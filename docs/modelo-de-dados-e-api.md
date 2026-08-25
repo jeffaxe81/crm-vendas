@@ -1,0 +1,30 @@
+# Modelo de Dados e Documentação de API
+
+## Modelo de dados conceitual
+
+| Entidade | Propósito | Relações principais |
+|---|---|---|
+| Usuário | Identidade e perfil de acesso | Cria atividades, interações, oportunidades e auditorias |
+| Cliente | Pessoa ou empresa gerenciada comercialmente | Possui contatos, interações, atividades e oportunidades |
+| Contato | Pessoa vinculada opcionalmente a uma empresa | Pertence a um cliente do tipo empresa |
+| Oportunidade | Negociação comercial no funil | Pertence a um cliente, possui atividades e interações, e preserva situação ativa/inativa |
+| Atividade | Tarefa ou compromisso operacional | Pode referenciar cliente e oportunidade e preserva situação ativa/inativa |
+| Interação | Evento do relacionamento comercial | Pode referenciar cliente e oportunidade, registra autor e preserva situação ativa/inativa |
+| Auditoria | Rastro de alteração relevante | Registra ator, ação, entidade e identificador afetado |
+
+## Contratos de API internos
+
+As operações do MVP serão expostas como procedimentos tRPC protegidos, com validação de entrada no servidor. As listas aceitam paginação, pesquisa, ordenação e filtros quando aplicáveis.
+
+| Módulo | Procedimentos previstos |
+|---|---|
+| dashboard | resumo; atividades pendentes; oportunidades recentes |
+| clients | listar; criar; atualizar; inativar; listar contatos paginados e filtráveis; criar contato; atualizar contato; inativar contato |
+| opportunities | listar; criar; atualizar; mover etapa; resumo do funil |
+| activities | listar; criar; atualizar situação |
+| interactions | listar por vínculo; criar |
+| audit | listar eventos recentes |
+
+## Evolução planejada
+
+Os contratos acima representam somente a Fase 1. Interfaces e operações de atendimento, integrações, automação e inteligência artificial permanecem deliberadamente fora da implementação atual e serão projetadas em módulos próprios nas fases previstas do roadmap.

@@ -1,0 +1,25 @@
+# Project TODO
+
+- [x] Documentar a visão do produto, roadmap, backlog, requisitos, regras de negócio, decisões, riscos, modelo de dados e plano de testes do MVP comercial.
+- [x] Modelar e migrar as entidades de clientes, empresas, contatos, oportunidades, atividades e auditoria com exclusão lógica e rastreabilidade.
+- [x] Implementar procedimentos protegidos para consultar, criar, editar e inativar clientes, empresas e contatos vinculados.
+- [x] Implementar pesquisa, filtros, ordenação e paginação para os cadastros comerciais.
+- [x] Implementar registro e consulta em linha do tempo para interações comerciais identificando o usuário responsável.
+- [x] Implementar criação e acompanhamento de tarefas e compromissos vinculados a clientes e oportunidades.
+- [x] Implementar criação, consulta, atualização e movimentação de oportunidades por etapas do funil comercial.
+- [x] Implementar indicadores comerciais e listas de tarefas e oportunidades no painel inicial.
+- [x] Implementar registro de auditoria das principais alterações e ações do MVP.
+- [x] Criar uma experiência responsiva, elegante e refinada, com navegação lateral e estados de carregamento, vazios e erro.
+- [x] Criar testes automatizados para funções e regras críticas do CRM, executar testes e validação de tipos.
+- [x] Revisar visualmente o app nas resoluções desktop e mobile, ajustar inconsistências e registrar evidências.
+- [x] Atualizar os artefatos do produto, marcar itens concluídos e salvar uma versão de entrega do MVP.
+- [x] Estender a exclusão lógica e a preservação histórica para oportunidades, atividades e interações.
+- [x] Disponibilizar pesquisa, filtros, ordenação e paginação para contatos vinculados.
+- [x] Implementar edição completa de oportunidades, incluindo título, valor, previsão e cliente associado.
+- [x] Adicionar estados de erro explícitos nas consultas das páginas principais do CRM.
+- [x] Atualizar evidências finais, revisar o checklist completo e salvar a versão de entrega após os ajustes.
+- [x] Implementar procedimentos e controles visuais para inativar oportunidades, atividades e interações com auditoria preservada.
+- [x] Adicionar filtros explícitos de contatos vinculados à API e à interface, além da busca, ordenação e paginação.
+- [x] Manter as Fases 2 a 6 apenas documentadas no roadmap, backlog e banco de ideias, sem desenvolvimento neste incremento.
+- [x] Confirmar na entrega que o escopo implementado corresponde exclusivamente à Fase 1 — MVP Comercial.
+- [x] Registrar e verificar de forma consistente no roadmap, backlog e Banco de Ideias que as Fases 2 a 6 permanecem apenas documentadas neste incremento.
