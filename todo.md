@@ -29,3 +29,5 @@
 - [x] Adaptar a navegação e as telas de acesso para a experiência de autenticação local.
 - [x] Criar testes de credenciais, sessão local e autorização por perfil; revisar e salvar a atualização de entrega.
 - [x] Verificar os artefatos de autenticação local e salvar uma nova versão de entrega após a migração.
+- [x] Substituir a marca NEXUS e o nome CRM Vendas por AXE Relationship na interface, nos metadados e nos documentos da Fase 1.
+- [x] Verificar visualmente a nova identidade e salvar a versão de entrega da atualização de marca.

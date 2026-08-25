@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="min-h-screen crm-surface flex items-center justify-center p-5">
         <section className="w-full max-w-md rounded-[2rem] border border-white/70 bg-white/85 p-9 text-center shadow-[0_28px_80px_rgba(26,35,56,0.14)] backdrop-blur">
           <div className="mx-auto mb-7 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#18223a] text-white shadow-lg"><Sparkles className="h-6 w-6" /></div>
-          <p className="eyebrow justify-center">CRM VENDAS</p>
+          <p className="eyebrow justify-center">AXE RELATIONSHIP</p>
           <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight text-[#172033]">Sua operação comercial, em foco.</h1>
           <p className="mt-4 text-sm leading-6 text-slate-500">Acesse o ambiente seguro para centralizar clientes, negociações e atividades da sua equipe.</p>
           <Button onClick={() => setLocation("/login")} size="lg" className="mt-8 w-full rounded-xl bg-[#172033] shadow-lg shadow-slate-900/15 hover:bg-[#27365b]">Entrar no CRM</Button>
@@ -56,7 +56,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[252px] flex-col border-r border-slate-200/70 bg-white/80 px-4 py-5 backdrop-blur-xl lg:flex">
         <button onClick={() => setLocation("/")} className="flex items-center gap-3 px-3 text-left" aria-label="Ir para a visão geral">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#172033] text-white shadow-md shadow-slate-900/20"><Sparkles className="h-4 w-4" /></span>
-          <span><strong className="font-display block text-sm font-semibold tracking-[0.14em] text-[#172033]">NEXUS</strong><small className="block text-[10px] font-medium tracking-[0.18em] text-slate-400">CRM VENDAS</small></span>
+          <span><strong className="font-display block text-sm font-semibold tracking-[0.14em] text-[#172033]">AXE</strong><small className="block text-[10px] font-medium tracking-[0.18em] text-slate-400">RELATIONSHIP</small></span>
         </button>
 
         <nav className="mt-10 space-y-1" aria-label="Navegação principal">
@@ -74,7 +74,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       <header className="sticky top-0 z-20 flex h-[68px] items-center justify-between border-b border-slate-200/70 bg-[#fbfcfe]/85 px-5 backdrop-blur-xl lg:ml-[252px] lg:px-9">
-        <div className="flex items-center gap-3 lg:hidden"><button onClick={() => setMobileMenuOpen(value => !value)} className="rounded-lg p-2 text-slate-600 hover:bg-slate-100" aria-label="Abrir navegação"><Menu className="h-5 w-5" /></button><span className="font-display text-sm font-semibold tracking-[0.12em] text-[#172033]">NEXUS</span></div>
+        <div className="flex items-center gap-3 lg:hidden"><button onClick={() => setMobileMenuOpen(value => !value)} className="rounded-lg p-2 text-slate-600 hover:bg-slate-100" aria-label="Abrir navegação"><Menu className="h-5 w-5" /></button><span className="font-display text-sm font-semibold tracking-[0.08em] text-[#172033]">AXE Relationship</span></div>
         <p className="hidden text-sm text-slate-400 lg:block">Operação comercial <span className="mx-2 text-slate-300">/</span> <span className="font-medium text-slate-600">{navItems.find(item => isCurrent(item.path))?.label ?? "CRM"}</span></p>
         <div className="flex items-center gap-3"><button className="relative rounded-xl p-2 text-slate-500 transition hover:bg-slate-100" aria-label="Notificações"><Bell className="h-4.5 w-4.5" /><span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[#c99a4a]" /></button><div className="hidden h-7 w-px bg-slate-200 sm:block" /><div className="hidden items-center gap-2 sm:flex"><span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e9edf8] text-[10px] font-bold text-[#27365b]">{initials(user.name)}</span><div className="leading-tight"><p className="max-w-[130px] truncate text-xs font-semibold text-slate-700">{user.name || "Usuário"}</p><p className="text-[10px] text-slate-400">{user.role === "admin" ? "Admin" : "Comercial"}</p></div></div></div>
       </header>

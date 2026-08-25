@@ -1,8 +1,8 @@
-# Visão do Produto — CRM Vendas
+# Visão do Produto — AXE Relationship
 
 ## Propósito
 
-O CRM Vendas centraliza informações de clientes, oportunidades e atividades para que equipes comerciais acompanhem o relacionamento, priorizem o trabalho diário e conduzam negociações com rastreabilidade. O produto começa focado em **gestão comercial e vendas** e preserva uma arquitetura modular para os módulos futuros de atendimento e operação integrada.
+O AXE Relationship centraliza informações de clientes, oportunidades e atividades para que equipes comerciais acompanhem o relacionamento, priorizem o trabalho diário e conduzam negociações com rastreabilidade. O produto começa focado em **gestão comercial e vendas** e preserva uma arquitetura modular para os módulos futuros de atendimento e operação integrada.
 
 ## Proposta de valor
 

@@ -11,6 +11,7 @@
 | DEC-05 | A identidade usa a autenticação nativa da plataforma. | O projeto já oferece sessão segura. | Sem senha local armazenada pela aplicação. |
 | DEC-06 | Implementar exclusivamente a Fase 1 neste incremento. | Direcionamento confirmado pelo solicitante. | Fases 2 a 6 seguem documentadas, mas sem código antecipado. |
 | DEC-07 | Substituir a autenticação vinculada à Manus por login e senha locais. | Direcionamento confirmado pelo solicitante. | O CRM terá usuários, credenciais e sessões próprias, sem redirecionamento OAuth. |
+| DEC-08 | Adotar AXE Relationship como nome do produto. | Direcionamento confirmado pelo solicitante. | Interface, metadados e documentos devem utilizar a nova identidade. |
 
 ## Riscos e pendências
 
@@ -30,3 +31,4 @@
 | 0.2.2 | 25/08/2026 | Finalizados os controles de inativação de oportunidades, atividades e interações, com auditoria e validação técnica da Fase 1. |
 | 0.3.0 | 25/08/2026 | Iniciada a migração da autenticação para credenciais locais independentes da Manus. |
 | 0.3.1 | 25/08/2026 | Concluída a autenticação local com criação do administrador inicial, login e senha, cookie de sessão assinado, testes e remoção do fluxo OAuth ativo. |
+| 0.3.2 | 25/08/2026 | Atualizada a identidade do produto para AXE Relationship. |
