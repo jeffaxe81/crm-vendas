@@ -83,6 +83,55 @@ export async function getUserByOpenId(openId: string) {
   return result[0];
 }
 
+function normalizeUsername(username: string) {
+  return username.trim().toLowerCase();
+}
+
+export async function hasLocalAccounts() {
+  const db = await requireDb();
+  const rows = await db.select({ total: count() }).from(users).where(sql`${users.username} is not null`);
+  return Number(rows[0]?.total ?? 0) > 0;
+}
+
+export async function createInitialLocalAdmin(input: { name: string; username: string; passwordHash: string }) {
+  const db = await requireDb();
+  if (await hasLocalAccounts()) throw new Error("A configuração inicial já foi concluída.");
+  const username = normalizeUsername(input.username);
+  const result = await db.insert(users).values({
+    openId: `local:${username}`,
+    username,
+    passwordHash: input.passwordHash,
+    name: input.name.trim(),
+    loginMethod: "local",
+    role: "admin",
+    isActive: "yes",
+    lastSignedIn: new Date(),
+  });
+  const id = insertId(result);
+  const user = await getActiveLocalUserById(id);
+  if (!user) throw new Error("Não foi possível criar o administrador local.");
+  await writeAudit(id, "create", "user", id, `Administrador local criado: ${username}`);
+  return user;
+}
+
+export async function getActiveLocalUserById(id: number) {
+  const db = await requireDb();
+  const result = await db.select().from(users).where(and(eq(users.id, id), eq(users.isActive, "yes"))).limit(1);
+  return result[0];
+}
+
+export async function getActiveLocalUserByUsername(username: string) {
+  const db = await requireDb();
+  const result = await db.select().from(users).where(and(eq(users.username, normalizeUsername(username)), eq(users.isActive, "yes"))).limit(1);
+  return result[0];
+}
+
+export async function registerLocalSignIn(userId: number) {
+  const db = await requireDb();
+  await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, userId));
+  await writeAudit(userId, "login", "user", userId, "Login local realizado.");
+}
+
 export async function writeAudit(userId: number, action: string, entityType: string, entityId: number, summary: string) {
   const db = await requireDb();
   await db.insert(auditLogs).values({ userId, action, entityType, entityId, summary });

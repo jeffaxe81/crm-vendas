@@ -10,6 +10,7 @@
 | RN-04 | Cada interação e cada evento de auditoria deve registrar o usuário responsável e a data de execução. |
 | RN-05 | O valor estimado de oportunidade não pode ser negativo. |
 | RN-06 | Apenas administradores podem executar ações administrativas de usuários; demais permissões serão evoluídas sem alterar o núcleo do domínio. |
+| RN-08 | Senhas não devem ser armazenadas em texto legível; a autenticação local deve persistir somente hash de senha e uma sessão HTTP segura. |
 | RN-07 | Estágios padrão do funil são Prospecção, Qualificação, Proposta, Negociação, Ganha e Perdida, configuráveis em evolução futura. |
 
 ## Critérios de aceite do incremento

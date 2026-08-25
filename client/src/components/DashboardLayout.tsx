@@ -1,5 +1,4 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { startLogin } from "@/const";
 import { initials } from "@/lib/crm";
 import {
   Activity,
@@ -43,7 +42,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <p className="eyebrow justify-center">CRM VENDAS</p>
           <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight text-[#172033]">Sua operação comercial, em foco.</h1>
           <p className="mt-4 text-sm leading-6 text-slate-500">Acesse o ambiente seguro para centralizar clientes, negociações e atividades da sua equipe.</p>
-          <Button onClick={() => startLogin()} size="lg" className="mt-8 w-full rounded-xl bg-[#172033] shadow-lg shadow-slate-900/15 hover:bg-[#27365b]">Entrar no CRM</Button>
+          <Button onClick={() => setLocation("/login")} size="lg" className="mt-8 w-full rounded-xl bg-[#172033] shadow-lg shadow-slate-900/15 hover:bg-[#27365b]">Entrar no CRM</Button>
         </section>
       </div>
     );

@@ -4,7 +4,7 @@
 
 | ID | Requisito |
 |---|---|
-| RF-01 | O sistema deve exigir autenticação para acessar dados comerciais. |
+| RF-01 | O sistema deve exigir autenticação local por login e senha para acessar dados comerciais, sem dependência de autenticação da Manus. |
 | RF-02 | O sistema deve diferenciar, no mínimo, usuários administradores e usuários padrão. |
 | RF-03 | O sistema deve cadastrar, consultar, editar e inativar pessoas e empresas. |
 | RF-04 | O sistema deve permitir vincular contatos a empresas. |

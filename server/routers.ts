@@ -1,8 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { compare, hash } from "bcryptjs";
 import * as db from "./db";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
+import { createLocalSession } from "./localAuth";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 
@@ -17,15 +19,34 @@ const clientPayload = z.object({
 });
 const opportunityStages = z.enum(["prospecting", "qualification", "proposal", "negotiation", "won", "lost"]);
 const pagination = z.object({ page: z.number().int().min(1).optional(), pageSize: z.number().int().min(1).max(100).optional() });
+const localAccountPayload = z.object({ name: z.string().trim().min(2).max(120), username: z.string().trim().min(3).max(64).regex(/^[a-zA-Z0-9._-]+$/, "Use apenas letras, números, ponto, hífen ou sublinhado."), password: z.string().min(10, "A senha deve ter ao menos 10 caracteres.").max(128) });
+const localLoginPayload = z.object({ username: z.string().trim().min(1).max(64), password: z.string().min(1).max(128) });
 
 function adminOnly(role: string) {
   if (role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Acesso restrito a administradores." });
 }
 
+function safeUser(user: NonNullable<Awaited<ReturnType<typeof db.getActiveLocalUserById>>>) {
+  return { id: user.id, name: user.name, username: user.username, email: user.email, role: user.role, isActive: user.isActive };
+}
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
+    me: publicProcedure.query(opts => opts.ctx.user ? safeUser(opts.ctx.user) : null),
+    setupStatus: publicProcedure.query(async () => ({ canBootstrap: !(await db.hasLocalAccounts()) })),
+    bootstrap: publicProcedure.input(localAccountPayload).mutation(async ({ ctx, input }) => {
+      const user = await db.createInitialLocalAdmin({ name: input.name, username: input.username, passwordHash: await hash(input.password, 12) });
+      ctx.res.cookie(COOKIE_NAME, await createLocalSession(user.id), getSessionCookieOptions(ctx.req));
+      return { user: safeUser(user) };
+    }),
+    login: publicProcedure.input(localLoginPayload).mutation(async ({ ctx, input }) => {
+      const user = await db.getActiveLocalUserByUsername(input.username);
+      if (!user?.passwordHash || !(await compare(input.password, user.passwordHash))) throw new TRPCError({ code: "UNAUTHORIZED", message: "Login ou senha inválidos." });
+      await db.registerLocalSignIn(user.id);
+      ctx.res.cookie(COOKIE_NAME, await createLocalSession(user.id), getSessionCookieOptions(ctx.req));
+      return { user: safeUser(user) };
+    }),
     logout: publicProcedure.mutation(({ ctx }) => {
       ctx.res.clearCookie(COOKIE_NAME, { ...getSessionCookieOptions(ctx.req), maxAge: -1 });
       return { success: true } as const;

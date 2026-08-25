@@ -23,3 +23,9 @@
 - [x] Manter as Fases 2 a 6 apenas documentadas no roadmap, backlog e banco de ideias, sem desenvolvimento neste incremento.
 - [x] Confirmar na entrega que o escopo implementado corresponde exclusivamente à Fase 1 — MVP Comercial.
 - [x] Registrar e verificar de forma consistente no roadmap, backlog e Banco de Ideias que as Fases 2 a 6 permanecem apenas documentadas neste incremento.
+- [x] Documentar a substituição da autenticação vinculada à Manus por login e senha locais da Fase 1.
+- [x] Modelar credenciais locais, senha protegida, conta ativa e sessão própria do CRM.
+- [x] Implementar login, encerramento de sessão e proteção de rotas sem dependência de autenticação da Manus.
+- [x] Adaptar a navegação e as telas de acesso para a experiência de autenticação local.
+- [x] Criar testes de credenciais, sessão local e autorização por perfil; revisar e salvar a atualização de entrega.
+- [x] Verificar os artefatos de autenticação local e salvar uma nova versão de entrega após a migração.

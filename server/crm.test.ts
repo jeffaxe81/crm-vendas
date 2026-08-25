@@ -25,9 +25,18 @@ vi.mock("./db", () => ({
   createInteraction: vi.fn(),
   inactivateInteraction: vi.fn(),
   listAuditLogs: vi.fn(),
+  hasLocalAccounts: vi.fn(),
+  createInitialLocalAdmin: vi.fn(),
+  getActiveLocalUserByUsername: vi.fn(),
+  registerLocalSignIn: vi.fn(),
 }));
 
+vi.mock("./localAuth", () => ({ createLocalSession: vi.fn() }));
+vi.mock("bcryptjs", () => ({ compare: vi.fn(), hash: vi.fn() }));
+
 import * as db from "./db";
+import { compare, hash } from "bcryptjs";
+import { createLocalSession } from "./localAuth";
 import { appRouter } from "./routers";
 
 function createContext(role: "user" | "admin" = "user"): TrpcContext {
@@ -35,21 +44,56 @@ function createContext(role: "user" | "admin" = "user"): TrpcContext {
     user: {
       id: 41,
       openId: "crm-test-user",
+      username: "teste",
+      passwordHash: "hash",
       name: "Usuário de Teste",
       email: "teste@example.com",
-      loginMethod: "manus",
+      loginMethod: "local",
       role,
+      isActive: "yes",
       createdAt: new Date(),
       updatedAt: new Date(),
       lastSignedIn: new Date(),
     },
     req: { protocol: "https", headers: {} } as TrpcContext["req"],
-    res: { clearCookie: vi.fn() } as unknown as TrpcContext["res"],
+    res: { clearCookie: vi.fn(), cookie: vi.fn() } as unknown as TrpcContext["res"],
   };
 }
 
 describe("CRM procedures", () => {
   beforeEach(() => vi.clearAllMocks());
+
+  it("cria o primeiro administrador com senha protegida e sessão local", async () => {
+    const localAdmin = { ...createContext("admin").user!, id: 9, name: "Administrador", username: "admin" };
+    vi.mocked(db.hasLocalAccounts).mockResolvedValue(false);
+    vi.mocked(hash).mockResolvedValue("hash-protegido" as never);
+    vi.mocked(db.createInitialLocalAdmin).mockResolvedValue(localAdmin);
+    vi.mocked(createLocalSession).mockResolvedValue("sessao-local");
+    const ctx = createContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.auth.bootstrap({ name: "Administrador", username: "admin", password: "Senha-local-123" });
+
+    expect(hash).toHaveBeenCalledWith("Senha-local-123", 12);
+    expect(db.createInitialLocalAdmin).toHaveBeenCalledWith({ name: "Administrador", username: "admin", passwordHash: "hash-protegido" });
+    expect(ctx.res.cookie).toHaveBeenCalled();
+    expect(result.user).toMatchObject({ id: 9, username: "admin", role: "admin" });
+  });
+
+  it("aceita login local com senha válida e atualiza o último acesso", async () => {
+    const localUser = { ...createContext().user!, id: 12, username: "vendas", passwordHash: "hash-protegido" };
+    vi.mocked(db.getActiveLocalUserByUsername).mockResolvedValue(localUser);
+    vi.mocked(compare).mockResolvedValue(true);
+    vi.mocked(createLocalSession).mockResolvedValue("sessao-local");
+    const ctx = createContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.auth.login({ username: "vendas", password: "Senha-local-123" });
+
+    expect(compare).toHaveBeenCalledWith("Senha-local-123", "hash-protegido");
+    expect(db.registerLocalSignIn).toHaveBeenCalledWith(12);
+    expect(result.user).toMatchObject({ id: 12, username: "vendas" });
+  });
 
   it("valida o nome do cliente antes de encaminhar o cadastro", async () => {
     const caller = appRouter.createCaller(createContext());
