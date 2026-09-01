@@ -13,7 +13,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: "pnpm --filter @axes/api dev",
+      command: "pnpm --filter @axes/api exec tsx src/main.ts",
       url: "http://127.0.0.1:3001/api/v1/health",
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
