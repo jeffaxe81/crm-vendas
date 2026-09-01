@@ -2,29 +2,29 @@
 
 ## Modelo de dados conceitual
 
-| Entidade | Propósito | Relações principais |
-|---|---|---|
-| Usuário | Identidade, credenciais locais e perfil de acesso | Possui login único, hash de senha, conta ativa, perfil e autoria de ações comerciais |
-| Cliente | Pessoa ou empresa gerenciada comercialmente | Possui contatos, interações, atividades e oportunidades |
-| Contato | Pessoa vinculada opcionalmente a uma empresa | Pertence a um cliente do tipo empresa |
-| Oportunidade | Negociação comercial no funil | Pertence a um cliente, possui atividades e interações, e preserva situação ativa/inativa |
-| Atividade | Tarefa ou compromisso operacional | Pode referenciar cliente e oportunidade e preserva situação ativa/inativa |
-| Interação | Evento do relacionamento comercial | Pode referenciar cliente e oportunidade, registra autor e preserva situação ativa/inativa |
-| Auditoria | Rastro de alteração relevante | Registra ator, ação, entidade e identificador afetado |
+| Entidade     | Propósito                                         | Relações principais                                                                       |
+| ------------ | ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Usuário      | Identidade, credenciais locais e perfil de acesso | Possui login único, hash de senha, conta ativa, perfil e autoria de ações comerciais      |
+| Cliente      | Pessoa ou empresa gerenciada comercialmente       | Possui contatos, interações, atividades e oportunidades                                   |
+| Contato      | Pessoa vinculada opcionalmente a uma empresa      | Pertence a um cliente do tipo empresa                                                     |
+| Oportunidade | Negociação comercial no funil                     | Pertence a um cliente, possui atividades e interações, e preserva situação ativa/inativa  |
+| Atividade    | Tarefa ou compromisso operacional                 | Pode referenciar cliente e oportunidade e preserva situação ativa/inativa                 |
+| Interação    | Evento do relacionamento comercial                | Pode referenciar cliente e oportunidade, registra autor e preserva situação ativa/inativa |
+| Auditoria    | Rastro de alteração relevante                     | Registra ator, ação, entidade e identificador afetado                                     |
 
 ## Contratos de API internos
 
 As operações do MVP serão expostas como procedimentos tRPC protegidos, com validação de entrada no servidor. As listas aceitam paginação, pesquisa, ordenação e filtros quando aplicáveis.
 
-| Módulo | Procedimentos previstos |
-|---|---|
-| dashboard | resumo; atividades pendentes; oportunidades recentes |
-| clients | listar; criar; atualizar; inativar; listar contatos paginados e filtráveis; criar contato; atualizar contato; inativar contato |
-| opportunities | listar; criar; atualizar; mover etapa; resumo do funil |
-| activities | listar; criar; atualizar situação |
-| interactions | listar por vínculo; criar |
-| audit | listar eventos recentes |
-| auth | consultar configuração inicial; criar primeiro administrador; login local; consultar sessão; encerrar sessão |
+| Módulo        | Procedimentos previstos                                                                                                        |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| dashboard     | resumo; atividades pendentes; oportunidades recentes                                                                           |
+| clients       | listar; criar; atualizar; inativar; listar contatos paginados e filtráveis; criar contato; atualizar contato; inativar contato |
+| opportunities | listar; criar; atualizar; mover etapa; resumo do funil                                                                         |
+| activities    | listar; criar; atualizar situação                                                                                              |
+| interactions  | listar por vínculo; criar                                                                                                      |
+| audit         | listar eventos recentes                                                                                                        |
+| auth          | consultar configuração inicial; criar primeiro administrador; login local; consultar sessão; encerrar sessão                   |
 
 ## Autenticação local
 

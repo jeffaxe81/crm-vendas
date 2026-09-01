@@ -2,15 +2,15 @@
 
 ## Testes
 
-| Nível | Ferramenta | Escopo |
-|---|---|---|
-| Repositório | Node test runner | Versões fixadas e contrato Compose |
-| Contratos | Vitest | Schemas e tipos compartilhados |
-| Web | Vitest + Testing Library | Readiness da interface |
-| API | Jest | Health, ambiente, request ID, erros e logging |
-| Integração | Jest + PostgreSQL | Conectividade real pelo Prisma |
-| E2E | Playwright | Jornada browser + health da API |
-| Container | Docker Compose | Build, dependências e health checks |
+| Nível       | Ferramenta               | Escopo                                        |
+| ----------- | ------------------------ | --------------------------------------------- |
+| Repositório | Node test runner         | Versões fixadas e contrato Compose            |
+| Contratos   | Vitest                   | Schemas e tipos compartilhados                |
+| Web         | Vitest + Testing Library | Readiness da interface                        |
+| API         | Jest                     | Health, ambiente, request ID, erros e logging |
+| Integração  | Jest + PostgreSQL        | Conectividade real pelo Prisma                |
+| E2E         | Playwright               | Jornada browser + health da API               |
+| Container   | Docker Compose           | Build, dependências e health checks           |
 
 Comandos:
 

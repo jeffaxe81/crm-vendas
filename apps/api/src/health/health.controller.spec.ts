@@ -1,10 +1,10 @@
-import { Test } from '@nestjs/testing';
+import { Test } from "@nestjs/testing";
 
-import { DatabaseHealthService } from '../database/database-health.service';
-import { HealthController } from './health.controller';
+import { DatabaseHealthService } from "../database/database-health.service";
+import { HealthController } from "./health.controller";
 
-describe('HealthController', () => {
-  it('reports API and database readiness', async () => {
+describe("HealthController", () => {
+  it("reports API and database readiness", async () => {
     const databaseHealth = {
       isReady: jest.fn().mockResolvedValue(true),
     };
@@ -22,9 +22,9 @@ describe('HealthController', () => {
     const controller = moduleRef.get(HealthController);
 
     await expect(controller.read()).resolves.toEqual({
-      status: 'ok',
-      service: 'api',
-      database: 'up',
+      status: "ok",
+      service: "api",
+      database: "up",
     });
     expect(databaseHealth.isReady).toHaveBeenCalledTimes(1);
   });

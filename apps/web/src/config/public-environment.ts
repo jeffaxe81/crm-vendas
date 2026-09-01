@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const PublicEnvironmentSchema = z.object({
   NEXT_PUBLIC_API_BASE_URL: z.string().url(),
@@ -7,7 +7,7 @@ const PublicEnvironmentSchema = z.object({
 export type PublicEnvironment = z.infer<typeof PublicEnvironmentSchema>;
 
 export function parsePublicEnvironment(
-  input: Record<string, unknown>,
+  input: Record<string, unknown>
 ): PublicEnvironment {
   return PublicEnvironmentSchema.parse(input);
 }

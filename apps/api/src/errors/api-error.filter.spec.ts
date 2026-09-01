@@ -5,18 +5,18 @@ import {
   Module,
   NotFoundException,
   type NestModule,
-} from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
+} from "@nestjs/common";
+import { Test } from "@nestjs/testing";
+import request from "supertest";
 
-import { RequestIdMiddleware } from '../observability/request-id.middleware';
-import { ApiErrorFilter } from './api-error.filter';
+import { RequestIdMiddleware } from "../observability/request-id.middleware";
+import { ApiErrorFilter } from "./api-error.filter";
 
-@Controller('missing')
+@Controller("missing")
 class MissingController {
   @Get()
   read(): never {
-    throw new NotFoundException('Recurso não encontrado.');
+    throw new NotFoundException("Recurso não encontrado.");
   }
 }
 
@@ -25,12 +25,12 @@ class MissingController {
 })
 class ErrorProbeModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(RequestIdMiddleware).forRoutes('*');
+    consumer.apply(RequestIdMiddleware).forRoutes("*");
   }
 }
 
-describe('ApiErrorFilter', () => {
-  it('returns the approved error envelope', async () => {
+describe("ApiErrorFilter", () => {
+  it("returns the approved error envelope", async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [ErrorProbeModule],
     }).compile();
@@ -39,14 +39,14 @@ describe('ApiErrorFilter', () => {
     await app.init();
 
     const response = await request(app.getHttpServer())
-      .get('/missing')
-      .set('x-request-id', 'crm-request-404')
+      .get("/missing")
+      .set("x-request-id", "crm-request-404")
       .expect(404);
 
     expect(response.body).toEqual({
-      code: 'RESOURCE_NOT_FOUND',
-      message: 'Recurso não encontrado.',
-      request_id: 'crm-request-404',
+      code: "RESOURCE_NOT_FOUND",
+      message: "Recurso não encontrado.",
+      request_id: "crm-request-404",
       details: [],
     });
 

@@ -1,15 +1,15 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 
-import Home from './page';
+import Home from "./page";
 
-describe('Home', () => {
-  it('identifies the CRM foundation', () => {
+describe("Home", () => {
+  it("identifies the CRM foundation", () => {
     render(<Home />);
 
     expect(
-      screen.getByRole('heading', { name: 'CRM Axesistemas' }),
+      screen.getByRole("heading", { name: "CRM Axesistemas" })
     ).toBeInTheDocument();
-    expect(screen.getByText('Fundação preparada')).toBeInTheDocument();
+    expect(screen.getByText("Fundação preparada")).toBeInTheDocument();
   });
 });

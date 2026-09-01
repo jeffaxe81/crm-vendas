@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
 
-import { DatabaseHealthService } from './database-health.service';
-import { PrismaService } from './prisma.service';
+import { DatabaseHealthService } from "./database-health.service";
+import { PrismaService } from "./prisma.service";
 
 @Module({
   providers: [PrismaService, DatabaseHealthService],

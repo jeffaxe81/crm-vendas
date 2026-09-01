@@ -1,39 +1,38 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from "@playwright/test";
 
 const databaseUrl =
-  process.env.DATABASE_URL ??
-  'postgresql://axes:axes@127.0.0.1:5432/axes_crm';
+  process.env.DATABASE_URL ?? "postgresql://axes:axes@127.0.0.1:5432/axes_crm";
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: "./tests/e2e",
   fullyParallel: false,
   workers: 1,
-  reporter: 'list',
+  reporter: "list",
   use: {
-    trace: 'retain-on-failure',
+    trace: "retain-on-failure",
   },
   webServer: [
     {
-      command: 'pnpm --filter @axes/api dev',
-      url: 'http://127.0.0.1:3001/api/v1/health',
+      command: "pnpm --filter @axes/api dev",
+      url: "http://127.0.0.1:3001/api/v1/health",
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
       env: {
         ...process.env,
-        NODE_ENV: 'test',
-        PORT: '3001',
-        LOG_LEVEL: 'warn',
+        NODE_ENV: "test",
+        PORT: "3001",
+        LOG_LEVEL: "warn",
         DATABASE_URL: databaseUrl,
       },
     },
     {
-      command: 'pnpm --filter @axes/web dev',
-      url: 'http://127.0.0.1:3000',
+      command: "pnpm --filter @axes/web dev",
+      url: "http://127.0.0.1:3000",
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
       env: {
         ...process.env,
-        NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3001/api/v1',
+        NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:3001/api/v1",
       },
     },
   ],

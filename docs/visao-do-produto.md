@@ -8,11 +8,11 @@ O AXE Relationship centraliza informações de clientes, oportunidades e ativida
 
 O MVP reduz a dispersão de informações comerciais ao reunir cadastro, linha do tempo, tarefas, funil e indicadores em uma experiência única, elegante e responsiva. A interface deve favorecer leitura rápida, decisões objetivas e poucos cliques.
 
-| Público inicial | Necessidade principal | Resultado esperado |
-|---|---|---|
-| Usuário comercial | Organizar clientes, atividades e negociações | Rotina comercial mais previsível |
-| Gestor comercial | Acompanhar funil e execução do time | Visibilidade de oportunidades e indicadores |
-| Administrador | Controlar acesso e consultar ações relevantes | Governança e rastreabilidade básica |
+| Público inicial   | Necessidade principal                         | Resultado esperado                          |
+| ----------------- | --------------------------------------------- | ------------------------------------------- |
+| Usuário comercial | Organizar clientes, atividades e negociações  | Rotina comercial mais previsível            |
+| Gestor comercial  | Acompanhar funil e execução do time           | Visibilidade de oportunidades e indicadores |
+| Administrador     | Controlar acesso e consultar ações relevantes | Governança e rastreabilidade básica         |
 
 ## Limites do MVP
 

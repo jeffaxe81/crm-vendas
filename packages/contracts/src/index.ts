@@ -2,4 +2,4 @@ export {
   HealthResponseSchema,
   createHealthResponse,
   type HealthResponse,
-} from './health';
+} from "./health";

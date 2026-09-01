@@ -58,25 +58,25 @@ Os itens abaixo não serão implementados no MVP, mas permanecerão registrados 
 
 ## 5. Decisões aprovadas
 
-| ID | Decisão |
-|---|---|
-| D-001 | Modelo híbrido: uso inicial pela Axesistemas com dados preparados para múltiplas organizações. |
-| D-002 | TypeScript no frontend e backend, com Next.js, NestJS, PostgreSQL e Prisma. |
-| D-003 | Monólito modular em monorepositório, dividido por responsabilidades de negócio. |
+| ID    | Decisão                                                                                            |
+| ----- | -------------------------------------------------------------------------------------------------- |
+| D-001 | Modelo híbrido: uso inicial pela Axesistemas com dados preparados para múltiplas organizações.     |
+| D-002 | TypeScript no frontend e backend, com Next.js, NestJS, PostgreSQL e Prisma.                        |
+| D-003 | Monólito modular em monorepositório, dividido por responsabilidades de negócio.                    |
 | D-004 | Modelo de dados com organização, contatos independentes de empresas, atividade unificada e Outbox. |
-| D-005 | Segurança em camadas com Argon2id, JWT curto, refresh token protegido, RBAC, auditoria e HMAC. |
-| D-006 | Menu lateral como estrutura visual principal. |
-| D-007 | Opções B e C mantidas no backlog; App Shell preparado para futura variação visual. |
-| D-008 | Navegação, telas e jornada comercial do MVP aprovadas. |
+| D-005 | Segurança em camadas com Argon2id, JWT curto, refresh token protegido, RBAC, auditoria e HMAC.     |
+| D-006 | Menu lateral como estrutura visual principal.                                                      |
+| D-007 | Opções B e C mantidas no backlog; App Shell preparado para futura variação visual.                 |
+| D-008 | Navegação, telas e jornada comercial do MVP aprovadas.                                             |
 
 ## 6. Perfis e visibilidade
 
-| Perfil | Escopo inicial |
-|---|---|
-| Administrador | Configura a organização, usuários e dados; consulta auditoria. |
-| Gestor | Visualiza e gerencia todos os dados comerciais da organização. |
-| Vendedor | Trabalha com registros pelos quais é responsável ou participante. |
-| Consulta | Visualiza dados autorizados, sem alterá-los. |
+| Perfil        | Escopo inicial                                                    |
+| ------------- | ----------------------------------------------------------------- |
+| Administrador | Configura a organização, usuários e dados; consulta auditoria.    |
+| Gestor        | Visualiza e gerencia todos os dados comerciais da organização.    |
+| Vendedor      | Trabalha com registros pelos quais é responsável ou participante. |
+| Consulta      | Visualiza dados autorizados, sem alterá-los.                      |
 
 As permissões serão identificadas por ações, como `company.read`, `opportunity.move`, `user.manage` e `audit.read`. No MVP, os quatro perfis terão mapeamentos fixos no código. Perfis personalizados serão uma evolução.
 
@@ -354,50 +354,50 @@ Antes de produção serão obrigatórios backup automatizado do banco e document
 
 ## 17. Roadmap
 
-| Ciclo | Resultado |
-|---|---|
-| 0 | Fundação, ambiente reproduzível, documentação e checkpoints. |
-| 1 | Login, organização, usuários, permissões e auditoria. |
-| 2 | Empresas, contatos, tags, campos e histórico. |
-| 3 | Funil, oportunidades, ganhos e perdas. |
-| 4 | Atividades, agenda e follow-ups. |
-| 5 | Dashboard e hub de conhecimento. |
-| 6 | API, eventos e webhooks. |
-| 7 | Consolidação, segurança, documentação e versão candidata. |
+| Ciclo | Resultado                                                    |
+| ----- | ------------------------------------------------------------ |
+| 0     | Fundação, ambiente reproduzível, documentação e checkpoints. |
+| 1     | Login, organização, usuários, permissões e auditoria.        |
+| 2     | Empresas, contatos, tags, campos e histórico.                |
+| 3     | Funil, oportunidades, ganhos e perdas.                       |
+| 4     | Atividades, agenda e follow-ups.                             |
+| 5     | Dashboard e hub de conhecimento.                             |
+| 6     | API, eventos e webhooks.                                     |
+| 7     | Consolidação, segurança, documentação e versão candidata.    |
 
 ## 18. Backlog priorizado do MVP
 
-| ID | Item | Ciclo |
-|---|---|---:|
-| FND-001 | Estrutura do monorepositório | 0 |
-| FND-002 | Docker Compose e ambiente reproduzível | 0 |
-| SEC-001 | Login, logout e renovação de sessão | 1 |
-| SEC-002 | Organizações e vínculos | 1 |
-| SEC-003 | Perfis e permissões | 1 |
-| SEC-004 | Isolamento multiempresa | 1 |
-| AUD-001 | Auditoria imutável para usuários comuns | 1 |
-| CRM-001 | Empresas | 2 |
-| CRM-002 | Contatos e canais | 2 |
-| CRM-003 | Relacionamento empresa–contato | 2 |
-| CRM-004 | Histórico de relacionamento | 2 |
-| CRM-005 | Tags | 2 |
-| CRM-006 | Campos customizáveis | 2 |
-| SAL-001 | Funis e etapas | 3 |
-| SAL-002 | Oportunidades | 3 |
-| SAL-003 | Movimentação e histórico | 3 |
-| SAL-004 | Ganho, perda e motivo | 3 |
-| ACT-001 | Atividades e tarefas | 4 |
-| ACT-002 | Agenda | 4 |
-| ACT-003 | Follow-ups e atrasos | 4 |
-| DSH-001 | Dashboard simples | 5 |
-| KNW-001 | Notas, links e documentos | 5 |
-| KNW-002 | Metadados preparados para IA | 5 |
-| API-001 | API REST documentada | 6 |
-| EVT-001 | Eventos e Outbox | 6 |
-| WHK-001 | Webhooks seguros | 6 |
+| ID      | Item                                       | Ciclo |
+| ------- | ------------------------------------------ | ----: |
+| FND-001 | Estrutura do monorepositório               |     0 |
+| FND-002 | Docker Compose e ambiente reproduzível     |     0 |
+| SEC-001 | Login, logout e renovação de sessão        |     1 |
+| SEC-002 | Organizações e vínculos                    |     1 |
+| SEC-003 | Perfis e permissões                        |     1 |
+| SEC-004 | Isolamento multiempresa                    |     1 |
+| AUD-001 | Auditoria imutável para usuários comuns    |     1 |
+| CRM-001 | Empresas                                   |     2 |
+| CRM-002 | Contatos e canais                          |     2 |
+| CRM-003 | Relacionamento empresa–contato             |     2 |
+| CRM-004 | Histórico de relacionamento                |     2 |
+| CRM-005 | Tags                                       |     2 |
+| CRM-006 | Campos customizáveis                       |     2 |
+| SAL-001 | Funis e etapas                             |     3 |
+| SAL-002 | Oportunidades                              |     3 |
+| SAL-003 | Movimentação e histórico                   |     3 |
+| SAL-004 | Ganho, perda e motivo                      |     3 |
+| ACT-001 | Atividades e tarefas                       |     4 |
+| ACT-002 | Agenda                                     |     4 |
+| ACT-003 | Follow-ups e atrasos                       |     4 |
+| DSH-001 | Dashboard simples                          |     5 |
+| KNW-001 | Notas, links e documentos                  |     5 |
+| KNW-002 | Metadados preparados para IA               |     5 |
+| API-001 | API REST documentada                       |     6 |
+| EVT-001 | Eventos e Outbox                           |     6 |
+| WHK-001 | Webhooks seguros                           |     6 |
 | QUA-001 | Testes automatizados das jornadas críticas | Todos |
-| DOC-001 | Documentação técnica e funcional | Todos |
-| OPS-001 | Checkpoints, backup e restauração | Todos |
+| DOC-001 | Documentação técnica e funcional           | Todos |
+| OPS-001 | Checkpoints, backup e restauração          | Todos |
 
 ## 19. Critérios de aceite do MVP
 
@@ -422,13 +422,13 @@ O MVP estará apto para validação final quando:
 
 ## 20. Riscos e respostas
 
-| Risco | Resposta planejada |
-|---|---|
-| Escopo crescer durante o MVP | Registrar e priorizar no backlog antes de implementar. |
-| Vazamento entre organizações | Contexto obrigatório, filtros centralizados, testes adversariais e RLS antes da comercialização. |
-| Complexidade de campos customizados | Limitar os tipos iniciais e não incluir fórmulas. |
-| Divergência entre interface e API | Contratos compartilhados e testes de contrato. |
-| Perda de evento de integração | Outbox transacional e reprocessamento. |
-| Dificuldade de recuperação | Checkpoints, migrações versionadas e restauração testada. |
-| Três layouts aumentarem manutenção | Implementar apenas A; manter App Shell extensível. |
-| IA aumentar custo e escopo | Guardar apenas metadados; implementar IA após validação do núcleo. |
+| Risco                               | Resposta planejada                                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Escopo crescer durante o MVP        | Registrar e priorizar no backlog antes de implementar.                                           |
+| Vazamento entre organizações        | Contexto obrigatório, filtros centralizados, testes adversariais e RLS antes da comercialização. |
+| Complexidade de campos customizados | Limitar os tipos iniciais e não incluir fórmulas.                                                |
+| Divergência entre interface e API   | Contratos compartilhados e testes de contrato.                                                   |
+| Perda de evento de integração       | Outbox transacional e reprocessamento.                                                           |
+| Dificuldade de recuperação          | Checkpoints, migrações versionadas e restauração testada.                                        |
+| Três layouts aumentarem manutenção  | Implementar apenas A; manter App Shell extensível.                                               |
+| IA aumentar custo e escopo          | Guardar apenas metadados; implementar IA após validação do núcleo.                               |

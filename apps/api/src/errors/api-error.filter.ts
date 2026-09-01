@@ -5,10 +5,10 @@ import {
   HttpStatus,
   Logger,
   type ExceptionFilter,
-} from '@nestjs/common';
-import type { Request, Response } from 'express';
+} from "@nestjs/common";
+import type { Request, Response } from "express";
 
-import type { RequestWithId } from '../observability/request-id.middleware';
+import type { RequestWithId } from "../observability/request-id.middleware";
 
 type ErrorEnvelope = {
   code: string;
@@ -38,13 +38,13 @@ export class ApiErrorFilter implements ExceptionFilter {
     const details = this.resolveDetails(httpResponse);
     const requestId =
       request.requestId ??
-      request.header('x-request-id') ??
-      'request-id-unavailable';
+      request.header("x-request-id") ??
+      "request-id-unavailable";
 
     if (!(exception instanceof HttpException) || status >= 500) {
       this.logger.error(
-        'Unhandled API error',
-        exception instanceof Error ? exception.stack : String(exception),
+        "Unhandled API error",
+        exception instanceof Error ? exception.stack : String(exception)
       );
     }
 
@@ -62,41 +62,44 @@ export class ApiErrorFilter implements ExceptionFilter {
     switch (status) {
       case HttpStatus.BAD_REQUEST:
       case HttpStatus.UNPROCESSABLE_ENTITY:
-        return 'VALIDATION_ERROR';
+        return "VALIDATION_ERROR";
       case HttpStatus.UNAUTHORIZED:
-        return 'AUTHENTICATION_REQUIRED';
+        return "AUTHENTICATION_REQUIRED";
       case HttpStatus.FORBIDDEN:
-        return 'ACCESS_DENIED';
+        return "ACCESS_DENIED";
       case HttpStatus.NOT_FOUND:
-        return 'RESOURCE_NOT_FOUND';
+        return "RESOURCE_NOT_FOUND";
       case HttpStatus.CONFLICT:
-        return 'CONFLICT';
+        return "CONFLICT";
       default:
-        return status >= 500 ? 'INTERNAL_ERROR' : 'REQUEST_ERROR';
+        return status >= 500 ? "INTERNAL_ERROR" : "REQUEST_ERROR";
     }
   }
 
-  private resolveMessage(status: number, response: string | object | null): string {
+  private resolveMessage(
+    status: number,
+    response: string | object | null
+  ): string {
     if (status >= 500) {
-      return 'Ocorreu uma falha interna. Utilize o identificador da requisição para suporte.';
+      return "Ocorreu uma falha interna. Utilize o identificador da requisição para suporte.";
     }
 
-    if (typeof response === 'string') {
+    if (typeof response === "string") {
       return response;
     }
 
-    if (response && 'message' in response) {
+    if (response && "message" in response) {
       const value = (response as { message?: unknown }).message;
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         return value;
       }
     }
 
-    return 'Não foi possível concluir a requisição.';
+    return "Não foi possível concluir a requisição.";
   }
 
   private resolveDetails(response: string | object | null): unknown[] {
-    if (!response || typeof response === 'string' || !('message' in response)) {
+    if (!response || typeof response === "string" || !("message" in response)) {
       return [];
     }
 

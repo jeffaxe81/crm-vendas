@@ -145,14 +145,14 @@ A especificação aprovada está em `docs/architecture/2026-08-30-crm-axesistema
 
 ## Testes
 
-| Camada | Comando | Finalidade |
-|---|---|---|
-| Contratos do repositório | `pnpm test:repo` | Toolchain e Compose |
-| Unitários/integração | `pnpm test` | Pacotes, web, API e banco |
-| Tipos | `pnpm typecheck` | Contratos TypeScript |
-| Build | `pnpm build` | Artefatos de produção |
-| E2E | `pnpm test:e2e` | Web + API + PostgreSQL |
-| Gate agregado | `pnpm verify` | Formatação, tipos, testes e build |
+| Camada                   | Comando          | Finalidade                        |
+| ------------------------ | ---------------- | --------------------------------- |
+| Contratos do repositório | `pnpm test:repo` | Toolchain e Compose               |
+| Unitários/integração     | `pnpm test`      | Pacotes, web, API e banco         |
+| Tipos                    | `pnpm typecheck` | Contratos TypeScript              |
+| Build                    | `pnpm build`     | Artefatos de produção             |
+| E2E                      | `pnpm test:e2e`  | Web + API + PostgreSQL            |
+| Gate agregado            | `pnpm verify`    | Formatação, tipos, testes e build |
 
 Para o E2E local, o PostgreSQL deve estar saudável antes da execução:
 

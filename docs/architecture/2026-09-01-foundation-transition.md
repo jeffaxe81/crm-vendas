@@ -25,17 +25,17 @@ O `main` não será sobrescrito durante a construção da nova fundação. A evo
 
 ## Diferenças que precisam ser tratadas
 
-| Tema | Estado atual | Estado aprovado |
-|---|---|---|
-| Frontend | React + Vite | Next.js |
-| Backend | Express + tRPC | NestJS + REST/OpenAPI |
-| Banco | MySQL | PostgreSQL |
-| ORM | Drizzle | Prisma |
-| Organização do código | app único | monorepositório modular |
-| Multiempresa | não garantido estruturalmente | `organization_id` + memberships + isolamento |
-| Eventos | acoplados à aplicação atual | Outbox transacional |
-| Containers | sem `compose.yaml` no `main` | Docker Compose obrigatório |
-| Checkpoint | commits históricos | tag por ciclo + instrução de retorno |
+| Tema                  | Estado atual                  | Estado aprovado                              |
+| --------------------- | ----------------------------- | -------------------------------------------- |
+| Frontend              | React + Vite                  | Next.js                                      |
+| Backend               | Express + tRPC                | NestJS + REST/OpenAPI                        |
+| Banco                 | MySQL                         | PostgreSQL                                   |
+| ORM                   | Drizzle                       | Prisma                                       |
+| Organização do código | app único                     | monorepositório modular                      |
+| Multiempresa          | não garantido estruturalmente | `organization_id` + memberships + isolamento |
+| Eventos               | acoplados à aplicação atual   | Outbox transacional                          |
+| Containers            | sem `compose.yaml` no `main`  | Docker Compose obrigatório                   |
+| Checkpoint            | commits históricos            | tag por ciclo + instrução de retorno         |
 
 ## Critério para encerrar o Cycle 0
 
