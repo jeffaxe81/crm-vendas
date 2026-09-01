@@ -1,4 +1,3 @@
-import { jest } from "@jest/globals";
 import { Test } from "@nestjs/testing";
 
 import { DatabaseHealthService } from "../database/database-health.service";
@@ -6,8 +5,12 @@ import { HealthController } from "./health.controller";
 
 describe("HealthController", () => {
   it("reports API and database readiness", async () => {
+    let readinessChecks = 0;
     const databaseHealth = {
-      isReady: jest.fn().mockResolvedValue(true),
+      isReady: async () => {
+        readinessChecks += 1;
+        return true;
+      },
     };
 
     const moduleRef = await Test.createTestingModule({
@@ -27,6 +30,6 @@ describe("HealthController", () => {
       service: "api",
       database: "up",
     });
-    expect(databaseHealth.isReady).toHaveBeenCalledTimes(1);
+    expect(readinessChecks).toBe(1);
   });
 });
