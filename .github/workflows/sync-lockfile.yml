@@ -1,0 +1,45 @@
+name: Sync lockfile
+
+on:
+  push:
+    branches:
+      - cycle-0-foundation
+    paths:
+      - .github/workflows/sync-lockfile.yml
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout foundation branch
+        uses: actions/checkout@v6
+        with:
+          ref: cycle-0-foundation
+
+      - name: Configure Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+
+      - name: Synchronize lockfile
+        run: pnpm install --lockfile-only --no-frozen-lockfile
+
+      - name: Commit lockfile
+        run: |
+          git add pnpm-lock.yaml
+          if git diff --cached --quiet; then
+            echo "Lockfile already synchronized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build: synchronize web test dependency lockfile"
+          git push origin HEAD:cycle-0-foundation
