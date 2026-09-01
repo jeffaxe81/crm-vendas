@@ -38,6 +38,11 @@ jobs:
       REFRESH_TOKEN_PEPPER: test-refresh-pepper-with-at-least-32-characters
       AUTH_ACCESS_TTL_SECONDS: 900
       AUTH_REFRESH_TTL_SECONDS: 2592000
+      BOOTSTRAP_ORG_NAME: Axesistemas
+      BOOTSTRAP_ORG_SLUG: axesistemas
+      BOOTSTRAP_ADMIN_EMAIL: admin@axes.test
+      BOOTSTRAP_ADMIN_NAME: Administrador CI
+      BOOTSTRAP_ADMIN_PASSWORD: Strong-CI-Password-2026!
 
     steps:
       - name: Checkout
@@ -65,6 +70,9 @@ jobs:
 
       - name: Verify source and tests
         run: pnpm verify
+
+      - name: Bootstrap administrator for E2E
+        run: pnpm --filter @axes/api bootstrap:admin
 
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
