@@ -1,13 +1,17 @@
-import 'dotenv/config';
-
+import { config } from 'dotenv';
 import { defineConfig } from 'prisma/config';
 
-const localDevelopmentDatabaseUrl =
+config({
+  path: '../../.env',
+});
+
+const databaseUrl =
+  process.env.DATABASE_URL ??
   'postgresql://axes:axes@localhost:5432/axes_crm';
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   datasource: {
-    url: process.env.DATABASE_URL ?? localDevelopmentDatabaseUrl,
+    url: databaseUrl,
   },
 });
