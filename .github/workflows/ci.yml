@@ -1,9 +1,6 @@
 name: Cycle 1 quality gate
 
 on:
-  push:
-    branches:
-      - cycle-1-identity-access
   pull_request:
     branches:
       - cycle-0-foundation
