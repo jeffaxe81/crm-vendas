@@ -1,5 +1,3 @@
-import { parseCookie, stringifySetCookie, type SetCookie } from "cookie";
-
 import { parseApiEnvironment } from "../config/environment";
 
 export const REFRESH_COOKIE_NAME = "axes_refresh_token";
@@ -9,34 +7,48 @@ export function readRefreshToken(cookieHeader?: string): string | null {
     return null;
   }
 
-  return parseCookie(cookieHeader)[REFRESH_COOKIE_NAME] ?? null;
+  for (const part of cookieHeader.split(";")) {
+    const [rawName, ...rawValue] = part.trim().split("=");
+    if (rawName === REFRESH_COOKIE_NAME) {
+      const value = rawValue.join("=");
+      return value ? decodeURIComponent(value) : null;
+    }
+  }
+
+  return null;
 }
 
 export function createRefreshCookie(token: string): string {
   const environment = parseApiEnvironment(process.env);
-  const options: SetCookie = {
-    name: REFRESH_COOKIE_NAME,
-    value: token,
-    httpOnly: true,
-    secure: environment.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/api/v1/auth",
-    maxAge: environment.AUTH_REFRESH_TTL_SECONDS,
-  };
+  const attributes = [
+    `${REFRESH_COOKIE_NAME}=${encodeURIComponent(token)}`,
+    `Max-Age=${environment.AUTH_REFRESH_TTL_SECONDS}`,
+    "Path=/api/v1/auth",
+    "HttpOnly",
+    "SameSite=Strict",
+  ];
 
-  return stringifySetCookie(options);
+  if (environment.NODE_ENV === "production") {
+    attributes.push("Secure");
+  }
+
+  return attributes.join("; ");
 }
 
 export function clearRefreshCookie(): string {
   const environment = parseApiEnvironment(process.env);
-  return stringifySetCookie({
-    name: REFRESH_COOKIE_NAME,
-    value: "",
-    httpOnly: true,
-    secure: environment.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/api/v1/auth",
-    maxAge: 0,
-    expires: new Date(0),
-  });
+  const attributes = [
+    `${REFRESH_COOKIE_NAME}=`,
+    "Max-Age=0",
+    "Expires=Thu, 01 Jan 1970 00:00:00 GMT",
+    "Path=/api/v1/auth",
+    "HttpOnly",
+    "SameSite=Strict",
+  ];
+
+  if (environment.NODE_ENV === "production") {
+    attributes.push("Secure");
+  }
+
+  return attributes.join("; ");
 }
