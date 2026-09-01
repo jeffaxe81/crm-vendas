@@ -49,7 +49,7 @@ export class ApiErrorFilter implements ExceptionFilter {
     }
 
     const envelope: ErrorEnvelope = {
-      code: this.resolveCode(status),
+      code: this.resolveCode(status, httpResponse),
       message,
       request_id: requestId,
       details,
@@ -58,7 +58,14 @@ export class ApiErrorFilter implements ExceptionFilter {
     response.status(status).json(envelope);
   }
 
-  private resolveCode(status: number): string {
+  private resolveCode(status: number, response: string | object | null): string {
+    if (response && typeof response === "object" && "code" in response) {
+      const value = (response as { code?: unknown }).code;
+      if (typeof value === "string" && /^[A-Z0-9_]{3,80}$/.test(value)) {
+        return value;
+      }
+    }
+
     switch (status) {
       case HttpStatus.BAD_REQUEST:
       case HttpStatus.UNPROCESSABLE_ENTITY:
