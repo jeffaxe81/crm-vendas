@@ -18,8 +18,10 @@ FROM dependencies AS build
 
 COPY tsconfig.base.json ./
 COPY apps/web apps/web
+COPY packages/contracts packages/contracts
 
-RUN pnpm --filter @axes/web build
+RUN pnpm --filter @axes/contracts build \
+    && pnpm --filter @axes/web build
 
 FROM node:24.20.0-bookworm-slim AS runtime
 
@@ -32,6 +34,8 @@ COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/apps/web/node_modules ./apps/web/node_modules
 COPY --from=build --chown=node:node /app/apps/web/package.json ./apps/web/package.json
 COPY --from=build --chown=node:node /app/apps/web/.next ./apps/web/.next
+COPY --from=build --chown=node:node /app/packages/contracts/package.json ./packages/contracts/package.json
+COPY --from=build --chown=node:node /app/packages/contracts/dist ./packages/contracts/dist
 
 USER node
 WORKDIR /app/apps/web
