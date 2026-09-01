@@ -285,9 +285,7 @@ export class AuthService {
   }
 
   private refreshExpiry(from = new Date()): Date {
-    return new Date(
-      from.getTime() + this.tokens.refreshTokenExpiresIn * 1000
-    );
+    return new Date(from.getTime() + this.tokens.refreshTokenExpiresIn * 1000);
   }
 
   private async revokeFamily(familyId: string, revokedAt: Date): Promise<void> {

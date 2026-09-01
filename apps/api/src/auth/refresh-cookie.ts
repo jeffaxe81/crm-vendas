@@ -1,8 +1,4 @@
-import {
-  parseCookie,
-  stringifySetCookie,
-  type SetCookie,
-} from "cookie";
+import { parseCookie, stringifySetCookie, type SetCookie } from "cookie";
 
 import { parseApiEnvironment } from "../config/environment";
 

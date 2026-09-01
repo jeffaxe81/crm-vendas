@@ -8,13 +8,8 @@ import {
 import { Reflector } from "@nestjs/core";
 
 import type { AuthenticatedRequest } from "./authenticated-request";
-import {
-  REQUIRED_PERMISSIONS_KEY,
-} from "./require-permissions.decorator";
-import {
-  roleHasPermission,
-  type Permission,
-} from "./permissions";
+import { REQUIRED_PERMISSIONS_KEY } from "./require-permissions.decorator";
+import { roleHasPermission, type Permission } from "./permissions";
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -22,10 +17,10 @@ export class PermissionsGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const required =
-      this.reflector.getAllAndOverride<Permission[]>(
-        REQUIRED_PERMISSIONS_KEY,
-        [context.getHandler(), context.getClass()]
-      ) ?? [];
+      this.reflector.getAllAndOverride<Permission[]>(REQUIRED_PERMISSIONS_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ]) ?? [];
 
     if (required.length === 0) {
       return true;
