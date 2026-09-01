@@ -8,6 +8,7 @@ import { parseApiEnvironment } from "./config/environment";
 import { HealthModule } from "./health/health.module";
 import { createLoggerOptions } from "./observability/logger.config";
 import { RequestIdMiddleware } from "./observability/request-id.middleware";
+import { OrganizationUsersModule } from "./users/organization-users.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RequestIdMiddleware } from "./observability/request-id.middleware";
     HealthModule,
     AuthModule,
     AuthorizationModule,
+    OrganizationUsersModule,
   ],
 })
 export class AppModule implements NestModule {
