@@ -46,9 +46,7 @@ export default function Home() {
       setPassword("");
     } catch (cause) {
       setError(
-        cause instanceof Error
-          ? cause.message
-          : "Não foi possível autenticar."
+        cause instanceof Error ? cause.message : "Não foi possível autenticar."
       );
     } finally {
       setSubmitting(false);
