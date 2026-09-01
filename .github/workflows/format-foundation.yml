@@ -1,0 +1,48 @@
+name: Format Cycle 0
+
+on:
+  push:
+    branches:
+      - cycle-0-foundation
+    paths:
+      - .github/workflows/format-foundation.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout foundation branch
+        uses: actions/checkout@v6
+        with:
+          ref: cycle-0-foundation
+
+      - name: Configure Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Format repository
+        run: pnpm exec prettier --write .
+
+      - name: Commit formatting
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Repository already formatted."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "style: format Cycle 0 foundation"
+          git push origin HEAD:cycle-0-foundation
