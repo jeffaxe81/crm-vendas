@@ -1,14 +1,45 @@
-name: Lockfile maintenance
+name: Sync Cycle 1 lockfile
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - cycle-1-identity-access
+    paths:
+      - .github/workflows/sync-lockfile.yml
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  notice:
+  lockfile:
     runs-on: ubuntu-24.04
     steps:
-      - name: Explain maintenance policy
-        run: echo "Lockfile updates must be reviewed and committed explicitly."
+      - name: Checkout Cycle 1
+        uses: actions/checkout@v6
+        with:
+          ref: cycle-1-identity-access
+
+      - name: Configure Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+
+      - name: Synchronize lockfile
+        run: pnpm install --lockfile-only --no-frozen-lockfile
+
+      - name: Commit lockfile
+        run: |
+          git add pnpm-lock.yaml
+          if git diff --cached --quiet; then
+            echo "Lockfile already synchronized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build: synchronize Cycle 1 lockfile"
+          git push origin HEAD:cycle-1-identity-access
