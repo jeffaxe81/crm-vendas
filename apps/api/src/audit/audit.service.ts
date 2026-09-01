@@ -20,6 +20,27 @@ export type AuditRecordInput = {
 export class AuditService {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
+  async list(organizationId: string, page: number, limit: number) {
+    const [items, total] = await Promise.all([
+      this.prisma.auditLog.findMany({
+        where: { organizationId },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.auditLog.count({
+        where: { organizationId },
+      }),
+    ]);
+
+    return {
+      items,
+      page,
+      limit,
+      total,
+    };
+  }
+
   async record(input: AuditRecordInput): Promise<void> {
     await this.prisma.auditLog.create({
       data: {
