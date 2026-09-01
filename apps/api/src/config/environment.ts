@@ -13,6 +13,7 @@ const ApiEnvironmentSchema = z.object({
         value.startsWith("postgresql://") || value.startsWith("postgres://"),
       "DATABASE_URL deve usar PostgreSQL."
     ),
+  WEB_ORIGIN: z.string().url().default("http://localhost:3000"),
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
