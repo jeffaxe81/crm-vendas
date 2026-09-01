@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "jest --runInBand",
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
