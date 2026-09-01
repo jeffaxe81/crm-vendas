@@ -11,6 +11,9 @@ module.exports = {
       },
     ],
   },
+  moduleNameMapper: {
+    "^@axes/contracts$": "<rootDir>/../../../packages/contracts/src/index.ts",
+  },
   moduleFileExtensions: ["ts", "js", "json"],
   testEnvironment: "node",
 };
