@@ -149,21 +149,19 @@ export class OrganizationUsersService {
         (input.role !== undefined && input.role !== "ADMIN"));
 
     if (removingAdmin) {
-      const otherActiveAdmins =
-        await this.prisma.organizationMembership.count({
-          where: {
-            organizationId: context.organizationId,
-            role: "ADMIN",
-            isActive: true,
-            id: { not: existing.id },
-          },
-        });
+      const otherActiveAdmins = await this.prisma.organizationMembership.count({
+        where: {
+          organizationId: context.organizationId,
+          role: "ADMIN",
+          isActive: true,
+          id: { not: existing.id },
+        },
+      });
 
       if (otherActiveAdmins === 0) {
         throw new ConflictException({
           code: "LAST_ADMIN_REQUIRED",
-          message:
-            "A organização deve manter ao menos um Administrador ativo.",
+          message: "A organização deve manter ao menos um Administrador ativo.",
         });
       }
     }
@@ -172,9 +170,7 @@ export class OrganizationUsersService {
       where: { id: existing.id },
       data: {
         ...(input.role !== undefined ? { role: input.role } : {}),
-        ...(input.isActive !== undefined
-          ? { isActive: input.isActive }
-          : {}),
+        ...(input.isActive !== undefined ? { isActive: input.isActive } : {}),
       },
       include: { user: true },
     });

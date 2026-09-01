@@ -54,13 +54,12 @@ async function main(): Promise<void> {
           },
         });
 
-    const existingMembership =
-      await prisma.organizationMembership.findFirst({
-        where: {
-          organizationId: organization.id,
-          userId: user.id,
-        },
-      });
+    const existingMembership = await prisma.organizationMembership.findFirst({
+      where: {
+        organizationId: organization.id,
+        userId: user.id,
+      },
+    });
 
     const membership = existingMembership
       ? await prisma.organizationMembership.update({

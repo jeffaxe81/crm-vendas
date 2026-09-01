@@ -42,10 +42,7 @@ export class OrganizationUsersController {
 
   @Post()
   create(@Body() body: unknown, @Req() request: AdministrationRequest) {
-    return this.users.create(
-      this.parseCreate(body),
-      this.contextFrom(request)
-    );
+    return this.users.create(this.parseCreate(body), this.contextFrom(request));
   }
 
   @Patch(":membershipId")
