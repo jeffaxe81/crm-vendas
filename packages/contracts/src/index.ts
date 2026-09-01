@@ -12,3 +12,12 @@ export {
   createHealthResponse,
   type HealthResponse,
 } from "./health";
+
+export {
+  CreateOrganizationUserInputSchema,
+  OrganizationUserResponseSchema,
+  UpdateOrganizationMembershipInputSchema,
+  type CreateOrganizationUserInput,
+  type OrganizationUserResponse,
+  type UpdateOrganizationMembershipInput,
+} from "./users";
