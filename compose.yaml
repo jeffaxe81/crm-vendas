@@ -25,6 +25,10 @@ services:
       PORT: 3001
       LOG_LEVEL: info
       DATABASE_URL: postgresql://axes:axes@postgres:5432/axes_crm
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      REFRESH_TOKEN_PEPPER: ${REFRESH_TOKEN_PEPPER}
+      AUTH_ACCESS_TTL_SECONDS: ${AUTH_ACCESS_TTL_SECONDS:-900}
+      AUTH_REFRESH_TTL_SECONDS: ${AUTH_REFRESH_TTL_SECONDS:-2592000}
     ports:
       - "3001:3001"
     depends_on:
