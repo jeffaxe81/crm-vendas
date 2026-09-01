@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { Test } from "@nestjs/testing";
 
 import { DatabaseHealthService } from "../database/database-health.service";
