@@ -1,11 +1,13 @@
 module.exports = {
   rootDir: "src",
   testRegex: ".*\\.spec\\.ts$",
+  extensionsToTreatAsEsm: [".ts"],
   transform: {
     "^.+\\.ts$": [
       "ts-jest",
       {
-        tsconfig: "<rootDir>/../tsconfig.json",
+        useESM: true,
+        tsconfig: "<rootDir>/../tsconfig.spec.json",
       },
     ],
   },
