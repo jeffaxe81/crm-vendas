@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { LoggerModule } from "nestjs-pino";
 
 import { AuthModule } from "./auth/auth.module";
+import { AuthorizationModule } from "./authorization/authorization.module";
 import { parseApiEnvironment } from "./config/environment";
 import { HealthModule } from "./health/health.module";
 import { createLoggerOptions } from "./observability/logger.config";
@@ -18,6 +19,7 @@ import { RequestIdMiddleware } from "./observability/request-id.middleware";
     LoggerModule.forRoot(createLoggerOptions()),
     HealthModule,
     AuthModule,
+    AuthorizationModule,
   ],
 })
 export class AppModule implements NestModule {
