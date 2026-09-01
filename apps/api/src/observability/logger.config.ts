@@ -1,6 +1,5 @@
 import type { Params } from 'nestjs-pino';
-
-import { parseApiEnvironment } from '../config/environment';
+import { z } from 'zod';
 
 const REDACTED_PATHS = [
   'req.headers.authorization',
@@ -14,10 +13,16 @@ const REDACTED_PATHS = [
   'secret',
 ];
 
+const LoggerEnvironmentSchema = z.object({
+  LOG_LEVEL: z
+    .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
+    .default('info'),
+});
+
 export function createLoggerOptions(
   input: Record<string, unknown> = process.env,
 ): Params {
-  const environment = parseApiEnvironment(input);
+  const environment = LoggerEnvironmentSchema.parse(input);
 
   return {
     pinoHttp: {
