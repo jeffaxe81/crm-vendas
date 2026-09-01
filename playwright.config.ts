@@ -16,7 +16,9 @@ export default defineConfig({
       command: "pnpm --filter @axes/api exec tsx src/main.ts",
       url: "http://127.0.0.1:3001/api/v1/health",
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
+      timeout: 30_000,
+      stdout: "pipe",
+      stderr: "pipe",
       env: {
         ...process.env,
         NODE_ENV: "test",
