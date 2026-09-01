@@ -8,6 +8,7 @@ import {
   Body,
   Controller,
   HttpCode,
+  Inject,
   Post,
   Req,
   Res,
@@ -27,7 +28,7 @@ type RequestWithContext = Request & RequestWithId;
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(@Inject(AuthService) private readonly auth: AuthService) {}
 
   @Post("login")
   @HttpCode(200)
