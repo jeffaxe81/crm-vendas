@@ -36,6 +36,10 @@ jobs:
       LOG_LEVEL: warn
       DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
       NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:3001/api/v1
+      JWT_ACCESS_SECRET: test-access-secret-with-at-least-32-characters
+      REFRESH_TOKEN_PEPPER: test-refresh-pepper-with-at-least-32-characters
+      AUTH_ACCESS_TTL_SECONDS: 900
+      AUTH_REFRESH_TTL_SECONDS: 2592000
 
     steps:
       - name: Checkout
