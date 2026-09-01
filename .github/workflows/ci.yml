@@ -1,9 +1,9 @@
-name: Cycle 0 quality gate
+name: Cycle 1 quality gate
 
 on:
   pull_request:
     branches:
-      - main
+      - cycle-0-foundation
 
 permissions:
   contents: read
@@ -54,6 +54,9 @@ jobs:
 
       - name: Generate Prisma client
         run: pnpm --filter @axes/api prisma:generate
+
+      - name: Deploy database migrations
+        run: pnpm --filter @axes/api prisma:migrate:deploy
 
       - name: Verify source and tests
         run: pnpm verify
