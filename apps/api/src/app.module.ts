@@ -15,6 +15,7 @@ import { RequestIdMiddleware } from './observability/request-id.middleware';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['../../.env', '.env'],
       validate: parseApiEnvironment,
     }),
     LoggerModule.forRoot(createLoggerOptions()),
