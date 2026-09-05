@@ -71,7 +71,7 @@ describe("Cycle 1 authentication and tenant isolation", () => {
       },
     });
 
-    await prisma.organizationMembership.create({
+    const membershipB = await prisma.organizationMembership.create({
       data: {
         organizationId: organizationB.id,
         userId: user.id,
@@ -120,6 +120,17 @@ describe("Cycle 1 authentication and tenant isolation", () => {
 
     expect(usersA.body).toHaveLength(1);
     expect(usersA.body[0].membershipId).toBe(membershipA.id);
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/admin/users/${membershipB.id}`)
+      .set("Authorization", `Bearer ${accessTokenA}`)
+      .send({ role: "VIEWER" })
+      .expect(404);
+
+    const untouchedMembershipB = await prisma.organizationMembership.findUnique({
+      where: { id: membershipB.id },
+    });
+    expect(untouchedMembershipB?.role).toBe("ADMIN");
 
     const loginB = await request(app.getHttpServer())
       .post("/api/v1/auth/login")
@@ -175,5 +186,81 @@ describe("Cycle 1 authentication and tenant isolation", () => {
         `DELETE FROM "audit_logs" WHERE "organization_id" = '${organizationA.id}'::uuid`
       )
     ).rejects.toThrow("audit_logs is append-only");
+  });
+
+  it("rotates refresh tokens and revokes the token family when an old token is reused", async () => {
+    await resetDatabase();
+
+    const organization = await prisma.organization.create({
+      data: { name: "Refresh Organization", slug: "refresh-organization" },
+    });
+    const password = "Strong-Refresh-Password-2026!";
+    const user = await prisma.user.create({
+      data: {
+        email: "refresh@example.test",
+        emailNormalized: "refresh@example.test",
+        displayName: "Refresh Test",
+        passwordHash: await passwords.hash(password),
+      },
+    });
+    await prisma.organizationMembership.create({
+      data: {
+        organizationId: organization.id,
+        userId: user.id,
+        role: "ADMIN",
+      },
+    });
+
+    const login = await request(app.getHttpServer())
+      .post("/api/v1/auth/login")
+      .send({
+        email: user.email,
+        password,
+        organizationSlug: organization.slug,
+      })
+      .expect(200);
+
+    const loginCookies = login.headers["set-cookie"];
+    if (!Array.isArray(loginCookies) || !loginCookies[0]) {
+      throw new Error("Expected login refresh cookie.");
+    }
+    const originalRefreshCookie = loginCookies[0].split(";")[0];
+    if (!originalRefreshCookie) {
+      throw new Error("Expected original refresh cookie value.");
+    }
+
+    const refreshed = await request(app.getHttpServer())
+      .post("/api/v1/auth/refresh")
+      .set("Cookie", originalRefreshCookie)
+      .expect(200);
+
+    const refreshedCookies = refreshed.headers["set-cookie"];
+    if (!Array.isArray(refreshedCookies) || !refreshedCookies[0]) {
+      throw new Error("Expected rotated refresh cookie.");
+    }
+    const rotatedRefreshCookie = refreshedCookies[0].split(";")[0];
+    if (!rotatedRefreshCookie) {
+      throw new Error("Expected rotated refresh cookie value.");
+    }
+
+    expect(rotatedRefreshCookie).not.toBe(originalRefreshCookie);
+
+    await request(app.getHttpServer())
+      .post("/api/v1/auth/refresh")
+      .set("Cookie", originalRefreshCookie)
+      .expect(401);
+
+    await request(app.getHttpServer())
+      .post("/api/v1/auth/refresh")
+      .set("Cookie", rotatedRefreshCookie)
+      .expect(401);
+
+    const refreshAudit = await prisma.auditLog.findMany({
+      where: {
+        organizationId: organization.id,
+        action: "auth.refresh",
+      },
+    });
+    expect(refreshAudit).toHaveLength(1);
   });
 });
