@@ -2,15 +2,15 @@
 
 ## Testes
 
-| Nível | Ferramenta | Escopo |
-| --- | --- | --- |
-| Repositório | Node test runner | Versões fixadas e contrato Compose |
-| Contratos | Vitest | Schemas e tipos compartilhados |
-| Web | Vitest + Testing Library | Readiness, login e estado de sessão |
-| API | Jest | Health, configuração, erros, auth, RBAC e auditoria |
-| Integração | Jest + PostgreSQL | Prisma, migration, sessão, isolamento multiempresa e append-only |
-| E2E | Playwright | Jornada browser de login, sessão ativa e logout |
-| Container | Docker Compose | Topologia, dependências, health checks e build das imagens |
+| Nível       | Ferramenta               | Escopo                                                           |
+| ----------- | ------------------------ | ---------------------------------------------------------------- |
+| Repositório | Node test runner         | Versões fixadas e contrato Compose                               |
+| Contratos   | Vitest                   | Schemas e tipos compartilhados                                   |
+| Web         | Vitest + Testing Library | Readiness, login e estado de sessão                              |
+| API         | Jest                     | Health, configuração, erros, auth, RBAC e auditoria              |
+| Integração  | Jest + PostgreSQL        | Prisma, migration, sessão, isolamento multiempresa e append-only |
+| E2E         | Playwright               | Jornada browser de login, sessão ativa e logout                  |
+| Container   | Docker Compose           | Topologia, dependências, health checks e build das imagens       |
 
 Comandos:
 
