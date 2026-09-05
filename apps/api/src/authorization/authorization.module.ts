@@ -10,11 +10,6 @@ import { SessionController } from "./session.controller";
   imports: [AuthModule, DatabaseModule],
   controllers: [SessionController],
   providers: [AuthenticationGuard, PermissionsGuard],
-  exports: [
-    AuthModule,
-    DatabaseModule,
-    AuthenticationGuard,
-    PermissionsGuard,
-  ],
+  exports: [AuthModule, DatabaseModule, AuthenticationGuard, PermissionsGuard],
 })
 export class AuthorizationModule {}
