@@ -3,7 +3,7 @@ name: Cycle 1 quality gate
 on:
   pull_request:
     branches:
-      - cycle-0-foundation
+      - main
 
 permissions:
   contents: read
