@@ -2,10 +2,14 @@ import { MiddlewareConsumer, Module, type NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { LoggerModule } from "nestjs-pino";
 
+import { AuditAdminModule } from "./audit/audit-admin.module";
+import { AuthModule } from "./auth/auth.module";
+import { AuthorizationModule } from "./authorization/authorization.module";
 import { parseApiEnvironment } from "./config/environment";
 import { HealthModule } from "./health/health.module";
 import { createLoggerOptions } from "./observability/logger.config";
 import { RequestIdMiddleware } from "./observability/request-id.middleware";
+import { OrganizationUsersModule } from "./users/organization-users.module";
 
 @Module({
   imports: [
@@ -16,6 +20,10 @@ import { RequestIdMiddleware } from "./observability/request-id.middleware";
     }),
     LoggerModule.forRoot(createLoggerOptions()),
     HealthModule,
+    AuthModule,
+    AuditAdminModule,
+    AuthorizationModule,
+    OrganizationUsersModule,
   ],
 })
 export class AppModule implements NestModule {

@@ -4,9 +4,11 @@ import { NestFactory } from "@nestjs/core";
 import { Logger } from "nestjs-pino";
 
 import { AppModule } from "./app.module";
+import { parseApiEnvironment } from "./config/environment";
 import { ApiErrorFilter } from "./errors/api-error.filter";
 
 async function bootstrap() {
+  const environment = parseApiEnvironment(process.env);
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
@@ -14,9 +16,14 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
   app.useGlobalFilters(new ApiErrorFilter());
   app.setGlobalPrefix("api/v1");
+  app.enableCors({
+    origin: environment.WEB_ORIGIN,
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "x-request-id"],
+    exposedHeaders: ["x-request-id"],
+  });
 
-  const port = Number(process.env.PORT ?? 3001);
-  await app.listen(port, "0.0.0.0");
+  await app.listen(environment.PORT, "0.0.0.0");
 }
 
 void bootstrap();

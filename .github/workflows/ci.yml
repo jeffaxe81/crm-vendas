@@ -1,4 +1,4 @@
-name: Cycle 0 quality gate
+name: Cycle 1 quality gate
 
 on:
   pull_request:
@@ -33,6 +33,16 @@ jobs:
       LOG_LEVEL: warn
       DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
       NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:3001/api/v1
+      WEB_ORIGIN: http://127.0.0.1:3000
+      JWT_ACCESS_SECRET: test-access-secret-with-at-least-32-characters
+      REFRESH_TOKEN_PEPPER: test-refresh-pepper-with-at-least-32-characters
+      AUTH_ACCESS_TTL_SECONDS: 900
+      AUTH_REFRESH_TTL_SECONDS: 2592000
+      BOOTSTRAP_ORG_NAME: Axesistemas
+      BOOTSTRAP_ORG_SLUG: axesistemas
+      BOOTSTRAP_ADMIN_EMAIL: admin@axes.test
+      BOOTSTRAP_ADMIN_NAME: Administrador CI
+      BOOTSTRAP_ADMIN_PASSWORD: Strong-CI-Password-2026!
 
     steps:
       - name: Checkout
@@ -55,8 +65,14 @@ jobs:
       - name: Generate Prisma client
         run: pnpm --filter @axes/api prisma:generate
 
+      - name: Deploy database migrations
+        run: pnpm --filter @axes/api prisma:migrate:deploy
+
       - name: Verify source and tests
         run: pnpm verify
+
+      - name: Bootstrap administrator for E2E
+        run: pnpm --filter @axes/api bootstrap:admin
 
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
