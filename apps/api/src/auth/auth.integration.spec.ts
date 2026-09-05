@@ -127,9 +127,11 @@ describe("Cycle 1 authentication and tenant isolation", () => {
       .send({ role: "VIEWER" })
       .expect(404);
 
-    const untouchedMembershipB = await prisma.organizationMembership.findUnique({
-      where: { id: membershipB.id },
-    });
+    const untouchedMembershipB = await prisma.organizationMembership.findUnique(
+      {
+        where: { id: membershipB.id },
+      }
+    );
     expect(untouchedMembershipB?.role).toBe("ADMIN");
 
     const loginB = await request(app.getHttpServer())
