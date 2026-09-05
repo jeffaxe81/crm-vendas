@@ -27,10 +27,11 @@ test("user authenticates in the active organization and logs out", async ({
   await page.getByLabel("Senha").fill(adminPassword);
   await page.getByRole("button", { name: "Entrar no CRM" }).click();
 
-  await expect(page.getByText("Sessão ativa")).toBeVisible();
-  await expect(page.getByText("Axesistemas")).toBeVisible();
-  await expect(page.getByText("ADMIN")).toBeVisible();
-  await expect(page.getByText(adminEmail)).toBeVisible();
+  const accessPanel = page.getByLabel("Acesso ao CRM");
+  await expect(accessPanel.getByText("Sessão ativa", { exact: true })).toBeVisible();
+  await expect(accessPanel.getByText("Axesistemas", { exact: true })).toBeVisible();
+  await expect(accessPanel.getByText("ADMIN", { exact: true })).toBeVisible();
+  await expect(accessPanel.getByText(adminEmail, { exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "Sair com segurança" }).click();
 
