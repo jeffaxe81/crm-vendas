@@ -94,8 +94,13 @@ describe("Cycle 1 authentication and tenant isolation", () => {
     expect(loginA.body.permissions).toContain("user.manage");
 
     const setCookie = loginA.headers["set-cookie"];
-    expect(Array.isArray(setCookie)).toBe(true);
+    if (!Array.isArray(setCookie) || !setCookie[0]) {
+      throw new Error("Expected login to return a refresh cookie.");
+    }
     const refreshCookie = setCookie[0].split(";")[0];
+    if (!refreshCookie) {
+      throw new Error("Expected refresh cookie value.");
+    }
     expect(setCookie[0]).toContain("HttpOnly");
     expect(setCookie[0]).toContain("SameSite=Strict");
 
