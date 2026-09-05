@@ -93,7 +93,7 @@ describe("Cycle 1 authentication security controls", () => {
       .expect(403);
   });
 
-  it("rejects login and refresh after the user is disabled", async () => {
+  it("rejects login and refresh after the user is disabled without auditing secrets", async () => {
     const { organization, user, password } = await createIdentity("ADMIN");
 
     const login = await request(app.getHttpServer())
@@ -113,6 +113,23 @@ describe("Cycle 1 authentication security controls", () => {
     if (!refreshCookie) {
       throw new Error("Expected refresh cookie value.");
     }
+
+    const session = await prisma.refreshSession.findFirst({
+      where: {
+        organizationId: organization.id,
+        userId: user.id,
+      },
+    });
+    if (!session) {
+      throw new Error("Expected persisted refresh session after login.");
+    }
+
+    const loginAudit = await prisma.auditLog.findMany({
+      where: { organizationId: organization.id },
+    });
+    const serializedAudit = JSON.stringify(loginAudit);
+    expect(serializedAudit).not.toContain(password);
+    expect(serializedAudit).not.toContain(session.tokenHash);
 
     await prisma.user.update({
       where: { id: user.id },
