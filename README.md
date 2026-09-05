@@ -1,8 +1,8 @@
 # CRM Axesistemas
 
-Fundação técnica do CRM Axesistemas construída na branch `cycle-0-foundation`.
+CRM modular da Axesistemas, com fundação Next.js + NestJS + PostgreSQL + Prisma e evolução preparada para múltiplas organizações.
 
-> Status: Cycle 0 em validação. O `main` permanece preservado com o AXE Relationship legado até a nova fundação passar pelo gate completo de qualidade e recuperação.
+O checkpoint aprovado da fundação é `v0.0.0-foundation`. O Ciclo 1 adiciona identidade, autenticação, organização ativa, RBAC, administração de usuários e auditoria append-only.
 
 ## Pré-requisitos
 
@@ -10,8 +10,6 @@ Fundação técnica do CRM Axesistemas construída na branch `cycle-0-foundation
 - pnpm 11.3.0 via Corepack;
 - Docker Desktop no Windows, ou Docker Engine + Compose em Linux;
 - Git.
-
-No Windows, o caminho documentado usa PowerShell e Docker Desktop. WSL não é obrigatório para executar o ambiente descrito aqui.
 
 Confirme as versões:
 
@@ -26,34 +24,37 @@ docker compose version
 
 ## Inicialização
 
-Clone o repositório e entre na branch da fundação:
+Clone o repositório e selecione a branch/ciclo que deseja validar:
 
 ```powershell
 git clone https://github.com/jeffaxe81/crm-vendas.git
 Set-Location crm-vendas
-git switch cycle-0-foundation
 ```
 
-Crie o arquivo local de ambiente, sem versionar segredos:
+Crie o arquivo local de ambiente:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Instale exatamente as dependências registradas no lockfile:
+Antes de qualquer uso real, substitua `JWT_ACCESS_SECRET`, `REFRESH_TOKEN_PEPPER` e a senha de bootstrap por valores fortes e exclusivos. Segredos não devem ser commitados.
+
+Instale as dependências congeladas, suba o PostgreSQL e prepare o Prisma:
 
 ```powershell
 pnpm install --frozen-lockfile
-```
-
-Suba somente o PostgreSQL e gere o Prisma Client:
-
-```powershell
 docker compose up -d postgres
 pnpm --filter @axes/api prisma:generate
+pnpm --filter @axes/api prisma:migrate:deploy
 ```
 
-Execute web e API em modo de desenvolvimento:
+Para criar ou atualizar explicitamente a primeira organização e o primeiro administrador, preencha as variáveis `BOOTSTRAP_*` no `.env` e execute:
+
+```powershell
+pnpm --filter @axes/api bootstrap:admin
+```
+
+Execute Web e API em desenvolvimento:
 
 ```powershell
 pnpm dev
@@ -65,123 +66,103 @@ Endereços locais:
 - API: `http://localhost:3001/api/v1`;
 - Health: `http://localhost:3001/api/v1/health`.
 
-Para executar a pilha completa em contêineres:
+Para a pilha completa em contêineres, defina os segredos no `.env` e execute:
 
 ```powershell
 docker compose up -d --build --wait
 ```
 
-O password `axes` presente no Compose existe apenas para desenvolvimento local e não deve ser reutilizado em outros ambientes.
+A senha `axes` do PostgreSQL no Compose é apenas para desenvolvimento local e não deve ser reutilizada em outros ambientes.
 
 ## Validação
 
-Gate principal:
+O gate técnico do ciclo executa, no mesmo checkpoint:
 
 ```powershell
+pnpm install --frozen-lockfile
 pnpm --filter @axes/api prisma:generate
+pnpm --filter @axes/api prisma:migrate:deploy
 pnpm verify
+pnpm --filter @axes/api bootstrap:admin
+pnpm exec playwright install chromium
 pnpm test:e2e
 docker compose config --quiet
 docker compose build api web
 ```
 
-O Cycle 0 só pode ser considerado concluído quando esses comandos passarem em uma instalação limpa e o CI aplicar o mesmo gate.
-
-O endpoint esperado após a inicialização é:
-
-```json
-{
-  "status": "ok",
-  "service": "api",
-  "database": "up"
-}
-```
-
-Todas as respostas da API devem carregar `x-request-id`. Erros seguem o envelope:
-
-```json
-{
-  "code": "RESOURCE_NOT_FOUND",
-  "message": "Recurso não encontrado.",
-  "request_id": "crm-request-1234",
-  "details": []
-}
-```
+O Ciclo 1 só pode ser aprovado depois de lint/formatação, typecheck, testes unitários e de integração, E2E, migration, Compose e imagens Docker passarem no mesmo commit.
 
 ## Arquitetura
 
-A fundação aprovada utiliza:
+A solução utiliza:
 
 - monorepositório pnpm;
-- aplicação web Next.js;
-- API NestJS;
-- PostgreSQL;
+- Next.js para a aplicação Web;
+- NestJS para a API REST;
+- PostgreSQL 18;
 - Prisma;
 - contratos TypeScript compartilhados;
 - Docker Compose;
-- logs estruturados com correlação de requisição;
-- testes unitários, integração, contrato e ponta a ponta.
+- logs estruturados e `x-request-id`;
+- autenticação com Argon2id, JWT curto e refresh token opaco rotacionável;
+- usuário global com membership por organização;
+- perfis fixos `ADMIN`, `MANAGER`, `SELLER` e `VIEWER`;
+- autorização por permissões explícitas;
+- auditoria append-only.
 
-Estrutura principal:
+A organização ativa é derivada da sessão autenticada. Endpoints administrativos não aceitam `organization_id` livre da interface para decidir o escopo da consulta.
 
-```text
-apps/
-  api/
-  web/
-packages/
-  contracts/
-docs/
-  architecture/
-  decisions/
-  testing/
-tests/
-  e2e/
-compose.yaml
-```
+Documentos principais:
 
-O Cycle 0 não contém entidades comerciais. Organizações, usuários, memberships, autenticação e isolamento multiempresa começam no Cycle 1.
-
-A especificação aprovada está em `docs/architecture/2026-08-30-crm-axesistemas-design.md`. A estratégia de transição do legado está em `docs/architecture/2026-09-01-foundation-transition.md`.
+- `docs/architecture/2026-08-30-crm-axesistemas-design.md`;
+- `docs/architecture/foundation.md`;
+- `docs/architecture/2026-09-01-cycle-1-identity-access.md`;
+- `docs/decisions/ADR-0001-foundation.md`.
 
 ## Testes
 
-| Camada                   | Comando          | Finalidade                        |
-| ------------------------ | ---------------- | --------------------------------- |
-| Contratos do repositório | `pnpm test:repo` | Toolchain e Compose               |
-| Unitários/integração     | `pnpm test`      | Pacotes, web, API e banco         |
-| Tipos                    | `pnpm typecheck` | Contratos TypeScript              |
-| Build                    | `pnpm build`     | Artefatos de produção             |
-| E2E                      | `pnpm test:e2e`  | Web + API + PostgreSQL            |
-| Gate agregado            | `pnpm verify`    | Formatação, tipos, testes e build |
+A suíte cobre, entre outros pontos:
 
-Para o E2E local, o PostgreSQL deve estar saudável antes da execução:
+- login e credenciais inválidas;
+- cookie de refresh protegido;
+- rotação e detecção de reutilização de refresh token;
+- logout e revogação imediata da sessão;
+- usuário e membership desativados;
+- isolamento de leitura e mutação entre organizações;
+- bloqueio de ações administrativas por perfil sem permissão;
+- auditoria append-only sem senha ou hash do refresh token;
+- migração reproduzível;
+- jornada E2E de login e logout pela Web.
+
+Comandos principais:
 
 ```powershell
-docker compose up -d postgres
-pnpm --filter @axes/api prisma:generate
+pnpm test
+pnpm typecheck
+pnpm build
 pnpm test:e2e
+pnpm verify
 ```
 
 ## Retorno
 
-O `main` atual permanece como checkpoint operacional do AXE Relationship enquanto a nova fundação está em construção.
-
-Depois que o gate do Cycle 0 for aprovado, a tag protegida será:
+O checkpoint conhecido e aprovado anterior ao Ciclo 1 é:
 
 ```text
 v0.0.0-foundation
 ```
 
-Para abrir o estado histórico após a criação da tag:
+Para abrir esse estado histórico sem alterar branches:
 
 ```powershell
 git switch --detach v0.0.0-foundation
 Copy-Item .env.example .env
-docker compose up -d --build
 ```
 
-Esse comando abre um estado histórico protegido. Não faça novos commits em `detached HEAD`; crie uma nova branch antes de alterar qualquer arquivo.
+Depois, gere o Prisma e suba os serviços conforme as instruções daquela versão. Não faça commits em `detached HEAD`; crie uma nova branch se precisar modificar o estado histórico.
+
+O checkpoint do Ciclo 1 só será criado depois do gate integral verde. Nenhum rollback deve remover ou mover tags já aprovadas.
 
 ## Changelog
 
-O histórico técnico da fundação está em `CHANGELOG.md`. Cada ciclo aprovado deve produzir commit identificado, migração versionada quando aplicável, testes, changelog, instrução de retorno e tag/checkpoint.
+O histórico de ciclos, checkpoints e mudanças relevantes está em `CHANGELOG.md`. Cada ciclo aprovado deve manter migration versionada quando aplicável, evidências de testes, instrução de retorno e tag/checkpoint recuperável.
