@@ -34,9 +34,7 @@ test("user authenticates in the active organization and logs out", async ({
   await expect(
     accessPanel.getByText("Axesistemas", { exact: true })
   ).toBeVisible();
-  await expect(
-    accessPanel.getByText("ADMIN", { exact: true })
-  ).toBeVisible();
+  await expect(accessPanel.getByText("ADMIN", { exact: true })).toBeVisible();
   await expect(
     accessPanel.getByText(adminEmail, { exact: true })
   ).toBeVisible();
