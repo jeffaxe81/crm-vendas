@@ -1,0 +1,43 @@
+{
+  "name": "@axes/api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
+    "prisma:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@axes/contracts": "workspace:*",
+    "@nestjs/common": "12.0.1",
+    "@nestjs/core": "12.0.1",
+    "@nestjs/platform-express": "12.0.1",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "@nestjs/config": "12.0.0",
+    "zod": "4.1.12",
+    "@prisma/client": "7.10.0",
+    "@prisma/adapter-pg": "7.10.0",
+    "pg": "8.23.0",
+    "dotenv": "17.2.2",
+    "nestjs-pino": "5.0.0",
+    "pino": "10.3.1",
+    "pino-http": "11.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "12.0.1",
+    "@types/jest": "29.5.14",
+    "@types/node": "24.7.0",
+    "jest": "29.7.0",
+    "ts-jest": "29.4.5",
+    "tsx": "4.23.13",
+    "prisma": "7.10.0",
+    "@types/pg": "8.23.1",
+    "supertest": "7.2.2",
+    "@types/supertest": "7.2.1",
+    "@types/express": "5.0.6"
+  }
+}

@@ -1,0 +1,14 @@
+name: Lockfile maintenance
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notice:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Explain maintenance policy
+        run: echo "Lockfile updates must be reviewed and committed explicitly."

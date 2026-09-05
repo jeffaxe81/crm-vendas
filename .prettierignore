@@ -1,35 +1,22 @@
-# Dependencies
 node_modules/
-.pnpm-store/
-
-# Build outputs
+**/node_modules/
+.next/
+**/.next/
 dist/
-build/
-*.dist
-
-# Generated files
-*.tsbuildinfo
+**/dist/
 coverage/
-
-# Package files
-package-lock.json
+**/coverage/
+apps/api/src/generated/
 pnpm-lock.yaml
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Logs
-*.log
-
-# Environment files
-.env*
-
-# IDE files
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
+client/
+server/
+shared/
+drizzle/
+patches/
+template.json
+components.json
+drizzle.config.ts
+vite.config.ts
+vitest.config.ts
+tsconfig.json
+todo.md
