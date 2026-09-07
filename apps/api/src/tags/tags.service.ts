@@ -106,11 +106,7 @@ export class TagsService {
     return tag;
   }
 
-  async update(
-    id: string,
-    input: TagInput,
-    context: TagAdministrationContext
-  ) {
+  async update(id: string, input: TagInput, context: TagAdministrationContext) {
     const existing = await this.requireTag(id, context.organizationId);
     const normalizedName = this.normalize(input.name);
     const duplicate = await this.prisma.tag.findFirst({
