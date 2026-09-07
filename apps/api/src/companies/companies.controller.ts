@@ -42,11 +42,16 @@ type CompanyListQuery = z.infer<typeof CompanyListQuerySchema>;
 @Controller("companies")
 @UseGuards(AuthenticationGuard, PermissionsGuard)
 export class CompaniesController {
-  constructor(@Inject(CompaniesService) private readonly companies: CompaniesService) {}
+  constructor(
+    @Inject(CompaniesService) private readonly companies: CompaniesService
+  ) {}
 
   @Get()
   @RequirePermissions("company.read")
-  list(@Query() query: Record<string, unknown>, @Req() request: CompanyRequest) {
+  list(
+    @Query() query: Record<string, unknown>,
+    @Req() request: CompanyRequest
+  ) {
     return this.companies.list(
       this.parseListQuery(query),
       this.requirePrincipal(request).organizationId
@@ -65,7 +70,10 @@ export class CompaniesController {
   @Post()
   @RequirePermissions("company.write")
   create(@Body() body: unknown, @Req() request: CompanyRequest) {
-    return this.companies.create(this.parseCreate(body), this.contextFrom(request));
+    return this.companies.create(
+      this.parseCreate(body),
+      this.contextFrom(request)
+    );
   }
 
   @Patch(":id")

@@ -1,7 +1,4 @@
-import type {
-  CompanyCreateInput,
-  CompanyUpdateInput,
-} from "@axes/contracts";
+import type { CompanyCreateInput, CompanyUpdateInput } from "@axes/contracts";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 
 import { AuditService } from "../audit/audit.service";
@@ -45,8 +42,12 @@ export class CompaniesService {
       ...(query.q
         ? {
             OR: [
-              { legalName: { contains: query.q, mode: "insensitive" as const } },
-              { tradeName: { contains: query.q, mode: "insensitive" as const } },
+              {
+                legalName: { contains: query.q, mode: "insensitive" as const },
+              },
+              {
+                tradeName: { contains: query.q, mode: "insensitive" as const },
+              },
               { document: { contains: query.q, mode: "insensitive" as const } },
             ],
           }
@@ -79,7 +80,10 @@ export class CompaniesService {
     return this.requireCompany(id, organizationId);
   }
 
-  async create(input: CompanyCreateInput, context: CompanyAdministrationContext) {
+  async create(
+    input: CompanyCreateInput,
+    context: CompanyAdministrationContext
+  ) {
     const company = await this.prisma.company.create({
       data: {
         organizationId: context.organizationId,
@@ -116,8 +120,12 @@ export class CompaniesService {
     const updated = await this.prisma.company.update({
       where: { id: existing.id },
       data: {
-        ...(input.legalName !== undefined ? { legalName: input.legalName } : {}),
-        ...(input.tradeName !== undefined ? { tradeName: input.tradeName } : {}),
+        ...(input.legalName !== undefined
+          ? { legalName: input.legalName }
+          : {}),
+        ...(input.tradeName !== undefined
+          ? { tradeName: input.tradeName }
+          : {}),
         ...(input.document !== undefined ? { document: input.document } : {}),
         ...(input.website !== undefined ? { website: input.website } : {}),
         ...(input.notes !== undefined ? { notes: input.notes } : {}),
@@ -141,7 +149,10 @@ export class CompaniesService {
     return updated;
   }
 
-  async remove(id: string, context: CompanyAdministrationContext): Promise<void> {
+  async remove(
+    id: string,
+    context: CompanyAdministrationContext
+  ): Promise<void> {
     const existing = await this.requireCompany(id, context.organizationId);
     const deletedAt = new Date();
     const updated = await this.prisma.company.update({
