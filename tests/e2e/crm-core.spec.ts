@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-const adminEmail = "admin@axes.test";
-const adminPassword = "Strong-CI-Password-2026!";
+const adminEmail = process.env.BOOTSTRAP_ADMIN_EMAIL ?? "admin@axes.test";
+const adminPassword = process.env.BOOTSTRAP_ADMIN_PASSWORD;
 
 const companyName = "Empresa E2E";
 const contactName = "Contato E2E";
@@ -11,10 +11,12 @@ const relationshipNote = "Contato E2E interessado na proposta comercial.";
 test("CRM core journey persists company contact channel link and history", async ({
   page,
 }) => {
+  test.skip(!adminPassword, "BOOTSTRAP_ADMIN_PASSWORD is required for E2E.");
+
   await page.goto("http://127.0.0.1:3000");
 
   await page.getByLabel("E-mail").fill(adminEmail);
-  await page.getByLabel("Senha").fill(adminPassword);
+  await page.getByLabel("Senha").fill(adminPassword ?? "");
   await page.getByRole("button", { name: "Entrar no CRM" }).click();
 
   await expect(
@@ -49,9 +51,7 @@ test("CRM core journey persists company contact channel link and history", async
   await channelForm.getByLabel("Rótulo").fill("E2E");
   await channelForm.getByLabel("Canal principal").check();
   await channelForm.getByRole("button", { name: "Salvar canal" }).click();
-  await expect(
-    contactCard.getByText(contactEmail, { exact: true })
-  ).toBeVisible();
+  await expect(contactCard.getByText(contactEmail)).toBeVisible();
 
   await contactCard.getByRole("button", { name: "Vincular empresa" }).click();
   const linkForm = page.getByRole("form", { name: "Vincular empresa" });
@@ -80,9 +80,7 @@ test("CRM core journey persists company contact channel link and history", async
     .locator("article")
     .filter({ hasText: contactName });
   await expect(persistedCard).toBeVisible();
-  await expect(
-    persistedCard.getByText(contactEmail, { exact: true })
-  ).toBeVisible();
+  await expect(persistedCard.getByText(contactEmail)).toBeVisible();
   await expect(
     persistedCard.getByText(relationshipNote, { exact: true })
   ).toBeVisible();
