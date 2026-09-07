@@ -36,6 +36,9 @@ function response(body: unknown, status = 200): Response {
   } as Response;
 }
 
+const emptyContacts = { items: [], page: 1, limit: 20, total: 0 };
+const emptyCompanies = { items: [], page: 1, limit: 100, total: 0 };
+
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
@@ -43,18 +46,24 @@ afterEach(() => {
 
 describe("Cycle 2 contacts navigation", () => {
   it("opens the real contacts workspace after authentication", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(response(session))
-      .mockResolvedValueOnce(
-        response({ items: [], page: 1, limit: 20, total: 0 })
-      )
-      .mockResolvedValueOnce(
-        response({ items: [], page: 1, limit: 20, total: 0 })
-      )
-      .mockResolvedValueOnce(
-        response({ items: [], page: 1, limit: 100, total: 0 })
-      );
+    const fetchMock = vi.fn(async (input: string | URL) => {
+      const url = String(input);
+
+      if (url.endsWith("/auth/refresh")) {
+        return response({}, 401);
+      }
+      if (url.endsWith("/auth/login")) {
+        return response(session);
+      }
+      if (url.includes("/contacts?")) {
+        return response(emptyContacts);
+      }
+      if (url.includes("/companies?")) {
+        return response(emptyCompanies);
+      }
+
+      throw new Error(`Unexpected request: ${url}`);
+    });
     vi.stubGlobal("fetch", fetchMock);
 
     render(<Home />);
@@ -79,6 +88,31 @@ describe("Cycle 2 contacts navigation", () => {
       screen.queryByText(
         "A área de contatos será habilitada na próxima tarefa do Cycle 2."
       )
+    ).not.toBeInTheDocument();
+  });
+
+  it("restores an authenticated session from the refresh cookie", async () => {
+    const fetchMock = vi.fn(async (input: string | URL) => {
+      const url = String(input);
+
+      if (url.endsWith("/auth/refresh")) {
+        return response(session);
+      }
+      if (url.includes("/companies?")) {
+        return response(emptyCompanies);
+      }
+
+      throw new Error(`Unexpected request: ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<Home />);
+
+    expect(
+      await screen.findByRole("button", { name: "Contatos" })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Entrar no CRM" })
     ).not.toBeInTheDocument();
   });
 });
