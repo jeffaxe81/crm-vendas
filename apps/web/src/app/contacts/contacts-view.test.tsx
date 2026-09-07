@@ -178,7 +178,9 @@ describe("Cycle 2 contacts and relationship workspace", () => {
 
     render(<ContactsView accessToken={accessToken} />);
 
-    const contactCard = (await screen.findByText("Ana Silva")).closest("article");
+    const contactCard = (await screen.findByText("Ana Silva")).closest(
+      "article"
+    );
     expect(contactCard).not.toBeNull();
 
     fireEvent.click(
@@ -197,7 +199,9 @@ describe("Cycle 2 contacts and relationship workspace", () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenNthCalledWith(
         3,
-        expect.stringContaining(`/companies/${company.id}/contacts/${contact.id}`),
+        expect.stringContaining(
+          `/companies/${company.id}/contacts/${contact.id}`
+        ),
         expect.objectContaining({ method: "POST" })
       );
     });
@@ -296,7 +300,10 @@ describe("Cycle 2 contacts and relationship workspace", () => {
     );
 
     expect(screen.getByLabelText("Resumo")).toHaveAttribute("type", "text");
-    expect(screen.getByLabelText("Pontuação")).toHaveAttribute("type", "number");
+    expect(screen.getByLabelText("Pontuação")).toHaveAttribute(
+      "type",
+      "number"
+    );
     expect(screen.getByLabelText("VIP")).toHaveAttribute("type", "checkbox");
     expect(screen.getByLabelText("Renovação")).toHaveAttribute("type", "date");
     expect(screen.getByLabelText("Segmento")).toHaveRole("combobox");
