@@ -162,11 +162,11 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
             ];
           });
           setHistory(
-  contactResult.items.flatMap(
-    contact => contact.relationshipEntries ?? []
-  )
-);
-setCompanies(companyResult.items);
+            contactResult.items.flatMap(
+              contact => contact.relationshipEntries ?? []
+            )
+          );
+          setCompanies(companyResult.items);
         }
       } catch (cause) {
         if (active) {
