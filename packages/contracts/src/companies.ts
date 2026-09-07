@@ -14,10 +14,11 @@ export const CompanyCreateInputSchema = z.object({
   notes: z.string().trim().max(10_000).optional(),
 });
 
-export const CompanyUpdateInputSchema = CompanyCreateInputSchema.partial().refine(
-  value => Object.values(value).some(item => item !== undefined),
-  { message: "Informe ao menos uma alteração." }
-);
+export const CompanyUpdateInputSchema =
+  CompanyCreateInputSchema.partial().refine(
+    value => Object.values(value).some(item => item !== undefined),
+    { message: "Informe ao menos uma alteração." }
+  );
 
 export type PaginationQuery = z.infer<typeof PaginationQuerySchema>;
 export type CompanyCreateInput = z.infer<typeof CompanyCreateInputSchema>;

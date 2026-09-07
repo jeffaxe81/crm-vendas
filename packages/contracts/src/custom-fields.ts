@@ -27,7 +27,10 @@ export const CustomFieldDefinitionInputSchema = z
     isActive: z.boolean().default(true),
   })
   .superRefine((value, context) => {
-    if (value.type === "SELECT" && (!value.options || value.options.length === 0)) {
+    if (
+      value.type === "SELECT" &&
+      (!value.options || value.options.length === 0)
+    ) {
       context.addIssue({
         code: "custom",
         path: ["options"],

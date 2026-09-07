@@ -16,13 +16,14 @@ export const RelationshipEntryCreateInputSchema = z
     content: z.string().trim().min(1).max(20_000),
     occurredAt: z.string().datetime({ offset: true }),
   })
-  .refine(value => value.companyId !== undefined || value.contactId !== undefined, {
-    message: "Informe uma empresa ou um contato.",
-  });
+  .refine(
+    value => value.companyId !== undefined || value.contactId !== undefined,
+    {
+      message: "Informe uma empresa ou um contato.",
+    }
+  );
 
-export type RelationshipEntryKind = z.infer<
-  typeof RelationshipEntryKindSchema
->;
+export type RelationshipEntryKind = z.infer<typeof RelationshipEntryKindSchema>;
 export type RelationshipEntryCreateInput = z.infer<
   typeof RelationshipEntryCreateInputSchema
 >;
