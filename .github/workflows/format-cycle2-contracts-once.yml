@@ -1,0 +1,51 @@
+name: Format Cycle 2 contracts once
+
+on:
+  push:
+    branches:
+      - cycle-2-crm-core
+    paths:
+      - .github/workflows/format-cycle2-contracts-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: cycle-2-crm-core
+
+      - name: Configure Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Format contracts
+        run: |
+          pnpm exec prettier --write packages/contracts/src/companies.ts
+          pnpm exec prettier --write packages/contracts/src/contacts.ts
+          pnpm exec prettier --write packages/contracts/src/custom-fields.ts
+          pnpm exec prettier --write packages/contracts/src/relationship.ts
+
+      - name: Commit formatting
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/contracts/src/companies.ts packages/contracts/src/contacts.ts packages/contracts/src/custom-fields.ts packages/contracts/src/relationship.ts
+          git commit -m "chore: format Cycle 2 contracts"
+          git push origin HEAD:cycle-2-crm-core
