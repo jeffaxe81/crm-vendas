@@ -1,0 +1,50 @@
+name: Format Cycle 2 once
+
+on:
+  push:
+    branches:
+      - cycle-2-crm-core
+    paths:
+      - .github/workflows/format-cycle2-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: cycle-2-crm-core
+
+      - name: Configure Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Format Cycle 2 files
+        run: |
+          pnpm exec prettier --write docs/superpowers/specs/2026-09-06-cycle-2-crm-core-design.md
+          pnpm exec prettier --write docs/superpowers/plans/2026-09-06-cycle-2-crm-core.md
+          pnpm exec prettier --write packages/contracts/src/crm-core.test.ts
+
+      - name: Commit formatting
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/superpowers/specs/2026-09-06-cycle-2-crm-core-design.md docs/superpowers/plans/2026-09-06-cycle-2-crm-core.md packages/contracts/src/crm-core.test.ts
+          git commit -m "chore: format Cycle 2 planning and tests"
+          git push origin HEAD:cycle-2-crm-core
