@@ -1,0 +1,53 @@
+name: Patch contact history once
+
+on:
+  push:
+    branches:
+      - cycle-2-crm-core
+    paths:
+      - .github/workflows/patch-contact-history.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: cycle-2-crm-core
+          fetch-depth: 0
+      - name: Patch ContactsView and self-remove
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("apps/web/src/app/contacts/contacts-view.tsx")
+          text = path.read_text()
+
+          old_type = "  channels?: ContactChannelRecord[];\n};"
+          new_type = "  channels?: ContactChannelRecord[];\n  relationshipEntries?: RelationshipEntryRecord[];\n};"
+          if text.count(old_type) != 1:
+              raise SystemExit("ContactRecord patch anchor not unique")
+          text = text.replace(old_type, new_type, 1)
+
+          old_load = "          setCompanies(companyResult.items);"
+          new_load = """          setHistory(
+            contactResult.items.flatMap(
+              contact => contact.relationshipEntries ?? []
+            )
+          );
+          setCompanies(companyResult.items);"""
+          if text.count(old_load) != 1:
+              raise SystemExit("loadWorkspace patch anchor not unique")
+          text = text.replace(old_load, new_load, 1)
+
+          path.write_text(text)
+          PY
+          rm .github/workflows/patch-contact-history.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/app/contacts/contacts-view.tsx .github/workflows/patch-contact-history.yml
+          git commit -m "fix(web): hydrate persisted contact relationship history"
+          git push origin HEAD:cycle-2-crm-core
