@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { StrictMode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import Home from "./page";
@@ -114,5 +115,36 @@ describe("Cycle 2 contacts navigation", () => {
     expect(
       screen.queryByRole("button", { name: "Entrar no CRM" })
     ).not.toBeInTheDocument();
+  });
+
+  it("rotates the refresh token only once under React Strict Mode", async () => {
+    const fetchMock = vi.fn(async (input: string | URL) => {
+      const url = String(input);
+
+      if (url.endsWith("/auth/refresh")) {
+        return response(session);
+      }
+      if (url.includes("/companies?")) {
+        return response(emptyCompanies);
+      }
+
+      throw new Error(`Unexpected request: ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <StrictMode>
+        <Home />
+      </StrictMode>
+    );
+
+    expect(
+      await screen.findByRole("button", { name: "Contatos" })
+    ).toBeInTheDocument();
+
+    const refreshCalls = fetchMock.mock.calls.filter(([input]) =>
+      String(input).endsWith("/auth/refresh")
+    );
+    expect(refreshCalls).toHaveLength(1);
   });
 });
