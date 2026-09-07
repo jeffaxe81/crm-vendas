@@ -261,12 +261,15 @@ describe("Cycle 2 contacts and relationship workspace", () => {
         response({ items: [tag], page: 1, limit: 100, total: 1 })
       )
       .mockResolvedValueOnce(
-        response({
-          id: "92000000-0000-4000-8000-000000000001",
-          organizationId,
-          contactId: contact.id,
-          tagId: tag.id,
-        }, 201)
+        response(
+          {
+            id: "92000000-0000-4000-8000-000000000001",
+            organizationId,
+            contactId: contact.id,
+            tagId: tag.id,
+          },
+          201
+        )
       );
     vi.stubGlobal("fetch", fetchMock);
 
@@ -291,7 +294,9 @@ describe("Cycle 2 contacts and relationship workspace", () => {
       within(tagEditor).getByRole("button", { name: "Vincular tag" })
     );
 
-    expect(await within(tagEditor).findByText("Cliente VIP")).toBeInTheDocument();
+    expect(
+      await within(tagEditor).findByText("Cliente VIP")
+    ).toBeInTheDocument();
     expect(fetchMock).toHaveBeenNthCalledWith(
       3,
       expect.stringContaining("/tags?page=1&limit=100"),
