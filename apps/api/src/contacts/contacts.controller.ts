@@ -45,7 +45,9 @@ type ContactListQuery = z.infer<typeof ContactListQuerySchema>;
 @Controller("contacts")
 @UseGuards(AuthenticationGuard, PermissionsGuard)
 export class ContactsController {
-  constructor(@Inject(ContactsService) private readonly contacts: ContactsService) {}
+  constructor(
+    @Inject(ContactsService) private readonly contacts: ContactsService
+  ) {}
 
   @Get()
   @RequirePermissions("contact.read")
