@@ -11,6 +11,7 @@ import { ContactsModule } from "./contacts/contacts.module";
 import { HealthModule } from "./health/health.module";
 import { createLoggerOptions } from "./observability/logger.config";
 import { RequestIdMiddleware } from "./observability/request-id.middleware";
+import { RelationshipsModule } from "./relationships/relationships.module";
 import { OrganizationUsersModule } from "./users/organization-users.module";
 
 @Module({
@@ -28,6 +29,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     OrganizationUsersModule,
     CompaniesModule,
     ContactsModule,
+    RelationshipsModule,
   ],
 })
 export class AppModule implements NestModule {
