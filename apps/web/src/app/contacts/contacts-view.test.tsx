@@ -297,7 +297,9 @@ describe("Cycle 2 contacts and relationship workspace", () => {
     );
 
     expect(
-      await within(tagEditor).findByText("Cliente VIP")
+      await within(tagEditor).findByRole("button", {
+        name: "Remover tag Cliente VIP",
+      })
     ).toBeInTheDocument();
     expect(fetchMock).toHaveBeenNthCalledWith(
       3,
