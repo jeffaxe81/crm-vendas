@@ -1,6 +1,6 @@
 # Cycle 2 — Working Checkpoint
 
-Última atualização: 2026-09-07 14:41 America/Sao_Paulo
+Última atualização: 2026-09-07 14:47 America/Sao_Paulo
 
 ## Branch
 
@@ -14,9 +14,10 @@
 
 - Task 8 — Contatos Web e relacionamento: **100% concluída**
 - Task 9 — jornada E2E e restauração de sessão: **GREEN**
-- SHA validado: `1a5c51cfac0ad4c7a3023ceebe899d3c5b37ddb5`
-- Gate: GitHub Actions run **#277** (`34148399712`)
-- Resultado: **GREEN integral**
+- Último SHA com gate integral verde:
+  `1a5c51cfac0ad4c7a3023ceebe899d3c5b37ddb5`
+- Gate verde: GitHub Actions run **#277** (`34148399712`)
+- Resultado do #277: **GREEN integral**
   - install locked dependencies: success
   - Prisma generate: success
   - migrations: success
@@ -26,7 +27,7 @@
   - Compose contract: success
   - Docker build API/Web: success
 
-## Funcionalidades validadas até este checkpoint
+## Funcionalidades validadas
 
 - Empresas Web integrada ao App Shell
 - Contatos Web integrado ao App Shell
@@ -49,9 +50,9 @@
   - reload
   - verificação de empresa, contato, canal e histórico persistidos
 
-## Revisão de segurança em andamento
+## Revisão final de segurança
 
-Confirmado por código e testes de integração:
+Concluída por leitura de código e evidências automatizadas:
 
 - Empresas: leitura e mutação por ID isoladas por `organizationId`
 - Contatos e canais: leitura e mutação isoladas por `organizationId`
@@ -59,24 +60,46 @@ Confirmado por código e testes de integração:
 - Histórico: entidades excluídas ou de outra organização são rejeitadas
 - Tags: tag e alvo são validados na organização ativa
 - Campos customizados: definição, escopo e alvo são validados por organização
-- VIEWER: escrita de Empresas e Contatos retorna 403
+- `VIEWER`: escrita de Empresas e Contatos retorna 403
+- demais endpoints de escrita do CRM Core exigem explicitamente
+  `company.write` e/ou `contact.write`
+- auditoria de autenticação é testada para não conter senha nem
+  `refreshSession.tokenHash`
+- usuário desativado não pode renovar refresh nem realizar novo login
 
-Ainda falta fechar formalmente a revisão de auditoria sem segredos e consolidar
-a evidência final da Task 9.
+## Documentação final
+
+Concluída na branch:
+
+- `README.md` atualizado para o Cycle 2
+- `CHANGELOG.md` com seção Cycle 2 ainda não liberada
+- `docs/testing/README.md` atualizado com matriz, controles adversariais e E2E
+- rollback documentado em `v0.1.0-identity-access` enquanto o Cycle 2 não for
+  aprovado
+
+Último commit antes deste checkpoint:
+`bb413a0ece70b065dc072f4391571042313fdda8`.
 
 ## Próximo ponto exato
 
-Task 9 — concluir documentação, revisão de segurança e gate final do Cycle 2.
+Task 9 — **gate final do Cycle 2**.
 
 Próximas ações:
 
-1. confirmar auditoria de autenticação sem senha/hash/token em evidência automatizada;
-2. atualizar `README.md`, `CHANGELOG.md` e `docs/testing/README.md` para o Cycle 2;
-3. atualizar o checklist do PR #3;
-4. executar um gate integral fresco no SHA final de documentação/revisão;
-5. apresentar o relatório pós-testes para aprovação;
-6. somente após aprovação: criar `v0.2.0-crm-core` no SHA validado e integrar ao
+1. executar o gate integral fresco no SHA gerado por este checkpoint;
+2. se houver falha, corrigir somente a causa raiz e registrar novo checkpoint;
+3. atualizar o checklist e relatório do PR #3 com a evidência final;
+4. apresentar o relatório pós-testes para aprovação;
+5. somente após aprovação: criar `v0.2.0-crm-core` no SHA validado e integrar ao
    `main` conforme a regra do Prompt Master.
+
+## Observação não bloqueante
+
+O workflow continua exibindo o nome histórico `Cycle 1 quality gate`. Foi
+confirmado que o conteúdo do gate é genérico e mantém todas as etapas exigidas.
+A tentativa de renomear apenas o título foi bloqueada pelo filtro de segurança
+da ferramenta por o arquivo conter valores de ambiente de teste com aparência
+de segredo. Nenhum valor ou etapa do gate foi alterado para contornar isso.
 
 ## Regra de checkpoint operacional
 
