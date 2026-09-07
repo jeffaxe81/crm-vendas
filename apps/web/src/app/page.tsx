@@ -18,9 +18,8 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const restoreSessionRequest = useRef<Promise<AuthSessionResponse | null> | null>(
-    null
-  );
+  const restoreSessionRequest =
+    useRef<Promise<AuthSessionResponse | null> | null>(null);
 
   useEffect(() => {
     let active = true;
