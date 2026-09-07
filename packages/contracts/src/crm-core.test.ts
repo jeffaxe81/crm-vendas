@@ -25,7 +25,9 @@ describe("Cycle 2 CRM core contracts", () => {
     const schema = requireSchema("PaginationQuerySchema");
 
     expect(() => schema.parse({ page: 1, limit: 101 })).toThrow();
-    expect(schema.parse({ page: "2", limit: "50", q: "  Acme  " })).toMatchObject({
+    expect(
+      schema.parse({ page: "2", limit: "50", q: "  Acme  " })
+    ).toMatchObject({
       page: 2,
       limit: 50,
       q: "Acme",

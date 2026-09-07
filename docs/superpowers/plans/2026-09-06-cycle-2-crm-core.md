@@ -29,6 +29,7 @@
 ### Task 1: Contratos do domínio CRM
 
 **Files:**
+
 - Create: `packages/contracts/src/companies.ts`
 - Create: `packages/contracts/src/contacts.ts`
 - Create: `packages/contracts/src/relationship.ts`
@@ -38,6 +39,7 @@
 - Modify: `packages/contracts/src/index.ts`
 
 **Interfaces:**
+
 - Consumes: convenções Zod existentes.
 - Produces: `CompanyCreateInputSchema`, `CompanyUpdateInputSchema`, `ContactCreateInputSchema`, `ContactChannelInputSchema`, `RelationshipEntryCreateInputSchema`, `TagInputSchema`, `CustomFieldDefinitionInputSchema`, `CustomFieldValueInputSchema`, `PaginationQuerySchema`.
 
@@ -45,7 +47,9 @@
 
 ```ts
 it("accepts a contact without company", () => {
-  expect(ContactCreateInputSchema.parse({ fullName: "Ana Silva" })).toMatchObject({
+  expect(
+    ContactCreateInputSchema.parse({ fullName: "Ana Silva" })
+  ).toMatchObject({
     fullName: "Ana Silva",
   });
 });
@@ -90,11 +94,13 @@ Commit: `feat(contracts): add CRM core contracts`
 ### Task 2: Prisma schema and reproducible migration
 
 **Files:**
+
 - Modify: `apps/api/prisma/schema.prisma`
 - Create: `apps/api/prisma/migrations/20260907012000_cycle2_crm_core/migration.sql`
 - Create: `apps/api/src/crm-core/crm-schema.integration.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `Organization`, `User`, `PrismaService`.
 - Produces Prisma models for `Company`, `Contact`, `ContactChannel`, `CompanyContact`, `RelationshipEntry`, `Tag`, `CompanyTag`, `ContactTag`, `CustomFieldDefinition`, `CompanyCustomFieldValue`, `ContactCustomFieldValue`.
 
@@ -169,6 +175,7 @@ Commit: `feat(api): add CRM core database model`
 ### Task 3: Empresas API com isolamento e auditoria
 
 **Files:**
+
 - Create: `apps/api/src/companies/companies.module.ts`
 - Create: `apps/api/src/companies/companies.controller.ts`
 - Create: `apps/api/src/companies/companies.service.ts`
@@ -176,6 +183,7 @@ Commit: `feat(api): add CRM core database model`
 - Modify: `apps/api/src/app.module.ts`
 
 **Interfaces:**
+
 - Consumes: `AuthenticationGuard`, `PermissionsGuard`, `AuditService`, `PrismaService`, company contracts.
 - Produces: list/get/create/update/soft-delete company operations scoped by `organizationId`.
 
@@ -228,6 +236,7 @@ Commit: `feat(api): add tenant-scoped companies`
 ### Task 4: Contatos e canais
 
 **Files:**
+
 - Create: `apps/api/src/contacts/contacts.module.ts`
 - Create: `apps/api/src/contacts/contacts.controller.ts`
 - Create: `apps/api/src/contacts/contacts.service.ts`
@@ -235,6 +244,7 @@ Commit: `feat(api): add tenant-scoped companies`
 - Modify: `apps/api/src/app.module.ts`
 
 **Interfaces:**
+
 - Consumes: authentication/RBAC/audit/database modules and contact contracts.
 - Produces: contact CRUD and channel create/update/delete.
 
@@ -281,6 +291,7 @@ Commit: `feat(api): add contacts and channels`
 ### Task 5: Vínculo empresa-contato e histórico
 
 **Files:**
+
 - Create: `apps/api/src/relationships/relationships.module.ts`
 - Create: `apps/api/src/relationships/relationships.controller.ts`
 - Create: `apps/api/src/relationships/relationships.service.ts`
@@ -288,6 +299,7 @@ Commit: `feat(api): add contacts and channels`
 - Modify: `apps/api/src/app.module.ts`
 
 **Interfaces:**
+
 - Produces: link/unlink company-contact and relationship entry create/list operations.
 
 - [ ] **Step 1: Write failing cross-tenant test**
@@ -325,6 +337,7 @@ Commit: `feat(api): add company contact relationships and history`
 ### Task 6: Tags e campos customizáveis
 
 **Files:**
+
 - Create: `apps/api/src/tags/tags.module.ts`
 - Create: `apps/api/src/tags/tags.controller.ts`
 - Create: `apps/api/src/tags/tags.service.ts`
@@ -338,6 +351,7 @@ Commit: `feat(api): add company contact relationships and history`
 - Modify: `apps/api/src/app.module.ts`
 
 **Interfaces:**
+
 - Produces tag CRUD/linking and custom-field definitions/values.
 
 - [ ] **Step 1: Write failing tag tests**
@@ -396,6 +410,7 @@ Commit: `feat(api): add tags and custom fields`
 ### Task 7: App Shell e Empresas Web
 
 **Files:**
+
 - Modify: `apps/web/src/app/page.tsx`
 - Modify: `apps/web/src/app/globals.css`
 - Create: `apps/web/src/app/crm-shell.tsx`
@@ -404,6 +419,7 @@ Commit: `feat(api): add tags and custom fields`
 - Create: `apps/web/src/lib/api-client.ts`
 
 **Interfaces:**
+
 - Consumes: session response, company contracts, existing login/logout.
 - Produces: authenticated shell and company list/create/edit UI.
 
@@ -438,6 +454,7 @@ Commit: `feat(web): add CRM shell and companies view`
 ### Task 8: Contatos Web e relacionamento
 
 **Files:**
+
 - Create: `apps/web/src/app/contacts/contacts-view.tsx`
 - Create: `apps/web/src/app/contacts/contacts-view.test.tsx`
 - Create: `apps/web/src/app/shared/tag-editor.tsx`
@@ -446,6 +463,7 @@ Commit: `feat(web): add CRM shell and companies view`
 - Modify: `apps/web/src/app/globals.css`
 
 **Interfaces:**
+
 - Produces contact list/create/edit, channels, company association, history, tags and custom fields.
 
 - [ ] **Step 1: Write failing UI tests**
@@ -475,6 +493,7 @@ Commit: `feat(web): add contacts and relationship management`
 ### Task 9: E2E, adversarial coverage, docs and final gate
 
 **Files:**
+
 - Create: `tests/e2e/crm-core.spec.ts`
 - Modify: `README.md`
 - Modify: `CHANGELOG.md`
@@ -482,6 +501,7 @@ Commit: `feat(web): add contacts and relationship management`
 - Modify: `.github/workflows/ci.yml` only if Cycle 2 data setup requires it without weakening existing gates.
 
 **Interfaces:**
+
 - Produces final Cycle 2 evidence and rollback instructions.
 
 - [ ] **Step 1: Add failing E2E**
