@@ -2,15 +2,15 @@
 
 ## Testes
 
-| Nível       | Ferramenta               | Escopo                                                                      |
-| ----------- | ------------------------ | --------------------------------------------------------------------------- |
-| Repositório | Node test runner         | Versões fixadas e contrato Compose                                          |
-| Contratos   | Vitest                   | Schemas e tipos compartilhados                                              |
-| Web         | Vitest + Testing Library | Login, sessão, Empresas, Contatos, tags e campos customizados                |
-| API         | Jest                     | Health, configuração, erros, auth, RBAC, auditoria e regras do CRM Core     |
-| Integração  | Jest + PostgreSQL        | Prisma, migrations, sessão, isolamento multiempresa e persistência real     |
-| E2E         | Playwright               | Jornada browser de autenticação, CRM Core, reload e persistência             |
-| Container   | Docker Compose           | Topologia, dependências, health checks e build das imagens                  |
+| Nível       | Ferramenta               | Escopo                                                                  |
+| ----------- | ------------------------ | ----------------------------------------------------------------------- |
+| Repositório | Node test runner         | Versões fixadas e contrato Compose                                      |
+| Contratos   | Vitest                   | Schemas e tipos compartilhados                                          |
+| Web         | Vitest + Testing Library | Login, sessão, Empresas, Contatos, tags e campos customizados           |
+| API         | Jest                     | Health, configuração, erros, auth, RBAC, auditoria e regras do CRM Core |
+| Integração  | Jest + PostgreSQL        | Prisma, migrations, sessão, isolamento multiempresa e persistência real |
+| E2E         | Playwright               | Jornada browser de autenticação, CRM Core, reload e persistência        |
+| Container   | Docker Compose           | Topologia, dependências, health checks e build das imagens              |
 
 Comandos:
 
