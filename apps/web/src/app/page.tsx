@@ -8,6 +8,7 @@ import { FormEvent, useState } from "react";
 
 import { authApiRequest } from "../lib/api-client";
 import { CompaniesView } from "./companies/companies-view";
+import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
 
 export default function Home() {
@@ -61,13 +62,7 @@ export default function Home() {
         {activeSection === "companies" ? (
           <CompaniesView accessToken={session.accessToken} />
         ) : (
-          <section className="crm-placeholder" aria-labelledby="contacts-title">
-            <p>Relacionamento</p>
-            <h1 id="contacts-title">Contatos</h1>
-            <span>
-              A área de contatos será habilitada na próxima tarefa do Cycle 2.
-            </span>
-          </section>
+          <ContactsView accessToken={session.accessToken} />
         )}
       </CrmShell>
     );
