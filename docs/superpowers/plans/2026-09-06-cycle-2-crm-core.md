@@ -38,7 +38,7 @@
 - Modify: `packages/contracts/src/index.ts`
 
 **Interfaces:**
-- Consumes: `MembershipRole` e convenções Zod existentes.
+- Consumes: convenções Zod existentes.
 - Produces: `CompanyCreateInputSchema`, `CompanyUpdateInputSchema`, `ContactCreateInputSchema`, `ContactChannelInputSchema`, `RelationshipEntryCreateInputSchema`, `TagInputSchema`, `CustomFieldDefinitionInputSchema`, `CustomFieldValueInputSchema`, `PaginationQuerySchema`.
 
 - [ ] **Step 1: Write failing contract tests**
@@ -91,7 +91,7 @@ Commit: `feat(contracts): add CRM core contracts`
 
 **Files:**
 - Modify: `apps/api/prisma/schema.prisma`
-- Create: `apps/api/prisma/migrations/<timestamp>_cycle2_crm_core/migration.sql`
+- Create: `apps/api/prisma/migrations/20260907012000_cycle2_crm_core/migration.sql`
 - Create: `apps/api/src/crm-core/crm-schema.integration.spec.ts`
 
 **Interfaces:**
@@ -99,8 +99,6 @@ Commit: `feat(contracts): add CRM core contracts`
 - Produces Prisma models for `Company`, `Contact`, `ContactChannel`, `CompanyContact`, `RelationshipEntry`, `Tag`, `CompanyTag`, `ContactTag`, `CustomFieldDefinition`, `CompanyCustomFieldValue`, `ContactCustomFieldValue`.
 
 - [ ] **Step 1: Write failing integration test**
-
-Test should create two organizations and prove the database permits:
 
 ```ts
 const company = await prisma.company.create({
@@ -123,8 +121,6 @@ Expected: FAIL because models/tables do not exist.
 
 - [ ] **Step 3: Add enums and models**
 
-Enums:
-
 ```prisma
 enum ContactChannelType { EMAIL PHONE MOBILE WHATSAPP OTHER }
 enum RelationshipEntryKind { NOTE CALL_NOTE EMAIL_NOTE MEETING_NOTE OTHER }
@@ -136,13 +132,11 @@ Add `organizationId` indexes to every business table; use restrictive FKs across
 
 - [ ] **Step 4: Add SQL integrity constraints**
 
-Migration must include:
-
 ```sql
 CHECK (company_id IS NOT NULL OR contact_id IS NOT NULL)
 ```
 
-for `relationship_entries`, and partial unique index for company document when non-null:
+for `relationship_entries`, plus:
 
 ```sql
 CREATE UNIQUE INDEX companies_org_document_key
@@ -200,7 +194,7 @@ Scenario:
 - [ ] **Step 2: Run RED**
 
 Run: `pnpm --filter @axes/api test -- companies.integration.spec.ts`
-Expected: 404 route/not implemented.
+Expected: route not implemented.
 
 - [ ] **Step 3: Implement scoped service**
 
@@ -246,8 +240,6 @@ Commit: `feat(api): add tenant-scoped companies`
 
 - [ ] **Step 1: Write failing tests**
 
-Cover:
-
 ```ts
 await request(server)
   .post("/api/v1/contacts")
@@ -256,7 +248,7 @@ await request(server)
   .expect(201);
 ```
 
-Also create EMAIL + MOBILE channels, mark one primary, then attempt to use org A token against org B contact channel and expect 404.
+Also create EMAIL + MOBILE channels, mark one primary, then attempt org A token against org B contact/channel and expect 404.
 
 - [ ] **Step 2: Run RED**
 
@@ -269,15 +261,19 @@ Use the same soft-delete/scoping rules as companies.
 
 - [ ] **Step 4: Implement channels transactionally**
 
-When setting a channel primary for `(contactId, type)`, clear any existing primary of the same type inside the same Prisma transaction before setting the requested channel.
+When setting a channel primary for `(contactId, type)`, clear an existing primary of the same type in the same Prisma transaction before setting the requested channel.
 
 - [ ] **Step 5: Audit channel changes**
 
-Actions: `contact.channel_created`, `contact.channel_updated`, `contact.channel_deleted`.
+Use exactly `contact.channel_created`, `contact.channel_updated`, `contact.channel_deleted`.
 
-- [ ] **Step 6: Run GREEN and commit**
+- [ ] **Step 6: Run GREEN**
 
 Run: `pnpm --filter @axes/api test -- contacts.integration.spec.ts`
+Expected: PASS.
+
+- [ ] **Step 7: Commit**
+
 Commit: `feat(api): add contacts and channels`
 
 ---
@@ -294,17 +290,18 @@ Commit: `feat(api): add contacts and channels`
 **Interfaces:**
 - Produces: link/unlink company-contact and relationship entry create/list operations.
 
-- [ ] **Step 1: Write failing cross-tenant tests**
+- [ ] **Step 1: Write failing cross-tenant test**
 
-Attempt to link company from org A to contact from org B and expect 404/validation rejection with no row created.
+Attempt company org A -> contact org B and assert HTTP 404 plus zero `company_contacts` rows.
 
-- [ ] **Step 2: Write history behavior test**
+- [ ] **Step 2: Write failing history behavior test**
 
-Create a `NOTE` with only `companyId`, another with only `contactId`, and reject an entry with neither.
+Create `NOTE` with only `companyId`, another with only `contactId`, and reject an entry with neither.
 
 - [ ] **Step 3: Run RED**
 
 Run: `pnpm --filter @axes/api test -- relationships.integration.spec.ts`
+Expected: routes not implemented.
 
 - [ ] **Step 4: Implement transactional relationship validation**
 
@@ -312,9 +309,14 @@ Before link/history creation, verify every supplied entity exists with the same 
 
 - [ ] **Step 5: Audit**
 
-Actions: `company.contact_linked`, `company.contact_unlinked`, `relationship.created`.
+Use exactly `company.contact_linked`, `company.contact_unlinked`, `relationship.created`.
 
-- [ ] **Step 6: Run GREEN and commit**
+- [ ] **Step 6: Run GREEN**
+
+Run: `pnpm --filter @axes/api test -- relationships.integration.spec.ts`
+Expected: PASS.
+
+- [ ] **Step 7: Commit**
 
 Commit: `feat(api): add company contact relationships and history`
 
@@ -330,6 +332,8 @@ Commit: `feat(api): add company contact relationships and history`
 - Create: `apps/api/src/custom-fields/custom-fields.module.ts`
 - Create: `apps/api/src/custom-fields/custom-fields.controller.ts`
 - Create: `apps/api/src/custom-fields/custom-fields.service.ts`
+- Create: `apps/api/src/custom-fields/custom-field-value.ts`
+- Create: `apps/api/src/custom-fields/custom-field-value.spec.ts`
 - Create: `apps/api/src/custom-fields/custom-fields.integration.spec.ts`
 - Modify: `apps/api/src/app.module.ts`
 
@@ -338,33 +342,54 @@ Commit: `feat(api): add company contact relationships and history`
 
 - [ ] **Step 1: Write failing tag tests**
 
-Prove normalized uniqueness within an org and allow same tag name in another org. Reject linking org A tag to org B company/contact.
+Prove normalized uniqueness within an org and allow the same display name in another org. Reject linking org A tag to org B company/contact.
 
-- [ ] **Step 2: Implement tags and explicit link tables**
+- [ ] **Step 2: Run tag tests RED**
+
+Run: `pnpm --filter @axes/api test -- tags.integration.spec.ts`
+Expected: routes/services not implemented.
+
+- [ ] **Step 3: Implement tags and explicit link tables**
 
 Normalize with `trim().toLowerCase()` while preserving display `name`.
 
-- [ ] **Step 3: Write failing custom-field tests**
-
-Examples:
+- [ ] **Step 4: Write failing custom-field unit tests**
 
 ```ts
-expect(validateCustomFieldValue({ type: "NUMBER" }, "abc")).toThrow();
+expect(() => validateCustomFieldValue({ type: "NUMBER" }, "abc")).toThrow();
 expect(validateCustomFieldValue({ type: "BOOLEAN" }, true)).toBe(true);
-expect(validateCustomFieldValue({ type: "SELECT", options: ["A"] }, "B")).toThrow();
+expect(() =>
+  validateCustomFieldValue({ type: "SELECT", options: ["A"] }, "B")
+).toThrow();
 ```
 
-- [ ] **Step 4: Implement centralized validator**
+- [ ] **Step 5: Run custom-field tests RED**
 
-Create a pure helper in `apps/api/src/custom-fields/custom-field-value.ts` and unit-test it independently. API must verify field definition `organizationId` and `scope` match the target entity before upsert.
+Run: `pnpm --filter @axes/api test -- custom-field-value.spec.ts custom-fields.integration.spec.ts`
+Expected: helper/routes not implemented.
 
-- [ ] **Step 5: Audit mutations**
+- [ ] **Step 6: Implement centralized validator and API**
 
-Actions for tag/definition/value creation/update/link/unlink.
+`validateCustomFieldValue()` validates primitive type, ISO date string for `DATE`, and membership in `options` for `SELECT`. API verifies definition `organizationId` and `scope` match the target entity before upsert.
 
-- [ ] **Step 6: Run GREEN and commit**
+- [ ] **Step 7: Audit mutations**
 
-Run the tag and custom-field suites; commit `feat(api): add tags and custom fields`.
+Use `tag.created`, `tag.updated`, `tag.linked`, `tag.unlinked`, `custom_field.created`, `custom_field.updated`, `custom_field.value_set`, `custom_field.value_removed`.
+
+- [ ] **Step 8: Run GREEN**
+
+Run:
+
+```bash
+pnpm --filter @axes/api test -- tags.integration.spec.ts
+pnpm --filter @axes/api test -- custom-field-value.spec.ts custom-fields.integration.spec.ts
+```
+
+Expected: PASS.
+
+- [ ] **Step 9: Commit**
+
+Commit: `feat(api): add tags and custom fields`
 
 ---
 
@@ -384,23 +409,29 @@ Run the tag and custom-field suites; commit `feat(api): add tags and custom fiel
 
 - [ ] **Step 1: Write failing Web test**
 
-After supplying an authenticated session fixture, assert navigation contains `Empresas` and `Contatos`, and Companies view renders search + create action.
+After supplying an authenticated session fixture, assert navigation contains `Empresas` and `Contatos`, and Companies view renders search plus create action.
 
 - [ ] **Step 2: Run RED**
 
 Run: `pnpm --filter @axes/web test -- companies-view.test.tsx`
+Expected: components do not exist.
 
 - [ ] **Step 3: Extract API client**
 
-Client must attach Bearer access token, `x-request-id`, parse standardized errors, and keep `credentials: "include"` where auth refresh/logout requires cookies.
+Client attaches Bearer access token, `x-request-id`, parses standardized errors, and uses `credentials: "include"` for auth refresh/logout.
 
 - [ ] **Step 4: Implement App Shell and companies UI**
 
-Do not introduce router complexity beyond needed navigation. Keep login page as unauthenticated state and render CRM shell after authentication.
+Keep login as unauthenticated state. After authentication render CRM shell; no new routing framework is introduced.
 
-- [ ] **Step 5: Run GREEN and commit**
+- [ ] **Step 5: Run GREEN**
 
-Commit: `feat(web): add CRM shell and companies view`.
+Run: `pnpm --filter @axes/web test -- companies-view.test.tsx`
+Expected: PASS.
+
+- [ ] **Step 6: Commit**
+
+Commit: `feat(web): add CRM shell and companies view`
 
 ---
 
@@ -419,30 +450,36 @@ Commit: `feat(web): add CRM shell and companies view`.
 
 - [ ] **Step 1: Write failing UI tests**
 
-Cover contact creation without company, adding channel, linking company, entering history, and rendering dynamic field control for `TEXT`, `NUMBER`, `BOOLEAN`, `DATE`, `SELECT`.
+Cover contact creation without company, adding channel, linking company, entering history, and rendering controls for `TEXT`, `NUMBER`, `BOOLEAN`, `DATE`, `SELECT`.
 
 - [ ] **Step 2: Run RED**
 
 Run: `pnpm --filter @axes/web test -- contacts-view.test.tsx`
+Expected: components do not exist.
 
 - [ ] **Step 3: Implement minimal accessible controls**
 
 Forms use labels, keyboard-accessible buttons, inline errors and mobile single-column layout.
 
-- [ ] **Step 4: Run GREEN and commit**
+- [ ] **Step 4: Run GREEN**
 
-Commit: `feat(web): add contacts and relationship management`.
+Run: `pnpm --filter @axes/web test -- contacts-view.test.tsx`
+Expected: PASS.
+
+- [ ] **Step 5: Commit**
+
+Commit: `feat(web): add contacts and relationship management`
 
 ---
 
 ### Task 9: E2E, adversarial coverage, docs and final gate
 
 **Files:**
-- Modify: `tests/e2e/foundation.spec.ts` or split into `tests/e2e/crm-core.spec.ts`
+- Create: `tests/e2e/crm-core.spec.ts`
 - Modify: `README.md`
 - Modify: `CHANGELOG.md`
 - Modify: `docs/testing/README.md`
-- Modify: `.github/workflows/ci.yml` only if needed to support Cycle 2 data setup without weakening existing gates.
+- Modify: `.github/workflows/ci.yml` only if Cycle 2 data setup requires it without weakening existing gates.
 
 **Interfaces:**
 - Produces final Cycle 2 evidence and rollback instructions.
@@ -461,13 +498,14 @@ Browser journey:
 8. create relationship note;
 9. reload and verify persisted state.
 
-- [ ] **Step 2: Run E2E and fix only proven failures**
+- [ ] **Step 2: Run E2E RED/GREEN cycle**
 
 Run: `pnpm test:e2e`.
+Expected before completion: the new scenario fails at the first missing behavior; after fixes: PASS.
 
 - [ ] **Step 3: Update documentation**
 
-Document migration, business routes, Web flow, test strategy, and rollback to `v0.1.0-identity-access`.
+Document migration `20260907012000_cycle2_crm_core`, business routes, Web flow, test strategy and rollback to `v0.1.0-identity-access`.
 
 - [ ] **Step 4: Run the complete fresh gate on one SHA**
 
@@ -487,11 +525,11 @@ Expected: every command exits 0.
 
 - [ ] **Step 5: Perform final security review**
 
-Verify every item-by-ID query includes `organizationId`; every relationship validates both sides in the same organization; audit metadata excludes secrets; VIEWER writes are 403.
+Verify every item-by-ID query includes `organizationId`; every relationship validates both sides in the same organization; audit metadata excludes secrets; VIEWER writes return 403.
 
 - [ ] **Step 6: Update PR checklist and report**
 
-Do not merge. Present the green evidence and wait for post-test approval.
+Do not merge. Present green evidence and wait for post-test approval.
 
 - [ ] **Step 7: Create checkpoint only after green gate**
 
