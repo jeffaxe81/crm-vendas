@@ -1,8 +1,8 @@
 # CRM Axesistemas
 
-CRM modular da Axesistemas, com fundação Next.js + NestJS + PostgreSQL + Prisma e evolução preparada para múltiplas organizações.
+CRM modular da Axesistemas, com fundação Next.js + NestJS + PostgreSQL + Prisma e arquitetura preparada para múltiplas organizações.
 
-O checkpoint aprovado da fundação é `v0.0.0-foundation`. O Ciclo 1 adiciona identidade, autenticação, organização ativa, RBAC, administração de usuários e auditoria append-only.
+O último checkpoint aprovado e integrado é `v0.1.0-identity-access`. O Cycle 2 adiciona o núcleo funcional de relacionamento: empresas, contatos, canais, vínculos empresa–contato, histórico, tags e campos customizáveis. O checkpoint `v0.2.0-crm-core` somente será criado após o gate integral verde e a aprovação pós-testes.
 
 ## Pré-requisitos
 
@@ -74,6 +74,23 @@ docker compose up -d --build --wait
 
 A senha `axes` do PostgreSQL no Compose é apenas para desenvolvimento local e não deve ser reutilizada em outros ambientes.
 
+## CRM Core — Cycle 2
+
+O Cycle 2 implementa o primeiro núcleo de negócio do CRM:
+
+- cadastro, busca, edição e soft delete de empresas;
+- cadastro de contatos independentes de empresa;
+- múltiplos canais por contato, com canal principal por tipo;
+- vínculo e desvínculo empresa–contato;
+- histórico de relacionamento associado a empresa, contato ou ambos;
+- tags por organização, com vínculo a empresas e contatos;
+- campos customizáveis com escopo `COMPANY` ou `CONTACT`;
+- App Shell autenticado com navegação entre Empresas e Contatos;
+- restauração de sessão após reload usando refresh cookie HttpOnly;
+- proteção contra rotação duplicada do refresh token em React Strict Mode.
+
+Toda consulta e mutação de entidades do CRM é derivada da organização autenticada. Identificadores de outra organização devem resultar em recurso não encontrado, sem permitir leitura ou alteração cruzada.
+
 ## Validação
 
 O gate técnico do ciclo executa, no mesmo checkpoint:
@@ -90,7 +107,9 @@ docker compose config --quiet
 docker compose build api web
 ```
 
-O Ciclo 1 só pode ser aprovado depois de lint/formatação, typecheck, testes unitários e de integração, E2E, migration, Compose e imagens Docker passarem no mesmo commit.
+Nenhum ciclo pode ser aprovado enquanto formatação, lint, typecheck, testes unitários e de integração, E2E, migrations, Compose e imagens Docker não passarem no mesmo commit.
+
+O E2E do Cycle 2 cobre login, criação de empresa, criação de contato independente, canal de e-mail, vínculo empresa–contato, histórico, reload e verificação dos dados persistidos após restauração da sessão.
 
 ## Arquitetura
 
@@ -108,15 +127,18 @@ A solução utiliza:
 - usuário global com membership por organização;
 - perfis fixos `ADMIN`, `MANAGER`, `SELLER` e `VIEWER`;
 - autorização por permissões explícitas;
-- auditoria append-only.
+- auditoria append-only;
+- entidades CRM com `organizationId` e validação de escopo no serviço.
 
-A organização ativa é derivada da sessão autenticada. Endpoints administrativos não aceitam `organization_id` livre da interface para decidir o escopo da consulta.
+A organização ativa é derivada da sessão autenticada. Endpoints administrativos e de negócio não aceitam `organization_id` livre da interface para decidir o escopo da consulta.
 
 Documentos principais:
 
 - `docs/architecture/2026-08-30-crm-axesistemas-design.md`;
 - `docs/architecture/foundation.md`;
 - `docs/architecture/2026-09-01-cycle-1-identity-access.md`;
+- `docs/superpowers/specs/2026-09-06-cycle-2-crm-core-design.md`;
+- `docs/superpowers/plans/2026-09-06-cycle-2-crm-core.md`;
 - `docs/decisions/ADR-0001-foundation.md`.
 
 ## Testes
@@ -126,13 +148,17 @@ A suíte cobre, entre outros pontos:
 - login e credenciais inválidas;
 - cookie de refresh protegido;
 - rotação e detecção de reutilização de refresh token;
+- restauração de sessão sem rotação duplicada em Strict Mode;
 - logout e revogação imediata da sessão;
 - usuário e membership desativados;
 - isolamento de leitura e mutação entre organizações;
-- bloqueio de ações administrativas por perfil sem permissão;
+- bloqueio de escrita para perfil `VIEWER`;
+- validação de ambos os lados do vínculo empresa–contato;
+- rejeição de histórico com entidade excluída ou de outra organização;
+- isolamento de tags e campos customizados;
 - auditoria append-only sem senha ou hash do refresh token;
 - migração reproduzível;
-- jornada E2E de login e logout pela Web.
+- jornada E2E completa do CRM Core com persistência após reload.
 
 Comandos principais:
 
@@ -146,22 +172,22 @@ pnpm verify
 
 ## Retorno
 
-O checkpoint conhecido e aprovado anterior ao Ciclo 1 é:
+O último checkpoint aprovado anterior ao Cycle 2 é:
 
 ```text
-v0.0.0-foundation
+v0.1.0-identity-access
 ```
 
 Para abrir esse estado histórico sem alterar branches:
 
 ```powershell
-git switch --detach v0.0.0-foundation
+git switch --detach v0.1.0-identity-access
 Copy-Item .env.example .env
 ```
 
 Depois, gere o Prisma e suba os serviços conforme as instruções daquela versão. Não faça commits em `detached HEAD`; crie uma nova branch se precisar modificar o estado histórico.
 
-O checkpoint do Ciclo 1 só será criado depois do gate integral verde. Nenhum rollback deve remover ou mover tags já aprovadas.
+Enquanto o Cycle 2 não tiver aprovação pós-testes, `v0.1.0-identity-access` permanece o ponto de rollback. O futuro checkpoint `v0.2.0-crm-core` não deve ser criado, movido ou substituído antes do gate final aprovado. Tags já aprovadas nunca devem ser removidas ou reposicionadas.
 
 ## Changelog
 
