@@ -1,0 +1,26 @@
+name: Format preview
+
+on:
+  push:
+    branches:
+      - cycle-2-crm-core
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Print formatted E2E
+        run: pnpm exec prettier tests/e2e/crm-core.spec.ts
