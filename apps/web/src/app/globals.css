@@ -8,7 +8,7 @@
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  background: #f4f7fb;
+  background: #eef3f9;
   color: #10243e;
 }
 
@@ -26,36 +26,207 @@ body {
   min-height: 100vh;
 }
 
-.foundation {
+button,
+input {
+  font: inherit;
+}
+
+.login-shell {
   min-height: 100vh;
   display: grid;
-  place-items: center;
-  padding: 24px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+  gap: clamp(32px, 7vw, 100px);
+  align-items: center;
+  padding: clamp(28px, 6vw, 88px);
+  background:
+    radial-gradient(circle at 15% 20%, rgb(25 92 164 / 12%), transparent 34%),
+    #eef3f9;
 }
 
-.foundation__card {
-  width: min(680px, 100%);
-  padding: 40px;
-  border: 1px solid #d8e1ee;
-  border-radius: 20px;
-  background: #ffffff;
-  box-shadow: 0 16px 50px rgb(16 36 62 / 8%);
+.login-brand {
+  max-width: 720px;
 }
 
-.foundation__eyebrow {
-  margin: 0 0 8px;
+.login-brand__eyebrow,
+.login-card__eyebrow {
+  margin: 0 0 10px;
+  color: #1c5fa8;
   font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-weight: 800;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
-.foundation h1 {
+.login-brand h1 {
   margin: 0;
-  font-size: clamp(2rem, 6vw, 3.4rem);
+  max-width: 620px;
+  font-size: clamp(2.7rem, 7vw, 5.8rem);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
 }
 
-.foundation__status {
-  margin: 18px 0 8px;
+.login-brand__lead {
+  max-width: 620px;
+  margin: 28px 0;
+  color: #52677f;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.65;
+}
+
+.login-brand__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid #cbd8e8;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 62%);
+  color: #31506f;
+  font-size: 0.9rem;
   font-weight: 700;
+}
+
+.login-brand__status span {
+  color: #25855f;
+}
+
+.login-card {
+  width: min(100%, 500px);
+  justify-self: end;
+  padding: clamp(28px, 5vw, 48px);
+  border: 1px solid #d6e0ec;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgb(16 36 62 / 11%);
+}
+
+.login-card h2 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+}
+
+.login-card__help {
+  margin: 10px 0 28px;
+  color: #66798e;
+  line-height: 1.5;
+}
+
+.login-form {
+  display: grid;
+  gap: 20px;
+}
+
+.login-form label {
+  display: grid;
+  gap: 8px;
+  color: #263e58;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.login-form input {
+  min-height: 48px;
+  width: 100%;
+  padding: 0 14px;
+  border: 1px solid #bfcddd;
+  border-radius: 10px;
+  background: #fbfdff;
+  color: #10243e;
+  outline: none;
+}
+
+.login-form input:focus {
+  border-color: #2769ad;
+  box-shadow: 0 0 0 3px rgb(39 105 173 / 14%);
+}
+
+.login-form__error {
+  margin: -4px 0 0;
+  color: #a52b2b;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 10px;
+  background: #185b9e;
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  background: #124c87;
+}
+
+.button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.button--secondary {
+  width: 100%;
+  margin-top: 28px;
+  border: 1px solid #bdcce0;
+  background: #f6f9fc;
+  color: #24425f;
+}
+
+.button--secondary:hover:not(:disabled) {
+  background: #eaf0f7;
+}
+
+.login-card__security {
+  margin: 22px 0 0;
+  color: #718197;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.session-card__details {
+  display: grid;
+  gap: 16px;
+  margin: 28px 0 0;
+}
+
+.session-card__details div {
+  display: grid;
+  gap: 3px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e3eaf2;
+}
+
+.session-card__details dt {
+  color: #718197;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.session-card__details dd {
+  margin: 0;
+  color: #183451;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 880px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 36px;
+    padding: 32px 20px;
+  }
+
+  .login-brand h1 {
+    font-size: clamp(2.6rem, 14vw, 4.5rem);
+  }
+
+  .login-card {
+    justify-self: stretch;
+    width: 100%;
+  }
 }

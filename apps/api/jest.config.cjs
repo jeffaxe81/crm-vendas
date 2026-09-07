@@ -13,6 +13,7 @@ module.exports = {
   },
   moduleNameMapper: {
     "^@axes/contracts$": "<rootDir>/../../../packages/contracts/src/index.ts",
+    "^nestjs-pino$": "<rootDir>/../test/mocks/nestjs-pino.mock.ts",
   },
   moduleFileExtensions: ["ts", "js", "json"],
   testEnvironment: "node",

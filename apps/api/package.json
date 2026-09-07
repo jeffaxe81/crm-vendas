@@ -8,7 +8,9 @@
     "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "bootstrap:admin": "tsx src/scripts/bootstrap-admin.ts"
   },
   "dependencies": {
     "@axes/contracts": "workspace:*",
@@ -25,7 +27,9 @@
     "dotenv": "17.2.2",
     "nestjs-pino": "5.0.0",
     "pino": "10.3.1",
-    "pino-http": "11.0.0"
+    "pino-http": "11.0.0",
+    "@nestjs/jwt": "12.0.1",
+    "argon2": "0.45.1"
   },
   "devDependencies": {
     "@nestjs/testing": "12.0.1",

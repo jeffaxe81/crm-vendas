@@ -7,11 +7,11 @@
     "node": "24.20.x"
   },
   "scripts": {
-    "dev": "pnpm -r --parallel dev",
+    "dev": "pnpm --filter @axes/contracts build && pnpm -r --parallel dev",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm test:repo && pnpm -r test",
+    "test": "pnpm --filter @axes/contracts build && pnpm test:repo && pnpm -r test",
     "test:e2e": "playwright test",
     "format:check": "prettier --check .",
     "verify": "pnpm verify:foundation && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",

@@ -13,9 +13,24 @@ const ApiEnvironmentSchema = z.object({
         value.startsWith("postgresql://") || value.startsWith("postgres://"),
       "DATABASE_URL deve usar PostgreSQL."
     ),
+  WEB_ORIGIN: z.string().url().default("http://localhost:3000"),
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
+  JWT_ACCESS_SECRET: z.string().min(32),
+  REFRESH_TOKEN_PEPPER: z.string().min(32),
+  AUTH_ACCESS_TTL_SECONDS: z.coerce
+    .number()
+    .int()
+    .min(60)
+    .max(3600)
+    .default(900),
+  AUTH_REFRESH_TTL_SECONDS: z.coerce
+    .number()
+    .int()
+    .min(3600)
+    .max(60 * 60 * 24 * 90)
+    .default(60 * 60 * 24 * 30),
 });
 
 export type ApiEnvironment = z.infer<typeof ApiEnvironmentSchema>;
