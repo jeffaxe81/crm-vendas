@@ -101,12 +101,11 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
     useState<ChannelFormState>(emptyChannelForm);
   const [linkContactId, setLinkContactId] = useState<string | null>(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState("");
-  const [linkedCompanies, setLinkedCompanies] = useState<Record<string, string>>(
-    {}
-  );
+  const [linkedCompanies, setLinkedCompanies] = useState<
+    Record<string, string>
+  >({});
   const [historyContactId, setHistoryContactId] = useState<string | null>(null);
-  const [historyKind, setHistoryKind] =
-    useState<RelationshipEntryKind>("NOTE");
+  const [historyKind, setHistoryKind] = useState<RelationshipEntryKind>("NOTE");
   const [historyContent, setHistoryContent] = useState("");
 
   useEffect(() => {
@@ -179,7 +178,9 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
       setContactFormOpen(false);
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Não foi possível salvar o contato."
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível salvar o contato."
       );
     }
   }
@@ -195,7 +196,9 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
       const payload: ContactChannelInput = {
         type: channelForm.type,
         value: channelForm.value.trim(),
-        ...(channelForm.label.trim() ? { label: channelForm.label.trim() } : {}),
+        ...(channelForm.label.trim()
+          ? { label: channelForm.label.trim() }
+          : {}),
         isPrimary: channelForm.isPrimary,
       };
       const created = await apiRequest<ContactChannelRecord>(
@@ -220,7 +223,9 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
       setChannelContactId(null);
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Não foi possível salvar o canal."
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível salvar o canal."
       );
     }
   }
@@ -416,7 +421,11 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
       </div>
 
       {channelContactId ? (
-        <form className="contact-form" aria-label="Novo canal" onSubmit={createChannel}>
+        <form
+          className="contact-form"
+          aria-label="Novo canal"
+          onSubmit={createChannel}
+        >
           <label>
             <span>Tipo</span>
             <select
@@ -480,7 +489,11 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
       ) : null}
 
       {linkContactId ? (
-        <form className="contact-form" aria-label="Vincular empresa" onSubmit={linkCompany}>
+        <form
+          className="contact-form"
+          aria-label="Vincular empresa"
+          onSubmit={linkCompany}
+        >
           <label>
             <span>Empresa</span>
             <select
