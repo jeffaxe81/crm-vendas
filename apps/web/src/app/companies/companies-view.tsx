@@ -1,9 +1,6 @@
 "use client";
 
-import type {
-  CompanyCreateInput,
-  CompanyUpdateInput,
-} from "@axes/contracts";
+import type { CompanyCreateInput, CompanyUpdateInput } from "@axes/contracts";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
@@ -282,7 +279,9 @@ export function CompaniesView({ accessToken }: CompaniesViewProps) {
         </form>
       ) : null}
 
-      {loading ? <p className="companies-view__status">Carregando empresas...</p> : null}
+      {loading ? (
+        <p className="companies-view__status">Carregando empresas...</p>
+      ) : null}
 
       {!loading && visibleCompanies.length === 0 ? (
         <div className="companies-view__empty">
