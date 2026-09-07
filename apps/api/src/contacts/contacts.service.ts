@@ -73,6 +73,9 @@ export class ContactsService {
           channels: {
             orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
           },
+          relationshipEntries: {
+            orderBy: [{ occurredAt: "desc" }, { createdAt: "desc" }],
+          },
         },
         orderBy,
         skip: (query.page - 1) * query.limit,
