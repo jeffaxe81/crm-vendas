@@ -27,7 +27,8 @@ body {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -213,6 +214,412 @@ input {
   overflow-wrap: anywhere;
 }
 
+.crm-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 272px minmax(0, 1fr);
+  background: #f3f6fa;
+}
+
+.crm-shell__sidebar {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px 22px;
+  border-right: 1px solid #d9e2ec;
+  background: #10243e;
+  color: #ffffff;
+}
+
+.crm-shell__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.crm-shell__brand-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #185b9e;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.crm-shell__brand p {
+  margin: 0;
+}
+
+.crm-shell__brand-eyebrow {
+  color: #a9bdd2;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.crm-shell__brand-title {
+  margin-top: 2px !important;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.crm-shell__organization {
+  display: grid;
+  gap: 5px;
+  padding: 14px;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 5%);
+}
+
+.crm-shell__organization span {
+  color: #a9bdd2;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.crm-shell__organization strong {
+  overflow-wrap: anywhere;
+}
+
+.crm-shell__nav {
+  display: grid;
+  gap: 8px;
+}
+
+.crm-shell__nav button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #dce7f2;
+  font-weight: 750;
+  text-align: left;
+  cursor: pointer;
+}
+
+.crm-shell__nav button:hover,
+.crm-shell__nav button.is-active {
+  background: rgb(255 255 255 / 11%);
+  color: #ffffff;
+}
+
+.crm-shell__session {
+  display: grid;
+  gap: 7px;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgb(255 255 255 / 14%);
+}
+
+.crm-shell__session p {
+  margin: 0;
+  color: #77d1a9;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.crm-shell__session span {
+  color: #b9c9d9;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.crm-shell__session button {
+  min-height: 40px;
+  margin-top: 8px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 9px;
+  background: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.crm-shell__workspace {
+  min-width: 0;
+}
+
+.crm-shell__topbar {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px clamp(20px, 4vw, 48px);
+  border-bottom: 1px solid #dce4ee;
+  background: #ffffff;
+}
+
+.crm-shell__topbar p,
+.crm-shell__topbar strong {
+  margin: 0;
+}
+
+.crm-shell__topbar p {
+  color: #6d8096;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.crm-shell__topbar span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #eef4fb;
+  color: #315d8c;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.crm-shell__content {
+  padding: clamp(22px, 4vw, 48px);
+}
+
+.companies-view {
+  display: grid;
+  gap: 24px;
+}
+
+.companies-view__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.companies-view__header h1,
+.companies-view__header p {
+  margin: 0;
+}
+
+.companies-view__header h1 {
+  margin-top: 4px;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: -0.04em;
+}
+
+.companies-view__header > div > p:last-child {
+  max-width: 620px;
+  margin-top: 8px;
+  color: #657a91;
+  line-height: 1.55;
+}
+
+.companies-view__eyebrow,
+.company-card__eyebrow {
+  color: #1c5fa8;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.companies-view__primary {
+  padding: 0 20px;
+  white-space: nowrap;
+}
+
+.companies-view__toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px;
+  border: 1px solid #dbe4ee;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.companies-view__toolbar label {
+  width: min(100%, 560px);
+  display: grid;
+  gap: 7px;
+  color: #263e58;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.companies-view__toolbar input,
+.company-form input {
+  min-height: 44px;
+  width: 100%;
+  padding: 0 13px;
+  border: 1px solid #bfcddd;
+  border-radius: 9px;
+  background: #fbfdff;
+  color: #10243e;
+  outline: none;
+}
+
+.companies-view__toolbar input:focus,
+.company-form input:focus {
+  border-color: #2769ad;
+  box-shadow: 0 0 0 3px rgb(39 105 173 / 14%);
+}
+
+.companies-view__toolbar > span,
+.companies-view__status {
+  color: #73859a;
+  font-size: 0.85rem;
+}
+
+.companies-view__error {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #efcaca;
+  border-radius: 10px;
+  background: #fff6f6;
+  color: #9d2d2d;
+}
+
+.company-form {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid #cbd9e8;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 14px 40px rgb(16 36 62 / 7%);
+}
+
+.company-form__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.company-form__heading p,
+.company-form__heading h2 {
+  margin: 0;
+}
+
+.company-form__heading p {
+  color: #6d8096;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.company-form__heading h2 {
+  margin-top: 3px;
+}
+
+.company-form__heading > button,
+.company-card > button {
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid #c7d4e3;
+  border-radius: 8px;
+  background: #f7f9fc;
+  color: #27445f;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.company-form__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.company-form__fields label {
+  display: grid;
+  gap: 7px;
+  color: #263e58;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.company-form__submit {
+  width: fit-content;
+  min-width: 170px;
+  padding: 0 18px;
+}
+
+.companies-view__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.company-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid #dbe4ee;
+  border-radius: 15px;
+  background: #ffffff;
+}
+
+.company-card p,
+.company-card h2 {
+  margin: 0;
+}
+
+.company-card h2 {
+  margin-top: 4px;
+  font-size: 1.05rem;
+}
+
+.company-card > div > p:last-child:not(.company-card__eyebrow) {
+  margin-top: 6px;
+  color: #6e8094;
+  font-size: 0.9rem;
+}
+
+.companies-view__empty,
+.crm-placeholder {
+  display: grid;
+  gap: 7px;
+  padding: 28px;
+  border: 1px dashed #bdccdc;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #62768c;
+}
+
+.crm-placeholder p,
+.crm-placeholder h1,
+.crm-placeholder span {
+  margin: 0;
+}
+
+.crm-placeholder p {
+  color: #1c5fa8;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.crm-placeholder h1 {
+  color: #10243e;
+  font-size: 2.2rem;
+}
+
+@media (max-width: 980px) {
+  .crm-shell {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .companies-view__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 880px) {
   .login-shell {
     grid-template-columns: 1fr;
@@ -228,5 +635,53 @@ input {
   .login-card {
     justify-self: stretch;
     width: 100%;
+  }
+
+  .crm-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .crm-shell__sidebar {
+    min-height: auto;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .crm-shell__nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .crm-shell__nav button {
+    text-align: center;
+  }
+
+  .crm-shell__session {
+    margin-top: 0;
+  }
+
+  .crm-shell__topbar {
+    min-height: 60px;
+    padding: 12px 18px;
+  }
+
+  .crm-shell__content {
+    padding: 22px 18px 32px;
+  }
+
+  .companies-view__header,
+  .companies-view__toolbar,
+  .company-form__heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .companies-view__primary,
+  .companies-view__toolbar label,
+  .company-form__submit {
+    width: 100%;
+  }
+
+  .company-form__fields {
+    grid-template-columns: 1fr;
   }
 }
