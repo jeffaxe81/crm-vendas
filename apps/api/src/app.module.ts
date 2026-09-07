@@ -7,6 +7,7 @@ import { AuthModule } from "./auth/auth.module";
 import { AuthorizationModule } from "./authorization/authorization.module";
 import { CompaniesModule } from "./companies/companies.module";
 import { parseApiEnvironment } from "./config/environment";
+import { ContactsModule } from "./contacts/contacts.module";
 import { HealthModule } from "./health/health.module";
 import { createLoggerOptions } from "./observability/logger.config";
 import { RequestIdMiddleware } from "./observability/request-id.middleware";
@@ -26,6 +27,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     AuthorizationModule,
     OrganizationUsersModule,
     CompaniesModule,
+    ContactsModule,
   ],
 })
 export class AppModule implements NestModule {
