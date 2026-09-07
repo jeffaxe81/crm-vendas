@@ -1,0 +1,39 @@
+name: Format Cycle 2 companies once
+
+on:
+  push:
+    branches:
+      - cycle-2-crm-core
+    paths:
+      - .github/workflows/format-cycle2-companies-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: cycle-2-crm-core
+      - name: Configure Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Format companies files
+        run: pnpm exec prettier --write apps/api/src/companies/companies.controller.ts apps/api/src/companies/companies.service.ts
+      - name: Commit formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/api/src/companies/companies.controller.ts apps/api/src/companies/companies.service.ts
+          git diff --cached --quiet || git commit -m "style(api): format companies module"
+          git push origin HEAD:cycle-2-crm-core
