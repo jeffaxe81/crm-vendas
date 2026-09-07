@@ -335,12 +335,20 @@ describe("Cycle 2 company-contact relationships and history API", () => {
       })
       .expect(400);
 
+    const otherCompany = await prisma.company.create({
+      data: {
+        organizationId: other.id,
+        legalName: "Empresa de Outra Organização",
+        createdBy: user.id,
+        updatedBy: user.id,
+      },
+    });
+
     await prisma.relationshipEntry.create({
       data: {
         organizationId: other.id,
         authorUserId: user.id,
-        companyId: null,
-        contactId: null,
+        companyId: otherCompany.id,
         kind: "OTHER",
         content: "Registro de outra organização",
         occurredAt: new Date("2026-09-06T21:00:00-03:00"),
