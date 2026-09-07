@@ -116,14 +116,15 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
       setError("");
 
       try {
-        const contactResult = await apiRequest<ListResponse<ContactRecord>>(
-          "/contacts?page=1&limit=20",
-          { accessToken }
-        );
-        const companyResult = await apiRequest<ListResponse<CompanyRecord>>(
-          "/companies?page=1&limit=100",
-          { accessToken }
-        );
+        const [contactResult, companyResult] = await Promise.all([
+          apiRequest<ListResponse<ContactRecord>>("/contacts?page=1&limit=20", {
+            accessToken,
+          }),
+          apiRequest<ListResponse<CompanyRecord>>(
+            "/companies?page=1&limit=100",
+            { accessToken }
+          ),
+        ]);
 
         if (active) {
           setContacts(contactResult.items);
@@ -285,7 +286,6 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
         }
       );
       setHistory(current => [...current, created]);
-      setHistoryContactId(null);
       setHistoryKind("NOTE");
       setHistoryContent("");
     } catch (cause) {
