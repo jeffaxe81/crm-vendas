@@ -160,11 +160,7 @@ export class CustomFieldsService {
   ) {
     const [, definition] = await Promise.all([
       this.requireCompany(companyId, context.organizationId),
-      this.requireDefinition(
-        definitionId,
-        context.organizationId,
-        "COMPANY"
-      ),
+      this.requireDefinition(definitionId, context.organizationId, "COMPANY"),
     ]);
     const validated = this.validateValue(definition, value);
     const existing = await this.prisma.companyCustomFieldValue.findFirst({
@@ -217,11 +213,7 @@ export class CustomFieldsService {
   ): Promise<void> {
     await Promise.all([
       this.requireCompany(companyId, context.organizationId),
-      this.requireDefinition(
-        definitionId,
-        context.organizationId,
-        "COMPANY"
-      ),
+      this.requireDefinition(definitionId, context.organizationId, "COMPANY"),
     ]);
 
     const existing = await this.prisma.companyCustomFieldValue.findFirst({
@@ -271,11 +263,7 @@ export class CustomFieldsService {
   ) {
     const [, definition] = await Promise.all([
       this.requireContact(contactId, context.organizationId),
-      this.requireDefinition(
-        definitionId,
-        context.organizationId,
-        "CONTACT"
-      ),
+      this.requireDefinition(definitionId, context.organizationId, "CONTACT"),
     ]);
     const validated = this.validateValue(definition, value);
     const existing = await this.prisma.contactCustomFieldValue.findFirst({
@@ -328,11 +316,7 @@ export class CustomFieldsService {
   ): Promise<void> {
     await Promise.all([
       this.requireContact(contactId, context.organizationId),
-      this.requireDefinition(
-        definitionId,
-        context.organizationId,
-        "CONTACT"
-      ),
+      this.requireDefinition(definitionId, context.organizationId, "CONTACT"),
     ]);
 
     const existing = await this.prisma.contactCustomFieldValue.findFirst({
@@ -394,12 +378,17 @@ export class CustomFieldsService {
     value: unknown
   ): Prisma.InputJsonValue {
     try {
-      return validateCustomFieldValue(definition, value) as Prisma.InputJsonValue;
+      return validateCustomFieldValue(
+        definition,
+        value
+      ) as Prisma.InputJsonValue;
     } catch (error) {
       throw new BadRequestException({
         code: "VALIDATION_ERROR",
         message:
-          error instanceof Error ? error.message : "Valor customizado inválido.",
+          error instanceof Error
+            ? error.message
+            : "Valor customizado inválido.",
       });
     }
   }

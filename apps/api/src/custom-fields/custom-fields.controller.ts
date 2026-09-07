@@ -100,7 +100,10 @@ export class CustomFieldsController {
 
   @Get()
   @RequirePermissions("company.read", "contact.read")
-  list(@Query("scope") scope: string | undefined, @Req() request: CustomFieldRequest) {
+  list(
+    @Query("scope") scope: string | undefined,
+    @Req() request: CustomFieldRequest
+  ) {
     const parsed = CustomFieldScopeSchema.safeParse(scope);
     if (!parsed.success) {
       throw validationError("Escopo de campo customizável inválido.");
