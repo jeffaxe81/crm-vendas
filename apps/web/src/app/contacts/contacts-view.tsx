@@ -40,6 +40,7 @@ type ContactRecord = {
   createdAt: string;
   updatedAt: string;
   channels?: ContactChannelRecord[];
+  relationshipEntries?: RelationshipEntryRecord[];
 };
 
 type CompanyRecord = {
@@ -160,7 +161,12 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
               ...current.filter(contact => !loadedIds.has(contact.id)),
             ];
           });
-          setCompanies(companyResult.items);
+          setHistory(
+  contactResult.items.flatMap(
+    contact => contact.relationshipEntries ?? []
+  )
+);
+setCompanies(companyResult.items);
         }
       } catch (cause) {
         if (active) {
