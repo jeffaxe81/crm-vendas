@@ -1,6 +1,6 @@
 # Cycle 2 — Working Checkpoint
 
-Última atualização: 2026-09-07 14:29 America/Sao_Paulo
+Última atualização: 2026-09-07 14:41 America/Sao_Paulo
 
 ## Branch
 
@@ -13,8 +13,9 @@
 ## Último ponto tecnicamente validado
 
 - Task 8 — Contatos Web e relacionamento: **100% concluída**
-- SHA validado: `b4ae7042b4ae9e1393d47f488a697d8964572baf`
-- Gate: GitHub Actions run **#257** (`34128540924`)
+- Task 9 — jornada E2E e restauração de sessão: **GREEN**
+- SHA validado: `1a5c51cfac0ad4c7a3023ceebe899d3c5b37ddb5`
+- Gate: GitHub Actions run **#277** (`34148399712`)
 - Resultado: **GREEN integral**
   - install locked dependencies: success
   - Prisma generate: success
@@ -25,7 +26,7 @@
   - Compose contract: success
   - Docker build API/Web: success
 
-## Funcionalidades encerradas até este checkpoint
+## Funcionalidades validadas até este checkpoint
 
 - Empresas Web integrada ao App Shell
 - Contatos Web integrado ao App Shell
@@ -36,21 +37,46 @@
 - tags: link/unlink
 - campos customizados CONTACT: carregar, editar e persistir
 - navegação autenticada real para Contatos
+- restauração da sessão por refresh cookie após reload
+- proteção contra rotação duplicada de refresh em React Strict Mode
+- E2E CRM Core:
+  - login
+  - criação de empresa
+  - criação de contato independente
+  - inclusão de canal de e-mail
+  - vínculo empresa–contato
+  - registro de histórico
+  - reload
+  - verificação de empresa, contato, canal e histórico persistidos
+
+## Revisão de segurança em andamento
+
+Confirmado por código e testes de integração:
+
+- Empresas: leitura e mutação por ID isoladas por `organizationId`
+- Contatos e canais: leitura e mutação isoladas por `organizationId`
+- Empresa–contato: ambos os lados precisam existir na organização ativa
+- Histórico: entidades excluídas ou de outra organização são rejeitadas
+- Tags: tag e alvo são validados na organização ativa
+- Campos customizados: definição, escopo e alvo são validados por organização
+- VIEWER: escrita de Empresas e Contatos retorna 403
+
+Ainda falta fechar formalmente a revisão de auditoria sem segredos e consolidar
+a evidência final da Task 9.
 
 ## Próximo ponto exato
 
-Task 9 — E2E, cobertura adversarial, documentação e gate final.
+Task 9 — concluir documentação, revisão de segurança e gate final do Cycle 2.
 
-Próxima ação TDD:
+Próximas ações:
 
-1. criar `tests/e2e/crm-core.spec.ts` com a jornada completa;
-2. rodar RED e confirmar a primeira falha comportamental;
-3. implementar somente o necessário para GREEN;
-4. atualizar documentação e evidências;
-5. executar gate integral fresco em um único SHA;
-6. revisão final de segurança;
-7. somente após GREEN integral e aprovação pós-testes: checkpoint de release
-   `v0.2.0-crm-core` e merge.
+1. confirmar auditoria de autenticação sem senha/hash/token em evidência automatizada;
+2. atualizar `README.md`, `CHANGELOG.md` e `docs/testing/README.md` para o Cycle 2;
+3. atualizar o checklist do PR #3;
+4. executar um gate integral fresco no SHA final de documentação/revisão;
+5. apresentar o relatório pós-testes para aprovação;
+6. somente após aprovação: criar `v0.2.0-crm-core` no SHA validado e integrar ao
+   `main` conforme a regra do Prompt Master.
 
 ## Regra de checkpoint operacional
 
