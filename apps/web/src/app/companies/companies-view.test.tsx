@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { CrmShell } from "../crm-shell";
@@ -21,7 +27,12 @@ const session = {
     id: "33333333-3333-4333-8333-333333333333",
     role: "ADMIN" as const,
   },
-  permissions: ["company.read", "company.write", "contact.read", "contact.write"],
+  permissions: [
+    "company.read",
+    "company.write",
+    "contact.read",
+    "contact.write",
+  ],
 };
 
 const initialCompany = {
@@ -68,8 +79,12 @@ describe("Cycle 2 CRM shell and companies view", () => {
 
     expect(screen.getByText("Axesistemas")).toBeInTheDocument();
     expect(screen.getByText("Administrador Axes")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Empresas" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Contatos" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Empresas" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Contatos" })
+    ).toBeInTheDocument();
     expect(screen.getByText("Conteúdo CRM")).toBeInTheDocument();
   });
 
@@ -97,13 +112,20 @@ describe("Cycle 2 CRM shell and companies view", () => {
 
     render(<CompaniesView accessToken={session.accessToken} />);
 
-    expect(screen.getByRole("searchbox", { name: "Buscar empresas" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Nova empresa" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("searchbox", { name: "Buscar empresas" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Nova empresa" })
+    ).toBeInTheDocument();
     expect(await screen.findByText("Empresa Inicial Ltda")).toBeInTheDocument();
 
-    fireEvent.change(screen.getByRole("searchbox", { name: "Buscar empresas" }), {
-      target: { value: "Inicial" },
-    });
+    fireEvent.change(
+      screen.getByRole("searchbox", { name: "Buscar empresas" }),
+      {
+        target: { value: "Inicial" },
+      }
+    );
     expect(screen.getByText("Empresa Inicial Ltda")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Nova empresa" }));
@@ -114,7 +136,9 @@ describe("Cycle 2 CRM shell and companies view", () => {
     fireEvent.change(within(createForm).getByLabelText("Nome fantasia"), {
       target: { value: "Nova Empresa" },
     });
-    fireEvent.click(within(createForm).getByRole("button", { name: "Salvar empresa" }));
+    fireEvent.click(
+      within(createForm).getByRole("button", { name: "Salvar empresa" })
+    );
 
     expect(await screen.findByText("Nova Empresa Ltda")).toBeInTheDocument();
     expect(fetchMock).toHaveBeenNthCalledWith(
@@ -128,15 +152,21 @@ describe("Cycle 2 CRM shell and companies view", () => {
       })
     );
 
-    const initialRow = screen.getByText("Empresa Inicial Ltda").closest("article");
+    const initialRow = screen
+      .getByText("Empresa Inicial Ltda")
+      .closest("article");
     expect(initialRow).not.toBeNull();
-    fireEvent.click(within(initialRow as HTMLElement).getByRole("button", { name: "Editar" }));
+    fireEvent.click(
+      within(initialRow as HTMLElement).getByRole("button", { name: "Editar" })
+    );
 
     const editForm = screen.getByRole("form", { name: "Editar empresa" });
     fireEvent.change(within(editForm).getByLabelText("Razão social"), {
       target: { value: "Empresa Inicial Atualizada Ltda" },
     });
-    fireEvent.click(within(editForm).getByRole("button", { name: "Salvar alterações" }));
+    fireEvent.click(
+      within(editForm).getByRole("button", { name: "Salvar alterações" })
+    );
 
     expect(
       await screen.findByText("Empresa Inicial Atualizada Ltda")
