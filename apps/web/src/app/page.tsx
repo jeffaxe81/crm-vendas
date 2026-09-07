@@ -4,7 +4,7 @@ import {
   AuthSessionResponseSchema,
   type AuthSessionResponse,
 } from "@axes/contracts";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { authApiRequest } from "../lib/api-client";
 import { CompaniesView } from "./companies/companies-view";
@@ -18,26 +18,27 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const restoreSessionRequest = useRef<Promise<AuthSessionResponse | null> | null>(
+    null
+  );
 
   useEffect(() => {
     let active = true;
 
-    async function restoreSession() {
-      try {
-        const payload = await authApiRequest<unknown>("/auth/refresh", {
-          method: "POST",
-        });
-
-        if (active) {
-          setSession(AuthSessionResponseSchema.parse(payload));
-          setActiveSection("companies");
-        }
-      } catch {
-        // No active refresh cookie: keep the login form available.
-      }
+    if (!restoreSessionRequest.current) {
+      restoreSessionRequest.current = authApiRequest<unknown>("/auth/refresh", {
+        method: "POST",
+      })
+        .then(payload => AuthSessionResponseSchema.parse(payload))
+        .catch(() => null);
     }
 
-    void restoreSession();
+    void restoreSessionRequest.current.then(restoredSession => {
+      if (active && restoredSession) {
+        setSession(restoredSession);
+        setActiveSection("companies");
+      }
+    });
 
     return () => {
       active = false;
