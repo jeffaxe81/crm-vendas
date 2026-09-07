@@ -5,6 +5,7 @@ import { LoggerModule } from "nestjs-pino";
 import { AuditAdminModule } from "./audit/audit-admin.module";
 import { AuthModule } from "./auth/auth.module";
 import { AuthorizationModule } from "./authorization/authorization.module";
+import { CompaniesModule } from "./companies/companies.module";
 import { parseApiEnvironment } from "./config/environment";
 import { HealthModule } from "./health/health.module";
 import { createLoggerOptions } from "./observability/logger.config";
@@ -24,6 +25,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     AuditAdminModule,
     AuthorizationModule,
     OrganizationUsersModule,
+    CompaniesModule,
   ],
 })
 export class AppModule implements NestModule {
