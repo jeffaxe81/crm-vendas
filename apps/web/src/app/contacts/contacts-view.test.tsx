@@ -239,6 +239,75 @@ describe("Cycle 2 contacts and relationship workspace", () => {
     );
   });
 
+  it("links an available tag to a contact", async () => {
+    const tag = {
+      id: "91000000-0000-4000-8000-000000000001",
+      organizationId,
+      name: "Cliente VIP",
+      normalizedName: "cliente vip",
+      createdAt: "2026-09-07T10:30:00.000Z",
+      updatedAt: "2026-09-07T10:30:00.000Z",
+    };
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        response({ items: [contact], page: 1, limit: 20, total: 1 })
+      )
+      .mockResolvedValueOnce(
+        response({ items: [company], page: 1, limit: 100, total: 1 })
+      )
+      .mockResolvedValueOnce(
+        response({ items: [tag], page: 1, limit: 100, total: 1 })
+      )
+      .mockResolvedValueOnce(
+        response({
+          id: "92000000-0000-4000-8000-000000000001",
+          organizationId,
+          contactId: contact.id,
+          tagId: tag.id,
+        }, 201)
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<ContactsView accessToken={accessToken} />);
+
+    const contactCard = (await screen.findByText("Ana Silva")).closest(
+      "article"
+    );
+    expect(contactCard).not.toBeNull();
+
+    fireEvent.click(
+      within(contactCard as HTMLElement).getByRole("button", {
+        name: "Gerenciar tags",
+      })
+    );
+
+    const tagEditor = await screen.findByLabelText("Tags do contato Ana Silva");
+    fireEvent.change(within(tagEditor).getByLabelText("Adicionar tag"), {
+      target: { value: tag.id },
+    });
+    fireEvent.click(
+      within(tagEditor).getByRole("button", { name: "Vincular tag" })
+    );
+
+    expect(await within(tagEditor).findByText("Cliente VIP")).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      3,
+      expect.stringContaining("/tags?page=1&limit=100"),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: `Bearer ${accessToken}`,
+        }),
+      })
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      4,
+      expect.stringContaining(`/contacts/${contact.id}/tags/${tag.id}`),
+      expect.objectContaining({ method: "POST" })
+    );
+  });
+
   it("renders accessible controls for every supported custom field type", () => {
     render(
       <CustomFieldsEditor
