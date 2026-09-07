@@ -8,6 +8,10 @@ import type {
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import {
+  CustomFieldsEditor,
+  type CustomFieldDefinitionView,
+} from "../shared/custom-fields-editor";
 import { TagEditor, type TagEditorItem } from "../shared/tag-editor";
 
 type ContactChannelRecord = {
@@ -58,6 +62,11 @@ type RelationshipEntryRecord = {
   kind: RelationshipEntryKind;
   content: string;
   occurredAt: string;
+};
+
+type ContactCustomFieldValueRecord = {
+  definitionId: string;
+  value: unknown;
 };
 
 type ContactsViewProps = {
@@ -112,6 +121,15 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
   const [availableTags, setAvailableTags] = useState<TagEditorItem[]>([]);
   const [linkedTagIdsByContact, setLinkedTagIdsByContact] = useState<
     Record<string, string[]>
+  >({});
+  const [customFieldsContactId, setCustomFieldsContactId] = useState<
+    string | null
+  >(null);
+  const [customFieldDefinitions, setCustomFieldDefinitions] = useState<
+    CustomFieldDefinitionView[]
+  >([]);
+  const [customFieldValues, setCustomFieldValues] = useState<
+    Record<string, unknown>
   >({});
 
   useEffect(() => {
@@ -383,8 +401,69 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
     }
   }
 
+  async function openCustomFields(contactId: string) {
+    setError("");
+
+    try {
+      const [definitions, storedValues] = await Promise.all([
+        apiRequest<CustomFieldDefinitionView[]>(
+          "/custom-fields?scope=CONTACT",
+          { accessToken }
+        ),
+        apiRequest<ContactCustomFieldValueRecord[]>(
+          `/contacts/${contactId}/custom-fields`,
+          { accessToken }
+        ),
+      ]);
+      setCustomFieldDefinitions(definitions);
+      setCustomFieldValues(
+        Object.fromEntries(
+          storedValues.map(stored => [stored.definitionId, stored.value])
+        )
+      );
+      setCustomFieldsContactId(contactId);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível carregar os campos customizados."
+      );
+    }
+  }
+
+  async function saveCustomFields() {
+    if (!customFieldsContactId) {
+      return;
+    }
+
+    setError("");
+    try {
+      await Promise.all(
+        Object.entries(customFieldValues).map(([definitionId, value]) =>
+          apiRequest(
+            `/contacts/${customFieldsContactId}/custom-fields/${definitionId}`,
+            {
+              accessToken,
+              method: "PUT",
+              body: { value },
+            }
+          )
+        )
+      );
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível salvar os campos customizados."
+      );
+    }
+  }
+
   const taggedContact = tagContactId
     ? contacts.find(contact => contact.id === tagContactId)
+    : undefined;
+  const customFieldsContact = customFieldsContactId
+    ? contacts.find(contact => contact.id === customFieldsContactId)
     : undefined;
 
   return (
@@ -511,6 +590,12 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
               >
                 Gerenciar tags
               </button>
+              <button
+                type="button"
+                onClick={() => void openCustomFields(contact.id)}
+              >
+                Campos customizados
+              </button>
             </div>
           </article>
         ))}
@@ -527,6 +612,31 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
             onLink={tagId => void linkTag(tagId)}
             onUnlink={tagId => void unlinkTag(tagId)}
           />
+        </section>
+      ) : null}
+
+      {customFieldsContact ? (
+        <section
+          className="contact-custom-fields"
+          aria-label={`Campos customizados do contato ${customFieldsContact.fullName}`}
+        >
+          <CustomFieldsEditor
+            definitions={customFieldDefinitions}
+            values={customFieldValues}
+            onChange={(definitionId, value) =>
+              setCustomFieldValues(current => ({
+                ...current,
+                [definitionId]: value,
+              }))
+            }
+          />
+          <button
+            type="button"
+            className="button"
+            onClick={() => void saveCustomFields()}
+          >
+            Salvar campos customizados
+          </button>
         </section>
       ) : null}
 
