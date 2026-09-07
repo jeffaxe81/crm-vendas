@@ -241,7 +241,7 @@ describe("Cycle 2 contacts and relationship workspace", () => {
     );
   });
 
-  it("links an available tag to a contact", async () => {
+  it("links and unlinks an available tag on a contact", async () => {
     const tag = {
       id: "91000000-0000-4000-8000-000000000001",
       organizationId,
@@ -272,7 +272,8 @@ describe("Cycle 2 contacts and relationship workspace", () => {
           },
           201
         )
-      );
+      )
+      .mockResolvedValueOnce(response(undefined, 204));
     vi.stubGlobal("fetch", fetchMock);
 
     render(<ContactsView accessToken={accessToken} />);
@@ -314,6 +315,21 @@ describe("Cycle 2 contacts and relationship workspace", () => {
       4,
       expect.stringContaining(`/contacts/${contact.id}/tags/${tag.id}`),
       expect.objectContaining({ method: "POST" })
+    );
+
+    fireEvent.click(
+      within(tagEditor).getByRole("button", {
+        name: "Remover tag Cliente VIP",
+      })
+    );
+
+    expect(
+      await within(tagEditor).findByText("Nenhuma tag vinculada.")
+    ).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      5,
+      expect.stringContaining(`/contacts/${contact.id}/tags/${tag.id}`),
+      expect.objectContaining({ method: "DELETE" })
     );
   });
 
