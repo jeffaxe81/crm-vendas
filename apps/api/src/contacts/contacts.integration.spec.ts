@@ -389,15 +389,15 @@ describe("Cycle 2 contacts API", () => {
     });
 
     expect(afterCreate).toHaveLength(3);
-    expect(afterCreate.find(item => item.id === firstEmail.body.id)?.isPrimary).toBe(
-      false
-    );
-    expect(afterCreate.find(item => item.id === secondEmail.body.id)?.isPrimary).toBe(
-      true
-    );
-    expect(afterCreate.find(item => item.id === mobile.body.id)?.isPrimary).toBe(
-      true
-    );
+    expect(
+      afterCreate.find(item => item.id === firstEmail.body.id)?.isPrimary
+    ).toBe(false);
+    expect(
+      afterCreate.find(item => item.id === secondEmail.body.id)?.isPrimary
+    ).toBe(true);
+    expect(
+      afterCreate.find(item => item.id === mobile.body.id)?.isPrimary
+    ).toBe(true);
 
     await request(app.getHttpServer())
       .patch(`/api/v1/contacts/${contactA.id}/channels/${firstEmail.body.id}`)
@@ -422,9 +422,9 @@ describe("Cycle 2 contacts API", () => {
       value: "first-updated@example.test",
       isPrimary: true,
     });
-    expect(emails.find(item => item.id === secondEmail.body.id)?.isPrimary).toBe(
-      false
-    );
+    expect(
+      emails.find(item => item.id === secondEmail.body.id)?.isPrimary
+    ).toBe(false);
 
     await request(app.getHttpServer())
       .post(`/api/v1/contacts/${contactB.id}/channels`)
