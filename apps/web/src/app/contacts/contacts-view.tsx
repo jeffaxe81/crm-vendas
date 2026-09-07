@@ -127,7 +127,15 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
         ]);
 
         if (active) {
-          setContacts(contactResult.items);
+          setContacts(current => {
+            const loadedIds = new Set(
+              contactResult.items.map(contact => contact.id)
+            );
+            return [
+              ...contactResult.items,
+              ...current.filter(contact => !loadedIds.has(contact.id)),
+            ];
+          });
           setCompanies(companyResult.items);
         }
       } catch (cause) {
