@@ -8,6 +8,7 @@ import type {
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { TagEditor, type TagEditorItem } from "../shared/tag-editor";
 
 type ContactChannelRecord = {
   id: string;
@@ -107,6 +108,11 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
   const [historyContactId, setHistoryContactId] = useState<string | null>(null);
   const [historyKind, setHistoryKind] = useState<RelationshipEntryKind>("NOTE");
   const [historyContent, setHistoryContent] = useState("");
+  const [tagContactId, setTagContactId] = useState<string | null>(null);
+  const [availableTags, setAvailableTags] = useState<TagEditorItem[]>([]);
+  const [linkedTagIdsByContact, setLinkedTagIdsByContact] = useState<
+    Record<string, string[]>
+  >({});
 
   useEffect(() => {
     let active = true;
@@ -305,6 +311,56 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
     }
   }
 
+  async function openTagEditor(contactId: string) {
+    setError("");
+
+    try {
+      const result = await apiRequest<ListResponse<TagEditorItem>>(
+        "/tags?page=1&limit=100",
+        { accessToken }
+      );
+      setAvailableTags(result.items);
+      setTagContactId(contactId);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível carregar as tags."
+      );
+    }
+  }
+
+  async function linkTag(tagId: string) {
+    if (!tagContactId) {
+      return;
+    }
+
+    setError("");
+    try {
+      await apiRequest(`/contacts/${tagContactId}/tags/${tagId}`, {
+        accessToken,
+        method: "POST",
+        body: {},
+      });
+      setLinkedTagIdsByContact(current => ({
+        ...current,
+        [tagContactId]: Array.from(
+          new Set([...(current[tagContactId] ?? []), tagId])
+        ),
+      }));
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível vincular a tag."
+      );
+    }
+  }
+
+  const taggedContact = tagContactId
+    ? contacts.find(contact => contact.id === tagContactId)
+    : undefined;
+
   return (
     <section className="contacts-view" aria-labelledby="contacts-title">
       <header className="contacts-view__header">
@@ -423,10 +479,30 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
               >
                 Registrar histórico
               </button>
+              <button
+                type="button"
+                onClick={() => void openTagEditor(contact.id)}
+              >
+                Gerenciar tags
+              </button>
             </div>
           </article>
         ))}
       </div>
+
+      {taggedContact ? (
+        <section
+          className="contact-tags"
+          aria-label={`Tags do contato ${taggedContact.fullName}`}
+        >
+          <TagEditor
+            availableTags={availableTags}
+            linkedTagIds={linkedTagIdsByContact[taggedContact.id] ?? []}
+            onLink={tagId => void linkTag(tagId)}
+            onUnlink={() => undefined}
+          />
+        </section>
+      ) : null}
 
       {channelContactId ? (
         <form
