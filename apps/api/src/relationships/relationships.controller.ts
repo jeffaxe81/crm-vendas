@@ -150,7 +150,9 @@ export class RelationshipEntriesController {
     );
   }
 
-  private parseListQuery(query: Record<string, unknown>): RelationshipListQuery {
+  private parseListQuery(
+    query: Record<string, unknown>
+  ): RelationshipListQuery {
     const parsed = RelationshipListQuerySchema.safeParse(query);
     if (!parsed.success) {
       throw new BadRequestException({
