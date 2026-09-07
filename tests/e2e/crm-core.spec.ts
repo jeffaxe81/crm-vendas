@@ -73,7 +73,10 @@ test("CRM core journey persists company contact channel link and history", async
 
   await page.reload();
 
-  await expect(page.getByRole("button", { name: "Contatos" })).toBeVisible();
+  await expect(page.getByLabel("Acesso ao CRM")).toBeVisible();
+  await expect(
+    page.getByText(companyName, { exact: true }).first()
+  ).toBeVisible();
   await page.getByRole("button", { name: "Contatos" }).click();
 
   const persistedCard = page
