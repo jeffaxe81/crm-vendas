@@ -357,6 +357,32 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
     }
   }
 
+  async function unlinkTag(tagId: string) {
+    if (!tagContactId) {
+      return;
+    }
+
+    setError("");
+    try {
+      await apiRequest(`/contacts/${tagContactId}/tags/${tagId}`, {
+        accessToken,
+        method: "DELETE",
+      });
+      setLinkedTagIdsByContact(current => ({
+        ...current,
+        [tagContactId]: (current[tagContactId] ?? []).filter(
+          linkedTagId => linkedTagId !== tagId
+        ),
+      }));
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível remover a tag."
+      );
+    }
+  }
+
   const taggedContact = tagContactId
     ? contacts.find(contact => contact.id === tagContactId)
     : undefined;
@@ -499,7 +525,7 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
             availableTags={availableTags}
             linkedTagIds={linkedTagIdsByContact[taggedContact.id] ?? []}
             onLink={tagId => void linkTag(tagId)}
-            onUnlink={() => undefined}
+            onUnlink={tagId => void unlinkTag(tagId)}
           />
         </section>
       ) : null}
