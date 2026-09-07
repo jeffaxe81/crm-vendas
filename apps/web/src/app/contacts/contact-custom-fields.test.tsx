@@ -1,4 +1,11 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ContactsView } from "./contacts-view";
@@ -77,7 +84,9 @@ describe("Cycle 2 contact custom fields persistence", () => {
 
     render(<ContactsView accessToken={accessToken} />);
 
-    const contactCard = (await screen.findByText("Ana Silva")).closest("article");
+    const contactCard = (await screen.findByText("Ana Silva")).closest(
+      "article"
+    );
     expect(contactCard).not.toBeNull();
 
     fireEvent.click(
