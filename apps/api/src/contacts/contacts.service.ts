@@ -69,6 +69,11 @@ export class ContactsService {
     const [items, total] = await Promise.all([
       this.prisma.contact.findMany({
         where,
+        include: {
+          channels: {
+            orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
+          },
+        },
         orderBy,
         skip: (query.page - 1) * query.limit,
         take: query.limit,
