@@ -16,12 +16,54 @@ export type TagAdministrationContext = {
   ipAddress?: string | null;
 };
 
+export type TagListQuery = {
+  page: number;
+  limit: number;
+  q?: string;
+};
+
 @Injectable()
 export class TagsService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
     @Inject(AuditService) private readonly audit: AuditService
   ) {}
+
+  async list(query: TagListQuery, organizationId: string) {
+    const where = {
+      organizationId,
+      ...(query.q
+        ? {
+            OR: [
+              { name: { contains: query.q, mode: "insensitive" as const } },
+              {
+                normalizedName: {
+                  contains: this.normalize(query.q),
+                  mode: "insensitive" as const,
+                },
+              },
+            ],
+          }
+        : {}),
+    };
+
+    const [items, total] = await Promise.all([
+      this.prisma.tag.findMany({
+        where,
+        orderBy: [{ name: "asc" }, { id: "asc" }],
+        skip: (query.page - 1) * query.limit,
+        take: query.limit,
+      }),
+      this.prisma.tag.count({ where }),
+    ]);
+
+    return {
+      items,
+      page: query.page,
+      limit: query.limit,
+      total,
+    };
+  }
 
   async create(input: TagInput, context: TagAdministrationContext) {
     const normalizedName = this.normalize(input.name);
@@ -62,6 +104,57 @@ export class TagsService {
     });
 
     return tag;
+  }
+
+  async update(
+    id: string,
+    input: TagInput,
+    context: TagAdministrationContext
+  ) {
+    const existing = await this.requireTag(id, context.organizationId);
+    const normalizedName = this.normalize(input.name);
+    const duplicate = await this.prisma.tag.findFirst({
+      where: {
+        organizationId: context.organizationId,
+        normalizedName,
+        id: { not: id },
+      },
+    });
+
+    if (duplicate) {
+      throw new ConflictException({
+        code: "TAG_ALREADY_EXISTS",
+        message: "Já existe uma tag com este nome nesta organização.",
+      });
+    }
+
+    const updated = await this.prisma.tag.update({
+      where: { id: existing.id },
+      data: {
+        name: input.name.trim(),
+        normalizedName,
+      },
+    });
+
+    await this.audit.record({
+      organizationId: context.organizationId,
+      actorUserId: context.actorUserId,
+      requestId: context.requestId,
+      action: "tag.updated",
+      entityType: "tag",
+      entityId: updated.id,
+      before: {
+        name: existing.name,
+        normalizedName: existing.normalizedName,
+      },
+      after: {
+        name: updated.name,
+        normalizedName: updated.normalizedName,
+      },
+      ipAddress: context.ipAddress ?? null,
+    });
+
+    return updated;
   }
 
   async linkCompany(
