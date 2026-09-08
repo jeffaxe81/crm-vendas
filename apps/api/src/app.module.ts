@@ -5,10 +5,15 @@ import { LoggerModule } from "nestjs-pino";
 import { AuditAdminModule } from "./audit/audit-admin.module";
 import { AuthModule } from "./auth/auth.module";
 import { AuthorizationModule } from "./authorization/authorization.module";
+import { CompaniesModule } from "./companies/companies.module";
 import { parseApiEnvironment } from "./config/environment";
+import { ContactsModule } from "./contacts/contacts.module";
+import { CustomFieldsModule } from "./custom-fields/custom-fields.module";
 import { HealthModule } from "./health/health.module";
 import { createLoggerOptions } from "./observability/logger.config";
 import { RequestIdMiddleware } from "./observability/request-id.middleware";
+import { RelationshipsModule } from "./relationships/relationships.module";
+import { TagsModule } from "./tags/tags.module";
 import { OrganizationUsersModule } from "./users/organization-users.module";
 
 @Module({
@@ -24,6 +29,11 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     AuditAdminModule,
     AuthorizationModule,
     OrganizationUsersModule,
+    CompaniesModule,
+    ContactsModule,
+    RelationshipsModule,
+    TagsModule,
+    CustomFieldsModule,
   ],
 })
 export class AppModule implements NestModule {

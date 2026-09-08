@@ -1,5 +1,33 @@
 # Changelog
 
+## [Unreleased] - Cycle 2
+
+### CRM Core — empresas, contatos e relacionamento
+
+- empresas com busca, edição, soft delete e auditoria;
+- contatos independentes de empresa;
+- canais de contato com suporte a e-mail, telefone, celular, WhatsApp e outros;
+- controle de canal principal por tipo;
+- vínculo e desvínculo empresa–contato;
+- histórico de relacionamento para empresa, contato ou ambos;
+- tags isoladas por organização e vinculáveis a empresas/contatos;
+- campos customizáveis por organização nos escopos `COMPANY` e `CONTACT`;
+- validação de tipo para campos `TEXT`, `NUMBER`, `BOOLEAN`, `DATE` e `SELECT`;
+- App Shell Web com áreas de Empresas e Contatos;
+- persistência visual de canais e histórico após recarregamento;
+- restauração de sessão via refresh cookie HttpOnly;
+- deduplicação da rotação de refresh token sob React Strict Mode;
+- migration `20260907012000_cycle2_crm_core`;
+- testes adversariais de isolamento entre organizações para empresas, contatos,
+  canais, relacionamentos, tags e campos customizados;
+- bloqueio de escrita por perfil `VIEWER` via permissões explícitas;
+- E2E do CRM Core com login, empresa, contato, canal, vínculo, histórico, reload e
+  verificação de persistência;
+- validação de Compose e build das imagens API/Web no gate.
+
+O checkpoint alvo é `v0.2.0-crm-core`. Ele permanece **não criado** enquanto o
+gate final e a aprovação pós-testes não forem concluídos.
+
 ## [0.1.0] - 2026-09-05
 
 ### Identidade, acesso, multiempresa e auditoria
@@ -23,7 +51,7 @@
 - E2E de autenticação pela interface;
 - CI com deploy de migrations antes do gate.
 
-> O checkpoint do Ciclo 1 só deve ser criado após o gate integral ficar verde no mesmo commit.
+Checkpoint aprovado: `v0.1.0-identity-access`.
 
 ## [0.0.0] - 2026-08-30
 
@@ -54,11 +82,13 @@ Consulte `README.md`.
 
 ## Validação
 
-A aprovação de cada ciclo depende do gate descrito no README e no workflow do GitHub Actions.
+A aprovação de cada ciclo depende do gate descrito no README e no workflow do
+GitHub Actions.
 
 ## Arquitetura
 
-Consulte `docs/architecture/foundation.md` e os documentos específicos de cada ciclo.
+Consulte `docs/architecture/foundation.md` e os documentos específicos de cada
+ciclo.
 
 ## Testes
 
@@ -66,7 +96,8 @@ Consulte `docs/testing/README.md` e os testes automatizados da API/Web.
 
 ## Retorno
 
-O retorno do Ciclo 1 usa `v0.0.0-foundation` enquanto seu próprio checkpoint não estiver aprovado.
+Enquanto o Cycle 2 não estiver aprovado, o rollback oficial permanece
+`v0.1.0-identity-access`.
 
 ## Changelog
 
