@@ -23,10 +23,11 @@ export const PipelineStageCreateInputSchema = z.object({
   position: z.number().int().min(0),
 });
 
-export const PipelineStageUpdateInputSchema = PipelineStageCreateInputSchema.partial().refine(
-  value => Object.values(value).some(item => item !== undefined),
-  { message: "Informe ao menos uma alteração." }
-);
+export const PipelineStageUpdateInputSchema =
+  PipelineStageCreateInputSchema.partial().refine(
+    value => Object.values(value).some(item => item !== undefined),
+    { message: "Informe ao menos uma alteração." }
+  );
 
 export const PipelineStageReorderInputSchema = z.object({
   stageIds: z.array(UuidSchema).min(1),
@@ -72,7 +73,8 @@ export const OpportunityCloseInputSchema = z
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["lossReason"],
-        message: "Motivo de perda só pode ser informado para oportunidades perdidas.",
+        message:
+          "Motivo de perda só pode ser informado para oportunidades perdidas.",
       });
     }
   });
@@ -88,11 +90,25 @@ export const OpportunityListQuerySchema = PaginationQuerySchema.extend({
 
 export type PipelineCreateInput = z.infer<typeof PipelineCreateInputSchema>;
 export type PipelineUpdateInput = z.infer<typeof PipelineUpdateInputSchema>;
-export type PipelineStageCreateInput = z.infer<typeof PipelineStageCreateInputSchema>;
-export type PipelineStageUpdateInput = z.infer<typeof PipelineStageUpdateInputSchema>;
-export type PipelineStageReorderInput = z.infer<typeof PipelineStageReorderInputSchema>;
-export type OpportunityCreateInput = z.infer<typeof OpportunityCreateInputSchema>;
-export type OpportunityUpdateInput = z.infer<typeof OpportunityUpdateInputSchema>;
+export type PipelineStageCreateInput = z.infer<
+  typeof PipelineStageCreateInputSchema
+>;
+export type PipelineStageUpdateInput = z.infer<
+  typeof PipelineStageUpdateInputSchema
+>;
+export type PipelineStageReorderInput = z.infer<
+  typeof PipelineStageReorderInputSchema
+>;
+export type OpportunityCreateInput = z.infer<
+  typeof OpportunityCreateInputSchema
+>;
+export type OpportunityUpdateInput = z.infer<
+  typeof OpportunityUpdateInputSchema
+>;
 export type OpportunityMoveInput = z.infer<typeof OpportunityMoveInputSchema>;
-export type OpportunityCloseInput = z.infer<typeof OpportunityCloseInputSchema>;
-export type OpportunityListQuery = z.infer<typeof OpportunityListQuerySchema>;
+export type OpportunityCloseInput = z.infer<
+  typeof OpportunityCloseInputSchema
+>;
+export type OpportunityListQuery = z.infer<
+  typeof OpportunityListQuerySchema
+>;
