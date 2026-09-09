@@ -422,18 +422,20 @@ export class CustomFieldsService {
   }
 
   private async requireCompany(id: string, organizationId: string) {
-    const company = await this.prisma.company.findFirst({
-      where: { id, organizationId, deletedAt: null },
-    });
-
-    if (!company) {
-      throw new NotFoundException({
-        code: "COMPANY_NOT_FOUND",
-        message: "Empresa não encontrada.",
+    return this.prisma.withTenant(organizationId, async tenant => {
+      const company = await tenant.company.findFirst({
+        where: { id, organizationId, deletedAt: null },
       });
-    }
 
-    return company;
+      if (!company) {
+        throw new NotFoundException({
+          code: "COMPANY_NOT_FOUND",
+          message: "Empresa não encontrada.",
+        });
+      }
+
+      return company;
+    });
   }
 
   private async requireContact(id: string, organizationId: string) {
