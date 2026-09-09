@@ -53,9 +53,7 @@ describe("Cycle 3 opportunities API", () => {
   }
 
   it("creates an opportunity only with references from the active tenant", async () => {
-    const loginSecret = ["Cycle3", "Opportunity", "Fixture", "2026!"].join(
-      "-"
-    );
+    const loginSecret = ["Cycle3", "Opportunity", "Fixture", "2026!"].join("-");
     const [organizationA, organizationB] = await Promise.all([
       prisma.organization.create({
         data: {
