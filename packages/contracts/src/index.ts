@@ -51,6 +51,31 @@ export {
   type RelationshipEntryKind,
 } from "./relationship";
 
+export {
+  OpportunityCloseInputSchema,
+  OpportunityCreateInputSchema,
+  OpportunityListQuerySchema,
+  OpportunityMoveInputSchema,
+  OpportunityStatusSchema,
+  OpportunityUpdateInputSchema,
+  PipelineCreateInputSchema,
+  PipelineStageCreateInputSchema,
+  PipelineStageReorderInputSchema,
+  PipelineStageUpdateInputSchema,
+  PipelineUpdateInputSchema,
+  type OpportunityCloseInput,
+  type OpportunityCreateInput,
+  type OpportunityListQuery,
+  type OpportunityMoveInput,
+  type OpportunityStatus,
+  type OpportunityUpdateInput,
+  type PipelineCreateInput,
+  type PipelineStageCreateInput,
+  type PipelineStageReorderInput,
+  type PipelineStageUpdateInput,
+  type PipelineUpdateInput,
+} from "./sales-pipeline";
+
 export { TagInputSchema, type TagInput } from "./tags";
 
 export {
