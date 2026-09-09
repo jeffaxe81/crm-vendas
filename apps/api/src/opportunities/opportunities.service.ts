@@ -114,8 +114,12 @@ export class OpportunitiesService {
     const updated = await this.prisma.opportunity.update({
       where: { id: existing.id },
       data: {
-        ...(input.companyId !== undefined ? { companyId: input.companyId } : {}),
-        ...(input.contactId !== undefined ? { contactId: input.contactId } : {}),
+        ...(input.companyId !== undefined
+          ? { companyId: input.companyId }
+          : {}),
+        ...(input.contactId !== undefined
+          ? { contactId: input.contactId }
+          : {}),
         ...(input.ownerUserId !== undefined
           ? { ownerUserId: input.ownerUserId }
           : {}),
