@@ -17,7 +17,7 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 - [x] Task 1 — contratos compartilhados
 - [x] Task 2 — schema Prisma e migration
 - [x] Task 3 — permissões e autorização
-- [ ] Task 4 — API de funis
+- [x] Task 4 — API de funis
 - [ ] Task 5 — API de etapas
 - [ ] Task 6 — API de oportunidades
 - [ ] Task 7 — movimentação e histórico
@@ -61,4 +61,14 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 
 ### Task 4 — API de funis
 
-Estado: iniciando RED para create/list/get/update tenant-scoped e 404 cross-tenant.
+- RED: SHA `98a06f019bfc6d393dcb13361912dce0f675e907`.
+- GitHub Actions RED: run `34295725336` / gate #306.
+- Falha esperada: `POST /api/v1/pipelines` retornava 404; 43 testes anteriores permaneceram verdes.
+- Implementação: `PipelinesModule`, controller e service tenant-scoped; create/list/get/update, 404 cross-tenant e auditoria de create/update; registro no `AppModule`.
+- GREEN integral: SHA `e553aa4888247a3b37acf1a19d1eac0ed4692f38`.
+- GitHub Actions GREEN: run `34295908264` / gate #310.
+- Resultado: Prisma/migrations, format, lint, typecheck, testes, build, E2E, Compose e imagens Docker aprovados.
+
+### Task 5 — API de etapas e ordenação
+
+Estado: iniciando RED para create/update/reorder/deactivate stage, validação integral de pipeline/tenant e regra de pipeline padrão.
