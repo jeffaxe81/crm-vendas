@@ -16,7 +16,7 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 - [x] Plano TDD aprovado
 - [x] Task 1 — contratos compartilhados
 - [x] Task 2 — schema Prisma e migration
-- [ ] Task 3 — permissões e autorização
+- [x] Task 3 — permissões e autorização
 - [ ] Task 4 — API de funis
 - [ ] Task 5 — API de etapas
 - [ ] Task 6 — API de oportunidades
@@ -51,4 +51,14 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 
 ### Task 3 — permissões e autorização
 
-Estado: iniciando RED sobre o RBAC existente; sem mecanismo paralelo.
+- RED: SHA `db5d1c43390b33c11c127eb89871c9db824e7b20`.
+- GitHub Actions RED: run `34295294139` / gate #303.
+- Falha esperada: `pipeline.read` e `pipeline.write` ausentes do tipo `Permission` e do mapa RBAC.
+- Implementação: extensão mínima do RBAC existente; `VIEWER` recebe somente `pipeline.read`; `ADMIN`, `MANAGER` e `SELLER` recebem leitura/escrita comercial.
+- GREEN integral: SHA `43c68831564a106e6c2fef9d41621d1ff68d814a`.
+- GitHub Actions GREEN: run `34295387469` / gate #304.
+- Resultado: Prisma/migrations, format, lint, typecheck, testes, build, E2E, Compose e imagens Docker aprovados.
+
+### Task 4 — API de funis
+
+Estado: iniciando RED para create/list/get/update tenant-scoped e 404 cross-tenant.
