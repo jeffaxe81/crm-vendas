@@ -104,7 +104,9 @@ describe("Cycle 3 sales pipeline contracts", () => {
     const pipelineSchema = requireSchema("PipelineCreateInputSchema");
     const stageSchema = requireSchema("PipelineStageCreateInputSchema");
 
-    expect(pipelineSchema.parse({ name: "Vendas", isDefault: true })).toMatchObject({
+    expect(
+      pipelineSchema.parse({ name: "Vendas", isDefault: true })
+    ).toMatchObject({
       name: "Vendas",
       isDefault: true,
     });
