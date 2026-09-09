@@ -13,7 +13,9 @@ describe("Cycle 3 opportunities API", () => {
   let passwords: PasswordService;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalFilters(new ApiErrorFilter());
     app.setGlobalPrefix("api/v1");
@@ -35,7 +37,11 @@ describe("Cycle 3 opportunities API", () => {
     );
   }
 
-  async function createUser(email: string, displayName: string, loginSecret: string) {
+  async function createUser(
+    email: string,
+    displayName: string,
+    loginSecret: string
+  ) {
     return prisma.user.create({
       data: {
         email,
@@ -47,49 +53,147 @@ describe("Cycle 3 opportunities API", () => {
   }
 
   it("creates an opportunity only with references from the active tenant", async () => {
-    const loginSecret = ["Cycle3", "Opportunity", "Fixture", "2026!"].join("-");
+    const loginSecret = ["Cycle3", "Opportunity", "Fixture", "2026!"].join(
+      "-"
+    );
     const [organizationA, organizationB] = await Promise.all([
-      prisma.organization.create({ data: { name: "Opportunity Organization A", slug: "opportunity-org-a" } }),
-      prisma.organization.create({ data: { name: "Opportunity Organization B", slug: "opportunity-org-b" } }),
+      prisma.organization.create({
+        data: {
+          name: "Opportunity Organization A",
+          slug: "opportunity-org-a",
+        },
+      }),
+      prisma.organization.create({
+        data: {
+          name: "Opportunity Organization B",
+          slug: "opportunity-org-b",
+        },
+      }),
     ]);
     const [admin, ownerA, ownerB] = await Promise.all([
-      createUser("opportunity-admin@example.test", "Opportunity Admin", loginSecret),
-      createUser("opportunity-owner-a@example.test", "Opportunity Owner A", loginSecret),
-      createUser("opportunity-owner-b@example.test", "Opportunity Owner B", loginSecret),
+      createUser(
+        "opportunity-admin@example.test",
+        "Opportunity Admin",
+        loginSecret
+      ),
+      createUser(
+        "opportunity-owner-a@example.test",
+        "Opportunity Owner A",
+        loginSecret
+      ),
+      createUser(
+        "opportunity-owner-b@example.test",
+        "Opportunity Owner B",
+        loginSecret
+      ),
     ]);
 
     await prisma.organizationMembership.createMany({
       data: [
-        { organizationId: organizationA.id, userId: admin.id, role: "ADMIN" },
-        { organizationId: organizationA.id, userId: ownerA.id, role: "SELLER" },
-        { organizationId: organizationB.id, userId: ownerB.id, role: "SELLER" },
+        {
+          organizationId: organizationA.id,
+          userId: admin.id,
+          role: "ADMIN",
+        },
+        {
+          organizationId: organizationA.id,
+          userId: ownerA.id,
+          role: "SELLER",
+        },
+        {
+          organizationId: organizationB.id,
+          userId: ownerB.id,
+          role: "SELLER",
+        },
       ],
     });
 
     const [companyA, companyB] = await Promise.all([
-      prisma.company.create({ data: { organizationId: organizationA.id, legalName: "Company A", createdBy: admin.id, updatedBy: admin.id } }),
-      prisma.company.create({ data: { organizationId: organizationB.id, legalName: "Company B", createdBy: ownerB.id, updatedBy: ownerB.id } }),
+      prisma.company.create({
+        data: {
+          organizationId: organizationA.id,
+          legalName: "Company A",
+          createdBy: admin.id,
+          updatedBy: admin.id,
+        },
+      }),
+      prisma.company.create({
+        data: {
+          organizationId: organizationB.id,
+          legalName: "Company B",
+          createdBy: ownerB.id,
+          updatedBy: ownerB.id,
+        },
+      }),
     ]);
     const [contactA, contactB] = await Promise.all([
-      prisma.contact.create({ data: { organizationId: organizationA.id, fullName: "Contact A", createdBy: admin.id, updatedBy: admin.id } }),
-      prisma.contact.create({ data: { organizationId: organizationB.id, fullName: "Contact B", createdBy: ownerB.id, updatedBy: ownerB.id } }),
+      prisma.contact.create({
+        data: {
+          organizationId: organizationA.id,
+          fullName: "Contact A",
+          createdBy: admin.id,
+          updatedBy: admin.id,
+        },
+      }),
+      prisma.contact.create({
+        data: {
+          organizationId: organizationB.id,
+          fullName: "Contact B",
+          createdBy: ownerB.id,
+          updatedBy: ownerB.id,
+        },
+      }),
     ]);
     await prisma.companyContact.create({
-      data: { organizationId: organizationA.id, companyId: companyA.id, contactId: contactA.id },
+      data: {
+        organizationId: organizationA.id,
+        companyId: companyA.id,
+        contactId: contactA.id,
+      },
     });
 
     const [pipelineA, pipelineB] = await Promise.all([
-      prisma.pipeline.create({ data: { organizationId: organizationA.id, name: "Pipeline A", isDefault: true } }),
-      prisma.pipeline.create({ data: { organizationId: organizationB.id, name: "Pipeline B", isDefault: true } }),
+      prisma.pipeline.create({
+        data: {
+          organizationId: organizationA.id,
+          name: "Pipeline A",
+          isDefault: true,
+        },
+      }),
+      prisma.pipeline.create({
+        data: {
+          organizationId: organizationB.id,
+          name: "Pipeline B",
+          isDefault: true,
+        },
+      }),
     ]);
     const [stageA, stageB] = await Promise.all([
-      prisma.pipelineStage.create({ data: { organizationId: organizationA.id, pipelineId: pipelineA.id, name: "Stage A", position: 0 } }),
-      prisma.pipelineStage.create({ data: { organizationId: organizationB.id, pipelineId: pipelineB.id, name: "Stage B", position: 0 } }),
+      prisma.pipelineStage.create({
+        data: {
+          organizationId: organizationA.id,
+          pipelineId: pipelineA.id,
+          name: "Stage A",
+          position: 0,
+        },
+      }),
+      prisma.pipelineStage.create({
+        data: {
+          organizationId: organizationB.id,
+          pipelineId: pipelineB.id,
+          name: "Stage B",
+          position: 0,
+        },
+      }),
     ]);
 
     const login = await request(app.getHttpServer())
       .post("/api/v1/auth/login")
-      .send({ email: admin.email, password: loginSecret, organizationSlug: organizationA.slug })
+      .send({
+        email: admin.email,
+        password: loginSecret,
+        organizationSlug: organizationA.slug,
+      })
       .expect(200);
     const accessToken = login.body.accessToken as string;
     const validPayload = {
