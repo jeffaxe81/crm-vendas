@@ -3,7 +3,10 @@ import { z } from "zod";
 import { PaginationQuerySchema } from "./companies";
 
 const UuidSchema = z.string().uuid();
-const CurrencyCodeSchema = z.string().trim().regex(/^[A-Z]{3}$/);
+const CurrencyCodeSchema = z
+  .string()
+  .trim()
+  .regex(/^[A-Z]{3}$/);
 
 export const OpportunityStatusSchema = z.enum(["OPEN", "WON", "LOST"]);
 export type OpportunityStatus = z.infer<typeof OpportunityStatusSchema>;
@@ -13,10 +16,11 @@ export const PipelineCreateInputSchema = z.object({
   isDefault: z.boolean().default(false),
 });
 
-export const PipelineUpdateInputSchema = PipelineCreateInputSchema.partial().refine(
-  value => Object.values(value).some(item => item !== undefined),
-  { message: "Informe ao menos uma alteração." }
-);
+export const PipelineUpdateInputSchema =
+  PipelineCreateInputSchema.partial().refine(
+    value => Object.values(value).some(item => item !== undefined),
+    { message: "Informe ao menos uma alteração." }
+  );
 
 export const PipelineStageCreateInputSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -106,9 +110,5 @@ export type OpportunityUpdateInput = z.infer<
   typeof OpportunityUpdateInputSchema
 >;
 export type OpportunityMoveInput = z.infer<typeof OpportunityMoveInputSchema>;
-export type OpportunityCloseInput = z.infer<
-  typeof OpportunityCloseInputSchema
->;
-export type OpportunityListQuery = z.infer<
-  typeof OpportunityListQuerySchema
->;
+export type OpportunityCloseInput = z.infer<typeof OpportunityCloseInputSchema>;
+export type OpportunityListQuery = z.infer<typeof OpportunityListQuerySchema>;
