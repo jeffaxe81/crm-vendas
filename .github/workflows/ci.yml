@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feat/c3-bottlecrm-engine-adoption
 
 permissions:
   contents: read
@@ -61,6 +62,23 @@ jobs:
 
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Diagnostic Prettier diff
+        if: github.base_ref == 'feat/c3-bottlecrm-engine-adoption'
+        run: |
+          pnpm exec prettier --write \
+            docs/architecture/2026-09-09-bottlecrm-adoption-matrix.md \
+            docs/architecture/2026-09-09-bottlecrm-gap-analysis.md \
+            docs/superpowers/plans/2026-09-09-c3-3-rls-foundation.md \
+            docs/superpowers/plans/2026-09-09-cycle-3-bottlecrm-engine-adoption.md \
+            docs/superpowers/specs/2026-09-09-bottlecrm-engine-adoption-design.md
+          git diff -- \
+            docs/architecture/2026-09-09-bottlecrm-adoption-matrix.md \
+            docs/architecture/2026-09-09-bottlecrm-gap-analysis.md \
+            docs/superpowers/plans/2026-09-09-c3-3-rls-foundation.md \
+            docs/superpowers/plans/2026-09-09-cycle-3-bottlecrm-engine-adoption.md \
+            docs/superpowers/specs/2026-09-09-bottlecrm-engine-adoption-design.md
+          exit 1
 
       - name: Generate Prisma client
         run: pnpm --filter @axes/api prisma:generate
