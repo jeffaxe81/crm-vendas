@@ -93,7 +93,7 @@ describe("Tenant RLS integration", () => {
     });
 
     await expect(
-      prisma.company.findMany({ where: { id: companyId } }),
+      prisma.company.findMany({ where: { id: companyId } })
     ).resolves.toEqual([]);
   });
 });
