@@ -147,7 +147,7 @@ describe("Cycle 3 pipelines API", () => {
     expect(created.body).toMatchObject({
       name: "Pipeline A",
       organizationId: organizationA.id,
-      isDefault: false,
+      isDefault: true,
       isActive: true,
     });
     const pipelineAId = created.body.id as string;
@@ -202,5 +202,59 @@ describe("Cycle 3 pipelines API", () => {
       "pipeline.created",
       "pipeline.updated",
     ]);
+  });
+
+  it("keeps exactly one active default pipeline even under concurrent default creation", async () => {
+    const organization = await prisma.organization.create({
+      data: { name: "Default Pipeline Organization", slug: "default-pipeline-org" },
+    });
+    const password = "Strong-Default-Pipeline-Password-2026!";
+    const user = await createUser({
+      email: "default-pipeline-admin@example.test",
+      password,
+      displayName: "Default Pipeline Admin",
+    });
+    await prisma.organizationMembership.create({
+      data: {
+        organizationId: organization.id,
+        userId: user.id,
+        role: "ADMIN",
+      },
+    });
+    const token = await login({
+      email: user.email,
+      password,
+      organizationSlug: organization.slug,
+    });
+
+    const first = await request(app.getHttpServer())
+      .post("/api/v1/pipelines")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ name: "Primeiro Funil", isDefault: false })
+      .expect(201);
+    expect(first.body.isDefault).toBe(true);
+
+    await Promise.all([
+      request(app.getHttpServer())
+        .post("/api/v1/pipelines")
+        .set("Authorization", `Bearer ${token}`)
+        .send({ name: "Default Concorrente A", isDefault: true })
+        .expect(201),
+      request(app.getHttpServer())
+        .post("/api/v1/pipelines")
+        .set("Authorization", `Bearer ${token}`)
+        .send({ name: "Default Concorrente B", isDefault: true })
+        .expect(201),
+    ]);
+
+    const defaults = await prisma.pipeline.findMany({
+      where: {
+        organizationId: organization.id,
+        isActive: true,
+        isDefault: true,
+      },
+      select: { id: true },
+    });
+    expect(defaults).toHaveLength(1);
   });
 });
