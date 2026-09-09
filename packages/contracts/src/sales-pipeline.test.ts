@@ -73,9 +73,9 @@ describe("Cycle 3 sales pipeline contracts", () => {
   it("allows closing only as WON or LOST", () => {
     const schema = requireSchema("OpportunityCloseInputSchema");
     expect(schema.parse({ status: "WON" })).toMatchObject({ status: "WON" });
-    expect(
-      schema.parse({ status: "LOST", lossReason: "Preço" })
-    ).toMatchObject({ status: "LOST", lossReason: "Preço" });
+    expect(schema.parse({ status: "LOST", lossReason: "Preço" })).toMatchObject(
+      { status: "LOST", lossReason: "Preço" }
+    );
     expect(() => schema.parse({ status: "OPEN" })).toThrow();
   });
 
