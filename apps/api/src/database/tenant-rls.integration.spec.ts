@@ -42,7 +42,9 @@ describe("Tenant RLS integration", () => {
   });
 
   it("fails closed for tenant-owned companies when tenant context is missing", async () => {
-    const context = await prisma.$queryRaw<Array<{ organizationId: string | null }>>`
+    const context = await prisma.$queryRaw<
+      Array<{ organizationId: string | null }>
+    >`
       SELECT nullif(current_setting('app.current_organization_id', true), '') AS "organizationId"
     `;
 
