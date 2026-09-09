@@ -28,9 +28,11 @@
 ### Task 1: Characterize database role and missing-context behavior
 
 **Files:**
+
 - Create: `apps/api/src/database/tenant-rls.integration.spec.ts`
 
 **Interfaces:**
+
 - Consumes: existing `PrismaService` and PostgreSQL test database.
 - Produces: executable security expectations for role safety and fail-closed RLS.
 
@@ -59,10 +61,12 @@ Commit: `test(c3.3): characterize tenant RLS fail-closed boundary`
 ### Task 2: Add RLS migration
 
 **Files:**
+
 - Create: `apps/api/prisma/migrations/20260909XXXXXX_cycle3_rls_foundation/migration.sql`
 - Test: `apps/api/src/database/tenant-rls.integration.spec.ts`
 
 **Interfaces:**
+
 - Consumes PostgreSQL setting `app.current_organization_id`.
 - Produces policy expression equivalent to `organization_id = nullif(current_setting('app.current_organization_id', true), '')::uuid` for tenant-owned tables.
 
@@ -95,12 +99,14 @@ Commit: `feat(c3.3): add fail-closed PostgreSQL RLS policies`
 ### Task 3: Add transaction-scoped tenant database context
 
 **Files:**
+
 - Modify: `apps/api/src/database/prisma.service.ts`
 - Create: `apps/api/src/database/tenant-database-context.ts`
 - Create: `apps/api/src/database/tenant-database-context.spec.ts`
 - Modify: `apps/api/src/database/database.module.ts`
 
 **Interfaces:**
+
 - Produces: `TenantDatabaseContext.run<T>(organizationId: string, work: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T>`.
 - Guarantee: calls `SELECT set_config('app.current_organization_id', <uuid>, true)` inside the same interactive transaction before `work(tx)`.
 - Guarantee: rejects malformed/non-UUID organization identifiers before issuing business queries.
@@ -138,10 +144,12 @@ Commit: `feat(c3.3): add transaction-scoped tenant database context`
 ### Task 4: Route one vertical slice through tenant context
 
 **Files:**
+
 - Modify: `apps/api/src/companies/companies.service.ts` (or the exact existing Company application service discovered before edit)
 - Modify: corresponding Company service/integration specs.
 
 **Interfaces:**
+
 - Consumes: `TenantDatabaseContext.run()`.
 - Preserves: current Company DTOs, authorization, `organizationId` predicates, optimistic/version semantics and audit behavior.
 
@@ -172,10 +180,12 @@ Commit: `refactor(c3.3): enforce tenant DB context for companies`
 ### Task 5: Extend tenant context to remaining protected Cycle 2 modules
 
 **Files:**
+
 - Modify only existing persistence services for contacts, contact channels/links, relationship history, tags, custom fields and audit/refresh-session flows that access protected tables.
 - Modify their existing focused tests.
 
 **Interfaces:**
+
 - Consumes: `TenantDatabaseContext.run()` and transaction client.
 - Preserves all current public contracts and application-level tenant predicates.
 
@@ -202,11 +212,13 @@ Use `refactor(c3.3): enforce tenant DB context for <module>`.
 ### Task 6: Operational guard and full verification
 
 **Files:**
+
 - Modify: `README.md`
 - Create: `docs/operations/postgresql-rls.md`
 - Modify: `CHANGELOG.md`
 
 **Interfaces:**
+
 - Documents required application DB role: `NOSUPERUSER NOBYPASSRLS`.
 - Documents tenant context: transaction-local `app.current_organization_id`.
 - Documents rollback: disable/drop policies independently before reverting application context wiring.
