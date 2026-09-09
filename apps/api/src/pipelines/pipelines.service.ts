@@ -48,12 +48,40 @@ export class PipelinesService {
     input: PipelineCreateInput,
     context: PipelineAdministrationContext
   ) {
-    const pipeline = await this.prisma.pipeline.create({
-      data: {
-        organizationId: context.organizationId,
-        name: input.name,
-        isDefault: input.isDefault,
-      },
+    const pipeline = await this.prisma.$transaction(async transaction => {
+      await transaction.$queryRaw`
+        SELECT "id"
+        FROM "organizations"
+        WHERE "id" = ${context.organizationId}::uuid
+        FOR UPDATE
+      `;
+
+      const activeCount = await transaction.pipeline.count({
+        where: {
+          organizationId: context.organizationId,
+          isActive: true,
+        },
+      });
+      const shouldBeDefault = input.isDefault || activeCount === 0;
+
+      if (shouldBeDefault) {
+        await transaction.pipeline.updateMany({
+          where: {
+            organizationId: context.organizationId,
+            isActive: true,
+            isDefault: true,
+          },
+          data: { isDefault: false },
+        });
+      }
+
+      return transaction.pipeline.create({
+        data: {
+          organizationId: context.organizationId,
+          name: input.name,
+          isDefault: shouldBeDefault,
+        },
+      });
     });
 
     await this.audit.record({
@@ -76,14 +104,48 @@ export class PipelinesService {
     context: PipelineAdministrationContext
   ) {
     const existing = await this.requirePipeline(id, context.organizationId);
-    const updated = await this.prisma.pipeline.update({
-      where: { id: existing.id },
-      data: {
-        ...(input.name !== undefined ? { name: input.name } : {}),
-        ...(input.isDefault !== undefined
-          ? { isDefault: input.isDefault }
-          : {}),
-      },
+    const updated = await this.prisma.$transaction(async transaction => {
+      await transaction.$queryRaw`
+        SELECT "id"
+        FROM "organizations"
+        WHERE "id" = ${context.organizationId}::uuid
+        FOR UPDATE
+      `;
+
+      const activeDefault = await transaction.pipeline.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          isActive: true,
+          isDefault: true,
+        },
+        select: { id: true },
+      });
+      const shouldBeDefault =
+        input.isDefault === true ||
+        (existing.isDefault && input.isDefault === false) ||
+        activeDefault === null;
+
+      if (shouldBeDefault) {
+        await transaction.pipeline.updateMany({
+          where: {
+            organizationId: context.organizationId,
+            isActive: true,
+            isDefault: true,
+            id: { not: existing.id },
+          },
+          data: { isDefault: false },
+        });
+      }
+
+      return transaction.pipeline.update({
+        where: { id: existing.id },
+        data: {
+          ...(input.name !== undefined ? { name: input.name } : {}),
+          ...(input.isDefault !== undefined || shouldBeDefault
+            ? { isDefault: shouldBeDefault }
+            : {}),
+        },
+      });
     });
 
     await this.audit.record({
