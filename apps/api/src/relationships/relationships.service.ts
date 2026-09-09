@@ -36,39 +36,42 @@ export class RelationshipsService {
     input: CompanyContactInput,
     context: RelationshipContext
   ) {
-    const link = await this.prisma.$transaction(async transaction => {
-      const company = await transaction.company.findFirst({
-        where: {
-          id: companyId,
-          organizationId: context.organizationId,
-          deletedAt: null,
-        },
-      });
-      if (!company) {
-        throw this.companyNotFound();
-      }
+    const link = await this.prisma.withTenant(
+      context.organizationId,
+      async transaction => {
+        const company = await transaction.company.findFirst({
+          where: {
+            id: companyId,
+            organizationId: context.organizationId,
+            deletedAt: null,
+          },
+        });
+        if (!company) {
+          throw this.companyNotFound();
+        }
 
-      const contact = await transaction.contact.findFirst({
-        where: {
-          id: contactId,
-          organizationId: context.organizationId,
-          deletedAt: null,
-        },
-      });
-      if (!contact) {
-        throw this.contactNotFound();
-      }
+        const contact = await transaction.contact.findFirst({
+          where: {
+            id: contactId,
+            organizationId: context.organizationId,
+            deletedAt: null,
+          },
+        });
+        if (!contact) {
+          throw this.contactNotFound();
+        }
 
-      return transaction.companyContact.create({
-        data: {
-          organizationId: context.organizationId,
-          companyId,
-          contactId,
-          relationshipLabel: input.relationshipLabel,
-          isPrimary: input.isPrimary,
-        },
-      });
-    });
+        return transaction.companyContact.create({
+          data: {
+            organizationId: context.organizationId,
+            companyId,
+            contactId,
+            relationshipLabel: input.relationshipLabel,
+            isPrimary: input.isPrimary,
+          },
+        });
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -134,45 +137,48 @@ export class RelationshipsService {
     input: RelationshipEntryCreateInput,
     context: RelationshipContext
   ) {
-    const entry = await this.prisma.$transaction(async transaction => {
-      if (input.companyId) {
-        const company = await transaction.company.findFirst({
-          where: {
-            id: input.companyId,
+    const entry = await this.prisma.withTenant(
+      context.organizationId,
+      async transaction => {
+        if (input.companyId) {
+          const company = await transaction.company.findFirst({
+            where: {
+              id: input.companyId,
+              organizationId: context.organizationId,
+              deletedAt: null,
+            },
+          });
+          if (!company) {
+            throw this.companyNotFound();
+          }
+        }
+
+        if (input.contactId) {
+          const contact = await transaction.contact.findFirst({
+            where: {
+              id: input.contactId,
+              organizationId: context.organizationId,
+              deletedAt: null,
+            },
+          });
+          if (!contact) {
+            throw this.contactNotFound();
+          }
+        }
+
+        return transaction.relationshipEntry.create({
+          data: {
             organizationId: context.organizationId,
-            deletedAt: null,
+            companyId: input.companyId,
+            contactId: input.contactId,
+            authorUserId: context.actorUserId,
+            kind: input.kind,
+            content: input.content,
+            occurredAt: new Date(input.occurredAt),
           },
         });
-        if (!company) {
-          throw this.companyNotFound();
-        }
       }
-
-      if (input.contactId) {
-        const contact = await transaction.contact.findFirst({
-          where: {
-            id: input.contactId,
-            organizationId: context.organizationId,
-            deletedAt: null,
-          },
-        });
-        if (!contact) {
-          throw this.contactNotFound();
-        }
-      }
-
-      return transaction.relationshipEntry.create({
-        data: {
-          organizationId: context.organizationId,
-          companyId: input.companyId,
-          contactId: input.contactId,
-          authorUserId: context.actorUserId,
-          kind: input.kind,
-          content: input.content,
-          occurredAt: new Date(input.occurredAt),
-        },
-      });
-    });
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
