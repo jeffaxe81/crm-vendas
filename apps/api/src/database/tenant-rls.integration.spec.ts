@@ -96,4 +96,47 @@ describe("Tenant RLS integration", () => {
       prisma.company.findMany({ where: { id: companyId } })
     ).resolves.toEqual([]);
   });
+
+  it("exposes tenant-owned companies only inside a transaction-scoped tenant context", async () => {
+    const organizationId = "10000000-0000-4000-8000-000000000002";
+    const userId = "20000000-0000-4000-8000-000000000002";
+    const companyId = "30000000-0000-4000-8000-000000000002";
+
+    await admin.organization.create({
+      data: {
+        id: organizationId,
+        name: "RLS Tenant Context Organization",
+        slug: "rls-tenant-context-organization",
+      },
+    });
+    await admin.user.create({
+      data: {
+        id: userId,
+        email: "rls-tenant-context@example.test",
+        emailNormalized: "rls-tenant-context@example.test",
+        displayName: "RLS Tenant Context User",
+        passwordHash: "not-used-by-this-test",
+      },
+    });
+    await admin.company.create({
+      data: {
+        id: companyId,
+        organizationId,
+        legalName: "Company visible with tenant context",
+        createdBy: userId,
+        updatedBy: userId,
+      },
+    });
+
+    const companies = await prisma.withTenant(organizationId, (tenant) =>
+      tenant.company.findMany({ where: { id: companyId } })
+    );
+
+    expect(companies).toHaveLength(1);
+    expect(companies[0]?.id).toBe(companyId);
+
+    await expect(
+      prisma.company.findMany({ where: { id: companyId } })
+    ).resolves.toEqual([]);
+  });
 });
