@@ -24,13 +24,19 @@ describe("Tenant RLS integration", () => {
   });
 
   it("uses an application role that cannot bypass row-level security", async () => {
-    const [role] = await prisma.$queryRaw<CurrentRole[]>`
+    const roles = await prisma.$queryRaw<CurrentRole[]>`
       SELECT rolname, rolsuper, rolbypassrls
       FROM pg_roles
       WHERE rolname = current_user
     `;
 
-    expect(role).toBeDefined();
+    expect(roles).toHaveLength(1);
+
+    const role = roles[0];
+    if (!role) {
+      throw new Error("PostgreSQL current_user role was not found");
+    }
+
     expect(role.rolsuper).toBe(false);
     expect(role.rolbypassrls).toBe(false);
   });
