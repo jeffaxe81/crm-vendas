@@ -11,16 +11,25 @@ const migrationPath = new URL(
 test("Cycle 3 Prisma schema defines tenant-scoped sales pipeline models", async () => {
   const schema = await readFile(schemaPath, "utf8");
 
-  assert.match(schema, /enum OpportunityStatus\s*{[\s\S]*OPEN[\s\S]*WON[\s\S]*LOST/);
+  assert.match(
+    schema,
+    /enum OpportunityStatus\s*{[\s\S]*OPEN[\s\S]*WON[\s\S]*LOST/
+  );
   assert.match(schema, /model Pipeline\s*{/);
   assert.match(schema, /model PipelineStage\s*{/);
   assert.match(schema, /model Opportunity\s*{/);
   assert.match(schema, /model OpportunityStageHistory\s*{/);
 
   assert.match(schema, /model Pipeline[\s\S]*organizationId\s+String/);
-  assert.match(schema, /model PipelineStage[\s\S]*organizationId\s+String/);
+  assert.match(
+    schema,
+    /model PipelineStage[\s\S]*organizationId\s+String/
+  );
   assert.match(schema, /model Opportunity[\s\S]*organizationId\s+String/);
-  assert.match(schema, /model OpportunityStageHistory[\s\S]*organizationId\s+String/);
+  assert.match(
+    schema,
+    /model OpportunityStageHistory[\s\S]*organizationId\s+String/
+  );
 
   assert.match(schema, /fromStageId\s+String\?/);
   assert.match(schema, /toStageId\s+String/);
@@ -37,5 +46,8 @@ test("Cycle 3 migration creates sales pipeline tables without destructive rewrit
   assert.match(migration, /CREATE TABLE "opportunities"/);
   assert.match(migration, /CREATE TABLE "opportunity_stage_history"/);
   assert.match(migration, /FOREIGN KEY \("organization_id"\)/);
-  assert.doesNotMatch(migration, /DROP TABLE|DROP COLUMN|TRUNCATE|DELETE FROM/i);
+  assert.doesNotMatch(
+    migration,
+    /DROP TABLE|DROP COLUMN|TRUNCATE|DELETE FROM/i
+  );
 });
