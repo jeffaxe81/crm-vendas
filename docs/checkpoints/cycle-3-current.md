@@ -19,7 +19,7 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 - [x] Task 3 — permissões e autorização
 - [x] Task 4 — API de funis
 - [x] Task 5 — API de etapas
-- [ ] Task 6 — API de oportunidades
+- [x] Task 6 — API de oportunidades
 - [ ] Task 7 — movimentação e histórico
 - [ ] Task 8 — fechamento WON/LOST
 - [ ] Task 9 — Web lista/formulário/detalhe
@@ -30,7 +30,7 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 - [ ] Task 14 — gate integral
 - [ ] Task 15 — aprovação pós-testes e merge
 
-Progresso operacional: `████████░░░░░░░░░░░░ 40%` — 6 de 15 tasks concluídas considerando design/plano como pré-condições e Tasks 1–5 fechadas.
+Progresso operacional: `████████░░░░░░░░░░░░ 40%` — 6 de 15 tasks concluídas.
 
 ## Estado TDD atual
 
@@ -81,12 +81,20 @@ Progresso operacional: `████████░░░░░░░░░░�
 - GitHub Actions GREEN: run `34296487551` / gate #314.
 - RED funcional da regra de pipeline padrão: SHA `110901c83043ff9c016f76d7d6a766df329663db`.
 - GitHub Actions RED: run `34297336628` / gate #318.
-- Falha esperada: primeiro funil criado com `isDefault=false` permanecia sem default; 44 testes anteriores passaram e somente as duas asserções da nova regra falharam.
 - Implementação: criação/alteração de pipeline serializada por lock transacional da organização; primeiro pipeline torna-se default automaticamente; promoção de novo default remove o anterior dentro da mesma transação; índice único parcial do PostgreSQL permanece como defesa adicional.
 - GREEN integral da Task 5: SHA `2a0c69edfa2d8ee05c085dd4438ec527af50eb93`.
 - GitHub Actions GREEN: run `34297499658` / gate #319.
-- Resultado: migrations, format, lint, typecheck, 46 testes de API/contratos/repos, build, E2E, Compose e imagens Docker aprovados.
 
 ### Task 6 — API de oportunidades
 
-Estado: iniciando RED para criação válida e rejeições cross-tenant de empresa, contato, responsável, pipeline e etapa. Nenhuma implementação de Opportunities deve entrar antes desse RED funcional.
+- RED de criação: gate #325; `POST /api/v1/opportunities` retornava 404 com os 46 testes anteriores verdes.
+- GREEN integral da criação: gate #329; criação e validações tenant-scoped de empresa, contato, responsável, pipeline e etapa aprovadas, incluindo E2E/Compose/Docker.
+- RED de gestão: SHA `d2c660f1f5ce34c9a4a88a2c6075b8d1825adf27`; gate #330; `GET /api/v1/opportunities` retornava 404 com 47 testes anteriores verdes.
+- Implementação: listagem paginada com filtros, detalhe tenant-scoped, edição sem movimentação de etapa, revalidação de empresa/contato/responsável e auditoria.
+- GREEN integral final: SHA `d0d04714947405b4cc8e20e1ce36e758db3184bf`.
+- GitHub Actions GREEN: run `34300611272` / gate #335.
+- Resultado: source/tests, E2E, Compose e imagens Docker aprovados no mesmo SHA.
+
+### Task 7 — movimentação e histórico
+
+Estado: iniciando RED para mover oportunidade somente para etapa ativa do mesmo pipeline e tenant, registrando `OpportunityStageHistory` imutável com etapa anterior, etapa nova, ator e timestamp. Nenhuma implementação de movimentação deve entrar antes desse RED funcional.
