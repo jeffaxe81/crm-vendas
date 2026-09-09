@@ -139,4 +139,40 @@ describe("Tenant RLS integration", () => {
       prisma.company.findMany({ where: { id: companyId } })
     ).resolves.toEqual([]);
   });
+
+  it("fails closed for tenant-owned contacts when tenant context is missing", async () => {
+    const organizationId = "10000000-0000-4000-8000-000000000003";
+    const userId = "20000000-0000-4000-8000-000000000003";
+    const contactId = "40000000-0000-4000-8000-000000000003";
+
+    await admin.organization.create({
+      data: {
+        id: organizationId,
+        name: "RLS Contact Characterization Organization",
+        slug: "rls-contact-characterization-organization",
+      },
+    });
+    await admin.user.create({
+      data: {
+        id: userId,
+        email: "rls-contact-characterization@example.test",
+        emailNormalized: "rls-contact-characterization@example.test",
+        displayName: "RLS Contact Characterization User",
+        passwordHash: "not-used-by-this-test",
+      },
+    });
+    await admin.contact.create({
+      data: {
+        id: contactId,
+        organizationId,
+        fullName: "Contact visible without RLS",
+        createdBy: userId,
+        updatedBy: userId,
+      },
+    });
+
+    await expect(
+      prisma.contact.findMany({ where: { id: contactId } })
+    ).resolves.toEqual([]);
+  });
 });
