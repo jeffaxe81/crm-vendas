@@ -71,8 +71,12 @@ describe("Cycle 2 tags API", () => {
     await prisma.organizationMembership.createMany({ data: [{ organizationId: organizationA.id, userId: user.id, role: "ADMIN" }, { organizationId: organizationB.id, userId: user.id, role: "ADMIN" }] });
     const tagA = await prisma.tag.create({ data: { organizationId: organizationA.id, name: "Tag A", normalizedName: "tag a" } });
     const tagB = await prisma.tag.create({ data: { organizationId: organizationB.id, name: "Tag B", normalizedName: "tag b" } });
-    const companyA = await prisma.withTenant(organizationA.id, tenant => tenant.company.create({ data: { organizationId: organizationA.id, legalName: "Empresa A", createdBy: user.id, updatedBy: user.id } }));
-    const companyB = await prisma.withTenant(organizationB.id, tenant => tenant.company.create({ data: { organizationId: organizationB.id, legalName: "Empresa B", createdBy: user.id, updatedBy: user.id } }));
+    const companyA = await prisma.withTenant(organizationA.id, tenant =>
+      tenant.company.create({ data: { organizationId: organizationA.id, legalName: "Empresa A", createdBy: user.id, updatedBy: user.id } })
+    );
+    const companyB = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.company.create({ data: { organizationId: organizationB.id, legalName: "Empresa B", createdBy: user.id, updatedBy: user.id } })
+    );
     const contactA = await prisma.contact.create({ data: { organizationId: organizationA.id, fullName: "Contato A", createdBy: user.id, updatedBy: user.id } });
     const contactB = await prisma.contact.create({ data: { organizationId: organizationB.id, fullName: "Contato B", createdBy: user.id, updatedBy: user.id } });
     const tokenA = await login({ email: user.email, password, organizationSlug: organizationA.slug });
@@ -86,7 +90,9 @@ describe("Cycle 2 tags API", () => {
 
   it("links and unlinks tags in the active organization and records audit actions", async () => {
     const { organization, user, token } = await createOrganizationAdmin({ organizationName: "Tag Lifecycle", organizationSlug: "tag-lifecycle", email: "tag-lifecycle@example.test", password: "Strong-Tag-Lifecycle-2026!" });
-    const company = await prisma.withTenant(organization.id, tenant => tenant.company.create({ data: { organizationId: organization.id, legalName: "Empresa com Tag", createdBy: user.id, updatedBy: user.id } }));
+    const company = await prisma.withTenant(organization.id, tenant =>
+      tenant.company.create({ data: { organizationId: organization.id, legalName: "Empresa com Tag", createdBy: user.id, updatedBy: user.id } })
+    );
     const [contact, tag] = await Promise.all([
       prisma.contact.create({ data: { organizationId: organization.id, fullName: "Contato com Tag", createdBy: user.id, updatedBy: user.id } }),
       prisma.tag.create({ data: { organizationId: organization.id, name: "Importante", normalizedName: "importante" } }),
