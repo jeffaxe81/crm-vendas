@@ -40,4 +40,14 @@ describe("Tenant RLS integration", () => {
     expect(role.rolsuper).toBe(false);
     expect(role.rolbypassrls).toBe(false);
   });
+
+  it("fails closed for tenant-owned companies when tenant context is missing", async () => {
+    const context = await prisma.$queryRaw<Array<{ organizationId: string | null }>>`
+      SELECT nullif(current_setting('app.current_organization_id', true), '') AS "organizationId"
+    `;
+
+    expect(context).toEqual([{ organizationId: null }]);
+
+    await expect(prisma.company.findMany()).resolves.toEqual([]);
+  });
 });
