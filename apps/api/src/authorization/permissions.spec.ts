@@ -11,8 +11,25 @@ describe("role permissions", () => {
     expect(roleHasPermission("SELLER", "audit.read")).toBe(false);
   });
 
-  it("keeps viewers read-only", () => {
+  it("allows commercial roles to read and write pipelines and opportunities", () => {
+    for (const role of ["ADMIN", "MANAGER", "SELLER"] as const) {
+      expect(roleHasPermission(role, "pipeline.read")).toBe(true);
+      expect(roleHasPermission(role, "pipeline.write")).toBe(true);
+      expect(roleHasPermission(role, "opportunity.read")).toBe(true);
+      expect(roleHasPermission(role, "opportunity.write")).toBe(true);
+      expect(roleHasPermission(role, "opportunity.move")).toBe(true);
+    }
+  });
+
+  it("keeps viewers read-only across companies, pipelines and opportunities", () => {
     expect(permissionsForRole("VIEWER")).toContain("company.read");
     expect(roleHasPermission("VIEWER", "company.write")).toBe(false);
+
+    expect(roleHasPermission("VIEWER", "pipeline.read")).toBe(true);
+    expect(roleHasPermission("VIEWER", "pipeline.write")).toBe(false);
+
+    expect(roleHasPermission("VIEWER", "opportunity.read")).toBe(true);
+    expect(roleHasPermission("VIEWER", "opportunity.write")).toBe(false);
+    expect(roleHasPermission("VIEWER", "opportunity.move")).toBe(false);
   });
 });
