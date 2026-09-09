@@ -1,4 +1,10 @@
-import type { PipelineCreateInput, PipelineUpdateInput } from "@axes/contracts";
+import type {
+  PipelineCreateInput,
+  PipelineStageCreateInput,
+  PipelineStageReorderInput,
+  PipelineStageUpdateInput,
+  PipelineUpdateInput,
+} from "@axes/contracts";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 
 import { AuditService } from "../audit/audit.service";
@@ -95,6 +101,120 @@ export class PipelinesService {
     return updated;
   }
 
+  async createStage(
+    pipelineId: string,
+    input: PipelineStageCreateInput,
+    context: PipelineAdministrationContext
+  ) {
+    await this.requirePipeline(pipelineId, context.organizationId);
+
+    return this.prisma.pipelineStage.create({
+      data: {
+        organizationId: context.organizationId,
+        pipelineId,
+        name: input.name,
+        position: input.position,
+      },
+    });
+  }
+
+  async updateStage(
+    pipelineId: string,
+    stageId: string,
+    input: PipelineStageUpdateInput,
+    context: PipelineAdministrationContext
+  ) {
+    await this.requirePipeline(pipelineId, context.organizationId);
+    const stage = await this.requireStage(
+      pipelineId,
+      stageId,
+      context.organizationId
+    );
+
+    return this.prisma.pipelineStage.update({
+      where: { id: stage.id },
+      data: {
+        ...(input.name !== undefined ? { name: input.name } : {}),
+        ...(input.position !== undefined ? { position: input.position } : {}),
+      },
+    });
+  }
+
+  async reorderStages(
+    pipelineId: string,
+    input: PipelineStageReorderInput,
+    context: PipelineAdministrationContext
+  ) {
+    await this.requirePipeline(pipelineId, context.organizationId);
+
+    const uniqueStageIds = new Set(input.stageIds);
+    if (uniqueStageIds.size !== input.stageIds.length) {
+      throw this.stageNotFound();
+    }
+
+    const activeStages = await this.prisma.pipelineStage.findMany({
+      where: {
+        organizationId: context.organizationId,
+        pipelineId,
+        isActive: true,
+      },
+      orderBy: { position: "asc" },
+      select: { id: true, position: true },
+    });
+
+    if (
+      activeStages.length !== input.stageIds.length ||
+      activeStages.some(stage => !uniqueStageIds.has(stage.id))
+    ) {
+      throw this.stageNotFound();
+    }
+
+    await this.prisma.$transaction(async transaction => {
+      const temporaryOffset = 100_000 + activeStages.length;
+
+      for (const stage of activeStages) {
+        await transaction.pipelineStage.update({
+          where: { id: stage.id },
+          data: { position: stage.position + temporaryOffset },
+        });
+      }
+
+      for (const [position, stageId] of input.stageIds.entries()) {
+        await transaction.pipelineStage.update({
+          where: { id: stageId },
+          data: { position },
+        });
+      }
+    });
+
+    return this.prisma.pipelineStage.findMany({
+      where: {
+        organizationId: context.organizationId,
+        pipelineId,
+        isActive: true,
+      },
+      orderBy: { position: "asc" },
+    });
+  }
+
+  async deactivateStage(
+    pipelineId: string,
+    stageId: string,
+    context: PipelineAdministrationContext
+  ): Promise<void> {
+    await this.requirePipeline(pipelineId, context.organizationId);
+    const stage = await this.requireStage(
+      pipelineId,
+      stageId,
+      context.organizationId
+    );
+
+    await this.prisma.pipelineStage.update({
+      where: { id: stage.id },
+      data: { isActive: false },
+    });
+  }
+
   private async requirePipeline(id: string, organizationId: string) {
     const pipeline = await this.prisma.pipeline.findFirst({
       where: {
@@ -112,6 +232,34 @@ export class PipelinesService {
     }
 
     return pipeline;
+  }
+
+  private async requireStage(
+    pipelineId: string,
+    stageId: string,
+    organizationId: string
+  ) {
+    const stage = await this.prisma.pipelineStage.findFirst({
+      where: {
+        id: stageId,
+        pipelineId,
+        organizationId,
+        isActive: true,
+      },
+    });
+
+    if (!stage) {
+      throw this.stageNotFound();
+    }
+
+    return stage;
+  }
+
+  private stageNotFound() {
+    return new NotFoundException({
+      code: "PIPELINE_STAGE_NOT_FOUND",
+      message: "Etapa do funil não encontrada.",
+    });
   }
 
   private toAuditPipeline(pipeline: AuditablePipeline) {
