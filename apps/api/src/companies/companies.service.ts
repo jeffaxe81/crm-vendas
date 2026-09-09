@@ -2,6 +2,7 @@ import type { CompanyCreateInput, CompanyUpdateInput } from "@axes/contracts";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 
 import { AuditService } from "../audit/audit.service";
+import { Prisma } from "../generated/prisma/client";
 import { PrismaService } from "../database/prisma.service";
 
 export type CompanyAdministrationContext = {
@@ -58,15 +59,19 @@ export class CompaniesService {
       [query.sortBy]: query.sortOrder,
     } as const;
 
-    const [items, total] = await Promise.all([
-      this.prisma.company.findMany({
-        where,
-        orderBy,
-        skip: (query.page - 1) * query.limit,
-        take: query.limit,
-      }),
-      this.prisma.company.count({ where }),
-    ]);
+    const [items, total] = await this.prisma.withTenant(
+      organizationId,
+      async tenant =>
+        Promise.all([
+          tenant.company.findMany({
+            where,
+            orderBy,
+            skip: (query.page - 1) * query.limit,
+            take: query.limit,
+          }),
+          tenant.company.count({ where }),
+        ])
+    );
 
     return {
       items,
@@ -77,25 +82,31 @@ export class CompaniesService {
   }
 
   async read(id: string, organizationId: string) {
-    return this.requireCompany(id, organizationId);
+    return this.prisma.withTenant(organizationId, tenant =>
+      this.requireCompany(tenant, id, organizationId)
+    );
   }
 
   async create(
     input: CompanyCreateInput,
     context: CompanyAdministrationContext
   ) {
-    const company = await this.prisma.company.create({
-      data: {
-        organizationId: context.organizationId,
-        legalName: input.legalName,
-        tradeName: input.tradeName,
-        document: input.document,
-        website: input.website,
-        notes: input.notes,
-        createdBy: context.actorUserId,
-        updatedBy: context.actorUserId,
-      },
-    });
+    const company = await this.prisma.withTenant(
+      context.organizationId,
+      tenant =>
+        tenant.company.create({
+          data: {
+            organizationId: context.organizationId,
+            legalName: input.legalName,
+            tradeName: input.tradeName,
+            document: input.document,
+            website: input.website,
+            notes: input.notes,
+            createdBy: context.actorUserId,
+            updatedBy: context.actorUserId,
+          },
+        })
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -116,23 +127,36 @@ export class CompaniesService {
     input: CompanyUpdateInput,
     context: CompanyAdministrationContext
   ) {
-    const existing = await this.requireCompany(id, context.organizationId);
-    const updated = await this.prisma.company.update({
-      where: { id: existing.id },
-      data: {
-        ...(input.legalName !== undefined
-          ? { legalName: input.legalName }
-          : {}),
-        ...(input.tradeName !== undefined
-          ? { tradeName: input.tradeName }
-          : {}),
-        ...(input.document !== undefined ? { document: input.document } : {}),
-        ...(input.website !== undefined ? { website: input.website } : {}),
-        ...(input.notes !== undefined ? { notes: input.notes } : {}),
-        updatedBy: context.actorUserId,
-        version: { increment: 1 },
-      },
-    });
+    const [existing, updated] = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const existing = await this.requireCompany(
+          tenant,
+          id,
+          context.organizationId
+        );
+        const updated = await tenant.company.update({
+          where: { id: existing.id },
+          data: {
+            ...(input.legalName !== undefined
+              ? { legalName: input.legalName }
+              : {}),
+            ...(input.tradeName !== undefined
+              ? { tradeName: input.tradeName }
+              : {}),
+            ...(input.document !== undefined
+              ? { document: input.document }
+              : {}),
+            ...(input.website !== undefined ? { website: input.website } : {}),
+            ...(input.notes !== undefined ? { notes: input.notes } : {}),
+            updatedBy: context.actorUserId,
+            version: { increment: 1 },
+          },
+        });
+
+        return [existing, updated] as const;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -153,17 +177,28 @@ export class CompaniesService {
     id: string,
     context: CompanyAdministrationContext
   ): Promise<void> {
-    const existing = await this.requireCompany(id, context.organizationId);
-    const deletedAt = new Date();
-    const updated = await this.prisma.company.update({
-      where: { id: existing.id },
-      data: {
-        deletedAt,
-        deletedBy: context.actorUserId,
-        updatedBy: context.actorUserId,
-        version: { increment: 1 },
-      },
-    });
+    const [existing, updated, deletedAt] = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const existing = await this.requireCompany(
+          tenant,
+          id,
+          context.organizationId
+        );
+        const deletedAt = new Date();
+        const updated = await tenant.company.update({
+          where: { id: existing.id },
+          data: {
+            deletedAt,
+            deletedBy: context.actorUserId,
+            updatedBy: context.actorUserId,
+            version: { increment: 1 },
+          },
+        });
+
+        return [existing, updated, deletedAt] as const;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -182,8 +217,12 @@ export class CompaniesService {
     });
   }
 
-  private async requireCompany(id: string, organizationId: string) {
-    const company = await this.prisma.company.findFirst({
+  private async requireCompany(
+    tenant: Prisma.TransactionClient,
+    id: string,
+    organizationId: string
+  ) {
+    const company = await tenant.company.findFirst({
       where: {
         id,
         organizationId,
