@@ -128,7 +128,7 @@ describe("Tenant RLS integration", () => {
       },
     });
 
-    const companies = await prisma.withTenant(organizationId, (tenant) =>
+    const companies = await prisma.withTenant(organizationId, tenant =>
       tenant.company.findMany({ where: { id: companyId } })
     );
 
