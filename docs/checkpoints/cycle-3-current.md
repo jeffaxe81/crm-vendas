@@ -14,7 +14,7 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 
 - [x] Design aprovado
 - [x] Plano TDD aprovado
-- [ ] Task 1 — contratos compartilhados
+- [x] Task 1 — contratos compartilhados
 - [ ] Task 2 — schema Prisma e migration
 - [ ] Task 3 — permissões e autorização
 - [ ] Task 4 — API de funis
@@ -32,4 +32,13 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 
 ## Estado TDD atual
 
-RED da Task 1 registrado no commit `9a1c02e4c0e61715d24e5ae853b63a64124b9280`, contendo apenas os testes esperados para os novos contratos do pipeline comercial.
+### Task 1 — contratos compartilhados
+
+- RED: commit `9a1c02e4c0e61715d24e5ae853b63a64124b9280`.
+- GREEN integral: SHA `2eabd79d69fbe3974314a57c13b1e5ac166d9ed4`.
+- GitHub Actions: run `34294054642` / gate #293.
+- Resultado: instalação, Prisma Client, migrations existentes, format, lint, typecheck, testes, build, E2E, Compose e imagens Docker aprovados.
+
+### Task 2 — schema Prisma e migration
+
+Estado: iniciando RED.
