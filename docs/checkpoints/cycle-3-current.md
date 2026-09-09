@@ -18,7 +18,7 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 - [x] Task 2 — schema Prisma e migration
 - [x] Task 3 — permissões e autorização
 - [x] Task 4 — API de funis
-- [ ] Task 5 — API de etapas
+- [x] Task 5 — API de etapas
 - [ ] Task 6 — API de oportunidades
 - [ ] Task 7 — movimentação e histórico
 - [ ] Task 8 — fechamento WON/LOST
@@ -29,6 +29,8 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 - [ ] Task 13 — documentação e rollback
 - [ ] Task 14 — gate integral
 - [ ] Task 15 — aprovação pós-testes e merge
+
+Progresso operacional: `████████░░░░░░░░░░░░ 40%` — 6 de 15 tasks concluídas considerando design/plano como pré-condições e Tasks 1–5 fechadas.
 
 ## Estado TDD atual
 
@@ -71,4 +73,20 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 
 ### Task 5 — API de etapas e ordenação
 
-Estado: iniciando RED para create/update/reorder/deactivate stage, validação integral de pipeline/tenant e regra de pipeline padrão.
+- RED da microfatia de etapas: SHA `c65e016988168a7e0eb053859d5c1e2dad5fa806`.
+- GitHub Actions RED: run `34296226743` / gate #312.
+- Falha esperada: `POST /api/v1/pipelines/:id/stages` retornava 404; 44 testes anteriores permaneceram verdes.
+- Implementação: create/update/reorder/deactivate de etapas, validação integral do pipeline/tenant, rejeição de ids externos ao pipeline e reorder em duas fases para preservar unicidade de posição.
+- GREEN integral da microfatia: SHA `b160b1f4ea3963a473adf6205e7d834298181688`.
+- GitHub Actions GREEN: run `34296487551` / gate #314.
+- RED funcional da regra de pipeline padrão: SHA `110901c83043ff9c016f76d7d6a766df329663db`.
+- GitHub Actions RED: run `34297336628` / gate #318.
+- Falha esperada: primeiro funil criado com `isDefault=false` permanecia sem default; 44 testes anteriores passaram e somente as duas asserções da nova regra falharam.
+- Implementação: criação/alteração de pipeline serializada por lock transacional da organização; primeiro pipeline torna-se default automaticamente; promoção de novo default remove o anterior dentro da mesma transação; índice único parcial do PostgreSQL permanece como defesa adicional.
+- GREEN integral da Task 5: SHA `2a0c69edfa2d8ee05c085dd4438ec527af50eb93`.
+- GitHub Actions GREEN: run `34297499658` / gate #319.
+- Resultado: migrations, format, lint, typecheck, 46 testes de API/contratos/repos, build, E2E, Compose e imagens Docker aprovados.
+
+### Task 6 — API de oportunidades
+
+Estado: iniciando RED para criação válida e rejeições cross-tenant de empresa, contato, responsável, pipeline e etapa. Nenhuma implementação de Opportunities deve entrar antes desse RED funcional.
