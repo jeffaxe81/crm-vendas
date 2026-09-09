@@ -21,10 +21,7 @@ test("Cycle 3 Prisma schema defines tenant-scoped sales pipeline models", async 
   assert.match(schema, /model OpportunityStageHistory\s*{/);
 
   assert.match(schema, /model Pipeline[\s\S]*organizationId\s+String/);
-  assert.match(
-    schema,
-    /model PipelineStage[\s\S]*organizationId\s+String/
-  );
+  assert.match(schema, /model PipelineStage[\s\S]*organizationId\s+String/);
   assert.match(schema, /model Opportunity[\s\S]*organizationId\s+String/);
   assert.match(
     schema,
