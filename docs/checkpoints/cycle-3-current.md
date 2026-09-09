@@ -15,7 +15,7 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 - [x] Design aprovado
 - [x] Plano TDD aprovado
 - [x] Task 1 — contratos compartilhados
-- [ ] Task 2 — schema Prisma e migration
+- [x] Task 2 — schema Prisma e migration
 - [ ] Task 3 — permissões e autorização
 - [ ] Task 4 — API de funis
 - [ ] Task 5 — API de etapas
@@ -41,4 +41,14 @@ Checkpoint alvo: `v0.3.0-sales-pipeline`.
 
 ### Task 2 — schema Prisma e migration
 
-Estado: iniciando RED.
+- RED funcional: SHA `c558b32a5c4e6eca968fed51e371e39589e0e278`.
+- GitHub Actions RED: run `34294654491` / gate #299.
+- Falha esperada: ausência de `OpportunityStatus`, dos quatro models do Ciclo 3 e da migration `cycle3_sales_pipeline`.
+- Implementação: schema Prisma tenant-scoped + migration `20260909002000_cycle3_sales_pipeline`.
+- GREEN integral: SHA `43dc348e25ae730caf736380a767dc4454ebc13f`.
+- GitHub Actions GREEN: run `34294924101` / gate #301.
+- Resultado: Prisma Client, três migrations em PostgreSQL vazio, format, lint, typecheck, testes, build, E2E, Compose e imagens Docker aprovados.
+
+### Task 3 — permissões e autorização
+
+Estado: iniciando RED sobre o RBAC existente; sem mecanismo paralelo.
