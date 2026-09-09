@@ -158,44 +158,47 @@ export class TagsService {
     tagId: string,
     context: TagAdministrationContext
   ) {
-    const link = await this.prisma.withTenant(context.organizationId, async tenant => {
-      const company = await tenant.company.findFirst({
-        where: {
-          id: companyId,
-          organizationId: context.organizationId,
-          deletedAt: null,
-        },
-      });
+    const link = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const company = await tenant.company.findFirst({
+          where: {
+            id: companyId,
+            organizationId: context.organizationId,
+            deletedAt: null,
+          },
+        });
 
-      if (!company) {
-        throw new NotFoundException({
-          code: "COMPANY_NOT_FOUND",
-          message: "Empresa não encontrada.",
+        if (!company) {
+          throw new NotFoundException({
+            code: "COMPANY_NOT_FOUND",
+            message: "Empresa não encontrada.",
+          });
+        }
+
+        await this.requireTag(tagId, context.organizationId);
+
+        const existing = await tenant.companyTag.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            companyId,
+            tagId,
+          },
+        });
+
+        if (existing) {
+          return existing;
+        }
+
+        return tenant.companyTag.create({
+          data: {
+            organizationId: context.organizationId,
+            companyId,
+            tagId,
+          },
         });
       }
-
-      await this.requireTag(tagId, context.organizationId);
-
-      const existing = await tenant.companyTag.findFirst({
-        where: {
-          organizationId: context.organizationId,
-          companyId,
-          tagId,
-        },
-      });
-
-      if (existing) {
-        return existing;
-      }
-
-      return tenant.companyTag.create({
-        data: {
-          organizationId: context.organizationId,
-          companyId,
-          tagId,
-        },
-      });
-    });
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -220,42 +223,45 @@ export class TagsService {
     tagId: string,
     context: TagAdministrationContext
   ): Promise<void> {
-    const link = await this.prisma.withTenant(context.organizationId, async tenant => {
-      const company = await tenant.company.findFirst({
-        where: {
-          id: companyId,
-          organizationId: context.organizationId,
-          deletedAt: null,
-        },
-      });
-
-      if (!company) {
-        throw new NotFoundException({
-          code: "COMPANY_NOT_FOUND",
-          message: "Empresa não encontrada.",
+    const link = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const company = await tenant.company.findFirst({
+          where: {
+            id: companyId,
+            organizationId: context.organizationId,
+            deletedAt: null,
+          },
         });
-      }
 
-      await this.requireTag(tagId, context.organizationId);
+        if (!company) {
+          throw new NotFoundException({
+            code: "COMPANY_NOT_FOUND",
+            message: "Empresa não encontrada.",
+          });
+        }
 
-      const existing = await tenant.companyTag.findFirst({
-        where: {
-          organizationId: context.organizationId,
-          companyId,
-          tagId,
-        },
-      });
+        await this.requireTag(tagId, context.organizationId);
 
-      if (!existing) {
-        throw new NotFoundException({
-          code: "TAG_LINK_NOT_FOUND",
-          message: "Vínculo de tag não encontrado.",
+        const existing = await tenant.companyTag.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            companyId,
+            tagId,
+          },
         });
-      }
 
-      await tenant.companyTag.delete({ where: { id: existing.id } });
-      return existing;
-    });
+        if (!existing) {
+          throw new NotFoundException({
+            code: "TAG_LINK_NOT_FOUND",
+            message: "Vínculo de tag não encontrado.",
+          });
+        }
+
+        await tenant.companyTag.delete({ where: { id: existing.id } });
+        return existing;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
