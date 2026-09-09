@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feat/c3-bottlecrm-engine-adoption
 
 permissions:
   contents: read
@@ -62,6 +63,21 @@ jobs:
 
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Format RLS test deterministically
+        if: github.base_ref == 'feat/c3-bottlecrm-engine-adoption'
+        run: pnpm exec prettier --write apps/api/src/database/tenant-rls.integration.spec.ts
+
+      - name: Upload formatted RLS test
+        if: github.base_ref == 'feat/c3-bottlecrm-engine-adoption'
+        uses: actions/upload-artifact@v7
+        with:
+          name: c3-rls-prettier-formatted
+          path: apps/api/src/database/tenant-rls.integration.spec.ts
+
+      - name: Stop diagnostic run
+        if: github.base_ref == 'feat/c3-bottlecrm-engine-adoption'
+        run: exit 1
 
       - name: Generate Prisma client
         run: pnpm --filter @axes/api prisma:generate
