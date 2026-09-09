@@ -121,22 +121,26 @@ describe("Cycle 2 companies API", () => {
       ],
     });
 
-    const companyA = await prisma.company.create({
-      data: {
-        organizationId: organizationA.id,
-        legalName: "Empresa Alpha",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
-    const companyB = await prisma.company.create({
-      data: {
-        organizationId: organizationB.id,
-        legalName: "Empresa Beta",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const companyA = await prisma.withTenant(organizationA.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: organizationA.id,
+          legalName: "Empresa Alpha",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
+    const companyB = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: organizationB.id,
+          legalName: "Empresa Beta",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
     const tokenA = await login({
       email: user.email,
       password,
@@ -175,9 +179,10 @@ describe("Cycle 2 companies API", () => {
       .send({ legalName: "Tentativa cruzada" })
       .expect(404);
 
-    const untouchedCompanyB = await prisma.company.findUnique({
-      where: { id: companyB.id },
-    });
+    const untouchedCompanyB = await prisma.withTenant(
+      organizationB.id,
+      tenant => tenant.company.findUnique({ where: { id: companyB.id } })
+    );
     expect(untouchedCompanyB?.legalName).toBe("Empresa Beta");
   });
 
@@ -267,9 +272,9 @@ describe("Cycle 2 companies API", () => {
       .set("Authorization", `Bearer ${token}`)
       .expect(404);
 
-    const stored = await prisma.company.findUnique({
-      where: { id: companyId },
-    });
+    const stored = await prisma.withTenant(organization.id, tenant =>
+      tenant.company.findUnique({ where: { id: companyId } })
+    );
     expect(stored?.deletedAt).toBeInstanceOf(Date);
     expect(stored?.deletedBy).toBe(user.id);
 
