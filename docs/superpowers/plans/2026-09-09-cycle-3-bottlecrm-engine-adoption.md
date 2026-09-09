@@ -26,6 +26,7 @@
 ### Task 1: C3.0 — Adoption baseline
 
 **Files:**
+
 - Create: `docs/superpowers/specs/2026-09-09-cycle-3-bottlecrm-engine-adoption-design.md`
 - Create: `docs/architecture/2026-09-09-bottlecrm-adoption-matrix.md`
 - Create: `docs/superpowers/plans/2026-09-09-cycle-3-bottlecrm-engine-adoption.md`
@@ -42,6 +43,7 @@
 ### Task 2: C3.1 — Evidence-backed gap analysis
 
 **Files:**
+
 - Modify: `docs/architecture/2026-09-09-bottlecrm-adoption-matrix.md`
 - Create: `docs/architecture/2026-09-09-bottlecrm-gap-analysis.md`
 
@@ -59,6 +61,7 @@
 ### Task 3: C3.2 — Axesistemas Engine architecture decision
 
 **Files:**
+
 - Create: `docs/decisions/ADR-0002-bottlecrm-engine-adoption.md`
 - Modify: `docs/architecture/2026-09-09-bottlecrm-adoption-matrix.md`
 
@@ -113,6 +116,7 @@
 ### Task 7: C3.15–C3.16 — Compatibility, final verification and homologation
 
 **Files:**
+
 - Modify: `CHANGELOG.md`
 - Modify: `README.md`
 - Modify/add testing and operational documentation according to the selected architecture.
