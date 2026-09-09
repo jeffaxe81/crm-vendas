@@ -206,7 +206,10 @@ describe("Cycle 3 pipelines API", () => {
 
   it("keeps exactly one active default pipeline even under concurrent default creation", async () => {
     const organization = await prisma.organization.create({
-      data: { name: "Default Pipeline Organization", slug: "default-pipeline-org" },
+      data: {
+        name: "Default Pipeline Organization",
+        slug: "default-pipeline-org",
+      },
     });
     const password = "Strong-Default-Pipeline-Password-2026!";
     const user = await createUser({
