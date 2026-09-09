@@ -70,16 +70,18 @@ describe("Cycle 2 CRM database schema", () => {
         `INSERT INTO organization_memberships (id, organization_id, user_id, role)
          VALUES ('${membershipId}'::uuid, '${organizationId}'::uuid, '${userId}'::uuid, 'ADMIN')`
       );
-      await prisma.$executeRawUnsafe(
-        `INSERT INTO companies (
-           id, organization_id, legal_name, created_by, updated_by
-         ) VALUES (
-           '${companyId}'::uuid,
-           '${organizationId}'::uuid,
-           'Empresa Schema',
-           '${userId}'::uuid,
-           '${userId}'::uuid
-         )`
+      await prisma.withTenant(organizationId, tenant =>
+        tenant.$executeRawUnsafe(
+          `INSERT INTO companies (
+             id, organization_id, legal_name, created_by, updated_by
+           ) VALUES (
+             '${companyId}'::uuid,
+             '${organizationId}'::uuid,
+             'Empresa Schema',
+             '${userId}'::uuid,
+             '${userId}'::uuid
+           )`
+        )
       );
       await prisma.$executeRawUnsafe(
         `INSERT INTO contacts (
