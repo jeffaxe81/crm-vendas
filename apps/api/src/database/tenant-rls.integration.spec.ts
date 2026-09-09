@@ -1,3 +1,6 @@
+import { PrismaPg } from "@prisma/adapter-pg";
+
+import { PrismaClient } from "../generated/prisma/client";
 import { PrismaService } from "./prisma.service";
 
 type CurrentRole = {
@@ -8,6 +11,7 @@ type CurrentRole = {
 
 describe("Tenant RLS integration", () => {
   let prisma: PrismaService;
+  let admin: PrismaClient;
 
   beforeAll(() => {
     process.env.NODE_ENV ??= "test";
@@ -17,10 +21,18 @@ describe("Tenant RLS integration", () => {
       "postgresql://axes:axes@localhost:5432/axes_crm";
 
     prisma = new PrismaService();
+    admin = new PrismaClient({
+      adapter: new PrismaPg({
+        connectionString:
+          process.env.MIGRATION_DATABASE_URL ??
+          "postgresql://axes:axes@localhost:5432/axes_crm",
+      }),
+    });
   });
 
   afterAll(async () => {
     await prisma.onModuleDestroy();
+    await admin.$disconnect();
   });
 
   it("uses an application role that cannot bypass row-level security", async () => {
@@ -50,6 +62,38 @@ describe("Tenant RLS integration", () => {
 
     expect(context).toEqual([{ organizationId: null }]);
 
-    await expect(prisma.company.findMany()).resolves.toEqual([]);
+    const organizationId = "10000000-0000-4000-8000-000000000001";
+    const userId = "20000000-0000-4000-8000-000000000001";
+    const companyId = "30000000-0000-4000-8000-000000000001";
+
+    await admin.organization.create({
+      data: {
+        id: organizationId,
+        name: "RLS Characterization Organization",
+        slug: "rls-characterization-organization",
+      },
+    });
+    await admin.user.create({
+      data: {
+        id: userId,
+        email: "rls-characterization@example.test",
+        emailNormalized: "rls-characterization@example.test",
+        displayName: "RLS Characterization User",
+        passwordHash: "not-used-by-this-test",
+      },
+    });
+    await admin.company.create({
+      data: {
+        id: companyId,
+        organizationId,
+        legalName: "Company visible without RLS",
+        createdBy: userId,
+        updatedBy: userId,
+      },
+    });
+
+    await expect(
+      prisma.company.findMany({ where: { id: companyId } }),
+    ).resolves.toEqual([]);
   });
 });
