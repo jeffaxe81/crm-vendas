@@ -1,0 +1,35 @@
+name: C3 tenant context Prettier diagnostic
+
+on:
+  pull_request:
+    branches:
+      - feat/c3-bottlecrm-engine-adoption
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Format target test
+        run: pnpm exec prettier --write apps/api/src/database/tenant-rls.integration.spec.ts
+      - name: Show exact diff
+        run: git diff -- apps/api/src/database/tenant-rls.integration.spec.ts
+      - name: Upload formatted test
+        uses: actions/upload-artifact@v4
+        with:
+          name: c3-tenant-context-prettier-formatted
+          path: apps/api/src/database/tenant-rls.integration.spec.ts
+      - name: End diagnostic run
+        run: exit 1
