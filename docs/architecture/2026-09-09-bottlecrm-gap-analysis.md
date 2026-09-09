@@ -6,78 +6,82 @@ Convert the C3.0 preliminary adoption matrix into evidence-backed engineering de
 
 ## Baseline
 
-Axesistemas authority is the Cycle 2 state integrated into `main` at `d98835b0f7ccc656e12d83be071d54d2f46b7790`. BottleCRM is an upstream/reference candidate. Existing Axesistemas behavior is not considered obsolete merely because BottleCRM has an equivalent capability.
+Axesistemas authority is the Cycle 2 state integrated into `main` at `d98835b0f7ccc656e12d83be071d54d2f46b7790`. BottleCRM/Django-CRM is an upstream/reference source. Existing Axesistemas behavior is not obsolete merely because upstream has an equivalent capability.
 
-## Evaluation method
+## Source-level findings
 
-Each capability is evaluated on eight dimensions: domain fit, tenant isolation, authorization, API/contract compatibility, data migration, dependency/operations impact, regression-test impact, and provenance/license obligations.
+### Tenant isolation — ADAPT
 
-A final `REPLACE` classification requires an explicit measurable advantage over the current implementation plus a migration and regression strategy. Otherwise the default is ADAPT or KEEP_AXES.
+Axesistemas already derives organization scope from authenticated context and stores `organizationId` across CRM business records. Upstream also models organization ownership explicitly and documents PostgreSQL Row-Level Security as defense in depth. The Axesistemas target therefore keeps application-level tenant scoping and adds database-level RLS rather than replacing trusted tenant context.
 
-## First-pass gaps
+Required invariant: a client-provided organization identifier is never authorization authority. Database sessions used by the application must not bypass RLS. Missing tenant context must fail closed for tenant-owned data.
 
-### Tenant isolation
+### Identity and authentication — KEEP_AXES
 
-Axesistemas currently derives organization scope from the authenticated session and applies `organizationId` scoping in services. The target evaluation is defense-in-depth: retain trusted application tenant context while determining whether PostgreSQL RLS can enforce the same boundary at the database layer. Client-provided organization identifiers must never become authorization authority.
+Cycle 1 authentication remains authoritative: Argon2id credentials, short-lived JWT access, opaque rotating refresh tokens, membership validation, revocation/logout behavior and append-only audit. Replacing it with upstream identity code would create security regression risk without a demonstrated product advantage.
 
-**Current direction:** ADAPT.
+### RBAC and organizations — ADAPT
 
-### Identity and authentication
+Upstream organization/team/profile concepts are useful references for future delegation and team ownership. Axesistemas fixed roles, explicit permissions and organization memberships remain the contract. Any future team model must compose with those permissions rather than bypass them.
 
-Axesistemas Cycle 1 already has Argon2id credentials, short-lived JWT access, opaque rotating refresh tokens, membership validation, logout/revocation behavior and audit requirements. Replacing this subsystem has high regression/security cost unless BottleCRM demonstrates a concrete improvement that can preserve these contracts.
+### Companies/accounts and contacts — ADAPT / KEEP_AXES
 
-**Current direction:** KEEP_AXES; import only demonstrably useful security patterns.
+Upstream Account adds useful commercial attributes such as industry, employees, annual revenue, currency, address, assignment/team ownership and custom fields. Those are candidates for selective adaptation.
 
-### RBAC and organizations
+Axesistemas keeps its current independent Contact model, contact channels, explicit company-contact links, soft deletion, organization scoping and relationship history. These Cycle 2 semantics are already homologated and are not replaced merely to match upstream naming.
 
-Axesistemas has global users, organization memberships, fixed roles and explicit permissions. BottleCRM team/role concepts may add value, but they must not weaken organization isolation or current permission semantics.
+### Leads — ADOPT DOMAIN PATTERNS
 
-**Current direction:** ADAPT.
+Upstream Lead provides useful patterns for source, status, rating, expected value, probability, expected close date, ownership, follow-up, tags, custom fields, pipeline stages, Kanban ordering and stale/follow-up calculations. Axesistemas should port the useful domain behavior into its own contracts and stack rather than introduce a second framework solely to reuse the model implementation.
 
-### Companies/accounts and contacts
+### Opportunities / sales pipeline — ADOPT DOMAIN PATTERNS
 
-Axesistemas Cycle 2 already supports companies, independent contacts, channels, company-contact relationships, soft deletion, organization scoping and history. BottleCRM equivalents should be treated primarily as model/workflow references until field-level comparison proves replacement value.
+Upstream Opportunity provides a strong reference for stage, amount, probability, expected close date, account/contact relationships, assignment, tags, custom fields, Kanban ordering, stage aging and optional line items/goals. The first Axesistemas implementation should stay intentionally smaller: opportunity, configurable stages/pipeline, ownership, amount/probability, expected close date and Kanban ordering. Line items, sales goals and advanced aging remain backlog unless separately approved.
 
-**Current direction:** ADAPT for companies/contacts; KEEP_AXES for independent-contact/channel/link semantics until proven otherwise.
+### Activities/tasks/history — ADAPT
 
-### Leads and opportunities
+Relationship history remains an Axesistemas business-history source. A future task/activity aggregate must not duplicate audit events or silently become a second history authority. Audit, business history and actionable tasks remain distinct concepts with explicit links.
 
-These are natural next-domain candidates because they extend the approved CRM direction without requiring replacement of the existing core. BottleCRM can accelerate the domain model if its lifecycle, ownership, stage and tenant semantics fit Axesistemas contracts.
+### Tags/custom fields/attachments — ADAPT
 
-**Current direction:** ADOPT candidate, subject to C3.2 architecture decision.
+Existing organization-scoped tags and custom fields remain authoritative. Attachments are a future adoption candidate only after storage authorization, content-type/size validation, audit and malware-handling boundaries are designed.
 
-### Activities/tasks/history
+### Audit and asynchronous processing — KEEP_AXES / DEFER
 
-Axesistemas already has relationship history; a richer activity/task model can complement it. The evaluation must prevent duplicate sources of truth and define whether history is an immutable projection, an activity aggregate, or separate audit/business concepts.
+Append-only Axesistemas auditing remains mandatory. Redis/Celery or another queue is not introduced just because upstream uses asynchronous infrastructure; an approved workload must justify the dependency.
 
-**Current direction:** ADAPT.
+### UI — KEEP_AXES
 
-### Tags/custom fields/attachments
+Wireframe A and Axesistemas product identity remain authoritative. Upstream UI is a UX reference only.
 
-Tags and custom fields already exist and remain organization-scoped. Attachments can be evaluated as a new capability, but storage authorization, audit, size/type validation and malware-handling boundaries must be defined before adoption.
+## C3.2 architecture decision recommendation
 
-**Current direction:** ADAPT for tags/custom fields; ADOPT candidate for attachments.
+Three options were evaluated:
 
-### Audit and asynchronous processing
+| Option | Reuse | Migration risk | Operational complexity | Cycle 0–2 continuity | Decision |
+| --- | --- | --- | --- | --- | --- |
+| Selective adoption in Next.js/NestJS/Prisma | High at domain/pattern level | Low | Low | High | **RECOMMENDED** |
+| Replace backend with Django/DRF | High at source-code level | High | High | Low | Reject for current cycle |
+| Transitional dual backend | Medium/High | High | Very high | Medium | Reject unless a future full replacement is approved |
 
-Axesistemas append-only auditing is a security requirement and remains authoritative. Async infrastructure is introduced only for concrete workloads; adopting Celery/Redis or an equivalent queue solely because upstream uses it would violate YAGNI.
+**Recommended architecture:** BottleCRM/Django-CRM is the upstream engine/reference for mature CRM domain patterns; Axesistemas remains the product and runtime authority using Next.js + NestJS + Prisma + PostgreSQL. We port/adapt capabilities behind Axesistemas contracts instead of maintaining two CRM engines.
 
-**Current direction:** ADAPT audit; IGNORE async infrastructure until justified by an approved workload.
+This interpretation satisfies the product intent of using BottleCRM as the engine base while preserving the already homologated Axesistemas foundation and avoiding a framework rewrite with no demonstrated user benefit.
 
-### UI
+## First implementation sequence after ADR approval
 
-Axesistemas Wireframe A and product identity remain authoritative. BottleCRM UI can inform interaction patterns but is not the target product shell.
+1. Add PostgreSQL RLS defense in depth for tenant-owned tables, with cross-tenant and missing-context tests.
+2. Add Leads using selected upstream domain patterns and Axesistemas contracts.
+3. Add Opportunity/Pipeline/Kanban as the next commercial aggregate.
+4. Extend company/account commercial fields only when required by those flows.
+5. Evaluate tasks/activities and attachments as separate later microdeliveries.
 
-**Current direction:** IGNORE as product UI.
+Each step must use TDD, preserve existing API/security behavior, remain reversible, and pass the complete regression gate before merge.
 
-## Architecture options for C3.2
+## Provenance and license
 
-1. **Selective adoption behind the current stack — preferred starting hypothesis.** Preserve Next.js/NestJS/Prisma and port/adapt BottleCRM domain and RLS ideas where they provide measurable value. Lowest migration risk and strongest continuity with Cycle 0–2.
-2. **BottleCRM backend adoption behind Axesistemas contracts.** Adopt Django/DRF and its persistence model as the engine while preserving Axesistemas-facing contracts. Potentially higher upstream reuse, but substantially higher migration, dual-stack and regression cost.
-3. **Hybrid transitional engine.** Run current and BottleCRM-derived services behind explicit boundaries during migration. Useful only if a staged backend replacement is selected; otherwise it adds avoidable operational complexity.
+When implementation is inspired only by concepts or independently reimplemented behavior, record upstream references in architecture/changelog documentation. If code or substantial portions are copied or adapted from MIT-licensed upstream source, preserve the applicable copyright and MIT permission notice and record the source path/commit used. Do not mix provenance silently.
 
-C3.2 must score these options before implementation. No option is approved by this document alone.
+## C3.1 exit criteria
 
-## Evidence still required before C3.1 closes
-
-The next pass must inspect BottleCRM source paths/models/migrations/API permissions and current Axesistemas Prisma/services/tests side by side, then append concrete evidence to the adoption matrix. This document intentionally does not declare framework replacement or production-code adoption before that source-level comparison.
+C3.1 is complete when this source-level comparison, the adoption matrix and the C3.2 ADR agree on the runtime strategy and no production framework replacement is implied by the term “engine”. Production implementation starts only from the approved ADR/implementation plan.
