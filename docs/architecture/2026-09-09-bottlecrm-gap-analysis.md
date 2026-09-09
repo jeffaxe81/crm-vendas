@@ -58,11 +58,11 @@ Wireframe A and Axesistemas product identity remain authoritative. Upstream UI i
 
 Three options were evaluated:
 
-| Option | Reuse | Migration risk | Operational complexity | Cycle 0–2 continuity | Decision |
-| --- | --- | --- | --- | --- | --- |
-| Selective adoption in Next.js/NestJS/Prisma | High at domain/pattern level | Low | Low | High | **RECOMMENDED** |
-| Replace backend with Django/DRF | High at source-code level | High | High | Low | Reject for current cycle |
-| Transitional dual backend | Medium/High | High | Very high | Medium | Reject unless a future full replacement is approved |
+| Option                                      | Reuse                        | Migration risk | Operational complexity | Cycle 0–2 continuity | Decision                                            |
+| ------------------------------------------- | ---------------------------- | -------------- | ---------------------- | -------------------- | --------------------------------------------------- |
+| Selective adoption in Next.js/NestJS/Prisma | High at domain/pattern level | Low            | Low                    | High                 | **RECOMMENDED**                                     |
+| Replace backend with Django/DRF             | High at source-code level    | High           | High                   | Low                  | Reject for current cycle                            |
+| Transitional dual backend                   | Medium/High                  | High           | Very high              | Medium               | Reject unless a future full replacement is approved |
 
 **Recommended architecture:** BottleCRM/Django-CRM is the upstream engine/reference for mature CRM domain patterns; Axesistemas remains the product and runtime authority using Next.js + NestJS + Prisma + PostgreSQL. We port/adapt capabilities behind Axesistemas contracts instead of maintaining two CRM engines.
 
