@@ -1,4 +1,19 @@
 export {
+  ActivityCreateInputSchema,
+  ActivityListQuerySchema,
+  ActivityPrioritySchema,
+  ActivityStatusSchema,
+  ActivityTypeSchema,
+  ActivityUpdateInputSchema,
+  type ActivityCreateInput,
+  type ActivityListQuery,
+  type ActivityPriority,
+  type ActivityStatus,
+  type ActivityType,
+  type ActivityUpdateInput,
+} from "./activities";
+
+export {
   AuthSessionResponseSchema,
   LoginInputSchema,
   MembershipRoleSchema,

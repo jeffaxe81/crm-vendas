@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, type NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { LoggerModule } from "nestjs-pino";
 
+import { ActivitiesModule } from "./activities/activities.module";
 import { AuditAdminModule } from "./audit/audit-admin.module";
 import { AuthModule } from "./auth/auth.module";
 import { AuthorizationModule } from "./authorization/authorization.module";
@@ -36,6 +37,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     TagsModule,
     CustomFieldsModule,
     PipelinesModule,
+    ActivitiesModule,
   ],
 })
 export class AppModule implements NestModule {
