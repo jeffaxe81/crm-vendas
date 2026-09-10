@@ -90,4 +90,42 @@ describe("C3.5.4 activities filters", () => {
       expect(calls.some(url => url.includes("q=proposta"))).toBe(true);
     });
   });
+
+  it("renders pending activities and marks overdue items", async () => {
+    const fetchMock = vi.fn(async (_input: string | URL) =>
+      response({
+        items: [
+          {
+            id: "activity-overdue",
+            type: "TASK",
+            status: "PENDING",
+            priority: "HIGH",
+            title: "Enviar proposta",
+            description: "Revisar escopo comercial antes do envio.",
+            ownerUserId,
+            companyId: null,
+            contactId: null,
+            dueAt: "2000-01-01T12:00:00.000Z",
+            completedAt: null,
+            cancelledAt: null,
+          },
+        ],
+        page: 1,
+        limit: 20,
+        total: 1,
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ActivitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite
+      />
+    );
+
+    expect(await screen.findByText("Enviar proposta")).toBeInTheDocument();
+    expect(screen.getByText("Atrasada")).toBeInTheDocument();
+  });
 });
