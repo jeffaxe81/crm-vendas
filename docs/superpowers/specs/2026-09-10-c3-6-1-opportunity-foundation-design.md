@@ -56,13 +56,15 @@ A entidade deve conter, no mínimo:
 - `contactId`: UUID opcional;
 - `ownerUserId`: UUID obrigatório;
 - `title`: texto obrigatório com até 200 caracteres;
-- `estimatedValue`: decimal monetário não negativo;
+- `estimatedValue`: `Decimal(19,2)` não negativo;
 - `expectedCloseAt`: timestamp opcional;
 - `notes`: texto opcional;
 - `createdAt`, `updatedAt`;
 - `createdBy`, `updatedBy`;
 - `version`: inteiro para concorrência otimista;
 - `deletedAt`, `deletedBy` para inativação lógica.
+
+A C3.6.1 não introduz multi-moeda. `estimatedValue` representa o valor comercial na moeda operacional adotada pela organização; suporte explícito a `currencyCode` fica para evolução própria caso o requisito seja aprovado futuramente.
 
 Não será criado enum de status próprio na C3.6.1. O estado comercial será derivado da classificação da etapa do pipeline (`OPEN`, `WON`, `LOST`) para evitar duas fontes de verdade.
 
@@ -72,7 +74,7 @@ Não será criado enum de status próprio na C3.6.1. O estado comercial será de
 2. Exatamente um entre `companyId` e `contactId` deve ser não nulo.
 3. Cliente, pipeline, etapa e owner devem pertencer à mesma organização da oportunidade.
 4. `stageId` deve pertencer ao `pipelineId` informado.
-5. O cliente vinculado deve estar ativo no momento da criação ou alteração do vínculo.
+5. O cliente vinculado deve estar ativo no momento da criação ou alteração do vínculo. Essa regra será aplicada pelo service da C3.6.2; a C3.6.1 apenas cria integridade referencial e isolamento necessários para suportá-la.
 6. `estimatedValue` deve ser maior ou igual a zero.
 7. Exclusão física não fará parte do domínio público; a fundação prepara soft delete.
 8. Mudança de etapa futura deve preservar trilha de auditoria; a C3.6.1 apenas cria os campos necessários.
@@ -112,6 +114,16 @@ Adicionar relações explícitas:
 
 As relações comerciais devem usar `onDelete: Restrict` para impedir perda acidental de histórico.
 
+## Integridade tenant-aware das FKs
+
+RLS é a barreira principal de isolamento em runtime, mas a migration também deve impedir que uma linha válida de uma organização referencie entidade de outra organização.
+
+Sempre que uma relação precisar validar o tenant no próprio banco, a FK de `opportunities` deve incluir `organization_id` junto ao identificador da entidade pai.
+
+Se Company, Contact, User, Pipeline ou PipelineStage ainda não expuserem uma chave candidata compatível com `(organization_id, id)` ou combinação equivalente, a migration poderá adicionar apenas a constraint/índice único mínimo necessário para suportar a FK composta, sem mudar o comportamento funcional desses domínios.
+
+Não criar constraints duplicadas quando a estrutura atual já fornecer garantia equivalente.
+
 ## Integridade pipeline-stage
 
 Uma FK simples em `stage_id` garante existência da etapa, mas não garante sozinha que ela pertence ao `pipeline_id` da mesma oportunidade.
@@ -142,6 +154,7 @@ A migration deve incluir, no mínimo:
 - check XOR entre `company_id` e `contact_id`;
 - check `estimated_value >= 0`;
 - FKs tenant-aware sempre que necessárias para impedir vínculo cross-tenant mesmo fora do fluxo normal da aplicação;
+- consistência composta entre organização, pipeline e etapa;
 - `onDelete: Restrict` para referências de domínio;
 - defaults de timestamps/version compatíveis com o padrão do projeto.
 
@@ -193,6 +206,7 @@ Esse vínculo será tratado separadamente na C3.6.3 para evitar misturar a funda
 - recorrência ou agenda;
 - probabilidade de fechamento;
 - forecast avançado;
+- multi-moeda;
 - produtos e itens da oportunidade;
 - propostas/cotações;
 - comissões;
@@ -207,9 +221,9 @@ Esse vínculo será tratado separadamente na C3.6.3 para evitar misturar a funda
 1. Prisma schema contém `Opportunity` e suas relações explícitas.
 2. Migration cria `opportunities` de forma reproduzível em PostgreSQL vazio.
 3. A migration garante exatamente um cliente entre Company e Contact.
-4. A migration rejeita `estimated_value < 0`.
+4. A migration rejeita `estimated_value < 0` e usa precisão `Decimal(19,2)`.
 5. Pipeline e etapa não podem divergir dentro da oportunidade.
-6. Relações cross-tenant são bloqueadas por constraints e/ou RLS apropriadas.
+6. Relações cross-tenant de Company, Contact, owner, Pipeline e PipelineStage são bloqueadas por constraints e/ou RLS apropriadas.
 7. `opportunities` usa `ENABLE ROW LEVEL SECURITY` e `FORCE ROW LEVEL SECURITY`.
 8. Ausência de `app.current_organization_id` não concede acesso a linhas.
 9. Organização A não consegue ler, inserir, alterar ou inativar oportunidade da organização B em testes adversariais.
