@@ -222,4 +222,71 @@ describe("Tenant RLS integration", () => {
       prisma.contactChannel.findMany({ where: { id: channelId } })
     ).resolves.toEqual([]);
   });
+
+  it("fails closed and isolates tenant-owned pipelines and stages", async () => {
+    const organizationId = "10000000-0000-4000-8000-000000000005";
+    const otherOrganizationId = "10000000-0000-4000-8000-000000000006";
+    const pipelineId = "60000000-0000-4000-8000-000000000005";
+    const stageId = "70000000-0000-4000-8000-000000000005";
+
+    await admin.organization.createMany({
+      data: [
+        {
+          id: organizationId,
+          name: "RLS Pipeline Organization",
+          slug: "rls-pipeline-organization",
+        },
+        {
+          id: otherOrganizationId,
+          name: "RLS Other Pipeline Organization",
+          slug: "rls-other-pipeline-organization",
+        },
+      ],
+    });
+    await admin.pipeline.create({
+      data: {
+        id: pipelineId,
+        organizationId,
+        name: "RLS Pipeline",
+        normalizedName: "rls pipeline",
+        stages: {
+          create: {
+            id: stageId,
+            organizationId,
+            name: "Prospecção",
+            position: 1,
+            kind: "OPEN",
+          },
+        },
+      },
+    });
+
+    await expect(
+      prisma.pipeline.findMany({ where: { id: pipelineId } })
+    ).resolves.toEqual([]);
+    await expect(
+      prisma.pipelineStage.findMany({ where: { id: stageId } })
+    ).resolves.toEqual([]);
+
+    const visible = await prisma.withTenant(organizationId, async tenant =>
+      Promise.all([
+        tenant.pipeline.findMany({ where: { id: pipelineId } }),
+        tenant.pipelineStage.findMany({ where: { id: stageId } }),
+      ])
+    );
+
+    expect(visible[0]).toHaveLength(1);
+    expect(visible[1]).toHaveLength(1);
+
+    const crossTenant = await prisma.withTenant(
+      otherOrganizationId,
+      async tenant =>
+        Promise.all([
+          tenant.pipeline.findMany({ where: { id: pipelineId } }),
+          tenant.pipelineStage.findMany({ where: { id: stageId } }),
+        ])
+    );
+
+    expect(crossTenant).toEqual([[], []]);
+  });
 });
