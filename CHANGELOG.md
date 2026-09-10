@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.5.1
+
+### Fundação tenant-aware de atividades
+
+- novo domínio canônico `Activity` na arquitetura Prisma/PostgreSQL;
+- tipos `TASK` e `APPOINTMENT`, status `PENDING`, `COMPLETED` e `CANCELLED`;
+- prioridades `LOW`, `MEDIUM` e `HIGH`;
+- responsável, prazo, rastreabilidade de criação/alteração e inativação lógica;
+- vínculos opcionais com empresa e contato; vínculo com oportunidade permanece deliberadamente fora desta microentrega;
+- índices tenant-aware por status/prazo, responsável/status/prazo, empresa e contato;
+- PostgreSQL RLS com `ENABLE` e `FORCE ROW LEVEL SECURITY` na tabela `activities`;
+- policy fail-closed baseada em `app.current_organization_id`;
+- teste de integração confirma ausência de visibilidade sem contexto, isolamento entre tenants e rejeição de escrita cross-tenant;
+- API REST, Web, agenda, recorrência, integrações de calendário e automação de follow-up permanecem fora da C3.5.1.
+
 ## [Unreleased] - Cycle 3.4
 
 ### Fundação do funil comercial
