@@ -77,15 +77,21 @@ export class PipelinesService {
             organizationId: context.organizationId,
             name: DEFAULT_PIPELINE_NAME,
             normalizedName: DEFAULT_PIPELINE_NORMALIZED_NAME,
-            stages: {
-              create: DEFAULT_STAGES.map(stage => ({
-                organizationId: context.organizationId,
-                name: stage.name,
-                position: stage.position,
-                kind: stage.kind,
-              })),
-            },
           },
+        });
+
+        await tenant.pipelineStage.createMany({
+          data: DEFAULT_STAGES.map(stage => ({
+            organizationId: context.organizationId,
+            pipelineId: newPipeline.id,
+            name: stage.name,
+            position: stage.position,
+            kind: stage.kind,
+          })),
+        });
+
+        const hydrated = await tenant.pipeline.findUniqueOrThrow({
+          where: { id: newPipeline.id },
           include: {
             stages: {
               where: { isActive: true },
@@ -95,7 +101,7 @@ export class PipelinesService {
         });
 
         created = true;
-        return newPipeline;
+        return hydrated;
       }
     );
 
