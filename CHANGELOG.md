@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.6.1
+
+### Fundação tenant-aware de oportunidades
+
+- novo domínio canônico `Opportunity` na arquitetura Prisma/PostgreSQL;
+- oportunidade vinculada obrigatoriamente a exatamente um cliente: `Company` XOR `Contact`;
+- valor estimado em `Decimal(19,2)` com restrição de não negatividade no banco;
+- coerência tenant-aware entre oportunidade, cliente, Pipeline e PipelineStage por chaves compostas;
+- responsável obrigado a possuir membership na organização da oportunidade;
+- campos de versionamento e soft delete preparados no modelo;
+- índices tenant-aware para etapa/prazo, responsável/prazo, empresa, contato e pipeline/etapa;
+- PostgreSQL RLS com `ENABLE` e `FORCE ROW LEVEL SECURITY` na tabela `opportunities`;
+- policy fail-closed baseada em `app.current_organization_id`;
+- testes adversariais confirmam isolamento entre organizações e rejeitam XOR inválido, valor negativo, referências cross-tenant, Stage/Pipeline incoerentes e owner sem membership;
+- API REST, Web/Kanban, vínculo `Activity` → `Opportunity`, automações, forecast, produtos/propostas e novas permissões RBAC permanecem fora desta entrega;
+- PR #15 permanece condicionado ao gate final GREEN no head documental e à aprovação humana explícita antes do merge.
+
 ## [Unreleased] - Cycle 3.5.4
 
 ### Web de atividades
