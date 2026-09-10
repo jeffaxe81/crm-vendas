@@ -3,10 +3,11 @@
 import type { AuthSessionResponse } from "@axes/contracts";
 import type { ReactNode } from "react";
 
-export type CrmSection = "companies" | "contacts";
+export type CrmSection = "companies" | "contacts" | "activities";
 
 type CrmShellProps = {
   session: AuthSessionResponse;
+  permissions: string[];
   activeSection: CrmSection;
   onNavigate: (section: CrmSection) => void;
   onLogout: () => void;
@@ -15,6 +16,7 @@ type CrmShellProps = {
 
 export function CrmShell({
   session,
+  permissions,
   activeSection,
   onNavigate,
   onLogout,
@@ -55,6 +57,16 @@ export function CrmShell({
           >
             Contatos
           </button>
+          {permissions.includes("activity.read") ? (
+            <button
+              type="button"
+              className={activeSection === "activities" ? "is-active" : undefined}
+              aria-current={activeSection === "activities" ? "page" : undefined}
+              onClick={() => onNavigate("activities")}
+            >
+              Atividades
+            </button>
+          ) : null}
         </nav>
 
         <section className="crm-shell__session" aria-label="Sessão ativa">
