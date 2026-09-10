@@ -20,6 +20,14 @@ function response(body: unknown): Response {
   } as Response;
 }
 
+function noContentResponse(): Response {
+  return {
+    ok: true,
+    status: 204,
+    json: async () => undefined,
+  } as Response;
+}
+
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
@@ -229,6 +237,68 @@ describe("C3.5.4 activity lifecycle", () => {
         status: "PENDING",
       });
       expect(completedReads).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  it("inactivates an activity and reloads the current list", async () => {
+    const activity = {
+      id: "77777777-7777-4777-8777-777777777777",
+      type: "TASK",
+      status: "PENDING",
+      priority: "MEDIUM",
+      title: "Atividade obsoleta",
+      description: null,
+      ownerUserId,
+      companyId: null,
+      contactId: null,
+      dueAt: null,
+      completedAt: null,
+      cancelledAt: null,
+    };
+    let reads = 0;
+    const fetchMock = vi.fn(async (input: string | URL, init?: RequestInit) => {
+      const url = String(input);
+
+      if (
+        url.endsWith(`/activities/${activity.id}`) &&
+        init?.method === "DELETE"
+      ) {
+        return noContentResponse();
+      }
+
+      if (url.includes("/activities?")) {
+        reads += 1;
+        return response({
+          items: reads === 1 ? [activity] : [],
+          page: 1,
+          limit: 20,
+          total: reads === 1 ? 1 : 0,
+        });
+      }
+
+      throw new Error(`Unexpected fetch: ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ActivitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite
+      />
+    );
+
+    expect(await screen.findByText("Atividade obsoleta")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Inativar" }));
+
+    await waitFor(() => {
+      const deleteCall = fetchMock.mock.calls.find(
+        ([input, init]) =>
+          String(input).endsWith(`/activities/${activity.id}`) &&
+          init?.method === "DELETE"
+      );
+      expect(deleteCall).toBeDefined();
+      expect(reads).toBeGreaterThanOrEqual(2);
     });
   });
 });
