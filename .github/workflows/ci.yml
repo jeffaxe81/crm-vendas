@@ -83,8 +83,23 @@ jobs:
           GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO axes_app;
           SQL
 
-      - name: Verify source and tests
-        run: pnpm verify
+      - name: Verify foundation
+        run: pnpm verify:foundation
+
+      - name: Verify formatting
+        run: pnpm format:check
+
+      - name: Verify lint
+        run: pnpm lint
+
+      - name: Verify typecheck
+        run: pnpm typecheck
+
+      - name: Verify tests
+        run: pnpm test
+
+      - name: Verify build
+        run: pnpm build
 
       - name: Bootstrap administrator for E2E
         run: pnpm --filter @axes/api bootstrap:admin
