@@ -90,4 +90,71 @@ describe("C3.5.4 activity lifecycle", () => {
       expect(reads).toBeGreaterThanOrEqual(2);
     });
   });
+
+  it("cancels a pending activity and reloads the current list", async () => {
+    const activity = {
+      id: "55555555-5555-4555-8555-555555555555",
+      type: "APPOINTMENT",
+      status: "PENDING",
+      priority: "HIGH",
+      title: "Reunião comercial",
+      description: null,
+      ownerUserId,
+      companyId: null,
+      contactId: null,
+      dueAt: null,
+      completedAt: null,
+      cancelledAt: null,
+    };
+    let reads = 0;
+    const fetchMock = vi.fn(async (input: string | URL, init?: RequestInit) => {
+      const url = String(input);
+
+      if (url.includes("/activities?")) {
+        reads += 1;
+        return response({
+          items: reads === 1 ? [activity] : [],
+          page: 1,
+          limit: 20,
+          total: reads === 1 ? 1 : 0,
+        });
+      }
+
+      if (
+        url.endsWith(`/activities/${activity.id}`) &&
+        init?.method === "PATCH"
+      ) {
+        return response({ ...activity, status: "CANCELLED" });
+      }
+
+      throw new Error(`Unexpected fetch: ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ActivitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite
+      />
+    );
+
+    expect(await screen.findByText("Reunião comercial")).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Cancelar atividade" })
+    );
+
+    await waitFor(() => {
+      const patchCall = fetchMock.mock.calls.find(
+        ([input, init]) =>
+          String(input).endsWith(`/activities/${activity.id}`) &&
+          init?.method === "PATCH"
+      );
+      expect(patchCall).toBeDefined();
+      expect(JSON.parse(String(patchCall?.[1]?.body))).toEqual({
+        status: "CANCELLED",
+      });
+      expect(reads).toBeGreaterThanOrEqual(2);
+    });
+  });
 });
