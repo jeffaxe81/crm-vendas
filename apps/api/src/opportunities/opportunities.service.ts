@@ -191,7 +191,8 @@ export class OpportunitiesService {
         const finalOwnerUserId = input.ownerUserId ?? existing.ownerUserId;
 
         if (
-          Number(Boolean(finalCompanyId)) + Number(Boolean(finalContactId)) !== 1
+          Number(Boolean(finalCompanyId)) + Number(Boolean(finalContactId)) !==
+          1
         ) {
           throw new BadRequestException({
             code: "VALIDATION_ERROR",
