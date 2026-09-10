@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 
+type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
+
 type ActivityRecord = {
   id: string;
   title: string;
@@ -22,8 +24,15 @@ type ActivitiesViewProps = {
   canWrite: boolean;
 };
 
+const statusLabels: Record<ActivityStatus, string> = {
+  PENDING: "Pendentes",
+  COMPLETED: "Concluídas",
+  CANCELLED: "Canceladas",
+};
+
 export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
   const [activities, setActivities] = useState<ActivityRecord[]>([]);
+  const [status, setStatus] = useState<ActivityStatus>("PENDING");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -36,7 +45,7 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
 
       try {
         const result = await apiRequest<ActivityListResponse>(
-          "/activities?page=1&limit=20&status=PENDING&sortBy=dueAt&sortOrder=asc",
+          `/activities?page=1&limit=20&status=${status}&sortBy=dueAt&sortOrder=asc`,
           { accessToken }
         );
         if (active) {
@@ -62,7 +71,7 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
     return () => {
       active = false;
     };
-  }, [accessToken]);
+  }, [accessToken, status]);
 
   return (
     <section className="activities-view" aria-labelledby="activities-title">
@@ -73,6 +82,20 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
           <p>Organize tarefas e próximos passos da operação comercial.</p>
         </div>
       </header>
+
+      <nav className="activities-view__status-tabs" aria-label="Status das atividades">
+        {(Object.keys(statusLabels) as ActivityStatus[]).map(option => (
+          <button
+            key={option}
+            type="button"
+            className={status === option ? "is-active" : undefined}
+            aria-pressed={status === option}
+            onClick={() => setStatus(option)}
+          >
+            {statusLabels[option]}
+          </button>
+        ))}
+      </nav>
 
       {error ? (
         <p className="activities-view__error" role="alert">
@@ -86,8 +109,8 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
 
       {!loading && !error && activities.length === 0 ? (
         <div className="activities-view__empty">
-          <strong>Nenhuma atividade pendente.</strong>
-          <span>Novas tarefas e compromissos aparecerão aqui.</span>
+          <strong>Nenhuma atividade em {statusLabels[status].toLowerCase()}.</strong>
+          <span>As atividades deste status aparecerão aqui.</span>
         </div>
       ) : null}
     </section>
