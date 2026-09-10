@@ -232,34 +232,35 @@ export class ContactsService {
     input: ContactChannelInput,
     context: ContactAdministrationContext
   ) {
-    await this.prisma.withTenant(context.organizationId, tenant =>
-      this.requireContact(tenant, contactId, context.organizationId)
-    );
+    const channel = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        await this.requireContact(tenant, contactId, context.organizationId);
 
-    const channel = await this.prisma.$transaction(async transaction => {
-      if (input.isPrimary) {
-        await transaction.contactChannel.updateMany({
-          where: {
+        if (input.isPrimary) {
+          await tenant.contactChannel.updateMany({
+            where: {
+              organizationId: context.organizationId,
+              contactId,
+              type: input.type,
+              isPrimary: true,
+            },
+            data: { isPrimary: false },
+          });
+        }
+
+        return tenant.contactChannel.create({
+          data: {
             organizationId: context.organizationId,
             contactId,
             type: input.type,
-            isPrimary: true,
+            value: input.value,
+            label: input.label,
+            isPrimary: input.isPrimary,
           },
-          data: { isPrimary: false },
         });
       }
-
-      return transaction.contactChannel.create({
-        data: {
-          organizationId: context.organizationId,
-          contactId,
-          type: input.type,
-          value: input.value,
-          label: input.label,
-          isPrimary: input.isPrimary,
-        },
-      });
-    });
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -282,39 +283,43 @@ export class ContactsService {
     input: ContactChannelInput,
     context: ContactAdministrationContext
   ) {
-    await this.prisma.withTenant(context.organizationId, tenant =>
-      this.requireContact(tenant, contactId, context.organizationId)
-    );
-    const existing = await this.requireChannel(
-      contactId,
-      channelId,
-      context.organizationId
-    );
+    const [existing, updated] = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        await this.requireContact(tenant, contactId, context.organizationId);
+        const existing = await this.requireChannel(
+          tenant,
+          contactId,
+          channelId,
+          context.organizationId
+        );
 
-    const updated = await this.prisma.$transaction(async transaction => {
-      if (input.isPrimary) {
-        await transaction.contactChannel.updateMany({
-          where: {
-            organizationId: context.organizationId,
-            contactId,
+        if (input.isPrimary) {
+          await tenant.contactChannel.updateMany({
+            where: {
+              organizationId: context.organizationId,
+              contactId,
+              type: input.type,
+              isPrimary: true,
+              id: { not: channelId },
+            },
+            data: { isPrimary: false },
+          });
+        }
+
+        const updated = await tenant.contactChannel.update({
+          where: { id: existing.id },
+          data: {
             type: input.type,
-            isPrimary: true,
-            id: { not: channelId },
+            value: input.value,
+            label: input.label,
+            isPrimary: input.isPrimary,
           },
-          data: { isPrimary: false },
         });
-      }
 
-      return transaction.contactChannel.update({
-        where: { id: existing.id },
-        data: {
-          type: input.type,
-          value: input.value,
-          label: input.label,
-          isPrimary: input.isPrimary,
-        },
-      });
-    });
+        return [existing, updated] as const;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -337,18 +342,24 @@ export class ContactsService {
     channelId: string,
     context: ContactAdministrationContext
   ): Promise<void> {
-    await this.prisma.withTenant(context.organizationId, tenant =>
-      this.requireContact(tenant, contactId, context.organizationId)
-    );
-    const existing = await this.requireChannel(
-      contactId,
-      channelId,
-      context.organizationId
-    );
+    const existing = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        await this.requireContact(tenant, contactId, context.organizationId);
+        const existing = await this.requireChannel(
+          tenant,
+          contactId,
+          channelId,
+          context.organizationId
+        );
 
-    await this.prisma.contactChannel.delete({
-      where: { id: existing.id },
-    });
+        await tenant.contactChannel.delete({
+          where: { id: existing.id },
+        });
+
+        return existing;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -387,11 +398,12 @@ export class ContactsService {
   }
 
   private async requireChannel(
+    tenant: Prisma.TransactionClient,
     contactId: string,
     channelId: string,
     organizationId: string
   ) {
-    const channel = await this.prisma.contactChannel.findFirst({
+    const channel = await tenant.contactChannel.findFirst({
       where: {
         id: channelId,
         contactId,
