@@ -94,15 +94,18 @@ describe("Cycle 3.6.2 opportunities API", () => {
     return response.body.accessToken as string;
   }
 
-  it("creates, reads and lists an opportunity inside the authenticated tenant", async () => {
+  async function createFixture(suffix = "base") {
     const organization = await prisma.organization.create({
-      data: { name: "Opportunity Organization", slug: "opportunity-org" },
+      data: {
+        name: `Opportunity Organization ${suffix}`,
+        slug: `opportunity-org-${suffix}`,
+      },
     });
     const password = "Strong-Opportunity-Password-2026!";
     const user = await createUser({
-      email: "opportunity-admin@example.test",
+      email: `opportunity-admin-${suffix}@example.test`,
       password,
-      displayName: "Opportunity Admin",
+      displayName: `Opportunity Admin ${suffix}`,
     });
 
     await prisma.organizationMembership.create({
@@ -117,7 +120,17 @@ describe("Cycle 3.6.2 opportunities API", () => {
       tenant.company.create({
         data: {
           organizationId: organization.id,
-          legalName: "Cliente Opportunity",
+          legalName: `Cliente Opportunity ${suffix}`,
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
+    const contact = await prisma.withTenant(organization.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organization.id,
+          fullName: `Contato Opportunity ${suffix}`,
           createdBy: user.id,
           updatedBy: user.id,
         },
@@ -136,27 +149,46 @@ describe("Cycle 3.6.2 opportunities API", () => {
       .expect(200);
     const stage = pipeline.body.stages[0] as { id: string };
 
-    const created = await request(app.getHttpServer())
+    return {
+      organization,
+      user,
+      company,
+      contact,
+      token,
+      pipelineId: pipeline.body.id as string,
+      stageId: stage.id,
+    };
+  }
+
+  async function createOpportunity(
+    fixture: Awaited<ReturnType<typeof createFixture>>
+  ) {
+    return request(app.getHttpServer())
       .post("/api/v1/opportunities")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
       .set("x-request-id", "c3-6-2-opportunity-create")
       .send({
-        pipelineId: pipeline.body.id,
-        stageId: stage.id,
-        companyId: company.id,
-        ownerUserId: user.id,
+        pipelineId: fixture.pipelineId,
+        stageId: fixture.stageId,
+        companyId: fixture.company.id,
+        ownerUserId: fixture.user.id,
         title: "Contrato Enterprise",
         estimatedValue: "150000.00",
       })
       .expect(201);
+  }
+
+  it("creates, reads and lists an opportunity inside the authenticated tenant", async () => {
+    const fixture = await createFixture("lifecycle");
+    const created = await createOpportunity(fixture);
 
     expect(created.body).toMatchObject({
-      organizationId: organization.id,
-      pipelineId: pipeline.body.id,
-      stageId: stage.id,
-      companyId: company.id,
+      organizationId: fixture.organization.id,
+      pipelineId: fixture.pipelineId,
+      stageId: fixture.stageId,
+      companyId: fixture.company.id,
       contactId: null,
-      ownerUserId: user.id,
+      ownerUserId: fixture.user.id,
       title: "Contrato Enterprise",
       estimatedValue: "150000.00",
       version: 1,
@@ -164,20 +196,134 @@ describe("Cycle 3.6.2 opportunities API", () => {
 
     const read = await request(app.getHttpServer())
       .get(`/api/v1/opportunities/${created.body.id}`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
       .expect(200);
 
     expect(read.body.id).toBe(created.body.id);
 
     const list = await request(app.getHttpServer())
       .get(
-        `/api/v1/opportunities?q=Enterprise&pipelineId=${pipeline.body.id}&page=1&limit=20`
+        `/api/v1/opportunities?q=Enterprise&pipelineId=${fixture.pipelineId}&page=1&limit=20`
       )
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
       .expect(200);
 
     expect(list.body).toMatchObject({ page: 1, limit: 20, total: 1 });
     expect(list.body.items).toHaveLength(1);
     expect(list.body.items[0].id).toBe(created.body.id);
+  });
+
+  it("updates mutable fields, switches Company to Contact atomically and rejects a stale version", async () => {
+    const fixture = await createFixture("update");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    const updated = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .set("x-request-id", "c3-6-2-opportunity-update")
+      .send({
+        companyId: null,
+        contactId: fixture.contact.id,
+        title: "Contrato revisado",
+        estimatedValue: "175000.25",
+        version: 1,
+      })
+      .expect(200);
+
+    expect(updated.body).toMatchObject({
+      companyId: null,
+      contactId: fixture.contact.id,
+      title: "Contrato revisado",
+      estimatedValue: "175000.25",
+      version: 2,
+    });
+
+    const stale = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({ title: "Stale", version: 1 })
+      .expect(409);
+
+    expect(stale.body.code).toBe("OPPORTUNITY_VERSION_CONFLICT");
+
+    const audit = await prisma.auditLog.findMany({
+      where: {
+        organizationId: fixture.organization.id,
+        entityId: opportunityId,
+        action: "opportunity.updated",
+      },
+    });
+    expect(audit).toHaveLength(1);
+    expect(audit[0]?.before).toMatchObject({ version: 1 });
+    expect(audit[0]?.after).toMatchObject({ version: 2 });
+  });
+
+  it("rejects a cross-tenant customer and an owner without active membership", async () => {
+    const fixture = await createFixture("references");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    const other = await createFixture("other-tenant");
+
+    const crossTenant = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({
+        companyId: other.company.id,
+        contactId: null,
+        version: 1,
+      })
+      .expect(404);
+
+    expect(crossTenant.body.code).toBe("OPPORTUNITY_REFERENCE_NOT_FOUND");
+
+    const inactiveOwner = await createUser({
+      email: "opportunity-inactive-owner@example.test",
+      password: "Strong-Inactive-Owner-Password-2026!",
+      displayName: "Inactive Opportunity Owner",
+    });
+    await prisma.organizationMembership.create({
+      data: {
+        organizationId: fixture.organization.id,
+        userId: inactiveOwner.id,
+        role: "SELLER",
+        isActive: false,
+      },
+    });
+
+    const inactive = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({ ownerUserId: inactiveOwner.id, version: 1 })
+      .expect(404);
+
+    expect(inactive.body.code).toBe("OPPORTUNITY_REFERENCE_NOT_FOUND");
+  });
+
+  it("rejects pipelineId and stageId on the general opportunity PATCH", async () => {
+    const fixture = await createFixture("immutable-routing");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({
+        title: "Não deve alterar pipeline",
+        pipelineId: fixture.pipelineId,
+        version: 1,
+      })
+      .expect(400);
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({
+        title: "Não deve alterar stage",
+        stageId: fixture.stageId,
+        version: 1,
+      })
+      .expect(400);
   });
 });
