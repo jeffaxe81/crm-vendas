@@ -1,6 +1,7 @@
 import type {
   OpportunityCreateInput,
   OpportunityListQuery,
+  OpportunityMoveInput,
   OpportunityUpdateInput,
 } from "@axes/contracts";
 import {
@@ -268,6 +269,88 @@ export class OpportunitiesService {
       before: this.toAuditOpportunity(before),
       after: this.toAuditOpportunity(after),
       metadata: {
+        previousVersion: before.version,
+        version: after.version,
+      },
+      ipAddress: context.ipAddress ?? null,
+    });
+
+    return this.toPublicOpportunity(after);
+  }
+
+  async move(
+    id: string,
+    input: OpportunityMoveInput,
+    context: OpportunityAdministrationContext
+  ) {
+    const { before, after, targetStageKind } = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const existing = await this.requireOpportunity(
+          tenant,
+          id,
+          context.organizationId
+        );
+
+        const targetStage = await tenant.pipelineStage.findFirst({
+          where: {
+            id: input.stageId,
+            organizationId: context.organizationId,
+            pipelineId: existing.pipelineId,
+            isActive: true,
+          },
+          select: { id: true, kind: true },
+        });
+        if (!targetStage) {
+          this.referenceNotFound();
+        }
+
+        const result = await tenant.opportunity.updateMany({
+          where: {
+            id,
+            organizationId: context.organizationId,
+            deletedAt: null,
+            version: input.version,
+          },
+          data: {
+            stageId: targetStage.id,
+            updatedBy: context.actorUserId,
+            version: { increment: 1 },
+          },
+        });
+
+        if (result.count === 0) {
+          this.versionConflict();
+        }
+
+        const updated = await this.requireOpportunity(
+          tenant,
+          id,
+          context.organizationId
+        );
+
+        return {
+          before: existing,
+          after: updated,
+          targetStageKind: targetStage.kind,
+        };
+      }
+    );
+
+    await this.audit.record({
+      organizationId: context.organizationId,
+      actorUserId: context.actorUserId,
+      requestId: context.requestId,
+      action: "opportunity.moved",
+      entityType: "opportunity",
+      entityId: after.id,
+      before: this.toAuditOpportunity(before),
+      after: this.toAuditOpportunity(after),
+      metadata: {
+        pipelineId: before.pipelineId,
+        fromStageId: before.stageId,
+        toStageId: after.stageId,
+        targetStageKind,
         previousVersion: before.version,
         version: after.version,
       },

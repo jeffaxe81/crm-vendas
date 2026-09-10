@@ -1,9 +1,11 @@
 import {
   OpportunityCreateInputSchema,
   OpportunityListQuerySchema,
+  OpportunityMoveInputSchema,
   OpportunityUpdateInputSchema,
   type OpportunityCreateInput,
   type OpportunityListQuery,
+  type OpportunityMoveInput,
   type OpportunityUpdateInput,
 } from "@axes/contracts";
 import {
@@ -70,6 +72,20 @@ export class OpportunitiesController {
     );
   }
 
+  @Patch(":id/stage")
+  @RequirePermissions("opportunity.move")
+  move(
+    @Param("id") id: string,
+    @Body() body: unknown,
+    @Req() request: OpportunityRequest
+  ) {
+    return this.opportunities.move(
+      this.parseOpportunityId(id),
+      this.parseMove(body),
+      this.contextFrom(request)
+    );
+  }
+
   @Patch(":id")
   @RequirePermissions("opportunity.write")
   update(
@@ -108,6 +124,17 @@ export class OpportunitiesController {
 
   private parseCreate(body: unknown): OpportunityCreateInput {
     const parsed = OpportunityCreateInputSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+    return parsed.data;
+  }
+
+  private parseMove(body: unknown): OpportunityMoveInput {
+    const parsed = OpportunityMoveInputSchema.safeParse(body);
     if (!parsed.success) {
       throw new BadRequestException({
         code: "VALIDATION_ERROR",
