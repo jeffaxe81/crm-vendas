@@ -360,6 +360,55 @@ export class OpportunitiesService {
     return this.toPublicOpportunity(after);
   }
 
+  async remove(
+    id: string,
+    context: OpportunityAdministrationContext
+  ): Promise<void> {
+    const { before, after } = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const existing = await this.requireOpportunity(
+          tenant,
+          id,
+          context.organizationId
+        );
+        const deletedAt = new Date();
+
+        const deleted = await tenant.opportunity.update({
+          where: { id: existing.id },
+          data: {
+            deletedAt,
+            deletedBy: context.actorUserId,
+            updatedBy: context.actorUserId,
+            version: { increment: 1 },
+          },
+        });
+
+        return { before: existing, after: deleted };
+      }
+    );
+
+    await this.audit.record({
+      organizationId: context.organizationId,
+      actorUserId: context.actorUserId,
+      requestId: context.requestId,
+      action: "opportunity.deleted",
+      entityType: "opportunity",
+      entityId: after.id,
+      before: this.toAuditOpportunity(before),
+      after: {
+        ...this.toAuditOpportunity(after),
+        deletedAt: after.deletedAt?.toISOString() ?? null,
+        deletedBy: after.deletedBy,
+      },
+      metadata: {
+        previousVersion: before.version,
+        version: after.version,
+      },
+      ipAddress: context.ipAddress ?? null,
+    });
+  }
+
   private async requireOpportunity(
     tenant: Prisma.TransactionClient,
     id: string,
