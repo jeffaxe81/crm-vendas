@@ -324,25 +324,27 @@ describe("C3.5.4 activity lifecycle", () => {
       title: "Somente leitura concluída",
       completedAt: "2026-09-10T10:00:00.000Z",
     };
-    const fetchMock = vi.fn(async (input: string | URL) => {
-      const url = String(input);
+    const fetchMock = vi.fn(
+      async (input: string | URL, _init?: RequestInit) => {
+        const url = String(input);
 
-      if (url.includes("status=COMPLETED")) {
+        if (url.includes("status=COMPLETED")) {
+          return response({
+            items: [completedActivity],
+            page: 1,
+            limit: 20,
+            total: 1,
+          });
+        }
+
         return response({
-          items: [completedActivity],
+          items: [pendingActivity],
           page: 1,
           limit: 20,
           total: 1,
         });
       }
-
-      return response({
-        items: [pendingActivity],
-        page: 1,
-        limit: 20,
-        total: 1,
-      });
-    });
+    );
     vi.stubGlobal("fetch", fetchMock);
 
     render(
