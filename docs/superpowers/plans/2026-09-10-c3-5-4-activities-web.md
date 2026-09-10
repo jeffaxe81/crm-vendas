@@ -4,9 +4,9 @@
 
 **Goal:** Integrar ao frontend canônico `apps/web` uma área de Atividades que consuma a API tenant-aware da C3.5.2, respeite `activity.read`/`activity.write` e permita o lifecycle básico de tarefas e compromissos.
 
-**Architecture:** A nova área será uma terceira seção do `CrmShell`, sem nova rota Next. `ActivitiesView` concentrará carregamento, filtros, formulário e mutações via `apiRequest`; o backend continuará como autoridade de autorização, isolamento multiempresa e transições. `ownerUserId` será sempre `session.user.id` nesta microentrega.
+**Architecture:** Atividades será uma terceira seção do `CrmShell`, sem nova rota Next. `ActivitiesView` concentrará leitura, filtros, formulário e mutações via `apiRequest`; o backend continuará sendo a autoridade de autorização, isolamento multiempresa e transições. Nesta entrega, `ownerUserId` será sempre `session.user.id`.
 
-**Tech Stack:** Next.js 16.3.3, React 19.2.1, TypeScript, Vitest 4.1.11, Testing Library 16.3.3, Playwright 1.62.1, `@axes/contracts`, REST via `apiRequest`.
+**Tech Stack:** Next.js 16.3.3, React 19.2.1, TypeScript, Vitest 4.1.11, Testing Library 16.3.3, Playwright 1.62.1, `@axes/contracts` e REST via `apiRequest`.
 
 **Spec:** `docs/superpowers/specs/2026-09-10-c3-5-4-activities-web-design.md`
 
@@ -14,92 +14,61 @@
 
 - Não criar rota Next independente para Atividades nesta etapa.
 - Não alterar Prisma schema, migrations, API backend ou RBAC.
-- Não expor `Opportunity` na Web de Atividades.
+- Não expor `Opportunity`.
 - Não consultar `/admin/users`; `ownerUserId` deve ser `session.user.id`.
-- O menu Atividades só aparece quando `session.permissions` contém `activity.read`.
-- Controles de criação, mudança de status e inativação só aparecem quando `session.permissions` contém `activity.write`.
-- Busca e status devem ser enviados para a API como filtros.
-- Empresa e Contato são vínculos opcionais e usam os endpoints canônicos existentes.
-- Sem agenda/calendário, recorrência, notificações, automação de follow-up, Google/Outlook ou delegação nesta microentrega.
-- Após cada mutação bem-sucedida, recarregar a lista atual sem recarregar a sessão.
+- O menu Atividades só aparece com `activity.read`.
+- Controles de mutação só aparecem com `activity.write`.
+- Busca e status são filtros da API, não uma segunda fonte de verdade no navegador.
+- Empresa e Contato são vínculos opcionais pelos endpoints canônicos existentes.
+- Sem agenda/calendário, recorrência, notificações, follow-up automático, Google/Outlook ou delegação.
+- Depois de mutações bem-sucedidas, recarregar a lista atual sem recarregar a sessão.
 - Manter o padrão visual e de acessibilidade de `apps/web`.
-
----
 
 ## File Structure
 
-- `apps/web/src/app/crm-shell.tsx`: ampliar `CrmSection` e navegação condicional por permissão.
-- `apps/web/src/app/page.tsx`: renderizar `ActivitiesView` e fornecer token, usuário e permissão de escrita.
-- `apps/web/src/app/page-activities-navigation.test.tsx`: contrato de navegação e visibilidade por `activity.read`.
-- `apps/web/src/app/activities/activities-view.tsx`: lista, filtros, criação, lifecycle e vínculos opcionais.
-- `apps/web/src/app/activities/activities-view.test.tsx`: testes funcionais da nova view.
-- `apps/web/src/app/globals.css`: estilos novos estritamente necessários.
-- `tests/e2e/crm-core.spec.ts`: fluxo E2E de Atividades no CRM Core.
-- `CHANGELOG.md`: registro da C3.5.4.
-- `docs/checkpoints/c3-5-4-activities-web.md`: evidência RED/GREEN e gate de integração.
+- `apps/web/src/app/crm-shell.tsx`: ampliar `CrmSection` e menu condicional.
+- `apps/web/src/app/page.tsx`: renderizar `ActivitiesView` com sessão e permissões.
+- `apps/web/src/app/page-activities-navigation.test.tsx`: contrato de navegação e `activity.read`.
+- `apps/web/src/app/activities/activities-view.tsx`: lista, filtros, criação, lifecycle e vínculos.
+- `apps/web/src/app/activities/activities-view.test.tsx`: testes funcionais da view.
+- `apps/web/src/app/globals.css`: estilos estritamente necessários.
+- `tests/e2e/crm-core.spec.ts`: fluxo real de Atividades no CRM Core.
+- `CHANGELOG.md`: registro da entrega.
+- `docs/checkpoints/c3-5-4-activities-web.md`: evidências RED/GREEN e gate.
 
 ---
 
 ### Task 1: Navegação canônica e permissão de leitura
 
 **Files:**
+
 - Create: `apps/web/src/app/page-activities-navigation.test.tsx`
 - Create: `apps/web/src/app/activities/activities-view.tsx`
 - Modify: `apps/web/src/app/crm-shell.tsx`
 - Modify: `apps/web/src/app/page.tsx`
 
 **Interfaces:**
-- Consumes: `AuthSessionResponse.permissions`, `AuthSessionResponse.user.id`, `CrmShell` atual.
-- Produces: `CrmSection = "companies" | "contacts" | "activities"`; `ActivitiesViewProps = { accessToken: string; ownerUserId: string; canWrite: boolean }`.
 
-- [ ] **Step 1: Escrever o RED de navegação**
+- Consumes: `AuthSessionResponse.permissions`, `AuthSessionResponse.user.id`, `CrmShell`.
+- Produces: `CrmSection = "companies" | "contacts" | "activities"` e `ActivitiesViewProps = { accessToken: string; ownerUserId: string; canWrite: boolean }`.
 
-Criar sessão de teste contendo `activity.read` e `activity.write`, autenticar `Home`, clicar em `Atividades` e esperar o heading da nova área:
+- [ ] **Step 1: Escrever o RED de navegação.**
 
-```tsx
-fireEvent.click(await screen.findByRole("button", { name: "Atividades" }));
-expect(
-  await screen.findByRole("heading", { name: "Atividades e compromissos" })
-).toBeInTheDocument();
-```
+O teste autentica uma sessão com `activity.read`, procura o botão `Atividades`, entra na seção e espera o heading `Atividades e compromissos`. Um segundo teste usa sessão sem `activity.read` e confirma que o botão não existe.
 
-No mesmo arquivo, criar sessão sem `activity.read` e verificar:
+- [ ] **Step 2: Executar o RED.**
 
-```tsx
-expect(screen.queryByRole("button", { name: "Atividades" })).not.toBeInTheDocument();
-```
-
-O mock de `GET /activities` deve devolver:
-
-```ts
-{ items: [], page: 1, limit: 20, total: 0 }
-```
-
-- [ ] **Step 2: Executar o RED**
-
-```bash
+```text
 pnpm --filter @axes/web test -- src/app/page-activities-navigation.test.tsx
 ```
 
-Expected: FAIL porque `CrmSection` e o menu ainda não suportam `activities`.
+Resultado esperado: FAIL funcional porque o shell ainda não oferece a seção `activities`.
 
-- [ ] **Step 3: Implementar a navegação mínima**
+- [ ] **Step 3: Implementar o mínimo para GREEN.**
 
-Em `crm-shell.tsx`:
+`crm-shell.tsx` deve aceitar `permissions` e incluir `activities` em `CrmSection`. O botão Atividades será renderizado somente com `activity.read`. `page.tsx` deverá renderizar a nova view assim:
 
-```ts
-export type CrmSection = "companies" | "contacts" | "activities";
-```
-
-Adicionar `permissions: string[]` nas props e renderizar o botão apenas quando:
-
-```ts
-permissions.includes("activity.read")
-```
-
-Em `page.tsx`, importar a view e renderizar:
-
-```tsx
+```text
 <ActivitiesView
   accessToken={session.accessToken}
   ownerUserId={session.user.id}
@@ -107,317 +76,200 @@ Em `page.tsx`, importar a view e renderizar:
 />
 ```
 
-Criar `activities-view.tsx` com heading e carregamento inicial de `PENDING` via `apiRequest`.
+A primeira versão de `ActivitiesView` terá o heading e carregará a lista `PENDING` via `apiRequest`, sem formulário ou lifecycle.
 
-- [ ] **Step 4: Verificar GREEN e regressão de navegação**
+- [ ] **Step 4: Verificar GREEN e regressão de navegação.**
 
-```bash
+```text
 pnpm --filter @axes/web test -- src/app/page-activities-navigation.test.tsx src/app/page-contacts-navigation.test.tsx
+pnpm --filter @axes/web typecheck
 ```
 
-Expected: PASS.
+- [ ] **Step 5: Commit.**
 
-- [ ] **Step 5: Commit**
-
-```bash
+```text
 git add apps/web/src/app/crm-shell.tsx apps/web/src/app/page.tsx apps/web/src/app/page-activities-navigation.test.tsx apps/web/src/app/activities/activities-view.tsx
 git commit -m "feat: add activities workspace navigation"
 ```
 
 ---
 
-### Task 2: Listagem, status, busca e estados
+### Task 2: Listagem, status, busca e estados visuais
 
 **Files:**
+
 - Create: `apps/web/src/app/activities/activities-view.test.tsx`
 - Modify: `apps/web/src/app/activities/activities-view.tsx`
 - Modify: `apps/web/src/app/globals.css`
 
 **Interfaces:**
-- Consumes: `GET /activities` com `page`, `limit`, `status`, `sortBy`, `sortOrder` e `q`.
-- Produces: `ActivityRecord`, `ActivityListResponse` e função interna `loadActivities`.
 
-Definir os tipos locais de resposta:
+- Consumes: `GET /activities?page=1&limit=20&status=<STATUS>&sortBy=dueAt&sortOrder=asc&q=<QUERY>`.
+- Produces: lista tipada, tabs `PENDING|COMPLETED|CANCELLED`, busca e indicador de vencimento.
 
-```ts
-type ActivityRecord = {
-  id: string;
-  type: "TASK" | "APPOINTMENT";
-  status: "PENDING" | "COMPLETED" | "CANCELLED";
-  priority: "LOW" | "MEDIUM" | "HIGH";
-  title: string;
-  description: string | null;
-  companyId: string | null;
-  contactId: string | null;
-  ownerUserId: string;
-  dueAt: string | null;
-  completedAt: string | null;
-  cancelledAt: string | null;
-};
+- [ ] **Step 1: Escrever RED de lista e filtros.**
 
-type ActivityListResponse = {
-  items: ActivityRecord[];
-  page: number;
-  limit: number;
-  total: number;
-};
-```
+Cobrir `PENDING` inicial, troca para `COMPLETED`, envio de `q=proposta`, loading, erro, vazio e atividade pendente vencida.
 
-- [ ] **Step 1: Escrever RED de lista e filtros**
+- [ ] **Step 2: Executar RED.**
 
-Testar:
-- request inicial com `status=PENDING`;
-- clique em `Concluídas` gera `status=COMPLETED`;
-- submit da busca `proposta` gera `q=proposta`;
-- estados `Carregando`, erro e vazio;
-- `PENDING` com prazo anterior a `Date.now()` exibe `Vencida`.
-
-- [ ] **Step 2: Executar RED**
-
-```bash
+```text
 pnpm --filter @axes/web test -- src/app/activities/activities-view.test.tsx
 ```
 
-Expected: FAIL porque filtros e apresentação ainda não existem.
+- [ ] **Step 3: Implementar filtros pela API.**
 
-- [ ] **Step 3: Implementar listagem e filtros**
+Montar `URLSearchParams` com `page=1`, `limit=20`, `status`, `sortBy=dueAt` e `sortOrder=asc`; acrescentar `q` somente quando a busca estiver preenchida. Usar submit explícito da busca para não disparar request a cada tecla.
 
-Montar a URL exatamente por `URLSearchParams`:
+- [ ] **Step 4: Verificar GREEN e typecheck.**
 
-```ts
-const params = new URLSearchParams({
-  page: "1",
-  limit: "20",
-  status,
-  sortBy: "dueAt",
-  sortOrder: "asc",
-});
-if (query.trim()) params.set("q", query.trim());
-
-const result = await apiRequest<ActivityListResponse>(
-  `/activities?${params.toString()}`,
-  { accessToken }
-);
-```
-
-Usar submit explícito para busca. Exibir tipo, título, prioridade, prazo e status; marcar vencida somente se `status === "PENDING"` e `dueAt` estiver no passado.
-
-- [ ] **Step 4: Verificar GREEN e typecheck**
-
-```bash
+```text
 pnpm --filter @axes/web test -- src/app/activities/activities-view.test.tsx
 pnpm --filter @axes/web typecheck
 ```
 
-Expected: PASS.
+- [ ] **Step 5: Commit.**
 
-- [ ] **Step 5: Commit**
-
-```bash
+```text
 git add apps/web/src/app/activities/activities-view.tsx apps/web/src/app/activities/activities-view.test.tsx apps/web/src/app/globals.css
 git commit -m "feat: list and filter activities"
 ```
 
 ---
 
-### Task 3: Criação self-owned e vínculos Empresa/Contato
+### Task 3: Criação self-owned e vínculos comerciais
 
 **Files:**
+
 - Modify: `apps/web/src/app/activities/activities-view.tsx`
 - Modify: `apps/web/src/app/activities/activities-view.test.tsx`
 - Modify: `apps/web/src/app/globals.css`
 
 **Interfaces:**
-- Consumes: `ActivityCreateInput`, `POST /activities`, `GET /companies?page=1&limit=100`, `GET /contacts?page=1&limit=100`.
-- Produces: formulário `Nova atividade` sem campo Opportunity.
 
-- [ ] **Step 1: Escrever RED de criação**
+- Consumes: `ActivityCreateInput`, `POST /activities`, `GET /companies?page=1&limit=100` e `GET /contacts?page=1&limit=100`.
+- Produces: formulário sem Opportunity, com `ownerUserId` vindo da sessão.
 
-Com `canWrite={true}`, abrir o formulário, preencher `TASK`, título `Preparar proposta`, prioridade `HIGH`, Empresa e Contato. Interceptar o POST e verificar:
+- [ ] **Step 1: Escrever RED de criação.**
 
-```ts
-expect(JSON.parse(String(init?.body))).toMatchObject({
-  type: "TASK",
-  priority: "HIGH",
-  title: "Preparar proposta",
-  ownerUserId: "11111111-1111-4111-8111-111111111111",
-  companyId,
-  contactId,
-});
+Testar tipo, título, prioridade, prazo e vínculos. O corpo do POST deve conter o `ownerUserId` recebido por prop e IDs opcionais de Empresa/Contato. Confirmar que não existe campo Opportunity e que `Nova atividade` não aparece com `canWrite=false`.
+
+Payload esperado:
+
+```text
+{
+  "type": "TASK",
+  "priority": "HIGH",
+  "title": "Preparar proposta",
+  "ownerUserId": "11111111-1111-4111-8111-111111111111",
+  "companyId": "<company-id>",
+  "contactId": "<contact-id>"
+}
 ```
 
-Verificar também:
+- [ ] **Step 2: Executar RED.**
 
-```tsx
-expect(screen.queryByLabelText(/oportunidade/i)).not.toBeInTheDocument();
-```
-
-Com `canWrite={false}`:
-
-```tsx
-expect(screen.queryByRole("button", { name: "Nova atividade" })).not.toBeInTheDocument();
-```
-
-- [ ] **Step 2: Executar RED**
-
-```bash
+```text
 pnpm --filter @axes/web test -- src/app/activities/activities-view.test.tsx
 ```
 
-Expected: FAIL porque o formulário ainda não existe.
+- [ ] **Step 3: Implementar formulário mínimo.**
 
-- [ ] **Step 3: Implementar criação mínima**
+Usar `ActivityCreateInput`. Carregar opções de Empresa/Contato ao abrir o formulário. Converter `datetime-local` para ISO somente quando preenchido. Bloquear submissão duplicada, fechar e limpar o formulário após sucesso e recarregar a lista atual.
 
-Usar `ActivityCreateInput` de `@axes/contracts`:
+- [ ] **Step 4: Verificar GREEN.**
 
-```ts
-const payload: ActivityCreateInput = {
-  type: form.type,
-  priority: form.priority,
-  title: form.title.trim(),
-  ownerUserId,
-  ...(form.description.trim() ? { description: form.description.trim() } : {}),
-  ...(form.companyId ? { companyId: form.companyId } : {}),
-  ...(form.contactId ? { contactId: form.contactId } : {}),
-  ...(form.dueAt ? { dueAt: new Date(form.dueAt).toISOString() } : {}),
-};
-```
-
-Carregar Empresas e Contatos ao abrir o formulário; enviar `POST /activities`; bloquear submit enquanto `submitting`; limpar o formulário e chamar `loadActivities` após sucesso.
-
-- [ ] **Step 4: Verificar GREEN e typecheck**
-
-```bash
+```text
 pnpm --filter @axes/web test -- src/app/activities/activities-view.test.tsx
 pnpm --filter @axes/web typecheck
 ```
 
-Expected: PASS.
+- [ ] **Step 5: Commit.**
 
-- [ ] **Step 5: Commit**
-
-```bash
+```text
 git add apps/web/src/app/activities/activities-view.tsx apps/web/src/app/activities/activities-view.test.tsx apps/web/src/app/globals.css
 git commit -m "feat: create linked activities in web"
 ```
 
 ---
 
-### Task 4: Lifecycle — concluir, cancelar, reabrir e inativar
+### Task 4: Lifecycle de atividades
 
 **Files:**
+
 - Modify: `apps/web/src/app/activities/activities-view.tsx`
 - Modify: `apps/web/src/app/activities/activities-view.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ActivityUpdateInput`, `PATCH /activities/:id`, `DELETE /activities/:id`.
-- Produces: ações `changeStatus` e `inactivateActivity`.
+- Produces: concluir, cancelar, reabrir e inativar.
 
-- [ ] **Step 1: Escrever RED das mutações**
+- [ ] **Step 1: Escrever RED das transições.**
 
-Verificar os corpos e métodos:
+Verificar os contratos:
 
 ```text
-PATCH /activities/activity-id {"status":"COMPLETED"}
-PATCH /activities/activity-id {"status":"CANCELLED"}
-PATCH /activities/activity-id {"status":"PENDING"}
-DELETE /activities/activity-id
+PATCH /activities/<id> { "status": "COMPLETED" }
+PATCH /activities/<id> { "status": "CANCELLED" }
+PATCH /activities/<id> { "status": "PENDING" }
+DELETE /activities/<id>
 ```
 
-Validar que sessão sem escrita não vê esses controles.
+Também confirmar ausência de controles de mutação em modo somente leitura.
 
-- [ ] **Step 2: Executar RED**
+- [ ] **Step 2: Executar RED.**
 
-```bash
+```text
 pnpm --filter @axes/web test -- src/app/activities/activities-view.test.tsx
 ```
 
-Expected: FAIL porque o lifecycle ainda não está conectado.
+- [ ] **Step 3: Implementar ações mínimas.**
 
-- [ ] **Step 3: Implementar mutações**
+Regras de UI: `PENDING` mostra Concluir/Cancelar; `COMPLETED` e `CANCELLED` mostram Reabrir; writer pode Inativar em qualquer status; reader não vê ações. Toda mutação bem-sucedida recarrega a lista atual.
 
-```ts
-async function changeStatus(id: string, status: ActivityStatus) {
-  const payload: ActivityUpdateInput = { status };
-  await apiRequest<ActivityRecord>(`/activities/${id}`, {
-    accessToken,
-    method: "PATCH",
-    body: payload,
-  });
-  await loadActivities(activeStatus, query);
-}
+- [ ] **Step 4: Verificar GREEN completo da Web.**
 
-async function inactivateActivity(id: string) {
-  await apiRequest<void>(`/activities/${id}`, {
-    accessToken,
-    method: "DELETE",
-  });
-  await loadActivities(activeStatus, query);
-}
-```
-
-Exibir:
-- `PENDING`: `Concluir`, `Cancelar`, `Inativar`;
-- `COMPLETED`: `Reabrir`, `Inativar`;
-- `CANCELLED`: `Reabrir`, `Inativar`;
-- reader-only: nenhum controle de mutação.
-
-- [ ] **Step 4: Verificar a suíte Web**
-
-```bash
+```text
 pnpm --filter @axes/web test
 pnpm --filter @axes/web typecheck
 ```
 
-Expected: PASS.
+- [ ] **Step 5: Commit.**
 
-- [ ] **Step 5: Commit**
-
-```bash
+```text
 git add apps/web/src/app/activities/activities-view.tsx apps/web/src/app/activities/activities-view.test.tsx
 git commit -m "feat: manage activity lifecycle in web"
 ```
 
 ---
 
-### Task 5: E2E do CRM Core
+### Task 5: E2E e regressão do CRM Core
 
 **Files:**
+
 - Modify: `tests/e2e/crm-core.spec.ts`
 
 **Interfaces:**
-- Consumes: `playwright.config.ts`, que inicia API e Web automaticamente; banco PostgreSQL deve estar acessível em `DATABASE_URL`.
-- Produces: cenário browser que prova navegação, criação e conclusão de Activity.
 
-- [ ] **Step 1: Acrescentar cenário E2E**
+- Consumes: stack real levantada pelo Playwright, login real e API real de Activity.
+- Produces: fluxo E2E de navegação, criação e conclusão.
 
-No fluxo autenticado, executar:
+- [ ] **Step 1: Acrescentar cenário E2E.**
 
-```ts
-await page.getByRole("button", { name: "Atividades" }).click();
-await expect(
-  page.getByRole("heading", { name: "Atividades e compromissos" })
-).toBeVisible();
-await page.getByRole("button", { name: "Nova atividade" }).click();
-await page.getByLabel("Título").fill("Follow-up E2E");
-await page.getByRole("button", { name: "Criar atividade" }).click();
-await expect(page.getByText("Follow-up E2E")).toBeVisible();
-await page.getByRole("button", { name: "Concluir" }).first().click();
-await page.getByRole("button", { name: "Concluídas" }).click();
-await expect(page.getByText("Follow-up E2E")).toBeVisible();
-```
+Depois do login: entrar em Atividades, criar `Follow-up E2E`, confirmar que aparece, concluir, abrir `Concluídas` e confirmar novamente a atividade.
 
-- [ ] **Step 2: Executar o E2E específico**
+- [ ] **Step 2: Executar E2E.**
 
-```bash
+```text
 pnpm test:e2e -- tests/e2e/crm-core.spec.ts
 ```
 
-Expected: PASS. O `playwright.config.ts` sobe API em `127.0.0.1:3001` e Web em `127.0.0.1:3000`; usar `DATABASE_URL` do ambiente de teste.
+O Playwright usa `playwright.config.ts` para levantar API e Web. O banco PostgreSQL precisa estar disponível; no PR, o workflow fornece esse serviço.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 3: Commit.**
 
-```bash
+```text
 git add tests/e2e/crm-core.spec.ts
 git commit -m "test: cover activities web lifecycle e2e"
 ```
@@ -427,65 +279,51 @@ git commit -m "test: cover activities web lifecycle e2e"
 ### Task 6: Documentação e gate final
 
 **Files:**
+
 - Modify: `CHANGELOG.md`
 - Create: `docs/checkpoints/c3-5-4-activities-web.md`
 
 **Interfaces:**
-- Consumes: SHAs e resultados reais das Tasks 1–5.
+
+- Consumes: SHAs RED/GREEN e resultados reais do CI.
 - Produces: checkpoint auditável e PR pronto para revisão.
 
-- [ ] **Step 1: Atualizar changelog**
+- [ ] **Step 1: Atualizar changelog.**
 
-Registrar: terceira seção `Atividades`, filtros via API, criação self-owned, Empresa/Contato opcionais, lifecycle, permissões e itens explicitamente fora do escopo.
+Registrar seção Atividades, filtros via API, criação self-owned, vínculos Empresa/Contato, lifecycle, permissões e exclusões de Opportunity/agenda/follow-up.
 
-- [ ] **Step 2: Criar checkpoint**
+- [ ] **Step 2: Criar checkpoint.**
 
-Registrar no checkpoint:
-- base `29dc19eb00de99fa20544d520558b4835f4e17ef`;
-- SHA do primeiro RED funcional e sua falha observada;
-- SHA GREEN final;
-- arquivos alterados;
-- resultado da suíte Web e typecheck;
-- resultado E2E;
-- resultado do gate integral do PR;
-- confirmação de ausência de mudança em schema, migration, backend e RBAC;
-- merge condicionado à aprovação explícita.
+Registrar base da branch, SHA RED e motivo funcional, SHA GREEN, arquivos alterados, testes executados, CI e confirmação de que não houve mudança de schema/migration/backend/RBAC. Declarar que o checkpoint não autoriza merge.
 
-- [ ] **Step 3: Executar verificação local completa disponível**
+- [ ] **Step 3: Executar gate local aplicável.**
 
-```bash
+```text
+pnpm --filter @axes/web test
+pnpm --filter @axes/web typecheck
 pnpm verify
 ```
 
-Expected: PASS para foundation, format, lint, typecheck, testes e build. O E2E é verificado separadamente pelo comando da Task 5 e novamente pelo workflow do PR.
+- [ ] **Step 4: Commit documental.**
 
-- [ ] **Step 4: Commit documental**
-
-```bash
+```text
 git add CHANGELOG.md docs/checkpoints/c3-5-4-activities-web.md
 git commit -m "docs: record C3.5.4 activities web delivery"
 ```
 
-- [ ] **Step 5: Abrir PR em draft**
+- [ ] **Step 5: Verificar o PR #14 no SHA final.**
 
-Título: `C3.5.4 — Activities web workspace`
+O workflow deve terminar GREEN no head final em instalação, Prisma/migrations, source/tests, E2E, Compose e build das imagens.
 
-Base: `main`
+- [ ] **Step 6: Marcar ready-for-review e parar no gate humano.**
 
-Head: `feat/c3-5-4-activities-web`
-
-O corpo deve registrar escopo, evidência RED/GREEN, E2E, ausência de backend/schema/RBAC e gate humano de merge.
-
-- [ ] **Step 6: Validar CI no SHA final**
-
-O workflow deve terminar GREEN no mesmo SHA final para dependências, Prisma/migrations, source/tests, E2E, Compose e build das imagens. Se houver commit depois desse resultado, repetir a validação no novo SHA.
-
-- [ ] **Step 7: Marcar ready-for-review e parar antes do merge**
-
-Somente após o CI integral GREEN. Nenhum merge é realizado nesta Task.
+Não fazer merge. Solicitar aprovação explícita do PR #14.
 
 ---
 
 ## Plan Self-Review
 
-O plano cobre navegação, permissões, listagem, filtros, busca, loading/erro/vazio, atividade vencida, criação self-owned, Empresa/Contato, lifecycle, ausência de Opportunity, E2E, documentação e gate final. Os nomes de tipos e contratos usados nas Tasks 3 e 4 correspondem a `@axes/contracts`, e nenhuma Task exige alteração de backend, banco ou RBAC.
+- A spec está coberta por tarefas explícitas de navegação, permissões, leitura, filtros, busca, estados, criação, self-owner, Empresa/Contato, lifecycle, ausência de Opportunity, E2E e gate final.
+- Não há tarefa que exija backend, banco, migration ou RBAC.
+- Os comandos de Vitest, typecheck, `pnpm verify` e Playwright estão explicitamente definidos.
+- Não há placeholders de implementação.
