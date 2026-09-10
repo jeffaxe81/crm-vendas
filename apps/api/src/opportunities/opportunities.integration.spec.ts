@@ -148,6 +148,7 @@ describe("Cycle 3.6.2 opportunities API", () => {
       .set("Authorization", `Bearer ${token}`)
       .expect(200);
     const stage = pipeline.body.stages[0] as { id: string };
+    const secondStage = pipeline.body.stages[1] as { id: string };
 
     return {
       organization,
@@ -157,6 +158,7 @@ describe("Cycle 3.6.2 opportunities API", () => {
       token,
       pipelineId: pipeline.body.id as string,
       stageId: stage.id,
+      secondStageId: secondStage.id,
     };
   }
 
@@ -325,5 +327,100 @@ describe("Cycle 3.6.2 opportunities API", () => {
         version: 1,
       })
       .expect(400);
+  });
+
+  it("moves an opportunity to another active stage in the same pipeline", async () => {
+    const fixture = await createFixture("move-same-pipeline");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    const moved = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}/stage`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .set("x-request-id", "c3-6-2-opportunity-move")
+      .send({ stageId: fixture.secondStageId, version: 1 })
+      .expect(200);
+
+    expect(moved.body).toMatchObject({
+      id: opportunityId,
+      pipelineId: fixture.pipelineId,
+      stageId: fixture.secondStageId,
+      version: 2,
+    });
+
+    const audit = await prisma.auditLog.findMany({
+      where: {
+        organizationId: fixture.organization.id,
+        entityId: opportunityId,
+        action: "opportunity.moved",
+      },
+    });
+    expect(audit).toHaveLength(1);
+    expect(audit[0]?.before).toMatchObject({
+      pipelineId: fixture.pipelineId,
+      stageId: fixture.stageId,
+      version: 1,
+    });
+    expect(audit[0]?.after).toMatchObject({
+      pipelineId: fixture.pipelineId,
+      stageId: fixture.secondStageId,
+      version: 2,
+    });
+  });
+
+  it("rejects a destination stage that belongs to another pipeline", async () => {
+    const fixture = await createFixture("move-cross-pipeline");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    const otherStage = await prisma.withTenant(
+      fixture.organization.id,
+      async tenant => {
+        const pipeline = await tenant.pipeline.create({
+          data: {
+            organizationId: fixture.organization.id,
+            name: "Funil Alternativo",
+            normalizedName: "funil alternativo",
+          },
+        });
+        return tenant.pipelineStage.create({
+          data: {
+            organizationId: fixture.organization.id,
+            pipelineId: pipeline.id,
+            name: "Etapa Alternativa",
+            position: 1,
+            kind: "OPEN",
+          },
+        });
+      }
+    );
+
+    const response = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}/stage`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({ stageId: otherStage.id, version: 1 })
+      .expect(404);
+
+    expect(response.body.code).toBe("OPPORTUNITY_REFERENCE_NOT_FOUND");
+  });
+
+  it("rejects a stage movement with a stale opportunity version", async () => {
+    const fixture = await createFixture("move-stale");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({ title: "Atualizada antes do move", version: 1 })
+      .expect(200);
+
+    const stale = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}/stage`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({ stageId: fixture.secondStageId, version: 1 })
+      .expect(409);
+
+    expect(stale.body.code).toBe("OPPORTUNITY_VERSION_CONFLICT");
   });
 });
