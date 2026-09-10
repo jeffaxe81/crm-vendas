@@ -4,10 +4,12 @@ import { PaginationQuerySchema } from "./companies";
 
 const OpportunityDateTimeSchema = z.string().datetime({ offset: true });
 
-export const OpportunityDecimalSchema = z.string().regex(
-  /^(0|[1-9]\d{0,16})(\.\d{1,2})?$/,
-  "Informe um valor decimal não negativo com até 17 dígitos inteiros e 2 casas decimais."
-);
+export const OpportunityDecimalSchema = z
+  .string()
+  .regex(
+    /^(0|[1-9]\d{0,16})(\.\d{1,2})?$/,
+    "Informe um valor decimal não negativo com até 17 dígitos inteiros e 2 casas decimais."
+  );
 
 const customerFields = {
   companyId: z.string().uuid().nullable().optional(),
