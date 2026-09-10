@@ -173,14 +173,12 @@ export function ActivitiesView({
 
     try {
       const [companyResult, contactResult] = await Promise.all([
-        apiRequest<ListResponse<CompanyOption>>(
-          "/companies?page=1&limit=100",
-          { accessToken }
-        ),
-        apiRequest<ListResponse<ContactOption>>(
-          "/contacts?page=1&limit=100",
-          { accessToken }
-        ),
+        apiRequest<ListResponse<CompanyOption>>("/companies?page=1&limit=100", {
+          accessToken,
+        }),
+        apiRequest<ListResponse<ContactOption>>("/contacts?page=1&limit=100", {
+          accessToken,
+        }),
       ]);
       setCompanies(companyResult.items);
       setContacts(contactResult.items);
