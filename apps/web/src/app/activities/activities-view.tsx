@@ -1,9 +1,6 @@
 "use client";
 
-import type {
-  ActivityCreateInput,
-  ActivityUpdateInput,
-} from "@axes/contracts";
+import type { ActivityCreateInput, ActivityUpdateInput } from "@axes/contracts";
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
