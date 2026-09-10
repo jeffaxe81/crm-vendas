@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.5.3
+
+### Vínculos comerciais de atividades
+
+- vínculo `Activity` → `Company` considerado atendido pela fundação e API já entregues, com FK real, validação tenant-aware e filtro por empresa;
+- vínculo `Activity` → `Contact` considerado atendido pela fundação e API já entregues, com FK real, validação tenant-aware e filtro por contato;
+- vínculo `Activity` → `Opportunity` formalmente diferido até a criação do domínio canônico de oportunidades;
+- quando `Opportunity` existir, o vínculo deverá usar relação Prisma/FK real, índice tenant-aware e validação no mesmo tenant;
+- rejeitada a criação de `opportunityId` solto, referência polimórfica genérica ou entidade Opportunity mínima apenas para satisfazer Activity;
+- nenhuma alteração de produção em schema, migrations, API ou RBAC nesta microentrega;
+- próxima etapa da linha 3.5: Web de Atividades.
+
 ## [Unreleased] - Cycle 3.5.2
 
 ### API tenant-aware de atividades
