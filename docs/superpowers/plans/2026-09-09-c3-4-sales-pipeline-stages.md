@@ -24,11 +24,13 @@
 ### Task 1: Characterize pipeline tenant isolation
 
 **Files:**
+
 - Create: `apps/api/src/pipelines/pipelines.integration.spec.ts`
 - Modify: `apps/api/prisma/schema.prisma`
 - Create: `apps/api/prisma/migrations/<timestamp>_c3_pipeline_stage_foundation/migration.sql`
 
 **Interfaces:**
+
 - Produces Prisma models `Pipeline`, `PipelineStage` and enum `PipelineStageKind`.
 
 - [ ] Write RED integration expectations for two organizations, missing tenant context, cross-tenant reads and six-stage bootstrap shape.
@@ -41,12 +43,14 @@
 ### Task 2: Add pipeline contracts and service
 
 **Files:**
+
 - Create: `apps/api/src/pipelines/pipelines.service.ts`
 - Create: `apps/api/src/pipelines/pipelines.controller.ts`
 - Create: `apps/api/src/pipelines/pipelines.module.ts`
 - Modify: `apps/api/src/app.module.ts`
 
 **Interfaces:**
+
 - Produces `list(organizationId)` and `ensureDefault(context)` service operations.
 - Produces `GET /api/v1/pipelines` and `POST /api/v1/pipelines/default`.
 
@@ -60,6 +64,7 @@
 ### Task 3: Security regression and documentation
 
 **Files:**
+
 - Modify: `apps/api/src/database/tenant-rls.integration.spec.ts`
 - Modify: `docs/modelo-de-dados-e-api.md`
 - Modify: `docs/regras-de-negocio-e-aceite.md` only if needed to reflect implemented contract without changing RN-07 meaning.
