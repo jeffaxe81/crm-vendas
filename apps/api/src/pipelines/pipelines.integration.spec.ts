@@ -161,6 +161,17 @@ describe("C3.4 sales pipeline API", () => {
 
     expect(secondA.body.id).toBe(firstA.body.id);
 
+    const auditA = await prisma.auditLog.findMany({
+      where: {
+        organizationId: organizationA.id,
+        action: "pipeline.default_created",
+        entityType: "pipeline",
+        entityId: firstA.body.id,
+      },
+    });
+    expect(auditA).toHaveLength(1);
+    expect(auditA[0]?.requestId).toBe("c3-4-pipeline-bootstrap-a");
+
     const createdB = await request(app.getHttpServer())
       .post("/api/v1/pipelines/default")
       .set("Authorization", `Bearer ${tokenB}`)
