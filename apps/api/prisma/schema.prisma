@@ -468,6 +468,7 @@ model Activity {
   description    String?
   companyId      String?          @map("company_id") @db.Uuid
   contactId      String?          @map("contact_id") @db.Uuid
+  opportunityId  String?          @map("opportunity_id") @db.Uuid
   ownerUserId    String           @map("owner_user_id") @db.Uuid
   dueAt          DateTime?        @map("due_at") @db.Timestamptz(6)
   completedAt    DateTime?        @map("completed_at") @db.Timestamptz(6)
@@ -490,6 +491,7 @@ model Activity {
   @@index([organizationId, ownerUserId, status, dueAt], map: "activities_org_owner_status_due_idx")
   @@index([organizationId, companyId], map: "activities_org_company_idx")
   @@index([organizationId, contactId], map: "activities_org_contact_idx")
+  @@index([organizationId, opportunityId], map: "activities_org_opportunity_idx")
   @@map("activities")
 }
 
