@@ -326,6 +326,31 @@ export function ActivitiesView({
     }
   }
 
+  async function inactivateActivity(activityId: string) {
+    if (transitioningActivityId !== null) {
+      return;
+    }
+
+    setError("");
+    setTransitioningActivityId(activityId);
+
+    try {
+      await apiRequest<void>(`/activities/${activityId}`, {
+        accessToken,
+        method: "DELETE",
+      });
+      setRefreshVersion(current => current + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível inativar a atividade."
+      );
+    } finally {
+      setTransitioningActivityId(null);
+    }
+  }
+
   return (
     <section className="activities-view" aria-labelledby="activities-title">
       <header className="activities-view__header">
@@ -597,6 +622,15 @@ export function ActivitiesView({
                         ? "Cancelando..."
                         : "Cancelar atividade"}
                     </button>
+                    <button
+                      type="button"
+                      disabled={transitioningActivityId === activity.id}
+                      onClick={() => void inactivateActivity(activity.id)}
+                    >
+                      {transitioningActivityId === activity.id
+                        ? "Inativando..."
+                        : "Inativar"}
+                    </button>
                   </div>
                 ) : null}
                 {canWrite && activity.status !== "PENDING" ? (
@@ -609,6 +643,15 @@ export function ActivitiesView({
                       {transitioningActivityId === activity.id
                         ? "Reabrindo..."
                         : "Reabrir"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={transitioningActivityId === activity.id}
+                      onClick={() => void inactivateActivity(activity.id)}
+                    >
+                      {transitioningActivityId === activity.id
+                        ? "Inativando..."
+                        : "Inativar"}
                     </button>
                   </div>
                 ) : null}
