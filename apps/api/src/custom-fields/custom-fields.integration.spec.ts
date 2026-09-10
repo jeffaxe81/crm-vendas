@@ -434,14 +434,16 @@ describe("Cycle 2 custom fields API", () => {
       password: "Strong-Custom-Fields-Contact-2026!",
     });
 
-    const contact = await prisma.contact.create({
-      data: {
-        organizationId: organization.id,
-        fullName: "Contato customizado",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const contact = await prisma.withTenant(organization.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organization.id,
+          fullName: "Contato customizado",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
     const contactDefinition = await prisma.customFieldDefinition.create({
       data: {
         organizationId: organization.id,
