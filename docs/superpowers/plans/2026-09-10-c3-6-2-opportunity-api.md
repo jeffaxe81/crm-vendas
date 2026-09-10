@@ -44,11 +44,13 @@
 ### Task 1: Public Opportunity Contracts
 
 **Files:**
+
 - Create: `packages/contracts/src/opportunities.ts`
 - Create: `packages/contracts/src/opportunities.test.ts`
 - Modify: `packages/contracts/src/index.ts`
 
 **Interfaces:**
+
 - Produces: `OpportunityCreateInputSchema`, `OpportunityUpdateInputSchema`, `OpportunityMoveInputSchema`, `OpportunityListQuerySchema` e seus tipos inferidos.
 - Consumes: `PaginationQuerySchema` de `packages/contracts/src/companies.ts`.
 
@@ -57,44 +59,56 @@
 Criar testes que provem:
 
 ```ts
-expect(OpportunityCreateInputSchema.safeParse({
-  pipelineId: uuidA,
-  stageId: uuidB,
-  companyId: uuidC,
-  ownerUserId: uuidD,
-  title: "Renovação anual",
-  estimatedValue: "1250.50",
-}).success).toBe(true);
+expect(
+  OpportunityCreateInputSchema.safeParse({
+    pipelineId: uuidA,
+    stageId: uuidB,
+    companyId: uuidC,
+    ownerUserId: uuidD,
+    title: "Renovação anual",
+    estimatedValue: "1250.50",
+  }).success
+).toBe(true);
 
-expect(OpportunityCreateInputSchema.safeParse({
-  pipelineId: uuidA,
-  stageId: uuidB,
-  companyId: uuidC,
-  contactId: uuidE,
-  ownerUserId: uuidD,
-  title: "Inválida",
-  estimatedValue: "10.00",
-}).success).toBe(false);
+expect(
+  OpportunityCreateInputSchema.safeParse({
+    pipelineId: uuidA,
+    stageId: uuidB,
+    companyId: uuidC,
+    contactId: uuidE,
+    ownerUserId: uuidD,
+    title: "Inválida",
+    estimatedValue: "10.00",
+  }).success
+).toBe(false);
 
-expect(OpportunityCreateInputSchema.safeParse({
-  pipelineId: uuidA,
-  stageId: uuidB,
-  ownerUserId: uuidD,
-  title: "Sem cliente",
-  estimatedValue: "10.00",
-}).success).toBe(false);
+expect(
+  OpportunityCreateInputSchema.safeParse({
+    pipelineId: uuidA,
+    stageId: uuidB,
+    ownerUserId: uuidD,
+    title: "Sem cliente",
+    estimatedValue: "10.00",
+  }).success
+).toBe(false);
 
-expect(OpportunityCreateInputSchema.safeParse({
-  pipelineId: uuidA,
-  stageId: uuidB,
-  companyId: uuidC,
-  ownerUserId: uuidD,
-  title: "Valor inválido",
-  estimatedValue: "0.001",
-}).success).toBe(false);
+expect(
+  OpportunityCreateInputSchema.safeParse({
+    pipelineId: uuidA,
+    stageId: uuidB,
+    companyId: uuidC,
+    ownerUserId: uuidD,
+    title: "Valor inválido",
+    estimatedValue: "0.001",
+  }).success
+).toBe(false);
 
-expect(OpportunityUpdateInputSchema.safeParse({ version: 2 }).success).toBe(false);
-expect(OpportunityMoveInputSchema.parse({ stageId: uuidB, version: 2 })).toEqual({ stageId: uuidB, version: 2 });
+expect(OpportunityUpdateInputSchema.safeParse({ version: 2 }).success).toBe(
+  false
+);
+expect(
+  OpportunityMoveInputSchema.parse({ stageId: uuidB, version: 2 })
+).toEqual({ stageId: uuidB, version: 2 });
 ```
 
 - [ ] **Step 2: Run contract tests and confirm RED**
@@ -112,10 +126,12 @@ import { z } from "zod";
 import { PaginationQuerySchema } from "./companies";
 
 const OpportunityDateTimeSchema = z.string().datetime({ offset: true });
-export const OpportunityDecimalSchema = z.string().regex(
-  /^(0|[1-9]\d{0,16})(\.\d{1,2})?$/,
-  "Informe um valor decimal não negativo com até 17 dígitos inteiros e 2 casas decimais."
-);
+export const OpportunityDecimalSchema = z
+  .string()
+  .regex(
+    /^(0|[1-9]\d{0,16})(\.\d{1,2})?$/,
+    "Informe um valor decimal não negativo com até 17 dígitos inteiros e 2 casas decimais."
+  );
 
 const customerFields = {
   companyId: z.string().uuid().nullable().optional(),
@@ -134,9 +150,13 @@ export const OpportunityCreateInputSchema = z
     expectedCloseAt: OpportunityDateTimeSchema.optional(),
     notes: z.string().trim().max(10_000).optional(),
   })
-  .refine(value => Number(Boolean(value.companyId)) + Number(Boolean(value.contactId)) === 1, {
-    message: "Informe exatamente um cliente: companyId ou contactId.",
-  });
+  .refine(
+    value =>
+      Number(Boolean(value.companyId)) + Number(Boolean(value.contactId)) === 1,
+    {
+      message: "Informe exatamente um cliente: companyId ou contactId.",
+    }
+  );
 
 export const OpportunityUpdateInputSchema = z
   .object({
@@ -148,9 +168,15 @@ export const OpportunityUpdateInputSchema = z
     notes: z.string().trim().max(10_000).nullable().optional(),
     version: z.number().int().min(1),
   })
-  .refine(value => Object.entries(value).some(([key, item]) => key !== "version" && item !== undefined), {
-    message: "Informe ao menos uma alteração além de version.",
-  });
+  .refine(
+    value =>
+      Object.entries(value).some(
+        ([key, item]) => key !== "version" && item !== undefined
+      ),
+    {
+      message: "Informe ao menos uma alteração além de version.",
+    }
+  );
 
 export const OpportunityMoveInputSchema = z.object({
   stageId: z.string().uuid(),
@@ -165,12 +191,18 @@ export const OpportunityListQuerySchema = PaginationQuerySchema.extend({
   contactId: z.string().uuid().optional(),
   expectedCloseFrom: OpportunityDateTimeSchema.optional(),
   expectedCloseTo: OpportunityDateTimeSchema.optional(),
-  sortBy: z.enum(["updatedAt", "createdAt", "expectedCloseAt", "estimatedValue"]).default("updatedAt"),
+  sortBy: z
+    .enum(["updatedAt", "createdAt", "expectedCloseAt", "estimatedValue"])
+    .default("updatedAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
-export type OpportunityCreateInput = z.infer<typeof OpportunityCreateInputSchema>;
-export type OpportunityUpdateInput = z.infer<typeof OpportunityUpdateInputSchema>;
+export type OpportunityCreateInput = z.infer<
+  typeof OpportunityCreateInputSchema
+>;
+export type OpportunityUpdateInput = z.infer<
+  typeof OpportunityUpdateInputSchema
+>;
 export type OpportunityMoveInput = z.infer<typeof OpportunityMoveInputSchema>;
 export type OpportunityListQuery = z.infer<typeof OpportunityListQuerySchema>;
 ```
@@ -195,6 +227,7 @@ git commit -m "feat: add C3.6.2 opportunity API contracts"
 ### Task 2: Create, Read and List Opportunity API
 
 **Files:**
+
 - Create: `apps/api/src/opportunities/opportunities.integration.spec.ts`
 - Create: `apps/api/src/opportunities/opportunities.controller.ts`
 - Create: `apps/api/src/opportunities/opportunities.service.ts`
@@ -202,6 +235,7 @@ git commit -m "feat: add C3.6.2 opportunity API contracts"
 - Modify: `apps/api/src/app.module.ts`
 
 **Interfaces:**
+
 - Produces: `OpportunitiesService.list(query, organizationId)`, `read(id, organizationId)`, `create(input, context)`.
 - Produces REST: `GET /api/v1/opportunities`, `GET /api/v1/opportunities/:id`, `POST /api/v1/opportunities`.
 - Context: `{ organizationId: string; actorUserId: string; requestId: string; ipAddress?: string | null }`.
@@ -309,11 +343,13 @@ git commit -m "feat: add tenant-aware opportunity create read list API"
 ### Task 3: Update With Final-State Validation and Optimistic Versioning
 
 **Files:**
+
 - Modify: `apps/api/src/opportunities/opportunities.integration.spec.ts`
 - Modify: `apps/api/src/opportunities/opportunities.controller.ts`
 - Modify: `apps/api/src/opportunities/opportunities.service.ts`
 
 **Interfaces:**
+
 - Produces REST: `PATCH /api/v1/opportunities/:id` with `opportunity.write`.
 - Produces: `OpportunitiesService.update(id, input, context)`.
 
@@ -350,29 +386,61 @@ Expected: FAIL porque PATCH ainda não existe.
 Fluxo dentro de `withTenant()`:
 
 ```ts
-const existing = await this.requireOpportunity(tenant, id, context.organizationId);
-const finalCompanyId = input.companyId !== undefined ? input.companyId : existing.companyId;
-const finalContactId = input.contactId !== undefined ? input.contactId : existing.contactId;
+const existing = await this.requireOpportunity(
+  tenant,
+  id,
+  context.organizationId
+);
+const finalCompanyId =
+  input.companyId !== undefined ? input.companyId : existing.companyId;
+const finalContactId =
+  input.contactId !== undefined ? input.contactId : existing.contactId;
 if (Number(Boolean(finalCompanyId)) + Number(Boolean(finalContactId)) !== 1) {
-  throw new BadRequestException({ code: "VALIDATION_ERROR", message: "A oportunidade deve possuir exatamente um cliente." });
+  throw new BadRequestException({
+    code: "VALIDATION_ERROR",
+    message: "A oportunidade deve possuir exatamente um cliente.",
+  });
 }
-await this.validateMutableReferences(tenant, { ...input, companyId: finalCompanyId, contactId: finalContactId }, context.organizationId);
+await this.validateMutableReferences(
+  tenant,
+  { ...input, companyId: finalCompanyId, contactId: finalContactId },
+  context.organizationId
+);
 const result = await tenant.opportunity.updateMany({
-  where: { id, organizationId: context.organizationId, deletedAt: null, version: input.version },
+  where: {
+    id,
+    organizationId: context.organizationId,
+    deletedAt: null,
+    version: input.version,
+  },
   data: {
     ...(input.companyId !== undefined ? { companyId: input.companyId } : {}),
     ...(input.contactId !== undefined ? { contactId: input.contactId } : {}),
-    ...(input.ownerUserId !== undefined ? { ownerUserId: input.ownerUserId } : {}),
+    ...(input.ownerUserId !== undefined
+      ? { ownerUserId: input.ownerUserId }
+      : {}),
     ...(input.title !== undefined ? { title: input.title } : {}),
-    ...(input.estimatedValue !== undefined ? { estimatedValue: new Prisma.Decimal(input.estimatedValue) } : {}),
-    ...(input.expectedCloseAt !== undefined ? { expectedCloseAt: input.expectedCloseAt ? new Date(input.expectedCloseAt) : null } : {}),
+    ...(input.estimatedValue !== undefined
+      ? { estimatedValue: new Prisma.Decimal(input.estimatedValue) }
+      : {}),
+    ...(input.expectedCloseAt !== undefined
+      ? {
+          expectedCloseAt: input.expectedCloseAt
+            ? new Date(input.expectedCloseAt)
+            : null,
+        }
+      : {}),
     ...(input.notes !== undefined ? { notes: input.notes } : {}),
     updatedBy: context.actorUserId,
     version: { increment: 1 },
   },
 });
 if (result.count === 0) this.versionConflict();
-const updated = await this.requireOpportunity(tenant, id, context.organizationId);
+const updated = await this.requireOpportunity(
+  tenant,
+  id,
+  context.organizationId
+);
 ```
 
 Auditar `opportunity.updated` com before/after e versões.
@@ -395,11 +463,13 @@ git commit -m "feat: add opportunity optimistic update"
 ### Task 4: Dedicated Stage Movement
 
 **Files:**
+
 - Modify: `apps/api/src/opportunities/opportunities.integration.spec.ts`
 - Modify: `apps/api/src/opportunities/opportunities.controller.ts`
 - Modify: `apps/api/src/opportunities/opportunities.service.ts`
 
 **Interfaces:**
+
 - Produces REST: `PATCH /api/v1/opportunities/:id/stage` with `opportunity.move`.
 - Produces: `OpportunitiesService.moveStage(id, input, context)`.
 
@@ -464,11 +534,13 @@ git commit -m "feat: add controlled opportunity stage movement"
 ### Task 5: Soft Delete, RBAC, Cross-Tenant and Audit Boundaries
 
 **Files:**
+
 - Modify: `apps/api/src/opportunities/opportunities.integration.spec.ts`
 - Modify: `apps/api/src/opportunities/opportunities.controller.ts`
 - Modify: `apps/api/src/opportunities/opportunities.service.ts`
 
 **Interfaces:**
+
 - Produces REST: `DELETE /api/v1/opportunities/:id` with `opportunity.write`.
 - Preserves existing RBAC map without changes to `permissions.ts`.
 
@@ -489,6 +561,7 @@ await request(app.getHttpServer())
 ```
 
 Também provar:
+
 - VIEWER: GET 200, POST/PATCH/stage/DELETE 403;
 - SELLER: create/update/move/delete permitido;
 - tenant A lendo/alterando ID de B recebe 404;
@@ -517,7 +590,11 @@ async remove(...) { await this.opportunities.remove(...); }
 Service, dentro de `withTenant()`:
 
 ```ts
-const existing = await this.requireOpportunity(tenant, id, context.organizationId);
+const existing = await this.requireOpportunity(
+  tenant,
+  id,
+  context.organizationId
+);
 const deletedAt = new Date();
 const updated = await tenant.opportunity.update({
   where: { id: existing.id },
@@ -556,11 +633,13 @@ git commit -m "test: harden opportunity tenant RBAC audit boundaries"
 ### Task 6: Documentation and Final Verification
 
 **Files:**
+
 - Modify: `CHANGELOG.md`
 - Create: `docs/checkpoints/c3-6-2-opportunity-api.md`
 - Modify: PR #17 body after final evidence is known.
 
 **Interfaces:**
+
 - Produces: checkpoint reproduzível com heads, runs, escopo entregue e exclusões.
 
 - [ ] **Step 1: Update changelog**
@@ -587,6 +666,7 @@ No workflow do head definitivo, exigir conclusão GREEN para instalação congel
 - [ ] **Step 5: Update PR #17 evidence**
 
 Atualizar o body com:
+
 - SHA do RED inicial;
 - SHA e run GREEN de cada fatia relevante;
 - SHA final;
