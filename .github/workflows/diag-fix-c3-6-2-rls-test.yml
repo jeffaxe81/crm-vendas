@@ -23,14 +23,18 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
 
           path = Path('apps/api/src/opportunities/opportunities-boundaries.integration.spec.ts')
           text = path.read_text()
-          pattern = re.compile(
-              r'    const deleted = await prisma\.\$queryRaw<.*?expect\(deleted\[0\]\?\.version\)\.toBe\(2\);',
-              re.S,
-          )
+          start_marker = '    const deleted = await prisma.$queryRaw<'
+          end_marker = '    expect(deleted[0]?.version).toBe(2);'
+          start = text.find(start_marker)
+          if start < 0:
+              raise SystemExit('deleted-row verification start marker not found')
+          end = text.find(end_marker, start)
+          if end < 0:
+              raise SystemExit('deleted-row verification end marker not found')
+          end += len(end_marker)
           replacement = '''    const deleted = await prisma.withTenant(
               fixture.organization.id,
               tenant =>
@@ -45,10 +49,7 @@ jobs:
             expect(deleted?.deletedAt).toBeInstanceOf(Date);
             expect(deleted?.deletedBy).toBe(fixture.admin.id);
             expect(deleted?.version).toBe(2);'''
-          updated, count = pattern.subn(replacement, text, count=1)
-          if count != 1:
-              raise SystemExit(f'expected one raw deleted-row verification block, found {count}')
-          path.write_text(updated)
+          path.write_text(text[:start] + replacement + text[end:])
           PY
       - run: pnpm exec prettier --write apps/api/src/opportunities/opportunities-boundaries.integration.spec.ts
       - name: Commit test-only fix
