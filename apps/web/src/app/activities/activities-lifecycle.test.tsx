@@ -155,4 +155,80 @@ describe("C3.5.4 activity lifecycle", () => {
       expect(reads).toBeGreaterThanOrEqual(2);
     });
   });
+
+  it("reopens a completed activity and reloads the completed list", async () => {
+    const activity = {
+      id: "66666666-6666-4666-8666-666666666666",
+      type: "TASK",
+      status: "COMPLETED",
+      priority: "LOW",
+      title: "Proposta concluída",
+      description: null,
+      ownerUserId,
+      companyId: null,
+      contactId: null,
+      dueAt: null,
+      completedAt: "2026-09-10T10:00:00.000Z",
+      cancelledAt: null,
+    };
+    let completedReads = 0;
+    const fetchMock = vi.fn(async (input: string | URL, init?: RequestInit) => {
+      const url = String(input);
+
+      if (url.includes("/activities?") && url.includes("status=PENDING")) {
+        return response({ items: [], page: 1, limit: 20, total: 0 });
+      }
+
+      if (url.includes("/activities?") && url.includes("status=COMPLETED")) {
+        completedReads += 1;
+        return response({
+          items: completedReads === 1 ? [activity] : [],
+          page: 1,
+          limit: 20,
+          total: completedReads === 1 ? 1 : 0,
+        });
+      }
+
+      if (
+        url.endsWith(`/activities/${activity.id}`) &&
+        init?.method === "PATCH"
+      ) {
+        return response({
+          ...activity,
+          status: "PENDING",
+          completedAt: null,
+        });
+      }
+
+      throw new Error(`Unexpected fetch: ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ActivitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite
+      />
+    );
+
+    await screen.findByText("Nenhuma atividade em pendentes.");
+    fireEvent.click(screen.getByRole("button", { name: "Concluídas" }));
+
+    expect(await screen.findByText("Proposta concluída")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Reabrir" }));
+
+    await waitFor(() => {
+      const patchCall = fetchMock.mock.calls.find(
+        ([input, init]) =>
+          String(input).endsWith(`/activities/${activity.id}`) &&
+          init?.method === "PATCH"
+      );
+      expect(patchCall).toBeDefined();
+      expect(JSON.parse(String(patchCall?.[1]?.body))).toEqual({
+        status: "PENDING",
+      });
+      expect(completedReads).toBeGreaterThanOrEqual(2);
+    });
+  });
 });
