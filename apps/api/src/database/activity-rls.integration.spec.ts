@@ -154,4 +154,119 @@ describe("Activity tenant RLS integration", () => {
       )
     ).rejects.toThrow();
   });
+
+  it("rejects a cross-tenant opportunity reference at the database boundary", async () => {
+    const organizationA = "81000000-0000-4000-8000-000000000005";
+    const organizationB = "81000000-0000-4000-8000-000000000006";
+    const userA = "82000000-0000-4000-8000-000000000005";
+    const userB = "82000000-0000-4000-8000-000000000006";
+    const pipelineB = "84000000-0000-4000-8000-000000000006";
+    const stageB = "85000000-0000-4000-8000-000000000006";
+    const companyB = "86000000-0000-4000-8000-000000000006";
+    const opportunityB = "87000000-0000-4000-8000-000000000006";
+
+    await admin.organization.createMany({
+      data: [
+        {
+          id: organizationA,
+          name: "Activity Opportunity FK Organization A",
+          slug: "activity-opportunity-fk-a",
+        },
+        {
+          id: organizationB,
+          name: "Activity Opportunity FK Organization B",
+          slug: "activity-opportunity-fk-b",
+        },
+      ],
+    });
+    await admin.user.createMany({
+      data: [
+        {
+          id: userA,
+          email: "activity-opportunity-fk-a@example.test",
+          emailNormalized: "activity-opportunity-fk-a@example.test",
+          displayName: "Activity Opportunity FK User A",
+          passwordHash: "not-used-by-this-test",
+        },
+        {
+          id: userB,
+          email: "activity-opportunity-fk-b@example.test",
+          emailNormalized: "activity-opportunity-fk-b@example.test",
+          displayName: "Activity Opportunity FK User B",
+          passwordHash: "not-used-by-this-test",
+        },
+      ],
+    });
+    await admin.organizationMembership.createMany({
+      data: [
+        {
+          organizationId: organizationA,
+          userId: userA,
+          role: "ADMIN",
+        },
+        {
+          organizationId: organizationB,
+          userId: userB,
+          role: "ADMIN",
+        },
+      ],
+    });
+    await admin.pipeline.create({
+      data: {
+        id: pipelineB,
+        organizationId: organizationB,
+        name: "Pipeline FK B",
+        normalizedName: "pipeline fk b",
+      },
+    });
+    await admin.pipelineStage.create({
+      data: {
+        id: stageB,
+        organizationId: organizationB,
+        pipelineId: pipelineB,
+        name: "Aberta",
+        position: 1,
+        kind: "OPEN",
+      },
+    });
+    await admin.company.create({
+      data: {
+        id: companyB,
+        organizationId: organizationB,
+        legalName: "Cliente Opportunity FK B",
+        createdBy: userB,
+        updatedBy: userB,
+      },
+    });
+    await admin.opportunity.create({
+      data: {
+        id: opportunityB,
+        organizationId: organizationB,
+        pipelineId: pipelineB,
+        stageId: stageB,
+        companyId: companyB,
+        ownerUserId: userB,
+        title: "Opportunity FK B",
+        estimatedValue: "1000.00",
+        createdBy: userB,
+        updatedBy: userB,
+      },
+    });
+
+    await expect(
+      prisma.withTenant(organizationA, tenant =>
+        tenant.activity.create({
+          data: {
+            organizationId: organizationA,
+            type: "TASK",
+            title: "Cross-tenant opportunity link",
+            ownerUserId: userA,
+            opportunityId: opportunityB,
+            createdBy: userA,
+            updatedBy: userA,
+          },
+        })
+      )
+    ).rejects.toMatchObject({ code: "P2003" });
+  });
 });
