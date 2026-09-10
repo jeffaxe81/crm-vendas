@@ -5,10 +5,22 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../../lib/api-client";
 
 type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
+type ActivityType = "TASK" | "APPOINTMENT";
+type ActivityPriority = "LOW" | "MEDIUM" | "HIGH";
 
 type ActivityRecord = {
   id: string;
+  type: ActivityType;
+  status: ActivityStatus;
+  priority: ActivityPriority;
   title: string;
+  description: string | null;
+  companyId: string | null;
+  contactId: string | null;
+  ownerUserId: string;
+  dueAt: string | null;
+  completedAt: string | null;
+  cancelledAt: string | null;
 };
 
 type ActivityListResponse = {
@@ -29,6 +41,30 @@ const statusLabels: Record<ActivityStatus, string> = {
   COMPLETED: "Concluídas",
   CANCELLED: "Canceladas",
 };
+
+const typeLabels: Record<ActivityType, string> = {
+  TASK: "Tarefa",
+  APPOINTMENT: "Compromisso",
+};
+
+const priorityLabels: Record<ActivityPriority, string> = {
+  LOW: "Baixa",
+  MEDIUM: "Média",
+  HIGH: "Alta",
+};
+
+const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
+  dateStyle: "short",
+  timeStyle: "short",
+});
+
+function isOverdue(activity: ActivityRecord): boolean {
+  return (
+    activity.status === "PENDING" &&
+    activity.dueAt !== null &&
+    new Date(activity.dueAt).getTime() < Date.now()
+  );
+}
 
 export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
   const [activities, setActivities] = useState<ActivityRecord[]>([]);
@@ -141,6 +177,40 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
 
       {loading ? (
         <p className="activities-view__status">Carregando atividades...</p>
+      ) : null}
+
+      {!loading && !error && activities.length > 0 ? (
+        <ul className="activities-view__list">
+          {activities.map(activity => {
+            const overdue = isOverdue(activity);
+
+            return (
+              <li
+                key={activity.id}
+                className={overdue ? "activities-view__item is-overdue" : "activities-view__item"}
+              >
+                <div className="activities-view__item-heading">
+                  <span>{typeLabels[activity.type]}</span>
+                  {overdue ? (
+                    <span className="activities-view__overdue">Atrasada</span>
+                  ) : null}
+                </div>
+                <strong>{activity.title}</strong>
+                {activity.description ? <p>{activity.description}</p> : null}
+                <div className="activities-view__item-meta">
+                  <span>Prioridade: {priorityLabels[activity.priority]}</span>
+                  {activity.dueAt ? (
+                    <span>
+                      Prazo: {dateTimeFormatter.format(new Date(activity.dueAt))}
+                    </span>
+                  ) : (
+                    <span>Sem prazo</span>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       ) : null}
 
       {!loading && !error && activities.length === 0 ? (
