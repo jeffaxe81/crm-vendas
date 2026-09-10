@@ -1,6 +1,7 @@
 # C3.5.2 Activities API Implementation Plan
 
-**Goal:** Expor o domínio `Activity` pela API REST canônica com tenant isolation, RBAC, validação de referências e auditoria.
+**Goal:** Expor o domínio `Activity` pela API REST canônica com tenant isolation,
+RBAC, validação de referências e auditoria.
 
 **Base:** `main` após integração da C3.5.1 e registro do design C3.5.2.
 
@@ -17,7 +18,8 @@
 - [ ] provar soft delete torna recurso invisível;
 - [ ] provar trilha de auditoria.
 
-Executar CI e confirmar RED pela ausência das rotas/módulo Activities, não por lint/format/typecheck incidental.
+Executar CI e confirmar RED pela ausência das rotas/módulo Activities, não por
+lint/format/typecheck incidental.
 
 ## Task 2 — Contratos compartilhados
 
@@ -32,6 +34,7 @@ Executar CI e confirmar RED pela ausência das rotas/módulo Activities, não po
 ## Task 3 — GREEN mínimo da API
 
 **Create:**
+
 - `apps/api/src/activities/activities.controller.ts`
 - `apps/api/src/activities/activities.service.ts`
 - `apps/api/src/activities/activities.module.ts`
