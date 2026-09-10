@@ -13,6 +13,7 @@ import { CustomFieldsModule } from "./custom-fields/custom-fields.module";
 import { HealthModule } from "./health/health.module";
 import { createLoggerOptions } from "./observability/logger.config";
 import { RequestIdMiddleware } from "./observability/request-id.middleware";
+import { OpportunitiesModule } from "./opportunities/opportunities.module";
 import { PipelinesModule } from "./pipelines/pipelines.module";
 import { RelationshipsModule } from "./relationships/relationships.module";
 import { TagsModule } from "./tags/tags.module";
@@ -38,6 +39,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     CustomFieldsModule,
     PipelinesModule,
     ActivitiesModule,
+    OpportunitiesModule,
   ],
 })
 export class AppModule implements NestModule {
