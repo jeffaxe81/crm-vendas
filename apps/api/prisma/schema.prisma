@@ -109,6 +109,7 @@ model Organization {
   contactCustomFieldValues ContactCustomFieldValue[]
   pipelines                Pipeline[]
   activities               Activity[]
+  opportunities            Opportunity[]
 
   @@map("organizations")
 }
@@ -136,6 +137,10 @@ model User {
   activitiesCreated         Activity[]           @relation("ActivityCreatedBy")
   activitiesUpdated         Activity[]           @relation("ActivityUpdatedBy")
   activitiesDeleted         Activity[]           @relation("ActivityDeletedBy")
+  opportunitiesOwned        Opportunity[]        @relation("OpportunityOwner")
+  opportunitiesCreated      Opportunity[]        @relation("OpportunityCreatedBy")
+  opportunitiesUpdated      Opportunity[]        @relation("OpportunityUpdatedBy")
+  opportunitiesDeleted      Opportunity[]        @relation("OpportunityDeletedBy")
 
   @@map("users")
 }
@@ -222,7 +227,9 @@ model Company {
   tagLinks          CompanyTag[]
   customFieldValues CompanyCustomFieldValue[]
   activities        Activity[]
+  opportunities     Opportunity[]
 
+  @@unique([id, organizationId], map: "companies_id_organization_key")
   @@index([organizationId, deletedAt, legalName], map: "companies_org_deleted_legal_name_idx")
   @@index([organizationId, tradeName], map: "companies_org_trade_name_idx")
   @@map("companies")
@@ -251,7 +258,9 @@ model Contact {
   tagLinks          ContactTag[]
   customFieldValues ContactCustomFieldValue[]
   activities        Activity[]
+  opportunities     Opportunity[]
 
+  @@unique([id, organizationId], map: "contacts_id_organization_key")
   @@index([organizationId, deletedAt, fullName], map: "contacts_org_deleted_full_name_idx")
   @@map("contacts")
 }
@@ -422,6 +431,7 @@ model Pipeline {
   updatedAt      DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   stages         PipelineStage[]
+  opportunities  Opportunity[]
 
   @@unique([organizationId, normalizedName], map: "pipelines_org_normalized_name_key")
   @@unique([id, organizationId], map: "pipelines_id_organization_key")
@@ -440,8 +450,10 @@ model PipelineStage {
   createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   pipeline       Pipeline          @relation(fields: [pipelineId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  opportunities  Opportunity[]
 
   @@unique([pipelineId, position], map: "pipeline_stages_pipeline_position_key")
+  @@unique([id, organizationId, pipelineId], map: "pipeline_stages_id_org_pipeline_key")
   @@index([organizationId, pipelineId, isActive], map: "pipeline_stages_org_pipeline_active_idx")
   @@map("pipeline_stages")
 }
@@ -479,4 +491,41 @@ model Activity {
   @@index([organizationId, companyId], map: "activities_org_company_idx")
   @@index([organizationId, contactId], map: "activities_org_contact_idx")
   @@map("activities")
+}
+
+model Opportunity {
+  id              String    @id @default(uuid()) @db.Uuid
+  organizationId  String    @map("organization_id") @db.Uuid
+  pipelineId      String    @map("pipeline_id") @db.Uuid
+  stageId         String    @map("stage_id") @db.Uuid
+  companyId       String?   @map("company_id") @db.Uuid
+  contactId       String?   @map("contact_id") @db.Uuid
+  ownerUserId     String    @map("owner_user_id") @db.Uuid
+  title           String    @db.VarChar(200)
+  estimatedValue  Decimal   @map("estimated_value") @db.Decimal(19, 2)
+  expectedCloseAt DateTime? @map("expected_close_at") @db.Timestamptz(6)
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy       String    @map("created_by") @db.Uuid
+  updatedBy       String    @map("updated_by") @db.Uuid
+  version         Int       @default(1)
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz(6)
+  deletedBy       String?   @map("deleted_by") @db.Uuid
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  pipeline        Pipeline     @relation(fields: [pipelineId], references: [id], onDelete: Restrict)
+  stage           PipelineStage @relation(fields: [stageId], references: [id], onDelete: Restrict)
+  company         Company?     @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  contact         Contact?     @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  owner           User         @relation("OpportunityOwner", fields: [ownerUserId], references: [id], onDelete: Restrict)
+  creator         User         @relation("OpportunityCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater         User         @relation("OpportunityUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter         User?        @relation("OpportunityDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, deletedAt, stageId, expectedCloseAt], map: "opportunities_org_deleted_stage_close_idx")
+  @@index([organizationId, ownerUserId, deletedAt, expectedCloseAt], map: "opportunities_org_owner_deleted_close_idx")
+  @@index([organizationId, companyId, deletedAt], map: "opportunities_org_company_deleted_idx")
+  @@index([organizationId, contactId, deletedAt], map: "opportunities_org_contact_deleted_idx")
+  @@index([organizationId, pipelineId, stageId, deletedAt], map: "opportunities_org_pipeline_stage_deleted_idx")
+  @@map("opportunities")
 }
