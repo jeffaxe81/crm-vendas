@@ -163,14 +163,16 @@ describe("Cycle 2 company-contact relationships and history API", () => {
         },
       })
     );
-    const contactB = await prisma.contact.create({
-      data: {
-        organizationId: organizationB.id,
-        fullName: "Contato B",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const contactB = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organizationB.id,
+          fullName: "Contato B",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     const tokenA = await login({
       email: user.email,
@@ -205,14 +207,16 @@ describe("Cycle 2 company-contact relationships and history API", () => {
         },
       })
     );
-    const contact = await prisma.contact.create({
-      data: {
-        organizationId: organization.id,
-        fullName: "Contato Relacionado",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const contact = await prisma.withTenant(organization.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organization.id,
+          fullName: "Contato Relacionado",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     const linked = await request(app.getHttpServer())
       .post(`/api/v1/companies/${company.id}/contacts/${contact.id}`)
@@ -281,14 +285,16 @@ describe("Cycle 2 company-contact relationships and history API", () => {
         },
       })
     );
-    const contact = await prisma.contact.create({
-      data: {
-        organizationId: organization.id,
-        fullName: "Contato Histórico",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const contact = await prisma.withTenant(organization.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organization.id,
+          fullName: "Contato Histórico",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     const companyEntry = await request(app.getHttpServer())
       .post("/api/v1/relationship-entries")
@@ -420,14 +426,16 @@ describe("Cycle 2 company-contact relationships and history API", () => {
         },
       })
     );
-    const otherContact = await prisma.contact.create({
-      data: {
-        organizationId: organizationB.id,
-        fullName: "Contato de Outra Organização",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const otherContact = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organizationB.id,
+          fullName: "Contato de Outra Organização",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     const tokenA = await login({
       email: user.email,
