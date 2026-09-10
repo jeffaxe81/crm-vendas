@@ -178,16 +178,18 @@ describe("Cycle 3.6.2 opportunity boundaries", () => {
       .expect(200);
     expect(list.body.total).toBe(0);
 
-    const deleted = await prisma.$queryRaw<
-      Array<{
-        deleted_at: Date | null;
-        deleted_by: string | null;
-        version: number;
-      }>
-    >`SELECT deleted_at, deleted_by, version FROM opportunities WHERE id = ${opportunityId}::uuid`;
-    expect(deleted[0]?.deleted_at).toBeInstanceOf(Date);
-    expect(deleted[0]?.deleted_by).toBe(fixture.admin.id);
-    expect(deleted[0]?.version).toBe(2);
+    const deleted = await prisma.withTenant(fixture.organization.id, tenant =>
+      tenant.opportunity.findFirst({
+        where: {
+          id: opportunityId,
+          organizationId: fixture.organization.id,
+        },
+        select: { deletedAt: true, deletedBy: true, version: true },
+      })
+    );
+    expect(deleted?.deletedAt).toBeInstanceOf(Date);
+    expect(deleted?.deletedBy).toBe(fixture.admin.id);
+    expect(deleted?.version).toBe(2);
 
     const audit = await prisma.auditLog.findMany({
       where: {
