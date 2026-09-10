@@ -29,9 +29,11 @@
 ### Task 1: Lock the Opportunity schema contract in a RED repository test
 
 **Files:**
+
 - Create: `tests/opportunity-foundation-schema.test.mjs`
 
 **Interfaces:**
+
 - Consumes: `apps/api/prisma/schema.prisma`, migration directory convention under `apps/api/prisma/migrations/`.
 - Produces: an executable contract that defines the required Prisma model, scalar types, indexes, SQL constraints, and RLS markers for C3.6.1.
 
@@ -53,10 +55,14 @@ const migrationsPath = new URL(
 async function readOpportunityMigration() {
   const entries = await readdir(migrationsPath, { withFileTypes: true });
   const directory = entries.find(
-    entry => entry.isDirectory() && entry.name.includes("c3_opportunity_foundation")
+    entry =>
+      entry.isDirectory() && entry.name.includes("c3_opportunity_foundation")
   );
 
-  assert.ok(directory, "expected C3.6.1 opportunity foundation migration directory");
+  assert.ok(
+    directory,
+    "expected C3.6.1 opportunity foundation migration directory"
+  );
 
   return readFile(
     new URL(
@@ -83,7 +89,10 @@ test("C3.6.1 defines the canonical Opportunity Prisma contract", async () => {
     '@@index([organizationId, ownerUserId, deletedAt, expectedCloseAt], map: "opportunities_org_owner_deleted_close_idx")',
     '@@map("opportunities")',
   ]) {
-    assert.ok(schema.includes(expected), `missing Prisma contract: ${expected}`);
+    assert.ok(
+      schema.includes(expected),
+      `missing Prisma contract: ${expected}`
+    );
   }
 });
 
@@ -101,7 +110,10 @@ test("C3.6.1 migration defines integrity and tenant isolation", async () => {
     'CREATE INDEX "opportunities_org_deleted_stage_close_idx"',
     'CREATE INDEX "opportunities_org_owner_deleted_close_idx"',
   ]) {
-    assert.ok(migration.includes(expected), `missing migration contract: ${expected}`);
+    assert.ok(
+      migration.includes(expected),
+      `missing migration contract: ${expected}`
+    );
   }
 });
 ```
@@ -128,10 +140,12 @@ git commit -m "test: define C3.6.1 opportunity foundation contract"
 ### Task 2: Add the canonical Prisma Opportunity model and tenant-safe relation keys
 
 **Files:**
+
 - Modify: `apps/api/prisma/schema.prisma`
 - Test: `tests/opportunity-foundation-schema.test.mjs`
 
 **Interfaces:**
+
 - Consumes: existing `Organization`, `User`, `Company`, `Contact`, `Pipeline`, `PipelineStage`, and `OrganizationMembership` models.
 - Produces: Prisma `Opportunity` model plus reverse relations and composite unique keys required by tenant-safe SQL FKs.
 
@@ -256,11 +270,13 @@ git commit -m "feat: add canonical Opportunity Prisma model"
 ### Task 3: Add the PostgreSQL migration with XOR, money constraint, composite tenant FKs, and FORCE RLS
 
 **Files:**
+
 - Create: `apps/api/prisma/migrations/20260910133000_c3_opportunity_foundation/migration.sql`
 - Modify if needed for schema parity: `apps/api/prisma/schema.prisma`
 - Test: `tests/opportunity-foundation-schema.test.mjs`
 
 **Interfaces:**
+
 - Consumes: existing unique `(id, organization_id)` Pipeline key; existing unique `(organization_id, user_id)` OrganizationMembership key.
 - Produces: `opportunities` table and database-level tenant/referential constraints.
 
@@ -383,9 +399,11 @@ git commit -m "feat: add C3.6.1 opportunity database foundation"
 ### Task 4: Prove RLS and cross-tenant referential integrity with integration tests
 
 **Files:**
+
 - Create: `apps/api/src/database/opportunity-rls.integration.spec.ts`
 
 **Interfaces:**
+
 - Consumes: generated `PrismaClient`, `PrismaService.withTenant`, `Opportunity` model and C3.6.1 migration.
 - Produces: adversarial evidence that fail-closed RLS, tenant isolation, XOR, non-negative value, Pipeline/Stage coherence, and owner membership constraints are effective.
 
@@ -418,14 +436,24 @@ expect(tenantB.map(item => item.id)).toEqual([opportunityB]);
 Test each invariant independently and require rejection:
 
 ```ts
-await expect(/* tenant A opportunity with organizationId B */).rejects.toThrow();
-await expect(/* opportunity with both companyId and contactId */).rejects.toThrow();
-await expect(/* opportunity with neither companyId nor contactId */).rejects.toThrow();
+await expect(
+  /* tenant A opportunity with organizationId B */
+).rejects.toThrow();
+await expect(
+  /* opportunity with both companyId and contactId */
+).rejects.toThrow();
+await expect(
+  /* opportunity with neither companyId nor contactId */
+).rejects.toThrow();
 await expect(/* estimatedValue = -0.01 */).rejects.toThrow();
 await expect(/* company from B with organization A */).rejects.toThrow();
 await expect(/* contact from B with organization A */).rejects.toThrow();
-await expect(/* stage from a different pipeline than pipelineId */).rejects.toThrow();
-await expect(/* ownerUserId without membership in opportunity organization */).rejects.toThrow();
+await expect(
+  /* stage from a different pipeline than pipelineId */
+).rejects.toThrow();
+await expect(
+  /* ownerUserId without membership in opportunity organization */
+).rejects.toThrow();
 ```
 
 For positive control, insert one Company-backed and one Contact-backed Opportunity with matching tenant/pipeline/stage/owner membership and assert they succeed.
@@ -454,11 +482,13 @@ git commit -m "test: verify opportunity tenant and integrity boundaries"
 ### Task 5: Run the complete C3.6.1 gate and record the checkpoint
 
 **Files:**
+
 - Create: `docs/checkpoints/c3-6-1-opportunity-foundation.md`
 - Modify: `CHANGELOG.md`
 - Do not modify API/Web source files.
 
 **Interfaces:**
+
 - Consumes: all C3.6.1 commits and CI commands.
 - Produces: audit-ready checkpoint documenting the exact head SHA and evidence before human merge approval.
 
