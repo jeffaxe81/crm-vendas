@@ -299,6 +299,33 @@ export function ActivitiesView({
     }
   }
 
+  async function reopenActivity(activityId: string) {
+    if (transitioningActivityId !== null) {
+      return;
+    }
+
+    setError("");
+    setTransitioningActivityId(activityId);
+    const payload: ActivityUpdateInput = { status: "PENDING" };
+
+    try {
+      await apiRequest<ActivityRecord>(`/activities/${activityId}`, {
+        accessToken,
+        method: "PATCH",
+        body: payload,
+      });
+      setRefreshVersion(current => current + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível reabrir a atividade."
+      );
+    } finally {
+      setTransitioningActivityId(null);
+    }
+  }
+
   return (
     <section className="activities-view" aria-labelledby="activities-title">
       <header className="activities-view__header">
@@ -569,6 +596,19 @@ export function ActivitiesView({
                       {transitioningActivityId === activity.id
                         ? "Cancelando..."
                         : "Cancelar atividade"}
+                    </button>
+                  </div>
+                ) : null}
+                {canWrite && activity.status !== "PENDING" ? (
+                  <div className="activities-view__item-actions">
+                    <button
+                      type="button"
+                      disabled={transitioningActivityId === activity.id}
+                      onClick={() => void reopenActivity(activity.id)}
+                    >
+                      {transitioningActivityId === activity.id
+                        ? "Reabrindo..."
+                        : "Reabrir"}
                     </button>
                   </div>
                 ) : null}
