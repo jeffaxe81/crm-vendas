@@ -237,22 +237,26 @@ describe("Cycle 2 tags API", () => {
         },
       })
     );
-    const contactA = await prisma.contact.create({
-      data: {
-        organizationId: organizationA.id,
-        fullName: "Contato A",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
-    const contactB = await prisma.contact.create({
-      data: {
-        organizationId: organizationB.id,
-        fullName: "Contato B",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const contactA = await prisma.withTenant(organizationA.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organizationA.id,
+          fullName: "Contato A",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
+    const contactB = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organizationB.id,
+          fullName: "Contato B",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     const tokenA = await login({
       email: user.email,
@@ -300,14 +304,16 @@ describe("Cycle 2 tags API", () => {
           },
         })
       ),
-      prisma.contact.create({
-        data: {
-          organizationId: organization.id,
-          fullName: "Contato com Tag",
-          createdBy: user.id,
-          updatedBy: user.id,
-        },
-      }),
+      prisma.withTenant(organization.id, tenant =>
+        tenant.contact.create({
+          data: {
+            organizationId: organization.id,
+            fullName: "Contato com Tag",
+            createdBy: user.id,
+            updatedBy: user.id,
+          },
+        })
+      ),
       prisma.tag.create({
         data: {
           organizationId: organization.id,
