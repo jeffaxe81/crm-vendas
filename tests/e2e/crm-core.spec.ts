@@ -7,6 +7,7 @@ const companyName = "Empresa E2E";
 const contactName = "Contato E2E";
 const contactEmail = "contato.e2e@example.test";
 const relationshipNote = "Contato E2E interessado na proposta comercial.";
+const activityName = "Follow-up E2E";
 
 test("CRM core journey persists company contact channel link and history", async ({
   page,
@@ -86,5 +87,43 @@ test("CRM core journey persists company contact channel link and history", async
   await expect(persistedCard.getByText(contactEmail)).toBeVisible();
   await expect(
     persistedCard.getByText(relationshipNote, { exact: true })
+  ).toBeVisible();
+});
+
+test("CRM activities journey creates completes and persists an activity", async ({
+  page,
+}) => {
+  test.skip(!adminPassword, "BOOTSTRAP_ADMIN_PASSWORD is required for E2E.");
+
+  await page.goto("http://127.0.0.1:3000");
+
+  await page.getByLabel("E-mail").fill(adminEmail);
+  await page.getByLabel("Senha").fill(adminPassword ?? "");
+  await page.getByRole("button", { name: "Entrar no CRM" }).click();
+
+  await page.getByRole("button", { name: "Atividades" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Atividades e compromissos" })
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Nova atividade" }).click();
+  const activityForm = page.getByRole("form", { name: "Nova atividade" });
+  await activityForm.getByLabel("Título").fill(activityName);
+  await activityForm.getByRole("button", { name: "Salvar atividade" }).click();
+
+  const pendingActivity = page
+    .getByRole("listitem")
+    .filter({ hasText: activityName });
+  await expect(pendingActivity).toBeVisible();
+  await pendingActivity.getByRole("button", { name: "Concluir" }).click();
+  await expect(pendingActivity).not.toBeVisible();
+
+  await page.getByRole("button", { name: "Concluídas" }).click();
+  const completedActivity = page
+    .getByRole("listitem")
+    .filter({ hasText: activityName });
+  await expect(completedActivity).toBeVisible();
+  await expect(
+    completedActivity.getByRole("button", { name: "Reabrir" })
   ).toBeVisible();
 });
