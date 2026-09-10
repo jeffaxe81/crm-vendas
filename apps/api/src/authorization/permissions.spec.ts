@@ -1,9 +1,15 @@
 import { permissionsForRole, roleHasPermission } from "./permissions";
 
 describe("role permissions", () => {
-  it("allows administrators to manage users and read audit", () => {
+  it("allows administrators to manage users, read audit and manage pipelines", () => {
     expect(roleHasPermission("ADMIN", "user.manage")).toBe(true);
     expect(roleHasPermission("ADMIN", "audit.read")).toBe(true);
+    expect(roleHasPermission("ADMIN", "pipeline.manage")).toBe(true);
+  });
+
+  it("allows managers but not sellers to manage pipeline configuration", () => {
+    expect(roleHasPermission("MANAGER", "pipeline.manage")).toBe(true);
+    expect(roleHasPermission("SELLER", "pipeline.manage")).toBe(false);
   });
 
   it("keeps administrative permissions away from managers and sellers", () => {
@@ -14,5 +20,6 @@ describe("role permissions", () => {
   it("keeps viewers read-only", () => {
     expect(permissionsForRole("VIEWER")).toContain("company.read");
     expect(roleHasPermission("VIEWER", "company.write")).toBe(false);
+    expect(roleHasPermission("VIEWER", "pipeline.manage")).toBe(false);
   });
 });

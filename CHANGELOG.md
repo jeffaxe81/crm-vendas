@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.4
+
+### Fundação do funil comercial
+
+- entidades `Pipeline` e `PipelineStage` isoladas por organização;
+- etapas padrão Prospecção, Qualificação, Proposta, Negociação, Ganha e Perdida;
+- classificação de etapa `OPEN`, `WON` e `LOST`;
+- posição única por pipeline e vínculo consistente entre pipeline, etapa e organização;
+- PostgreSQL RLS com `ENABLE` e `FORCE ROW LEVEL SECURITY` para as duas novas tabelas;
+- bootstrap idempotente do funil padrão por organização;
+- permissão `pipeline.manage` restrita a `ADMIN` e `MANAGER`;
+- `GET /api/v1/pipelines` para leitura tenant-aware do funil;
+- `POST /api/v1/pipelines/default` para garantir o funil padrão;
+- auditoria `pipeline.default_created` somente na criação efetiva;
+- regressão de isolamento RLS entre organizações e de ausência de contexto;
+- editor customizável de funil e CRUD completo de oportunidades permanecem fora da C3.4.
+
 ## [Unreleased] - Cycle 2
 
 ### CRM Core — empresas, contatos e relacionamento

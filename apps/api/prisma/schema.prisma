@@ -55,6 +55,14 @@ enum CustomFieldType {
   @@map("custom_field_type")
 }
 
+enum PipelineStageKind {
+  OPEN
+  WON
+  LOST
+
+  @@map("pipeline_stage_kind")
+}
+
 model Organization {
   id                       String                    @id @default(uuid()) @db.Uuid
   name                     String                    @db.VarChar(160)
@@ -76,6 +84,7 @@ model Organization {
   customFieldDefinitions   CustomFieldDefinition[]
   companyCustomFieldValues CompanyCustomFieldValue[]
   contactCustomFieldValues ContactCustomFieldValue[]
+  pipelines                Pipeline[]
 
   @@map("organizations")
 }
@@ -371,4 +380,38 @@ model ContactCustomFieldValue {
   @@unique([organizationId, contactId, definitionId], map: "contact_custom_field_values_org_contact_definition_key")
   @@index([organizationId, definitionId], map: "contact_custom_field_values_org_definition_idx")
   @@map("contact_custom_field_values")
+}
+
+model Pipeline {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizationId String          @map("organization_id") @db.Uuid
+  name           String          @db.VarChar(160)
+  normalizedName String          @map("normalized_name") @db.VarChar(160)
+  isActive       Boolean         @default(true) @map("is_active")
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  stages         PipelineStage[]
+
+  @@unique([organizationId, normalizedName], map: "pipelines_org_normalized_name_key")
+  @@unique([id, organizationId], map: "pipelines_id_organization_key")
+  @@index([organizationId, isActive], map: "pipelines_org_active_idx")
+  @@map("pipelines")
+}
+
+model PipelineStage {
+  id             String            @id @default(uuid()) @db.Uuid
+  organizationId String            @map("organization_id") @db.Uuid
+  pipelineId     String            @map("pipeline_id") @db.Uuid
+  name           String            @db.VarChar(120)
+  position       Int
+  kind           PipelineStageKind
+  isActive       Boolean           @default(true) @map("is_active")
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  pipeline       Pipeline          @relation(fields: [pipelineId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@unique([pipelineId, position], map: "pipeline_stages_pipeline_position_key")
+  @@index([organizationId, pipelineId, isActive], map: "pipeline_stages_org_pipeline_active_idx")
+  @@map("pipeline_stages")
 }
