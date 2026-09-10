@@ -187,7 +187,11 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
             return (
               <li
                 key={activity.id}
-                className={overdue ? "activities-view__item is-overdue" : "activities-view__item"}
+                className={
+                  overdue
+                    ? "activities-view__item is-overdue"
+                    : "activities-view__item"
+                }
               >
                 <div className="activities-view__item-heading">
                   <span>{typeLabels[activity.type]}</span>
@@ -201,7 +205,8 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
                   <span>Prioridade: {priorityLabels[activity.priority]}</span>
                   {activity.dueAt ? (
                     <span>
-                      Prazo: {dateTimeFormatter.format(new Date(activity.dueAt))}
+                      Prazo:{" "}
+                      {dateTimeFormatter.format(new Date(activity.dueAt))}
                     </span>
                   ) : (
                     <span>Sem prazo</span>
