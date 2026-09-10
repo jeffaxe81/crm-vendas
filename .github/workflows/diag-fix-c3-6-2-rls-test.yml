@@ -1,0 +1,80 @@
+name: Diagnostic C3.6.2 Task 5 RLS test fix
+
+on:
+  push:
+    branches:
+      - diag/c3-6-2-boundaries-green-20260910
+
+permissions:
+  contents: write
+
+jobs:
+  fix-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - run: corepack enable
+      - run: corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - name: Make deleted-row verification tenant-aware
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('apps/api/src/opportunities/opportunities-boundaries.integration.spec.ts')
+          text = path.read_text()
+          old = '''    const deleted = await prisma.$queryRaw<
+              Array<{
+                deleted_at: Date | null;
+                deleted_by: string | null;
+                version: number;
+              }>
+            >`SELECT deleted_at, deleted_by, version FROM opportunities WHERE id = ${opportunityId}::uuid`;
+            expect(deleted[0]?.deleted_at).toBeInstanceOf(Date);
+            expect(deleted[0]?.deleted_by).toBe(fixture.admin.id);
+            expect(deleted[0]?.version).toBe(2);
+          '''
+          if old not in text:
+              old = '''    const deleted = await prisma.$queryRaw<
+              Array<{
+                deleted_at: Date | null;
+                deleted_by: string | null;
+                version: number;
+              }>
+            >`SELECT deleted_at, deleted_by, version FROM opportunities WHERE id = ${opportunityId}::uuid`;
+            expect(deleted[0]?.deleted_at).toBeInstanceOf(Date);
+            expect(deleted[0]?.deleted_by).toBe(fixture.admin.id);
+            expect(deleted[0]?.version).toBe(2);
+          '''
+          replacement = '''    const deleted = await prisma.withTenant(
+              fixture.organization.id,
+              tenant =>
+                tenant.opportunity.findFirst({
+                  where: {
+                    id: opportunityId,
+                    organizationId: fixture.organization.id,
+                  },
+                  select: { deletedAt: true, deletedBy: true, version: true },
+                })
+            );
+            expect(deleted?.deletedAt).toBeInstanceOf(Date);
+            expect(deleted?.deletedBy).toBe(fixture.admin.id);
+            expect(deleted?.version).toBe(2);
+          '''
+          if old not in text:
+              raise SystemExit('expected raw deleted-row verification block not found')
+          path.write_text(text.replace(old, replacement, 1))
+          PY
+      - run: pnpm exec prettier --write apps/api/src/opportunities/opportunities-boundaries.integration.spec.ts
+      - name: Commit test-only fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/api/src/opportunities/opportunities-boundaries.integration.spec.ts
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "test: verify opportunity soft delete inside tenant context"
+          git push
