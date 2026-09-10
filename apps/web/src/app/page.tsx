@@ -81,7 +81,6 @@ export default function Home() {
     return (
       <CrmShell
         session={session}
-        permissions={session.permissions}
         activeSection={activeSection}
         onNavigate={setActiveSection}
         onLogout={() => void logout()}
