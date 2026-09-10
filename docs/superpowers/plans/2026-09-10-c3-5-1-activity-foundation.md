@@ -1,6 +1,9 @@
 # C3.5.1 Activity Foundation Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use
+> superpowers:subagent-driven-development (recommended) or
+> superpowers:executing-plans to implement this plan task-by-task. Steps use
+> checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Criar a fundação persistente tenant-aware de atividades comerciais no CRM canônico, sem API/Web nesta microentrega.
 
@@ -26,9 +29,11 @@
 ### Task 1: RED de contrato do schema e migration
 
 **Files:**
+
 - Create: `tests/activity-foundation-schema.test.mjs`
 
 **Interfaces:**
+
 - Consumes: `apps/api/prisma/schema.prisma` e diretório `apps/api/prisma/migrations`.
 - Produces: contrato executável para os models/enums/índices/RLS esperados.
 
@@ -65,9 +70,11 @@ Commit esperado: `test: define C3.5.1 activity foundation contract`.
 ### Task 2: GREEN mínimo do modelo Prisma
 
 **Files:**
+
 - Modify: `apps/api/prisma/schema.prisma`
 
 **Interfaces:**
+
 - Produces enums `ActivityType`, `ActivityStatus`, `ActivityPriority` e model `Activity`.
 
 - [ ] **Step 1: adicionar enums**
@@ -159,9 +166,11 @@ A validação integral será realizada pelo workflow `verify`; qualquer erro de 
 ### Task 3: Migration PostgreSQL + FORCE RLS
 
 **Files:**
+
 - Create: `apps/api/prisma/migrations/20260910090000_c3_activity_foundation/migration.sql`
 
 **Interfaces:**
+
 - Consumes: enums/model da Task 2.
 - Produces: estruturas SQL e policy tenant-aware fail-closed.
 
@@ -211,10 +220,12 @@ Expected: PASS.
 ### Task 4: Gate integral e checkpoint
 
 **Files:**
+
 - Modify: `CHANGELOG.md`
 - Create/Modify: `docs/checkpoints/cycle-3-current.md` ou checkpoint equivalente vigente.
 
 **Interfaces:**
+
 - Produces: evidência auditável da microentrega C3.5.1.
 
 - [ ] **Step 1: executar `pnpm verify` via GitHub Actions**
