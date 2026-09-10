@@ -49,6 +49,8 @@ A tela deverá oferecer:
 - reabertura para `PENDING`;
 - inativação lógica via `DELETE` da API.
 
+Status e busca textual serão enviados à API como parâmetros da listagem. A Web não manterá uma implementação paralela de filtragem como fonte de verdade.
+
 A tela não deverá duplicar lógica tenant-aware ou regras de transição do backend. O frontend envia comandos e reflete o estado retornado pela API.
 
 ## Criação de atividade
@@ -77,13 +79,13 @@ Usuários com `activity.read` podem visualizar a seção e seus registros.
 
 Controles de criação, mudança de status e inativação somente serão renderizados quando a sessão possuir `activity.write`. A API permanece como autoridade final de autorização.
 
-A ausência de `activity.read` não deverá expor dados da API. A seção poderá ser omitida do menu para sessões sem essa permissão.
+Quando a sessão não possuir `activity.read`, a opção `Atividades` não será renderizada no menu e `ActivitiesView` não será montada, evitando qualquer chamada de listagem de atividades pelo frontend.
 
 ## Dados auxiliares
 
 Para preencher os vínculos comerciais, a Web poderá reutilizar os endpoints canônicos de Empresas e Contatos já existentes.
 
-A primeira versão pode carregar opções em lotes compatíveis com o comportamento atual das telas existentes, sem introduzir autocomplete remoto ou paginação infinita nesta etapa.
+A primeira versão carregará opções em lotes compatíveis com o comportamento atual das telas existentes, sem introduzir autocomplete remoto ou paginação infinita nesta etapa.
 
 ## Experiência visual
 
@@ -94,12 +96,12 @@ A tela legada `client/src/pages/Activities.tsx` serve apenas como referência fu
 ## Fluxo principal
 
 1. Usuário autenticado entra no CRM.
-2. O menu mostra `Atividades` quando houver `activity.read`.
-3. Ao selecionar a seção, `ActivitiesView` carrega atividades pendentes por padrão.
-4. O usuário pode alternar entre pendentes, concluídas e canceladas e pesquisar pelo título.
+2. O menu mostra `Atividades` somente quando houver `activity.read`.
+3. Ao selecionar a seção, `ActivitiesView` carrega atividades `PENDING` por padrão.
+4. O usuário pode alternar entre `PENDING`, `COMPLETED` e `CANCELLED` e pesquisar pelo título; cada mudança atualiza a consulta à API.
 5. Com `activity.write`, pode criar uma atividade atribuída a si mesmo, vinculando opcionalmente Empresa e Contato.
 6. Com `activity.write`, pode concluir, cancelar, reabrir ou inativar uma atividade.
-7. Após mutações bem-sucedidas, a view atualiza o estado exibido sem exigir recarregamento completo da sessão.
+7. Após mutações bem-sucedidas, a view refaz a consulta da visão atual e reflete o estado persistido pela API, sem exigir recarregamento completo da sessão.
 
 ## Tratamento de erros
 
@@ -118,8 +120,9 @@ O primeiro RED deverá provar que a navegação canônica ainda não suporta a s
 Os testes deverão cobrir, no mínimo:
 
 - presença/ausência do item de navegação conforme `activity.read`;
+- ausência de chamada de atividades quando `activity.read` não existir;
 - renderização da lista e estados de carregamento/erro/vazio;
-- filtro por status e busca textual;
+- filtro por status e busca textual enviados à API;
 - criação atribuída ao usuário autenticado;
 - ausência de controles de escrita para sessão sem `activity.write`;
 - conclusão, cancelamento e reabertura;
