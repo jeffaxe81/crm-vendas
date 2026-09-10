@@ -13,7 +13,9 @@ describe("Cycle 3.6.2 opportunity boundaries", () => {
   let passwords: PasswordService;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalFilters(new ApiErrorFilter());
     app.setGlobalPrefix("api/v1");
@@ -51,7 +53,11 @@ describe("Cycle 3.6.2 opportunity boundaries", () => {
     });
   }
 
-  async function login(email: string, password: string, organizationSlug: string) {
+  async function login(
+    email: string,
+    password: string,
+    organizationSlug: string
+  ) {
     const response = await request(app.getHttpServer())
       .post("/api/v1/auth/login")
       .send({ email, password, organizationSlug })
@@ -73,7 +79,11 @@ describe("Cycle 3.6.2 opportunity boundaries", () => {
       displayName: `Boundary Admin ${suffix}`,
     });
     await prisma.organizationMembership.create({
-      data: { organizationId: organization.id, userId: admin.id, role: "ADMIN" },
+      data: {
+        organizationId: organization.id,
+        userId: admin.id,
+        role: "ADMIN",
+      },
     });
     const company = await prisma.withTenant(organization.id, tenant =>
       tenant.company.create({
@@ -169,7 +179,11 @@ describe("Cycle 3.6.2 opportunity boundaries", () => {
     expect(list.body.total).toBe(0);
 
     const deleted = await prisma.$queryRaw<
-      Array<{ deleted_at: Date | null; deleted_by: string | null; version: number }>
+      Array<{
+        deleted_at: Date | null;
+        deleted_by: string | null;
+        version: number;
+      }>
     >`SELECT deleted_at, deleted_by, version FROM opportunities WHERE id = ${opportunityId}::uuid`;
     expect(deleted[0]?.deleted_at).toBeInstanceOf(Date);
     expect(deleted[0]?.deleted_by).toBe(fixture.admin.id);
@@ -199,7 +213,12 @@ describe("Cycle 3.6.2 opportunity boundaries", () => {
       .set("Authorization", `Bearer ${viewer.token}`)
       .expect(200);
 
-    await createOpportunity(fixture, viewer.token, viewer.user.id, "Viewer cannot create").expect(403);
+    await createOpportunity(
+      fixture,
+      viewer.token,
+      viewer.user.id,
+      "Viewer cannot create"
+    ).expect(403);
 
     await request(app.getHttpServer())
       .patch(`/api/v1/opportunities/${opportunityId}`)
@@ -279,10 +298,12 @@ describe("Cycle 3.6.2 opportunity boundaries", () => {
       .set("Authorization", `Bearer ${tenantA.adminToken}`)
       .expect(404);
 
-    const stillPresent = await prisma.withTenant(tenantB.organization.id, tenant =>
-      tenant.opportunity.findFirst({
-        where: { id: opportunityId, organizationId: tenantB.organization.id },
-      })
+    const stillPresent = await prisma.withTenant(
+      tenantB.organization.id,
+      tenant =>
+        tenant.opportunity.findFirst({
+          where: { id: opportunityId, organizationId: tenantB.organization.id },
+        })
     );
     expect(stillPresent?.deletedAt).toBeNull();
   });
