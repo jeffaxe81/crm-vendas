@@ -272,6 +272,33 @@ export function ActivitiesView({
     }
   }
 
+  async function cancelActivity(activityId: string) {
+    if (transitioningActivityId !== null) {
+      return;
+    }
+
+    setError("");
+    setTransitioningActivityId(activityId);
+    const payload: ActivityUpdateInput = { status: "CANCELLED" };
+
+    try {
+      await apiRequest<ActivityRecord>(`/activities/${activityId}`, {
+        accessToken,
+        method: "PATCH",
+        body: payload,
+      });
+      setRefreshVersion(current => current + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível cancelar a atividade."
+      );
+    } finally {
+      setTransitioningActivityId(null);
+    }
+  }
+
   return (
     <section className="activities-view" aria-labelledby="activities-title">
       <header className="activities-view__header">
@@ -533,6 +560,15 @@ export function ActivitiesView({
                       {transitioningActivityId === activity.id
                         ? "Concluindo..."
                         : "Concluir"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={transitioningActivityId === activity.id}
+                      onClick={() => void cancelActivity(activity.id)}
+                    >
+                      {transitioningActivityId === activity.id
+                        ? "Cancelando..."
+                        : "Cancelar atividade"}
                     </button>
                   </div>
                 ) : null}
