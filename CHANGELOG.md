@@ -1,5 +1,23 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.5.2
+
+### API tenant-aware de atividades
+
+- contratos compartilhados de criação, atualização, filtros, tipos, status e prioridades de atividades;
+- `GET /api/v1/activities` com paginação, busca e filtros por tipo, status, prioridade, responsável, empresa, contato e intervalo de prazo;
+- `GET /api/v1/activities/:id` com leitura isolada por organização;
+- `POST /api/v1/activities` para criação de tarefas e compromissos;
+- `PATCH /api/v1/activities/:id` para edição e transições entre `PENDING`, `COMPLETED` e `CANCELLED`;
+- `DELETE /api/v1/activities/:id` com soft delete;
+- timestamps `completedAt` e `cancelledAt` controlados pelo servidor conforme a transição de status;
+- validação tenant-aware de empresa, contato e responsável com membership ativa;
+- permissões `activity.read` e `activity.write`, preservando leitura para `VIEWER` e escrita para perfis comerciais autorizados;
+- tentativas de leitura, alteração ou uso de referências cross-tenant retornam `404`, sem revelar existência de recursos de outra organização;
+- auditoria `activity.created`, `activity.updated`, `activity.completed`, `activity.cancelled` e `activity.deleted`;
+- teste de integração cobre lifecycle, isolamento multiempresa, referências, RBAC, status e soft delete;
+- interface Web, agenda, recorrência, notificações, automação de follow-up, integração Google/Outlook e vínculo com Opportunity permanecem fora da C3.5.2.
+
 ## [Unreleased] - Cycle 3.5.1
 
 ### Fundação tenant-aware de atividades
