@@ -56,4 +56,38 @@ describe("C3.5.4 activities filters", () => {
       expect(calls.some(url => url.includes("status=COMPLETED"))).toBe(true);
     });
   });
+
+  it("sends title search through the API only after submit", async () => {
+    const fetchMock = vi.fn(async (_input: string | URL) =>
+      response(emptyActivities)
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ActivitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite
+      />
+    );
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalled();
+    });
+    fetchMock.mockClear();
+
+    const searchInput = screen.getByRole("searchbox", {
+      name: "Buscar atividades",
+    });
+    fireEvent.change(searchInput, { target: { value: "proposta" } });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Buscar" }));
+
+    await waitFor(() => {
+      const calls = fetchMock.mock.calls.map(([input]) => String(input));
+      expect(calls.some(url => url.includes("q=proposta"))).toBe(true);
+    });
+  });
 });
