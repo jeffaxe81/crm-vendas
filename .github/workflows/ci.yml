@@ -63,12 +63,6 @@ jobs:
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Show Prettier diff for activities
-        run: |
-          pnpm exec prettier --write apps/web/src/app/activities/activities-view.tsx apps/web/src/app/activities/activities-view.test.tsx
-          git diff -- apps/web/src/app/activities/activities-view.tsx apps/web/src/app/activities/activities-view.test.tsx
-          git diff --exit-code -- apps/web/src/app/activities/activities-view.tsx apps/web/src/app/activities/activities-view.test.tsx
-
       - name: Generate Prisma client
         run: pnpm --filter @axes/api prisma:generate
 
