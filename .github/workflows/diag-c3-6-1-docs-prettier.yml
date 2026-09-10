@@ -1,0 +1,36 @@
+name: Diagnostic C3.6.1 docs Prettier
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - run: corepack enable
+      - run: corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - name: Generate exact Prettier output
+        run: |
+          pnpm exec prettier --write \
+            docs/superpowers/plans/2026-09-10-c3-6-1-opportunity-foundation.md \
+            docs/superpowers/specs/2026-09-10-c3-6-1-opportunity-foundation-design.md
+          pnpm exec prettier --check \
+            docs/superpowers/plans/2026-09-10-c3-6-1-opportunity-foundation.md \
+            docs/superpowers/specs/2026-09-10-c3-6-1-opportunity-foundation-design.md
+      - name: Capture formatted docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: c3-6-1-docs-prettier-formatted
+          path: |
+            docs/superpowers/plans/2026-09-10-c3-6-1-opportunity-foundation.md
+            docs/superpowers/specs/2026-09-10-c3-6-1-opportunity-foundation-design.md
+          if-no-files-found: error
