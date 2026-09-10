@@ -187,130 +187,135 @@ describe("C3.5.4 activities filters", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("creates a self-owned activity with optional commercial links", async () => {
-    const companyId = "22222222-2222-4222-8222-222222222222";
-    const contactId = "33333333-3333-4333-8333-333333333333";
-    const createdActivity = {
-      id: "44444444-4444-4444-8444-444444444444",
-      type: "TASK",
-      status: "PENDING",
-      priority: "HIGH",
-      title: "Preparar proposta",
-      description: null,
-      ownerUserId,
-      companyId,
-      contactId,
-      dueAt: null,
-      completedAt: null,
-      cancelledAt: null,
-    };
-    let activitiesReads = 0;
-    const fetchMock = vi.fn(
-      async (input: string | URL, init?: RequestInit) => {
-        const url = String(input);
-
-        if (url.includes("/companies?page=1&limit=100")) {
-          return response({
-            items: [
-              {
-                id: companyId,
-                legalName: "Axes Cliente Ltda",
-                tradeName: "Axes Cliente",
-              },
-            ],
-            page: 1,
-            limit: 100,
-            total: 1,
-          });
-        }
-
-        if (url.includes("/contacts?page=1&limit=100")) {
-          return response({
-            items: [{ id: contactId, fullName: "Maria Cliente" }],
-            page: 1,
-            limit: 100,
-            total: 1,
-          });
-        }
-
-        if (url.endsWith("/activities") && init?.method === "POST") {
-          return response(createdActivity);
-        }
-
-        if (url.includes("/activities?")) {
-          activitiesReads += 1;
-          return response(
-            activitiesReads === 1
-              ? emptyActivities
-              : { items: [createdActivity], page: 1, limit: 20, total: 1 }
-          );
-        }
-
-        throw new Error(`Unexpected fetch: ${url}`);
-      }
-    );
-    vi.stubGlobal("fetch", fetchMock);
-
-    render(
-      <ActivitiesView
-        accessToken={accessToken}
-        ownerUserId={ownerUserId}
-        canWrite
-      />
-    );
-
-    await screen.findByText("Nenhuma atividade em pendentes.");
-    fireEvent.click(screen.getByRole("button", { name: "Nova atividade" }));
-
-    expect(
-      await screen.findByRole("form", { name: "Nova atividade" })
-    ).toBeInTheDocument();
-    expect(screen.queryByLabelText("Opportunity")).not.toBeInTheDocument();
-
-    fireEvent.change(screen.getByLabelText("Título"), {
-      target: { value: "Preparar proposta" },
-    });
-    fireEvent.change(screen.getByLabelText("Tipo"), {
-      target: { value: "TASK" },
-    });
-    fireEvent.change(screen.getByLabelText("Prioridade"), {
-      target: { value: "HIGH" },
-    });
-    fireEvent.change(screen.getByLabelText("Prazo"), {
-      target: { value: "2026-09-15T14:30" },
-    });
-
-    await screen.findByRole("option", { name: "Axes Cliente" });
-    fireEvent.change(screen.getByLabelText("Empresa"), {
-      target: { value: companyId },
-    });
-    fireEvent.change(screen.getByLabelText("Contato"), {
-      target: { value: contactId },
-    });
-
-    fireEvent.click(screen.getByRole("button", { name: "Salvar atividade" }));
-
-    await waitFor(() => {
-      const postCall = fetchMock.mock.calls.find(
-        ([input, init]) =>
-          String(input).endsWith("/activities") && init?.method === "POST"
-      );
-      expect(postCall).toBeDefined();
-      const payload = JSON.parse(String(postCall?.[1]?.body));
-      expect(payload).toEqual({
+  it(
+    "creates a self-owned activity with optional commercial links",
+    async () => {
+      const companyId = "22222222-2222-4222-8222-222222222222";
+      const contactId = "33333333-3333-4333-8333-333333333333";
+      const createdActivity = {
+        id: "44444444-4444-4444-8444-444444444444",
         type: "TASK",
+        status: "PENDING",
         priority: "HIGH",
         title: "Preparar proposta",
+        description: null,
         ownerUserId,
         companyId,
         contactId,
-        dueAt: new Date("2026-09-15T14:30").toISOString(),
-      });
-    });
+        dueAt: null,
+        completedAt: null,
+        cancelledAt: null,
+      };
+      let activitiesReads = 0;
+      const fetchMock = vi.fn(
+        async (input: string | URL, init?: RequestInit) => {
+          const url = String(input);
 
-    expect(await screen.findByText("Preparar proposta")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("form", { name: "Nova atividade" })
-    ).not.toBeInTheDocument();
-  });
+          if (url.includes("/companies?page=1&limit=100")) {
+            return response({
+              items: [
+                {
+                  id: companyId,
+                  legalName: "Axes Cliente Ltda",
+                  tradeName: "Axes Cliente",
+                },
+              ],
+              page: 1,
+              limit: 100,
+              total: 1,
+            });
+          }
+
+          if (url.includes("/contacts?page=1&limit=100")) {
+            return response({
+              items: [{ id: contactId, fullName: "Maria Cliente" }],
+              page: 1,
+              limit: 100,
+              total: 1,
+            });
+          }
+
+          if (url.endsWith("/activities") && init?.method === "POST") {
+            return response(createdActivity);
+          }
+
+          if (url.includes("/activities?")) {
+            activitiesReads += 1;
+            return response(
+              activitiesReads === 1
+                ? emptyActivities
+                : { items: [createdActivity], page: 1, limit: 20, total: 1 }
+            );
+          }
+
+          throw new Error(`Unexpected fetch: ${url}`);
+        }
+      );
+      vi.stubGlobal("fetch", fetchMock);
+
+      render(
+        <ActivitiesView
+          accessToken={accessToken}
+          ownerUserId={ownerUserId}
+          canWrite
+        />
+      );
+
+      await screen.findByText("Nenhuma atividade em pendentes.");
+      fireEvent.click(screen.getByRole("button", { name: "Nova atividade" }));
+
+      expect(
+        await screen.findByRole("form", { name: "Nova atividade" })
+      ).toBeInTheDocument();
+      expect(screen.queryByLabelText("Opportunity")).not.toBeInTheDocument();
+
+      fireEvent.change(screen.getByLabelText("Título"), {
+        target: { value: "Preparar proposta" },
+      });
+      fireEvent.change(screen.getByLabelText("Tipo"), {
+        target: { value: "TASK" },
+      });
+      fireEvent.change(screen.getByLabelText("Prioridade"), {
+        target: { value: "HIGH" },
+      });
+      fireEvent.change(screen.getByLabelText("Prazo"), {
+        target: { value: "2026-09-15T14:30" },
+      });
+
+      await screen.findByRole("option", { name: "Axes Cliente" });
+      fireEvent.change(screen.getByLabelText("Empresa"), {
+        target: { value: companyId },
+      });
+      fireEvent.change(screen.getByLabelText("Contato"), {
+        target: { value: contactId },
+      });
+
+      fireEvent.click(
+        screen.getByRole("button", { name: "Salvar atividade" })
+      );
+
+      await waitFor(() => {
+        const postCall = fetchMock.mock.calls.find(
+          ([input, init]) =>
+            String(input).endsWith("/activities") && init?.method === "POST"
+        );
+        expect(postCall).toBeDefined();
+        const payload = JSON.parse(String(postCall?.[1]?.body));
+        expect(payload).toEqual({
+          type: "TASK",
+          priority: "HIGH",
+          title: "Preparar proposta",
+          ownerUserId,
+          companyId,
+          contactId,
+          dueAt: new Date("2026-09-15T14:30").toISOString(),
+        });
+      });
+
+      expect(await screen.findByText("Preparar proposta")).toBeInTheDocument();
+      expect(
+        screen.queryByRole("form", { name: "Nova atividade" })
+      ).not.toBeInTheDocument();
+    }
+  );
 });
