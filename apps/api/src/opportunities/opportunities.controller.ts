@@ -12,7 +12,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   Inject,
   Param,
   Patch,
@@ -96,6 +98,19 @@ export class OpportunitiesController {
     return this.opportunities.update(
       this.parseOpportunityId(id),
       this.parseUpdate(body),
+      this.contextFrom(request)
+    );
+  }
+
+  @Delete(":id")
+  @HttpCode(204)
+  @RequirePermissions("opportunity.write")
+  async remove(
+    @Param("id") id: string,
+    @Req() request: OpportunityRequest
+  ): Promise<void> {
+    await this.opportunities.remove(
+      this.parseOpportunityId(id),
       this.contextFrom(request)
     );
   }
