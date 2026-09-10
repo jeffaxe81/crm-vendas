@@ -7,6 +7,7 @@ import {
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { authApiRequest } from "../lib/api-client";
+import { ActivitiesView } from "./activities/activities-view";
 import { CompaniesView } from "./companies/companies-view";
 import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
@@ -80,14 +81,21 @@ export default function Home() {
     return (
       <CrmShell
         session={session}
+        permissions={session.permissions}
         activeSection={activeSection}
         onNavigate={setActiveSection}
         onLogout={() => void logout()}
       >
         {activeSection === "companies" ? (
           <CompaniesView accessToken={session.accessToken} />
-        ) : (
+        ) : activeSection === "contacts" ? (
           <ContactsView accessToken={session.accessToken} />
+        ) : (
+          <ActivitiesView
+            accessToken={session.accessToken}
+            ownerUserId={session.user.id}
+            canWrite={session.permissions.includes("activity.write")}
+          />
         )}
       </CrmShell>
     );
