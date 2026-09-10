@@ -1,9 +1,11 @@
 import {
   OpportunityCreateInputSchema,
   OpportunityListQuerySchema,
+  OpportunityMoveInputSchema,
   OpportunityUpdateInputSchema,
   type OpportunityCreateInput,
   type OpportunityListQuery,
+  type OpportunityMoveInput,
   type OpportunityUpdateInput,
 } from "@axes/contracts";
 import {
@@ -52,6 +54,15 @@ export class OpportunitiesController {
     );
   }
 
+  @Get(":id/stage-history")
+  @RequirePermissions("opportunity.read")
+  stageHistory(@Param("id") id: string, @Req() request: OpportunityRequest) {
+    return this.opportunities.stageHistory(
+      this.parseOpportunityId(id),
+      this.requirePrincipal(request).organizationId
+    );
+  }
+
   @Get(":id")
   @RequirePermissions("opportunity.read")
   read(@Param("id") id: string, @Req() request: OpportunityRequest) {
@@ -66,6 +77,20 @@ export class OpportunitiesController {
   create(@Body() body: unknown, @Req() request: OpportunityRequest) {
     return this.opportunities.create(
       this.parseCreate(body),
+      this.contextFrom(request)
+    );
+  }
+
+  @Post(":id/move")
+  @RequirePermissions("opportunity.write")
+  move(
+    @Param("id") id: string,
+    @Body() body: unknown,
+    @Req() request: OpportunityRequest
+  ) {
+    return this.opportunities.move(
+      this.parseOpportunityId(id),
+      this.parseMove(body),
       this.contextFrom(request)
     );
   }
@@ -108,6 +133,17 @@ export class OpportunitiesController {
 
   private parseCreate(body: unknown): OpportunityCreateInput {
     const parsed = OpportunityCreateInputSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+    return parsed.data;
+  }
+
+  private parseMove(body: unknown): OpportunityMoveInput {
+    const parsed = OpportunityMoveInputSchema.safeParse(body);
     if (!parsed.success) {
       throw new BadRequestException({
         code: "VALIDATION_ERROR",
