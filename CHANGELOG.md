@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.5.4
+
+### Web de atividades
+
+- nova seção `Atividades` integrada ao `CrmShell` canônico, visível somente com `activity.read`;
+- listagem por status `PENDING`, `COMPLETED` e `CANCELLED`, com busca explícita pelo parâmetro `q` da API;
+- estados visuais de carregamento, erro, vazio e indicação de atividade pendente vencida;
+- criação de tarefas e compromissos atribuída ao usuário autenticado, sem delegação de responsável;
+- vínculos opcionais com Empresa e Contato usando os endpoints canônicos existentes;
+- lifecycle Web para concluir, cancelar, reabrir e inativar atividades, com recarga da lista atual após cada mutação bem-sucedida;
+- controles de criação e lifecycle disponíveis somente com `activity.write`; usuários somente-leitura não recebem comandos de mutação;
+- fluxo E2E real cobre login, navegação em Atividades, criação de `Follow-up E2E`, conclusão e persistência na aba Concluídas;
+- `Opportunity`, agenda/calendário, recorrência, notificações, automação de follow-up, Google/Outlook e delegação permanecem fora desta entrega;
+- nenhuma alteração de API backend, Prisma schema, migrations ou RBAC na C3.5.4;
+- PR #14 permanece condicionado ao gate final GREEN e à aprovação explícita antes do merge.
+
 ## [Unreleased] - Cycle 3.5.3
 
 ### Vínculos comerciais de atividades

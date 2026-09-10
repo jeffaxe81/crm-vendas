@@ -3,7 +3,7 @@
 import type { AuthSessionResponse } from "@axes/contracts";
 import type { ReactNode } from "react";
 
-export type CrmSection = "companies" | "contacts";
+export type CrmSection = "companies" | "contacts" | "activities";
 
 type CrmShellProps = {
   session: AuthSessionResponse;
@@ -20,6 +20,9 @@ export function CrmShell({
   onLogout,
   children,
 }: CrmShellProps) {
+  const canReadActivities = session.permissions.includes("activity.read");
+  const isActivitiesActive = activeSection === "activities";
+
   return (
     <main className="crm-shell" aria-label="Acesso ao CRM">
       <aside className="crm-shell__sidebar">
@@ -55,6 +58,16 @@ export function CrmShell({
           >
             Contatos
           </button>
+          {canReadActivities ? (
+            <button
+              type="button"
+              className={isActivitiesActive ? "is-active" : undefined}
+              aria-current={isActivitiesActive ? "page" : undefined}
+              onClick={() => onNavigate("activities")}
+            >
+              Atividades
+            </button>
+          ) : null}
         </nav>
 
         <section className="crm-shell__session" aria-label="Sessão ativa">
