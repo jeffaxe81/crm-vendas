@@ -409,21 +409,23 @@ export class TagsService {
   }
 
   private async requireContact(id: string, organizationId: string) {
-    const contact = await this.prisma.contact.findFirst({
-      where: {
-        id,
-        organizationId,
-        deletedAt: null,
-      },
-    });
-
-    if (!contact) {
-      throw new NotFoundException({
-        code: "CONTACT_NOT_FOUND",
-        message: "Contato não encontrado.",
+    return this.prisma.withTenant(organizationId, async tenant => {
+      const contact = await tenant.contact.findFirst({
+        where: {
+          id,
+          organizationId,
+          deletedAt: null,
+        },
       });
-    }
 
-    return contact;
+      if (!contact) {
+        throw new NotFoundException({
+          code: "CONTACT_NOT_FOUND",
+          message: "Contato não encontrado.",
+        });
+      }
+
+      return contact;
+    });
   }
 }
