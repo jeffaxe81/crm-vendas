@@ -182,6 +182,9 @@ export class ActivitiesService {
             ...(input.contactId !== undefined
               ? { contactId: input.contactId }
               : {}),
+            ...(input.opportunityId !== undefined
+              ? { opportunityId: input.opportunityId }
+              : {}),
             ...(input.ownerUserId !== undefined
               ? { ownerUserId: input.ownerUserId }
               : {}),
