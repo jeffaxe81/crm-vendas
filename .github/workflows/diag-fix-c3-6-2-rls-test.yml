@@ -23,31 +23,14 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
+
           path = Path('apps/api/src/opportunities/opportunities-boundaries.integration.spec.ts')
           text = path.read_text()
-          old = '''    const deleted = await prisma.$queryRaw<
-              Array<{
-                deleted_at: Date | null;
-                deleted_by: string | null;
-                version: number;
-              }>
-            >`SELECT deleted_at, deleted_by, version FROM opportunities WHERE id = ${opportunityId}::uuid`;
-            expect(deleted[0]?.deleted_at).toBeInstanceOf(Date);
-            expect(deleted[0]?.deleted_by).toBe(fixture.admin.id);
-            expect(deleted[0]?.version).toBe(2);
-          '''
-          if old not in text:
-              old = '''    const deleted = await prisma.$queryRaw<
-              Array<{
-                deleted_at: Date | null;
-                deleted_by: string | null;
-                version: number;
-              }>
-            >`SELECT deleted_at, deleted_by, version FROM opportunities WHERE id = ${opportunityId}::uuid`;
-            expect(deleted[0]?.deleted_at).toBeInstanceOf(Date);
-            expect(deleted[0]?.deleted_by).toBe(fixture.admin.id);
-            expect(deleted[0]?.version).toBe(2);
-          '''
+          pattern = re.compile(
+              r'    const deleted = await prisma\.\$queryRaw<.*?expect\(deleted\[0\]\?\.version\)\.toBe\(2\);',
+              re.S,
+          )
           replacement = '''    const deleted = await prisma.withTenant(
               fixture.organization.id,
               tenant =>
@@ -61,11 +44,11 @@ jobs:
             );
             expect(deleted?.deletedAt).toBeInstanceOf(Date);
             expect(deleted?.deletedBy).toBe(fixture.admin.id);
-            expect(deleted?.version).toBe(2);
-          '''
-          if old not in text:
-              raise SystemExit('expected raw deleted-row verification block not found')
-          path.write_text(text.replace(old, replacement, 1))
+            expect(deleted?.version).toBe(2);'''
+          updated, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'expected one raw deleted-row verification block, found {count}')
+          path.write_text(updated)
           PY
       - run: pnpm exec prettier --write apps/api/src/opportunities/opportunities-boundaries.integration.spec.ts
       - name: Commit test-only fix
