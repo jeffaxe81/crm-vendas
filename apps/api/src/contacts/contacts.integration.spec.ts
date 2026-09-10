@@ -138,14 +138,16 @@ describe("Cycle 2 contacts API", () => {
       jobTitle: null,
     });
 
-    const contactB = await prisma.contact.create({
-      data: {
-        organizationId: organizationB.id,
-        fullName: "Contato Organização B",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const contactB = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organizationB.id,
+          fullName: "Contato Organização B",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     const list = await request(app.getHttpServer())
       .get("/api/v1/contacts?q=Contato&page=1&limit=20")
@@ -167,9 +169,11 @@ describe("Cycle 2 contacts API", () => {
       .send({ fullName: "Tentativa cruzada" })
       .expect(404);
 
-    const untouched = await prisma.contact.findUnique({
-      where: { id: contactB.id },
-    });
+    const untouched = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.contact.findUnique({
+        where: { id: contactB.id },
+      })
+    );
     expect(untouched?.fullName).toBe("Contato Organização B");
   });
 
@@ -262,9 +266,11 @@ describe("Cycle 2 contacts API", () => {
       .set("Authorization", `Bearer ${token}`)
       .expect(404);
 
-    const stored = await prisma.contact.findUnique({
-      where: { id: contactId },
-    });
+    const stored = await prisma.withTenant(organization.id, tenant =>
+      tenant.contact.findUnique({
+        where: { id: contactId },
+      })
+    );
     expect(stored?.deletedAt).toBeInstanceOf(Date);
     expect(stored?.deletedBy).toBe(user.id);
 
@@ -316,22 +322,26 @@ describe("Cycle 2 contacts API", () => {
     });
 
     const [contactA, contactB] = await Promise.all([
-      prisma.contact.create({
-        data: {
-          organizationId: organizationA.id,
-          fullName: "Contato Canais A",
-          createdBy: user.id,
-          updatedBy: user.id,
-        },
-      }),
-      prisma.contact.create({
-        data: {
-          organizationId: organizationB.id,
-          fullName: "Contato Canais B",
-          createdBy: user.id,
-          updatedBy: user.id,
-        },
-      }),
+      prisma.withTenant(organizationA.id, tenant =>
+        tenant.contact.create({
+          data: {
+            organizationId: organizationA.id,
+            fullName: "Contato Canais A",
+            createdBy: user.id,
+            updatedBy: user.id,
+          },
+        })
+      ),
+      prisma.withTenant(organizationB.id, tenant =>
+        tenant.contact.create({
+          data: {
+            organizationId: organizationB.id,
+            fullName: "Contato Canais B",
+            createdBy: user.id,
+            updatedBy: user.id,
+          },
+        })
+      ),
     ]);
 
     const channelB = await prisma.contactChannel.create({
