@@ -249,15 +249,16 @@ describe("Tenant RLS integration", () => {
         organizationId,
         name: "RLS Pipeline",
         normalizedName: "rls pipeline",
-        stages: {
-          create: {
-            id: stageId,
-            organizationId,
-            name: "Prospecção",
-            position: 1,
-            kind: "OPEN",
-          },
-        },
+      },
+    });
+    await admin.pipelineStage.create({
+      data: {
+        id: stageId,
+        organizationId,
+        pipelineId,
+        name: "Prospecção",
+        position: 1,
+        kind: "OPEN",
       },
     });
 
