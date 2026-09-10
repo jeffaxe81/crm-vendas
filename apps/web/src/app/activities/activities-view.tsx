@@ -173,12 +173,14 @@ export function ActivitiesView({
 
     try {
       const [companyResult, contactResult] = await Promise.all([
-        apiRequest<ListResponse<CompanyOption>>("/companies?page=1&limit=100", {
-          accessToken,
-        }),
-        apiRequest<ListResponse<ContactOption>>("/contacts?page=1&limit=100", {
-          accessToken,
-        }),
+        apiRequest<ListResponse<CompanyOption>>(
+          "/companies?page=1&limit=100",
+          { accessToken }
+        ),
+        apiRequest<ListResponse<ContactOption>>(
+          "/contacts?page=1&limit=100",
+          { accessToken }
+        ),
       ]);
       setCompanies(companyResult.items);
       setContacts(contactResult.items);
@@ -251,7 +253,10 @@ export function ActivitiesView({
           <p>Organize tarefas e próximos passos da operação comercial.</p>
         </div>
         {canWrite ? (
-          <button className="button activities-view__primary" onClick={openCreate}>
+          <button
+            className="button activities-view__primary"
+            onClick={openCreate}
+          >
             Nova atividade
           </button>
         ) : null}
@@ -323,7 +328,10 @@ export function ActivitiesView({
                 id="activity-title"
                 value={form.title}
                 onChange={event =>
-                  setForm(current => ({ ...current, title: event.target.value }))
+                  setForm(current => ({
+                    ...current,
+                    title: event.target.value,
+                  }))
                 }
                 required
               />
@@ -371,7 +379,10 @@ export function ActivitiesView({
                 type="datetime-local"
                 value={form.dueAt}
                 onChange={event =>
-                  setForm(current => ({ ...current, dueAt: event.target.value }))
+                  setForm(current => ({
+                    ...current,
+                    dueAt: event.target.value,
+                  }))
                 }
               />
             </label>
@@ -418,7 +429,10 @@ export function ActivitiesView({
               </select>
             </label>
 
-            <label className="activity-form__description" htmlFor="activity-description">
+            <label
+              className="activity-form__description"
+              htmlFor="activity-description"
+            >
               <span>Descrição</span>
               <textarea
                 id="activity-description"
