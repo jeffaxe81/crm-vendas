@@ -22,6 +22,9 @@ export function CrmShell({
   onLogout,
   children,
 }: CrmShellProps) {
+  const canReadActivities = permissions.includes("activity.read");
+  const isActivitiesActive = activeSection === "activities";
+
   return (
     <main className="crm-shell" aria-label="Acesso ao CRM">
       <aside className="crm-shell__sidebar">
@@ -57,15 +60,11 @@ export function CrmShell({
           >
             Contatos
           </button>
-          {permissions.includes("activity.read") ? (
+          {canReadActivities ? (
             <button
               type="button"
-              className={
-                activeSection === "activities" ? "is-active" : undefined
-              }
-              aria-current={
-                activeSection === "activities" ? "page" : undefined
-              }
+              className={isActivitiesActive ? "is-active" : undefined}
+              aria-current={isActivitiesActive ? "page" : undefined}
               onClick={() => onNavigate("activities")}
             >
               Atividades
