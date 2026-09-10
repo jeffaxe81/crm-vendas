@@ -87,7 +87,7 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
         className="activities-view__status-tabs"
         aria-label="Status das atividades"
       >
-        {(Object.keys(statusLabels) as ActivityStatus[]).map((option) => (
+        {(Object.keys(statusLabels) as ActivityStatus[]).map(option => (
           <button
             key={option}
             type="button"
