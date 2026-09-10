@@ -63,6 +63,29 @@ enum PipelineStageKind {
   @@map("pipeline_stage_kind")
 }
 
+enum ActivityType {
+  TASK
+  APPOINTMENT
+
+  @@map("activity_type")
+}
+
+enum ActivityStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+
+  @@map("activity_status")
+}
+
+enum ActivityPriority {
+  LOW
+  MEDIUM
+  HIGH
+
+  @@map("activity_priority")
+}
+
 model Organization {
   id                       String                    @id @default(uuid()) @db.Uuid
   name                     String                    @db.VarChar(160)
@@ -85,6 +108,7 @@ model Organization {
   companyCustomFieldValues CompanyCustomFieldValue[]
   contactCustomFieldValues ContactCustomFieldValue[]
   pipelines                Pipeline[]
+  activities               Activity[]
 
   @@map("organizations")
 }
@@ -108,6 +132,10 @@ model User {
   contactsUpdated           Contact[]            @relation("ContactUpdatedBy")
   contactsDeleted           Contact[]            @relation("ContactDeletedBy")
   relationshipEntriesAuthored RelationshipEntry[] @relation("RelationshipEntryAuthor")
+  activitiesOwned           Activity[]           @relation("ActivityOwner")
+  activitiesCreated         Activity[]           @relation("ActivityCreatedBy")
+  activitiesUpdated         Activity[]           @relation("ActivityUpdatedBy")
+  activitiesDeleted         Activity[]           @relation("ActivityDeletedBy")
 
   @@map("users")
 }
@@ -193,6 +221,7 @@ model Company {
   relationshipEntries RelationshipEntry[]
   tagLinks          CompanyTag[]
   customFieldValues CompanyCustomFieldValue[]
+  activities        Activity[]
 
   @@index([organizationId, deletedAt, legalName], map: "companies_org_deleted_legal_name_idx")
   @@index([organizationId, tradeName], map: "companies_org_trade_name_idx")
@@ -221,6 +250,7 @@ model Contact {
   relationshipEntries RelationshipEntry[]
   tagLinks          ContactTag[]
   customFieldValues ContactCustomFieldValue[]
+  activities        Activity[]
 
   @@index([organizationId, deletedAt, fullName], map: "contacts_org_deleted_full_name_idx")
   @@map("contacts")
@@ -414,4 +444,39 @@ model PipelineStage {
   @@unique([pipelineId, position], map: "pipeline_stages_pipeline_position_key")
   @@index([organizationId, pipelineId, isActive], map: "pipeline_stages_org_pipeline_active_idx")
   @@map("pipeline_stages")
+}
+
+model Activity {
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @map("organization_id") @db.Uuid
+  type           ActivityType
+  status         ActivityStatus   @default(PENDING)
+  priority       ActivityPriority @default(MEDIUM)
+  title          String           @db.VarChar(200)
+  description    String?
+  companyId      String?          @map("company_id") @db.Uuid
+  contactId      String?          @map("contact_id") @db.Uuid
+  ownerUserId    String           @map("owner_user_id") @db.Uuid
+  dueAt          DateTime?        @map("due_at") @db.Timestamptz(6)
+  completedAt    DateTime?        @map("completed_at") @db.Timestamptz(6)
+  cancelledAt    DateTime?        @map("cancelled_at") @db.Timestamptz(6)
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy      String           @map("created_by") @db.Uuid
+  updatedBy      String           @map("updated_by") @db.Uuid
+  deletedAt      DateTime?        @map("deleted_at") @db.Timestamptz(6)
+  deletedBy      String?          @map("deleted_by") @db.Uuid
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company        Company?         @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  contact        Contact?         @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  owner          User             @relation("ActivityOwner", fields: [ownerUserId], references: [id], onDelete: Restrict)
+  creator        User             @relation("ActivityCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater        User             @relation("ActivityUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter        User?            @relation("ActivityDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, status, dueAt], map: "activities_org_status_due_idx")
+  @@index([organizationId, ownerUserId, status, dueAt], map: "activities_org_owner_status_due_idx")
+  @@index([organizationId, companyId], map: "activities_org_company_idx")
+  @@index([organizationId, contactId], map: "activities_org_contact_idx")
+  @@map("activities")
 }
