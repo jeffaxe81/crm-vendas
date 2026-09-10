@@ -311,4 +311,29 @@ describe("C3.5.4 activities filters", () => {
       screen.queryByRole("form", { name: "Nova atividade" })
     ).not.toBeInTheDocument();
   });
+
+  it("hides creation controls for read-only users", async () => {
+    const fetchMock = vi.fn(async (_input: string | URL) =>
+      response(emptyActivities)
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ActivitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite={false}
+      />
+    );
+
+    await screen.findByText("Nenhuma atividade em pendentes.");
+
+    expect(
+      screen.queryByRole("button", { name: "Nova atividade" })
+    ).not.toBeInTheDocument();
+
+    const calls = fetchMock.mock.calls.map(([input]) => String(input));
+    expect(calls.some(url => url.includes("/companies?"))).toBe(false);
+    expect(calls.some(url => url.includes("/contacts?"))).toBe(false);
+  });
 });
