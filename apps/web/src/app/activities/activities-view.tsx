@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import type { ActivityCreateInput } from "@axes/contracts";
+import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 
@@ -23,17 +24,50 @@ type ActivityRecord = {
   cancelledAt: string | null;
 };
 
-type ActivityListResponse = {
-  items: ActivityRecord[];
+type CompanyOption = {
+  id: string;
+  legalName: string;
+  tradeName: string | null;
+};
+
+type ContactOption = {
+  id: string;
+  fullName: string;
+};
+
+type ListResponse<T> = {
+  items: T[];
   page: number;
   limit: number;
   total: number;
 };
 
+type ActivityListResponse = ListResponse<ActivityRecord>;
+
 type ActivitiesViewProps = {
   accessToken: string;
   ownerUserId: string;
   canWrite: boolean;
+};
+
+type ActivityFormState = {
+  type: ActivityType;
+  priority: ActivityPriority;
+  title: string;
+  description: string;
+  dueAt: string;
+  companyId: string;
+  contactId: string;
+};
+
+const emptyForm: ActivityFormState = {
+  type: "TASK",
+  priority: "MEDIUM",
+  title: "",
+  description: "",
+  dueAt: "",
+  companyId: "",
+  contactId: "",
 };
 
 const statusLabels: Record<ActivityStatus, string> = {
@@ -66,13 +100,23 @@ function isOverdue(activity: ActivityRecord): boolean {
   );
 }
 
-export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
+export function ActivitiesView({
+  accessToken,
+  ownerUserId,
+  canWrite,
+}: ActivitiesViewProps) {
   const [activities, setActivities] = useState<ActivityRecord[]>([]);
   const [status, setStatus] = useState<ActivityStatus>("PENDING");
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [refreshVersion, setRefreshVersion] = useState(0);
+  const [formOpen, setFormOpen] = useState(false);
+  const [form, setForm] = useState<ActivityFormState>(emptyForm);
+  const [companies, setCompanies] = useState<CompanyOption[]>([]);
+  const [contacts, setContacts] = useState<ContactOption[]>([]);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -120,7 +164,83 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
     return () => {
       active = false;
     };
-  }, [accessToken, query, status]);
+  }, [accessToken, query, refreshVersion, status]);
+
+  async function openCreate() {
+    setError("");
+    setForm(emptyForm);
+    setFormOpen(true);
+
+    try {
+      const [companyResult, contactResult] = await Promise.all([
+        apiRequest<ListResponse<CompanyOption>>("/companies?page=1&limit=100", {
+          accessToken,
+        }),
+        apiRequest<ListResponse<ContactOption>>("/contacts?page=1&limit=100", {
+          accessToken,
+        }),
+      ]);
+      setCompanies(companyResult.items);
+      setContacts(contactResult.items);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível carregar os vínculos comerciais."
+      );
+    }
+  }
+
+  function closeForm() {
+    setFormOpen(false);
+    setForm(emptyForm);
+  }
+
+  async function submitActivity(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (submitting) {
+      return;
+    }
+
+    setError("");
+    const title = form.title.trim();
+    if (!title) {
+      setError("Informe o título da atividade.");
+      return;
+    }
+
+    const payload: ActivityCreateInput = {
+      type: form.type,
+      priority: form.priority,
+      title,
+      ownerUserId,
+      ...(form.description.trim()
+        ? { description: form.description.trim() }
+        : {}),
+      ...(form.companyId ? { companyId: form.companyId } : {}),
+      ...(form.contactId ? { contactId: form.contactId } : {}),
+      ...(form.dueAt ? { dueAt: new Date(form.dueAt).toISOString() } : {}),
+    };
+
+    setSubmitting(true);
+    try {
+      await apiRequest<ActivityRecord>("/activities", {
+        accessToken,
+        method: "POST",
+        body: payload,
+      });
+      closeForm();
+      setRefreshVersion(current => current + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível salvar a atividade."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <section className="activities-view" aria-labelledby="activities-title">
@@ -130,6 +250,11 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
           <h1 id="activities-title">Atividades e compromissos</h1>
           <p>Organize tarefas e próximos passos da operação comercial.</p>
         </div>
+        {canWrite ? (
+          <button className="button activities-view__primary" onClick={openCreate}>
+            Nova atividade
+          </button>
+        ) : null}
       </header>
 
       <form
@@ -173,6 +298,150 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
         <p className="activities-view__error" role="alert">
           {error}
         </p>
+      ) : null}
+
+      {canWrite && formOpen ? (
+        <form
+          className="activity-form"
+          aria-label="Nova atividade"
+          onSubmit={submitActivity}
+        >
+          <div className="activity-form__heading">
+            <div>
+              <p>Novo registro</p>
+              <h2>Nova atividade</h2>
+            </div>
+            <button type="button" onClick={closeForm}>
+              Cancelar
+            </button>
+          </div>
+
+          <div className="activity-form__fields">
+            <label htmlFor="activity-title">
+              <span>Título</span>
+              <input
+                id="activity-title"
+                value={form.title}
+                onChange={event =>
+                  setForm(current => ({ ...current, title: event.target.value }))
+                }
+                required
+              />
+            </label>
+
+            <label htmlFor="activity-type">
+              <span>Tipo</span>
+              <select
+                id="activity-type"
+                value={form.type}
+                onChange={event =>
+                  setForm(current => ({
+                    ...current,
+                    type: event.target.value as ActivityType,
+                  }))
+                }
+              >
+                <option value="TASK">Tarefa</option>
+                <option value="APPOINTMENT">Compromisso</option>
+              </select>
+            </label>
+
+            <label htmlFor="activity-priority">
+              <span>Prioridade</span>
+              <select
+                id="activity-priority"
+                value={form.priority}
+                onChange={event =>
+                  setForm(current => ({
+                    ...current,
+                    priority: event.target.value as ActivityPriority,
+                  }))
+                }
+              >
+                <option value="LOW">Baixa</option>
+                <option value="MEDIUM">Média</option>
+                <option value="HIGH">Alta</option>
+              </select>
+            </label>
+
+            <label htmlFor="activity-due-at">
+              <span>Prazo</span>
+              <input
+                id="activity-due-at"
+                type="datetime-local"
+                value={form.dueAt}
+                onChange={event =>
+                  setForm(current => ({ ...current, dueAt: event.target.value }))
+                }
+              />
+            </label>
+
+            <label htmlFor="activity-company">
+              <span>Empresa</span>
+              <select
+                id="activity-company"
+                value={form.companyId}
+                onChange={event =>
+                  setForm(current => ({
+                    ...current,
+                    companyId: event.target.value,
+                  }))
+                }
+              >
+                <option value="">Sem empresa</option>
+                {companies.map(company => (
+                  <option key={company.id} value={company.id}>
+                    {company.tradeName || company.legalName}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label htmlFor="activity-contact">
+              <span>Contato</span>
+              <select
+                id="activity-contact"
+                value={form.contactId}
+                onChange={event =>
+                  setForm(current => ({
+                    ...current,
+                    contactId: event.target.value,
+                  }))
+                }
+              >
+                <option value="">Sem contato</option>
+                {contacts.map(contact => (
+                  <option key={contact.id} value={contact.id}>
+                    {contact.fullName}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="activity-form__description" htmlFor="activity-description">
+              <span>Descrição</span>
+              <textarea
+                id="activity-description"
+                rows={4}
+                value={form.description}
+                onChange={event =>
+                  setForm(current => ({
+                    ...current,
+                    description: event.target.value,
+                  }))
+                }
+              />
+            </label>
+          </div>
+
+          <button
+            className="button activity-form__submit"
+            type="submit"
+            disabled={submitting}
+          >
+            {submitting ? "Salvando..." : "Salvar atividade"}
+          </button>
+        </form>
       ) : null}
 
       {loading ? (
