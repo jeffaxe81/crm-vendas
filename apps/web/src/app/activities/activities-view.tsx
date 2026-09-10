@@ -1,6 +1,9 @@
 "use client";
 
-import type { ActivityCreateInput } from "@axes/contracts";
+import type {
+  ActivityCreateInput,
+  ActivityUpdateInput,
+} from "@axes/contracts";
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
@@ -117,6 +120,9 @@ export function ActivitiesView({
   const [companies, setCompanies] = useState<CompanyOption[]>([]);
   const [contacts, setContacts] = useState<ContactOption[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [transitioningActivityId, setTransitioningActivityId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     let active = true;
@@ -239,6 +245,33 @@ export function ActivitiesView({
       );
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function completeActivity(activityId: string) {
+    if (transitioningActivityId !== null) {
+      return;
+    }
+
+    setError("");
+    setTransitioningActivityId(activityId);
+    const payload: ActivityUpdateInput = { status: "COMPLETED" };
+
+    try {
+      await apiRequest<ActivityRecord>(`/activities/${activityId}`, {
+        accessToken,
+        method: "PATCH",
+        body: payload,
+      });
+      setRefreshVersion(current => current + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível concluir a atividade."
+      );
+    } finally {
+      setTransitioningActivityId(null);
     }
   }
 
@@ -493,6 +526,19 @@ export function ActivitiesView({
                     <span>Sem prazo</span>
                   )}
                 </div>
+                {canWrite && activity.status === "PENDING" ? (
+                  <div className="activities-view__item-actions">
+                    <button
+                      type="button"
+                      disabled={transitioningActivityId === activity.id}
+                      onClick={() => void completeActivity(activity.id)}
+                    >
+                      {transitioningActivityId === activity.id
+                        ? "Concluindo..."
+                        : "Concluir"}
+                    </button>
+                  </div>
+                ) : null}
               </li>
             );
           })}
