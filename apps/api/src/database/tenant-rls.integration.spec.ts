@@ -175,4 +175,51 @@ describe("Tenant RLS integration", () => {
       prisma.contact.findMany({ where: { id: contactId } })
     ).resolves.toEqual([]);
   });
+
+  it("fails closed for tenant-owned contact channels when tenant context is missing", async () => {
+    const organizationId = "10000000-0000-4000-8000-000000000004";
+    const userId = "20000000-0000-4000-8000-000000000004";
+    const contactId = "40000000-0000-4000-8000-000000000004";
+    const channelId = "50000000-0000-4000-8000-000000000004";
+
+    await admin.organization.create({
+      data: {
+        id: organizationId,
+        name: "RLS Contact Channel Characterization Organization",
+        slug: "rls-contact-channel-characterization-organization",
+      },
+    });
+    await admin.user.create({
+      data: {
+        id: userId,
+        email: "rls-contact-channel-characterization@example.test",
+        emailNormalized: "rls-contact-channel-characterization@example.test",
+        displayName: "RLS Contact Channel Characterization User",
+        passwordHash: "not-used-by-this-test",
+      },
+    });
+    await admin.contact.create({
+      data: {
+        id: contactId,
+        organizationId,
+        fullName: "Contact channel parent",
+        createdBy: userId,
+        updatedBy: userId,
+      },
+    });
+    await admin.contactChannel.create({
+      data: {
+        id: channelId,
+        organizationId,
+        contactId,
+        type: "EMAIL",
+        value: "visible-without-channel-rls@example.test",
+        isPrimary: true,
+      },
+    });
+
+    await expect(
+      prisma.contactChannel.findMany({ where: { id: channelId } })
+    ).resolves.toEqual([]);
+  });
 });
