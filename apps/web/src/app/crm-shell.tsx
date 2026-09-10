@@ -60,8 +60,12 @@ export function CrmShell({
           {permissions.includes("activity.read") ? (
             <button
               type="button"
-              className={activeSection === "activities" ? "is-active" : undefined}
-              aria-current={activeSection === "activities" ? "page" : undefined}
+              className={
+                activeSection === "activities" ? "is-active" : undefined
+              }
+              aria-current={
+                activeSection === "activities" ? "page" : undefined
+              }
               onClick={() => onNavigate("activities")}
             >
               Atividades
