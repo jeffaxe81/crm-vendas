@@ -21,6 +21,14 @@ function response(body: unknown): Response {
   } as Response;
 }
 
+function errorResponse(message: string, status = 500): Response {
+  return {
+    ok: false,
+    status,
+    json: async () => ({ message }),
+  } as Response;
+}
+
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
@@ -127,5 +135,55 @@ describe("C3.5.4 activities filters", () => {
 
     expect(await screen.findByText("Enviar proposta")).toBeInTheDocument();
     expect(screen.getByText("Atrasada")).toBeInTheDocument();
+  });
+
+  it("shows loading until the API responds and then the empty state", async () => {
+    let resolveFetch: ((value: Response) => void) | undefined;
+    const fetchMock = vi.fn(
+      (_input: string | URL) =>
+        new Promise<Response>(resolve => {
+          resolveFetch = resolve;
+        })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ActivitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite
+      />
+    );
+
+    expect(screen.getByText("Carregando atividades...")).toBeInTheDocument();
+
+    resolveFetch?.(response(emptyActivities));
+
+    expect(
+      await screen.findByText("Nenhuma atividade em pendentes.")
+    ).toBeInTheDocument();
+  });
+
+  it("shows the API error without rendering an empty state", async () => {
+    const fetchMock = vi.fn(async (_input: string | URL) =>
+      errorResponse("Falha controlada ao consultar atividades.")
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ActivitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite
+      />
+    );
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent(
+      "Falha controlada ao consultar atividades."
+    );
+    expect(
+      screen.queryByText("Nenhuma atividade em pendentes.")
+    ).not.toBeInTheDocument();
   });
 });
