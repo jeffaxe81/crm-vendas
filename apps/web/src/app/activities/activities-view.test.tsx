@@ -28,7 +28,9 @@ afterEach(() => {
 
 describe("C3.5.4 activities filters", () => {
   it("switches status through the API", async () => {
-    const fetchMock = vi.fn(async () => response(emptyActivities));
+    const fetchMock = vi.fn(async (_input: string | URL) =>
+      response(emptyActivities)
+    );
     vi.stubGlobal("fetch", fetchMock);
 
     render(
