@@ -33,6 +33,8 @@ const statusLabels: Record<ActivityStatus, string> = {
 export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
   const [activities, setActivities] = useState<ActivityRecord[]>([]);
   const [status, setStatus] = useState<ActivityStatus>("PENDING");
+  const [queryInput, setQueryInput] = useState("");
+  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -43,9 +45,20 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
       setLoading(true);
       setError("");
 
+      const params = new URLSearchParams({
+        page: "1",
+        limit: "20",
+        status,
+        sortBy: "dueAt",
+        sortOrder: "asc",
+      });
+      if (query) {
+        params.set("q", query);
+      }
+
       try {
         const result = await apiRequest<ActivityListResponse>(
-          `/activities?page=1&limit=20&status=${status}&sortBy=dueAt&sortOrder=asc`,
+          `/activities?${params.toString()}`,
           { accessToken }
         );
         if (active) {
@@ -71,7 +84,7 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
     return () => {
       active = false;
     };
-  }, [accessToken, status]);
+  }, [accessToken, query, status]);
 
   return (
     <section className="activities-view" aria-labelledby="activities-title">
@@ -82,6 +95,26 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
           <p>Organize tarefas e próximos passos da operação comercial.</p>
         </div>
       </header>
+
+      <form
+        className="activities-view__search"
+        role="search"
+        onSubmit={event => {
+          event.preventDefault();
+          setQuery(queryInput.trim());
+        }}
+      >
+        <label htmlFor="activities-search">Buscar atividades</label>
+        <div>
+          <input
+            id="activities-search"
+            type="search"
+            value={queryInput}
+            onChange={event => setQueryInput(event.target.value)}
+          />
+          <button type="submit">Buscar</button>
+        </div>
+      </form>
 
       <nav
         className="activities-view__status-tabs"
