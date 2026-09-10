@@ -15,7 +15,9 @@ describe("C3.6.3 activity opportunity update API", () => {
   let passwords: PasswordService;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalFilters(new ApiErrorFilter());
     app.setGlobalPrefix("api/v1");
@@ -45,7 +47,10 @@ describe("C3.6.3 activity opportunity update API", () => {
 
   async function seed() {
     const organization = await prisma.organization.create({
-      data: { name: "Activity Opportunity Update Org", slug: "activity-opportunity-update" },
+      data: {
+        name: "Activity Opportunity Update Org",
+        slug: "activity-opportunity-update",
+      },
     });
     const credential = `C3-update-${randomUUID()}!`;
     const user = await prisma.user.create({
@@ -57,7 +62,11 @@ describe("C3.6.3 activity opportunity update API", () => {
       },
     });
     await prisma.organizationMembership.create({
-      data: { organizationId: organization.id, userId: user.id, role: "ADMIN" },
+      data: {
+        organizationId: organization.id,
+        userId: user.id,
+        role: "ADMIN",
+      },
     });
 
     const pipeline = await prisma.withTenant(organization.id, tenant =>
@@ -125,7 +134,11 @@ describe("C3.6.3 activity opportunity update API", () => {
 
     const login = await request(app.getHttpServer())
       .post("/api/v1/auth/login")
-      .send({ email: user.email, password: credential, organizationSlug: organization.slug })
+      .send({
+        email: user.email,
+        password: credential,
+        organizationSlug: organization.slug,
+      })
       .expect(200);
 
     return {
@@ -168,7 +181,8 @@ describe("C3.6.3 activity opportunity update API", () => {
   });
 
   it("swaps opportunities and audits before and after", async () => {
-    const { organization, user, opportunityA, opportunityB, token } = await seed();
+    const { organization, user, opportunityA, opportunityB, token } =
+      await seed();
     const created = await createActivity(token, user.id, opportunityA.id);
 
     const updated = await request(app.getHttpServer())
