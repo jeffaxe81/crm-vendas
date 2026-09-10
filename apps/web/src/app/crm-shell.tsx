@@ -7,7 +7,6 @@ export type CrmSection = "companies" | "contacts" | "activities";
 
 type CrmShellProps = {
   session: AuthSessionResponse;
-  permissions: string[];
   activeSection: CrmSection;
   onNavigate: (section: CrmSection) => void;
   onLogout: () => void;
@@ -16,13 +15,12 @@ type CrmShellProps = {
 
 export function CrmShell({
   session,
-  permissions,
   activeSection,
   onNavigate,
   onLogout,
   children,
 }: CrmShellProps) {
-  const canReadActivities = permissions.includes("activity.read");
+  const canReadActivities = session.permissions.includes("activity.read");
   const isActivitiesActive = activeSection === "activities";
 
   return (
