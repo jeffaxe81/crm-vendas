@@ -140,9 +140,7 @@ describe("C3.5.4 activity lifecycle", () => {
     );
 
     expect(await screen.findByText("Reunião comercial")).toBeInTheDocument();
-    fireEvent.click(
-      screen.getByRole("button", { name: "Cancelar atividade" })
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar atividade" }));
 
     await waitFor(() => {
       const patchCall = fetchMock.mock.calls.find(
