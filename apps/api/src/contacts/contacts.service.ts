@@ -152,8 +152,12 @@ export class ContactsService {
         const updated = await tenant.contact.update({
           where: { id: existing.id },
           data: {
-            ...(input.fullName !== undefined ? { fullName: input.fullName } : {}),
-            ...(input.jobTitle !== undefined ? { jobTitle: input.jobTitle } : {}),
+            ...(input.fullName !== undefined
+              ? { fullName: input.fullName }
+              : {}),
+            ...(input.jobTitle !== undefined
+              ? { jobTitle: input.jobTitle }
+              : {}),
             ...(input.notes !== undefined ? { notes: input.notes } : {}),
             updatedBy: context.actorUserId,
             version: { increment: 1 },
