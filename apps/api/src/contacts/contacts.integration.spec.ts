@@ -170,7 +170,9 @@ describe("Cycle 2 contacts API", () => {
       .expect(404);
 
     const untouched = await prisma.withTenant(organizationB.id, tenant =>
-      tenant.contact.findUnique({ where: { id: contactB.id } })
+      tenant.contact.findUnique({
+        where: { id: contactB.id },
+      })
     );
     expect(untouched?.fullName).toBe("Contato Organização B");
   });
@@ -236,7 +238,10 @@ describe("Cycle 2 contacts API", () => {
       .post("/api/v1/contacts")
       .set("Authorization", `Bearer ${token}`)
       .set("x-request-id", "cycle2-contact-create")
-      .send({ fullName: "Contato Criado", jobTitle: "Analista" })
+      .send({
+        fullName: "Contato Criado",
+        jobTitle: "Analista",
+      })
       .expect(201);
 
     const contactId = created.body.id as string;
@@ -262,13 +267,18 @@ describe("Cycle 2 contacts API", () => {
       .expect(404);
 
     const stored = await prisma.withTenant(organization.id, tenant =>
-      tenant.contact.findUnique({ where: { id: contactId } })
+      tenant.contact.findUnique({
+        where: { id: contactId },
+      })
     );
     expect(stored?.deletedAt).toBeInstanceOf(Date);
     expect(stored?.deletedBy).toBe(user.id);
 
     const auditActions = await prisma.auditLog.findMany({
-      where: { organizationId: organization.id, entityId: contactId },
+      where: {
+        organizationId: organization.id,
+        entityId: contactId,
+      },
       orderBy: { createdAt: "asc" },
       select: { action: true },
     });
@@ -298,8 +308,16 @@ describe("Cycle 2 contacts API", () => {
 
     await prisma.organizationMembership.createMany({
       data: [
-        { organizationId: organizationA.id, userId: user.id, role: "ADMIN" },
-        { organizationId: organizationB.id, userId: user.id, role: "ADMIN" },
+        {
+          organizationId: organizationA.id,
+          userId: user.id,
+          role: "ADMIN",
+        },
+        {
+          organizationId: organizationB.id,
+          userId: user.id,
+          role: "ADMIN",
+        },
       ],
     });
 
@@ -348,21 +366,33 @@ describe("Cycle 2 contacts API", () => {
       .post(`/api/v1/contacts/${contactA.id}/channels`)
       .set("Authorization", `Bearer ${tokenA}`)
       .set("x-request-id", "cycle2-channel-email-1")
-      .send({ type: "EMAIL", value: "first@example.test", isPrimary: true })
+      .send({
+        type: "EMAIL",
+        value: "first@example.test",
+        isPrimary: true,
+      })
       .expect(201);
 
     const secondEmail = await request(app.getHttpServer())
       .post(`/api/v1/contacts/${contactA.id}/channels`)
       .set("Authorization", `Bearer ${tokenA}`)
       .set("x-request-id", "cycle2-channel-email-2")
-      .send({ type: "EMAIL", value: "second@example.test", isPrimary: true })
+      .send({
+        type: "EMAIL",
+        value: "second@example.test",
+        isPrimary: true,
+      })
       .expect(201);
 
     const mobile = await request(app.getHttpServer())
       .post(`/api/v1/contacts/${contactA.id}/channels`)
       .set("Authorization", `Bearer ${tokenA}`)
       .set("x-request-id", "cycle2-channel-mobile")
-      .send({ type: "MOBILE", value: "+5548999999999", isPrimary: true })
+      .send({
+        type: "MOBILE",
+        value: "+5548999999999",
+        isPrimary: true,
+      })
       .expect(201);
 
     const afterCreate = await prisma.contactChannel.findMany({
@@ -371,15 +401,25 @@ describe("Cycle 2 contacts API", () => {
     });
 
     expect(afterCreate).toHaveLength(3);
-    expect(afterCreate.find(item => item.id === firstEmail.body.id)?.isPrimary).toBe(false);
-    expect(afterCreate.find(item => item.id === secondEmail.body.id)?.isPrimary).toBe(true);
-    expect(afterCreate.find(item => item.id === mobile.body.id)?.isPrimary).toBe(true);
+    expect(
+      afterCreate.find(item => item.id === firstEmail.body.id)?.isPrimary
+    ).toBe(false);
+    expect(
+      afterCreate.find(item => item.id === secondEmail.body.id)?.isPrimary
+    ).toBe(true);
+    expect(
+      afterCreate.find(item => item.id === mobile.body.id)?.isPrimary
+    ).toBe(true);
 
     await request(app.getHttpServer())
       .patch(`/api/v1/contacts/${contactA.id}/channels/${firstEmail.body.id}`)
       .set("Authorization", `Bearer ${tokenA}`)
       .set("x-request-id", "cycle2-channel-email-promote")
-      .send({ type: "EMAIL", value: "first-updated@example.test", isPrimary: true })
+      .send({
+        type: "EMAIL",
+        value: "first-updated@example.test",
+        isPrimary: true,
+      })
       .expect(200);
 
     const emails = await prisma.contactChannel.findMany({
@@ -394,7 +434,9 @@ describe("Cycle 2 contacts API", () => {
       value: "first-updated@example.test",
       isPrimary: true,
     });
-    expect(emails.find(item => item.id === secondEmail.body.id)?.isPrimary).toBe(false);
+    expect(
+      emails.find(item => item.id === secondEmail.body.id)?.isPrimary
+    ).toBe(false);
 
     await request(app.getHttpServer())
       .post(`/api/v1/contacts/${contactB.id}/channels`)
@@ -405,11 +447,16 @@ describe("Cycle 2 contacts API", () => {
     await request(app.getHttpServer())
       .patch(`/api/v1/contacts/${contactB.id}/channels/${channelB.id}`)
       .set("Authorization", `Bearer ${tokenA}`)
-      .send({ type: "EMAIL", value: "cross-tenant@example.test", isPrimary: true })
+      .send({
+        type: "EMAIL",
+        value: "cross-tenant@example.test",
+        isPrimary: true,
+      })
       .expect(404);
 
-    const untouchedChannelB = await prisma.withTenant(organizationB.id, tenant =>
-      tenant.contactChannel.findUnique({ where: { id: channelB.id } })
+    const untouchedChannelB = await prisma.withTenant(
+      organizationB.id,
+      tenant => tenant.contactChannel.findUnique({ where: { id: channelB.id } })
     );
     expect(untouchedChannelB?.value).toBe("org-b@example.test");
 
