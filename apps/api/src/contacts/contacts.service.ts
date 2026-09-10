@@ -7,6 +7,7 @@ import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../database/prisma.service";
+import { Prisma } from "../generated/prisma/client";
 
 export type ContactAdministrationContext = {
   organizationId: string;
@@ -66,23 +67,27 @@ export class ContactsService {
       [query.sortBy]: query.sortOrder,
     } as const;
 
-    const [items, total] = await Promise.all([
-      this.prisma.contact.findMany({
-        where,
-        include: {
-          channels: {
-            orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
-          },
-          relationshipEntries: {
-            orderBy: [{ occurredAt: "desc" }, { createdAt: "desc" }],
-          },
-        },
-        orderBy,
-        skip: (query.page - 1) * query.limit,
-        take: query.limit,
-      }),
-      this.prisma.contact.count({ where }),
-    ]);
+    const [items, total] = await this.prisma.withTenant(
+      organizationId,
+      async tenant =>
+        Promise.all([
+          tenant.contact.findMany({
+            where,
+            include: {
+              channels: {
+                orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
+              },
+              relationshipEntries: {
+                orderBy: [{ occurredAt: "desc" }, { createdAt: "desc" }],
+              },
+            },
+            orderBy,
+            skip: (query.page - 1) * query.limit,
+            take: query.limit,
+          }),
+          tenant.contact.count({ where }),
+        ])
+    );
 
     return {
       items,
@@ -93,23 +98,29 @@ export class ContactsService {
   }
 
   async read(id: string, organizationId: string) {
-    return this.requireContact(id, organizationId);
+    return this.prisma.withTenant(organizationId, tenant =>
+      this.requireContact(tenant, id, organizationId)
+    );
   }
 
   async create(
     input: ContactCreateInput,
     context: ContactAdministrationContext
   ) {
-    const contact = await this.prisma.contact.create({
-      data: {
-        organizationId: context.organizationId,
-        fullName: input.fullName,
-        jobTitle: input.jobTitle,
-        notes: input.notes,
-        createdBy: context.actorUserId,
-        updatedBy: context.actorUserId,
-      },
-    });
+    const contact = await this.prisma.withTenant(
+      context.organizationId,
+      tenant =>
+        tenant.contact.create({
+          data: {
+            organizationId: context.organizationId,
+            fullName: input.fullName,
+            jobTitle: input.jobTitle,
+            notes: input.notes,
+            createdBy: context.actorUserId,
+            updatedBy: context.actorUserId,
+          },
+        })
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -130,17 +141,32 @@ export class ContactsService {
     input: ContactUpdateInput,
     context: ContactAdministrationContext
   ) {
-    const existing = await this.requireContact(id, context.organizationId);
-    const updated = await this.prisma.contact.update({
-      where: { id: existing.id },
-      data: {
-        ...(input.fullName !== undefined ? { fullName: input.fullName } : {}),
-        ...(input.jobTitle !== undefined ? { jobTitle: input.jobTitle } : {}),
-        ...(input.notes !== undefined ? { notes: input.notes } : {}),
-        updatedBy: context.actorUserId,
-        version: { increment: 1 },
-      },
-    });
+    const [existing, updated] = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const existing = await this.requireContact(
+          tenant,
+          id,
+          context.organizationId
+        );
+        const updated = await tenant.contact.update({
+          where: { id: existing.id },
+          data: {
+            ...(input.fullName !== undefined
+              ? { fullName: input.fullName }
+              : {}),
+            ...(input.jobTitle !== undefined
+              ? { jobTitle: input.jobTitle }
+              : {}),
+            ...(input.notes !== undefined ? { notes: input.notes } : {}),
+            updatedBy: context.actorUserId,
+            version: { increment: 1 },
+          },
+        });
+
+        return [existing, updated] as const;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -161,17 +187,28 @@ export class ContactsService {
     id: string,
     context: ContactAdministrationContext
   ): Promise<void> {
-    const existing = await this.requireContact(id, context.organizationId);
-    const deletedAt = new Date();
-    const updated = await this.prisma.contact.update({
-      where: { id: existing.id },
-      data: {
-        deletedAt,
-        deletedBy: context.actorUserId,
-        updatedBy: context.actorUserId,
-        version: { increment: 1 },
-      },
-    });
+    const [existing, updated, deletedAt] = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const existing = await this.requireContact(
+          tenant,
+          id,
+          context.organizationId
+        );
+        const deletedAt = new Date();
+        const updated = await tenant.contact.update({
+          where: { id: existing.id },
+          data: {
+            deletedAt,
+            deletedBy: context.actorUserId,
+            updatedBy: context.actorUserId,
+            version: { increment: 1 },
+          },
+        });
+
+        return [existing, updated, deletedAt] as const;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -195,32 +232,35 @@ export class ContactsService {
     input: ContactChannelInput,
     context: ContactAdministrationContext
   ) {
-    await this.requireContact(contactId, context.organizationId);
+    const channel = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        await this.requireContact(tenant, contactId, context.organizationId);
 
-    const channel = await this.prisma.$transaction(async transaction => {
-      if (input.isPrimary) {
-        await transaction.contactChannel.updateMany({
-          where: {
+        if (input.isPrimary) {
+          await tenant.contactChannel.updateMany({
+            where: {
+              organizationId: context.organizationId,
+              contactId,
+              type: input.type,
+              isPrimary: true,
+            },
+            data: { isPrimary: false },
+          });
+        }
+
+        return tenant.contactChannel.create({
+          data: {
             organizationId: context.organizationId,
             contactId,
             type: input.type,
-            isPrimary: true,
+            value: input.value,
+            label: input.label,
+            isPrimary: input.isPrimary,
           },
-          data: { isPrimary: false },
         });
       }
-
-      return transaction.contactChannel.create({
-        data: {
-          organizationId: context.organizationId,
-          contactId,
-          type: input.type,
-          value: input.value,
-          label: input.label,
-          isPrimary: input.isPrimary,
-        },
-      });
-    });
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -243,37 +283,43 @@ export class ContactsService {
     input: ContactChannelInput,
     context: ContactAdministrationContext
   ) {
-    await this.requireContact(contactId, context.organizationId);
-    const existing = await this.requireChannel(
-      contactId,
-      channelId,
-      context.organizationId
-    );
+    const [existing, updated] = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        await this.requireContact(tenant, contactId, context.organizationId);
+        const existing = await this.requireChannel(
+          tenant,
+          contactId,
+          channelId,
+          context.organizationId
+        );
 
-    const updated = await this.prisma.$transaction(async transaction => {
-      if (input.isPrimary) {
-        await transaction.contactChannel.updateMany({
-          where: {
-            organizationId: context.organizationId,
-            contactId,
+        if (input.isPrimary) {
+          await tenant.contactChannel.updateMany({
+            where: {
+              organizationId: context.organizationId,
+              contactId,
+              type: input.type,
+              isPrimary: true,
+              id: { not: channelId },
+            },
+            data: { isPrimary: false },
+          });
+        }
+
+        const updated = await tenant.contactChannel.update({
+          where: { id: existing.id },
+          data: {
             type: input.type,
-            isPrimary: true,
-            id: { not: channelId },
+            value: input.value,
+            label: input.label,
+            isPrimary: input.isPrimary,
           },
-          data: { isPrimary: false },
         });
-      }
 
-      return transaction.contactChannel.update({
-        where: { id: existing.id },
-        data: {
-          type: input.type,
-          value: input.value,
-          label: input.label,
-          isPrimary: input.isPrimary,
-        },
-      });
-    });
+        return [existing, updated] as const;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -296,16 +342,24 @@ export class ContactsService {
     channelId: string,
     context: ContactAdministrationContext
   ): Promise<void> {
-    await this.requireContact(contactId, context.organizationId);
-    const existing = await this.requireChannel(
-      contactId,
-      channelId,
-      context.organizationId
-    );
+    const existing = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        await this.requireContact(tenant, contactId, context.organizationId);
+        const existing = await this.requireChannel(
+          tenant,
+          contactId,
+          channelId,
+          context.organizationId
+        );
 
-    await this.prisma.contactChannel.delete({
-      where: { id: existing.id },
-    });
+        await tenant.contactChannel.delete({
+          where: { id: existing.id },
+        });
+
+        return existing;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -320,8 +374,12 @@ export class ContactsService {
     });
   }
 
-  private async requireContact(id: string, organizationId: string) {
-    const contact = await this.prisma.contact.findFirst({
+  private async requireContact(
+    tenant: Prisma.TransactionClient,
+    id: string,
+    organizationId: string
+  ) {
+    const contact = await tenant.contact.findFirst({
       where: {
         id,
         organizationId,
@@ -340,11 +398,12 @@ export class ContactsService {
   }
 
   private async requireChannel(
+    tenant: Prisma.TransactionClient,
     contactId: string,
     channelId: string,
     organizationId: string
   ) {
-    const channel = await this.prisma.contactChannel.findFirst({
+    const channel = await tenant.contactChannel.findFirst({
       where: {
         id: channelId,
         contactId,

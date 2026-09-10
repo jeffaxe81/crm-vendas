@@ -31,7 +31,8 @@ jobs:
       NODE_ENV: test
       PORT: 3001
       LOG_LEVEL: warn
-      DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
+      DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
+      MIGRATION_DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
       NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:3001/api/v1
       WEB_ORIGIN: http://127.0.0.1:3000
       JWT_ACCESS_SECRET: test-access-secret-with-at-least-32-characters
@@ -66,7 +67,21 @@ jobs:
         run: pnpm --filter @axes/api prisma:generate
 
       - name: Deploy database migrations
+        env:
+          DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
         run: pnpm --filter @axes/api prisma:migrate:deploy
+
+      - name: Provision application database role
+        env:
+          PGPASSWORD: axes
+        run: |
+          psql -h 127.0.0.1 -U axes -d axes_crm -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE axes_app LOGIN PASSWORD 'axes_app' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS;
+          GRANT CONNECT ON DATABASE axes_crm TO axes_app;
+          GRANT USAGE ON SCHEMA public TO axes_app;
+          GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA public TO axes_app;
+          GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO axes_app;
+          SQL
 
       - name: Verify source and tests
         run: pnpm verify

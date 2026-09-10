@@ -279,22 +279,26 @@ describe("Cycle 2 custom fields API", () => {
       password: "Strong-Custom-Fields-B-2026!",
     });
 
-    const companyA = await prisma.company.create({
-      data: {
-        organizationId: first.organization.id,
-        legalName: "Empresa A",
-        createdBy: first.user.id,
-        updatedBy: first.user.id,
-      },
-    });
-    const companyB = await prisma.company.create({
-      data: {
-        organizationId: second.organization.id,
-        legalName: "Empresa B",
-        createdBy: second.user.id,
-        updatedBy: second.user.id,
-      },
-    });
+    const companyA = await prisma.withTenant(first.organization.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: first.organization.id,
+          legalName: "Empresa A",
+          createdBy: first.user.id,
+          updatedBy: first.user.id,
+        },
+      })
+    );
+    const companyB = await prisma.withTenant(second.organization.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: second.organization.id,
+          legalName: "Empresa B",
+          createdBy: second.user.id,
+          updatedBy: second.user.id,
+        },
+      })
+    );
     const companyDefinitionA = await prisma.customFieldDefinition.create({
       data: {
         organizationId: first.organization.id,
@@ -430,14 +434,16 @@ describe("Cycle 2 custom fields API", () => {
       password: "Strong-Custom-Fields-Contact-2026!",
     });
 
-    const contact = await prisma.contact.create({
-      data: {
-        organizationId: organization.id,
-        fullName: "Contato customizado",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const contact = await prisma.withTenant(organization.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organization.id,
+          fullName: "Contato customizado",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
     const contactDefinition = await prisma.customFieldDefinition.create({
       data: {
         organizationId: organization.id,

@@ -153,22 +153,26 @@ describe("Cycle 2 company-contact relationships and history API", () => {
       ],
     });
 
-    const companyA = await prisma.company.create({
-      data: {
-        organizationId: organizationA.id,
-        legalName: "Empresa A",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
-    const contactB = await prisma.contact.create({
-      data: {
-        organizationId: organizationB.id,
-        fullName: "Contato B",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const companyA = await prisma.withTenant(organizationA.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: organizationA.id,
+          legalName: "Empresa A",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
+    const contactB = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organizationB.id,
+          fullName: "Contato B",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     const tokenA = await login({
       email: user.email,
@@ -193,24 +197,26 @@ describe("Cycle 2 company-contact relationships and history API", () => {
       password: "Strong-Relationship-Lifecycle-2026!",
     });
 
-    const [company, contact] = await Promise.all([
-      prisma.company.create({
+    const company = await prisma.withTenant(organization.id, tenant =>
+      tenant.company.create({
         data: {
           organizationId: organization.id,
           legalName: "Empresa Relacionada",
           createdBy: user.id,
           updatedBy: user.id,
         },
-      }),
-      prisma.contact.create({
+      })
+    );
+    const contact = await prisma.withTenant(organization.id, tenant =>
+      tenant.contact.create({
         data: {
           organizationId: organization.id,
           fullName: "Contato Relacionado",
           createdBy: user.id,
           updatedBy: user.id,
         },
-      }),
-    ]);
+      })
+    );
 
     const linked = await request(app.getHttpServer())
       .post(`/api/v1/companies/${company.id}/contacts/${contact.id}`)
@@ -269,24 +275,26 @@ describe("Cycle 2 company-contact relationships and history API", () => {
       data: { name: "Other History Organization", slug: "other-history-org" },
     });
 
-    const [company, contact] = await Promise.all([
-      prisma.company.create({
+    const company = await prisma.withTenant(organization.id, tenant =>
+      tenant.company.create({
         data: {
           organizationId: organization.id,
           legalName: "Empresa Histórico",
           createdBy: user.id,
           updatedBy: user.id,
         },
-      }),
-      prisma.contact.create({
+      })
+    );
+    const contact = await prisma.withTenant(organization.id, tenant =>
+      tenant.contact.create({
         data: {
           organizationId: organization.id,
           fullName: "Contato Histórico",
           createdBy: user.id,
           updatedBy: user.id,
         },
-      }),
-    ]);
+      })
+    );
 
     const companyEntry = await request(app.getHttpServer())
       .post("/api/v1/relationship-entries")
@@ -335,14 +343,16 @@ describe("Cycle 2 company-contact relationships and history API", () => {
       })
       .expect(400);
 
-    const otherCompany = await prisma.company.create({
-      data: {
-        organizationId: other.id,
-        legalName: "Empresa de Outra Organização",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const otherCompany = await prisma.withTenant(other.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: other.id,
+          legalName: "Empresa de Outra Organização",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     await prisma.relationshipEntry.create({
       data: {
@@ -404,24 +414,28 @@ describe("Cycle 2 company-contact relationships and history API", () => {
       ],
     });
 
-    const deletedCompany = await prisma.company.create({
-      data: {
-        organizationId: organizationA.id,
-        legalName: "Empresa Excluída",
-        createdBy: user.id,
-        updatedBy: user.id,
-        deletedAt: new Date(),
-        deletedBy: user.id,
-      },
-    });
-    const otherContact = await prisma.contact.create({
-      data: {
-        organizationId: organizationB.id,
-        fullName: "Contato de Outra Organização",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const deletedCompany = await prisma.withTenant(organizationA.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: organizationA.id,
+          legalName: "Empresa Excluída",
+          createdBy: user.id,
+          updatedBy: user.id,
+          deletedAt: new Date(),
+          deletedBy: user.id,
+        },
+      })
+    );
+    const otherContact = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organizationB.id,
+          fullName: "Contato de Outra Organização",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     const tokenA = await login({
       email: user.email,

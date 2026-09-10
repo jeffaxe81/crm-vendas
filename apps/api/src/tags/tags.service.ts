@@ -158,30 +158,47 @@ export class TagsService {
     tagId: string,
     context: TagAdministrationContext
   ) {
-    await Promise.all([
-      this.requireCompany(companyId, context.organizationId),
-      this.requireTag(tagId, context.organizationId),
-    ]);
+    const link = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const company = await tenant.company.findFirst({
+          where: {
+            id: companyId,
+            organizationId: context.organizationId,
+            deletedAt: null,
+          },
+        });
 
-    const existing = await this.prisma.companyTag.findFirst({
-      where: {
-        organizationId: context.organizationId,
-        companyId,
-        tagId,
-      },
-    });
+        if (!company) {
+          throw new NotFoundException({
+            code: "COMPANY_NOT_FOUND",
+            message: "Empresa não encontrada.",
+          });
+        }
 
-    if (existing) {
-      return existing;
-    }
+        await this.requireTag(tagId, context.organizationId);
 
-    const link = await this.prisma.companyTag.create({
-      data: {
-        organizationId: context.organizationId,
-        companyId,
-        tagId,
-      },
-    });
+        const existing = await tenant.companyTag.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            companyId,
+            tagId,
+          },
+        });
+
+        if (existing) {
+          return existing;
+        }
+
+        return tenant.companyTag.create({
+          data: {
+            organizationId: context.organizationId,
+            companyId,
+            tagId,
+          },
+        });
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -206,27 +223,45 @@ export class TagsService {
     tagId: string,
     context: TagAdministrationContext
   ): Promise<void> {
-    await Promise.all([
-      this.requireCompany(companyId, context.organizationId),
-      this.requireTag(tagId, context.organizationId),
-    ]);
+    const link = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const company = await tenant.company.findFirst({
+          where: {
+            id: companyId,
+            organizationId: context.organizationId,
+            deletedAt: null,
+          },
+        });
 
-    const link = await this.prisma.companyTag.findFirst({
-      where: {
-        organizationId: context.organizationId,
-        companyId,
-        tagId,
-      },
-    });
+        if (!company) {
+          throw new NotFoundException({
+            code: "COMPANY_NOT_FOUND",
+            message: "Empresa não encontrada.",
+          });
+        }
 
-    if (!link) {
-      throw new NotFoundException({
-        code: "TAG_LINK_NOT_FOUND",
-        message: "Vínculo de tag não encontrado.",
-      });
-    }
+        await this.requireTag(tagId, context.organizationId);
 
-    await this.prisma.companyTag.delete({ where: { id: link.id } });
+        const existing = await tenant.companyTag.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            companyId,
+            tagId,
+          },
+        });
+
+        if (!existing) {
+          throw new NotFoundException({
+            code: "TAG_LINK_NOT_FOUND",
+            message: "Vínculo de tag não encontrado.",
+          });
+        }
+
+        await tenant.companyTag.delete({ where: { id: existing.id } });
+        return existing;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -374,21 +409,23 @@ export class TagsService {
   }
 
   private async requireContact(id: string, organizationId: string) {
-    const contact = await this.prisma.contact.findFirst({
-      where: {
-        id,
-        organizationId,
-        deletedAt: null,
-      },
-    });
-
-    if (!contact) {
-      throw new NotFoundException({
-        code: "CONTACT_NOT_FOUND",
-        message: "Contato não encontrado.",
+    return this.prisma.withTenant(organizationId, async tenant => {
+      const contact = await tenant.contact.findFirst({
+        where: {
+          id,
+          organizationId,
+          deletedAt: null,
+        },
       });
-    }
 
-    return contact;
+      if (!contact) {
+        throw new NotFoundException({
+          code: "CONTACT_NOT_FOUND",
+          message: "Contato não encontrado.",
+        });
+      }
+
+      return contact;
+    });
   }
 }

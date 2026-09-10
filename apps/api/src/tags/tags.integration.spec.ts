@@ -217,38 +217,46 @@ describe("Cycle 2 tags API", () => {
         normalizedName: "tag b",
       },
     });
-    const companyA = await prisma.company.create({
-      data: {
-        organizationId: organizationA.id,
-        legalName: "Empresa A",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
-    const companyB = await prisma.company.create({
-      data: {
-        organizationId: organizationB.id,
-        legalName: "Empresa B",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
-    const contactA = await prisma.contact.create({
-      data: {
-        organizationId: organizationA.id,
-        fullName: "Contato A",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
-    const contactB = await prisma.contact.create({
-      data: {
-        organizationId: organizationB.id,
-        fullName: "Contato B",
-        createdBy: user.id,
-        updatedBy: user.id,
-      },
-    });
+    const companyA = await prisma.withTenant(organizationA.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: organizationA.id,
+          legalName: "Empresa A",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
+    const companyB = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: organizationB.id,
+          legalName: "Empresa B",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
+    const contactA = await prisma.withTenant(organizationA.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organizationA.id,
+          fullName: "Contato A",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
+    const contactB = await prisma.withTenant(organizationB.id, tenant =>
+      tenant.contact.create({
+        data: {
+          organizationId: organizationB.id,
+          fullName: "Contato B",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
 
     const tokenA = await login({
       email: user.email,
@@ -286,22 +294,26 @@ describe("Cycle 2 tags API", () => {
     });
 
     const [company, contact, tag] = await Promise.all([
-      prisma.company.create({
-        data: {
-          organizationId: organization.id,
-          legalName: "Empresa com Tag",
-          createdBy: user.id,
-          updatedBy: user.id,
-        },
-      }),
-      prisma.contact.create({
-        data: {
-          organizationId: organization.id,
-          fullName: "Contato com Tag",
-          createdBy: user.id,
-          updatedBy: user.id,
-        },
-      }),
+      prisma.withTenant(organization.id, tenant =>
+        tenant.company.create({
+          data: {
+            organizationId: organization.id,
+            legalName: "Empresa com Tag",
+            createdBy: user.id,
+            updatedBy: user.id,
+          },
+        })
+      ),
+      prisma.withTenant(organization.id, tenant =>
+        tenant.contact.create({
+          data: {
+            organizationId: organization.id,
+            fullName: "Contato com Tag",
+            createdBy: user.id,
+            updatedBy: user.id,
+          },
+        })
+      ),
       prisma.tag.create({
         data: {
           organizationId: organization.id,
