@@ -60,6 +60,18 @@ export {
 } from "./health";
 
 export {
+  OpportunityCreateInputSchema,
+  OpportunityDecimalSchema,
+  OpportunityListQuerySchema,
+  OpportunityMoveInputSchema,
+  OpportunityUpdateInputSchema,
+  type OpportunityCreateInput,
+  type OpportunityListQuery,
+  type OpportunityMoveInput,
+  type OpportunityUpdateInput,
+} from "./opportunities";
+
+export {
   RelationshipEntryCreateInputSchema,
   RelationshipEntryKindSchema,
   type RelationshipEntryCreateInput,
