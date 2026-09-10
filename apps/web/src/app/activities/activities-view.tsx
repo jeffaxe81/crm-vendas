@@ -83,7 +83,10 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
         </div>
       </header>
 
-      <nav className="activities-view__status-tabs" aria-label="Status das atividades">
+      <nav
+        className="activities-view__status-tabs"
+        aria-label="Status das atividades"
+      >
         {(Object.keys(statusLabels) as ActivityStatus[]).map(option => (
           <button
             key={option}
@@ -109,7 +112,9 @@ export function ActivitiesView({ accessToken }: ActivitiesViewProps) {
 
       {!loading && !error && activities.length === 0 ? (
         <div className="activities-view__empty">
-          <strong>Nenhuma atividade em {statusLabels[status].toLowerCase()}.</strong>
+          <strong>
+            Nenhuma atividade em {statusLabels[status].toLowerCase()}.
+          </strong>
           <span>As atividades deste status aparecerão aqui.</span>
         </div>
       ) : null}
