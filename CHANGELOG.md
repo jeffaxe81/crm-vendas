@@ -1,5 +1,26 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.6.2
+
+### API tenant-aware de oportunidades
+
+- contratos compartilhados para criação, consulta, edição, movimentação de etapa e filtros de oportunidades;
+- `GET /api/v1/opportunities` com paginação, busca e filtros por Pipeline, Stage, responsável, empresa, contato e período previsto de fechamento;
+- `GET /api/v1/opportunities/:id` com leitura isolada por organização;
+- `POST /api/v1/opportunities` com `organizationId` derivado exclusivamente do contexto autenticado;
+- `PATCH /api/v1/opportunities/:id` para edição cadastral sem permitir alteração de Pipeline ou Stage;
+- `PATCH /api/v1/opportunities/:id/stage` para movimentação controlada somente dentro do Pipeline atual;
+- `DELETE /api/v1/opportunities/:id` com soft delete e incremento de versão;
+- `estimatedValue` representado como string decimal no contrato público, preservando `Decimal(19,2)` sem conversão para `number` JavaScript;
+- validação final de cliente `Company` XOR `Contact`, referências no mesmo tenant, Pipeline/Stage ativos e owner com membership ativa;
+- concorrência otimista por `version` nos PATCHes cadastral e de movimentação, com `409 OPPORTUNITY_VERSION_CONFLICT` para versão stale;
+- isolamento tenant-aware por `PrismaService.withTenant()` e RLS fail-closed, com 404 para leitura/mutação cross-tenant e referências inválidas sem revelar existência;
+- RBAC reutiliza exclusivamente `opportunity.read`, `opportunity.write` e `opportunity.move`, sem criação de novas permissões;
+- auditoria `opportunity.created`, `opportunity.updated`, `opportunity.moved` e `opportunity.deleted` com ator, requestId, entidade e versões;
+- testes adversariais cobrem soft delete, VIEWER somente leitura, SELLER com operações comerciais, referências inativas/cross-tenant, movimentação cross-pipeline rejeitada e concorrência otimista;
+- Web/Kanban, drag-and-drop, troca de Pipeline, vínculo `Activity` → `Opportunity`, forecast avançado, multi-moeda, produtos/propostas, comissões, automações, integrações e IA permanecem fora desta entrega;
+- PR #17 permanece Draft e condicionado a gate final GREEN no head documental definitivo, à integração correta da C3.6.1 e à aprovação humana explícita antes do merge.
+
 ## [Unreleased] - Cycle 3.6.1
 
 ### Fundação tenant-aware de oportunidades
