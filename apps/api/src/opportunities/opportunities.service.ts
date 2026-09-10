@@ -1,9 +1,15 @@
 import type {
   OpportunityCreateInput,
   OpportunityListQuery,
+  OpportunityMoveInput,
   OpportunityUpdateInput,
 } from "@axes/contracts";
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../database/prisma.service";
@@ -46,16 +52,19 @@ export class OpportunitiesService {
       this.prisma.opportunity.count({ where }),
     ]);
 
-    return {
-      items,
-      page: query.page,
-      limit: query.limit,
-      total,
-    };
+    return { items, page: query.page, limit: query.limit, total };
   }
 
   async read(id: string, organizationId: string) {
     return this.requireOpportunity(id, organizationId);
+  }
+
+  async stageHistory(id: string, organizationId: string) {
+    await this.requireOpportunity(id, organizationId);
+    return this.prisma.opportunityStageHistory.findMany({
+      where: { organizationId, opportunityId: id },
+      orderBy: { occurredAt: "asc" },
+    });
   }
 
   async create(
@@ -93,6 +102,62 @@ export class OpportunitiesService {
     return opportunity;
   }
 
+  async move(
+    id: string,
+    input: OpportunityMoveInput,
+    context: OpportunityAdministrationContext
+  ) {
+    const existing = await this.requireOpportunity(id, context.organizationId);
+    if (existing.status !== "OPEN") {
+      throw new ConflictException({
+        code: "OPPORTUNITY_ALREADY_CLOSED",
+        message: "Oportunidade fechada não pode mudar de etapa.",
+      });
+    }
+
+    const targetStage = await this.prisma.pipelineStage.findFirst({
+      where: {
+        id: input.stageId,
+        organizationId: context.organizationId,
+        pipelineId: existing.pipelineId,
+        isActive: true,
+      },
+      select: { id: true },
+    });
+    if (!targetStage) throw this.referenceNotFound();
+
+    const updated = await this.prisma.$transaction(async transaction => {
+      const opportunity = await transaction.opportunity.update({
+        where: { id: existing.id },
+        data: { stageId: targetStage.id },
+      });
+      await transaction.opportunityStageHistory.create({
+        data: {
+          organizationId: context.organizationId,
+          opportunityId: existing.id,
+          fromStageId: existing.stageId,
+          toStageId: targetStage.id,
+          actorUserId: context.actorUserId,
+        },
+      });
+      return opportunity;
+    });
+
+    await this.audit.record({
+      organizationId: context.organizationId,
+      actorUserId: context.actorUserId,
+      requestId: context.requestId,
+      action: "opportunity.stage_moved",
+      entityType: "opportunity",
+      entityId: updated.id,
+      before: this.toAuditOpportunity(existing),
+      after: this.toAuditOpportunity(updated),
+      ipAddress: context.ipAddress ?? null,
+    });
+
+    return updated;
+  }
+
   async update(
     id: string,
     input: OpportunityUpdateInput,
@@ -100,8 +165,7 @@ export class OpportunitiesService {
   ) {
     const existing = await this.requireOpportunity(id, context.organizationId);
     const companyId = input.companyId ?? existing.companyId;
-    const contactId =
-      input.contactId !== undefined ? input.contactId : existing.contactId;
+    const contactId = input.contactId !== undefined ? input.contactId : existing.contactId;
     const ownerUserId = input.ownerUserId ?? existing.ownerUserId;
 
     await this.requireCompanyContactOwner(
@@ -114,23 +178,13 @@ export class OpportunitiesService {
     const updated = await this.prisma.opportunity.update({
       where: { id: existing.id },
       data: {
-        ...(input.companyId !== undefined
-          ? { companyId: input.companyId }
-          : {}),
-        ...(input.contactId !== undefined
-          ? { contactId: input.contactId }
-          : {}),
-        ...(input.ownerUserId !== undefined
-          ? { ownerUserId: input.ownerUserId }
-          : {}),
+        ...(input.companyId !== undefined ? { companyId: input.companyId } : {}),
+        ...(input.contactId !== undefined ? { contactId: input.contactId } : {}),
+        ...(input.ownerUserId !== undefined ? { ownerUserId: input.ownerUserId } : {}),
         ...(input.title !== undefined ? { title: input.title } : {}),
-        ...(input.estimatedValue !== undefined
-          ? { estimatedValue: input.estimatedValue }
-          : {}),
+        ...(input.estimatedValue !== undefined ? { estimatedValue: input.estimatedValue } : {}),
         ...(input.currency !== undefined ? { currency: input.currency } : {}),
-        ...(input.expectedCloseDate !== undefined
-          ? { expectedCloseDate: input.expectedCloseDate }
-          : {}),
+        ...(input.expectedCloseDate !== undefined ? { expectedCloseDate: input.expectedCloseDate } : {}),
       },
     });
 
@@ -162,11 +216,7 @@ export class OpportunitiesService {
 
     const [pipeline, stage] = await Promise.all([
       this.prisma.pipeline.findFirst({
-        where: {
-          id: input.pipelineId,
-          organizationId,
-          isActive: true,
-        },
+        where: { id: input.pipelineId, organizationId, isActive: true },
         select: { id: true },
       }),
       this.prisma.pipelineStage.findFirst({
@@ -180,9 +230,7 @@ export class OpportunitiesService {
       }),
     ]);
 
-    if (!pipeline || !stage) {
-      throw this.referenceNotFound();
-    }
+    if (!pipeline || !stage) throw this.referenceNotFound();
   }
 
   private async requireCompanyContactOwner(
@@ -193,11 +241,7 @@ export class OpportunitiesService {
   ): Promise<void> {
     const [company, ownerMembership] = await Promise.all([
       this.prisma.company.findFirst({
-        where: {
-          id: companyId,
-          organizationId,
-          deletedAt: null,
-        },
+        where: { id: companyId, organizationId, deletedAt: null },
         select: { id: true },
       }),
       this.prisma.organizationMembership.findFirst({
@@ -211,9 +255,7 @@ export class OpportunitiesService {
       }),
     ]);
 
-    if (!company || !ownerMembership) {
-      throw this.referenceNotFound();
-    }
+    if (!company || !ownerMembership) throw this.referenceNotFound();
 
     if (contactId) {
       const contactLink = await this.prisma.companyContact.findFirst({
@@ -221,34 +263,24 @@ export class OpportunitiesService {
           organizationId,
           companyId,
           contactId,
-          contact: {
-            deletedAt: null,
-          },
+          contact: { deletedAt: null },
         },
         select: { contactId: true },
       });
-
-      if (!contactLink) {
-        throw this.referenceNotFound();
-      }
+      if (!contactLink) throw this.referenceNotFound();
     }
   }
 
   private async requireOpportunity(id: string, organizationId: string) {
     const opportunity = await this.prisma.opportunity.findFirst({
-      where: {
-        id,
-        organizationId,
-      },
+      where: { id, organizationId },
     });
-
     if (!opportunity) {
       throw new NotFoundException({
         code: "OPPORTUNITY_NOT_FOUND",
         message: "Oportunidade não encontrada.",
       });
     }
-
     return opportunity;
   }
 
