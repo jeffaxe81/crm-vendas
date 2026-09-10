@@ -301,4 +301,78 @@ describe("C3.5.4 activity lifecycle", () => {
       expect(reads).toBeGreaterThanOrEqual(2);
     });
   });
+
+  it("hides every lifecycle mutation for read-only users", async () => {
+    const pendingActivity = {
+      id: "88888888-8888-4888-8888-888888888888",
+      type: "TASK",
+      status: "PENDING",
+      priority: "MEDIUM",
+      title: "Somente leitura pendente",
+      description: null,
+      ownerUserId,
+      companyId: null,
+      contactId: null,
+      dueAt: null,
+      completedAt: null,
+      cancelledAt: null,
+    };
+    const completedActivity = {
+      ...pendingActivity,
+      id: "99999999-9999-4999-8999-999999999999",
+      status: "COMPLETED",
+      title: "Somente leitura concluída",
+      completedAt: "2026-09-10T10:00:00.000Z",
+    };
+    const fetchMock = vi.fn(async (input: string | URL) => {
+      const url = String(input);
+
+      if (url.includes("status=COMPLETED")) {
+        return response({
+          items: [completedActivity],
+          page: 1,
+          limit: 20,
+          total: 1,
+        });
+      }
+
+      return response({
+        items: [pendingActivity],
+        page: 1,
+        limit: 20,
+        total: 1,
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ActivitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite={false}
+      />
+    );
+
+    expect(
+      await screen.findByText("Somente leitura pendente")
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Concluir" })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: "Cancelar atividade" })
+    ).toBeNull();
+    expect(screen.queryByRole("button", { name: "Inativar" })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Concluídas" }));
+
+    expect(
+      await screen.findByText("Somente leitura concluída")
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Reabrir" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Inativar" })).toBeNull();
+
+    const mutationCalls = fetchMock.mock.calls.filter(([, init]) =>
+      ["PATCH", "DELETE"].includes(String(init?.method))
+    );
+    expect(mutationCalls).toHaveLength(0);
+  });
 });
