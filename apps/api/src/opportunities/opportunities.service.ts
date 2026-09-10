@@ -1,8 +1,15 @@
 import type {
   OpportunityCreateInput,
   OpportunityListQuery,
+  OpportunityUpdateInput,
 } from "@axes/contracts";
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../database/prisma.service";
@@ -34,6 +41,12 @@ type OpportunityRecord = {
   version: number;
   deletedAt: Date | null;
   deletedBy: string | null;
+};
+
+type MutableOpportunityReferences = {
+  companyId: string | null;
+  contactId: string | null;
+  ownerUserId: string;
 };
 
 @Injectable()
@@ -157,6 +170,112 @@ export class OpportunitiesService {
     return this.toPublicOpportunity(opportunity);
   }
 
+  async update(
+    id: string,
+    input: OpportunityUpdateInput,
+    context: OpportunityAdministrationContext
+  ) {
+    const { before, after } = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const existing = await this.requireOpportunity(
+          tenant,
+          id,
+          context.organizationId
+        );
+
+        const finalCompanyId =
+          input.companyId !== undefined ? input.companyId : existing.companyId;
+        const finalContactId =
+          input.contactId !== undefined ? input.contactId : existing.contactId;
+        const finalOwnerUserId = input.ownerUserId ?? existing.ownerUserId;
+
+        if (
+          Number(Boolean(finalCompanyId)) + Number(Boolean(finalContactId)) !== 1
+        ) {
+          throw new BadRequestException({
+            code: "VALIDATION_ERROR",
+            message: "A oportunidade deve possuir exatamente um cliente.",
+          });
+        }
+
+        await this.validateMutableReferences(
+          tenant,
+          {
+            companyId: finalCompanyId,
+            contactId: finalContactId,
+            ownerUserId: finalOwnerUserId,
+          },
+          context.organizationId
+        );
+
+        const result = await tenant.opportunity.updateMany({
+          where: {
+            id,
+            organizationId: context.organizationId,
+            deletedAt: null,
+            version: input.version,
+          },
+          data: {
+            ...(input.companyId !== undefined
+              ? { companyId: input.companyId }
+              : {}),
+            ...(input.contactId !== undefined
+              ? { contactId: input.contactId }
+              : {}),
+            ...(input.ownerUserId !== undefined
+              ? { ownerUserId: input.ownerUserId }
+              : {}),
+            ...(input.title !== undefined ? { title: input.title } : {}),
+            ...(input.estimatedValue !== undefined
+              ? { estimatedValue: new Prisma.Decimal(input.estimatedValue) }
+              : {}),
+            ...(input.expectedCloseAt !== undefined
+              ? {
+                  expectedCloseAt: input.expectedCloseAt
+                    ? new Date(input.expectedCloseAt)
+                    : null,
+                }
+              : {}),
+            ...(input.notes !== undefined ? { notes: input.notes } : {}),
+            updatedBy: context.actorUserId,
+            version: { increment: 1 },
+          },
+        });
+
+        if (result.count === 0) {
+          this.versionConflict();
+        }
+
+        const updated = await this.requireOpportunity(
+          tenant,
+          id,
+          context.organizationId
+        );
+
+        return { before: existing, after: updated };
+      }
+    );
+
+    await this.audit.record({
+      organizationId: context.organizationId,
+      actorUserId: context.actorUserId,
+      requestId: context.requestId,
+      action: "opportunity.updated",
+      entityType: "opportunity",
+      entityId: after.id,
+      before: this.toAuditOpportunity(before),
+      after: this.toAuditOpportunity(after),
+      metadata: {
+        previousVersion: before.version,
+        version: after.version,
+      },
+      ipAddress: context.ipAddress ?? null,
+    });
+
+    return this.toPublicOpportunity(after);
+  }
+
   private async requireOpportunity(
     tenant: Prisma.TransactionClient,
     id: string,
@@ -242,10 +361,63 @@ export class OpportunitiesService {
     }
   }
 
+  private async validateMutableReferences(
+    tenant: Prisma.TransactionClient,
+    references: MutableOpportunityReferences,
+    organizationId: string
+  ): Promise<void> {
+    const membership = await tenant.organizationMembership.findFirst({
+      where: {
+        organizationId,
+        userId: references.ownerUserId,
+        isActive: true,
+      },
+      select: { id: true },
+    });
+    if (!membership) {
+      this.referenceNotFound();
+    }
+
+    if (references.companyId) {
+      const company = await tenant.company.findFirst({
+        where: {
+          id: references.companyId,
+          organizationId,
+          deletedAt: null,
+        },
+        select: { id: true },
+      });
+      if (!company) {
+        this.referenceNotFound();
+      }
+    }
+
+    if (references.contactId) {
+      const contact = await tenant.contact.findFirst({
+        where: {
+          id: references.contactId,
+          organizationId,
+          deletedAt: null,
+        },
+        select: { id: true },
+      });
+      if (!contact) {
+        this.referenceNotFound();
+      }
+    }
+  }
+
   private referenceNotFound(): never {
     throw new NotFoundException({
       code: "OPPORTUNITY_REFERENCE_NOT_FOUND",
       message: "Referência da oportunidade não encontrada.",
+    });
+  }
+
+  private versionConflict(): never {
+    throw new ConflictException({
+      code: "OPPORTUNITY_VERSION_CONFLICT",
+      message: "A oportunidade foi alterada por outra operação.",
     });
   }
 

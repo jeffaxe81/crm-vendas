@@ -46,6 +46,7 @@ export const OpportunityUpdateInputSchema = z
     notes: z.string().trim().max(10_000).nullable().optional(),
     version: z.number().int().min(1),
   })
+  .strict()
   .refine(
     value =>
       Object.entries(value).some(

@@ -1,8 +1,10 @@
 import {
   OpportunityCreateInputSchema,
   OpportunityListQuerySchema,
+  OpportunityUpdateInputSchema,
   type OpportunityCreateInput,
   type OpportunityListQuery,
+  type OpportunityUpdateInput,
 } from "@axes/contracts";
 import {
   BadRequestException,
@@ -11,6 +13,7 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -67,6 +70,20 @@ export class OpportunitiesController {
     );
   }
 
+  @Patch(":id")
+  @RequirePermissions("opportunity.write")
+  update(
+    @Param("id") id: string,
+    @Body() body: unknown,
+    @Req() request: OpportunityRequest
+  ) {
+    return this.opportunities.update(
+      this.parseOpportunityId(id),
+      this.parseUpdate(body),
+      this.contextFrom(request)
+    );
+  }
+
   private parseListQuery(query: Record<string, unknown>): OpportunityListQuery {
     const parsed = OpportunityListQuerySchema.safeParse(query);
     if (!parsed.success) {
@@ -91,6 +108,17 @@ export class OpportunitiesController {
 
   private parseCreate(body: unknown): OpportunityCreateInput {
     const parsed = OpportunityCreateInputSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+    return parsed.data;
+  }
+
+  private parseUpdate(body: unknown): OpportunityUpdateInput {
+    const parsed = OpportunityUpdateInputSchema.safeParse(body);
     if (!parsed.success) {
       throw new BadRequestException({
         code: "VALIDATION_ERROR",
