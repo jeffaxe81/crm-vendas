@@ -15,17 +15,15 @@ A microentrega integra Atividades ao `CrmShell` canônico do CRM e reutiliza int
 
 ## Evidências TDD
 
-| Área | RED observado | Motivo funcional | GREEN principal |
-| --- | --- | --- | --- |
-| Navegação/permissão | `52bbcebe` | seção Atividades ainda não existia no shell | `cb4d01c5` |
-| Status/lista | `61883bf8` / `30bedcd8` | filtros/listagem ainda não atendiam ao contrato | `b461789a` |
-| Busca | `940b6438` | `q` ainda não era aplicado por submit explícito | `928db448` |
-| Vencimento | `ac91695c` | estado visual de atividade atrasada ainda não existia | `6e5845f2` |
-| Criação vinculada | `c7823764` | formulário self-owned e vínculos ainda não existiam | `0c519581` |
-| Concluir | `0bdbe9f3` / `37367571` | botão/ação Concluir ausente | `4f91fed5` |
-| Cancelar | `29a2138d` / `007b986a` | botão/ação Cancelar ausente | `a21f3ed7` |
-| Reabrir | `96ed2308` | botão/ação Reabrir ausente | `8de6962c` |
-| Inativar | `ee31934e` | botão/DELETE Inativar ausente | `6c8096ce` |
+- Navegação/permissão: RED `52bbcebe`, porque a seção Atividades ainda não existia no shell; GREEN principal `cb4d01c5`.
+- Status/lista: RED `61883bf8` / `30bedcd8`, porque filtros e listagem ainda não atendiam ao contrato; GREEN principal `b461789a`.
+- Busca: RED `940b6438`, porque `q` ainda não era aplicado por submit explícito; GREEN principal `928db448`.
+- Vencimento: RED `ac91695c`, porque o estado visual de atividade atrasada ainda não existia; GREEN principal `6e5845f2`.
+- Criação vinculada: RED `c7823764`, porque o formulário self-owned e os vínculos ainda não existiam; GREEN principal `0c519581`.
+- Concluir: RED `0bdbe9f3` / `37367571`, porque o botão/ação Concluir estava ausente; GREEN principal `4f91fed5`.
+- Cancelar: RED `29a2138d` / `007b986a`, porque o botão/ação Cancelar estava ausente; GREEN principal `a21f3ed7`.
+- Reabrir: RED `96ed2308`, porque o botão/ação Reabrir estava ausente; GREEN principal `8de6962c`.
+- Inativar: RED `ee31934e`, porque o botão/DELETE Inativar estava ausente; GREEN principal `6c8096ce`.
 
 A proteção de modo somente leitura foi consolidada em `67379862` e teve o mock tipado/corrigido em `e94b16a6`, sem ampliar o comportamento de produção.
 
