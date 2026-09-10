@@ -136,7 +136,7 @@ describe("Cycle 3.6.2 opportunity boundaries", () => {
     return { user, token };
   }
 
-  async function createOpportunity(
+  function createOpportunity(
     fixture: Awaited<ReturnType<typeof createFixture>>,
     token = fixture.adminToken,
     ownerUserId = fixture.admin.id,
