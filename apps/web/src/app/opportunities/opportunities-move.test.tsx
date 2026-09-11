@@ -61,7 +61,10 @@ function stubApi() {
       opportunityReads += 1;
       return response({
         items: [
-          opportunityRecord(moved ? targetStageId : initialStageId, moved ? 4 : 3),
+          opportunityRecord(
+            moved ? targetStageId : initialStageId,
+            moved ? 4 : 3
+          ),
         ],
         page: 1,
         limit: 20,
