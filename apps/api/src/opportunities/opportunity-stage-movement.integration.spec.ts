@@ -13,7 +13,9 @@ describe("Cycle 3 opportunity stage movement", () => {
   let passwords: PasswordService;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalFilters(new ApiErrorFilter());
     app.setGlobalPrefix("api/v1");
@@ -35,11 +37,15 @@ describe("Cycle 3 opportunity stage movement", () => {
     );
   }
 
-  it("moves only open opportunities inside the same pipeline and tenant and appends immutable history", async () => {
+  it("moves only open opportunities inside the same active pipeline and tenant and appends immutable history", async () => {
     const loginSecret = ["Cycle3", "Movement", "Fixture", "2026!"].join("-");
     const [organizationA, organizationB] = await Promise.all([
-      prisma.organization.create({ data: { name: "Movement A", slug: "movement-a" } }),
-      prisma.organization.create({ data: { name: "Movement B", slug: "movement-b" } }),
+      prisma.organization.create({
+        data: { name: "Movement A", slug: "movement-a" },
+      }),
+      prisma.organization.create({
+        data: { name: "Movement B", slug: "movement-b" },
+      }),
     ]);
     const [admin, ownerB] = await Promise.all([
       prisma.user.create({
@@ -61,8 +67,16 @@ describe("Cycle 3 opportunity stage movement", () => {
     ]);
     await prisma.organizationMembership.createMany({
       data: [
-        { organizationId: organizationA.id, userId: admin.id, role: "ADMIN" },
-        { organizationId: organizationB.id, userId: ownerB.id, role: "SELLER" },
+        {
+          organizationId: organizationA.id,
+          userId: admin.id,
+          role: "ADMIN",
+        },
+        {
+          organizationId: organizationB.id,
+          userId: ownerB.id,
+          role: "SELLER",
+        },
       ],
     });
 
@@ -86,15 +100,75 @@ describe("Cycle 3 opportunity stage movement", () => {
     ]);
 
     const [pipelineA, pipelineOtherA, pipelineB] = await Promise.all([
-      prisma.pipeline.create({ data: { organizationId: organizationA.id, name: "Pipeline A", isDefault: true } }),
-      prisma.pipeline.create({ data: { organizationId: organizationA.id, name: "Pipeline Other A" } }),
-      prisma.pipeline.create({ data: { organizationId: organizationB.id, name: "Pipeline B", isDefault: true } }),
+      prisma.pipeline.create({
+        data: {
+          organizationId: organizationA.id,
+          name: "Pipeline A",
+          isDefault: true,
+        },
+      }),
+      prisma.pipeline.create({
+        data: {
+          organizationId: organizationA.id,
+          name: "Pipeline Other A",
+        },
+      }),
+      prisma.pipeline.create({
+        data: {
+          organizationId: organizationB.id,
+          name: "Pipeline B",
+          isDefault: true,
+        },
+      }),
     ]);
-    const [stageFrom, stageTo, stageOtherPipeline, stageTenantB] = await Promise.all([
-      prisma.pipelineStage.create({ data: { organizationId: organizationA.id, pipelineId: pipelineA.id, name: "Lead", position: 0 } }),
-      prisma.pipelineStage.create({ data: { organizationId: organizationA.id, pipelineId: pipelineA.id, name: "Qualified", position: 1 } }),
-      prisma.pipelineStage.create({ data: { organizationId: organizationA.id, pipelineId: pipelineOtherA.id, name: "Other", position: 0 } }),
-      prisma.pipelineStage.create({ data: { organizationId: organizationB.id, pipelineId: pipelineB.id, name: "Tenant B", position: 0 } }),
+    const [
+      stageFrom,
+      stageTo,
+      stageInactive,
+      stageOtherPipeline,
+      stageTenantB,
+    ] = await Promise.all([
+      prisma.pipelineStage.create({
+        data: {
+          organizationId: organizationA.id,
+          pipelineId: pipelineA.id,
+          name: "Lead",
+          position: 0,
+        },
+      }),
+      prisma.pipelineStage.create({
+        data: {
+          organizationId: organizationA.id,
+          pipelineId: pipelineA.id,
+          name: "Qualified",
+          position: 1,
+        },
+      }),
+      prisma.pipelineStage.create({
+        data: {
+          organizationId: organizationA.id,
+          pipelineId: pipelineA.id,
+          name: "Inactive",
+          position: 2,
+          isActive: false,
+        },
+      }),
+      prisma.pipelineStage.create({
+        data: {
+          organizationId: organizationA.id,
+          pipelineId: pipelineOtherA.id,
+          name: "Other",
+          position: 0,
+        },
+      }),
+      prisma.pipelineStage.create({
+        data: {
+          organizationId: organizationB.id,
+          pipelineId: pipelineB.id,
+          name: "Tenant B",
+          position: 0,
+        },
+      }),
     ]);
 
     const [opportunity, closedOpportunity] = await Promise.all([
@@ -127,7 +201,11 @@ describe("Cycle 3 opportunity stage movement", () => {
 
     const login = await request(app.getHttpServer())
       .post("/api/v1/auth/login")
-      .send({ email: admin.email, password: loginSecret, organizationSlug: organizationA.slug })
+      .send({
+        email: admin.email,
+        password: loginSecret,
+        organizationSlug: organizationA.slug,
+      })
       .expect(200);
     const token = login.body.accessToken as string;
 
@@ -153,7 +231,23 @@ describe("Cycle 3 opportunity stage movement", () => {
       actorUserId: admin.id,
     });
 
-    for (const invalidStageId of [stageOtherPipeline.id, stageTenantB.id]) {
+    const movementAudit = await prisma.auditLog.findFirst({
+      where: {
+        organizationId: organizationA.id,
+        action: "opportunity.stage_moved",
+        entityId: opportunity.id,
+      },
+    });
+    expect(movementAudit).toMatchObject({
+      actorUserId: admin.id,
+      entityType: "opportunity",
+    });
+
+    for (const invalidStageId of [
+      stageInactive.id,
+      stageOtherPipeline.id,
+      stageTenantB.id,
+    ]) {
       await request(app.getHttpServer())
         .post(`/api/v1/opportunities/${opportunity.id}/move`)
         .set("Authorization", `Bearer ${token}`)
@@ -172,8 +266,19 @@ describe("Cycle 3 opportunity stage movement", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({ fromStageId: stageFrom.id, toStageId: stageTo.id })
       .expect(404);
+    await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunity.id}/stage-history`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ fromStageId: stageFrom.id, toStageId: stageTo.id })
+      .expect(404);
+    await request(app.getHttpServer())
+      .delete(`/api/v1/opportunities/${opportunity.id}/stage-history`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(404);
 
-    const persisted = await prisma.opportunity.findUniqueOrThrow({ where: { id: opportunity.id } });
+    const persisted = await prisma.opportunity.findUniqueOrThrow({
+      where: { id: opportunity.id },
+    });
     expect(persisted.stageId).toBe(stageTo.id);
 
     const tenantBOpportunity = await prisma.opportunity.create({
