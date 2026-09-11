@@ -22,6 +22,17 @@
 | US-04 | Como usuário, quero acompanhar oportunidades por etapas do funil.                           | A oportunidade possui cliente, valor, previsão e etapa editável.                 |
 | US-05 | Como gestor, quero indicadores comerciais básicos para orientar prioridades.                | O painel resume oportunidades por etapa, valor em aberto e atividades pendentes. |
 
+## Decisão de visualização — Oportunidades
+
+Para a implementação Web atual do Cycle 3, fica aprovada a **Opção A — Lista de oportunidades** como visão principal.
+
+As alternativas abaixo ficam registradas para avaliação futura e **não devem ser implementadas neste incremento**:
+
+- `VIS-OPP-B` — Opção B, visualização alternativa de oportunidades — **Backlog**;
+- `VIS-OPP-C` — Opção C, visualização alternativa de oportunidades — **Backlog**.
+
+Os detalhes funcionais das opções B e C não são ampliados neste documento para evitar introduzir requisitos ainda não confirmados.
+
 ## Delimitação do incremento
 
 Este backlog em desenvolvimento contém somente itens da **Fase 1 — MVP Comercial**. As iniciativas das Fases 2 a 6 estão preservadas no roadmap e no Banco de Ideias como planejamento futuro; não há itens dessas fases em implementação, testes de aceitação ou código neste incremento.
