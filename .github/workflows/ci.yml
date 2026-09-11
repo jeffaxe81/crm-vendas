@@ -83,8 +83,11 @@ jobs:
           GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO axes_app;
           SQL
 
-      - name: Verify source and tests
-        run: pnpm verify
+      - name: Diagnose exact Prettier output
+        run: |
+          pnpm exec prettier --write apps/api/src/activities/activity-opportunity-boundaries.integration.spec.ts
+          git diff -- apps/api/src/activities/activity-opportunity-boundaries.integration.spec.ts
+          exit 1
 
       - name: Bootstrap administrator for E2E
         run: pnpm --filter @axes/api bootstrap:admin
