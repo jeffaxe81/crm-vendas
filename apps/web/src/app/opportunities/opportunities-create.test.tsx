@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type { ComponentType } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { OpportunitiesView } from "./opportunities-view";
@@ -8,6 +9,12 @@ const ownerUserId = "11111111-1111-4111-8111-111111111111";
 const pipelineId = "22222222-2222-4222-8222-222222222222";
 const stageId = "33333333-3333-4333-8333-333333333333";
 const companyId = "44444444-4444-4444-8444-444444444444";
+
+const WritableOpportunitiesView = OpportunitiesView as unknown as ComponentType<{
+  accessToken: string;
+  ownerUserId: string;
+  canWrite: boolean;
+}>;
 
 function response(body: unknown): Response {
   return {
@@ -64,7 +71,12 @@ describe("C3.6.5 opportunity creation", () => {
             id: pipelineId,
             name: "Funil de Vendas",
             stages: [
-              { id: stageId, name: "Prospecção", position: 1, kind: "OPEN" },
+              {
+                id: stageId,
+                name: "Prospecção",
+                position: 1,
+                kind: "OPEN",
+              },
             ],
           },
         ]);
@@ -72,7 +84,13 @@ describe("C3.6.5 opportunity creation", () => {
 
       if (url.includes("/companies?page=1&limit=100")) {
         return response({
-          items: [{ id: companyId, legalName: "Cliente Exemplo Ltda", tradeName: "Cliente Exemplo" }],
+          items: [
+            {
+              id: companyId,
+              legalName: "Cliente Exemplo Ltda",
+              tradeName: "Cliente Exemplo",
+            },
+          ],
           page: 1,
           limit: 100,
           total: 1,
@@ -92,7 +110,7 @@ describe("C3.6.5 opportunity creation", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     render(
-      <OpportunitiesView
+      <WritableOpportunitiesView
         accessToken={accessToken}
         ownerUserId={ownerUserId}
         canWrite
