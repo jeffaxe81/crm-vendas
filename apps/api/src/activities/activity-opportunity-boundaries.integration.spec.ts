@@ -132,130 +132,122 @@ describe("C3.6.3 activity opportunity boundaries", () => {
     );
   }
 
-  it(
-    "rejects cross-tenant opportunity references on create and update",
-    async () => {
-      const [organizationA, organizationB] = await Promise.all([
-        prisma.organization.create({
-          data: { name: "Boundary Org A", slug: "boundary-org-a" },
-        }),
-        prisma.organization.create({
-          data: { name: "Boundary Org B", slug: "boundary-org-b" },
-        }),
-      ]);
-      const memberA = await createMember(organizationA, "ADMIN", "admin-a");
-      const memberB = await createMember(organizationB, "ADMIN", "admin-b");
-      const opportunityB = await createOpportunity(
-        organizationB.id,
-        memberB.user.id,
-        "Tenant B"
-      );
+  it("rejects cross-tenant opportunity references on create and update", async () => {
+    const [organizationA, organizationB] = await Promise.all([
+      prisma.organization.create({
+        data: { name: "Boundary Org A", slug: "boundary-org-a" },
+      }),
+      prisma.organization.create({
+        data: { name: "Boundary Org B", slug: "boundary-org-b" },
+      }),
+    ]);
+    const memberA = await createMember(organizationA, "ADMIN", "admin-a");
+    const memberB = await createMember(organizationB, "ADMIN", "admin-b");
+    const opportunityB = await createOpportunity(
+      organizationB.id,
+      memberB.user.id,
+      "Tenant B"
+    );
 
-      const createRejected = await request(app.getHttpServer())
-        .post("/api/v1/activities")
-        .set("Authorization", `Bearer ${memberA.token}`)
-        .send({
-          type: "TASK",
-          title: "Cross-tenant create",
-          ownerUserId: memberA.user.id,
-          opportunityId: opportunityB.id,
-        })
-        .expect(404);
-      expect(createRejected.body.code).toBe("ACTIVITY_REFERENCE_NOT_FOUND");
+    const createRejected = await request(app.getHttpServer())
+      .post("/api/v1/activities")
+      .set("Authorization", `Bearer ${memberA.token}`)
+      .send({
+        type: "TASK",
+        title: "Cross-tenant create",
+        ownerUserId: memberA.user.id,
+        opportunityId: opportunityB.id,
+      })
+      .expect(404);
+    expect(createRejected.body.code).toBe("ACTIVITY_REFERENCE_NOT_FOUND");
 
-      const localActivity = await request(app.getHttpServer())
-        .post("/api/v1/activities")
-        .set("Authorization", `Bearer ${memberA.token}`)
-        .send({
-          type: "TASK",
-          title: "Local activity",
-          ownerUserId: memberA.user.id,
-        })
-        .expect(201);
+    const localActivity = await request(app.getHttpServer())
+      .post("/api/v1/activities")
+      .set("Authorization", `Bearer ${memberA.token}`)
+      .send({
+        type: "TASK",
+        title: "Local activity",
+        ownerUserId: memberA.user.id,
+      })
+      .expect(201);
 
-      const updateRejected = await request(app.getHttpServer())
-        .patch(`/api/v1/activities/${localActivity.body.id as string}`)
-        .set("Authorization", `Bearer ${memberA.token}`)
-        .send({ opportunityId: opportunityB.id })
-        .expect(404);
-      expect(updateRejected.body.code).toBe("ACTIVITY_REFERENCE_NOT_FOUND");
+    const updateRejected = await request(app.getHttpServer())
+      .patch(`/api/v1/activities/${localActivity.body.id as string}`)
+      .set("Authorization", `Bearer ${memberA.token}`)
+      .send({ opportunityId: opportunityB.id })
+      .expect(404);
+    expect(updateRejected.body.code).toBe("ACTIVITY_REFERENCE_NOT_FOUND");
 
-      await request(app.getHttpServer())
-        .post("/api/v1/activities")
-        .set("Authorization", `Bearer ${memberB.token}`)
-        .send({
-          type: "TASK",
-          title: "Tenant B linked activity",
-          ownerUserId: memberB.user.id,
-          opportunityId: opportunityB.id,
-        })
-        .expect(201);
+    await request(app.getHttpServer())
+      .post("/api/v1/activities")
+      .set("Authorization", `Bearer ${memberB.token}`)
+      .send({
+        type: "TASK",
+        title: "Tenant B linked activity",
+        ownerUserId: memberB.user.id,
+        opportunityId: opportunityB.id,
+      })
+      .expect(201);
 
-      const filteredFromA = await request(app.getHttpServer())
-        .get(`/api/v1/activities?opportunityId=${opportunityB.id}`)
-        .set("Authorization", `Bearer ${memberA.token}`)
-        .expect(200);
-      expect(filteredFromA.body.total).toBe(0);
-      expect(filteredFromA.body.items).toEqual([]);
-    }
-  );
+    const filteredFromA = await request(app.getHttpServer())
+      .get(`/api/v1/activities?opportunityId=${opportunityB.id}`)
+      .set("Authorization", `Bearer ${memberA.token}`)
+      .expect(200);
+    expect(filteredFromA.body.total).toBe(0);
+    expect(filteredFromA.body.items).toEqual([]);
+  });
 
-  it(
-    "rejects a soft-deleted opportunity as a new reference but preserves history",
-    async () => {
-      const organization = await prisma.organization.create({
-        data: { name: "Boundary Soft Delete", slug: "boundary-soft-delete" },
-      });
-      const member = await createMember(organization, "ADMIN", "soft-delete");
-      const opportunity = await createOpportunity(
-        organization.id,
-        member.user.id,
-        "Historical"
-      );
+  it("rejects a soft-deleted opportunity as a new reference but preserves history", async () => {
+    const organization = await prisma.organization.create({
+      data: { name: "Boundary Soft Delete", slug: "boundary-soft-delete" },
+    });
+    const member = await createMember(organization, "ADMIN", "soft-delete");
+    const opportunity = await createOpportunity(
+      organization.id,
+      member.user.id,
+      "Historical"
+    );
 
-      const linked = await request(app.getHttpServer())
-        .post("/api/v1/activities")
-        .set("Authorization", `Bearer ${member.token}`)
-        .send({
-          type: "TASK",
-          title: "Historical linked activity",
-          ownerUserId: member.user.id,
-          opportunityId: opportunity.id,
-        })
-        .expect(201);
+    const linked = await request(app.getHttpServer())
+      .post("/api/v1/activities")
+      .set("Authorization", `Bearer ${member.token}`)
+      .send({
+        type: "TASK",
+        title: "Historical linked activity",
+        ownerUserId: member.user.id,
+        opportunityId: opportunity.id,
+      })
+      .expect(201);
 
-      await prisma.withTenant(organization.id, tenant =>
-        tenant.opportunity.update({
-          where: { id: opportunity.id },
-          data: {
-            deletedAt: new Date(),
-            deletedBy: member.user.id,
-            updatedBy: member.user.id,
-          },
-        })
-      );
+    await prisma.withTenant(organization.id, tenant =>
+      tenant.opportunity.update({
+        where: { id: opportunity.id },
+        data: {
+          deletedAt: new Date(),
+          deletedBy: member.user.id,
+          updatedBy: member.user.id,
+        },
+      })
+    );
 
-      const newReferenceRejected = await request(app.getHttpServer())
-        .post("/api/v1/activities")
-        .set("Authorization", `Bearer ${member.token}`)
-        .send({
-          type: "TASK",
-          title: "New reference after deletion",
-          ownerUserId: member.user.id,
-          opportunityId: opportunity.id,
-        })
-        .expect(404);
-      expect(newReferenceRejected.body.code).toBe(
-        "ACTIVITY_REFERENCE_NOT_FOUND"
-      );
+    const newReferenceRejected = await request(app.getHttpServer())
+      .post("/api/v1/activities")
+      .set("Authorization", `Bearer ${member.token}`)
+      .send({
+        type: "TASK",
+        title: "New reference after deletion",
+        ownerUserId: member.user.id,
+        opportunityId: opportunity.id,
+      })
+      .expect(404);
+    expect(newReferenceRejected.body.code).toBe("ACTIVITY_REFERENCE_NOT_FOUND");
 
-      const historical = await request(app.getHttpServer())
-        .get(`/api/v1/activities/${linked.body.id as string}`)
-        .set("Authorization", `Bearer ${member.token}`)
-        .expect(200);
-      expect(historical.body.opportunityId).toBe(opportunity.id);
-    }
-  );
+    const historical = await request(app.getHttpServer())
+      .get(`/api/v1/activities/${linked.body.id as string}`)
+      .set("Authorization", `Bearer ${member.token}`)
+      .expect(200);
+    expect(historical.body.opportunityId).toBe(opportunity.id);
+  });
 
   it("allows SELLER link writes and blocks VIEWER link writes", async () => {
     const organization = await prisma.organization.create({
