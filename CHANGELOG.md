@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.6.3
+
+### Vínculo Activity → Opportunity
+
+- Activity pode ser vinculada opcionalmente a uma Opportunity do mesmo tenant;
+- create, update e list de Activities suportam `opportunityId`;
+- FK composta impede vínculo cross-tenant no banco;
+- Opportunity soft-deleted não pode ser usada como nova referência, enquanto vínculo histórico existente é preservado;
+- snapshots de auditoria de Activity passam a incluir `opportunityId`.
+
 ## [Unreleased] - Cycle 3.6.2
 
 ### API tenant-aware de oportunidades

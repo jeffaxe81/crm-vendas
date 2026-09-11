@@ -24,6 +24,7 @@ type AuditableActivity = {
   description: string | null;
   companyId: string | null;
   contactId: string | null;
+  opportunityId: string | null;
   ownerUserId: string;
   dueAt: Date | null;
   completedAt: Date | null;
@@ -70,6 +71,7 @@ export class ActivitiesService {
       ...(query.ownerUserId ? { ownerUserId: query.ownerUserId } : {}),
       ...(query.companyId ? { companyId: query.companyId } : {}),
       ...(query.contactId ? { contactId: query.contactId } : {}),
+      ...(query.opportunityId ? { opportunityId: query.opportunityId } : {}),
       ...(dueAt ? { dueAt } : {}),
     };
 
@@ -123,6 +125,7 @@ export class ActivitiesService {
             description: input.description,
             companyId: input.companyId,
             contactId: input.contactId,
+            opportunityId: input.opportunityId,
             ownerUserId: input.ownerUserId,
             dueAt: input.dueAt ? new Date(input.dueAt) : undefined,
             createdBy: context.actorUserId,
@@ -178,6 +181,9 @@ export class ActivitiesService {
               : {}),
             ...(input.contactId !== undefined
               ? { contactId: input.contactId }
+              : {}),
+            ...(input.opportunityId !== undefined
+              ? { opportunityId: input.opportunityId }
               : {}),
             ...(input.ownerUserId !== undefined
               ? { ownerUserId: input.ownerUserId }
@@ -281,6 +287,7 @@ export class ActivitiesService {
       ownerUserId?: string;
       companyId?: string | null;
       contactId?: string | null;
+      opportunityId?: string | null;
     },
     organizationId: string
   ): Promise<void> {
@@ -325,6 +332,21 @@ export class ActivitiesService {
       });
 
       if (!contact) {
+        this.referenceNotFound();
+      }
+    }
+
+    if (input.opportunityId) {
+      const opportunity = await tenant.opportunity.findFirst({
+        where: {
+          id: input.opportunityId,
+          organizationId,
+          deletedAt: null,
+        },
+        select: { id: true },
+      });
+
+      if (!opportunity) {
         this.referenceNotFound();
       }
     }
@@ -387,6 +409,7 @@ export class ActivitiesService {
       description: activity.description,
       companyId: activity.companyId,
       contactId: activity.contactId,
+      opportunityId: activity.opportunityId,
       ownerUserId: activity.ownerUserId,
       dueAt: activity.dueAt?.toISOString() ?? null,
       completedAt: activity.completedAt?.toISOString() ?? null,

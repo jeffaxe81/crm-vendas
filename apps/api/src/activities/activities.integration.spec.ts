@@ -93,6 +93,96 @@ describe("Cycle 3.5.2 activities API", () => {
     return response.body.accessToken as string;
   }
 
+  describe("C3.6.3 Activity -> Opportunity persistence", () => {
+    it("persists a same-tenant opportunityId on Activity", async () => {
+      const organizationA = await prisma.organization.create({
+        data: {
+          name: "Activity Opportunity Org A",
+          slug: "activity-opportunity-a",
+        },
+      });
+      const password = "Strong-Activity-Opportunity-Password-2026!";
+      const userA = await createUser({
+        email: "activity-opportunity-a@example.test",
+        password,
+        displayName: "Activity Opportunity User A",
+      });
+
+      await prisma.organizationMembership.create({
+        data: {
+          organizationId: organizationA.id,
+          userId: userA.id,
+          role: "ADMIN",
+        },
+      });
+
+      const pipelineA = await prisma.withTenant(organizationA.id, tenant =>
+        tenant.pipeline.create({
+          data: {
+            organizationId: organizationA.id,
+            name: "Pipeline A",
+            normalizedName: "pipeline a",
+          },
+        })
+      );
+      const stageA = await prisma.withTenant(organizationA.id, tenant =>
+        tenant.pipelineStage.create({
+          data: {
+            organizationId: organizationA.id,
+            pipelineId: pipelineA.id,
+            name: "Aberta",
+            position: 1,
+            kind: "OPEN",
+          },
+        })
+      );
+      const companyA = await prisma.withTenant(organizationA.id, tenant =>
+        tenant.company.create({
+          data: {
+            organizationId: organizationA.id,
+            legalName: "Cliente Opportunity A",
+            createdBy: userA.id,
+            updatedBy: userA.id,
+          },
+        })
+      );
+      const opportunityA = await prisma.withTenant(organizationA.id, tenant =>
+        tenant.opportunity.create({
+          data: {
+            organizationId: organizationA.id,
+            pipelineId: pipelineA.id,
+            stageId: stageA.id,
+            companyId: companyA.id,
+            ownerUserId: userA.id,
+            title: "Opportunity A",
+            estimatedValue: "1000.00",
+            createdBy: userA.id,
+            updatedBy: userA.id,
+          },
+        })
+      );
+
+      await expect(
+        prisma.withTenant(organizationA.id, tenant =>
+          tenant.activity.create({
+            data: {
+              organizationId: organizationA.id,
+              type: "TASK",
+              title: "Follow-up da oportunidade",
+              ownerUserId: userA.id,
+              opportunityId: opportunityA.id,
+              createdBy: userA.id,
+              updatedBy: userA.id,
+            } as never,
+          })
+        )
+      ).resolves.toMatchObject({
+        organizationId: organizationA.id,
+        opportunityId: opportunityA.id,
+      });
+    });
+  });
+
   it("creates, lists, reads, changes status and soft-deletes an activity with audit", async () => {
     const organization = await prisma.organization.create({
       data: { name: "Activities Organization", slug: "activities-org" },

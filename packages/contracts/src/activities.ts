@@ -26,6 +26,7 @@ export const ActivityCreateInputSchema = z.object({
   ownerUserId: z.string().uuid(),
   companyId: z.string().uuid().optional(),
   contactId: z.string().uuid().optional(),
+  opportunityId: z.string().uuid().optional(),
   dueAt: ActivityDateTimeSchema.optional(),
 });
 
@@ -39,6 +40,7 @@ export const ActivityUpdateInputSchema = z
     ownerUserId: z.string().uuid().optional(),
     companyId: z.string().uuid().nullable().optional(),
     contactId: z.string().uuid().nullable().optional(),
+    opportunityId: z.string().uuid().nullable().optional(),
     dueAt: ActivityDateTimeSchema.nullable().optional(),
   })
   .refine(value => Object.values(value).some(item => item !== undefined), {
@@ -52,6 +54,7 @@ export const ActivityListQuerySchema = PaginationQuerySchema.extend({
   ownerUserId: z.string().uuid().optional(),
   companyId: z.string().uuid().optional(),
   contactId: z.string().uuid().optional(),
+  opportunityId: z.string().uuid().optional(),
   dueFrom: ActivityDateTimeSchema.optional(),
   dueTo: ActivityDateTimeSchema.optional(),
   sortBy: z.enum(["dueAt", "createdAt", "updatedAt", "title"]).default("dueAt"),
