@@ -11,6 +11,7 @@ import { ActivitiesView } from "./activities/activities-view";
 import { CompaniesView } from "./companies/companies-view";
 import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
+import { OpportunitiesView } from "./opportunities/opportunities-view";
 
 export default function Home() {
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
@@ -89,12 +90,14 @@ export default function Home() {
           <CompaniesView accessToken={session.accessToken} />
         ) : activeSection === "contacts" ? (
           <ContactsView accessToken={session.accessToken} />
-        ) : (
+        ) : activeSection === "activities" ? (
           <ActivitiesView
             accessToken={session.accessToken}
             ownerUserId={session.user.id}
             canWrite={session.permissions.includes("activity.write")}
           />
+        ) : (
+          <OpportunitiesView accessToken={session.accessToken} />
         )}
       </CrmShell>
     );

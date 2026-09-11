@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.6.4
+
+### Web de oportunidades — lista
+
+- nova seção `Oportunidades` integrada ao `CrmShell`, exibida somente para sessões com `opportunity.read`;
+- primeira visualização Web do domínio canônico de oportunidades na Opção A — lista;
+- listagem read-only consumindo `GET /api/v1/opportunities`, com paginação inicial, ordenação por `updatedAt desc` e busca textual via `q`;
+- estados de carregamento, erro e vazio;
+- cards com título, valor estimado e previsão de fechamento;
+- nenhuma operação de criação, edição, movimentação de etapa ou fechamento WON/LOST foi adicionada nesta fatia;
+- nenhuma alteração de API, Prisma schema, migrations, RLS ou RBAC;
+- RED comportamental validado no commit `92fc8f741256554ad5d3dabedb8e9f1da3933940` / workflow `34551827072` (#563), pela ausência esperada da navegação `Oportunidades`;
+- GREEN funcional pré-documentação validado no commit `b8ed7b1804e37fb266adcb2168161e56d09ab4e8` / workflow `34552351688` (#572), incluindo `pnpm verify`, E2E, Compose e imagens Docker;
+- Kanban, drag-and-drop, detalhe completo, escrita Web, automações e IA permanecem fora da C3.6.4;
+- PR #31 permanece Draft e condicionado ao gate final GREEN no head documental definitivo e à aprovação humana explícita antes do merge.
+
 ## [Unreleased] - Cycle 3.6.3
 
 ### Vínculo Activity → Opportunity
