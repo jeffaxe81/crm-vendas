@@ -101,6 +101,7 @@ export default function Home() {
             accessToken={session.accessToken}
             ownerUserId={session.user.id}
             canWrite={session.permissions.includes("opportunity.write")}
+            canMove={session.permissions.includes("opportunity.move")}
           />
         )}
       </CrmShell>
