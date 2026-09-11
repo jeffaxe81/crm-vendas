@@ -3,7 +3,11 @@
 import type { AuthSessionResponse } from "@axes/contracts";
 import type { ReactNode } from "react";
 
-export type CrmSection = "companies" | "contacts" | "activities";
+export type CrmSection =
+  | "companies"
+  | "contacts"
+  | "activities"
+  | "opportunities";
 
 type CrmShellProps = {
   session: AuthSessionResponse;
@@ -21,7 +25,9 @@ export function CrmShell({
   children,
 }: CrmShellProps) {
   const canReadActivities = session.permissions.includes("activity.read");
+  const canReadOpportunities = session.permissions.includes("opportunity.read");
   const isActivitiesActive = activeSection === "activities";
+  const isOpportunitiesActive = activeSection === "opportunities";
 
   return (
     <main className="crm-shell" aria-label="Acesso ao CRM">
@@ -66,6 +72,16 @@ export function CrmShell({
               onClick={() => onNavigate("activities")}
             >
               Atividades
+            </button>
+          ) : null}
+          {canReadOpportunities ? (
+            <button
+              type="button"
+              className={isOpportunitiesActive ? "is-active" : undefined}
+              aria-current={isOpportunitiesActive ? "page" : undefined}
+              onClick={() => onNavigate("opportunities")}
+            >
+              Oportunidades
             </button>
           ) : null}
         </nav>
