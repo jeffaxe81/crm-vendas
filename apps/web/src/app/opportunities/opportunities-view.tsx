@@ -133,7 +133,9 @@ export function OpportunitiesView({ accessToken }: OpportunitiesViewProps) {
       ) : null}
 
       {loading ? (
-        <p className="opportunities-view__status">Carregando oportunidades...</p>
+        <p className="opportunities-view__status">
+          Carregando oportunidades...
+        </p>
       ) : null}
 
       {!loading && !error && opportunities.length === 0 ? (
