@@ -62,7 +62,10 @@ function stubApi() {
         });
       }
       if (url.endsWith("/opportunities") && init?.method === "POST") {
-        return response({ id: "55555555-5555-4555-8555-555555555555" }, 201);
+        return response(
+          { id: "55555555-5555-4555-8555-555555555555" },
+          201
+        );
       }
       if (url.endsWith("/pipelines")) {
         return response([
@@ -75,7 +78,13 @@ function stubApi() {
       }
       if (url.includes("/companies?")) {
         return response({
-          items: [{ id: companyId, legalName: "Empresa Exemplo", tradeName: null }],
+          items: [
+            {
+              id: companyId,
+              legalName: "Empresa Exemplo",
+              tradeName: null,
+            },
+          ],
           page: 1,
           limit: 100,
           total: 1,
@@ -146,7 +155,9 @@ describe("C3.6.5 opportunity creation", () => {
     );
 
     await screen.findByText("Nenhuma oportunidade encontrada.");
-    fireEvent.click(screen.getByRole("button", { name: "Nova oportunidade" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Nova oportunidade" })
+    );
 
     expect(
       await screen.findByRole("form", { name: "Nova oportunidade" })
@@ -172,7 +183,9 @@ describe("C3.6.5 opportunity creation", () => {
     );
 
     await screen.findByText("Nenhuma oportunidade encontrada.");
-    fireEvent.click(screen.getByRole("button", { name: "Nova oportunidade" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Nova oportunidade" })
+    );
 
     fireEvent.change(await screen.findByLabelText("Título"), {
       target: { value: "Renovação anual" },
@@ -189,7 +202,9 @@ describe("C3.6.5 opportunity creation", () => {
     fireEvent.change(screen.getByLabelText("Valor estimado"), {
       target: { value: "1500.00" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Salvar oportunidade" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Salvar oportunidade" })
+    );
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
