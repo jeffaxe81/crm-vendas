@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.6.6
+
+### Web de oportunidades — movimentação de etapa
+
+- movimentação de oportunidade exposta na Web somente para sessões com `opportunity.move`;
+- seleção limitada às etapas pertencentes ao mesmo Pipeline da oportunidade;
+- reutilização de `PATCH /api/v1/opportunities/:id/stage` com `{ stageId, version }`, preservando a concorrência otimista já existente na API;
+- recarga da lista após movimentação bem-sucedida, refletindo a etapa persistida pelo backend;
+- `canMove` derivado das permissões da sessão autenticada, sem criação de novas permissões RBAC;
+- E2E dedicado valida login, bootstrap idempotente do funil padrão, criação de empresa e oportunidade, movimentação de `Prospecção` para `Qualificação` e persistência após reload;
+- nenhuma alteração de banco, migrations, RLS, contratos de domínio ou API nesta microentrega;
+- RED comportamental registrado no commit `9234413f0fb6ff8dee49082efdf9443cfba25acf` / workflow `34591013129` (#616);
+- GREEN funcional intermediário validado no commit `920fa4090b97ebbb3a63abd868f24c1fa119497c` / workflow `34591600221` (#619), antes do E2E específico e da documentação final;
+- edição geral, troca de Pipeline, Kanban, drag-and-drop e fechamento WON/LOST permanecem fora da C3.6.6;
+- PR #33 permanece Draft e condicionado ao gate final GREEN no head documental definitivo e à aprovação humana explícita antes do merge.
+
 ## [Unreleased] - Cycle 3.6.4
 
 ### Web de oportunidades — lista
