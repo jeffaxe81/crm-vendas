@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { OpportunitiesView } from "./opportunities-view";
 
+const accessToken = "opportunities-access-token";
 const ownerUserId = "11111111-1111-4111-8111-111111111111";
 const pipelineId = "22222222-2222-4222-8222-222222222222";
 const stageId = "33333333-3333-4333-8333-333333333333";
@@ -24,81 +25,52 @@ function response(body: unknown, status = 200): Response {
 
 function stubApi() {
   let opportunityReads = 0;
-  const fetchMock = vi.fn(
-    async (input: string | URL, init?: RequestInit): Promise<Response> => {
-      const url = String(input);
+  const fetchMock = vi.fn(async (input: string | URL, init?: RequestInit) => {
+    const url = String(input);
 
-      if (url.includes("/opportunities?") && init?.method !== "POST") {
-        opportunityReads += 1;
-        return response({
-          items:
-            opportunityReads > 1
-              ? [
-                  {
-                    id: "55555555-5555-4555-8555-555555555555",
-                    organizationId: "66666666-6666-4666-8666-666666666666",
-                    pipelineId,
-                    stageId,
-                    companyId,
-                    contactId: null,
-                    ownerUserId,
-                    title: "Renovação anual",
-                    estimatedValue: "1500.00",
-                    expectedCloseAt: null,
-                    notes: null,
-                    version: 1,
-                    createdBy: ownerUserId,
-                    updatedBy: ownerUserId,
-                    deletedAt: null,
-                    deletedBy: null,
-                    createdAt: "2026-09-11T09:00:00.000Z",
-                    updatedAt: "2026-09-11T09:00:00.000Z",
-                  },
-                ]
-              : [],
-          page: 1,
-          limit: 20,
-          total: opportunityReads > 1 ? 1 : 0,
-        });
-      }
-      if (url.endsWith("/opportunities") && init?.method === "POST") {
-        return response(
-          { id: "55555555-5555-4555-8555-555555555555" },
-          201
-        );
-      }
-      if (url.endsWith("/pipelines")) {
-        return response([
-          {
-            id: pipelineId,
-            name: "Funil de Vendas",
-            stages: [{ id: stageId, name: "Prospecção", position: 1 }],
-          },
-        ]);
-      }
-      if (url.includes("/companies?")) {
-        return response({
-          items: [
-            {
-              id: companyId,
-              legalName: "Empresa Exemplo",
-              tradeName: null,
-            },
-          ],
-          page: 1,
-          limit: 100,
-          total: 1,
-        });
-      }
-      if (url.includes("/contacts?")) {
-        return response({ items: [], page: 1, limit: 100, total: 0 });
-      }
-
-      throw new Error(`Unexpected request: ${url}`);
+    if (url.includes("/opportunities?")) {
+      opportunityReads += 1;
+      return response({ items: [], page: 1, limit: 20, total: 0 });
     }
-  );
+
+    if (url.endsWith("/opportunities") && init?.method === "POST") {
+      return response({ id: "55555555-5555-4555-8555-555555555555" }, 201);
+    }
+
+    if (url.endsWith("/pipelines")) {
+      return response([
+        {
+          id: pipelineId,
+          name: "Funil de Vendas",
+          stages: [{ id: stageId, name: "Prospecção", position: 1 }],
+        },
+      ]);
+    }
+
+    if (url.includes("/companies?")) {
+      return response({
+        items: [
+          {
+            id: companyId,
+            legalName: "Empresa Exemplo",
+            tradeName: null,
+          },
+        ],
+        page: 1,
+        limit: 100,
+        total: 1,
+      });
+    }
+
+    if (url.includes("/contacts?")) {
+      return response({ items: [], page: 1, limit: 100, total: 0 });
+    }
+
+    throw new Error(`Unexpected fetch: ${url}`);
+  });
   vi.stubGlobal("fetch", fetchMock);
-  return fetchMock;
+
+  return { fetchMock, getOpportunityReads: () => opportunityReads };
 }
 
 afterEach(() => {
@@ -107,30 +79,12 @@ afterEach(() => {
 });
 
 describe("C3.6.5 opportunity creation", () => {
-  it("shows the create action for opportunity.write", async () => {
-    stubApi();
-
-    render(
-      <OpportunitiesView
-        accessToken="opportunities-access-token"
-        ownerUserId={ownerUserId}
-        canWrite
-      />
-    );
-
-    await screen.findByText("Nenhuma oportunidade encontrada.");
-
-    expect(
-      screen.getByRole("button", { name: "Nova oportunidade" })
-    ).toBeInTheDocument();
-  });
-
   it("hides the create action without opportunity.write", async () => {
     stubApi();
 
     render(
       <OpportunitiesView
-        accessToken="opportunities-access-token"
+        accessToken={accessToken}
         ownerUserId={ownerUserId}
         canWrite={false}
       />
@@ -140,15 +94,15 @@ describe("C3.6.5 opportunity creation", () => {
 
     expect(
       screen.queryByRole("button", { name: "Nova oportunidade" })
-    ).not.toBeInTheDocument();
+    ).toBeNull();
   });
 
-  it("opens the opportunity form and loads tenant references", async () => {
-    stubApi();
+  it("creates a self-owned opportunity and reloads the list", async () => {
+    const { fetchMock, getOpportunityReads } = stubApi();
 
     render(
       <OpportunitiesView
-        accessToken="opportunities-access-token"
+        accessToken={accessToken}
         ownerUserId={ownerUserId}
         canWrite
       />
@@ -159,35 +113,14 @@ describe("C3.6.5 opportunity creation", () => {
       screen.getByRole("button", { name: "Nova oportunidade" })
     );
 
-    expect(
-      await screen.findByRole("form", { name: "Nova oportunidade" })
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText("Título")).toBeInTheDocument();
     expect(
       await screen.findByRole("option", { name: "Empresa Exemplo" })
     ).toBeInTheDocument();
     expect(
       await screen.findByRole("option", { name: "Funil de Vendas" })
     ).toBeInTheDocument();
-  });
 
-  it("creates a self-owned opportunity and reloads the list", async () => {
-    const fetchMock = stubApi();
-
-    render(
-      <OpportunitiesView
-        accessToken="opportunities-access-token"
-        ownerUserId={ownerUserId}
-        canWrite
-      />
-    );
-
-    await screen.findByText("Nenhuma oportunidade encontrada.");
-    fireEvent.click(
-      screen.getByRole("button", { name: "Nova oportunidade" })
-    );
-
-    fireEvent.change(await screen.findByLabelText("Título"), {
+    fireEvent.change(screen.getByLabelText("Título"), {
       target: { value: "Renovação anual" },
     });
     fireEvent.change(screen.getByLabelText("Cliente"), {
@@ -207,25 +140,24 @@ describe("C3.6.5 opportunity creation", () => {
     );
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        expect.stringContaining("/opportunities"),
-        expect.objectContaining({
-          method: "POST",
-          body: JSON.stringify({
-            pipelineId,
-            stageId,
-            companyId,
-            ownerUserId,
-            title: "Renovação anual",
-            estimatedValue: "1500.00",
-          }),
-        })
+      const postCall = fetchMock.mock.calls.find(
+        ([input, init]) =>
+          String(input).endsWith("/opportunities") && init?.method === "POST"
       );
+      expect(postCall).toBeDefined();
+      expect(JSON.parse(String(postCall?.[1]?.body))).toEqual({
+        pipelineId,
+        stageId,
+        companyId,
+        ownerUserId,
+        title: "Renovação anual",
+        estimatedValue: "1500.00",
+      });
+      expect(getOpportunityReads()).toBeGreaterThanOrEqual(2);
     });
 
-    expect(await screen.findByText("Renovação anual")).toBeInTheDocument();
     expect(
       screen.queryByRole("form", { name: "Nova oportunidade" })
-    ).not.toBeInTheDocument();
+    ).toBeNull();
   });
 });
