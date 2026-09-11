@@ -46,6 +46,7 @@ export function OpportunitiesView({ accessToken }: OpportunitiesViewProps) {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -110,10 +111,57 @@ export function OpportunitiesView({ accessToken }: OpportunitiesViewProps) {
           <h1 id="opportunities-title">Oportunidades</h1>
           <p>Acompanhe as negociações comerciais em uma visão objetiva.</p>
         </div>
-        <button className="button" type="button">
+        <button
+          className="button"
+          type="button"
+          onClick={() => setCreateOpen(true)}
+        >
           Nova oportunidade
         </button>
       </header>
+
+      {createOpen ? (
+        <form
+          className="opportunities-view__create"
+          aria-label="Nova oportunidade"
+          onSubmit={event => event.preventDefault()}
+        >
+          <label>
+            <span>Título</span>
+            <input name="title" type="text" />
+          </label>
+          <label>
+            <span>Cliente</span>
+            <select name="customer" defaultValue="">
+              <option value="">Selecione o cliente</option>
+            </select>
+          </label>
+          <label>
+            <span>Funil</span>
+            <select name="pipelineId" defaultValue="">
+              <option value="">Selecione o funil</option>
+            </select>
+          </label>
+          <label>
+            <span>Etapa</span>
+            <select name="stageId" defaultValue="">
+              <option value="">Selecione a etapa</option>
+            </select>
+          </label>
+          <label>
+            <span>Valor estimado</span>
+            <input name="estimatedValue" inputMode="decimal" />
+          </label>
+          <label>
+            <span>Previsão de fechamento</span>
+            <input name="expectedCloseAt" type="datetime-local" />
+          </label>
+          <label>
+            <span>Observações</span>
+            <textarea name="notes" />
+          </label>
+        </form>
+      ) : null}
 
       <form
         className="opportunities-view__search"
