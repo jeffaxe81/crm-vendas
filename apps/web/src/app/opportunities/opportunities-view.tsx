@@ -1,6 +1,9 @@
 "use client";
 
-import type { OpportunityCreateInput } from "@axes/contracts";
+import type {
+  OpportunityCreateInput,
+  OpportunityMoveInput,
+} from "@axes/contracts";
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
@@ -62,6 +65,7 @@ type OpportunitiesViewProps = {
   accessToken: string;
   ownerUserId: string;
   canWrite: boolean;
+  canMove?: boolean;
 };
 
 type OpportunityFormState = {
@@ -92,6 +96,7 @@ export function OpportunitiesView({
   accessToken,
   ownerUserId,
   canWrite,
+  canMove = false,
 }: OpportunitiesViewProps) {
   const [opportunities, setOpportunities] = useState<OpportunityRecord[]>([]);
   const [queryInput, setQueryInput] = useState("");
@@ -104,6 +109,12 @@ export function OpportunitiesView({
   const [contacts, setContacts] = useState<ContactOption[]>([]);
   const [pipelines, setPipelines] = useState<PipelineOption[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [movingOpportunityId, setMovingOpportunityId] = useState<string | null>(
+    null
+  );
+  const [stageSelections, setStageSelections] = useState<
+    Record<string, string>
+  >({});
   const [refreshVersion, setRefreshVersion] = useState(0);
 
   const selectedPipeline = pipelines.find(
@@ -156,6 +167,41 @@ export function OpportunitiesView({
       active = false;
     };
   }, [accessToken, query, refreshVersion]);
+
+  useEffect(() => {
+    let active = true;
+
+    if (!canMove) {
+      return () => {
+        active = false;
+      };
+    }
+
+    async function loadPipelines() {
+      try {
+        const result = await apiRequest<PipelineOption[]>("/pipelines", {
+          accessToken,
+        });
+        if (active) {
+          setPipelines(result);
+        }
+      } catch (cause) {
+        if (active) {
+          setError(
+            cause instanceof Error
+              ? cause.message
+              : "Não foi possível carregar as etapas do funil."
+          );
+        }
+      }
+    }
+
+    void loadPipelines();
+
+    return () => {
+      active = false;
+    };
+  }, [accessToken, canMove]);
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -250,6 +296,50 @@ export function OpportunitiesView({
       );
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function moveOpportunity(opportunity: OpportunityRecord) {
+    if (!canMove || movingOpportunityId) {
+      return;
+    }
+
+    const stageId = stageSelections[opportunity.id] ?? opportunity.stageId;
+    if (stageId === opportunity.stageId) {
+      return;
+    }
+
+    const payload: OpportunityMoveInput = {
+      stageId,
+      version: opportunity.version,
+    };
+
+    setError("");
+    setMovingOpportunityId(opportunity.id);
+
+    try {
+      await apiRequest<OpportunityRecord>(
+        `/opportunities/${opportunity.id}/stage`,
+        {
+          accessToken,
+          method: "PATCH",
+          body: payload,
+        }
+      );
+      setStageSelections(current => {
+        const next = { ...current };
+        delete next[opportunity.id];
+        return next;
+      });
+      setRefreshVersion(version => version + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível mover a oportunidade."
+      );
+    } finally {
+      setMovingOpportunityId(null);
     }
   }
 
@@ -462,30 +552,72 @@ export function OpportunitiesView({
 
       {!loading && !error && opportunities.length > 0 ? (
         <ul className="opportunities-view__list">
-          {opportunities.map(opportunity => (
-            <li key={opportunity.id} className="opportunity-card">
-              <article>
-                <p className="opportunity-card__eyebrow">Oportunidade</p>
-                <h2>{opportunity.title}</h2>
-                <dl>
-                  <div>
-                    <dt>Valor estimado</dt>
-                    <dd>{opportunity.estimatedValue}</dd>
-                  </div>
-                  <div>
-                    <dt>Previsão de fechamento</dt>
-                    <dd>
-                      {opportunity.expectedCloseAt
-                        ? dateFormatter.format(
-                            new Date(opportunity.expectedCloseAt)
-                          )
-                        : "Não informada"}
-                    </dd>
-                  </div>
-                </dl>
-              </article>
-            </li>
-          ))}
+          {opportunities.map(opportunity => {
+            const opportunityPipeline = pipelines.find(
+              pipeline => pipeline.id === opportunity.pipelineId
+            );
+            const selectedStageId =
+              stageSelections[opportunity.id] ?? opportunity.stageId;
+            const isMoving = movingOpportunityId === opportunity.id;
+
+            return (
+              <li key={opportunity.id} className="opportunity-card">
+                <article>
+                  <p className="opportunity-card__eyebrow">Oportunidade</p>
+                  <h2>{opportunity.title}</h2>
+                  <dl>
+                    <div>
+                      <dt>Valor estimado</dt>
+                      <dd>{opportunity.estimatedValue}</dd>
+                    </div>
+                    <div>
+                      <dt>Previsão de fechamento</dt>
+                      <dd>
+                        {opportunity.expectedCloseAt
+                          ? dateFormatter.format(
+                              new Date(opportunity.expectedCloseAt)
+                            )
+                          : "Não informada"}
+                      </dd>
+                    </div>
+                  </dl>
+                  {canMove && opportunityPipeline ? (
+                    <div className="opportunity-card__stage">
+                      <label>
+                        <span>Etapa</span>
+                        <select
+                          aria-label={`Etapa de ${opportunity.title}`}
+                          value={selectedStageId}
+                          disabled={isMoving}
+                          onChange={event =>
+                            setStageSelections(current => ({
+                              ...current,
+                              [opportunity.id]: event.target.value,
+                            }))
+                          }
+                        >
+                          {opportunityPipeline.stages.map(stage => (
+                            <option key={stage.id} value={stage.id}>
+                              {stage.name}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <button
+                        type="button"
+                        disabled={
+                          isMoving || selectedStageId === opportunity.stageId
+                        }
+                        onClick={() => void moveOpportunity(opportunity)}
+                      >
+                        {isMoving ? "Movendo..." : "Mover etapa"}
+                      </button>
+                    </div>
+                  ) : null}
+                </article>
+              </li>
+            );
+          })}
         </ul>
       ) : null}
     </section>
