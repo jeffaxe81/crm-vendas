@@ -8,6 +8,10 @@ const contactName = "Contato E2E";
 const contactEmail = "contato.e2e@example.test";
 const relationshipNote = "Contato E2E interessado na proposta comercial.";
 const activityName = "Follow-up E2E";
+const opportunityCompanyName = "Empresa Oportunidade E2E";
+const opportunityTitle = "Oportunidade E2E";
+
+const apiBaseUrl = "http://127.0.0.1:3001/api/v1";
 
 test("CRM core journey persists company contact channel link and history", async ({
   page,
@@ -126,4 +130,109 @@ test("CRM activities journey creates completes and persists an activity", async 
   await expect(
     completedActivity.getByRole("button", { name: "Reabrir" })
   ).toBeVisible();
+});
+
+test("CRM opportunity journey creates moves and persists a stage change", async ({
+  page,
+  request,
+}) => {
+  test.skip(!adminPassword, "BOOTSTRAP_ADMIN_PASSWORD is required for E2E.");
+
+  const apiLogin = await request.post(`${apiBaseUrl}/auth/login`, {
+    data: {
+      email: adminEmail,
+      password: adminPassword ?? "",
+    },
+  });
+  expect(apiLogin.ok()).toBeTruthy();
+
+  const apiSession = (await apiLogin.json()) as { accessToken: string };
+  const pipelineResponse = await request.post(
+    `${apiBaseUrl}/pipelines/default`,
+    {
+      headers: {
+        Authorization: `Bearer ${apiSession.accessToken}`,
+      },
+    }
+  );
+  expect(pipelineResponse.ok()).toBeTruthy();
+
+  const pipeline = (await pipelineResponse.json()) as {
+    name: string;
+    stages: Array<{ id: string; name: string }>;
+  };
+  expect(pipeline.stages.length).toBeGreaterThanOrEqual(2);
+
+  const initialStage = pipeline.stages[0];
+  const targetStage = pipeline.stages[1];
+
+  await page.goto("http://127.0.0.1:3000");
+  await page.getByLabel("E-mail").fill(adminEmail);
+  await page.getByLabel("Senha").fill(adminPassword ?? "");
+  await page.getByRole("button", { name: "Entrar no CRM" }).click();
+
+  await expect(
+    page.getByRole("button", { name: "Nova empresa" })
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Nova empresa" }).click();
+  const companyForm = page.getByRole("form", { name: "Nova empresa" });
+  await companyForm.getByLabel("Razão social").fill(opportunityCompanyName);
+  await companyForm.getByLabel("Nome fantasia").fill(opportunityCompanyName);
+  await companyForm.getByRole("button", { name: "Salvar empresa" }).click();
+  await expect(
+    page.getByText(opportunityCompanyName, { exact: true }).first()
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Oportunidades" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Oportunidades" })
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Nova oportunidade" }).click();
+
+  const opportunityForm = page.getByRole("form", {
+    name: "Nova oportunidade",
+  });
+  await opportunityForm.getByLabel("Título").fill(opportunityTitle);
+  await opportunityForm
+    .getByLabel("Cliente")
+    .selectOption({ label: opportunityCompanyName });
+  await opportunityForm
+    .getByLabel("Funil")
+    .selectOption({ label: pipeline.name });
+  await opportunityForm
+    .getByLabel("Etapa")
+    .selectOption({ label: initialStage.name });
+  await opportunityForm.getByLabel("Valor estimado").fill("2500.00");
+  await opportunityForm
+    .getByRole("button", { name: "Salvar oportunidade" })
+    .click();
+
+  const opportunityCard = page
+    .getByRole("listitem")
+    .filter({ hasText: opportunityTitle });
+  await expect(opportunityCard).toBeVisible();
+
+  const stageSelect = opportunityCard.getByRole("combobox", {
+    name: `Etapa de ${opportunityTitle}`,
+  });
+  await expect(stageSelect).toHaveValue(initialStage.id);
+  await stageSelect.selectOption(targetStage.id);
+  await opportunityCard.getByRole("button", { name: "Mover etapa" }).click();
+  await expect(stageSelect).toHaveValue(targetStage.id);
+
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Oportunidades" })
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Oportunidades" }).click();
+
+  const persistedOpportunityCard = page
+    .getByRole("listitem")
+    .filter({ hasText: opportunityTitle });
+  await expect(persistedOpportunityCard).toBeVisible();
+  await expect(
+    persistedOpportunityCard.getByRole("combobox", {
+      name: `Etapa de ${opportunityTitle}`,
+    })
+  ).toHaveValue(targetStage.id);
 });

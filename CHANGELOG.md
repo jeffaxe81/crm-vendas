@@ -1,5 +1,37 @@
 # Changelog
 
+## [Unreleased] - Cycle 3.6.6
+
+### Web de oportunidades — movimentação de etapa
+
+- movimentação de oportunidade exposta na Web somente para sessões com `opportunity.move`;
+- seleção limitada às etapas pertencentes ao mesmo Pipeline da oportunidade;
+- reutilização de `PATCH /api/v1/opportunities/:id/stage` com `{ stageId, version }`, preservando a concorrência otimista já existente na API;
+- recarga da lista após movimentação bem-sucedida, refletindo a etapa persistida pelo backend;
+- `canMove` derivado das permissões da sessão autenticada, sem criação de novas permissões RBAC;
+- E2E canônico valida login, bootstrap idempotente do funil padrão, criação de empresa e oportunidade, movimentação de `Prospecção` para `Qualificação` e persistência após reload;
+- nenhuma alteração de banco, migrations, RLS, contratos de domínio ou API nesta microentrega;
+- o workflow #616 do commit inicial `9234413f0fb6ff8dee49082efdf9443cfba25acf` parou apenas por formatação do teste e não foi considerado RED funcional;
+- RED funcional validado no commit `93b2d604e19002993bb86cf6cbc8046c4c88ffd3` / workflow `34591294806` (#617), pela ausência esperada do controle Web de etapa;
+- GREEN funcional intermediário validado no commit `920fa4090b97ebbb3a63abd868f24c1fa119497c` / workflow `34591600221` (#619), antes do E2E específico e da documentação final;
+- validação integral pré-fechamento GREEN no commit `a4bc5f1f7a78b78e88af1fb30b5df7d314e00eae` / workflow `34592410380` (#627), incluindo `pnpm verify`, E2E, Compose e imagens Docker;
+- edição geral, troca de Pipeline, Kanban, drag-and-drop e fechamento WON/LOST permanecem fora da C3.6.6;
+- PR #33 permanece Draft e condicionado ao gate final GREEN no head documental definitivo e à aprovação humana explícita antes do merge.
+
+## [Unreleased] - Cycle 3.6.5
+
+### Web de oportunidades — criação
+
+- ação `Nova oportunidade` disponível somente para sessões com `opportunity.write`;
+- formulário de criação com título, cliente Empresa ou Contato, funil, etapa, valor estimado, previsão de fechamento e observações;
+- responsável inicial derivado do usuário autenticado, sem consulta administrativa de usuários;
+- reutilização dos contratos existentes `GET /pipelines`, listas de empresas/contatos e `POST /opportunities`;
+- lista de oportunidades recarregada após criação bem-sucedida;
+- nenhuma alteração de banco, migration, RLS, API ou expansão de permissões RBAC;
+- RED funcional validado no commit `efe1abe03e7e4f14815b5f615532476050fcbb1d` / workflow #582, pela ausência esperada da ação `Nova oportunidade`;
+- GREEN final validado no commit `bcd2757bf951a4da5c0935dd5b890fbc7b61d613` / workflow `34589588501` (#615);
+- PR #32 integrado à `main` pelo merge commit `480a5b2c2bbf37829d2e1d7474cd2c31fa5f1d3d`.
+
 ## [Unreleased] - Cycle 3.6.4
 
 ### Web de oportunidades — lista
