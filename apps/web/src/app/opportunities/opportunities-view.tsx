@@ -110,6 +110,9 @@ export function OpportunitiesView({ accessToken }: OpportunitiesViewProps) {
           <h1 id="opportunities-title">Oportunidades</h1>
           <p>Acompanhe as negociações comerciais em uma visão objetiva.</p>
         </div>
+        <button className="button" type="button">
+          Nova oportunidade
+        </button>
       </header>
 
       <form
