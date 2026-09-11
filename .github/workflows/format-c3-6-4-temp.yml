@@ -1,0 +1,35 @@
+name: Format C3.6.4 once
+
+on:
+  push:
+    branches:
+      - feat/c3-6-4-opportunities-web-list
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: ${{ !contains(github.event.head_commit.message, '[formatted-c3-6-4]') }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feat/c3-6-4-opportunities-web-list
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - run: corepack enable
+      - run: corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier --write apps/web/src/app/crm-shell.tsx apps/web/src/app/opportunities/opportunities-view.tsx
+      - name: Commit formatted files
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/app/crm-shell.tsx apps/web/src/app/opportunities/opportunities-view.tsx
+          git commit -m "style(web): apply project formatter [formatted-c3-6-4]"
+          git push origin HEAD:feat/c3-6-4-opportunities-web-list
