@@ -100,7 +100,10 @@ export function OpportunitiesView({ accessToken }: OpportunitiesViewProps) {
   }
 
   return (
-    <section className="opportunities-view" aria-labelledby="opportunities-title">
+    <section
+      className="opportunities-view"
+      aria-labelledby="opportunities-title"
+    >
       <header className="opportunities-view__header">
         <div>
           <p className="opportunities-view__eyebrow">Pipeline comercial</p>

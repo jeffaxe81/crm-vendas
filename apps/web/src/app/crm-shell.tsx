@@ -4,10 +4,7 @@ import type { AuthSessionResponse } from "@axes/contracts";
 import type { ReactNode } from "react";
 
 export type CrmSection =
-  | "companies"
-  | "contacts"
-  | "activities"
-  | "opportunities";
+  "companies" | "contacts" | "activities" | "opportunities";
 
 type CrmShellProps = {
   session: AuthSessionResponse;
@@ -25,9 +22,7 @@ export function CrmShell({
   children,
 }: CrmShellProps) {
   const canReadActivities = session.permissions.includes("activity.read");
-  const canReadOpportunities = session.permissions.includes(
-    "opportunity.read"
-  );
+  const canReadOpportunities = session.permissions.includes("opportunity.read");
   const isActivitiesActive = activeSection === "activities";
   const isOpportunitiesActive = activeSection === "opportunities";
 
