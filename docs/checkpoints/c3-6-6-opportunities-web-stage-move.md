@@ -32,24 +32,25 @@ A C3.6.6 fecha a lacuna funcional da Fase 1 permitindo movimentar uma oportunida
 
 ### RED — comportamento antes da implementação
 
-- commit RED: `9234413f0fb6ff8dee49082efdf9443cfba25acf`;
-- workflow RED: `34591013129` (#616);
-- infraestrutura, dependencies, Prisma, migrations e role de aplicação passaram;
-- `Verify source and tests` falhou como esperado antes da implementação da movimentação Web;
-- etapas posteriores do gate foram corretamente interrompidas.
+- o commit inicial `9234413f0fb6ff8dee49082efdf9443cfba25acf` gerou o workflow #616, que parou apenas por formatação do novo teste e não foi considerado RED funcional;
+- RED funcional: commit `93b2d604e19002993bb86cf6cbc8046c4c88ffd3`;
+- workflow RED funcional: `34591294806` (#617);
+- Prettier, lint e typecheck passaram antes do teste comportamental;
+- o teste `moves an opportunity within its pipeline and reloads the list` falhou pela ausência esperada do combobox `Etapa de Renovação anual`;
+- resultado Web no RED funcional: 32 testes aprovados e 1 falha esperada.
 
 ### GREEN funcional intermediário
 
 A implementação funcional foi introduzida incrementalmente nos commits:
 
-- `a851fc290...` — movimentação de etapa na Web reutilizando a API existente;
+- `a851fc290281cc8ab5e5ccb6917c04baad4a7ae7` — movimentação de etapa na Web reutilizando a API existente;
 - `920fa4090b97ebbb3a63abd868f24c1fa119497c` — permission gate por `opportunity.move`.
 
-O workflow #619 terminou GREEN no head `920fa4090b97ebbb3a63abd868f24c1fa119497c`, incluindo verificação de fonte/testes, Playwright E2E existente, Compose e build das imagens.
+O workflow #619 (`34591600221`) terminou GREEN no head `920fa4090b97ebbb3a63abd868f24c1fa119497c`, incluindo verificação de fonte/testes, Playwright E2E existente, Compose e build das imagens.
 
 ## E2E específico da C3.6.6
 
-Foi adicionado um fluxo Playwright dedicado que:
+Foi adicionado ao fluxo Playwright canônico um cenário que:
 
 - autentica o administrador de teste;
 - garante idempotentemente o `Funil de Vendas` padrão pela API;
@@ -58,7 +59,23 @@ Foi adicionado um fluxo Playwright dedicado que:
 - movimenta a oportunidade para `Qualificação` pela interface Web;
 - recarrega a aplicação e valida a persistência da nova etapa.
 
-Esse teste complementa os testes Web existentes e valida o fluxo comercial real sem mocks.
+Esse teste complementa os testes Web existentes e valida o fluxo comercial real sem mocks de domínio.
+
+## Validação integral pré-fechamento
+
+O workflow #627 (`34592410380`) terminou GREEN no head `a4bc5f1f7a78b78e88af1fb30b5df7d314e00eae`, incluindo:
+
+- instalação congelada e políticas de supply chain;
+- Prisma generate;
+- deploy das migrations existentes;
+- provisionamento da role de aplicação com `NOBYPASSRLS`;
+- `pnpm verify`;
+- bootstrap do administrador E2E;
+- Playwright E2E, incluindo criação e movimentação de oportunidade;
+- validação de Compose;
+- build das imagens API e Web.
+
+Como este próprio ajuste documental cria um novo SHA, o gate integral deve ser executado novamente no head documental definitivo antes do gate humano.
 
 ## Fora do escopo
 
@@ -72,19 +89,7 @@ Permanecem deliberadamente fora da C3.6.6:
 - produtos, propostas, comissões, automações, integrações e IA;
 - qualquer alteração de banco, migration, RLS ou contrato de domínio.
 
-## Gate de integração
-
-Após o E2E e esta documentação, um novo workflow completo deve terminar GREEN no SHA final da branch, incluindo:
-
-- instalação congelada e políticas de supply chain;
-- Prisma generate;
-- deploy das migrations existentes;
-- provisionamento da role de aplicação sem bypass de RLS;
-- `pnpm verify`;
-- bootstrap do administrador E2E;
-- Playwright E2E, incluindo movimentação de oportunidade;
-- validação de Compose;
-- build das imagens API e Web.
+## Gate humano
 
 Mesmo após GREEN e com o PR mergeável, o PR #33 deve permanecer Draft e **não pode ser marcado ready nem mergeado** sem aprovação humana explícita equivalente a:
 
