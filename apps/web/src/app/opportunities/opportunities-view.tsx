@@ -265,7 +265,11 @@ export function OpportunitiesView({
           <p>Acompanhe as negociações comerciais em uma visão objetiva.</p>
         </div>
         {canWrite ? (
-          <button className="button" type="button" onClick={() => void openCreate()}>
+          <button
+            className="button"
+            type="button"
+            onClick={() => void openCreate()}
+          >
             Nova oportunidade
           </button>
         ) : null}
@@ -295,7 +299,10 @@ export function OpportunitiesView({
               name="customer"
               value={form.customer}
               onChange={event =>
-                setForm(current => ({ ...current, customer: event.target.value }))
+                setForm(current => ({
+                  ...current,
+                  customer: event.target.value,
+                }))
               }
               required
             >
@@ -303,10 +310,7 @@ export function OpportunitiesView({
               {companies.length > 0 ? (
                 <optgroup label="Empresas">
                   {companies.map(company => (
-                    <option
-                      key={company.id}
-                      value={`company:${company.id}`}
-                    >
+                    <option key={company.id} value={`company:${company.id}`}>
                       {company.tradeName || company.legalName}
                     </option>
                   ))}
@@ -351,7 +355,10 @@ export function OpportunitiesView({
               name="stageId"
               value={form.stageId}
               onChange={event =>
-                setForm(current => ({ ...current, stageId: event.target.value }))
+                setForm(current => ({
+                  ...current,
+                  stageId: event.target.value,
+                }))
               }
               required
             >
