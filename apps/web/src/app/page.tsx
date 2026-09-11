@@ -97,7 +97,11 @@ export default function Home() {
             canWrite={session.permissions.includes("activity.write")}
           />
         ) : (
-          <OpportunitiesView accessToken={session.accessToken} />
+          <OpportunitiesView
+            accessToken={session.accessToken}
+            ownerUserId={session.user.id}
+            canWrite={session.permissions.includes("opportunity.write")}
+          />
         )}
       </CrmShell>
     );
