@@ -18,12 +18,10 @@ afterEach(() => {
 
 describe("C3.6.5 opportunity creation", () => {
   it("shows the create action", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () =>
-        response({ items: [], page: 1, limit: 20, total: 0 })
-      )
-    );
+    const fetchMock = vi.fn(async () => {
+      return response({ items: [], page: 1, limit: 20, total: 0 });
+    });
+    vi.stubGlobal("fetch", fetchMock);
 
     render(<OpportunitiesView accessToken="opportunities-access-token" />);
 
