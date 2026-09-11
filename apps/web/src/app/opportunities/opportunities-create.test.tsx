@@ -109,9 +109,7 @@ describe("C3.6.5 opportunity creation", () => {
     );
 
     await screen.findByText("Nenhuma oportunidade encontrada.");
-    fireEvent.click(
-      screen.getByRole("button", { name: "Nova oportunidade" })
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Nova oportunidade" }));
 
     expect(
       await screen.findByRole("option", { name: "Empresa Exemplo" })
