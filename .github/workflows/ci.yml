@@ -63,14 +63,6 @@ jobs:
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Capture C3.6.5 formatted test
-        run: |
-          pnpm exec prettier --write apps/web/src/app/opportunities/opportunities-create.test.tsx
-          echo '--- C3.6.5 PRETTIER BEGIN ---'
-          cat apps/web/src/app/opportunities/opportunities-create.test.tsx
-          echo '--- C3.6.5 PRETTIER END ---'
-          exit 1
-
       - name: Generate Prisma client
         run: pnpm --filter @axes/api prisma:generate
 
