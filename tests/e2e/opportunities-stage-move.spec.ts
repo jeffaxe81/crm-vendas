@@ -62,7 +62,9 @@ test("opportunity stage movement persists inside the current pipeline", async ({
     name: "Nova oportunidade",
   });
   await opportunityForm.getByLabel("Título").fill(opportunityTitle);
-  await opportunityForm.getByLabel("Cliente").selectOption({ label: companyName });
+  await opportunityForm
+    .getByLabel("Cliente")
+    .selectOption({ label: companyName });
   await opportunityForm
     .getByLabel("Funil")
     .selectOption({ label: "Funil de Vendas" });
@@ -85,7 +87,9 @@ test("opportunity stage movement persists inside the current pipeline", async ({
   await expect(stageSelect.locator("option:checked")).toHaveText("Prospecção");
   await stageSelect.selectOption({ label: "Qualificação" });
   await opportunityCard.getByRole("button", { name: "Mover etapa" }).click();
-  await expect(stageSelect.locator("option:checked")).toHaveText("Qualificação");
+  await expect(stageSelect.locator("option:checked")).toHaveText(
+    "Qualificação"
+  );
 
   await page.reload();
   await expect(page.getByLabel("Acesso ao CRM")).toBeVisible();
