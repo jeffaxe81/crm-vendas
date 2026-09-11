@@ -147,11 +147,14 @@ test("CRM opportunity journey creates moves and persists a stage change", async 
   expect(apiLogin.ok()).toBeTruthy();
 
   const apiSession = (await apiLogin.json()) as { accessToken: string };
-  const pipelineResponse = await request.post(`${apiBaseUrl}/pipelines/default`, {
-    headers: {
-      Authorization: `Bearer ${apiSession.accessToken}`,
-    },
-  });
+  const pipelineResponse = await request.post(
+    `${apiBaseUrl}/pipelines/default`,
+    {
+      headers: {
+        Authorization: `Bearer ${apiSession.accessToken}`,
+      },
+    }
+  );
   expect(pipelineResponse.ok()).toBeTruthy();
 
   const pipeline = (await pipelineResponse.json()) as {
@@ -193,7 +196,9 @@ test("CRM opportunity journey creates moves and persists a stage change", async 
   await opportunityForm
     .getByLabel("Cliente")
     .selectOption({ label: opportunityCompanyName });
-  await opportunityForm.getByLabel("Funil").selectOption({ label: pipeline.name });
+  await opportunityForm
+    .getByLabel("Funil")
+    .selectOption({ label: pipeline.name });
   await opportunityForm
     .getByLabel("Etapa")
     .selectOption({ label: initialStage.name });
