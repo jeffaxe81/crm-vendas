@@ -60,6 +60,11 @@ export {
 } from "./health";
 
 export {
+  ManagementSummarySchema,
+  type ManagementSummary,
+} from "./management-summary";
+
+export {
   OpportunityCreateInputSchema,
   OpportunityDecimalSchema,
   OpportunityListQuerySchema,
