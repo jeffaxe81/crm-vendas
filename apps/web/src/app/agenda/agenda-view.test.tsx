@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { AgendaView } from "./agenda-view";
@@ -42,7 +48,9 @@ afterEach(() => {
 
 describe("C4.1 AgendaView", () => {
   it("loads a weekly window and applies activity filters", async () => {
-    const fetchMock = vi.fn(async () => response(agendaPayload));
+    const fetchMock = vi.fn(async (_input: string | URL) =>
+      response(agendaPayload)
+    );
     vi.stubGlobal("fetch", fetchMock);
 
     render(
