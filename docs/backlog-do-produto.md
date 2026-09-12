@@ -22,7 +22,7 @@
 | US-03 | Como usuário, quero criar tarefas associadas a clientes e oportunidades.                    | A tarefa possui responsável, prazo, prioridade e status.                         |
 | US-04 | Como usuário, quero acompanhar oportunidades por etapas do funil.                           | A oportunidade possui cliente, valor, previsão e etapa editável.                 |
 | US-05 | Como gestor, quero indicadores comerciais básicos para orientar prioridades.                | O painel resume oportunidades por etapa, valor em aberto e atividades pendentes. |
-| US-06 | Como usuário comercial, quero visualizar minhas atividades em uma agenda semanal.            | A agenda usa dueAt, navegação semanal, filtros e respeita activity.read.          |
+| US-06 | Como usuário comercial, quero visualizar minhas atividades em uma agenda semanal.           | A agenda usa dueAt, navegação semanal, filtros e respeita activity.read.         |
 
 ## Delimitação do incremento
 
