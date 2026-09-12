@@ -4,11 +4,7 @@ import type { AuthSessionResponse } from "@axes/contracts";
 import type { ReactNode } from "react";
 
 export type CrmSection =
-  | "companies"
-  | "contacts"
-  | "activities"
-  | "agenda"
-  | "opportunities";
+  "companies" | "contacts" | "activities" | "agenda" | "opportunities";
 
 type CrmShellProps = {
   session: AuthSessionResponse;
