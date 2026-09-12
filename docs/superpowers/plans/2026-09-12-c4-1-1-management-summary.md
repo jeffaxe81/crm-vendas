@@ -50,11 +50,15 @@ expect(roleHasPermission("VIEWER", "reports.read")).toBe(false);
 import { z } from "zod";
 export const ManagementSummarySchema = z.object({
   asOf: z.string().datetime(),
-  opportunitiesByStage: z.array(z.object({
-    pipelineId: z.string().uuid(), pipelineName: z.string(),
-    stageId: z.string().uuid(), stageName: z.string(),
-    count: z.number().int().nonnegative(),
-  })),
+  opportunitiesByStage: z.array(
+    z.object({
+      pipelineId: z.string().uuid(),
+      pipelineName: z.string(),
+      stageId: z.string().uuid(),
+      stageName: z.string(),
+      count: z.number().int().nonnegative(),
+    })
+  ),
   openEstimatedValue: z.string().regex(/^\d+\.\d{2}$/),
   pendingActivities: z.number().int().nonnegative(),
   overdueActivities: z.number().int().nonnegative(),

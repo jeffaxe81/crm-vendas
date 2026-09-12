@@ -34,13 +34,13 @@ Todos os cálculos usam exclusivamente a organização da sessão e registros co
 deletedAt nulo. São um retrato atual, sem filtro por período ou reconstrução
 histórica. A API captura um único instante de referência por consulta.
 
-| Indicador | Regra |
-| --- | --- |
-| Oportunidades por etapa | Contagem por pipelineId e stageId, com nomes do funil e da etapa; nomes iguais não fundem grupos. |
-| Valor em aberto | Soma decimal de estimatedValue apenas quando a etapa tem kind OPEN. Não representa receita realizada ou faturamento. |
-| Atividades pendentes | Contagem de atividades PENDING. |
-| Atividades vencidas | Subconjunto PENDING com dueAt estritamente anterior ao instante de referência. |
-| Atividades sem prazo | Subconjunto PENDING com dueAt nulo. Não são vencidas. |
+| Indicador               | Regra                                                                                                                |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Oportunidades por etapa | Contagem por pipelineId e stageId, com nomes do funil e da etapa; nomes iguais não fundem grupos.                    |
+| Valor em aberto         | Soma decimal de estimatedValue apenas quando a etapa tem kind OPEN. Não representa receita realizada ou faturamento. |
+| Atividades pendentes    | Contagem de atividades PENDING.                                                                                      |
+| Atividades vencidas     | Subconjunto PENDING com dueAt estritamente anterior ao instante de referência.                                       |
+| Atividades sem prazo    | Subconjunto PENDING com dueAt nulo. Não são vencidas.                                                                |
 
 Atividades COMPLETED e CANCELLED não entram nos três indicadores de pendência.
 dueAt igual ao instante de referência não está vencido. Excluir logicamente uma
