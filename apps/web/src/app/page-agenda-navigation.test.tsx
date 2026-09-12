@@ -79,9 +79,7 @@ describe("C4.1 agenda navigation", () => {
       screen.getByRole("button", { name: "Anterior" })
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Hoje" })).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Próximo" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Próximo" })).toBeInTheDocument();
   });
 
   it("hides agenda when the session lacks activity.read", async () => {
