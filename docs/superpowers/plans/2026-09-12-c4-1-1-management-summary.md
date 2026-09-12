@@ -120,7 +120,7 @@ expect(response.body.undatedActivities).toBe(1);
 
 - [ ] Usar duas oportunidades OPEN de 0.10 e 0.20, uma WON de 500, uma LOST de 600 e uma excluída de 900. Criar três pendentes (vencida, futura e sem prazo), uma concluída e uma cancelada. Adicionar tenant B com valores distintos. Verificar grupos por IDs, inclusive nomes iguais entre funis, registros em etapas inativas e mais de 100 oportunidades para demonstrar independência de paginação.
 - [ ] Rodar pnpm --filter @axes/api test --runTestsByPath src/reports/management-summary.integration.spec.ts e registrar RED funcional.
-- [ ] Implementar o controller com AuthenticationGuard, PermissionsGuard e RequirePermissions("reports.read"). Recusar query não vazia com 400; principal ausente com 401. Ler organizationId de request.principal conforme AuthenticatedRequest; nunca derivar da query/body. Serviço recebe somente organizationId.
+- [ ] Implementar o controller com AuthenticationGuard, PermissionsGuard e RequirePermissions("reports.read"). Recusar query não vazia com 400; request.auth ausente com 401. Ler organizationId de request.auth conforme AuthenticatedRequest; nunca derivar da query/body. Serviço recebe somente organizationId.
 - [ ] Implementar read sob withTenant com RepeatableRead; capturar asOf uma vez dentro da transação. groupBy de oportunidades por pipelineId/stageId com deletedAt null; consultar metadados dos IDs retornados dentro da mesma transação e ordenar por pipeline.name, pipeline.id, stage.position, stage.id após conferir o nome de ordenação no schema. Falta de metadados é erro, nunca total silenciosamente descartado.
 
 ```ts
