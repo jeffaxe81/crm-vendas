@@ -146,7 +146,9 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
           { accessToken }
         );
         if (active) {
-          setActivities(result.items.filter(activity => activity.dueAt !== null));
+          setActivities(
+            result.items.filter(activity => activity.dueAt !== null)
+          );
         }
       } catch (cause) {
         if (active) {
@@ -199,7 +201,10 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
         </div>
       </header>
 
-      <nav className="activities-view__status-tabs" aria-label="Período da agenda">
+      <nav
+        className="activities-view__status-tabs"
+        aria-label="Período da agenda"
+      >
         <button type="button" onClick={() => setWeekOffset(value => value - 1)}>
           Anterior
         </button>
@@ -212,7 +217,8 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
       </nav>
 
       <p className="activities-view__status">
-        {periodFormatter.format(period.from)} a {periodFormatter.format(period.to)}
+        {periodFormatter.format(period.from)} a{" "}
+        {periodFormatter.format(period.to)}
       </p>
 
       <div className="activity-form__fields" aria-label="Filtros da agenda">
