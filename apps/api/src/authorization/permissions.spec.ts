@@ -17,6 +17,13 @@ describe("role permissions", () => {
     expect(roleHasPermission("SELLER", "audit.read")).toBe(false);
   });
 
+  it("grants management reports only to administrators and managers", () => {
+    expect(roleHasPermission("ADMIN", "reports.read")).toBe(true);
+    expect(roleHasPermission("MANAGER", "reports.read")).toBe(true);
+    expect(roleHasPermission("SELLER", "reports.read")).toBe(false);
+    expect(roleHasPermission("VIEWER", "reports.read")).toBe(false);
+  });
+
   it("keeps viewers read-only", () => {
     expect(permissionsForRole("VIEWER")).toContain("company.read");
     expect(roleHasPermission("VIEWER", "company.write")).toBe(false);
