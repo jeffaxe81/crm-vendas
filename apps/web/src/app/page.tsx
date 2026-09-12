@@ -8,6 +8,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { authApiRequest } from "../lib/api-client";
 import { ActivitiesView } from "./activities/activities-view";
+import { AgendaView } from "./agenda/agenda-view";
 import { CompaniesView } from "./companies/companies-view";
 import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
@@ -95,6 +96,11 @@ export default function Home() {
             accessToken={session.accessToken}
             ownerUserId={session.user.id}
             canWrite={session.permissions.includes("activity.write")}
+          />
+        ) : activeSection === "agenda" ? (
+          <AgendaView
+            accessToken={session.accessToken}
+            ownerUserId={session.user.id}
           />
         ) : (
           <OpportunitiesView

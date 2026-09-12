@@ -4,7 +4,7 @@ import type { AuthSessionResponse } from "@axes/contracts";
 import type { ReactNode } from "react";
 
 export type CrmSection =
-  "companies" | "contacts" | "activities" | "opportunities";
+  "companies" | "contacts" | "activities" | "agenda" | "opportunities";
 
 type CrmShellProps = {
   session: AuthSessionResponse;
@@ -24,6 +24,7 @@ export function CrmShell({
   const canReadActivities = session.permissions.includes("activity.read");
   const canReadOpportunities = session.permissions.includes("opportunity.read");
   const isActivitiesActive = activeSection === "activities";
+  const isAgendaActive = activeSection === "agenda";
   const isOpportunitiesActive = activeSection === "opportunities";
 
   return (
@@ -69,6 +70,16 @@ export function CrmShell({
               onClick={() => onNavigate("activities")}
             >
               Atividades
+            </button>
+          ) : null}
+          {canReadActivities ? (
+            <button
+              type="button"
+              className={isAgendaActive ? "is-active" : undefined}
+              aria-current={isAgendaActive ? "page" : undefined}
+              onClick={() => onNavigate("agenda")}
+            >
+              Agenda
             </button>
           ) : null}
           {canReadOpportunities ? (
