@@ -1,7 +1,9 @@
 import {
   LoginInputSchema,
+  RegisterOrganizationInputSchema,
   type AuthSessionResponse,
   type LoginInput,
+  type RegisterOrganizationInput,
 } from "@axes/contracts";
 import {
   BadRequestException,
@@ -44,6 +46,23 @@ export class AuthController {
     return result.response;
   }
 
+  @Post("register")
+  @HttpCode(201)
+  async register(
+    @Body() body: unknown,
+    @Req() request: RequestWithContext,
+    @Res({ passthrough: true }) response: Response
+  ): Promise<AuthSessionResponse> {
+    const input = this.parseRegister(body);
+    const result = await this.auth.register(
+      input,
+      this.requestContext(request)
+    );
+
+    response.setHeader("Set-Cookie", createRefreshCookie(result.refreshToken));
+    return result.response;
+  }
+
   @Post("refresh")
   @HttpCode(200)
   async refresh(
@@ -77,6 +96,18 @@ export class AuthController {
 
   private parseLogin(body: unknown): LoginInput {
     const parsed = LoginInputSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+
+    return parsed.data;
+  }
+
+  private parseRegister(body: unknown): RegisterOrganizationInput {
+    const parsed = RegisterOrganizationInputSchema.safeParse(body);
     if (!parsed.success) {
       throw new BadRequestException({
         code: "VALIDATION_ERROR",

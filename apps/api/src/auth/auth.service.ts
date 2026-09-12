@@ -4,8 +4,10 @@ import {
   type AuthSessionResponse,
   type LoginInput,
   type MembershipRole,
+  type RegisterOrganizationInput,
 } from "@axes/contracts";
 import {
+  ConflictException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -112,6 +114,106 @@ export class AuthService {
     });
 
     return { response, refreshToken };
+  }
+
+  async register(
+    input: RegisterOrganizationInput,
+    context: AuthenticationRequestContext
+  ): Promise<AuthenticationResult> {
+    const emailNormalized = input.adminEmail.trim().toLowerCase();
+    const existingUser = await this.prisma.user.findUnique({
+      where: { emailNormalized },
+    });
+
+    if (existingUser) {
+      throw new ConflictException({
+        code: "USER_EMAIL_ALREADY_EXISTS",
+        message: "Já existe uma conta com este e-mail.",
+      });
+    }
+
+    const slug = await this.uniqueOrganizationSlug(input.organizationName);
+    const passwordHash = await this.passwords.hash(input.adminPassword);
+
+    const created = await this.prisma.$transaction(async transaction => {
+      const organization = await transaction.organization.create({
+        data: { name: input.organizationName, slug },
+      });
+
+      const user = await transaction.user.create({
+        data: {
+          email: input.adminEmail,
+          emailNormalized,
+          displayName: input.adminDisplayName,
+          passwordHash,
+        },
+      });
+
+      const membership = await transaction.organizationMembership.create({
+        data: {
+          organizationId: organization.id,
+          userId: user.id,
+          role: "ADMIN",
+        },
+      });
+
+      return { organization, user, membership };
+    });
+
+    const refreshToken = this.tokens.createRefreshToken();
+    const session = await this.prisma.refreshSession.create({
+      data: {
+        organizationId: created.organization.id,
+        userId: created.user.id,
+        tokenHash: this.tokens.hashRefreshToken(refreshToken),
+        expiresAt: this.refreshExpiry(),
+      },
+    });
+
+    const response = await this.createSessionResponse({
+      user: created.user,
+      membership: created.membership,
+      organization: created.organization,
+      role: "ADMIN",
+      sessionId: session.id,
+    });
+
+    await this.audit.record({
+      organizationId: created.organization.id,
+      actorUserId: created.user.id,
+      requestId: context.requestId,
+      action: "organization.registered",
+      entityType: "organization",
+      entityId: created.organization.id,
+      metadata: { adminEmail: created.user.email },
+      ipAddress: context.ipAddress ?? null,
+    });
+
+    return { response, refreshToken };
+  }
+
+  private async uniqueOrganizationSlug(name: string): Promise<string> {
+    const base =
+      name
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 70) || "organizacao";
+
+    let candidate = base;
+    let suffix = 1;
+
+    while (
+      await this.prisma.organization.findUnique({ where: { slug: candidate } })
+    ) {
+      suffix += 1;
+      candidate = `${base}-${suffix}`;
+    }
+
+    return candidate;
   }
 
   async refresh(

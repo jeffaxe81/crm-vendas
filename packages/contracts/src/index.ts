@@ -17,9 +17,11 @@ export {
   AuthSessionResponseSchema,
   LoginInputSchema,
   MembershipRoleSchema,
+  RegisterOrganizationInputSchema,
   type AuthSessionResponse,
   type LoginInput,
   type MembershipRole,
+  type RegisterOrganizationInput,
 } from "./auth";
 
 export {
