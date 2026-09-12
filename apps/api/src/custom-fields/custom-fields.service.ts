@@ -211,26 +211,41 @@ export class CustomFieldsService {
     definitionId: string,
     context: CustomFieldAdministrationContext
   ): Promise<void> {
-    await Promise.all([
-      this.requireCompany(companyId, context.organizationId),
-      this.requireDefinition(definitionId, context.organizationId, "COMPANY"),
-    ]);
+    // SECURITY: Perform all operations within withTenant() for consistent isolation
+    const existing = await this.prisma.withTenant(
+      context.organizationId,
+      async transaction => {
+        await Promise.all([
+          this.requireCompany(companyId, context.organizationId),
+          this.requireDefinition(definitionId, context.organizationId, "COMPANY"),
+        ]);
 
-    const existing = await this.prisma.companyCustomFieldValue.findFirst({
-      where: {
-        organizationId: context.organizationId,
-        companyId,
-        definitionId,
-      },
-    });
+        const foundValue = await transaction.companyCustomFieldValue.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            companyId,
+            definitionId,
+          },
+        });
 
-    if (!existing) {
-      throw this.valueNotFound();
-    }
+        if (!foundValue) {
+          throw this.valueNotFound();
+        }
 
-    await this.prisma.companyCustomFieldValue.delete({
-      where: { id: existing.id },
-    });
+        // SECURITY: Delete uses composite key with organizationId to prevent cross-tenant deletion
+        await transaction.companyCustomFieldValue.delete({
+          where: {
+            organizationId_companyId_definitionId: {
+              organizationId: context.organizationId,
+              companyId,
+              definitionId,
+            },
+          },
+        });
+
+        return foundValue;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -314,26 +329,41 @@ export class CustomFieldsService {
     definitionId: string,
     context: CustomFieldAdministrationContext
   ): Promise<void> {
-    await Promise.all([
-      this.requireContact(contactId, context.organizationId),
-      this.requireDefinition(definitionId, context.organizationId, "CONTACT"),
-    ]);
+    // SECURITY: Perform all operations within withTenant() for consistent isolation
+    const existing = await this.prisma.withTenant(
+      context.organizationId,
+      async transaction => {
+        await Promise.all([
+          this.requireContact(contactId, context.organizationId),
+          this.requireDefinition(definitionId, context.organizationId, "CONTACT"),
+        ]);
 
-    const existing = await this.prisma.contactCustomFieldValue.findFirst({
-      where: {
-        organizationId: context.organizationId,
-        contactId,
-        definitionId,
-      },
-    });
+        const foundValue = await transaction.contactCustomFieldValue.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            contactId,
+            definitionId,
+          },
+        });
 
-    if (!existing) {
-      throw this.valueNotFound();
-    }
+        if (!foundValue) {
+          throw this.valueNotFound();
+        }
 
-    await this.prisma.contactCustomFieldValue.delete({
-      where: { id: existing.id },
-    });
+        // SECURITY: Delete uses composite key with organizationId to prevent cross-tenant deletion
+        await transaction.contactCustomFieldValue.delete({
+          where: {
+            organizationId_contactId_definitionId: {
+              organizationId: context.organizationId,
+              contactId,
+              definitionId,
+            },
+          },
+        });
+
+        return foundValue;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,

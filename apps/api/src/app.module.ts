@@ -12,6 +12,7 @@ import { ContactsModule } from "./contacts/contacts.module";
 import { CustomFieldsModule } from "./custom-fields/custom-fields.module";
 import { HealthModule } from "./health/health.module";
 import { createLoggerOptions } from "./observability/logger.config";
+import { ObservabilityModule } from "./observability/observability.module";
 import { RequestIdMiddleware } from "./observability/request-id.middleware";
 import { OpportunitiesModule } from "./opportunities/opportunities.module";
 import { PipelinesModule } from "./pipelines/pipelines.module";
@@ -31,6 +32,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     AuthModule,
     AuditAdminModule,
     AuthorizationModule,
+    ObservabilityModule,
     OrganizationUsersModule,
     CompaniesModule,
     ContactsModule,
