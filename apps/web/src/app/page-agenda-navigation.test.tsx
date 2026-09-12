@@ -40,6 +40,7 @@ function response(body: unknown, status = 200): Response {
   } as Response;
 }
 
+const emptyCompanies = { items: [], page: 1, limit: 20, total: 0 };
 const emptyActivities = { items: [], page: 1, limit: 100, total: 0 };
 
 afterEach(() => {
@@ -52,6 +53,9 @@ function renderWithSession(session: typeof sessionWithAgenda) {
     const url = String(input);
     if (url.endsWith("/auth/refresh")) {
       return response(session);
+    }
+    if (url.includes("/companies?")) {
+      return response(emptyCompanies);
     }
     if (url.includes("/activities?")) {
       return response(emptyActivities);
@@ -71,15 +75,21 @@ describe("C4.1 agenda navigation", () => {
     expect(
       await screen.findByRole("heading", { name: "Agenda Comercial" })
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Anterior" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Anterior" })
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Hoje" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Próximo" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Próximo" })
+    ).toBeInTheDocument();
   });
 
   it("hides agenda when the session lacks activity.read", async () => {
     renderWithSession(sessionWithoutAgenda);
 
     await screen.findByText(sessionWithoutAgenda.organization.name);
-    expect(screen.queryByRole("button", { name: "Agenda" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Agenda" })
+    ).not.toBeInTheDocument();
   });
 });
