@@ -5,10 +5,17 @@ services:
       POSTGRES_DB: axes_crm
       POSTGRES_USER: axes
       POSTGRES_PASSWORD: axes
+      # Restricted runtime role — see postgres-init/01-create-app-role.sh.
+      # The API connects as this role, never as the POSTGRES_USER superuser,
+      # so that Row-Level Security tenant policies are actually enforced
+      # (superusers have BYPASSRLS by nature and silently ignore every policy).
+      APP_DB_USER: ${APP_DB_USER:-axes_app}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?set APP_DB_PASSWORD before starting the stack}
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U axes -d axes_crm"]
       interval: 5s
@@ -24,7 +31,11 @@ services:
       NODE_ENV: production
       PORT: 3001
       LOG_LEVEL: info
+      # Superuser connection — schema owner, used only if migrations run
+      # from inside this service. The running app never uses this one.
       DATABASE_URL: postgresql://axes:axes@postgres:5432/axes_crm
+      # Restricted role the app actually connects as (no BYPASSRLS).
+      APP_DATABASE_URL: postgresql://${APP_DB_USER:-axes_app}:${APP_DB_PASSWORD:?set APP_DB_PASSWORD before starting the stack}@postgres:5432/axes_crm
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
       REFRESH_TOKEN_PEPPER: ${REFRESH_TOKEN_PEPPER}

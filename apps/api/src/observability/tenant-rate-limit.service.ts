@@ -34,7 +34,7 @@ export class TenantRateLimitService {
   private readonly userLimits = new Map<string, RateLimitEntry>();
 
   // Cleanup interval (every 5 minutes)
-  private cleanupInterval: NodeJS.Timer | null = null;
+  private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor() {
     this.startCleanupInterval();

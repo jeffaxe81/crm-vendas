@@ -9,7 +9,7 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
   constructor() {
     const environment = parseApiEnvironment(process.env);
     const adapter = new PrismaPg({
-      connectionString: environment.DATABASE_URL,
+      connectionString: environment.APP_DATABASE_URL,
     });
 
     super({ adapter });

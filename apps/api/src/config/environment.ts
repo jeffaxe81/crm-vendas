@@ -13,6 +13,18 @@ const ApiEnvironmentSchema = z.object({
         value.startsWith("postgresql://") || value.startsWith("postgres://"),
       "DATABASE_URL deve usar PostgreSQL."
     ),
+  // Restricted, non-superuser connection the running app queries through.
+  // Kept separate from DATABASE_URL (the schema-owner connection used by
+  // Prisma CLI for migrations) because a superuser role has BYPASSRLS by
+  // nature and would silently defeat every Row-Level Security tenant policy.
+  APP_DATABASE_URL: z
+    .string()
+    .url()
+    .refine(
+      value =>
+        value.startsWith("postgresql://") || value.startsWith("postgres://"),
+      "APP_DATABASE_URL deve usar PostgreSQL."
+    ),
   WEB_ORIGIN: z.string().url().default("http://localhost:3000"),
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])

@@ -16,7 +16,7 @@ COPY apps/api/package.json apps/api/package.json
 COPY apps/web/package.json apps/web/package.json
 COPY packages/contracts/package.json packages/contracts/package.json
 
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile
 
 FROM dependencies AS build
 COPY tsconfig.base.json ./
@@ -45,6 +45,7 @@ COPY --from=build --chown=node:node /app/apps/api/dist ./apps/api/dist
 COPY --from=build --chown=node:node /app/apps/api/src/generated ./apps/api/dist/generated
 COPY --from=build --chown=node:node /app/packages/contracts/package.json ./packages/contracts/package.json
 COPY --from=build --chown=node:node /app/packages/contracts/dist ./packages/contracts/dist
+COPY --from=build --chown=node:node /app/packages/contracts/node_modules ./packages/contracts/node_modules
 
 USER node
 WORKDIR /app/apps/api

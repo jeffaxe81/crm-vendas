@@ -64,7 +64,7 @@ export class DeniedAccessLogger implements NestInterceptor {
     const reason = error.message ?? "Unknown";
 
     // Generate request ID if not present
-    const requestId = request.id ?? `denied-access-${Date.now()}`;
+    const requestId = String(request.id ?? `denied-access-${Date.now()}`);
 
     // Only log if we have either userId or organizationId
     // This ensures we're not logging incomplete information

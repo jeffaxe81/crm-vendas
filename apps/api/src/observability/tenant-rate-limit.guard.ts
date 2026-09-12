@@ -1,9 +1,10 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
-  TooManyRequestsException,
 } from "@nestjs/common";
 
 import type { AuthenticatedRequest } from "../authorization/authenticated-request";
@@ -55,16 +56,18 @@ export class TenantRateLimitGuard implements CanActivate {
     // Check tenant limit
     if (!this.rateLimiter.checkTenantLimit(organizationId)) {
       await this.logRateLimitViolation(request, "tenant", organizationId, userId);
-      throw new TooManyRequestsException(
-        "Organization rate limit exceeded: 1000 requests/minute"
+      throw new HttpException(
+        "Organization rate limit exceeded: 1000 requests/minute",
+        HttpStatus.TOO_MANY_REQUESTS
       );
     }
 
     // Check user limit
     if (!this.rateLimiter.checkUserLimit(userId, organizationId)) {
       await this.logRateLimitViolation(request, "user", organizationId, userId);
-      throw new TooManyRequestsException(
-        "User rate limit exceeded: 50 requests/second"
+      throw new HttpException(
+        "User rate limit exceeded: 50 requests/second",
+        HttpStatus.TOO_MANY_REQUESTS
       );
     }
 
@@ -79,7 +82,7 @@ export class TenantRateLimitGuard implements CanActivate {
   ): Promise<void> {
     const status = this.rateLimiter.getStatus(organizationId, userId);
     const ipAddress = this.extractIpAddress(request);
-    const requestId = request.id ?? `rate-limit-${Date.now()}`;
+    const requestId = String(request.id ?? `rate-limit-${Date.now()}`);
 
     try {
       await this.audit.record({

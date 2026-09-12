@@ -21,17 +21,19 @@ export class AuditService {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async list(organizationId: string, page: number, limit: number) {
-    const [items, total] = await Promise.all([
-      this.prisma.auditLog.findMany({
-        where: { organizationId },
-        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      this.prisma.auditLog.count({
-        where: { organizationId },
-      }),
-    ]);
+    const [items, total] = await this.prisma.withTenant(organizationId, tenant =>
+      Promise.all([
+        tenant.auditLog.findMany({
+          where: { organizationId },
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        tenant.auditLog.count({
+          where: { organizationId },
+        }),
+      ])
+    );
 
     return {
       items,
@@ -42,19 +44,21 @@ export class AuditService {
   }
 
   async record(input: AuditRecordInput): Promise<void> {
-    await this.prisma.auditLog.create({
-      data: {
-        organizationId: input.organizationId,
-        actorUserId: input.actorUserId ?? null,
-        requestId: input.requestId,
-        action: input.action,
-        entityType: input.entityType,
-        entityId: input.entityId ?? null,
-        before: input.before,
-        after: input.after,
-        metadata: input.metadata,
-        ipAddress: input.ipAddress ?? null,
-      },
-    });
+    await this.prisma.withTenant(input.organizationId, tenant =>
+      tenant.auditLog.create({
+        data: {
+          organizationId: input.organizationId,
+          actorUserId: input.actorUserId ?? null,
+          requestId: input.requestId,
+          action: input.action,
+          entityType: input.entityType,
+          entityId: input.entityId ?? null,
+          before: input.before,
+          after: input.after,
+          metadata: input.metadata,
+          ipAddress: input.ipAddress ?? null,
+        },
+      })
+    );
   }
 }
