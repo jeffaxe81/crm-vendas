@@ -26,8 +26,7 @@ export function CrmShell({
   children,
 }: CrmShellProps) {
   const canReadActivities = session.permissions.includes("activity.read");
-  const canReadOpportunities =
-    session.permissions.includes("opportunity.read");
+  const canReadOpportunities = session.permissions.includes("opportunity.read");
   const isActivitiesActive = activeSection === "activities";
   const isAgendaActive = activeSection === "agenda";
   const isOpportunitiesActive = activeSection === "opportunities";
