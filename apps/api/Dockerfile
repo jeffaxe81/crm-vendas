@@ -19,7 +19,6 @@ COPY packages/contracts/package.json packages/contracts/package.json
 RUN pnpm install --frozen-lockfile
 
 FROM dependencies AS build
-
 COPY tsconfig.base.json ./
 COPY apps/api apps/api
 COPY packages/contracts packages/contracts
@@ -43,6 +42,7 @@ COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=build --chown=node:node /app/apps/api/package.json ./apps/api/package.json
 COPY --from=build --chown=node:node /app/apps/api/dist ./apps/api/dist
+COPY --from=build --chown=node:node /app/apps/api/src/generated ./apps/api/dist/generated
 COPY --from=build --chown=node:node /app/packages/contracts/package.json ./packages/contracts/package.json
 COPY --from=build --chown=node:node /app/packages/contracts/dist ./packages/contracts/dist
 

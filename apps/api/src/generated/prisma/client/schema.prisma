@@ -3,8 +3,6 @@ generator client {
   output   = "../src/generated/prisma/client"
 }
 
-
-
 datasource db {
   provider = "postgresql"
 }
@@ -115,32 +113,32 @@ model Organization {
 }
 
 model User {
-  id                          String              @id @default(uuid()) @db.Uuid
-  email                       String              @db.VarChar(254)
-  emailNormalized             String              @unique @map("email_normalized") @db.VarChar(254)
-  displayName                 String              @map("display_name") @db.VarChar(160)
-  passwordHash                String              @map("password_hash") @db.VarChar(255)
-  isActive                    Boolean             @default(true) @map("is_active")
-  createdAt                   DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                   DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
-  memberships                OrganizationMembership[]
-  refreshSessions            RefreshSession[]
-  auditLogs                   AuditLog[]           @relation("AuditActor")
-  companiesCreated           Company[]            @relation("CompanyCreatedBy")
-  companiesUpdated           Company[]            @relation("CompanyUpdatedBy")
-  companiesDeleted           Company[]            @relation("CompanyDeletedBy")
-  contactsCreated            Contact[]            @relation("ContactCreatedBy")
-  contactsUpdated            Contact[]            @relation("ContactUpdatedBy")
-  contactsDeleted            Contact[]            @relation("ContactDeletedBy")
-  relationshipEntriesAuthored RelationshipEntry[] @relation("RelationshipEntryAuthor")
-  activitiesOwned            Activity[]           @relation("ActivityOwner")
-  activitiesCreated          Activity[]           @relation("ActivityCreatedBy")
-  activitiesUpdated          Activity[]           @relation("ActivityUpdatedBy")
-  activitiesDeleted          Activity[]           @relation("ActivityDeletedBy")
-  opportunitiesOwned         Opportunity[]        @relation("OpportunityOwner")
-  opportunitiesCreated       Opportunity[]        @relation("OpportunityCreatedBy")
-  opportunitiesUpdated       Opportunity[]        @relation("OpportunityUpdatedBy")
-  opportunitiesDeleted       Opportunity[]        @relation("OpportunityDeletedBy")
+  id                          String                   @id @default(uuid()) @db.Uuid
+  email                       String                   @db.VarChar(254)
+  emailNormalized             String                   @unique @map("email_normalized") @db.VarChar(254)
+  displayName                 String                   @map("display_name") @db.VarChar(160)
+  passwordHash                String                   @map("password_hash") @db.VarChar(255)
+  isActive                    Boolean                  @default(true) @map("is_active")
+  createdAt                   DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                   DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(6)
+  memberships                 OrganizationMembership[]
+  refreshSessions             RefreshSession[]
+  auditLogs                   AuditLog[]               @relation("AuditActor")
+  companiesCreated            Company[]                @relation("CompanyCreatedBy")
+  companiesUpdated            Company[]                @relation("CompanyUpdatedBy")
+  companiesDeleted            Company[]                @relation("CompanyDeletedBy")
+  contactsCreated             Contact[]                @relation("ContactCreatedBy")
+  contactsUpdated             Contact[]                @relation("ContactUpdatedBy")
+  contactsDeleted             Contact[]                @relation("ContactDeletedBy")
+  relationshipEntriesAuthored RelationshipEntry[]      @relation("RelationshipEntryAuthor")
+  activitiesOwned             Activity[]               @relation("ActivityOwner")
+  activitiesCreated           Activity[]               @relation("ActivityCreatedBy")
+  activitiesUpdated           Activity[]               @relation("ActivityUpdatedBy")
+  activitiesDeleted           Activity[]               @relation("ActivityDeletedBy")
+  opportunitiesOwned          Opportunity[]            @relation("OpportunityOwner")
+  opportunitiesCreated        Opportunity[]            @relation("OpportunityCreatedBy")
+  opportunitiesUpdated        Opportunity[]            @relation("OpportunityUpdatedBy")
+  opportunitiesDeleted        Opportunity[]            @relation("OpportunityDeletedBy")
 
   @@map("users")
 }
@@ -367,18 +365,18 @@ model ContactTag {
 }
 
 model CustomFieldDefinition {
-  id             String                  @id @default(uuid()) @db.Uuid
-  organizationId String                  @map("organization_id") @db.Uuid
+  id             String                    @id @default(uuid()) @db.Uuid
+  organizationId String                    @map("organization_id") @db.Uuid
   scope          CustomFieldScope
-  key            String                  @db.VarChar(80)
-  label          String                  @db.VarChar(120)
+  key            String                    @db.VarChar(80)
+  label          String                    @db.VarChar(120)
   type           CustomFieldType
-  isRequired     Boolean                 @default(false) @map("is_required")
+  isRequired     Boolean                   @default(false) @map("is_required")
   options        Json?
-  isActive       Boolean                 @default(true) @map("is_active")
-  createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  organization   Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  isActive       Boolean                   @default(true) @map("is_active")
+  createdAt      DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime                  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization              @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   companyValues  CompanyCustomFieldValue[]
   contactValues  ContactCustomFieldValue[]
 
@@ -497,33 +495,33 @@ model Activity {
 }
 
 model Opportunity {
-  id              String         @id @default(uuid()) @db.Uuid
-  organizationId  String         @map("organization_id") @db.Uuid
-  pipelineId      String         @map("pipeline_id") @db.Uuid
-  stageId         String         @map("stage_id") @db.Uuid
-  companyId       String?        @map("company_id") @db.Uuid
-  contactId       String?        @map("contact_id") @db.Uuid
-  ownerUserId     String         @map("owner_user_id") @db.Uuid
-  title           String         @db.VarChar(200)
-  estimatedValue  Decimal        @map("estimated_value") @db.Decimal(19, 2)
-  expectedCloseAt DateTime?      @map("expected_close_at") @db.Timestamptz(6)
+  id              String        @id @default(uuid()) @db.Uuid
+  organizationId  String        @map("organization_id") @db.Uuid
+  pipelineId      String        @map("pipeline_id") @db.Uuid
+  stageId         String        @map("stage_id") @db.Uuid
+  companyId       String?       @map("company_id") @db.Uuid
+  contactId       String?       @map("contact_id") @db.Uuid
+  ownerUserId     String        @map("owner_user_id") @db.Uuid
+  title           String        @db.VarChar(200)
+  estimatedValue  Decimal       @map("estimated_value") @db.Decimal(19, 2)
+  expectedCloseAt DateTime?     @map("expected_close_at") @db.Timestamptz(6)
   notes           String?
-  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  createdBy       String         @map("created_by") @db.Uuid
-  updatedBy       String         @map("updated_by") @db.Uuid
-  version         Int            @default(1)
-  deletedAt       DateTime?      @map("deleted_at") @db.Timestamptz(6)
-  deletedBy       String?        @map("deleted_by") @db.Uuid
-  organization    Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  pipeline        Pipeline       @relation(fields: [pipelineId], references: [id], onDelete: Restrict)
-  stage           PipelineStage  @relation(fields: [stageId], references: [id], onDelete: Restrict)
-  company         Company?       @relation(fields: [companyId], references: [id], onDelete: Restrict)
-  contact         Contact?       @relation(fields: [contactId], references: [id], onDelete: Restrict)
-  owner           User           @relation("OpportunityOwner", fields: [ownerUserId], references: [id], onDelete: Restrict)
-  creator         User           @relation("OpportunityCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
-  updater         User           @relation("OpportunityUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
-  deleter         User?          @relation("OpportunityDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy       String        @map("created_by") @db.Uuid
+  updatedBy       String        @map("updated_by") @db.Uuid
+  version         Int           @default(1)
+  deletedAt       DateTime?     @map("deleted_at") @db.Timestamptz(6)
+  deletedBy       String?       @map("deleted_by") @db.Uuid
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  pipeline        Pipeline      @relation(fields: [pipelineId], references: [id], onDelete: Restrict)
+  stage           PipelineStage @relation(fields: [stageId], references: [id], onDelete: Restrict)
+  company         Company?      @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  contact         Contact?      @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  owner           User          @relation("OpportunityOwner", fields: [ownerUserId], references: [id], onDelete: Restrict)
+  creator         User          @relation("OpportunityCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater         User          @relation("OpportunityUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter         User?         @relation("OpportunityDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
   activities      Activity[]
 
   @@unique([id, organizationId], map: "opportunities_id_organization_key")
