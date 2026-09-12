@@ -59,6 +59,18 @@ export const ActivityListQuerySchema = PaginationQuerySchema.extend({
   dueTo: ActivityDateTimeSchema.optional(),
   sortBy: z.enum(["dueAt", "createdAt", "updatedAt", "title"]).default("dueAt"),
   sortOrder: z.enum(["asc", "desc"]).default("asc"),
+}).superRefine((value, context) => {
+  if (
+    value.dueFrom &&
+    value.dueTo &&
+    new Date(value.dueFrom).getTime() > new Date(value.dueTo).getTime()
+  ) {
+    context.addIssue({
+      code: "custom",
+      path: ["dueTo"],
+      message: "dueTo deve ser igual ou posterior a dueFrom.",
+    });
+  }
 });
 
 export type ActivityType = z.infer<typeof ActivityTypeSchema>;
