@@ -6,7 +6,9 @@ if (githubEnvironmentFile) {
   const databaseUrl = process.env.DATABASE_URL;
 
   if (!databaseUrl) {
-    throw new Error("DATABASE_URL is required to prepare the Compose CI environment.");
+    throw new Error(
+      "DATABASE_URL is required to prepare the Compose CI environment."
+    );
   }
 
   const parsedDatabaseUrl = new URL(databaseUrl);
