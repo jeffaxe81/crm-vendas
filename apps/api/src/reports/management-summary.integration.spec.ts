@@ -112,6 +112,7 @@ describe("C4.1.1 management summary API", () => {
     const response = await request(app.getHttpServer())
       .get("/api/v1/reports/management-summary")
       .set("Authorization", `Bearer ${fixture.token}`)
+      .expect("Content-Type", /json/)
       .expect(200);
 
     expect(response.body).toMatchObject({
