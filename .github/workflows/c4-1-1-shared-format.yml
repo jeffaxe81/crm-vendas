@@ -1,4 +1,4 @@
-name: C4.1.1 shared formatter
+name: C4.1.1 sync and shared formatter
 
 on:
   push:
@@ -11,12 +11,19 @@ permissions:
   contents: write
 
 jobs:
-  format:
+  sync-format:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
         with:
           ref: feat/c4-1-1-management-summary
+          fetch-depth: 0
+      - name: Sync current main into feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git merge --no-edit origin/main
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
@@ -40,10 +47,8 @@ jobs:
             apps/api/src/relationships/relationships.service.ts \
             apps/web/src/app/page.tsx
           rm .github/workflows/c4-1-1-shared-format.yml
-      - name: Commit deterministic formatting
+      - name: Commit formatting and remove temporary workflow
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
             apps/api/src/audit/audit-completeness.integration.spec.ts \
             apps/api/src/audit/audit.service.ts \
