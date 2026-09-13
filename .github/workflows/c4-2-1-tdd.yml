@@ -9,8 +9,39 @@ permissions:
   contents: read
 
 jobs:
-  unit:
+  c4-2-1:
     runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:18-bookworm
+        env:
+          POSTGRES_DB: axes_crm
+          POSTGRES_USER: axes
+          POSTGRES_PASSWORD: axes
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U axes -d axes_crm"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: test
+      PORT: 3001
+      LOG_LEVEL: warn
+      DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
+      MIGRATION_DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:3001/api/v1
+      WEB_ORIGIN: http://127.0.0.1:3000
+      JWT_ACCESS_SECRET: test-access-secret-with-at-least-32-characters
+      REFRESH_TOKEN_PEPPER: test-refresh-pepper-with-at-least-32-characters
+      AUTH_ACCESS_TTL_SECONDS: 900
+      AUTH_REFRESH_TTL_SECONDS: 2592000
+      BOOTSTRAP_ORG_NAME: Axesistemas
+      BOOTSTRAP_ORG_SLUG: axesistemas
+      BOOTSTRAP_ADMIN_EMAIL: admin@axes.test
+      BOOTSTRAP_ADMIN_NAME: Administrador CI
+      BOOTSTRAP_ADMIN_PASSWORD: Strong-CI-Password-2026!
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -24,8 +55,27 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build contracts
         run: pnpm --filter @axes/contracts build
+      - name: Generate Prisma client
+        run: pnpm --filter @axes/api prisma:generate
+      - name: Deploy migrations
+        env:
+          DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
+        run: pnpm --filter @axes/api prisma:migrate:deploy
+      - name: Provision application role
+        env:
+          PGPASSWORD: axes
+        run: |
+          psql -h 127.0.0.1 -U axes -d axes_crm -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE axes_app LOGIN PASSWORD 'axes_app' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS;
+          GRANT CONNECT ON DATABASE axes_crm TO axes_app;
+          GRANT USAGE ON SCHEMA public TO axes_app;
+          GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA public TO axes_app;
+          GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO axes_app;
+          SQL
       - name: Run C4.2.1 unit tests
         run: >-
           pnpm --filter @axes/api test --
           company-csv-parser.spec.ts
           company-import.service.spec.ts
+      - name: Run C4.2.1 integration test
+        run: pnpm --filter @axes/api test -- company-import.integration.spec.ts
