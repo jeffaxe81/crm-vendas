@@ -53,10 +53,7 @@ export class DeniedAccessLogger implements NestInterceptor {
     try {
       await this.persistDeniedAccess(request, error);
     } catch (cause) {
-      console.error(
-        "[DeniedAccessLogger] Failed to log denied access:",
-        cause
-      );
+      console.error("[DeniedAccessLogger] Failed to log denied access:", cause);
     }
   }
 
