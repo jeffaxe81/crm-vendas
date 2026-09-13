@@ -41,12 +41,14 @@ export async function apiRequest<T>(
   const headers: Record<string, string> = {
     "x-request-id": createRequestId(),
   };
+  const isFormData =
+    typeof FormData !== "undefined" && options.body instanceof FormData;
 
   if (options.accessToken) {
     headers.Authorization = `Bearer ${options.accessToken}`;
   }
 
-  if (options.body !== undefined) {
+  if (options.body !== undefined && !isFormData) {
     headers["Content-Type"] = "application/json";
   }
 
@@ -56,7 +58,9 @@ export async function apiRequest<T>(
   };
 
   if (options.body !== undefined) {
-    request.body = JSON.stringify(options.body);
+    request.body = isFormData
+      ? (options.body as FormData)
+      : JSON.stringify(options.body);
   }
 
   if (options.credentials) {
