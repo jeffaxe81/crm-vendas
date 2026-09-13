@@ -83,7 +83,10 @@ describe("Issue #40 — advanced security audit", () => {
     };
   }
 
-  async function findDeniedAccessAudit(organizationId: string, requestId: string) {
+  async function findDeniedAccessAudit(
+    organizationId: string,
+    requestId: string
+  ) {
     for (let attempt = 0; attempt < 20; attempt += 1) {
       const log = await prisma.withTenant(organizationId, tenant =>
         tenant.auditLog.findFirst({
