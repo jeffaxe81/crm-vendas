@@ -26,18 +26,18 @@ type LogicalRow = {
 
 export class CompanyCsvParser {
   parse(content: Buffer | string): ParsedCompanyCsv {
-    const text = (Buffer.isBuffer(content) ? content.toString("utf8") : content).replace(
-      /^\uFEFF/,
-      ""
-    );
+    const text = (
+      Buffer.isBuffer(content) ? content.toString("utf8") : content
+    ).replace(/^\uFEFF/, "");
     const delimiter = this.detectDelimiter(text);
     const logicalRows = this.parseRows(text, delimiter);
+    const headerRow = logicalRows[0];
 
-    if (logicalRows.length === 0) {
+    if (!headerRow) {
       throw new Error("O arquivo CSV está vazio.");
     }
 
-    const headers = this.validateHeaders(logicalRows[0].fields);
+    const headers = this.validateHeaders(headerRow.fields);
     const rows = logicalRows
       .slice(1)
       .filter(row => row.fields.some(field => field.trim().length > 0))
