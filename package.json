@@ -14,7 +14,7 @@
     "test": "pnpm --filter @axes/contracts build && pnpm test:repo && pnpm -r test",
     "test:e2e": "playwright test",
     "format:check": "prettier --check .",
-    "verify": "node scripts/export-compose-ci-env.mjs && pnpm verify:foundation && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "verify": "node scripts/export-compose-ci-env.mjs && node scripts/run-verify.mjs",
     "test:repo": "node --test tests/*.test.mjs",
     "verify:foundation": "node scripts/verify-foundation.mjs"
   },
