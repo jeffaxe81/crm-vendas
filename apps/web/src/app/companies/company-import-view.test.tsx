@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { CompaniesView } from "./companies-view";
@@ -12,6 +18,7 @@ function response(body: unknown, status = 200): Response {
 }
 
 afterEach(() => {
+  cleanup();
   vi.unstubAllGlobals();
 });
 
@@ -91,9 +98,7 @@ describe("C4.2.1 company CSV import view", () => {
       );
     vi.stubGlobal("fetch", fetchMock);
 
-    render(
-      <CompaniesView accessToken="access-token" canWrite />
-    );
+    render(<CompaniesView accessToken="access-token" canWrite />);
 
     await screen.findByText("Nenhuma empresa encontrada.");
     fireEvent.click(screen.getByRole("button", { name: "Importar CSV" }));
@@ -107,12 +112,16 @@ describe("C4.2.1 company CSV import view", () => {
       target: { files: [file] },
     });
 
-    expect(await screen.findByText("1 válida(s) · 1 inválida(s)")).toBeInTheDocument();
+    expect(
+      await screen.findByText("1 válida(s) · 1 inválida(s)")
+    ).toBeInTheDocument();
     expect(screen.getByText("Empresa Alpha")).toBeInTheDocument();
     expect(screen.getByText("Empresa Beta")).toBeInTheDocument();
     expect(screen.getByText("Invalid URL")).toBeInTheDocument();
 
-    const confirm = screen.getByRole("button", { name: "Confirmar importação" });
+    const confirm = screen.getByRole("button", {
+      name: "Confirmar importação",
+    });
     expect(confirm).toBeEnabled();
     fireEvent.click(confirm);
 
@@ -129,8 +138,12 @@ describe("C4.2.1 company CSV import view", () => {
     const confirmRequest = fetchMock.mock.calls[2]?.[1] as RequestInit;
     expect(previewRequest.body).toBeInstanceOf(FormData);
     expect(confirmRequest.body).toBeInstanceOf(FormData);
-    expect((previewRequest.headers as Record<string, string>)["Content-Type"]).toBeUndefined();
-    expect((confirmRequest.headers as Record<string, string>)["Content-Type"]).toBeUndefined();
+    expect(
+      (previewRequest.headers as Record<string, string>)["Content-Type"]
+    ).toBeUndefined();
+    expect(
+      (confirmRequest.headers as Record<string, string>)["Content-Type"]
+    ).toBeUndefined();
     expect((confirmRequest.body as FormData).get("fingerprint")).toBe(
       "a".repeat(64)
     );
@@ -170,7 +183,9 @@ describe("C4.2.1 company CSV import view", () => {
       },
     });
 
-    expect(await screen.findByText("0 válida(s) · 1 inválida(s)")).toBeInTheDocument();
+    expect(
+      await screen.findByText("0 válida(s) · 1 inválida(s)")
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Confirmar importação" })
     ).toBeDisabled();
