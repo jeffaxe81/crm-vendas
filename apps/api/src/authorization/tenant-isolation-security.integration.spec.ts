@@ -3,7 +3,7 @@ import { Test } from "@nestjs/testing";
 import request from "supertest";
 
 import { AppModule } from "../app.module";
-import { ApiErrorFilter } from "../common/filters/api-error.filter";
+import { ApiErrorFilter } from "../errors/api-error.filter";
 import { PrismaService } from "../database/prisma.service";
 
 /**
@@ -400,7 +400,7 @@ describe("Tenant isolation security - HTTP endpoints", () => {
         data: {
           id: contactB,
           organizationId: orgB,
-          givenName: "Bob",
+          fullName: "Bob",
           createdBy: userId,
           updatedBy: userId,
         },
