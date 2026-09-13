@@ -45,7 +45,10 @@ export class PermissionsGuard implements CanActivate {
         message: "Você não possui permissão para esta operação.",
       });
 
-      await this.deniedAccessLogger.recordDeniedAccess(request, error);
+      await this.deniedAccessLogger.recordDeniedAccess(request, {
+        status: error.getStatus(),
+        message: error.message,
+      });
       throw error;
     }
 
