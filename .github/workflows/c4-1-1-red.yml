@@ -1,0 +1,94 @@
+name: C4.1.1 targeted verification
+
+on:
+  push:
+    branches:
+      - feat/c4-1-1-management-summary
+    paths:
+      - .github/workflows/c4-1-1-red.yml
+      - apps/api/src/reports/**
+      - apps/api/src/app.module.ts
+      - packages/contracts/src/management-summary.ts
+      - packages/contracts/src/management-summary.test.ts
+      - packages/contracts/src/index.ts
+
+permissions:
+  contents: read
+
+jobs:
+  verify-management-summary:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:18-bookworm
+        env:
+          POSTGRES_DB: axes_crm
+          POSTGRES_USER: axes
+          POSTGRES_PASSWORD: axes
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U axes -d axes_crm"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: test
+      PORT: 3001
+      LOG_LEVEL: warn
+      DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
+      APP_DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
+      MIGRATION_DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:3001/api/v1
+      WEB_ORIGIN: http://127.0.0.1:3000
+      JWT_ACCESS_SECRET: test-access-secret-with-at-least-32-characters
+      REFRESH_TOKEN_PEPPER: test-refresh-pepper-with-at-least-32-characters
+      AUTH_ACCESS_TTL_SECONDS: 900
+      AUTH_REFRESH_TTL_SECONDS: 2592000
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v6
+        with:
+          ref: feat/c4-1-1-management-summary
+      - name: Configure Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check C4.1.1 formatting
+        run: |
+          pnpm exec prettier --check \
+            packages/contracts/src/management-summary.ts \
+            packages/contracts/src/management-summary.test.ts \
+            packages/contracts/src/index.ts \
+            apps/api/src/reports/*.ts \
+            apps/api/src/app.module.ts
+      - name: Verify management summary contract
+        run: |
+          pnpm --filter @axes/contracts test -- management-summary.test.ts
+          pnpm --filter @axes/contracts typecheck
+          pnpm --filter @axes/contracts build
+      - name: Generate Prisma client
+        run: pnpm --filter @axes/api prisma:generate
+      - name: Deploy database migrations
+        env:
+          DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
+        run: pnpm --filter @axes/api prisma:migrate:deploy
+      - name: Provision application database role
+        env:
+          PGPASSWORD: axes
+        run: |
+          psql -h 127.0.0.1 -U axes -d axes_crm -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE axes_app LOGIN PASSWORD 'axes_app' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS;
+          GRANT CONNECT ON DATABASE axes_crm TO axes_app;
+          GRANT USAGE ON SCHEMA public TO axes_app;
+          GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA public TO axes_app;
+          GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO axes_app;
+          SQL
+      - name: Run management summary integration test
+        run: pnpm --filter @axes/api test -- management-summary.integration.spec.ts

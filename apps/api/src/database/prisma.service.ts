@@ -4,6 +4,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { parseApiEnvironment } from "../config/environment";
 import { Prisma, PrismaClient } from "../generated/prisma/client";
 
+type TenantTransactionOptions = {
+  maxWait?: number;
+  timeout?: number;
+  isolationLevel?: Prisma.TransactionIsolationLevel;
+};
+
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleDestroy {
   constructor(
@@ -21,7 +27,8 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
 
   async withTenant<T>(
     organizationId: string,
-    callback: (tenant: Prisma.TransactionClient) => Promise<T>
+    callback: (tenant: Prisma.TransactionClient) => Promise<T>,
+    options?: TenantTransactionOptions
   ): Promise<T> {
     return this.$transaction(async tenant => {
       await tenant.$executeRaw`
@@ -29,7 +36,7 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
       `;
 
       return callback(tenant);
-    });
+    }, options);
   }
 
   async onModuleDestroy(): Promise<void> {
