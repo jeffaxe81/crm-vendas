@@ -1,4 +1,9 @@
-import { Injectable, OnModuleDestroy } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  OnModuleDestroy,
+  Optional,
+} from "@nestjs/common";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 import { parseApiEnvironment } from "../config/environment";
@@ -6,7 +11,11 @@ import { Prisma, PrismaClient } from "../generated/prisma/client";
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleDestroy {
-  constructor(connectionString?: string) {
+  constructor(
+    @Optional()
+    @Inject("PRISMA_CONNECTION_STRING")
+    connectionString?: string
+  ) {
     const environment = parseApiEnvironment(process.env);
     const adapter = new PrismaPg({
       connectionString: connectionString ?? environment.APP_DATABASE_URL,
