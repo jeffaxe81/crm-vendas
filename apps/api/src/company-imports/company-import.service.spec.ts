@@ -1,3 +1,5 @@
+import { jest } from "@jest/globals";
+
 import type { CompaniesService } from "../companies/companies.service";
 import { CompanyCsvParser } from "./company-csv-parser";
 import { CompanyImportService } from "./company-import.service";
