@@ -42,7 +42,10 @@ export class DeniedAccessLogger implements NestInterceptor {
         if (error.status === 401 || error.status === 403) {
           this.logDeniedAccess(request, error).catch(err => {
             // Fail silently - don't break the response if audit logging fails
-            console.error("[DeniedAccessLogger] Failed to log denied access:", err);
+            console.error(
+              "[DeniedAccessLogger] Failed to log denied access:",
+              err
+            );
           });
         }
 

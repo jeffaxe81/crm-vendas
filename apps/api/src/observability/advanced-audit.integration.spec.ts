@@ -203,7 +203,9 @@ describe("Advanced Audit & Security - Phase 3", () => {
 
       // Get audit logs for this org
       const auditRes = await request(app.getHttpServer())
-        .get("/api/v1/audit-logs?entityType=security&action=rate_limit_exceeded_user&limit=100")
+        .get(
+          "/api/v1/audit-logs?entityType=security&action=rate_limit_exceeded_user&limit=100"
+        )
         .set("Authorization", `Bearer ${token}`)
         .expect(200);
 
@@ -289,8 +291,8 @@ describe("Advanced Audit & Security - Phase 3", () => {
         .set("Authorization", `Bearer ${token}`)
         .expect(200);
 
-      const rateLimitLogs = auditRes.body.data.filter(
-        (log: any) => log.action.startsWith("rate_limit_exceeded")
+      const rateLimitLogs = auditRes.body.data.filter((log: any) =>
+        log.action.startsWith("rate_limit_exceeded")
       );
 
       // Should only have user-level violations, not tenant-level
@@ -312,9 +314,7 @@ describe("Advanced Audit & Security - Phase 3", () => {
       // They should return 401 immediately
 
       for (let i = 0; i < 5; i++) {
-        await request(app.getHttpServer())
-          .get("/api/v1/companies")
-          .expect(401);
+        await request(app.getHttpServer()).get("/api/v1/companies").expect(401);
       }
 
       // Now authenticate and make requests - should all succeed

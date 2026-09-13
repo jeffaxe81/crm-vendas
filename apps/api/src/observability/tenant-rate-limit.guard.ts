@@ -55,7 +55,12 @@ export class TenantRateLimitGuard implements CanActivate {
 
     // Check tenant limit
     if (!this.rateLimiter.checkTenantLimit(organizationId)) {
-      await this.logRateLimitViolation(request, "tenant", organizationId, userId);
+      await this.logRateLimitViolation(
+        request,
+        "tenant",
+        organizationId,
+        userId
+      );
       throw new HttpException(
         "Organization rate limit exceeded: 1000 requests/minute",
         HttpStatus.TOO_MANY_REQUESTS
@@ -96,8 +101,11 @@ export class TenantRateLimitGuard implements CanActivate {
           method: request.method,
           limitType,
           current:
-            limitType === "tenant" ? status.tenant.current : status.user.current,
-          limit: limitType === "tenant" ? status.tenant.limit : status.user.limit,
+            limitType === "tenant"
+              ? status.tenant.current
+              : status.user.current,
+          limit:
+            limitType === "tenant" ? status.tenant.limit : status.user.limit,
           window:
             limitType === "tenant" ? status.tenant.window : status.user.window,
         },
@@ -105,7 +113,10 @@ export class TenantRateLimitGuard implements CanActivate {
       });
     } catch (error) {
       // Fail silently - don't break the response if audit logging fails
-      console.error("[TenantRateLimitGuard] Failed to log rate limit violation:", error);
+      console.error(
+        "[TenantRateLimitGuard] Failed to log rate limit violation:",
+        error
+      );
     }
   }
 
