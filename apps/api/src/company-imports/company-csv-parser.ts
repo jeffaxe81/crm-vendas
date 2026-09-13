@@ -38,15 +38,14 @@ export class CompanyCsvParser {
     ).replace(/^\uFEFF/, "");
     const delimiter = this.detectDelimiter(text);
     const logicalRows = this.parseRows(text, delimiter);
-    const headerRow = logicalRows[0];
+    const [headerRow, ...dataRows] = logicalRows;
 
     if (!headerRow) {
       throw new CompanyCsvValidationError("O arquivo CSV está vazio.");
     }
 
     const headers = this.validateHeaders(headerRow.fields);
-    const rows = logicalRows
-      .slice(1)
+    const rows = dataRows
       .filter(row => row.fields.some(field => field.trim().length > 0))
       .map(row => this.mapRow(row, headers));
 
