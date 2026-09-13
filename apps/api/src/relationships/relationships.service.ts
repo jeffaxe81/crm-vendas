@@ -27,18 +27,18 @@ export type CompanyContactInput = {
 export class RelationshipsService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
-    @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(AuditService) private readonly audit: AuditService
   ) {}
 
   async linkCompanyContact(
     companyId: string,
     contactId: string,
     input: CompanyContactInput,
-    context: RelationshipContext,
+    context: RelationshipContext
   ) {
     const link = await this.prisma.withTenant(
       context.organizationId,
-      async (transaction) => {
+      async transaction => {
         const company = await transaction.company.findFirst({
           where: {
             id: companyId,
@@ -70,7 +70,7 @@ export class RelationshipsService {
             isPrimary: input.isPrimary,
           },
         });
-      },
+      }
     );
 
     await this.audit.record({
@@ -95,7 +95,7 @@ export class RelationshipsService {
   async unlinkCompanyContact(
     companyId: string,
     contactId: string,
-    context: RelationshipContext,
+    context: RelationshipContext
   ): Promise<void> {
     const existing = await this.prisma.companyContact.findFirst({
       where: {
@@ -113,20 +113,17 @@ export class RelationshipsService {
     }
 
     // SECURITY: Delete uses composite key with organizationId to prevent cross-tenant deletion
-    await this.prisma.withTenant(
-      context.organizationId,
-      async (transaction) => {
-        await transaction.companyContact.delete({
-          where: {
-            organizationId_companyId_contactId: {
-              organizationId: context.organizationId,
-              companyId,
-              contactId,
-            },
+    await this.prisma.withTenant(context.organizationId, async transaction => {
+      await transaction.companyContact.delete({
+        where: {
+          organizationId_companyId_contactId: {
+            organizationId: context.organizationId,
+            companyId,
+            contactId,
           },
-        });
-      },
-    );
+        },
+      });
+    });
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -147,11 +144,11 @@ export class RelationshipsService {
 
   async createEntry(
     input: RelationshipEntryCreateInput,
-    context: RelationshipContext,
+    context: RelationshipContext
   ) {
     const entry = await this.prisma.withTenant(
       context.organizationId,
-      async (transaction) => {
+      async transaction => {
         if (input.companyId) {
           const company = await transaction.company.findFirst({
             where: {
@@ -189,7 +186,7 @@ export class RelationshipsService {
             occurredAt: new Date(input.occurredAt),
           },
         });
-      },
+      }
     );
 
     await this.audit.record({
