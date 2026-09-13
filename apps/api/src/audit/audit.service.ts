@@ -23,7 +23,7 @@ export class AuditService {
   async list(organizationId: string, page: number, limit: number) {
     const [items, total] = await this.prisma.withTenant(
       organizationId,
-      (tenant) =>
+      tenant =>
         Promise.all([
           tenant.auditLog.findMany({
             where: { organizationId },
@@ -34,7 +34,7 @@ export class AuditService {
           tenant.auditLog.count({
             where: { organizationId },
           }),
-        ]),
+        ])
     );
 
     return {
@@ -46,7 +46,7 @@ export class AuditService {
   }
 
   async record(input: AuditRecordInput): Promise<void> {
-    await this.prisma.withTenant(input.organizationId, (tenant) =>
+    await this.prisma.withTenant(input.organizationId, tenant =>
       tenant.auditLog.create({
         data: {
           organizationId: input.organizationId,
@@ -60,7 +60,7 @@ export class AuditService {
           metadata: input.metadata,
           ipAddress: input.ipAddress ?? null,
         },
-      }),
+      })
     );
   }
 }
