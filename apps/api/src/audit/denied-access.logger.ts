@@ -37,26 +37,26 @@ export class DeniedAccessLogger implements NestInterceptor {
     const response = context.switchToHttp().getResponse();
 
     return next.handle().pipe(
-      catchError((error) => {
+      catchError(error => {
         // Only log 401 and 403 errors
         if (error.status === 401 || error.status === 403) {
-          this.logDeniedAccess(request, error).catch((err) => {
+          this.logDeniedAccess(request, error).catch(err => {
             // Fail silently - don't break the response if audit logging fails
             console.error(
               "[DeniedAccessLogger] Failed to log denied access:",
-              err,
+              err
             );
           });
         }
 
         throw error;
-      }),
+      })
     );
   }
 
   private async logDeniedAccess(
     request: AuthenticatedRequest,
-    error: any,
+    error: any
   ): Promise<void> {
     // Extract information from request
     const userId = request.auth?.userId ?? null;
