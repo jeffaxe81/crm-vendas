@@ -77,3 +77,27 @@ describe("C3.6.3 activity opportunity contracts", () => {
     );
   });
 });
+
+describe("C4.1.1 activity agenda window", () => {
+  it("rejects an inverted activity due window", () => {
+    const schema = requireSchema("ActivityListQuerySchema");
+
+    const parsed = schema.safeParse({
+      dueFrom: "2026-09-14T18:00:00-03:00",
+      dueTo: "2026-09-14T09:00:00-03:00",
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("accepts an ordered due window across different offsets", () => {
+    const schema = requireSchema("ActivityListQuerySchema");
+
+    const parsed = schema.safeParse({
+      dueFrom: "2026-09-14T09:00:00-03:00",
+      dueTo: "2026-09-14T13:00:00-02:00",
+    });
+
+    expect(parsed.success).toBe(true);
+  });
+});

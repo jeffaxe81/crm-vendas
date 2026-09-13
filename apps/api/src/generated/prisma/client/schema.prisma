@@ -1,0 +1,534 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MembershipRole {
+  ADMIN
+  MANAGER
+  SELLER
+  VIEWER
+
+  @@map("membership_role")
+}
+
+enum ContactChannelType {
+  EMAIL
+  PHONE
+  MOBILE
+  WHATSAPP
+  OTHER
+
+  @@map("contact_channel_type")
+}
+
+enum RelationshipEntryKind {
+  NOTE
+  CALL_NOTE
+  EMAIL_NOTE
+  MEETING_NOTE
+  OTHER
+
+  @@map("relationship_entry_kind")
+}
+
+enum CustomFieldScope {
+  COMPANY
+  CONTACT
+
+  @@map("custom_field_scope")
+}
+
+enum CustomFieldType {
+  TEXT
+  NUMBER
+  BOOLEAN
+  DATE
+  SELECT
+
+  @@map("custom_field_type")
+}
+
+enum PipelineStageKind {
+  OPEN
+  WON
+  LOST
+
+  @@map("pipeline_stage_kind")
+}
+
+enum ActivityType {
+  TASK
+  APPOINTMENT
+
+  @@map("activity_type")
+}
+
+enum ActivityStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+
+  @@map("activity_status")
+}
+
+enum ActivityPriority {
+  LOW
+  MEDIUM
+  HIGH
+
+  @@map("activity_priority")
+}
+
+model Organization {
+  id                       String                    @id @default(uuid()) @db.Uuid
+  name                     String                    @db.VarChar(160)
+  slug                     String                    @unique @db.VarChar(80)
+  isActive                 Boolean                   @default(true) @map("is_active")
+  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime                  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  memberships              OrganizationMembership[]
+  refreshSessions          RefreshSession[]
+  auditLogs                AuditLog[]
+  companies                Company[]
+  contacts                 Contact[]
+  contactChannels          ContactChannel[]
+  companyContacts          CompanyContact[]
+  relationshipEntries      RelationshipEntry[]
+  tags                     Tag[]
+  companyTags              CompanyTag[]
+  contactTags              ContactTag[]
+  customFieldDefinitions   CustomFieldDefinition[]
+  companyCustomFieldValues CompanyCustomFieldValue[]
+  contactCustomFieldValues ContactCustomFieldValue[]
+  pipelines                Pipeline[]
+  activities               Activity[]
+  opportunities            Opportunity[]
+
+  @@map("organizations")
+}
+
+model User {
+  id                          String                   @id @default(uuid()) @db.Uuid
+  email                       String                   @db.VarChar(254)
+  emailNormalized             String                   @unique @map("email_normalized") @db.VarChar(254)
+  displayName                 String                   @map("display_name") @db.VarChar(160)
+  passwordHash                String                   @map("password_hash") @db.VarChar(255)
+  isActive                    Boolean                  @default(true) @map("is_active")
+  createdAt                   DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                   DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(6)
+  memberships                 OrganizationMembership[]
+  refreshSessions             RefreshSession[]
+  auditLogs                   AuditLog[]               @relation("AuditActor")
+  companiesCreated            Company[]                @relation("CompanyCreatedBy")
+  companiesUpdated            Company[]                @relation("CompanyUpdatedBy")
+  companiesDeleted            Company[]                @relation("CompanyDeletedBy")
+  contactsCreated             Contact[]                @relation("ContactCreatedBy")
+  contactsUpdated             Contact[]                @relation("ContactUpdatedBy")
+  contactsDeleted             Contact[]                @relation("ContactDeletedBy")
+  relationshipEntriesAuthored RelationshipEntry[]      @relation("RelationshipEntryAuthor")
+  activitiesOwned             Activity[]               @relation("ActivityOwner")
+  activitiesCreated           Activity[]               @relation("ActivityCreatedBy")
+  activitiesUpdated           Activity[]               @relation("ActivityUpdatedBy")
+  activitiesDeleted           Activity[]               @relation("ActivityDeletedBy")
+  opportunitiesOwned          Opportunity[]            @relation("OpportunityOwner")
+  opportunitiesCreated        Opportunity[]            @relation("OpportunityCreatedBy")
+  opportunitiesUpdated        Opportunity[]            @relation("OpportunityUpdatedBy")
+  opportunitiesDeleted        Opportunity[]            @relation("OpportunityDeletedBy")
+
+  @@map("users")
+}
+
+model OrganizationMembership {
+  id             String         @id @default(uuid()) @db.Uuid
+  organizationId String         @map("organization_id") @db.Uuid
+  userId         String         @map("user_id") @db.Uuid
+  role           MembershipRole
+  isActive       Boolean        @default(true) @map("is_active")
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, userId], map: "organization_memberships_org_user_key")
+  @@index([userId, isActive], map: "organization_memberships_user_active_idx")
+  @@index([organizationId, role, isActive], map: "organization_memberships_org_role_active_idx")
+  @@map("organization_memberships")
+}
+
+model RefreshSession {
+  id             String       @id @default(uuid()) @db.Uuid
+  familyId       String       @default(uuid()) @map("family_id") @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  userId         String       @map("user_id") @db.Uuid
+  tokenHash      String       @unique @map("token_hash") @db.VarChar(128)
+  expiresAt      DateTime     @map("expires_at") @db.Timestamptz(6)
+  lastUsedAt     DateTime?    @map("last_used_at") @db.Timestamptz(6)
+  revokedAt      DateTime?    @map("revoked_at") @db.Timestamptz(6)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, revokedAt, expiresAt], map: "refresh_sessions_user_status_idx")
+  @@index([organizationId, revokedAt, expiresAt], map: "refresh_sessions_org_status_idx")
+  @@index([familyId], map: "refresh_sessions_family_idx")
+  @@map("refresh_sessions")
+}
+
+model AuditLog {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  actorUserId    String?      @map("actor_user_id") @db.Uuid
+  requestId      String       @map("request_id") @db.VarChar(120)
+  action         String       @db.VarChar(120)
+  entityType     String       @map("entity_type") @db.VarChar(120)
+  entityId       String?      @map("entity_id") @db.VarChar(120)
+  before         Json?
+  after          Json?
+  metadata       Json?
+  ipAddress      String?      @map("ip_address") @db.VarChar(64)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  actor          User?        @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt], map: "audit_logs_org_created_idx")
+  @@index([actorUserId, createdAt], map: "audit_logs_actor_created_idx")
+  @@index([organizationId, entityType, entityId, createdAt], map: "audit_logs_entity_created_idx")
+  @@map("audit_logs")
+}
+
+model Company {
+  id                  String                    @id @default(uuid()) @db.Uuid
+  organizationId      String                    @map("organization_id") @db.Uuid
+  legalName           String                    @map("legal_name") @db.VarChar(200)
+  tradeName           String?                   @map("trade_name") @db.VarChar(200)
+  document            String?                   @db.VarChar(32)
+  website             String?                   @db.VarChar(500)
+  notes               String?
+  createdAt           DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime                  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy           String                    @map("created_by") @db.Uuid
+  updatedBy           String                    @map("updated_by") @db.Uuid
+  version             Int                       @default(1)
+  deletedAt           DateTime?                 @map("deleted_at") @db.Timestamptz(6)
+  deletedBy           String?                   @map("deleted_by") @db.Uuid
+  organization        Organization              @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  creator             User                      @relation("CompanyCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater             User                      @relation("CompanyUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter             User?                     @relation("CompanyDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+  contactLinks        CompanyContact[]
+  relationshipEntries RelationshipEntry[]
+  tagLinks            CompanyTag[]
+  customFieldValues   CompanyCustomFieldValue[]
+  activities          Activity[]
+  opportunities       Opportunity[]
+
+  @@unique([id, organizationId], map: "companies_id_organization_key")
+  @@index([organizationId, deletedAt, legalName], map: "companies_org_deleted_legal_name_idx")
+  @@index([organizationId, tradeName], map: "companies_org_trade_name_idx")
+  @@map("companies")
+}
+
+model Contact {
+  id                  String                    @id @default(uuid()) @db.Uuid
+  organizationId      String                    @map("organization_id") @db.Uuid
+  fullName            String                    @map("full_name") @db.VarChar(200)
+  jobTitle            String?                   @map("job_title") @db.VarChar(160)
+  notes               String?
+  createdAt           DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime                  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy           String                    @map("created_by") @db.Uuid
+  updatedBy           String                    @map("updated_by") @db.Uuid
+  version             Int                       @default(1)
+  deletedAt           DateTime?                 @map("deleted_at") @db.Timestamptz(6)
+  deletedBy           String?                   @map("deleted_by") @db.Uuid
+  organization        Organization              @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  creator             User                      @relation("ContactCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater             User                      @relation("ContactUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter             User?                     @relation("ContactDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+  channels            ContactChannel[]
+  companyLinks        CompanyContact[]
+  relationshipEntries RelationshipEntry[]
+  tagLinks            ContactTag[]
+  customFieldValues   ContactCustomFieldValue[]
+  activities          Activity[]
+  opportunities       Opportunity[]
+
+  @@unique([id, organizationId], map: "contacts_id_organization_key")
+  @@index([organizationId, deletedAt, fullName], map: "contacts_org_deleted_full_name_idx")
+  @@map("contacts")
+}
+
+model ContactChannel {
+  id             String             @id @default(uuid()) @db.Uuid
+  organizationId String             @map("organization_id") @db.Uuid
+  contactId      String             @map("contact_id") @db.Uuid
+  type           ContactChannelType
+  value          String             @db.VarChar(320)
+  label          String?            @db.VarChar(80)
+  isPrimary      Boolean            @default(false) @map("is_primary")
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  contact        Contact            @relation(fields: [contactId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, contactId], map: "contact_channels_org_contact_idx")
+  @@index([organizationId, type], map: "contact_channels_org_type_idx")
+  @@map("contact_channels")
+}
+
+model CompanyContact {
+  id                String       @id @default(uuid()) @db.Uuid
+  organizationId    String       @map("organization_id") @db.Uuid
+  companyId         String       @map("company_id") @db.Uuid
+  contactId         String       @map("contact_id") @db.Uuid
+  relationshipLabel String?      @map("relationship_label") @db.VarChar(120)
+  isPrimary         Boolean      @default(false) @map("is_primary")
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company           Company      @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  contact           Contact      @relation(fields: [contactId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, companyId, contactId], map: "company_contacts_org_company_contact_key")
+  @@index([organizationId, contactId], map: "company_contacts_org_contact_idx")
+  @@map("company_contacts")
+}
+
+model RelationshipEntry {
+  id             String                @id @default(uuid()) @db.Uuid
+  organizationId String                @map("organization_id") @db.Uuid
+  companyId      String?               @map("company_id") @db.Uuid
+  contactId      String?               @map("contact_id") @db.Uuid
+  authorUserId   String                @map("author_user_id") @db.Uuid
+  kind           RelationshipEntryKind
+  content        String
+  occurredAt     DateTime              @map("occurred_at") @db.Timestamptz(6)
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company        Company?              @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  contact        Contact?              @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  author         User                  @relation("RelationshipEntryAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, occurredAt], map: "relationship_entries_org_occurred_idx")
+  @@index([organizationId, companyId, occurredAt], map: "relationship_entries_org_company_idx")
+  @@index([organizationId, contactId, occurredAt], map: "relationship_entries_org_contact_idx")
+  @@map("relationship_entries")
+}
+
+model Tag {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  name           String       @db.VarChar(80)
+  normalizedName String       @map("normalized_name") @db.VarChar(80)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  companyLinks   CompanyTag[]
+  contactLinks   ContactTag[]
+
+  @@unique([organizationId, normalizedName], map: "tags_org_normalized_name_key")
+  @@index([organizationId, name], map: "tags_org_name_idx")
+  @@map("tags")
+}
+
+model CompanyTag {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  companyId      String       @map("company_id") @db.Uuid
+  tagId          String       @map("tag_id") @db.Uuid
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company        Company      @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  tag            Tag          @relation(fields: [tagId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, companyId, tagId], map: "company_tags_org_company_tag_key")
+  @@index([organizationId, tagId], map: "company_tags_org_tag_idx")
+  @@map("company_tags")
+}
+
+model ContactTag {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  contactId      String       @map("contact_id") @db.Uuid
+  tagId          String       @map("tag_id") @db.Uuid
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  contact        Contact      @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  tag            Tag          @relation(fields: [tagId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, contactId, tagId], map: "contact_tags_org_contact_tag_key")
+  @@index([organizationId, tagId], map: "contact_tags_org_tag_idx")
+  @@map("contact_tags")
+}
+
+model CustomFieldDefinition {
+  id             String                    @id @default(uuid()) @db.Uuid
+  organizationId String                    @map("organization_id") @db.Uuid
+  scope          CustomFieldScope
+  key            String                    @db.VarChar(80)
+  label          String                    @db.VarChar(120)
+  type           CustomFieldType
+  isRequired     Boolean                   @default(false) @map("is_required")
+  options        Json?
+  isActive       Boolean                   @default(true) @map("is_active")
+  createdAt      DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime                  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization              @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  companyValues  CompanyCustomFieldValue[]
+  contactValues  ContactCustomFieldValue[]
+
+  @@unique([organizationId, scope, key], map: "custom_field_definitions_org_scope_key_key")
+  @@index([organizationId, scope, isActive], map: "custom_field_definitions_org_scope_active_idx")
+  @@map("custom_field_definitions")
+}
+
+model CompanyCustomFieldValue {
+  id             String                @id @default(uuid()) @db.Uuid
+  organizationId String                @map("organization_id") @db.Uuid
+  companyId      String                @map("company_id") @db.Uuid
+  definitionId   String                @map("definition_id") @db.Uuid
+  value          Json
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company        Company               @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  definition     CustomFieldDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, companyId, definitionId], map: "company_custom_field_values_org_company_definition_key")
+  @@index([organizationId, definitionId], map: "company_custom_field_values_org_definition_idx")
+  @@map("company_custom_field_values")
+}
+
+model ContactCustomFieldValue {
+  id             String                @id @default(uuid()) @db.Uuid
+  organizationId String                @map("organization_id") @db.Uuid
+  contactId      String                @map("contact_id") @db.Uuid
+  definitionId   String                @map("definition_id") @db.Uuid
+  value          Json
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  contact        Contact               @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  definition     CustomFieldDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, contactId, definitionId], map: "contact_custom_field_values_org_contact_definition_key")
+  @@index([organizationId, definitionId], map: "contact_custom_field_values_org_definition_idx")
+  @@map("contact_custom_field_values")
+}
+
+model Pipeline {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizationId String          @map("organization_id") @db.Uuid
+  name           String          @db.VarChar(160)
+  normalizedName String          @map("normalized_name") @db.VarChar(160)
+  isActive       Boolean         @default(true) @map("is_active")
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  stages         PipelineStage[]
+  opportunities  Opportunity[]
+
+  @@unique([organizationId, normalizedName], map: "pipelines_org_normalized_name_key")
+  @@unique([id, organizationId], map: "pipelines_id_organization_key")
+  @@index([organizationId, isActive], map: "pipelines_org_active_idx")
+  @@map("pipelines")
+}
+
+model PipelineStage {
+  id             String            @id @default(uuid()) @db.Uuid
+  organizationId String            @map("organization_id") @db.Uuid
+  pipelineId     String            @map("pipeline_id") @db.Uuid
+  name           String            @db.VarChar(120)
+  position       Int
+  kind           PipelineStageKind
+  isActive       Boolean           @default(true) @map("is_active")
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  pipeline       Pipeline          @relation(fields: [pipelineId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  opportunities  Opportunity[]
+
+  @@unique([pipelineId, position], map: "pipeline_stages_pipeline_position_key")
+  @@unique([id, organizationId, pipelineId], map: "pipeline_stages_id_org_pipeline_key")
+  @@index([organizationId, pipelineId, isActive], map: "pipeline_stages_org_pipeline_active_idx")
+  @@map("pipeline_stages")
+}
+
+model Activity {
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @map("organization_id") @db.Uuid
+  type           ActivityType
+  status         ActivityStatus   @default(PENDING)
+  priority       ActivityPriority @default(MEDIUM)
+  title          String           @db.VarChar(200)
+  description    String?
+  companyId      String?          @map("company_id") @db.Uuid
+  contactId      String?          @map("contact_id") @db.Uuid
+  opportunityId  String?          @map("opportunity_id") @db.Uuid
+  ownerUserId    String           @map("owner_user_id") @db.Uuid
+  dueAt          DateTime?        @map("due_at") @db.Timestamptz(6)
+  completedAt    DateTime?        @map("completed_at") @db.Timestamptz(6)
+  cancelledAt    DateTime?        @map("cancelled_at") @db.Timestamptz(6)
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy      String           @map("created_by") @db.Uuid
+  updatedBy      String           @map("updated_by") @db.Uuid
+  deletedAt      DateTime?        @map("deleted_at") @db.Timestamptz(6)
+  deletedBy      String?          @map("deleted_by") @db.Uuid
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company        Company?         @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  contact        Contact?         @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  opportunity    Opportunity?     @relation(fields: [opportunityId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  owner          User             @relation("ActivityOwner", fields: [ownerUserId], references: [id], onDelete: Restrict)
+  creator        User             @relation("ActivityCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater        User             @relation("ActivityUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter        User?            @relation("ActivityDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, status, dueAt], map: "activities_org_status_due_idx")
+  @@index([organizationId, ownerUserId, status, dueAt], map: "activities_org_owner_status_due_idx")
+  @@index([organizationId, companyId], map: "activities_org_company_idx")
+  @@index([organizationId, contactId], map: "activities_org_contact_idx")
+  @@index([organizationId, opportunityId], map: "activities_org_opportunity_idx")
+  @@map("activities")
+}
+
+model Opportunity {
+  id              String        @id @default(uuid()) @db.Uuid
+  organizationId  String        @map("organization_id") @db.Uuid
+  pipelineId      String        @map("pipeline_id") @db.Uuid
+  stageId         String        @map("stage_id") @db.Uuid
+  companyId       String?       @map("company_id") @db.Uuid
+  contactId       String?       @map("contact_id") @db.Uuid
+  ownerUserId     String        @map("owner_user_id") @db.Uuid
+  title           String        @db.VarChar(200)
+  estimatedValue  Decimal       @map("estimated_value") @db.Decimal(19, 2)
+  expectedCloseAt DateTime?     @map("expected_close_at") @db.Timestamptz(6)
+  notes           String?
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy       String        @map("created_by") @db.Uuid
+  updatedBy       String        @map("updated_by") @db.Uuid
+  version         Int           @default(1)
+  deletedAt       DateTime?     @map("deleted_at") @db.Timestamptz(6)
+  deletedBy       String?       @map("deleted_by") @db.Uuid
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  pipeline        Pipeline      @relation(fields: [pipelineId], references: [id], onDelete: Restrict)
+  stage           PipelineStage @relation(fields: [stageId], references: [id], onDelete: Restrict)
+  company         Company?      @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  contact         Contact?      @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  owner           User          @relation("OpportunityOwner", fields: [ownerUserId], references: [id], onDelete: Restrict)
+  creator         User          @relation("OpportunityCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater         User          @relation("OpportunityUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter         User?         @relation("OpportunityDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+  activities      Activity[]
+
+  @@unique([id, organizationId], map: "opportunities_id_organization_key")
+  @@index([organizationId, deletedAt, stageId, expectedCloseAt], map: "opportunities_org_deleted_stage_close_idx")
+  @@index([organizationId, ownerUserId, deletedAt, expectedCloseAt], map: "opportunities_org_owner_deleted_close_idx")
+  @@index([organizationId, companyId, deletedAt], map: "opportunities_org_company_deleted_idx")
+  @@index([organizationId, contactId, deletedAt], map: "opportunities_org_contact_deleted_idx")
+  @@index([organizationId, pipelineId, stageId, deletedAt], map: "opportunities_org_pipeline_stage_deleted_idx")
+  @@map("opportunities")
+}

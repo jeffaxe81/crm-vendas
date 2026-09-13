@@ -1,9 +1,9 @@
 generator client {
-  provider            = "prisma-client"
-  output              = "../src/generated/prisma"
-  moduleFormat        = "cjs"
-  importFileExtension = "ts"
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma/client"
 }
+
+
 
 datasource db {
   provider = "postgresql"
@@ -110,8 +110,38 @@ model Organization {
   pipelines                Pipeline[]
   activities               Activity[]
   opportunities            Opportunity[]
+  roles                    Role[]
 
   @@map("organizations")
+}
+
+model Role {
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @map("organization_id") @db.Uuid
+  code           String           @db.VarChar(60)
+  name           String           @db.VarChar(160)
+  isSystem       Boolean          @default(false) @map("is_system")
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  permissions    RolePermission[]
+
+  @@unique([organizationId, code], map: "roles_org_code_key")
+  @@index([organizationId, isSystem], map: "roles_org_system_idx")
+  @@map("roles")
+}
+
+model RolePermission {
+  id             String   @id @default(uuid()) @db.Uuid
+  roleId         String   @map("role_id") @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  permission     String   @db.VarChar(80)
+  scope          String   @default("ORGANIZATION") @db.VarChar(20)
+  role           Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permission], map: "role_permissions_role_permission_key")
+  @@index([organizationId], map: "role_permissions_org_idx")
+  @@map("role_permissions")
 }
 
 model User {

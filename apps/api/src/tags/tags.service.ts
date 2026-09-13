@@ -284,30 +284,36 @@ export class TagsService {
     tagId: string,
     context: TagAdministrationContext
   ) {
-    await Promise.all([
-      this.requireContact(contactId, context.organizationId),
-      this.requireTag(tagId, context.organizationId),
-    ]);
+    // SECURITY: Perform all operations within withTenant() for consistent isolation
+    const link = await this.prisma.withTenant(
+      context.organizationId,
+      async transaction => {
+        await Promise.all([
+          this.requireContact(contactId, context.organizationId),
+          this.requireTag(tagId, context.organizationId),
+        ]);
 
-    const existing = await this.prisma.contactTag.findFirst({
-      where: {
-        organizationId: context.organizationId,
-        contactId,
-        tagId,
-      },
-    });
+        const existing = await transaction.contactTag.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            contactId,
+            tagId,
+          },
+        });
 
-    if (existing) {
-      return existing;
-    }
+        if (existing) {
+          return existing;
+        }
 
-    const link = await this.prisma.contactTag.create({
-      data: {
-        organizationId: context.organizationId,
-        contactId,
-        tagId,
-      },
-    });
+        return transaction.contactTag.create({
+          data: {
+            organizationId: context.organizationId,
+            contactId,
+            tagId,
+          },
+        });
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,
@@ -332,27 +338,44 @@ export class TagsService {
     tagId: string,
     context: TagAdministrationContext
   ): Promise<void> {
-    await Promise.all([
-      this.requireContact(contactId, context.organizationId),
-      this.requireTag(tagId, context.organizationId),
-    ]);
+    // SECURITY: Perform all operations within withTenant() for consistent isolation
+    const link = await this.prisma.withTenant(
+      context.organizationId,
+      async transaction => {
+        await Promise.all([
+          this.requireContact(contactId, context.organizationId),
+          this.requireTag(tagId, context.organizationId),
+        ]);
 
-    const link = await this.prisma.contactTag.findFirst({
-      where: {
-        organizationId: context.organizationId,
-        contactId,
-        tagId,
-      },
-    });
+        const foundLink = await transaction.contactTag.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            contactId,
+            tagId,
+          },
+        });
 
-    if (!link) {
-      throw new NotFoundException({
-        code: "TAG_LINK_NOT_FOUND",
-        message: "Vínculo de tag não encontrado.",
-      });
-    }
+        if (!foundLink) {
+          throw new NotFoundException({
+            code: "TAG_LINK_NOT_FOUND",
+            message: "Vínculo de tag não encontrado.",
+          });
+        }
 
-    await this.prisma.contactTag.delete({ where: { id: link.id } });
+        // SECURITY: Delete uses composite key with organizationId to prevent cross-tenant deletion
+        await transaction.contactTag.delete({
+          where: {
+            organizationId_contactId_tagId: {
+              organizationId: context.organizationId,
+              contactId,
+              tagId,
+            },
+          },
+        });
+
+        return foundLink;
+      }
+    );
 
     await this.audit.record({
       organizationId: context.organizationId,

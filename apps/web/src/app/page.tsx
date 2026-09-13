@@ -8,6 +8,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { authApiRequest } from "../lib/api-client";
 import { ActivitiesView } from "./activities/activities-view";
+import { AgendaView } from "./agenda/agenda-view";
 import { CompaniesView } from "./companies/companies-view";
 import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
@@ -16,8 +17,14 @@ import { OpportunitiesView } from "./opportunities/opportunities-view";
 export default function Home() {
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
   const [activeSection, setActiveSection] = useState<CrmSection>("companies");
+  const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [organizationName, setOrganizationName] = useState("");
+  const [adminDisplayName, setAdminDisplayName] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminPasswordConfirm, setAdminPasswordConfirm] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const restoreSessionRequest =
@@ -68,6 +75,40 @@ export default function Home() {
     }
   }
 
+  async function register(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (adminPassword !== adminPasswordConfirm) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const payload = await authApiRequest<unknown>("/auth/register", {
+        method: "POST",
+        body: { organizationName, adminDisplayName, adminEmail, adminPassword },
+      });
+      setSession(AuthSessionResponseSchema.parse(payload));
+      setActiveSection("companies");
+      setAdminPassword("");
+      setAdminPasswordConfirm("");
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Não foi possível cadastrar."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function switchMode(nextMode: "login" | "register") {
+    setMode(nextMode);
+    setError("");
+  }
+
   async function logout() {
     setError("");
     try {
@@ -95,6 +136,11 @@ export default function Home() {
             accessToken={session.accessToken}
             ownerUserId={session.user.id}
             canWrite={session.permissions.includes("activity.write")}
+          />
+        ) : activeSection === "agenda" ? (
+          <AgendaView
+            accessToken={session.accessToken}
+            ownerUserId={session.user.id}
           />
         ) : (
           <OpportunitiesView
@@ -124,52 +170,164 @@ export default function Home() {
       </section>
 
       <section className="login-card" aria-label="Acesso ao CRM">
-        <p className="login-card__eyebrow">Acesso seguro</p>
-        <h2>Entrar</h2>
-        <p className="login-card__help">
-          Use seu e-mail e senha cadastrados na organização.
-        </p>
-
-        <form className="login-form" onSubmit={login}>
-          <label>
-            <span>E-mail</span>
-            <input
-              type="email"
-              name="email"
-              autoComplete="username"
-              value={email}
-              onChange={event => setEmail(event.target.value)}
-              required
-            />
-          </label>
-
-          <label>
-            <span>Senha</span>
-            <input
-              type="password"
-              name="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={event => setPassword(event.target.value)}
-              required
-            />
-          </label>
-
-          {error ? (
-            <p className="login-form__error" role="alert">
-              {error}
+        {mode === "login" ? (
+          <>
+            <p className="login-card__eyebrow">Acesso seguro</p>
+            <h2>Entrar</h2>
+            <p className="login-card__help">
+              Use seu e-mail e senha cadastrados na organização.
             </p>
-          ) : null}
 
-          <button className="button" type="submit" disabled={submitting}>
-            {submitting ? "Autenticando..." : "Entrar no CRM"}
-          </button>
-        </form>
+            <form className="login-form" onSubmit={login}>
+              <label>
+                <span>E-mail</span>
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="username"
+                  value={email}
+                  onChange={event => setEmail(event.target.value)}
+                  required
+                />
+              </label>
 
-        <p className="login-card__security">
-          O refresh token permanece protegido em cookie HttpOnly e não é
-          armazenado pela interface.
-        </p>
+              <label>
+                <span>Senha</span>
+                <input
+                  type="password"
+                  name="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={event => setPassword(event.target.value)}
+                  required
+                />
+              </label>
+
+              {error ? (
+                <p className="login-form__error" role="alert">
+                  {error}
+                </p>
+              ) : null}
+
+              <button className="button" type="submit" disabled={submitting}>
+                {submitting ? "Autenticando..." : "Entrar no CRM"}
+              </button>
+            </form>
+
+            <p className="login-card__security">
+              O refresh token permanece protegido em cookie HttpOnly e não é
+              armazenado pela interface.
+            </p>
+
+            <p className="login-card__switch">
+              Ainda não tem uma organização cadastrada?{" "}
+              <button
+                type="button"
+                className="login-card__link"
+                onClick={() => switchMode("register")}
+              >
+                Cadastre-se
+              </button>
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="login-card__eyebrow">Primeiro acesso</p>
+            <h2>Cadastrar organização</h2>
+            <p className="login-card__help">
+              Crie sua organização e o primeiro usuário administrador. Depois
+              é possível adicionar outras pessoas com permissões menores.
+            </p>
+
+            <form className="login-form" onSubmit={register}>
+              <label>
+                <span>Nome da organização</span>
+                <input
+                  type="text"
+                  name="organizationName"
+                  autoComplete="organization"
+                  value={organizationName}
+                  onChange={event => setOrganizationName(event.target.value)}
+                  required
+                  minLength={2}
+                />
+              </label>
+
+              <label>
+                <span>Seu nome</span>
+                <input
+                  type="text"
+                  name="adminDisplayName"
+                  autoComplete="name"
+                  value={adminDisplayName}
+                  onChange={event => setAdminDisplayName(event.target.value)}
+                  required
+                />
+              </label>
+
+              <label>
+                <span>E-mail</span>
+                <input
+                  type="email"
+                  name="adminEmail"
+                  autoComplete="username"
+                  value={adminEmail}
+                  onChange={event => setAdminEmail(event.target.value)}
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Senha</span>
+                <input
+                  type="password"
+                  name="adminPassword"
+                  autoComplete="new-password"
+                  value={adminPassword}
+                  onChange={event => setAdminPassword(event.target.value)}
+                  required
+                  minLength={12}
+                />
+              </label>
+
+              <label>
+                <span>Confirmar senha</span>
+                <input
+                  type="password"
+                  name="adminPasswordConfirm"
+                  autoComplete="new-password"
+                  value={adminPasswordConfirm}
+                  onChange={event =>
+                    setAdminPasswordConfirm(event.target.value)
+                  }
+                  required
+                  minLength={12}
+                />
+              </label>
+
+              {error ? (
+                <p className="login-form__error" role="alert">
+                  {error}
+                </p>
+              ) : null}
+
+              <button className="button" type="submit" disabled={submitting}>
+                {submitting ? "Cadastrando..." : "Criar organização"}
+              </button>
+            </form>
+
+            <p className="login-card__switch">
+              Já tem uma conta?{" "}
+              <button
+                type="button"
+                className="login-card__link"
+                onClick={() => switchMode("login")}
+              >
+                Entrar
+              </button>
+            </p>
+          </>
+        )}
       </section>
     </main>
   );
