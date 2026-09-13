@@ -4,8 +4,7 @@ const secureEnvironment = {
   NODE_ENV: "test",
   PORT: "3001",
   DATABASE_URL: "postgresql://axes:axes@localhost:5432/axes_crm",
-  APP_DATABASE_URL:
-    "postgresql://axes_app:axes_app@localhost:5432/axes_crm",
+  APP_DATABASE_URL: "postgresql://axes_app:axes_app@localhost:5432/axes_crm",
   LOG_LEVEL: "info",
   JWT_ACCESS_SECRET: "test-access-secret-with-at-least-32-characters",
   REFRESH_TOKEN_PEPPER: "test-refresh-pepper-with-at-least-32-characters",
