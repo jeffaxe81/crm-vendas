@@ -99,11 +99,26 @@ jobs:
       - name: Check types
         run: pnpm typecheck
 
-      - name: Run tests
-        timeout-minutes: 10
+      - name: Build contracts for tests
+        run: pnpm --filter @axes/contracts build
+
+      - name: Run repository tests
+        run: pnpm test:repo
+
+      - name: Run contracts and web tests
+        run: pnpm --filter @axes/contracts --filter @axes/web test
+
+      - name: Diagnose API test handles
+        timeout-minutes: 5
         env:
           APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
-        run: pnpm test
+        run: >-
+          pnpm --filter @axes/api exec node
+          --experimental-vm-modules
+          ./node_modules/jest/bin/jest.js
+          --runInBand
+          --detectOpenHandles
+          --forceExit
 
       - name: Build source
         timeout-minutes: 10
