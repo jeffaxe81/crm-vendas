@@ -108,17 +108,11 @@ jobs:
       - name: Run contracts and web tests
         run: pnpm --filter @axes/contracts --filter @axes/web test
 
-      - name: Diagnose API test handles
+      - name: Run API tests
         timeout-minutes: 5
         env:
           APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
-        run: >-
-          pnpm --filter @axes/api exec node
-          --experimental-vm-modules
-          ./node_modules/jest/bin/jest.js
-          --runInBand
-          --detectOpenHandles
-          --forceExit
+        run: pnpm --filter @axes/api test
 
       - name: Build source
         timeout-minutes: 10
