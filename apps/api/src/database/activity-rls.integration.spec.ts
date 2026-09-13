@@ -14,7 +14,7 @@ describe("Activity tenant RLS integration", () => {
     process.env.DATABASE_URL ??=
       "postgresql://axes_app:axes_app@localhost:5432/axes_crm";
 
-    prisma = new PrismaService();
+    prisma = new PrismaService(process.env.RLS_DATABASE_URL);
     admin = new PrismaClient({
       adapter: new PrismaPg({
         connectionString:
