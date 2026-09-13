@@ -1,37 +1,47 @@
-import type { CompaniesService } from "../companies/companies.service";
+import type {
+  CompaniesService,
+  CompanyAdministrationContext,
+} from "../companies/companies.service";
 import { CompanyCsvParser } from "./company-csv-parser";
 import { CompanyImportService } from "./company-import.service";
 
-describe("CompanyImportService preview", () => {
-  const createCompaniesMock = () => {
-    let existingDocumentsResult = new Set<string>();
-    const existingDocumentsCalls: Array<{
-      documents: string[];
-      organizationId: string;
-    }> = [];
-    const createCalls: unknown[][] = [];
+const createCompaniesMock = () => {
+  let existingDocumentsResult = new Set<string>();
+  const existingDocumentsCalls: Array<{
+    documents: string[];
+    organizationId: string;
+  }> = [];
+  const createCalls: unknown[][] = [];
 
-    const service = {
-      existingDocuments: async (documents: string[], organizationId: string) => {
-        existingDocumentsCalls.push({ documents, organizationId });
-        return existingDocumentsResult;
-      },
-      create: async (...args: unknown[]) => {
-        createCalls.push(args);
-        return { id: "unused" };
-      },
-    } as unknown as CompaniesService;
+  const service = {
+    existingDocuments: async (documents: string[], organizationId: string) => {
+      existingDocumentsCalls.push({ documents, organizationId });
+      return existingDocumentsResult;
+    },
+    create: async (...args: unknown[]) => {
+      createCalls.push(args);
+      return { id: `company-${createCalls.length}` };
+    },
+  } as unknown as CompaniesService;
 
-    return {
-      service,
-      existingDocumentsCalls,
-      createCalls,
-      setExistingDocumentsResult: (documents: Set<string>) => {
-        existingDocumentsResult = documents;
-      },
-    };
+  return {
+    service,
+    existingDocumentsCalls,
+    createCalls,
+    setExistingDocumentsResult: (documents: Set<string>) => {
+      existingDocumentsResult = documents;
+    },
   };
+};
 
+const context: CompanyAdministrationContext = {
+  organizationId: "tenant-a",
+  actorUserId: "user-a",
+  requestId: "req-a",
+  ipAddress: "127.0.0.1",
+};
+
+describe("CompanyImportService preview", () => {
   it("validates rows without persisting companies", async () => {
     const companies = createCompaniesMock();
     const service = new CompanyImportService(
@@ -116,5 +126,89 @@ describe("CompanyImportService preview", () => {
     expect(companies.existingDocumentsCalls).toEqual([
       { documents: ["doc-9"], organizationId: "tenant-a" },
     ]);
+  });
+});
+
+describe("CompanyImportService confirm", () => {
+  it("rejects a fingerprint mismatch before creating companies", async () => {
+    const companies = createCompaniesMock();
+    const service = new CompanyImportService(
+      new CompanyCsvParser(),
+      companies.service
+    );
+    const file = Buffer.from("legalName,document\nEmpresa Alpha,DOC-1");
+
+    await expect(
+      service.confirm(file, "0".repeat(64), context)
+    ).rejects.toMatchObject({
+      response: expect.objectContaining({ code: "VALIDATION_ERROR" }),
+    });
+    expect(companies.createCalls).toHaveLength(0);
+  });
+
+  it("creates valid companies through CompaniesService", async () => {
+    const companies = createCompaniesMock();
+    const service = new CompanyImportService(
+      new CompanyCsvParser(),
+      companies.service
+    );
+    const file = Buffer.from("legalName,document\nEmpresa Alpha,DOC-1");
+    const preview = await service.preview(file, context.organizationId);
+
+    const result = await service.confirm(file, preview.fingerprint, context);
+
+    expect(result).toMatchObject({ processed: 1, imported: 1, rejected: 0 });
+    expect(result.rows[0]).toEqual({
+      rowNumber: 2,
+      status: "IMPORTED",
+      companyId: "company-1",
+      errors: [],
+    });
+    expect(companies.createCalls).toHaveLength(1);
+    expect(companies.createCalls[0]?.[0]).toEqual({
+      legalName: "Empresa Alpha",
+      document: "DOC-1",
+    });
+    expect(companies.createCalls[0]?.[1]).toEqual(context);
+  });
+
+  it("imports valid rows without rolling back invalid rows", async () => {
+    const companies = createCompaniesMock();
+    const service = new CompanyImportService(
+      new CompanyCsvParser(),
+      companies.service
+    );
+    const file = Buffer.from(
+      "legalName,website\nEmpresa Valida,https://valida.example\nEmpresa Invalida,nao-e-url"
+    );
+    const preview = await service.preview(file, context.organizationId);
+
+    const result = await service.confirm(file, preview.fingerprint, context);
+
+    expect(result).toMatchObject({ processed: 2, imported: 1, rejected: 1 });
+    expect(result.rows.map(row => row.status)).toEqual([
+      "IMPORTED",
+      "REJECTED",
+    ]);
+    expect(companies.createCalls).toHaveLength(1);
+  });
+
+  it("revalidates duplicates at confirmation time", async () => {
+    const companies = createCompaniesMock();
+    const service = new CompanyImportService(
+      new CompanyCsvParser(),
+      companies.service
+    );
+    const file = Buffer.from("legalName,document\nEmpresa Corrida,DOC-2");
+    const preview = await service.preview(file, context.organizationId);
+    companies.setExistingDocumentsResult(new Set(["doc-2"]));
+
+    const result = await service.confirm(file, preview.fingerprint, context);
+
+    expect(result).toMatchObject({ processed: 1, imported: 0, rejected: 1 });
+    expect(result.rows[0]?.errors).toContain(
+      "Documento já cadastrado para outra empresa."
+    );
+    expect(companies.createCalls).toHaveLength(0);
   });
 });
