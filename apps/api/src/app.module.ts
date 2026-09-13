@@ -18,6 +18,7 @@ import { RequestIdMiddleware } from "./observability/request-id.middleware";
 import { OpportunitiesModule } from "./opportunities/opportunities.module";
 import { PipelinesModule } from "./pipelines/pipelines.module";
 import { RelationshipsModule } from "./relationships/relationships.module";
+import { ReportsModule } from "./reports/reports.module";
 import { TagsModule } from "./tags/tags.module";
 import { OrganizationUsersModule } from "./users/organization-users.module";
 
@@ -44,6 +45,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     PipelinesModule,
     ActivitiesModule,
     OpportunitiesModule,
+    ReportsModule,
   ],
 })
 export class AppModule implements NestModule {
