@@ -37,11 +37,11 @@ export default function Home() {
       restoreSessionRequest.current = authApiRequest<unknown>("/auth/refresh", {
         method: "POST",
       })
-        .then((payload) => AuthSessionResponseSchema.parse(payload))
+        .then(payload => AuthSessionResponseSchema.parse(payload))
         .catch(() => null);
     }
 
-    void restoreSessionRequest.current.then((restoredSession) => {
+    void restoreSessionRequest.current.then(restoredSession => {
       if (active && restoredSession) {
         setSession(restoredSession);
         setActiveSection("companies");
@@ -68,7 +68,7 @@ export default function Home() {
       setPassword("");
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Não foi possível autenticar.",
+        cause instanceof Error ? cause.message : "Não foi possível autenticar."
       );
     } finally {
       setSubmitting(false);
@@ -97,7 +97,7 @@ export default function Home() {
       setAdminPasswordConfirm("");
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Não foi possível cadastrar.",
+        cause instanceof Error ? cause.message : "Não foi possível cadastrar."
       );
     } finally {
       setSubmitting(false);
@@ -186,7 +186,7 @@ export default function Home() {
                   name="email"
                   autoComplete="username"
                   value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  onChange={event => setEmail(event.target.value)}
                   required
                 />
               </label>
@@ -198,7 +198,7 @@ export default function Home() {
                   name="password"
                   autoComplete="current-password"
                   value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  onChange={event => setPassword(event.target.value)}
                   required
                 />
               </label>
@@ -247,7 +247,7 @@ export default function Home() {
                   name="organizationName"
                   autoComplete="organization"
                   value={organizationName}
-                  onChange={(event) => setOrganizationName(event.target.value)}
+                  onChange={event => setOrganizationName(event.target.value)}
                   required
                   minLength={2}
                 />
@@ -260,7 +260,7 @@ export default function Home() {
                   name="adminDisplayName"
                   autoComplete="name"
                   value={adminDisplayName}
-                  onChange={(event) => setAdminDisplayName(event.target.value)}
+                  onChange={event => setAdminDisplayName(event.target.value)}
                   required
                 />
               </label>
@@ -272,7 +272,7 @@ export default function Home() {
                   name="adminEmail"
                   autoComplete="username"
                   value={adminEmail}
-                  onChange={(event) => setAdminEmail(event.target.value)}
+                  onChange={event => setAdminEmail(event.target.value)}
                   required
                 />
               </label>
@@ -284,7 +284,7 @@ export default function Home() {
                   name="adminPassword"
                   autoComplete="new-password"
                   value={adminPassword}
-                  onChange={(event) => setAdminPassword(event.target.value)}
+                  onChange={event => setAdminPassword(event.target.value)}
                   required
                   minLength={12}
                 />
@@ -297,7 +297,7 @@ export default function Home() {
                   name="adminPasswordConfirm"
                   autoComplete="new-password"
                   value={adminPasswordConfirm}
-                  onChange={(event) =>
+                  onChange={event =>
                     setAdminPasswordConfirm(event.target.value)
                   }
                   required
