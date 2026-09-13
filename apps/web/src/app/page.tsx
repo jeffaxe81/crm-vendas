@@ -129,7 +129,10 @@ export default function Home() {
         onLogout={() => void logout()}
       >
         {activeSection === "companies" ? (
-          <CompaniesView accessToken={session.accessToken} />
+          <CompaniesView
+            accessToken={session.accessToken}
+            canWrite={session.permissions.includes("company.write")}
+          />
         ) : activeSection === "contacts" ? (
           <ContactsView accessToken={session.accessToken} />
         ) : activeSection === "activities" ? (
