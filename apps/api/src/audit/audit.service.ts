@@ -21,18 +21,20 @@ export class AuditService {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async list(organizationId: string, page: number, limit: number) {
-    const [items, total] = await this.prisma.withTenant(organizationId, tenant =>
-      Promise.all([
-        tenant.auditLog.findMany({
-          where: { organizationId },
-          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-          skip: (page - 1) * limit,
-          take: limit,
-        }),
-        tenant.auditLog.count({
-          where: { organizationId },
-        }),
-      ])
+    const [items, total] = await this.prisma.withTenant(
+      organizationId,
+      (tenant) =>
+        Promise.all([
+          tenant.auditLog.findMany({
+            where: { organizationId },
+            orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+            skip: (page - 1) * limit,
+            take: limit,
+          }),
+          tenant.auditLog.count({
+            where: { organizationId },
+          }),
+        ]),
     );
 
     return {
@@ -44,7 +46,7 @@ export class AuditService {
   }
 
   async record(input: AuditRecordInput): Promise<void> {
-    await this.prisma.withTenant(input.organizationId, tenant =>
+    await this.prisma.withTenant(input.organizationId, (tenant) =>
       tenant.auditLog.create({
         data: {
           organizationId: input.organizationId,
@@ -58,7 +60,7 @@ export class AuditService {
           metadata: input.metadata,
           ipAddress: input.ipAddress ?? null,
         },
-      })
+      }),
     );
   }
 }
