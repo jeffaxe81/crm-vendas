@@ -39,7 +39,7 @@ export class TenantRateLimitGuard implements CanActivate {
   constructor(
     @Inject(TenantRateLimitService)
     private readonly rateLimiter: TenantRateLimitService,
-    @Inject(AuditService) private readonly audit: AuditService
+    @Inject(AuditService) private readonly audit: AuditService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -55,10 +55,15 @@ export class TenantRateLimitGuard implements CanActivate {
 
     // Check tenant limit
     if (!this.rateLimiter.checkTenantLimit(organizationId)) {
-      await this.logRateLimitViolation(request, "tenant", organizationId, userId);
+      await this.logRateLimitViolation(
+        request,
+        "tenant",
+        organizationId,
+        userId,
+      );
       throw new HttpException(
         "Organization rate limit exceeded: 1000 requests/minute",
-        HttpStatus.TOO_MANY_REQUESTS
+        HttpStatus.TOO_MANY_REQUESTS,
       );
     }
 
@@ -67,7 +72,7 @@ export class TenantRateLimitGuard implements CanActivate {
       await this.logRateLimitViolation(request, "user", organizationId, userId);
       throw new HttpException(
         "User rate limit exceeded: 50 requests/second",
-        HttpStatus.TOO_MANY_REQUESTS
+        HttpStatus.TOO_MANY_REQUESTS,
       );
     }
 
@@ -78,7 +83,7 @@ export class TenantRateLimitGuard implements CanActivate {
     request: AuthenticatedRequest,
     limitType: "tenant" | "user",
     organizationId: string,
-    userId: string
+    userId: string,
   ): Promise<void> {
     const status = this.rateLimiter.getStatus(organizationId, userId);
     const ipAddress = this.extractIpAddress(request);
@@ -96,8 +101,11 @@ export class TenantRateLimitGuard implements CanActivate {
           method: request.method,
           limitType,
           current:
-            limitType === "tenant" ? status.tenant.current : status.user.current,
-          limit: limitType === "tenant" ? status.tenant.limit : status.user.limit,
+            limitType === "tenant"
+              ? status.tenant.current
+              : status.user.current,
+          limit:
+            limitType === "tenant" ? status.tenant.limit : status.user.limit,
           window:
             limitType === "tenant" ? status.tenant.window : status.user.window,
         },
@@ -105,7 +113,10 @@ export class TenantRateLimitGuard implements CanActivate {
       });
     } catch (error) {
       // Fail silently - don't break the response if audit logging fails
-      console.error("[TenantRateLimitGuard] Failed to log rate limit violation:", error);
+      console.error(
+        "[TenantRateLimitGuard] Failed to log rate limit violation:",
+        error,
+      );
     }
   }
 
