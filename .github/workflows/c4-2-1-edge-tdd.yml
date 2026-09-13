@@ -1,0 +1,62 @@
+name: C4.2.1 edge TDD gate
+
+on:
+  push:
+    branches:
+      - feat/c4-2-1-company-import
+
+permissions:
+  contents: read
+
+jobs:
+  duplicate-trim:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:18-bookworm
+        env:
+          POSTGRES_DB: axes_crm
+          POSTGRES_USER: axes
+          POSTGRES_PASSWORD: axes
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U axes -d axes_crm"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
+      APP_DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
+      MIGRATION_DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
+      JWT_ACCESS_SECRET: test-access-secret-with-at-least-32-characters
+      REFRESH_TOKEN_PEPPER: test-refresh-pepper-with-at-least-32-characters
+      AUTH_ACCESS_TTL_SECONDS: 900
+      AUTH_REFRESH_TTL_SECONDS: 2592000
+      WEB_ORIGIN: http://127.0.0.1:3000
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - run: corepack enable && corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @axes/contracts build
+      - run: pnpm --filter @axes/api prisma:generate
+      - name: Migrate database
+        env:
+          DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
+        run: pnpm --filter @axes/api prisma:migrate:deploy
+      - name: Create application role
+        env:
+          PGPASSWORD: axes
+        run: |
+          psql -h 127.0.0.1 -U axes -d axes_crm -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE axes_app LOGIN PASSWORD 'axes_app' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS;
+          GRANT CONNECT ON DATABASE axes_crm TO axes_app;
+          GRANT USAGE ON SCHEMA public TO axes_app;
+          GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA public TO axes_app;
+          GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO axes_app;
+          SQL
+      - run: pnpm --filter @axes/api test -- company-import.integration.spec.ts
