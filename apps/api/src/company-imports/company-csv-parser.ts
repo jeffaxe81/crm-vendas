@@ -24,6 +24,13 @@ type LogicalRow = {
   fields: string[];
 };
 
+export class CompanyCsvValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "CompanyCsvValidationError";
+  }
+}
+
 export class CompanyCsvParser {
   parse(content: Buffer | string): ParsedCompanyCsv {
     const text = (
@@ -34,7 +41,7 @@ export class CompanyCsvParser {
     const headerRow = logicalRows[0];
 
     if (!headerRow) {
-      throw new Error("O arquivo CSV está vazio.");
+      throw new CompanyCsvValidationError("O arquivo CSV está vazio.");
     }
 
     const headers = this.validateHeaders(headerRow.fields);
@@ -44,7 +51,9 @@ export class CompanyCsvParser {
       .map(row => this.mapRow(row, headers));
 
     if (rows.length > 500) {
-      throw new Error("O arquivo CSV excede o limite de 500 linhas.");
+      throw new CompanyCsvValidationError(
+        "O arquivo CSV excede o limite de 500 linhas."
+      );
     }
 
     return {
@@ -136,7 +145,9 @@ export class CompanyCsvParser {
     }
 
     if (inQuotes) {
-      throw new Error("CSV inválido: campo entre aspas não foi encerrado.");
+      throw new CompanyCsvValidationError(
+        "CSV inválido: campo entre aspas não foi encerrado."
+      );
     }
 
     if (currentField.length > 0 || fields.length > 0) {
@@ -153,16 +164,20 @@ export class CompanyCsvParser {
 
     for (const header of headers) {
       if (!COMPANY_CSV_HEADERS.includes(header as CompanyCsvHeader)) {
-        throw new Error(`Coluna CSV desconhecida: ${header}`);
+        throw new CompanyCsvValidationError(
+          `Coluna CSV desconhecida: ${header}`
+        );
       }
       if (seen.has(header)) {
-        throw new Error(`Coluna CSV duplicada: ${header}`);
+        throw new CompanyCsvValidationError(`Coluna CSV duplicada: ${header}`);
       }
       seen.add(header);
     }
 
     if (!seen.has("legalName")) {
-      throw new Error("Coluna obrigatória ausente: legalName");
+      throw new CompanyCsvValidationError(
+        "Coluna obrigatória ausente: legalName"
+      );
     }
 
     return headers as CompanyCsvHeader[];
@@ -175,7 +190,9 @@ export class CompanyCsvParser {
     if (row.fields.length > headers.length) {
       const extraFields = row.fields.slice(headers.length);
       if (extraFields.some(field => field.trim().length > 0)) {
-        throw new Error(`Quantidade de colunas inválida na linha ${row.rowNumber}.`);
+        throw new CompanyCsvValidationError(
+          `Quantidade de colunas inválida na linha ${row.rowNumber}.`
+        );
       }
     }
 
