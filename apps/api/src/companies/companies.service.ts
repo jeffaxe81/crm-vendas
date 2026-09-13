@@ -81,6 +81,38 @@ export class CompaniesService {
     };
   }
 
+  async existingDocuments(
+    documents: string[],
+    organizationId: string
+  ): Promise<Set<string>> {
+    if (documents.length === 0) {
+      return new Set();
+    }
+
+    const normalizedDocuments = Array.from(
+      new Set(documents.map(document => document.trim().toLocaleLowerCase("pt-BR")))
+    );
+    const companies = await this.prisma.withTenant(organizationId, tenant =>
+      tenant.company.findMany({
+        where: {
+          organizationId,
+          deletedAt: null,
+          OR: normalizedDocuments.map(document => ({
+            document: { equals: document, mode: "insensitive" as const },
+          })),
+        },
+        select: { document: true },
+      })
+    );
+
+    return new Set(
+      companies
+        .map(company => company.document)
+        .filter((document): document is string => Boolean(document))
+        .map(document => document.trim().toLocaleLowerCase("pt-BR"))
+    );
+  }
+
   async read(id: string, organizationId: string) {
     return this.prisma.withTenant(organizationId, tenant =>
       this.requireCompany(tenant, id, organizationId)
