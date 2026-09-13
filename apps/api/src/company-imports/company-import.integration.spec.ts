@@ -166,10 +166,12 @@ describe("C4.2.1 company import API", () => {
     expect(companies).toHaveLength(1);
     expect(companies[0]?.legalName).toBe("Empresa Valida");
 
-    const audit = await prisma.auditLog.findMany({
-      where: { organizationId: organization.id, action: "company.created" },
-      select: { requestId: true, entityId: true },
-    });
+    const audit = await prisma.withTenant(organization.id, tenant =>
+      tenant.auditLog.findMany({
+        where: { organizationId: organization.id, action: "company.created" },
+        select: { requestId: true, entityId: true },
+      })
+    );
     expect(audit).toHaveLength(1);
     expect(audit[0]?.requestId).toBe("c4-2-1-import-confirm");
   });
