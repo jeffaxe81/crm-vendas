@@ -80,3 +80,5 @@ jobs:
           company-import.service.spec.ts
       - name: Run C4.2.1 integration test
         run: pnpm --filter @axes/api test -- company-import.integration.spec.ts
+      - name: Run C4.2.1 web test
+        run: pnpm --filter @axes/web test -- company-import-view.test.tsx
