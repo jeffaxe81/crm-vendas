@@ -5,7 +5,7 @@ import test from "node:test";
 test("compose defines the Cycle 0 service topology", () => {
   const output = execFileSync(
     "docker",
-    ["compose", "--env-file", ".env.example", "config", "--format", "json"],
+    ["compose", "config", "--format", "json"],
     {
       encoding: "utf8",
     }

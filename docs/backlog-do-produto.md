@@ -11,8 +11,7 @@
 | MVP-07 | Oportunidades       | Cadastro e movimentação no funil              | P0         | 1    | Concluído             | MVP-03                      | Alto    |
 | MVP-08 | Painel              | Indicadores e visão de trabalho diário        | P1         | 1    | Concluído             | MVP-06, MVP-07              | Médio   |
 | MVP-09 | Auditoria           | Registro das ações principais                 | P1         | 1    | Concluído             | Usuário autenticado         | Médio   |
-| F2-01  | Produtividade       | Agenda Comercial semanal                      | P0         | 2    | Concluído             | MVP-06, activity.read       | Médio   |
-| F2-02  | Produtividade       | Importação CSV de empresas                    | P0         | 2    | Em validação          | MVP-03, company.write       | Médio   |
+| F2-01  | Produtividade       | Agenda Comercial semanal                      | P0         | 2    | Em validação          | MVP-06, activity.read       | Médio   |
 
 ## Histórias de usuário prioritárias
 
@@ -24,12 +23,9 @@
 | US-04 | Como usuário, quero acompanhar oportunidades por etapas do funil.                           | A oportunidade possui cliente, valor, previsão e etapa editável.                 |
 | US-05 | Como gestor, quero indicadores comerciais básicos para orientar prioridades.                | O painel resume oportunidades por etapa, valor em aberto e atividades pendentes. |
 | US-06 | Como usuário comercial, quero visualizar minhas atividades em uma agenda semanal.           | A agenda usa dueAt, navegação semanal, filtros e respeita activity.read.         |
-| US-07 | Como usuário autorizado, quero importar empresas por CSV com preview antes da gravação.     | Até 500 linhas, validação por linha, confirmação explícita e sem sobrescrita.    |
 
 ## Delimitação do incremento
 
-A **Fase 1 — MVP Comercial** está encerrada e a **F2-01 / C4.1 — Agenda Comercial** está concluída. O incremento atual da **Fase 2 — Produtividade** é a **F2-02 / C4.2.1 — Importação CSV de Empresas**.
+A **Fase 1 — MVP Comercial** está encerrada. O incremento atual inicia a **Fase 2 — Produtividade** exclusivamente pela **F2-01 / C4.1 — Agenda Comercial**.
 
-A C4.2.1 permanece em validação no PR #38. O escopo não inclui importação de contatos, atualização/merge automático, XLS/XLSX, filas ou jobs persistentes.
-
-Campos personalizados e tags já estão presentes na base atual e não serão duplicados. Produtos, relatórios e demais evoluções continuam planejados para incrementos posteriores.
+Campos personalizados e tags já estão presentes na base atual e não serão duplicados. Importação, produtos, relatórios e demais evoluções continuam planejados para incrementos posteriores.
