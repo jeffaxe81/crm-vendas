@@ -1,4 +1,4 @@
-name: C4.1.1 targeted RED
+name: C4.1.1 targeted verification
 
 on:
   push:
@@ -6,12 +6,14 @@ on:
       - feat/c4-1-1-management-summary
     paths:
       - .github/workflows/c4-1-1-red.yml
+      - apps/api/src/reports/**
+      - apps/api/src/app.module.ts
 
 permissions:
   contents: read
 
 jobs:
-  red:
+  verify-management-summary:
     runs-on: ubuntu-24.04
     services:
       postgres:
@@ -72,5 +74,5 @@ jobs:
           GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA public TO axes_app;
           GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO axes_app;
           SQL
-      - name: Run management summary integration RED
+      - name: Run management summary integration test
         run: pnpm --filter @axes/api test -- management-summary.integration.spec.ts
