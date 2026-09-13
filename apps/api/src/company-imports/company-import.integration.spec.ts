@@ -13,7 +13,9 @@ describe("C4.2.1 company import API", () => {
   let passwords: PasswordService;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalFilters(new ApiErrorFilter());
     app.setGlobalPrefix("api/v1");
@@ -132,10 +134,48 @@ describe("C4.2.1 company import API", () => {
     expect(response.body).toMatchObject({ processed: 1, valid: 1, invalid: 0 });
     expect(response.body.fingerprint).toMatch(/^[a-f0-9]{64}$/);
 
-    const companiesA = await prisma.withTenant(tenantA.organization.id, tenant =>
-      tenant.company.count({ where: { organizationId: tenantA.organization.id } })
+    const companiesA = await prisma.withTenant(
+      tenantA.organization.id,
+      tenant =>
+        tenant.company.count({
+          where: { organizationId: tenantA.organization.id },
+        })
     );
     expect(companiesA).toBe(0);
+  });
+
+  it("normalizes surrounding whitespace when checking existing documents", async () => {
+    const { organization, user, token } = await createSession(
+      "ADMIN",
+      "trim-duplicate"
+    );
+
+    await prisma.withTenant(organization.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: organization.id,
+          legalName: "Empresa Legada",
+          document: " DOC-LEGACY ",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      })
+    );
+
+    const response = await request(app.getHttpServer())
+      .post("/api/v1/company-imports/preview")
+      .set("Authorization", `Bearer ${token}`)
+      .attach(
+        "file",
+        Buffer.from("legalName,document\nEmpresa Nova,doc-legacy"),
+        "empresas.csv"
+      )
+      .expect(200);
+
+    expect(response.body).toMatchObject({ processed: 1, valid: 0, invalid: 1 });
+    expect(response.body.rows[0]?.errors).toContain(
+      "Já existe uma empresa ativa com este documento."
+    );
   });
 
   it("confirms valid rows, rejects invalid rows and audits created companies", async () => {
