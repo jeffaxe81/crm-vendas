@@ -87,9 +87,13 @@ jobs:
           SQL
 
       - name: Verify source and tests
+        env:
+          APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
         run: pnpm verify
 
       - name: Bootstrap administrator for E2E
+        env:
+          APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
         run: pnpm --filter @axes/api bootstrap:admin
 
       - name: Install Chromium
