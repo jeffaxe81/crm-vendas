@@ -35,6 +35,7 @@ jobs:
       APP_DB_PASSWORD: axes_app
       DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
       APP_DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
+      RLS_DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
       MIGRATION_DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
       NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:3001/api/v1
       WEB_ORIGIN: http://127.0.0.1:3000
