@@ -100,7 +100,7 @@ export class DeniedAccessLogger implements NestInterceptor {
 
     const xRealIp = request.headers["x-real-ip"];
     if (xRealIp) {
-      return Array.isArray(xRealIp) ? xRealIp[0] : (xRealIp as string);
+      return Array.isArray(xRealIp) ? (xRealIp[0] ?? null) : xRealIp;
     }
 
     return request.socket?.remoteAddress ?? null;
