@@ -74,7 +74,10 @@ export function ManagementSummaryView({
   }, [accessToken]);
 
   return (
-    <section className="activities-view" aria-labelledby="management-summary-title">
+    <section
+      className="activities-view"
+      aria-labelledby="management-summary-title"
+    >
       <header className="activities-view__header">
         <div>
           <p className="activities-view__eyebrow">Visão executiva</p>
@@ -87,7 +90,9 @@ export function ManagementSummaryView({
       </header>
 
       {loading ? (
-        <p className="activities-view__status">Carregando resumo gerencial...</p>
+        <p className="activities-view__status">
+          Carregando resumo gerencial...
+        </p>
       ) : error ? (
         <p className="login-form__error" role="alert">
           {error}
@@ -98,7 +103,10 @@ export function ManagementSummaryView({
             Atualizado em {dateTimeFormatter.format(new Date(summary.asOf))}
           </p>
 
-          <div className="companies-view__grid" aria-label="Indicadores gerenciais">
+          <div
+            className="companies-view__grid"
+            aria-label="Indicadores gerenciais"
+          >
             <article className="companies-view__card">
               <span>Valor em aberto</span>
               <strong>{formatCurrency(summary.openEstimatedValue)}</strong>
@@ -118,7 +126,9 @@ export function ManagementSummaryView({
           </div>
 
           <section aria-labelledby="management-summary-pipeline-title">
-            <h2 id="management-summary-pipeline-title">Oportunidades por etapa</h2>
+            <h2 id="management-summary-pipeline-title">
+              Oportunidades por etapa
+            </h2>
             {summary.opportunitiesByStage.length === 0 ? (
               <p className="activities-view__status">
                 Nenhuma oportunidade ativa encontrada.
