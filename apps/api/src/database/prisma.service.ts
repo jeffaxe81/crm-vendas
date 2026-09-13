@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  OnModuleDestroy,
-  Optional,
-} from "@nestjs/common";
+import { Inject, Injectable, OnModuleDestroy, Optional } from "@nestjs/common";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 import { parseApiEnvironment } from "../config/environment";
