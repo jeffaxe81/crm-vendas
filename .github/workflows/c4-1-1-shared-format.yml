@@ -1,0 +1,60 @@
+name: C4.1.1 shared formatter
+
+on:
+  push:
+    branches:
+      - feat/c4-1-1-management-summary
+    paths:
+      - .github/workflows/c4-1-1-shared-format.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feat/c4-1-1-management-summary
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Apply repository Prettier configuration
+        run: |
+          pnpm exec prettier --write \
+            apps/api/src/audit/audit-completeness.integration.spec.ts \
+            apps/api/src/audit/audit.service.ts \
+            apps/api/src/audit/denied-access.logger.ts \
+            apps/api/src/custom-fields/custom-fields.service.ts \
+            apps/api/src/database/comprehensive-rls.integration.spec.ts \
+            apps/api/src/observability/advanced-audit.integration.spec.ts \
+            apps/api/src/observability/tenant-rate-limit.guard.ts \
+            apps/api/src/observability/tenant-rate-limit.service.ts \
+            apps/api/src/relationships/relationships.service.ts \
+            apps/web/src/app/page.tsx
+          rm .github/workflows/c4-1-1-shared-format.yml
+      - name: Commit deterministic formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            apps/api/src/audit/audit-completeness.integration.spec.ts \
+            apps/api/src/audit/audit.service.ts \
+            apps/api/src/audit/denied-access.logger.ts \
+            apps/api/src/custom-fields/custom-fields.service.ts \
+            apps/api/src/database/comprehensive-rls.integration.spec.ts \
+            apps/api/src/observability/advanced-audit.integration.spec.ts \
+            apps/api/src/observability/tenant-rate-limit.guard.ts \
+            apps/api/src/observability/tenant-rate-limit.service.ts \
+            apps/api/src/relationships/relationships.service.ts \
+            apps/web/src/app/page.tsx \
+            .github/workflows/c4-1-1-shared-format.yml
+          git commit -m "style: apply exact prettier output for shared files"
+          git push origin HEAD:feat/c4-1-1-management-summary
