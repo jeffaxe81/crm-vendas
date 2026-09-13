@@ -13,6 +13,7 @@ import { CompaniesView } from "./companies/companies-view";
 import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
 import { OpportunitiesView } from "./opportunities/opportunities-view";
+import { ManagementSummaryView } from "./reports/management-summary-view";
 
 export default function Home() {
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
@@ -145,6 +146,8 @@ export default function Home() {
             accessToken={session.accessToken}
             ownerUserId={session.user.id}
           />
+        ) : activeSection === "management-summary" ? (
+          <ManagementSummaryView accessToken={session.accessToken} />
         ) : (
           <OpportunitiesView
             accessToken={session.accessToken}
