@@ -6,10 +6,10 @@ import { Prisma, PrismaClient } from "../generated/prisma/client";
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleDestroy {
-  constructor() {
+  constructor(connectionString?: string) {
     const environment = parseApiEnvironment(process.env);
     const adapter = new PrismaPg({
-      connectionString: environment.APP_DATABASE_URL,
+      connectionString: connectionString ?? environment.APP_DATABASE_URL,
     });
 
     super({ adapter });
