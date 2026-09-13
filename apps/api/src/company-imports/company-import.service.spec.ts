@@ -94,9 +94,7 @@ describe("CompanyImportService preview", () => {
     );
 
     const preview = await service.preview(
-      Buffer.from(
-        "legalName,document\nEmpresa Um,DOC-1\nEmpresa Dois, doc-1 "
-      ),
+      Buffer.from("legalName,document\nEmpresa Um,DOC-1\nEmpresa Dois, doc-1 "),
       "tenant-a"
     );
 

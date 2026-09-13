@@ -194,9 +194,11 @@ describe("C4.2.1 company CSV import view", () => {
   it("does not expose import action without company.write", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        response({ items: [], page: 1, limit: 20, total: 0 })
-      )
+      vi
+        .fn()
+        .mockResolvedValue(
+          response({ items: [], page: 1, limit: 20, total: 0 })
+        )
     );
 
     render(<CompaniesView accessToken="access-token" canWrite={false} />);

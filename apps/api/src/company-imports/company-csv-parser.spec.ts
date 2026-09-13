@@ -38,7 +38,9 @@ describe("CompanyCsvParser", () => {
   });
 
   it("ignores fully empty data rows", () => {
-    const parsed = parser.parse("legalName,document\nEmpresa A,DOC-A\n,,\n\nEmpresa B,DOC-B");
+    const parsed = parser.parse(
+      "legalName,document\nEmpresa A,DOC-A\n,,\n\nEmpresa B,DOC-B"
+    );
     expect(parsed.rows.map(row => row.data.legalName)).toEqual([
       "Empresa A",
       "Empresa B",
@@ -58,12 +60,18 @@ describe("CompanyCsvParser", () => {
   });
 
   it("accepts 500 non-empty rows", () => {
-    const rows = Array.from({ length: 500 }, (_, index) => `Empresa ${index + 1}`).join("\n");
+    const rows = Array.from(
+      { length: 500 },
+      (_, index) => `Empresa ${index + 1}`
+    ).join("\n");
     expect(parser.parse(`legalName\n${rows}`).rows).toHaveLength(500);
   });
 
   it("rejects 501 non-empty rows", () => {
-    const rows = Array.from({ length: 501 }, (_, index) => `Empresa ${index + 1}`).join("\n");
+    const rows = Array.from(
+      { length: 501 },
+      (_, index) => `Empresa ${index + 1}`
+    ).join("\n");
     expect(() => parser.parse(`legalName\n${rows}`)).toThrow(
       "O arquivo CSV excede o limite de 500 linhas."
     );

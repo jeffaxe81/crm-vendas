@@ -24,7 +24,7 @@
 | US-04 | Como usuário, quero acompanhar oportunidades por etapas do funil.                           | A oportunidade possui cliente, valor, previsão e etapa editável.                 |
 | US-05 | Como gestor, quero indicadores comerciais básicos para orientar prioridades.                | O painel resume oportunidades por etapa, valor em aberto e atividades pendentes. |
 | US-06 | Como usuário comercial, quero visualizar minhas atividades em uma agenda semanal.           | A agenda usa dueAt, navegação semanal, filtros e respeita activity.read.         |
-| US-07 | Como usuário autorizado, quero importar empresas por CSV com preview antes da gravação.      | Até 500 linhas, validação por linha, confirmação explícita e sem sobrescrita.     |
+| US-07 | Como usuário autorizado, quero importar empresas por CSV com preview antes da gravação.     | Até 500 linhas, validação por linha, confirmação explícita e sem sobrescrita.    |
 
 ## Delimitação do incremento
 

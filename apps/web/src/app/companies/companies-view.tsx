@@ -322,7 +322,10 @@ export function CompaniesView({
               Importar CSV
             </button>
           ) : null}
-          <button className="button companies-view__primary" onClick={openCreate}>
+          <button
+            className="button companies-view__primary"
+            onClick={openCreate}
+          >
             Nova empresa
           </button>
         </div>
@@ -349,7 +352,10 @@ export function CompaniesView({
       ) : null}
 
       {importOpen ? (
-        <section className="company-import" aria-label="Importar empresas por CSV">
+        <section
+          className="company-import"
+          aria-label="Importar empresas por CSV"
+        >
           <div className="company-form__heading">
             <div>
               <p>Importação</p>
@@ -376,7 +382,8 @@ export function CompaniesView({
           {importPreview && !importResult ? (
             <>
               <p>
-                {importPreview.valid} válida(s) · {importPreview.invalid} inválida(s)
+                {importPreview.valid} válida(s) · {importPreview.invalid}{" "}
+                inválida(s)
               </p>
               <div className="company-import__table-wrapper">
                 <table>
@@ -393,7 +400,9 @@ export function CompaniesView({
                       <tr key={row.rowNumber}>
                         <td>{row.rowNumber}</td>
                         <td>{row.data.legalName ?? "—"}</td>
-                        <td>{row.status === "VALID" ? "Válida" : "Inválida"}</td>
+                        <td>
+                          {row.status === "VALID" ? "Válida" : "Inválida"}
+                        </td>
                         <td>{row.errors.join(" · ") || "—"}</td>
                       </tr>
                     ))}
@@ -413,7 +422,8 @@ export function CompaniesView({
 
           {importResult ? (
             <p>
-              {importResult.imported} importada(s) · {importResult.rejected} rejeitada(s)
+              {importResult.imported} importada(s) · {importResult.rejected}{" "}
+              rejeitada(s)
             </p>
           ) : null}
         </section>

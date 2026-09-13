@@ -91,9 +91,7 @@ export class CompaniesService {
 
     const normalizedDocuments = Array.from(
       new Set(
-        documents.map(document =>
-          document.trim().toLocaleLowerCase("pt-BR")
-        )
+        documents.map(document => document.trim().toLocaleLowerCase("pt-BR"))
       )
     );
     const companies = await this.prisma.withTenant(organizationId, tenant =>

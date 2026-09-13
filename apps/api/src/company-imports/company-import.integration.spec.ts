@@ -198,7 +198,11 @@ describe("C4.2.1 company import API", () => {
       .attach("file", csv, "empresas.csv")
       .expect(200);
 
-    expect(result.body).toMatchObject({ processed: 2, imported: 1, rejected: 1 });
+    expect(result.body).toMatchObject({
+      processed: 2,
+      imported: 1,
+      rejected: 1,
+    });
 
     const companies = await prisma.withTenant(organization.id, tenant =>
       tenant.company.findMany({ where: { organizationId: organization.id } })
@@ -222,7 +226,11 @@ describe("C4.2.1 company import API", () => {
     await request(app.getHttpServer())
       .post("/api/v1/company-imports/preview")
       .set("Authorization", `Bearer ${token}`)
-      .attach("file", Buffer.from("legalName,unknown\nEmpresa A,x"), "empresas.csv")
+      .attach(
+        "file",
+        Buffer.from("legalName,unknown\nEmpresa A,x"),
+        "empresas.csv"
+      )
       .expect(400);
 
     await request(app.getHttpServer())
