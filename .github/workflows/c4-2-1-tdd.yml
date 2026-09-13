@@ -1,0 +1,28 @@
+name: C4.2.1 TDD gate
+
+on:
+  push:
+    branches:
+      - feat/c4-2-1-company-import
+
+permissions:
+  contents: read
+
+jobs:
+  parser:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build contracts
+        run: pnpm --filter @axes/contracts build
+      - name: Run parser test
+        run: pnpm --filter @axes/api test -- company-csv-parser.spec.ts
