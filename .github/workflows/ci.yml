@@ -87,10 +87,27 @@ jobs:
           GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO axes_app;
           SQL
 
-      - name: Verify source and tests
+      - name: Verify foundation
+        run: pnpm verify:foundation
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Lint source
+        run: pnpm lint
+
+      - name: Check types
+        run: pnpm typecheck
+
+      - name: Run tests
+        timeout-minutes: 10
         env:
           APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
-        run: pnpm verify
+        run: pnpm test
+
+      - name: Build source
+        timeout-minutes: 10
+        run: pnpm build
 
       - name: Bootstrap administrator for E2E
         env:
