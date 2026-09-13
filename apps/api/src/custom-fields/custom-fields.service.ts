@@ -43,7 +43,7 @@ type AuditableDefinition = {
 export class CustomFieldsService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
-    @Inject(AuditService) private readonly audit: AuditService
+    @Inject(AuditService) private readonly audit: AuditService,
   ) {}
 
   async listDefinitions(scope: CustomFieldScope, organizationId: string) {
@@ -55,7 +55,7 @@ export class CustomFieldsService {
 
   async createDefinition(
     input: CustomFieldDefinitionInput,
-    context: CustomFieldAdministrationContext
+    context: CustomFieldAdministrationContext,
   ) {
     this.validateDefinitionOptions(input.type, input.options);
 
@@ -104,11 +104,11 @@ export class CustomFieldsService {
   async updateDefinition(
     id: string,
     input: CustomFieldDefinitionUpdateInput,
-    context: CustomFieldAdministrationContext
+    context: CustomFieldAdministrationContext,
   ) {
     const existing = await this.requireDefinitionById(
       id,
-      context.organizationId
+      context.organizationId,
     );
 
     if (input.options !== undefined) {
@@ -156,7 +156,7 @@ export class CustomFieldsService {
     companyId: string,
     definitionId: string,
     value: unknown,
-    context: CustomFieldAdministrationContext
+    context: CustomFieldAdministrationContext,
   ) {
     const [, definition] = await Promise.all([
       this.requireCompany(companyId, context.organizationId),
@@ -209,15 +209,19 @@ export class CustomFieldsService {
   async removeCompanyValue(
     companyId: string,
     definitionId: string,
-    context: CustomFieldAdministrationContext
+    context: CustomFieldAdministrationContext,
   ): Promise<void> {
     // SECURITY: Perform all operations within withTenant() for consistent isolation
     const existing = await this.prisma.withTenant(
       context.organizationId,
-      async transaction => {
+      async (transaction) => {
         await Promise.all([
           this.requireCompany(companyId, context.organizationId),
-          this.requireDefinition(definitionId, context.organizationId, "COMPANY"),
+          this.requireDefinition(
+            definitionId,
+            context.organizationId,
+            "COMPANY",
+          ),
         ]);
 
         const foundValue = await transaction.companyCustomFieldValue.findFirst({
@@ -244,7 +248,7 @@ export class CustomFieldsService {
         });
 
         return foundValue;
-      }
+      },
     );
 
     await this.audit.record({
@@ -274,7 +278,7 @@ export class CustomFieldsService {
     contactId: string,
     definitionId: string,
     value: unknown,
-    context: CustomFieldAdministrationContext
+    context: CustomFieldAdministrationContext,
   ) {
     const [, definition] = await Promise.all([
       this.requireContact(contactId, context.organizationId),
@@ -327,15 +331,19 @@ export class CustomFieldsService {
   async removeContactValue(
     contactId: string,
     definitionId: string,
-    context: CustomFieldAdministrationContext
+    context: CustomFieldAdministrationContext,
   ): Promise<void> {
     // SECURITY: Perform all operations within withTenant() for consistent isolation
     const existing = await this.prisma.withTenant(
       context.organizationId,
-      async transaction => {
+      async (transaction) => {
         await Promise.all([
           this.requireContact(contactId, context.organizationId),
-          this.requireDefinition(definitionId, context.organizationId, "CONTACT"),
+          this.requireDefinition(
+            definitionId,
+            context.organizationId,
+            "CONTACT",
+          ),
         ]);
 
         const foundValue = await transaction.contactCustomFieldValue.findFirst({
@@ -362,7 +370,7 @@ export class CustomFieldsService {
         });
 
         return foundValue;
-      }
+      },
     );
 
     await this.audit.record({
@@ -380,7 +388,7 @@ export class CustomFieldsService {
 
   private validateDefinitionOptions(
     type: "TEXT" | "NUMBER" | "BOOLEAN" | "DATE" | "SELECT",
-    options: string[] | undefined
+    options: string[] | undefined,
   ): void {
     if (type === "SELECT") {
       if (!options || options.length === 0) {
@@ -405,12 +413,12 @@ export class CustomFieldsService {
       type: "TEXT" | "NUMBER" | "BOOLEAN" | "DATE" | "SELECT";
       options: Prisma.JsonValue | null;
     },
-    value: unknown
+    value: unknown,
   ): Prisma.InputJsonValue {
     try {
       return validateCustomFieldValue(
         definition,
-        value
+        value,
       ) as Prisma.InputJsonValue;
     } catch (error) {
       throw new BadRequestException({
@@ -438,7 +446,7 @@ export class CustomFieldsService {
   private async requireDefinition(
     id: string,
     organizationId: string,
-    scope: CustomFieldScope
+    scope: CustomFieldScope,
   ) {
     const definition = await this.prisma.customFieldDefinition.findFirst({
       where: { id, organizationId, scope },
@@ -452,7 +460,7 @@ export class CustomFieldsService {
   }
 
   private async requireCompany(id: string, organizationId: string) {
-    return this.prisma.withTenant(organizationId, async tenant => {
+    return this.prisma.withTenant(organizationId, async (tenant) => {
       const company = await tenant.company.findFirst({
         where: { id, organizationId, deletedAt: null },
       });
@@ -469,7 +477,7 @@ export class CustomFieldsService {
   }
 
   private async requireContact(id: string, organizationId: string) {
-    return this.prisma.withTenant(organizationId, async tenant => {
+    return this.prisma.withTenant(organizationId, async (tenant) => {
       const contact = await tenant.contact.findFirst({
         where: { id, organizationId, deletedAt: null },
       });
@@ -500,7 +508,7 @@ export class CustomFieldsService {
   }
 
   private toAuditDefinition(
-    definition: AuditableDefinition
+    definition: AuditableDefinition,
   ): Prisma.InputJsonValue {
     return {
       scope: definition.scope,
