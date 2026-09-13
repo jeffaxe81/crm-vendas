@@ -8,6 +8,9 @@ on:
       - .github/workflows/c4-1-1-red.yml
       - apps/api/src/reports/**
       - apps/api/src/app.module.ts
+      - packages/contracts/src/management-summary.ts
+      - packages/contracts/src/management-summary.test.ts
+      - packages/contracts/src/index.ts
 
 permissions:
   contents: read
@@ -57,6 +60,19 @@ jobs:
           corepack prepare pnpm@11.3.0 --activate
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
+      - name: Check C4.1.1 formatting
+        run: |
+          pnpm exec prettier --check \
+            packages/contracts/src/management-summary.ts \
+            packages/contracts/src/management-summary.test.ts \
+            packages/contracts/src/index.ts \
+            apps/api/src/reports/*.ts \
+            apps/api/src/app.module.ts
+      - name: Verify management summary contract
+        run: |
+          pnpm --filter @axes/contracts test -- management-summary.test.ts
+          pnpm --filter @axes/contracts typecheck
+          pnpm --filter @axes/contracts build
       - name: Generate Prisma client
         run: pnpm --filter @axes/api prisma:generate
       - name: Deploy database migrations
