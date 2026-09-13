@@ -2,8 +2,8 @@ import type { CompanyCreateInput, CompanyUpdateInput } from "@axes/contracts";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 
 import { AuditService } from "../audit/audit.service";
-import { Prisma } from "../generated/prisma/client";
 import { PrismaService } from "../database/prisma.service";
+import { Prisma } from "../generated/prisma/client";
 
 export type CompanyAdministrationContext = {
   organizationId: string;
@@ -90,7 +90,11 @@ export class CompaniesService {
     }
 
     const normalizedDocuments = Array.from(
-      new Set(documents.map(document => document.trim().toLocaleLowerCase("pt-BR")))
+      new Set(
+        documents.map(document =>
+          document.trim().toLocaleLowerCase("pt-BR")
+        )
+      )
     );
     const companies = await this.prisma.withTenant(organizationId, tenant =>
       tenant.company.findMany({
@@ -98,7 +102,7 @@ export class CompaniesService {
           organizationId,
           deletedAt: null,
           OR: normalizedDocuments.map(document => ({
-            document: { equals: document, mode: "insensitive" as const },
+            document: { contains: document, mode: "insensitive" as const },
           })),
         },
         select: { document: true },
