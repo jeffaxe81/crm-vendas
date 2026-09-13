@@ -57,13 +57,15 @@ describe("Cycle 2 CRM database schema", () => {
          VALUES ('${organizationId}'::uuid, 'CRM Schema Org', 'crm-schema-${suffix}')`
       );
       await prisma.$executeRawUnsafe(
-        `INSERT INTO users (id, email, email_normalized, display_name, password_hash)
-         VALUES (
+        `INSERT INTO users (
+           id, email, email_normalized, display_name, password_hash, updated_at
+         ) VALUES (
            '${userId}'::uuid,
            'schema-${suffix}@example.test',
            'schema-${suffix}@example.test',
            'Schema User',
-           'not-used-by-this-test'
+           'not-used-by-this-test',
+           CURRENT_TIMESTAMP
          )`
       );
       await prisma.$executeRawUnsafe(
