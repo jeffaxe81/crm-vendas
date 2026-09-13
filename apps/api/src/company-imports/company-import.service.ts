@@ -2,11 +2,15 @@ import {
   CompanyCreateInputSchema,
   type CompanyCreateInput,
   type CompanyImportPreview,
+  type CompanyImportResult,
 } from "@axes/contracts";
 import { createHash } from "node:crypto";
-import { Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 
-import { CompaniesService } from "../companies/companies.service";
+import {
+  CompaniesService,
+  type CompanyAdministrationContext,
+} from "../companies/companies.service";
 import { CompanyCsvParser } from "./company-csv-parser";
 
 type ValidatedRow = {
@@ -84,6 +88,53 @@ export class CompanyImportService {
       processed: rows.length,
       valid,
       invalid: rows.length - valid,
+      rows,
+    };
+  }
+
+  async confirm(
+    file: Buffer,
+    fingerprint: string,
+    context: CompanyAdministrationContext
+  ): Promise<CompanyImportResult> {
+    const preview = await this.preview(file, context.organizationId);
+
+    if (preview.fingerprint !== fingerprint) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message:
+          "O arquivo foi alterado após o preview. Gere um novo preview antes de confirmar.",
+      });
+    }
+
+    const rows: CompanyImportResult["rows"] = [];
+
+    for (const row of preview.rows) {
+      if (row.status === "INVALID") {
+        rows.push({
+          rowNumber: row.rowNumber,
+          status: "REJECTED",
+          errors: row.errors,
+        });
+        continue;
+      }
+
+      const input = CompanyCreateInputSchema.parse(row.data);
+      const company = await this.companies.create(input, context);
+      rows.push({
+        rowNumber: row.rowNumber,
+        status: "IMPORTED",
+        companyId: company.id,
+        errors: [],
+      });
+    }
+
+    const imported = rows.filter(row => row.status === "IMPORTED").length;
+
+    return {
+      processed: rows.length,
+      imported,
+      rejected: rows.length - imported,
       rows,
     };
   }
