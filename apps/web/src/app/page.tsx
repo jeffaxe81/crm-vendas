@@ -235,8 +235,8 @@ export default function Home() {
             <p className="login-card__eyebrow">Primeiro acesso</p>
             <h2>Cadastrar organização</h2>
             <p className="login-card__help">
-              Crie sua organização e o primeiro usuário administrador. Depois
-              é possível adicionar outras pessoas com permissões menores.
+              Crie sua organização e o primeiro usuário administrador. Depois é
+              possível adicionar outras pessoas com permissões menores.
             </p>
 
             <form className="login-form" onSubmit={register}>

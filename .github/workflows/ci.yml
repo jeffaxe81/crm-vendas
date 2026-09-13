@@ -31,7 +31,11 @@ jobs:
       NODE_ENV: test
       PORT: 3001
       LOG_LEVEL: warn
-      DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
+      APP_DB_USER: axes_app
+      APP_DB_PASSWORD: axes_app
+      DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
+      APP_DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
+      RLS_DATABASE_URL: postgresql://axes_app:axes_app@127.0.0.1:5432/axes_crm
       MIGRATION_DATABASE_URL: postgresql://axes:axes@127.0.0.1:5432/axes_crm
       NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:3001/api/v1
       WEB_ORIGIN: http://127.0.0.1:3000
@@ -83,10 +87,40 @@ jobs:
           GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO axes_app;
           SQL
 
-      - name: Verify source and tests
-        run: pnpm verify
+      - name: Verify foundation
+        run: pnpm verify:foundation
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Lint source
+        run: pnpm lint
+
+      - name: Check types
+        run: pnpm typecheck
+
+      - name: Build contracts for tests
+        run: pnpm --filter @axes/contracts build
+
+      - name: Run repository tests
+        run: pnpm test:repo
+
+      - name: Run contracts and web tests
+        run: pnpm --filter @axes/contracts --filter @axes/web test
+
+      - name: Run API tests
+        timeout-minutes: 5
+        env:
+          APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
+        run: pnpm --filter @axes/api test
+
+      - name: Build source
+        timeout-minutes: 10
+        run: pnpm build
 
       - name: Bootstrap administrator for E2E
+        env:
+          APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
         run: pnpm --filter @axes/api bootstrap:admin
 
       - name: Install Chromium
