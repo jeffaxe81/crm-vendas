@@ -19,7 +19,7 @@ export class ManagementSummaryService {
     return this.prisma.withTenant(
       organizationId,
       async tenant => {
-        const asOf = new Date();
+        const asOf = new Date(Date.now());
 
         const groupedOpportunities = await tenant.opportunity.groupBy({
           by: ["pipelineId", "stageId"],
