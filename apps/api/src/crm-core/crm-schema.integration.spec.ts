@@ -49,6 +49,8 @@ describe("Cycle 2 CRM database schema", () => {
     const companyId = randomUUID();
     const contactId = randomUUID();
     const membershipId = randomUUID();
+    const firstLinkId = randomUUID();
+    const duplicateLinkId = randomUUID();
     const suffix = organizationId.slice(0, 8);
 
     try {
@@ -57,13 +59,15 @@ describe("Cycle 2 CRM database schema", () => {
          VALUES ('${organizationId}'::uuid, 'CRM Schema Org', 'crm-schema-${suffix}')`
       );
       await prisma.$executeRawUnsafe(
-        `INSERT INTO users (id, email, email_normalized, display_name, password_hash)
-         VALUES (
+        `INSERT INTO users (
+           id, email, email_normalized, display_name, password_hash, updated_at
+         ) VALUES (
            '${userId}'::uuid,
            'schema-${suffix}@example.test',
            'schema-${suffix}@example.test',
            'Schema User',
-           'not-used-by-this-test'
+           'not-used-by-this-test',
+           CURRENT_TIMESTAMP
          )`
       );
       await prisma.$executeRawUnsafe(
@@ -98,8 +102,9 @@ describe("Cycle 2 CRM database schema", () => {
       );
       await prisma.$executeRawUnsafe(
         `INSERT INTO company_contacts (
-           organization_id, company_id, contact_id
+           id, organization_id, company_id, contact_id
          ) VALUES (
+           '${firstLinkId}'::uuid,
            '${organizationId}'::uuid,
            '${companyId}'::uuid,
            '${contactId}'::uuid
@@ -109,8 +114,9 @@ describe("Cycle 2 CRM database schema", () => {
       await expect(
         prisma.$executeRawUnsafe(
           `INSERT INTO company_contacts (
-             organization_id, company_id, contact_id
+             id, organization_id, company_id, contact_id
            ) VALUES (
+             '${duplicateLinkId}'::uuid,
              '${organizationId}'::uuid,
              '${companyId}'::uuid,
              '${contactId}'::uuid
