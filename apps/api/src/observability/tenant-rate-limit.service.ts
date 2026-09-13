@@ -103,7 +103,10 @@ export class TenantRateLimitService {
   /**
    * Get current rate limit status (for debugging/monitoring)
    */
-  getStatus(organizationId: string, userId: string): {
+  getStatus(
+    organizationId: string,
+    userId: string
+  ): {
     tenant: { current: number; limit: number; window: number };
     user: { current: number; limit: number; window: number };
   } {
@@ -116,7 +119,8 @@ export class TenantRateLimitService {
 
     return {
       tenant: {
-        current: tenantEntry && tenantEntry.resetAt > now ? tenantEntry.count : 0,
+        current:
+          tenantEntry && tenantEntry.resetAt > now ? tenantEntry.count : 0,
         limit: this.TENANT_LIMIT,
         window: this.TENANT_WINDOW,
       },
@@ -140,31 +144,34 @@ export class TenantRateLimitService {
    * Cleanup expired entries every 5 minutes
    */
   private startCleanupInterval(): void {
-    this.cleanupInterval = setInterval(() => {
-      const now = Date.now();
-      let tenantCount = 0;
-      let userCount = 0;
+    this.cleanupInterval = setInterval(
+      () => {
+        const now = Date.now();
+        let tenantCount = 0;
+        let userCount = 0;
 
-      for (const [key, entry] of this.tenantLimits.entries()) {
-        if (entry.resetAt <= now) {
-          this.tenantLimits.delete(key);
-          tenantCount++;
+        for (const [key, entry] of this.tenantLimits.entries()) {
+          if (entry.resetAt <= now) {
+            this.tenantLimits.delete(key);
+            tenantCount++;
+          }
         }
-      }
 
-      for (const [key, entry] of this.userLimits.entries()) {
-        if (entry.resetAt <= now) {
-          this.userLimits.delete(key);
-          userCount++;
+        for (const [key, entry] of this.userLimits.entries()) {
+          if (entry.resetAt <= now) {
+            this.userLimits.delete(key);
+            userCount++;
+          }
         }
-      }
 
-      if (tenantCount > 0 || userCount > 0) {
-        this.logger.debug(
-          `[RATE_LIMIT_CLEANUP] Cleaned up ${tenantCount} tenant entries and ${userCount} user entries`
-        );
-      }
-    }, 5 * 60 * 1000); // 5 minutes
+        if (tenantCount > 0 || userCount > 0) {
+          this.logger.debug(
+            `[RATE_LIMIT_CLEANUP] Cleaned up ${tenantCount} tenant entries and ${userCount} user entries`
+          );
+        }
+      },
+      5 * 60 * 1000
+    ); // 5 minutes
   }
 
   onModuleDestroy(): void {

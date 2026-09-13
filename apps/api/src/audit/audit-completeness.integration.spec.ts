@@ -456,7 +456,9 @@ describe("Audit completeness - all CRUD operations logged", () => {
 
       // Query audit logs
       const auditRes = await request(app.getHttpServer())
-        .get("/api/v1/audit-logs?entityType=company_custom_field_value&limit=10")
+        .get(
+          "/api/v1/audit-logs?entityType=company_custom_field_value&limit=10"
+        )
         .set("Authorization", `Bearer ${token}`)
         .expect(200);
 
@@ -485,7 +487,9 @@ describe("Audit completeness - all CRUD operations logged", () => {
 
       // Query audit logs again
       const auditRes2 = await request(app.getHttpServer())
-        .get("/api/v1/audit-logs?entityType=company_custom_field_value&limit=20")
+        .get(
+          "/api/v1/audit-logs?entityType=company_custom_field_value&limit=20"
+        )
         .set("Authorization", `Bearer ${token}`)
         .expect(200);
 

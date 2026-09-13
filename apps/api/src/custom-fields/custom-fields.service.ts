@@ -217,7 +217,11 @@ export class CustomFieldsService {
       async transaction => {
         await Promise.all([
           this.requireCompany(companyId, context.organizationId),
-          this.requireDefinition(definitionId, context.organizationId, "COMPANY"),
+          this.requireDefinition(
+            definitionId,
+            context.organizationId,
+            "COMPANY"
+          ),
         ]);
 
         const foundValue = await transaction.companyCustomFieldValue.findFirst({
@@ -335,7 +339,11 @@ export class CustomFieldsService {
       async transaction => {
         await Promise.all([
           this.requireContact(contactId, context.organizationId),
-          this.requireDefinition(definitionId, context.organizationId, "CONTACT"),
+          this.requireDefinition(
+            definitionId,
+            context.organizationId,
+            "CONTACT"
+          ),
         ]);
 
         const foundValue = await transaction.contactCustomFieldValue.findFirst({

@@ -616,9 +616,9 @@ describe("Comprehensive RLS integration - relationship tables", () => {
       });
 
       // SECURITY: Without tenant context, should return empty
-      await expect(
-        prisma.contactCustomFieldValue.findMany()
-      ).resolves.toEqual([]);
+      await expect(prisma.contactCustomFieldValue.findMany()).resolves.toEqual(
+        []
+      );
 
       // SECURITY: With tenant context, see only own org data
       const valuesA = await prisma.withTenant(orgA, tenant =>

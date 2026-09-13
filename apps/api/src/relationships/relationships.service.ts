@@ -113,20 +113,17 @@ export class RelationshipsService {
     }
 
     // SECURITY: Delete uses composite key with organizationId to prevent cross-tenant deletion
-    await this.prisma.withTenant(
-      context.organizationId,
-      async transaction => {
-        await transaction.companyContact.delete({
-          where: {
-            organizationId_companyId_contactId: {
-              organizationId: context.organizationId,
-              companyId,
-              contactId,
-            },
+    await this.prisma.withTenant(context.organizationId, async transaction => {
+      await transaction.companyContact.delete({
+        where: {
+          organizationId_companyId_contactId: {
+            organizationId: context.organizationId,
+            companyId,
+            contactId,
           },
-        });
-      }
-    );
+        },
+      });
+    });
 
     await this.audit.record({
       organizationId: context.organizationId,
