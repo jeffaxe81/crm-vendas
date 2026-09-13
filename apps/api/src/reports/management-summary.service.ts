@@ -2,7 +2,11 @@ import {
   ManagementSummarySchema,
   type ManagementSummary,
 } from "@axes/contracts";
-import { Inject, Injectable, InternalServerErrorException } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 
 import { PrismaService } from "../database/prisma.service";
 import {
@@ -82,11 +86,12 @@ export class ManagementSummaryService {
           };
         });
 
-        opportunitiesByStage.sort((left, right) =>
-          left.pipelineName.localeCompare(right.pipelineName) ||
-          left.pipelineId.localeCompare(right.pipelineId) ||
-          left.stagePosition - right.stagePosition ||
-          left.stageId.localeCompare(right.stageId)
+        opportunitiesByStage.sort(
+          (left, right) =>
+            left.pipelineName.localeCompare(right.pipelineName) ||
+            left.pipelineId.localeCompare(right.pipelineId) ||
+            left.stagePosition - right.stagePosition ||
+            left.stageId.localeCompare(right.stageId)
         );
 
         const openValue = await tenant.opportunity.aggregate({
