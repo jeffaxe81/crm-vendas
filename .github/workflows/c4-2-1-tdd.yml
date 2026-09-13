@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  parser:
+  unit:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -24,5 +24,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build contracts
         run: pnpm --filter @axes/contracts build
-      - name: Run parser test
-        run: pnpm --filter @axes/api test -- company-csv-parser.spec.ts
+      - name: Run C4.2.1 unit tests
+        run: >-
+          pnpm --filter @axes/api test --
+          company-csv-parser.spec.ts
+          company-import.service.spec.ts
