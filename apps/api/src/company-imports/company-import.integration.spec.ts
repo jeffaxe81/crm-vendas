@@ -174,7 +174,7 @@ describe("C4.2.1 company import API", () => {
 
     expect(response.body).toMatchObject({ processed: 1, valid: 0, invalid: 1 });
     expect(response.body.rows[0]?.errors).toContain(
-      "Já existe uma empresa ativa com este documento."
+      "Documento já cadastrado para outra empresa."
     );
   });
 
