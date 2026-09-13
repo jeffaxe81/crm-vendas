@@ -1,4 +1,3 @@
-import { jest } from "@jest/globals";
 import { ManagementSummarySchema } from "@axes/contracts";
 import type { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
@@ -17,34 +16,64 @@ describe("C4.1.1 management summary API", () => {
   let passwords: PasswordService;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
     app = moduleRef.createNestApplication();
     app.useGlobalFilters(new ApiErrorFilter());
     app.setGlobalPrefix("api/v1");
     await app.init();
+
     prisma = moduleRef.get(PrismaService);
     passwords = moduleRef.get(PasswordService);
   });
 
-  beforeEach(async () => resetDatabase());
+  beforeEach(async () => {
+    await resetDatabase();
+  });
+
   afterAll(async () => {
     await resetDatabase();
     await app.close();
   });
 
   async function resetDatabase(): Promise<void> {
-    if (!prisma) return;
+    if (!prisma) {
+      return;
+    }
+
     await prisma.$executeRawUnsafe(
-      `TRUNCATE TABLE opportunities, activities, contact_custom_field_values,
-       company_custom_field_values, custom_field_definitions, contact_tags,
-       company_tags, tags, relationship_entries, company_contacts,
-       contact_channels, contacts, companies, pipeline_stages, pipelines,
-       audit_logs, refresh_sessions, organization_memberships, users,
-       organizations CASCADE`
+      `TRUNCATE TABLE
+         opportunities,
+         activities,
+         contact_custom_field_values,
+         company_custom_field_values,
+         custom_field_definitions,
+         contact_tags,
+         company_tags,
+         tags,
+         relationship_entries,
+         company_contacts,
+         contact_channels,
+         contacts,
+         companies,
+         pipeline_stages,
+         pipelines,
+         audit_logs,
+         refresh_sessions,
+         organization_memberships,
+         users,
+         organizations
+       CASCADE`
     );
   }
 
-  async function createUser(email: string, password: string, displayName: string) {
+  async function createUser(
+    email: string,
+    password: string,
+    displayName: string
+  ) {
     return prisma.user.create({
       data: {
         email,
@@ -55,11 +84,16 @@ describe("C4.1.1 management summary API", () => {
     });
   }
 
-  async function login(email: string, password: string, organizationSlug: string) {
+  async function login(
+    email: string,
+    password: string,
+    organizationSlug: string
+  ): Promise<string> {
     const response = await request(app.getHttpServer())
       .post("/api/v1/auth/login")
       .send({ email, password, organizationSlug })
       .expect(200);
+
     return response.body.accessToken as string;
   }
 
@@ -76,9 +110,15 @@ describe("C4.1.1 management summary API", () => {
       password,
       `Management Summary Admin ${suffix}`
     );
+
     await prisma.organizationMembership.create({
-      data: { organizationId: organization.id, userId: user.id, role: "ADMIN" },
+      data: {
+        organizationId: organization.id,
+        userId: user.id,
+        role: "ADMIN",
+      },
     });
+
     const company = await prisma.withTenant(organization.id, tenant =>
       tenant.company.create({
         data: {
@@ -90,6 +130,7 @@ describe("C4.1.1 management summary API", () => {
       })
     );
     const token = await login(user.email, password, organization.slug);
+
     return { organization, user, company, token };
   }
 
@@ -104,10 +145,19 @@ describe("C4.1.1 management summary API", () => {
       password,
       `${role} ${suffix}`
     );
+
     await prisma.organizationMembership.create({
-      data: { organizationId: fixture.organization.id, userId: user.id, role },
+      data: {
+        organizationId: fixture.organization.id,
+        userId: user.id,
+        role,
+      },
     });
-    return { user, token: await login(user.email, password, fixture.organization.slug) };
+
+    return {
+      user,
+      token: await login(user.email, password, fixture.organization.slug),
+    };
   }
 
   async function createPipelineData(
@@ -178,8 +228,20 @@ describe("C4.1.1 management summary API", () => {
       if (largeValues) {
         await tenant.opportunity.createMany({
           data: [
-            { ...base, pipelineId: pipelineA.id, stageId: openA.id, title: "Valor grande 1", estimatedValue: "90000000000000000.10" },
-            { ...base, pipelineId: pipelineA.id, stageId: openA.id, title: "Valor grande 2", estimatedValue: "0.20" },
+            {
+              ...base,
+              pipelineId: pipelineA.id,
+              stageId: openA.id,
+              title: "Valor grande 1",
+              estimatedValue: "90000000000000000.10",
+            },
+            {
+              ...base,
+              pipelineId: pipelineA.id,
+              stageId: openA.id,
+              title: "Valor grande 2",
+              estimatedValue: "0.20",
+            },
           ],
         });
         return { pipelineA, pipelineB, openA, openInactive, won, lost };
@@ -187,13 +249,46 @@ describe("C4.1.1 management summary API", () => {
 
       await tenant.opportunity.createMany({
         data: [
-          { ...base, pipelineId: pipelineA.id, stageId: openA.id, title: "Aberta 0.10", estimatedValue: "0.10" },
-          { ...base, pipelineId: pipelineB.id, stageId: openInactive.id, title: "Aberta 0.20", estimatedValue: "0.20" },
-          { ...base, pipelineId: pipelineA.id, stageId: won.id, title: "Ganha", estimatedValue: "500.00" },
-          { ...base, pipelineId: pipelineA.id, stageId: lost.id, title: "Perdida", estimatedValue: "600.00" },
-          { ...base, pipelineId: pipelineA.id, stageId: openA.id, title: "Excluída", estimatedValue: "900.00", deletedAt: new Date(), deletedBy: fixture.user.id },
+          {
+            ...base,
+            pipelineId: pipelineA.id,
+            stageId: openA.id,
+            title: "Aberta 0.10",
+            estimatedValue: "0.10",
+          },
+          {
+            ...base,
+            pipelineId: pipelineB.id,
+            stageId: openInactive.id,
+            title: "Aberta 0.20",
+            estimatedValue: "0.20",
+          },
+          {
+            ...base,
+            pipelineId: pipelineA.id,
+            stageId: won.id,
+            title: "Ganha",
+            estimatedValue: "500.00",
+          },
+          {
+            ...base,
+            pipelineId: pipelineA.id,
+            stageId: lost.id,
+            title: "Perdida",
+            estimatedValue: "600.00",
+          },
+          {
+            ...base,
+            pipelineId: pipelineA.id,
+            stageId: openA.id,
+            title: "Excluída",
+            estimatedValue: "900.00",
+            deletedAt: new Date(),
+            deletedBy: fixture.user.id,
+          },
         ],
       });
+
       await tenant.opportunity.createMany({
         data: Array.from({ length: 101 }, (_, index) => ({
           ...base,
@@ -213,27 +308,65 @@ describe("C4.1.1 management summary API", () => {
         createdBy: fixture.user.id,
         updatedBy: fixture.user.id,
       };
+
       await tenant.activity.createMany({
         data: [
-          { ...activityBase, status: "PENDING", title: "Pendente vencida", dueAt: new Date(now - 60_000) },
-          { ...activityBase, status: "PENDING", title: "Pendente futura", dueAt: new Date(now + 3_600_000) },
-          { ...activityBase, status: "PENDING", title: "Pendente sem prazo", dueAt: null },
-          { ...activityBase, status: "COMPLETED", title: "Concluída", dueAt: new Date(now - 60_000), completedAt: new Date(now - 30_000) },
-          { ...activityBase, status: "CANCELLED", title: "Cancelada", dueAt: new Date(now - 60_000), cancelledAt: new Date(now - 30_000) },
-          { ...activityBase, status: "PENDING", title: "Pendente excluída", dueAt: new Date(now - 60_000), deletedAt: new Date(now - 30_000), deletedBy: fixture.user.id },
+          {
+            ...activityBase,
+            status: "PENDING",
+            title: "Pendente vencida",
+            dueAt: new Date(now - 60_000),
+          },
+          {
+            ...activityBase,
+            status: "PENDING",
+            title: "Pendente futura",
+            dueAt: new Date(now + 3_600_000),
+          },
+          {
+            ...activityBase,
+            status: "PENDING",
+            title: "Pendente sem prazo",
+            dueAt: null,
+          },
+          {
+            ...activityBase,
+            status: "COMPLETED",
+            title: "Concluída",
+            dueAt: new Date(now - 60_000),
+            completedAt: new Date(now - 30_000),
+          },
+          {
+            ...activityBase,
+            status: "CANCELLED",
+            title: "Cancelada",
+            dueAt: new Date(now - 60_000),
+            cancelledAt: new Date(now - 30_000),
+          },
+          {
+            ...activityBase,
+            status: "PENDING",
+            title: "Pendente excluída",
+            dueAt: new Date(now - 60_000),
+            deletedAt: new Date(now - 30_000),
+            deletedBy: fixture.user.id,
+          },
         ],
       });
+
       return { pipelineA, pipelineB, openA, openInactive, won, lost };
     });
   }
 
   it("returns an empty schema-valid management summary for an administrator", async () => {
     const fixture = await createFixture("empty");
+
     const response = await request(app.getHttpServer())
       .get("/api/v1/reports/management-summary")
       .set("Authorization", `Bearer ${fixture.token}`)
       .expect("Content-Type", /json/)
       .expect(200);
+
     expect(response.body).toMatchObject({
       opportunitiesByStage: [],
       openEstimatedValue: "0.00",
@@ -256,25 +389,39 @@ describe("C4.1.1 management summary API", () => {
       .set("Authorization", `Bearer ${fixture.token}`)
       .expect(200);
     const parsed = ManagementSummarySchema.parse(response.body);
+
     expect(parsed.openEstimatedValue).toBe("0.30");
     expect(parsed.pendingActivities).toBe(3);
     expect(parsed.overdueActivities).toBe(1);
     expect(parsed.undatedActivities).toBe(1);
     expect(parsed.opportunitiesByStage).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ pipelineId: data.pipelineA.id, stageId: data.openA.id, stageName: "Qualificação", count: 102 }),
-        expect.objectContaining({ pipelineId: data.pipelineB.id, stageId: data.openInactive.id, stageName: "Qualificação", count: 1 }),
+        expect.objectContaining({
+          pipelineId: data.pipelineA.id,
+          stageId: data.openA.id,
+          stageName: "Qualificação",
+          count: 102,
+        }),
+        expect.objectContaining({
+          pipelineId: data.pipelineB.id,
+          stageId: data.openInactive.id,
+          stageName: "Qualificação",
+          count: 1,
+        }),
         expect.objectContaining({ stageId: data.won.id, count: 1 }),
         expect.objectContaining({ stageId: data.lost.id, count: 1 }),
       ])
     );
     expect(parsed.opportunitiesByStage).toHaveLength(4);
-    expect(parsed.opportunitiesByStage.some(item =>
-      item.pipelineId === otherData.pipelineA.id ||
-      item.pipelineId === otherData.pipelineB.id ||
-      item.stageId === otherData.openA.id ||
-      item.stageId === otherData.openInactive.id
-    )).toBe(false);
+    expect(
+      parsed.opportunitiesByStage.some(
+        item =>
+          item.pipelineId === otherData.pipelineA.id ||
+          item.pipelineId === otherData.pipelineB.id ||
+          item.stageId === otherData.openA.id ||
+          item.stageId === otherData.openInactive.id
+      )
+    ).toBe(false);
 
     const managerResponse = await request(app.getHttpServer())
       .get("/api/v1/reports/management-summary")
@@ -294,14 +441,24 @@ describe("C4.1.1 management summary API", () => {
     const other = await createFixture("rbac-other");
 
     for (const token of [fixture.token, manager.token]) {
-      await request(app.getHttpServer()).get("/api/v1/reports/management-summary").set("Authorization", `Bearer ${token}`).expect(200);
+      await request(app.getHttpServer())
+        .get("/api/v1/reports/management-summary")
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200);
     }
     for (const token of [seller.token, viewer.token]) {
-      await request(app.getHttpServer()).get("/api/v1/reports/management-summary").set("Authorization", `Bearer ${token}`).expect(403);
+      await request(app.getHttpServer())
+        .get("/api/v1/reports/management-summary")
+        .set("Authorization", `Bearer ${token}`)
+        .expect(403);
     }
-    await request(app.getHttpServer()).get("/api/v1/reports/management-summary").expect(401);
     await request(app.getHttpServer())
-      .get(`/api/v1/reports/management-summary?organizationId=${other.organization.id}`)
+      .get("/api/v1/reports/management-summary")
+      .expect(401);
+    await request(app.getHttpServer())
+      .get(
+        `/api/v1/reports/management-summary?organizationId=${other.organization.id}`
+      )
       .set("Authorization", `Bearer ${fixture.token}`)
       .expect(400);
   });
@@ -309,10 +466,12 @@ describe("C4.1.1 management summary API", () => {
   it("preserves exact large decimal sums", async () => {
     const fixture = await createFixture("large-decimal");
     await createPipelineData(fixture, "large-decimal", true);
+
     const response = await request(app.getHttpServer())
       .get("/api/v1/reports/management-summary")
       .set("Authorization", `Bearer ${fixture.token}`)
       .expect(200);
+
     expect(response.body.openEstimatedValue).toBe("90000000000000000.30");
     expect(() => ManagementSummarySchema.parse(response.body)).not.toThrow();
   });
@@ -320,6 +479,7 @@ describe("C4.1.1 management summary API", () => {
   it("treats dueAt equal to asOf as pending but not overdue", async () => {
     const fixture = await createFixture("due-boundary");
     const fixedAsOf = new Date("2020-01-02T03:04:05.000Z");
+
     await prisma.withTenant(fixture.organization.id, tenant =>
       tenant.activity.create({
         data: {
@@ -335,30 +495,38 @@ describe("C4.1.1 management summary API", () => {
         },
       })
     );
-    const now = jest.spyOn(Date, "now").mockReturnValue(fixedAsOf.getTime());
+
+    const originalNow = Date.now;
+    Date.now = () => fixedAsOf.getTime();
     try {
       const response = await request(app.getHttpServer())
         .get("/api/v1/reports/management-summary")
         .set("Authorization", `Bearer ${fixture.token}`)
         .expect(200);
+
       expect(response.body.asOf).toBe(fixedAsOf.toISOString());
       expect(response.body.pendingActivities).toBe(1);
       expect(response.body.overdueActivities).toBe(0);
     } finally {
-      now.mockRestore();
+      Date.now = originalNow;
     }
   });
 
   it("returns 5xx instead of silent zeroes when the database read fails", async () => {
     const fixture = await createFixture("database-error");
-    const withTenant = jest.spyOn(prisma, "withTenant").mockRejectedValueOnce(new Error("forced management summary database error"));
+    const originalWithTenant = prisma.withTenant;
+    prisma.withTenant = (() =>
+      Promise.reject(
+        new Error("forced management summary database error")
+      )) as typeof prisma.withTenant;
+
     try {
       await request(app.getHttpServer())
         .get("/api/v1/reports/management-summary")
         .set("Authorization", `Bearer ${fixture.token}`)
         .expect(500);
     } finally {
-      withTenant.mockRestore();
+      prisma.withTenant = originalWithTenant;
     }
   });
 });
