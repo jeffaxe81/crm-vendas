@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { ManagementSummarySchema } from "@axes/contracts";
 import type { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
@@ -248,7 +249,7 @@ describe("C4.1.1 management summary API", () => {
     const manager = await addMember(fixture, "MANAGER", "aggregate-a");
     const data = await createPipelineData(fixture, "aggregate-a");
     const other = await createFixture("aggregate-b");
-    const otherData = await createPipelineData(other, "aggregate-b");
+    const otherData = await createPipelineData(other, "aggregate-b", true);
 
     const response = await request(app.getHttpServer())
       .get("/api/v1/reports/management-summary")
@@ -279,7 +280,10 @@ describe("C4.1.1 management summary API", () => {
       .get("/api/v1/reports/management-summary")
       .set("Authorization", `Bearer ${manager.token}`)
       .expect(200);
-    expect(managerResponse.body).toEqual(response.body);
+    const managerParsed = ManagementSummarySchema.parse(managerResponse.body);
+    const { asOf: _adminAsOf, ...adminSnapshot } = parsed;
+    const { asOf: _managerAsOf, ...managerSnapshot } = managerParsed;
+    expect(managerSnapshot).toEqual(adminSnapshot);
   });
 
   it("enforces report authorization and rejects tenant/query injection", async () => {
@@ -313,13 +317,48 @@ describe("C4.1.1 management summary API", () => {
     expect(() => ManagementSummarySchema.parse(response.body)).not.toThrow();
   });
 
+  it("treats dueAt equal to asOf as pending but not overdue", async () => {
+    const fixture = await createFixture("due-boundary");
+    const fixedAsOf = new Date("2020-01-02T03:04:05.000Z");
+    await prisma.withTenant(fixture.organization.id, tenant =>
+      tenant.activity.create({
+        data: {
+          organizationId: fixture.organization.id,
+          type: "TASK",
+          status: "PENDING",
+          title: "Exatamente no instante do resumo",
+          companyId: fixture.company.id,
+          ownerUserId: fixture.user.id,
+          dueAt: fixedAsOf,
+          createdBy: fixture.user.id,
+          updatedBy: fixture.user.id,
+        },
+      })
+    );
+    const now = jest.spyOn(Date, "now").mockReturnValue(fixedAsOf.getTime());
+    try {
+      const response = await request(app.getHttpServer())
+        .get("/api/v1/reports/management-summary")
+        .set("Authorization", `Bearer ${fixture.token}`)
+        .expect(200);
+      expect(response.body.asOf).toBe(fixedAsOf.toISOString());
+      expect(response.body.pendingActivities).toBe(1);
+      expect(response.body.overdueActivities).toBe(0);
+    } finally {
+      now.mockRestore();
+    }
+  });
+
   it("returns 5xx instead of silent zeroes when the database read fails", async () => {
     const fixture = await createFixture("database-error");
     const withTenant = jest.spyOn(prisma, "withTenant").mockRejectedValueOnce(new Error("forced management summary database error"));
-    await request(app.getHttpServer())
-      .get("/api/v1/reports/management-summary")
-      .set("Authorization", `Bearer ${fixture.token}`)
-      .expect(500);
-    withTenant.mockRestore();
+    try {
+      await request(app.getHttpServer())
+        .get("/api/v1/reports/management-summary")
+        .set("Authorization", `Bearer ${fixture.token}`)
+        .expect(500);
+    } finally {
+      withTenant.mockRestore();
+    }
   });
 });
