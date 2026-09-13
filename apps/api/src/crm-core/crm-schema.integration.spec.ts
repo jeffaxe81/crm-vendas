@@ -49,6 +49,8 @@ describe("Cycle 2 CRM database schema", () => {
     const companyId = randomUUID();
     const contactId = randomUUID();
     const membershipId = randomUUID();
+    const firstLinkId = randomUUID();
+    const duplicateLinkId = randomUUID();
     const suffix = organizationId.slice(0, 8);
 
     try {
@@ -100,8 +102,9 @@ describe("Cycle 2 CRM database schema", () => {
       );
       await prisma.$executeRawUnsafe(
         `INSERT INTO company_contacts (
-           organization_id, company_id, contact_id
+           id, organization_id, company_id, contact_id
          ) VALUES (
+           '${firstLinkId}'::uuid,
            '${organizationId}'::uuid,
            '${companyId}'::uuid,
            '${contactId}'::uuid
@@ -111,8 +114,9 @@ describe("Cycle 2 CRM database schema", () => {
       await expect(
         prisma.$executeRawUnsafe(
           `INSERT INTO company_contacts (
-             organization_id, company_id, contact_id
+             id, organization_id, company_id, contact_id
            ) VALUES (
+             '${duplicateLinkId}'::uuid,
              '${organizationId}'::uuid,
              '${companyId}'::uuid,
              '${contactId}'::uuid
