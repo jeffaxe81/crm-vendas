@@ -67,7 +67,7 @@ export class DeniedAccessLogger implements NestInterceptor {
     const method = request.method;
     const ipAddress = this.extractIpAddress(request);
     const reason = error.message ?? "Unknown";
-    const requestId = String(request.id ?? `denied-access-${Date.now()}`);
+    const requestId = request.requestId ?? `denied-access-${Date.now()}`;
 
     if (!userId && !organizationId) {
       return;
