@@ -34,19 +34,11 @@ export class DeniedAccessLogger implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
-    const response = context.switchToHttp().getResponse();
 
     return next.handle().pipe(
       catchError(error => {
-        // Only log 401 and 403 errors
         if (error.status === 401 || error.status === 403) {
-          this.logDeniedAccess(request, error).catch(err => {
-            // Fail silently - don't break the response if audit logging fails
-            console.error(
-              "[DeniedAccessLogger] Failed to log denied access:",
-              err
-            );
-          });
+          void this.recordDeniedAccess(request, error);
         }
 
         throw error;
@@ -54,28 +46,33 @@ export class DeniedAccessLogger implements NestInterceptor {
     );
   }
 
-  private async logDeniedAccess(
+  async recordDeniedAccess(
     request: AuthenticatedRequest,
-    error: any
+    error: { status?: number; message?: string }
   ): Promise<void> {
-    // Extract information from request
+    try {
+      await this.persistDeniedAccess(request, error);
+    } catch (cause) {
+      console.error("[DeniedAccessLogger] Failed to log denied access:", cause);
+    }
+  }
+
+  private async persistDeniedAccess(
+    request: AuthenticatedRequest,
+    error: { status?: number; message?: string }
+  ): Promise<void> {
     const userId = request.auth?.userId ?? null;
     const organizationId = request.auth?.organizationId ?? null;
     const endpoint = request.url;
     const method = request.method;
     const ipAddress = this.extractIpAddress(request);
     const reason = error.message ?? "Unknown";
+    const requestId = request.requestId ?? `denied-access-${Date.now()}`;
 
-    // Generate request ID if not present
-    const requestId = String(request.id ?? `denied-access-${Date.now()}`);
-
-    // Only log if we have either userId or organizationId
-    // This ensures we're not logging incomplete information
     if (!userId && !organizationId) {
       return;
     }
 
-    // Log to audit trail
     await this.audit.record({
       organizationId: organizationId ?? "unknown",
       actorUserId: userId,
@@ -92,14 +89,9 @@ export class DeniedAccessLogger implements NestInterceptor {
     });
   }
 
-  /**
-   * Extract IP address from request
-   * Handles: X-Forwarded-For, X-Real-IP, connection.remoteAddress
-   */
-  private extractIpAddress(request: any): string | null {
+  private extractIpAddress(request: AuthenticatedRequest): string | null {
     const xForwardedFor = request.headers["x-forwarded-for"];
     if (xForwardedFor) {
-      // x-forwarded-for can contain multiple IPs, take the first
       const ips = Array.isArray(xForwardedFor)
         ? xForwardedFor[0]
         : xForwardedFor.split(",")[0];
@@ -108,7 +100,7 @@ export class DeniedAccessLogger implements NestInterceptor {
 
     const xRealIp = request.headers["x-real-ip"];
     if (xRealIp) {
-      return Array.isArray(xRealIp) ? xRealIp[0] : (xRealIp as string);
+      return Array.isArray(xRealIp) ? (xRealIp[0] ?? null) : xRealIp;
     }
 
     return request.socket?.remoteAddress ?? null;
