@@ -167,7 +167,7 @@ describe("Issue #40 — tenant isolation security", () => {
       )
       .set("Authorization", `Bearer ${tenantB.token}`)
       .expect(404);
-    expect(unlink.body.code).toBe("COMPANY_NOT_FOUND");
+    expect(unlink.body.code).toBe("COMPANY_CONTACT_NOT_FOUND");
 
     await request(app.getHttpServer())
       .delete(`/api/v1/companies/${company.body.id}`)
