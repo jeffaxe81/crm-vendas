@@ -323,8 +323,8 @@ model CompanyContact {
   isPrimary         Boolean      @default(false) @map("is_primary")
   createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  company           Company      @relation(fields: [companyId], references: [id], onDelete: Restrict)
-  contact           Contact      @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  company           Company      @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  contact           Contact      @relation(fields: [contactId, organizationId], references: [id, organizationId], onDelete: Restrict)
 
   @@unique([organizationId, companyId, contactId], map: "company_contacts_org_company_contact_key")
   @@index([organizationId, contactId], map: "company_contacts_org_contact_idx")
