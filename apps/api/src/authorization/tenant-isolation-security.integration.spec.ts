@@ -156,13 +156,17 @@ describe("Issue #40 — tenant isolation security", () => {
       .expect(201);
 
     await request(app.getHttpServer())
-      .post(`/api/v1/companies/${company.body.id}/contacts/${contact.body.id}`)
+      .post(
+        `/api/v1/companies/${company.body.id}/contacts/${contact.body.id}`
+      )
       .set("Authorization", `Bearer ${tenantA.token}`)
       .send({ isPrimary: true, relationshipLabel: "Decision maker" })
       .expect(201);
 
     const unlink = await request(app.getHttpServer())
-      .delete(`/api/v1/companies/${company.body.id}/contacts/${contact.body.id}`)
+      .delete(
+        `/api/v1/companies/${company.body.id}/contacts/${contact.body.id}`
+      )
       .set("Authorization", `Bearer ${tenantB.token}`)
       .expect(404);
     expect(unlink.body.code).toBe("COMPANY_NOT_FOUND");
