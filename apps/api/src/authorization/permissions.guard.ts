@@ -20,7 +20,7 @@ export class PermissionsGuard implements CanActivate {
     private readonly deniedAccessLogger: DeniedAccessLogger
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const required =
       this.reflector.getAllAndOverride<Permission[]>(REQUIRED_PERMISSIONS_KEY, [
         context.getHandler(),
@@ -45,7 +45,7 @@ export class PermissionsGuard implements CanActivate {
         message: "Você não possui permissão para esta operação.",
       });
 
-      void this.deniedAccessLogger.recordDeniedAccess(request, {
+      await this.deniedAccessLogger.recordDeniedAccess(request, {
         status: error.getStatus(),
         message: error.message,
       });
