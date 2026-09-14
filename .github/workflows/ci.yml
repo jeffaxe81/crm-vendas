@@ -91,10 +91,7 @@ jobs:
         run: pnpm verify:foundation
 
       - name: Check formatting
-        run: |
-          pnpm exec prettier --write apps/api/src/authorization/tenant-isolation-security.integration.spec.ts
-          git diff -- apps/api/src/authorization/tenant-isolation-security.integration.spec.ts
-          git diff --exit-code -- apps/api/src/authorization/tenant-isolation-security.integration.spec.ts
+        run: pnpm format:check
 
       - name: Lint source
         run: pnpm lint
