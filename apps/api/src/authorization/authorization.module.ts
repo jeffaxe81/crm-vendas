@@ -11,6 +11,12 @@ import { SessionController } from "./session.controller";
   imports: [AuthModule, AuditModule, DatabaseModule],
   controllers: [SessionController],
   providers: [AuthenticationGuard, PermissionsGuard],
-  exports: [AuthModule, DatabaseModule, AuthenticationGuard, PermissionsGuard],
+  exports: [
+    AuthModule,
+    AuditModule,
+    DatabaseModule,
+    AuthenticationGuard,
+    PermissionsGuard,
+  ],
 })
 export class AuthorizationModule {}
