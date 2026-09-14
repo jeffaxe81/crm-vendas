@@ -58,8 +58,16 @@ describe("Issue #40 — comprehensive relationship RLS", () => {
 
     await admin.organization.createMany({
       data: [
-        { id: orgA, name: "Comprehensive RLS A", slug: "comprehensive-rls-a" },
-        { id: orgB, name: "Comprehensive RLS B", slug: "comprehensive-rls-b" },
+        {
+          id: orgA,
+          name: "Comprehensive RLS A",
+          slug: "comprehensive-rls-a",
+        },
+        {
+          id: orgB,
+          name: "Comprehensive RLS B",
+          slug: "comprehensive-rls-b",
+        },
       ],
     });
     await admin.user.create({
@@ -273,8 +281,12 @@ describe("Issue #40 — comprehensive relationship RLS", () => {
     await expect(prisma.contactTag.findMany()).resolves.toEqual([]);
     await expect(prisma.tag.findMany()).resolves.toEqual([]);
     await expect(prisma.customFieldDefinition.findMany()).resolves.toEqual([]);
-    await expect(prisma.companyCustomFieldValue.findMany()).resolves.toEqual([]);
-    await expect(prisma.contactCustomFieldValue.findMany()).resolves.toEqual([]);
+    await expect(prisma.companyCustomFieldValue.findMany()).resolves.toEqual(
+      []
+    );
+    await expect(prisma.contactCustomFieldValue.findMany()).resolves.toEqual(
+      []
+    );
     await expect(prisma.relationshipEntry.findMany()).resolves.toEqual([]);
 
     const tenantA = await prisma.withTenant(orgA, async tenant =>
@@ -335,8 +347,16 @@ describe("Issue #40 — comprehensive relationship RLS", () => {
 
     await admin.organization.createMany({
       data: [
-        { id: orgA, name: "Integrity Tenant A", slug: "integrity-tenant-a" },
-        { id: orgB, name: "Integrity Tenant B", slug: "integrity-tenant-b" },
+        {
+          id: orgA,
+          name: "Integrity Tenant A",
+          slug: "integrity-tenant-a",
+        },
+        {
+          id: orgB,
+          name: "Integrity Tenant B",
+          slug: "integrity-tenant-b",
+        },
       ],
     });
     await admin.user.create({
