@@ -11,4 +11,5 @@ export type AuthenticatedPrincipal = {
 
 export type AuthenticatedRequest = Request & {
   auth?: AuthenticatedPrincipal;
+  requestId?: string;
 };
