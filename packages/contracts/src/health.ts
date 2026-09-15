@@ -1,19 +1,19 @@
 import { z } from "zod";
 
 export const HealthResponseSchema = z.object({
-  status: z.literal("ok"),
+  status: z.enum(["ok", "error"]),
   service: z.string().min(1),
-  database: z.literal("up").optional(),
+  database: z.enum(["up", "down"]).optional(),
 });
 
 export type HealthResponse = z.infer<typeof HealthResponseSchema>;
 
 export function createHealthResponse(
   service: string,
-  database?: "up"
+  database?: "up" | "down"
 ): HealthResponse {
   return {
-    status: "ok",
+    status: database === "down" ? "error" : "ok",
     service,
     ...(database ? { database } : {}),
   };

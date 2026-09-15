@@ -23,4 +23,15 @@ describe("health contract", () => {
     });
     expect(HealthResponseSchema.parse(response)).toEqual(response);
   });
+
+  it("represents a failed readiness check without hiding the dependency state", () => {
+    const response = createHealthResponse("api", "down");
+
+    expect(response).toEqual({
+      status: "error",
+      service: "api",
+      database: "down",
+    });
+    expect(HealthResponseSchema.parse(response)).toEqual(response);
+  });
 });
