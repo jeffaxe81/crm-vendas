@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased] - C4.4, C4.3.2 e C4.3.3 (entregas em paralelo)
+
+- C4.4: `GET /api/v1/reports/sales-by-product` (reports.read) com quantidade, oportunidades e valor por produto separados em aberto/ganho/perdido, filtros de período, funil e responsável; aba "Vendas por produto" no Resumo gerencial (`docs/checkpoints/c4-4-sales-by-product-report.md`);
+- C4.3.2: importação CSV de produtos (`/api/v1/product-imports/preview|confirm`, product.write) com preview, erros por linha e código único por tenant (`docs/checkpoints/c4-3-2-product-import.md`);
+- C4.3.3: edição de quantidade, preço e desconto dos itens na UI com tratamento de conflito 409, normalização de decimais pt-BR, teste de navegação de Produtos e jornada E2E de produtos/itens (`docs/checkpoints/c4-3-3-item-editing-e2e.md`);
+- testes: IDs fixos do `tenant-snapshot.integration.spec` separados dos de `opportunity-rls` (colidiam conforme a ordem das suítes);
+- gate integrado (banco limpo, 3 execuções): API 189/189, web 65/65, contratos 34/34, build e E2E 5/5.
+
 ## [Unreleased] - C4.3 Produtos e C4.3.1 Itens de oportunidade
 
 - catálogo `/api/v1/products` com código único por tenant (sem caixa), preço, ativo/inativo, versão e exclusão lógica; permissões `product.read`/`product.write`;

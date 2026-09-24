@@ -18,6 +18,9 @@
 | F2-05  | Importação          | Vínculo de contatos importados a empresas     | P1         | 2    | Concluído             | F2-03, F2-04                | Baixo   |
 | F2-06  | Produtos            | Catálogo de produtos (C4.3)                   | P1         | 2    | Concluído             | Modelo de dados novo        | Alto    |
 | F2-07  | Produtos            | Itens da oportunidade com valor calculado     | P1         | 2    | Concluído             | F2-06, MVP-07               | Alto    |
+| F2-08  | Importação          | Importação CSV de produtos (C4.3.2)           | P2         | 2    | Concluído             | F2-06                       | Médio   |
+| F2-09  | Produtos            | Edição de itens na UI + E2E (C4.3.3)          | P1         | 2    | Concluído             | F2-07                       | Baixo   |
+| F2-10  | Relatórios          | Vendas por produto (C4.4)                     | P1         | 2    | Concluído             | F2-07, reports.read         | Médio   |
 
 ## Histórias de usuário prioritárias
 
@@ -32,6 +35,6 @@
 
 ## Delimitação do incremento
 
-A **Fase 1 — MVP Comercial** está encerrada. Na **Fase 2 — Produtividade** já foram entregues a Agenda Comercial (C4.1), o Resumo gerencial (C4.1.1) e as importações CSV de empresas (C4.2.1) e de contatos (C4.2.2). O vínculo de contatos importados a empresas (C4.2.3) também foi entregue, encerrando o bloco de Importação. Produtos (C4.3) e itens de oportunidade com valor calculado (C4.3.1) também foram entregues. O próximo bloco é Relatórios.
+A **Fase 1 — MVP Comercial** está encerrada. Na **Fase 2 — Produtividade** já foram entregues a Agenda Comercial (C4.1), o Resumo gerencial (C4.1.1) e as importações CSV de empresas (C4.2.1) e de contatos (C4.2.2). O vínculo de contatos importados a empresas (C4.2.3) também foi entregue, encerrando o bloco de Importação. Produtos (C4.3) e itens de oportunidade com valor calculado (C4.3.1) também foram entregues. Também foram entregues a importação CSV de produtos (C4.3.2), a edição de itens na UI com jornada E2E (C4.3.3) e o relatório de vendas por produto (C4.4), que abre o bloco de Relatórios.
 
 Campos personalizados e tags já estão presentes na base atual e não serão duplicados. Importação, produtos, relatórios e demais evoluções continuam planejados para incrementos posteriores.

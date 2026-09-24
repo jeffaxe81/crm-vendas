@@ -30,9 +30,9 @@ describe("Tenant snapshot integration", () => {
   });
 
   it("keeps a repeatable-read tenant snapshot stable across a concurrent commit", async () => {
-    const organizationId = "91000000-0000-4000-8000-000000000001";
-    const userId = "92000000-0000-4000-8000-000000000001";
-    const companyId = "93000000-0000-4000-8000-000000000001";
+    const organizationId = "9a000000-0000-4000-8000-000000000001";
+    const userId = "9b000000-0000-4000-8000-000000000001";
+    const companyId = "9c000000-0000-4000-8000-000000000001";
 
     await admin.organization.create({
       data: {
