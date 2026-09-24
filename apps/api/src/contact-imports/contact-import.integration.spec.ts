@@ -7,7 +7,7 @@ import { PasswordService } from "../auth/password.service";
 import { PrismaService } from "../database/prisma.service";
 import { ApiErrorFilter } from "../errors/api-error.filter";
 
-describe("C4.2.2 contact import API", () => {
+describe("C4.2.2/C4.2.3 contact import API", () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let passwords: PasswordService;
@@ -292,5 +292,86 @@ describe("C4.2.2 contact import API", () => {
       .field("fingerprint", "0".repeat(64))
       .attach("file", Buffer.from("fullName\nAna"), "contatos.csv")
       .expect(400);
+  });
+  it("links imported contacts to an existing company of the same tenant only", async () => {
+    const tenantA = await createSession("ADMIN", "link-a");
+    const tenantB = await createSession("ADMIN", "link-b");
+
+    const companyA = await prisma.withTenant(tenantA.organization.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: tenantA.organization.id,
+          legalName: "Acme Tenant A",
+          document: "12.345.678/0001-90",
+          createdBy: tenantA.user.id,
+          updatedBy: tenantA.user.id,
+        },
+      })
+    );
+    await prisma.withTenant(tenantB.organization.id, tenant =>
+      tenant.company.create({
+        data: {
+          organizationId: tenantB.organization.id,
+          legalName: "Empresa só do Tenant B",
+          document: "DOC-ONLY-B",
+          createdBy: tenantB.user.id,
+          updatedBy: tenantB.user.id,
+        },
+      })
+    );
+
+    const csv = Buffer.from(
+      "fullName,email,companyDocument\nAna Link,ana.link@example.test,12.345.678/0001-90\nBia Outro Tenant,,DOC-ONLY-B"
+    );
+
+    const preview = await request(app.getHttpServer())
+      .post(url("preview"))
+      .set("Authorization", `Bearer ${tenantA.token}`)
+      .attach("file", csv, "contatos.csv")
+      .expect(200);
+
+    expect(preview.body).toMatchObject({ processed: 2, valid: 1, invalid: 1 });
+    expect(preview.body.rows[0]?.company).toEqual({
+      id: companyA.id,
+      legalName: "Acme Tenant A",
+    });
+    expect(preview.body.rows[1]?.errors).toContain(
+      "Nenhuma empresa cadastrada com o documento informado."
+    );
+
+    const result = await request(app.getHttpServer())
+      .post(url("confirm"))
+      .set("Authorization", `Bearer ${tenantA.token}`)
+      .set("x-request-id", "c4-2-3-link")
+      .field("fingerprint", preview.body.fingerprint as string)
+      .attach("file", csv, "contatos.csv")
+      .expect(200);
+
+    expect(result.body).toMatchObject({ imported: 1, rejected: 1 });
+    expect(result.body.rows[0]?.companyId).toBe(companyA.id);
+
+    const links = await prisma.withTenant(tenantA.organization.id, tenant =>
+      tenant.companyContact.findMany({
+        where: { organizationId: tenantA.organization.id },
+        include: { contact: true },
+      })
+    );
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({
+      companyId: companyA.id,
+      isPrimary: false,
+    });
+    expect(links[0]?.contact.fullName).toBe("Ana Link");
+
+    const linkAudit = await prisma.withTenant(tenantA.organization.id, tenant =>
+      tenant.auditLog.count({
+        where: {
+          organizationId: tenantA.organization.id,
+          action: "company.contact_linked",
+          requestId: "c4-2-3-link",
+        },
+      })
+    );
+    expect(linkAudit).toBe(1);
   });
 });

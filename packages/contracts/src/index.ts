@@ -41,6 +41,7 @@ export {
 } from "./company-imports";
 
 export {
+  type ContactImportCompanyMatch,
   type ContactImportPreview,
   type ContactImportPreviewRow,
   type ContactImportResult,

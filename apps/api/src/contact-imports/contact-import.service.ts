@@ -4,6 +4,7 @@ import {
   type ContactChannelInput,
   type ContactChannelType,
   type ContactCreateInput,
+  type ContactImportCompanyMatch,
   type ContactImportPreview,
   type ContactImportPreviewRow,
   type ContactImportResult,
@@ -13,6 +14,7 @@ import { createHash } from "node:crypto";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { z } from "zod";
 
+import { CompaniesService } from "../companies/companies.service";
 import {
   ContactsService,
   type ContactAdministrationContext,
@@ -39,25 +41,38 @@ type ValidatedRow = {
   data: ContactImportRowData;
   contact?: ContactCreateInput;
   channels: ContactChannelInput[];
+  company?: ContactImportCompanyMatch;
   errors: string[];
+};
+
+export type ContactImportOptions = {
+  /** Sessão possui `company.write`, exigida para criar vínculos. */
+  canLinkCompanies: boolean;
 };
 
 @Injectable()
 export class ContactImportService {
   constructor(
     @Inject(ContactCsvParser) private readonly parser: ContactCsvParser,
-    @Inject(ContactsService) private readonly contacts: ContactsService
+    @Inject(ContactsService) private readonly contacts: ContactsService,
+    @Inject(CompaniesService) private readonly companies: CompaniesService
   ) {}
 
   async preview(
     file: Buffer,
-    organizationId: string
+    organizationId: string,
+    options: ContactImportOptions
   ): Promise<ContactImportPreview> {
-    const { rows, fingerprint } = await this.validate(file, organizationId);
+    const { rows, fingerprint } = await this.validate(
+      file,
+      organizationId,
+      options
+    );
     const previewRows: ContactImportPreviewRow[] = rows.map(row => ({
       rowNumber: row.rowNumber,
       status: row.errors.length === 0 ? "VALID" : "INVALID",
       data: row.data,
+      ...(row.company ? { company: row.company } : {}),
       errors: row.errors,
     }));
     const valid = previewRows.filter(row => row.status === "VALID").length;
@@ -74,9 +89,14 @@ export class ContactImportService {
   async confirm(
     file: Buffer,
     fingerprint: string,
-    context: ContactAdministrationContext
+    context: ContactAdministrationContext,
+    options: ContactImportOptions
   ): Promise<ContactImportResult> {
-    const validated = await this.validate(file, context.organizationId);
+    const validated = await this.validate(
+      file,
+      context.organizationId,
+      options
+    );
 
     if (validated.fingerprint !== fingerprint) {
       throw new BadRequestException({
@@ -101,12 +121,14 @@ export class ContactImportService {
       const { contact } = await this.contacts.createWithChannels(
         row.contact,
         row.channels,
-        context
+        context,
+        row.company ? { companyId: row.company.id } : undefined
       );
       rows.push({
         rowNumber: row.rowNumber,
         status: "IMPORTED",
         contactId: contact.id,
+        ...(row.company ? { companyId: row.company.id } : {}),
         errors: [],
       });
     }
@@ -121,9 +143,15 @@ export class ContactImportService {
     };
   }
 
-  private async validate(file: Buffer, organizationId: string) {
+  private async validate(
+    file: Buffer,
+    organizationId: string,
+    options: ContactImportOptions
+  ) {
     const parsed = this.parser.parse(file);
     const rows = parsed.rows.map(row => this.validateRow(row));
+
+    await this.resolveCompanies(rows, organizationId, options);
 
     const emails = rows
       .map(row => this.emailOf(row))
@@ -204,6 +232,47 @@ export class ContactImportService {
       channels,
       errors,
     };
+  }
+
+  private async resolveCompanies(
+    rows: ValidatedRow[],
+    organizationId: string,
+    options: ContactImportOptions
+  ) {
+    const withDocument = rows.filter(row => row.data.companyDocument);
+    if (withDocument.length === 0) return;
+
+    if (!options.canLinkCompanies) {
+      for (const row of withDocument) {
+        row.errors.push(
+          "Sem permissão para vincular contatos a empresas (company.write)."
+        );
+      }
+      return;
+    }
+
+    const matches = await this.companies.findByDocuments(
+      withDocument.map(row => row.data.companyDocument as string),
+      organizationId
+    );
+
+    for (const row of withDocument) {
+      const key = (row.data.companyDocument as string).toLocaleLowerCase(
+        "pt-BR"
+      );
+      const found = matches.get(key) ?? [];
+      if (found.length === 0) {
+        row.errors.push(
+          "Nenhuma empresa cadastrada com o documento informado."
+        );
+      } else if (found.length > 1) {
+        row.errors.push(
+          "O documento informado corresponde a mais de uma empresa."
+        );
+      } else {
+        row.company = found[0];
+      }
+    }
   }
 
   private emailOf(row: ValidatedRow): string | undefined {

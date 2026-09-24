@@ -137,6 +137,7 @@ export function ContactImportPanel({
                   <th>Linha</th>
                   <th>Contato</th>
                   <th>E-mail</th>
+                  <th>Empresa</th>
                   <th>Status</th>
                   <th>Erros</th>
                 </tr>
@@ -147,6 +148,11 @@ export function ContactImportPanel({
                     <td>{row.rowNumber}</td>
                     <td>{row.data.fullName ?? "—"}</td>
                     <td>{row.data.email ?? "—"}</td>
+                    <td>
+                      {row.company?.legalName ??
+                        row.data.companyDocument ??
+                        "—"}
+                    </td>
                     <td>{row.status === "VALID" ? "Válida" : "Inválida"}</td>
                     <td>{row.errors.join(" · ") || "—"}</td>
                   </tr>

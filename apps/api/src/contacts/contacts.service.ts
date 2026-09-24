@@ -143,9 +143,10 @@ export class ContactsService {
   async createWithChannels(
     input: ContactCreateInput,
     channels: ContactChannelInput[],
-    context: ContactAdministrationContext
+    context: ContactAdministrationContext,
+    companyLink?: { companyId: string }
   ) {
-    const { contact, createdChannels } = await this.prisma.withTenant(
+    const { contact, createdChannels, link } = await this.prisma.withTenant(
       context.organizationId,
       async tenant => {
         const created = await tenant.contact.create({
@@ -175,7 +176,24 @@ export class ContactsService {
           );
         }
 
-        return { contact: created, createdChannels: channelRows };
+        // Vínculo opcional com empresa (C4.2.3). A FK composta
+        // (company_id, organization_id) impede vincular empresa de outro tenant.
+        const createdLink = companyLink
+          ? await tenant.companyContact.create({
+              data: {
+                organizationId: context.organizationId,
+                companyId: companyLink.companyId,
+                contactId: created.id,
+                isPrimary: false,
+              },
+            })
+          : undefined;
+
+        return {
+          contact: created,
+          createdChannels: channelRows,
+          link: createdLink,
+        };
       }
     );
 
@@ -204,7 +222,25 @@ export class ContactsService {
       });
     }
 
-    return { contact, channels: createdChannels };
+    if (link) {
+      await this.audit.record({
+        organizationId: context.organizationId,
+        actorUserId: context.actorUserId,
+        requestId: context.requestId,
+        action: "company.contact_linked",
+        entityType: "company_contact",
+        entityId: link.id,
+        after: {
+          companyId: link.companyId,
+          contactId: link.contactId,
+          relationshipLabel: link.relationshipLabel,
+          isPrimary: link.isPrimary,
+        },
+        ipAddress: context.ipAddress ?? null,
+      });
+    }
+
+    return { contact, channels: createdChannels, link };
   }
 
   /**

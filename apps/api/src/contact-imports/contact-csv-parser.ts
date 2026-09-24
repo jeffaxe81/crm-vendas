@@ -12,6 +12,7 @@ export const CONTACT_CSV_HEADERS = [
   "mobile",
   "whatsapp",
   "notes",
+  "companyDocument",
 ] as const;
 
 export type ContactCsvHeader = (typeof CONTACT_CSV_HEADERS)[number];

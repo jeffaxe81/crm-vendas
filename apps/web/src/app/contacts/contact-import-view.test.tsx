@@ -41,7 +41,12 @@ describe("C4.2.2 contact CSV import view", () => {
             {
               rowNumber: 2,
               status: "VALID",
-              data: { fullName: "Ana Souza", email: "ana@example.test" },
+              data: {
+                fullName: "Ana Souza",
+                email: "ana@example.test",
+                companyDocument: "DOC-ACME",
+              },
+              company: { id: "company-acme", legalName: "Acme Ltda" },
               errors: [],
             },
             {
@@ -114,6 +119,7 @@ describe("C4.2.2 contact CSV import view", () => {
     expect(
       screen.getByText("email: formato de e-mail inválido.")
     ).toBeInTheDocument();
+    expect(screen.getByText("Acme Ltda")).toBeInTheDocument();
 
     fireEvent.click(
       screen.getByRole("button", { name: "Confirmar importação" })
