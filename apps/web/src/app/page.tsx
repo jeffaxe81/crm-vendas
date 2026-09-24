@@ -13,6 +13,7 @@ import { CompaniesView } from "./companies/companies-view";
 import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
 import { OpportunitiesView } from "./opportunities/opportunities-view";
+import { ProductsView } from "./products/products-view";
 import { ManagementSummaryView } from "./reports/management-summary-view";
 
 export default function Home() {
@@ -148,6 +149,11 @@ export default function Home() {
           <AgendaView
             accessToken={session.accessToken}
             ownerUserId={session.user.id}
+          />
+        ) : activeSection === "products" ? (
+          <ProductsView
+            accessToken={session.accessToken}
+            canWrite={session.permissions.includes("product.write")}
           />
         ) : activeSection === "management-summary" ? (
           <ManagementSummaryView accessToken={session.accessToken} />

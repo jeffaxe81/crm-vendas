@@ -16,7 +16,8 @@
 | F2-03  | Importação          | Importação CSV de empresas (C4.2.1)           | P0         | 2    | Concluído             | company.write               | Médio   |
 | F2-04  | Importação          | Importação CSV de contatos (C4.2.2)           | P0         | 2    | Concluído             | contact.write, F2-03        | Médio   |
 | F2-05  | Importação          | Vínculo de contatos importados a empresas     | P1         | 2    | Concluído             | F2-03, F2-04                | Baixo   |
-| F2-06  | Produtos            | Catálogo de produtos                          | P1         | 2    | Aguardando definição  | Modelo de dados novo        | Alto    |
+| F2-06  | Produtos            | Catálogo de produtos (C4.3)                   | P1         | 2    | Concluído             | Modelo de dados novo        | Alto    |
+| F2-07  | Produtos            | Itens da oportunidade com valor calculado     | P1         | 2    | Concluído             | F2-06, MVP-07               | Alto    |
 
 ## Histórias de usuário prioritárias
 
@@ -31,6 +32,6 @@
 
 ## Delimitação do incremento
 
-A **Fase 1 — MVP Comercial** está encerrada. Na **Fase 2 — Produtividade** já foram entregues a Agenda Comercial (C4.1), o Resumo gerencial (C4.1.1) e as importações CSV de empresas (C4.2.1) e de contatos (C4.2.2). O vínculo de contatos importados a empresas (C4.2.3) também foi entregue, encerrando o bloco de Importação. O próximo bloco é Produtos, que depende de definição de escopo.
+A **Fase 1 — MVP Comercial** está encerrada. Na **Fase 2 — Produtividade** já foram entregues a Agenda Comercial (C4.1), o Resumo gerencial (C4.1.1) e as importações CSV de empresas (C4.2.1) e de contatos (C4.2.2). O vínculo de contatos importados a empresas (C4.2.3) também foi entregue, encerrando o bloco de Importação. Produtos (C4.3) e itens de oportunidade com valor calculado (C4.3.1) também foram entregues. O próximo bloco é Relatórios.
 
 Campos personalizados e tags já estão presentes na base atual e não serão duplicados. Importação, produtos, relatórios e demais evoluções continuam planejados para incrementos posteriores.

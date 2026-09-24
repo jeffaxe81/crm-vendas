@@ -101,6 +101,24 @@ export {
   type RelationshipEntryKind,
 } from "./relationship";
 
+export {
+  OpportunityItemCreateInputSchema,
+  OpportunityItemDiscountSchema,
+  OpportunityItemQuantitySchema,
+  OpportunityItemUpdateInputSchema,
+  ProductCreateInputSchema,
+  ProductListQuerySchema,
+  ProductUpdateInputSchema,
+  MAX_MONEY_CENTS,
+  calculateLineTotalCents,
+  formatCents,
+  type OpportunityItemCreateInput,
+  type OpportunityItemUpdateInput,
+  type ProductCreateInput,
+  type ProductListQuery,
+  type ProductUpdateInput,
+} from "./products";
+
 export { TagInputSchema, type TagInput } from "./tags";
 
 export {

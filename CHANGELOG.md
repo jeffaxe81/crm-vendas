@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased] - C4.3 Produtos e C4.3.1 Itens de oportunidade
+
+- catálogo `/api/v1/products` com código único por tenant (sem caixa), preço, ativo/inativo, versão e exclusão lógica; permissões `product.read`/`product.write`;
+- itens em `/api/v1/opportunities/:id/items` com quantidade, preço (snapshot) e desconto; `estimatedValue` recalculado na mesma transação, com trava otimista por `version` e auditoria;
+- valor manual bloqueado enquanto houver itens (`OPPORTUNITY_VALUE_DERIVED`);
+- migration com RLS forçada, FKs compostas por tenant e `CHECK`s;
+- web: seção Produtos e painel de Itens nas oportunidades;
+- gate local: API 158/158, web 50/50, contratos 30/30, build e E2E 4/4.
+
 ## [Unreleased] - C4.2.3 Vínculo de contatos importados a empresas
 
 - coluna opcional `companyDocument` no CSV de contatos, resolvida para uma empresa ativa do mesmo tenant;
