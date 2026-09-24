@@ -62,15 +62,23 @@ cp .env.example .env
 
 ### Step 4: Inicie os Containers
 
+> ⚠️ **Sempre use `-f docker-compose.yml`.** A raiz também tem um `compose.yaml`
+> (stack TypeScript/AXE Relationship). O Docker Compose v2 dá preferência ao
+> `compose.yaml` quando nenhum arquivo é indicado, e subiria a stack errada.
+>
+> O frontend React ainda não foi criado (`frontend/` só tem o Dockerfile), por
+> isso o serviço `frontend` fica no profile `frontend` e não sobe por padrão.
+> As migrations do Alembic rodam automaticamente quando o backend inicia.
+
 ```bash
 # Build e inicie os containers
-docker-compose up -d
+docker compose -f docker-compose.yml up -d
 
 # Aguarde ~30s para todos os serviços estarem prontos
 sleep 30
 
 # Verifique se todos estão saudáveis
-docker-compose ps
+docker compose -f docker-compose.yml ps
 ```
 
 Saída esperada:
@@ -79,14 +87,18 @@ NAME                    STATUS
 crm-vendas-postgres     Up (healthy)
 crm-vendas-redis        Up (healthy)
 crm-vendas-backend      Up (healthy)
-crm-vendas-frontend     Up
 ```
 
 ### Step 5: Verify Services
 
 ```bash
 # Backend Health Check
-curl http://localhost:8000/health
+curl http://localhost:8000/api/v1/health
+
+# Login com o usuário de desenvolvimento (criado pela migration 002)
+curl -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"demo@example.com","password":"demo1234"}'
 
 # Frontend
 open http://localhost:3000  # macOS
@@ -102,8 +114,8 @@ start http://localhost:3000  # Windows
 |---------|-----|-----------|
 | **Frontend** | http://localhost:3000 | React App |
 | **Backend API** | http://localhost:8000 | FastAPI Server |
-| **Swagger Docs** | http://localhost:8000/docs | API Documentation |
-| **ReDoc** | http://localhost:8000/redoc | Alternative API Docs |
+| **Swagger Docs** | http://localhost:8000/api/v1/docs | API Documentation |
+| **ReDoc** | http://localhost:8000/api/v1/redoc | Alternative API Docs |
 | **Database** | localhost:5432 | PostgreSQL |
 | **Redis** | localhost:6379 | Cache Server |
 
@@ -115,20 +127,23 @@ start http://localhost:3000  # Windows
 
 ```bash
 # Via Docker
-docker-compose exec postgres psql -U vendas_user -d crm_vendas_dev
+docker compose -f docker-compose.yml exec postgres psql -U vendas_user -d crm_vendas_dev
 
 # Via pgAdmin (opcional)
 # Ou use seu cliente SQL favorito (DBeaver, DataGrip, etc)
 ```
 
-### Criar primeira migração (depois de Sprint 1)
+### Migrações (Alembic)
+
+As migrations `001` (schema `crm_core`) e `002` (dados de desenvolvimento)
+são aplicadas automaticamente quando o backend sobe.
 
 ```bash
-# Gerar migração
-docker-compose exec backend alembic revision --autogenerate -m "Initial schema"
+# Gerar nova migração a partir dos models
+docker compose -f docker-compose.yml exec backend alembic revision --autogenerate -m "descricao"
 
 # Aplicar migrações
-docker-compose exec backend alembic upgrade head
+docker compose -f docker-compose.yml exec backend alembic upgrade head
 ```
 
 ---
@@ -137,28 +152,35 @@ docker-compose exec backend alembic upgrade head
 
 ### Backend Tests
 
+Os testes usam o banco descartável `crm_vendas_dev_test` (criado pelo
+`init-db.sql` e apontado por `TEST_DATABASE_URL`). A suíte recusa rodar em
+qualquer banco cujo nome não termine em `_test`. O CI exige cobertura ≥ 90%.
+
+> Se o volume do Postgres foi criado antes desta versão, recrie-o com
+> `docker compose -f docker-compose.yml down -v` para que o banco de testes exista.
+
 ```bash
 # Todos os testes
-docker-compose exec backend pytest -v
+docker compose -f docker-compose.yml exec backend pytest -v
 
 # Com coverage
-docker-compose exec backend pytest --cov=app --cov-report=html
+docker compose -f docker-compose.yml exec backend pytest --cov=app --cov-report=html
 
 # Teste específico
-docker-compose exec backend pytest tests/test_auth.py::test_login -v
+docker compose -f docker-compose.yml exec backend pytest tests/test_auth.py::test_login_with_seeded_demo_user -v
 ```
 
 ### Frontend Tests
 
 ```bash
 # Todos os testes
-docker-compose exec frontend npm test
+docker compose -f docker-compose.yml exec frontend npm test
 
 # Watch mode
-docker-compose exec frontend npm test -- --watch
+docker compose -f docker-compose.yml exec frontend npm test -- --watch
 
 # Coverage
-docker-compose exec frontend npm test -- --coverage
+docker compose -f docker-compose.yml exec frontend npm test -- --coverage
 ```
 
 ---
@@ -168,24 +190,21 @@ docker-compose exec frontend npm test -- --coverage
 ### Backend
 
 ```bash
-# Lint
-docker-compose exec backend flake8 app tests
+# Lint (ruff)
+docker compose -f docker-compose.yml exec backend ruff check .
 
 # Format
-docker-compose exec backend black app tests
-
-# Type check
-docker-compose exec backend mypy app
+docker compose -f docker-compose.yml exec backend ruff format app tests
 ```
 
 ### Frontend
 
 ```bash
 # Lint
-docker-compose exec frontend npm run lint
+docker compose -f docker-compose.yml exec frontend npm run lint
 
 # Format
-docker-compose exec frontend npm run format
+docker compose -f docker-compose.yml exec frontend npm run format
 ```
 
 ---
@@ -196,25 +215,25 @@ docker-compose exec frontend npm run format
 
 ```bash
 # Tail logs
-docker-compose logs -f backend
+docker compose -f docker-compose.yml logs -f backend
 
 # Últimas N linhas
-docker-compose logs --tail=50 backend
+docker compose -f docker-compose.yml logs --tail=50 backend
 
 # Sem timestamp
-docker-compose logs --no-log-prefix backend
+docker compose -f docker-compose.yml logs --no-log-prefix backend
 ```
 
 ### Frontend Logs
 
 ```bash
-docker-compose logs -f frontend
+docker compose -f docker-compose.yml logs -f frontend
 ```
 
 ### Redis CLI
 
 ```bash
-docker-compose exec redis redis-cli
+docker compose -f docker-compose.yml exec redis redis-cli
 > PING
 > KEYS *
 > FLUSHDB
@@ -223,7 +242,7 @@ docker-compose exec redis redis-cli
 ### Database Query
 
 ```bash
-docker-compose exec postgres psql -U vendas_user -d crm_vendas_dev
+docker compose -f docker-compose.yml exec postgres psql -U vendas_user -d crm_vendas_dev
 > \dt  # List tables
 > SELECT * FROM organizations;
 ```
@@ -235,19 +254,19 @@ docker-compose exec postgres psql -U vendas_user -d crm_vendas_dev
 ### Parar containers (mantém volumes)
 
 ```bash
-docker-compose stop
+docker compose -f docker-compose.yml stop
 ```
 
 ### Parar e remover containers (remove volumes também)
 
 ```bash
-docker-compose down -v
+docker compose -f docker-compose.yml down -v
 ```
 
 ### Remover tudo (containers, images, volumes)
 
 ```bash
-docker-compose down -v --rmi all
+docker compose -f docker-compose.yml down -v --rmi all
 ```
 
 ---
@@ -264,18 +283,18 @@ lsof -i :5432    # Database
 lsof -i :6379    # Redis
 
 # Ou use porta diferente
-docker-compose down
+docker compose -f docker-compose.yml down
 # Edite docker-compose.yml ou .env
-docker-compose up -d
+docker compose -f docker-compose.yml up -d
 ```
 
 ### Containers não iniciam
 
 ```bash
 # Remova volumes e recrie
-docker-compose down -v
-docker-compose build --no-cache
-docker-compose up -d
+docker compose -f docker-compose.yml down -v
+docker compose -f docker-compose.yml build --no-cache
+docker compose -f docker-compose.yml up -d
 ```
 
 ### Hot reload não funcionando
@@ -286,18 +305,18 @@ chmod -R 755 backend
 chmod -R 755 frontend
 
 # Ou recrie os containers
-docker-compose restart backend frontend
+docker compose -f docker-compose.yml restart backend frontend
 ```
 
 ### Database migration error
 
 ```bash
 # Reset database (atenção: deleta dados!)
-docker-compose exec postgres psql -U vendas_user -d crm_vendas_dev -c "DROP SCHEMA public CASCADE;"
-docker-compose exec postgres psql -U vendas_user -d crm_vendas_dev -c "CREATE SCHEMA public;"
+docker compose -f docker-compose.yml exec postgres psql -U vendas_user -d crm_vendas_dev -c "DROP SCHEMA public CASCADE;"
+docker compose -f docker-compose.yml exec postgres psql -U vendas_user -d crm_vendas_dev -c "CREATE SCHEMA public;"
 
 # Reapply migrations
-docker-compose exec backend alembic upgrade head
+docker compose -f docker-compose.yml exec backend alembic upgrade head
 ```
 
 ---
@@ -339,7 +358,7 @@ git branch -a
 
 ## 💬 Need Help?
 
-- Verifique logs: `docker-compose logs`
+- Verifique logs: `docker compose -f docker-compose.yml logs`
 - Leia a documentação: `/docs`
 - Abra uma issue: GitHub Issues
 - Converse no Slack: #crm-vendas

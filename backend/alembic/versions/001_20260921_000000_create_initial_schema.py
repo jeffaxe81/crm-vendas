@@ -19,7 +19,8 @@ depends_on = None
 def upgrade() -> None:
     """Create initial tables for multi-tenant architecture"""
 
-    # Enable required PostgreSQL extensions
+    # Enable required PostgreSQL extensions (pre-created by
+    # backend/scripts/init-db.sql when running under docker-compose)
     op.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
     op.execute('CREATE EXTENSION IF NOT EXISTS "pg_trgm"')
 
@@ -45,7 +46,10 @@ def upgrade() -> None:
     op.create_index('idx_organizations_created_at', 'organizations', ['created_at'], schema='crm_core')
 
     # Create user roles enum
-    user_role_enum = postgresql.ENUM('admin', 'manager', 'sales_rep', 'viewer', name='user_role')
+    user_role_enum = postgresql.ENUM(
+        'admin', 'manager', 'sales_rep', 'viewer',
+        name='user_role', schema='crm_core', create_type=False
+    )
     user_role_enum.create(op.get_bind(), checkfirst=True)
 
     # Create users table
@@ -67,7 +71,8 @@ def upgrade() -> None:
         schema='crm_core'
     )
     op.create_index('idx_users_organization_id', 'users', ['organization_id'], schema='crm_core')
-    op.create_index('idx_users_email', 'users', ['email'], schema='crm_core')
+    # E-mail is the login identifier: enforce uniqueness at the database level
+    op.create_index('idx_users_email', 'users', ['email'], unique=True, schema='crm_core')
     op.create_index('idx_users_created_at', 'users', ['created_at'], schema='crm_core')
 
     # Create audit_logs table for compliance
@@ -115,12 +120,14 @@ def downgrade() -> None:
     op.drop_table('organizations', schema='crm_core')
 
     # Drop enum
-    user_role_enum = postgresql.ENUM('admin', 'manager', 'sales_rep', 'viewer', name='user_role')
+    user_role_enum = postgresql.ENUM(
+        'admin', 'manager', 'sales_rep', 'viewer', name='user_role', schema='crm_core'
+    )
     user_role_enum.drop(op.get_bind(), checkfirst=True)
 
     # Drop schema
     op.execute('DROP SCHEMA IF EXISTS crm_core')
 
     # Drop extensions
-    op.execute('DROP EXTENSION IF EXISTS "pg_trgm"')
-    op.execute('DROP EXTENSION IF EXISTS "uuid-ossp"')
+    # Extensions are left installed: they are database-wide and may be used
+    # by other schemas.

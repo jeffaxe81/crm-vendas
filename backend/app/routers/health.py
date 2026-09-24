@@ -4,7 +4,9 @@ Used for monitoring and Kubernetes probes
 """
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import text
 from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse
 from app.database import get_db
 from datetime import datetime
 
@@ -28,7 +30,7 @@ async def health_check() -> dict:
 
 
 @router.get("/ready")
-async def readiness_probe(db: Session = Depends(get_db)) -> dict:
+async def readiness_probe(db: Session = Depends(get_db)):
     """
     Kubernetes readiness probe
 
@@ -41,7 +43,7 @@ async def readiness_probe(db: Session = Depends(get_db)) -> dict:
     """
     try:
         # Test database connection
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
 
         return {
             "status": "ready",
@@ -51,13 +53,17 @@ async def readiness_probe(db: Session = Depends(get_db)) -> dict:
                 "database": "healthy"
             }
         }
-    except Exception as e:
-        return {
-            "status": "not_ready",
-            "service": "crm-vendas-backend",
-            "timestamp": datetime.utcnow().isoformat(),
-            "error": str(e)
-        }
+    except Exception:
+        # 503 so Kubernetes/Docker stop routing traffic; no internal details leaked
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "not_ready",
+                "service": "crm-vendas-backend",
+                "timestamp": datetime.utcnow().isoformat(),
+                "checks": {"database": "unavailable"}
+            }
+        )
 
 
 @router.get("/live")

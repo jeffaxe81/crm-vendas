@@ -4,9 +4,8 @@ Database configuration and session management for CRM-VENDAS
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.pool import NullPool
 import os
-from typing import Optional
+from typing import Iterator
 
 # Database URL from environment variable
 DATABASE_URL = os.getenv(
@@ -37,7 +36,7 @@ engine = create_db_engine()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def get_db() -> Session:
+def get_db() -> Iterator[Session]:
     """Dependency for FastAPI to get database session"""
     db = SessionLocal()
     try:

@@ -8,6 +8,9 @@ from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session
 from typing import Optional
 from app.database import get_db
+from app.core.permissions import get_current_claims
+from app.repositories import UserRepository
+from uuid import UUID
 from app.services import AuthenticationService
 from app.core.exceptions import (
     ValidationError,
@@ -33,7 +36,7 @@ class RegisterRequest(BaseModel):
     organization_slug: Optional[str] = Field(None, description="Organization slug")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "email": "john@example.com",
                 "password": "SecurePassword123",
@@ -49,7 +52,7 @@ class LoginRequest(BaseModel):
     password: str = Field(..., description="User password")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "email": "john@example.com",
                 "password": "SecurePassword123"
@@ -62,7 +65,7 @@ class RefreshTokenRequest(BaseModel):
     refresh_token: str = Field(..., description="Valid refresh token")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
             }
@@ -74,7 +77,7 @@ class ResetPasswordRequest(BaseModel):
     email: EmailStr = Field(..., description="User email")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "email": "john@example.com"
             }
@@ -87,7 +90,7 @@ class ConfirmResetRequest(BaseModel):
     new_password: str = Field(..., min_length=8, description="New password")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "reset_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
                 "new_password": "NewPassword123"
@@ -234,6 +237,27 @@ async def refresh_token(
                 "message": e.message
             }
         )
+
+
+@router.get("/me", response_model=UserResponse)
+async def me(
+    claims: dict = Depends(get_current_claims),
+    db: Session = Depends(get_db)
+) -> dict:
+    """Return the authenticated user's profile (requires a valid access token)"""
+    user = UserRepository.get_by_id(db, UUID(claims["sub"]))
+    if not user or not user.is_active:
+        raise HTTPException(
+            status_code=401,
+            detail={"error": "user_inactive", "message": "User no longer active"}
+        )
+    return {
+        "id": str(user.id),
+        "email": user.email,
+        "full_name": user.full_name,
+        "role": user.role.value,
+        "organization_id": str(user.organization_id)
+    }
 
 
 @router.post("/logout")

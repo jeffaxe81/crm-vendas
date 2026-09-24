@@ -5,19 +5,22 @@ Handles user registration, login, token management, and password reset
 
 from sqlalchemy.orm import Session
 from uuid import UUID
-from typing import Optional, Dict, Tuple
-from datetime import datetime, timedelta
-from app.models import User, Organization, UserRole
+from typing import Optional, Dict
+import os
+from app.models import UserRole
 from app.repositories import UserRepository, OrganizationRepository
 from app.core.security import (
     hash_password,
     verify_password,
     create_access_token,
     create_refresh_token,
-    decode_token
+    create_password_reset_token,
+    password_fingerprint,
+    decode_token,
+    TOKEN_REFRESH,
+    TOKEN_RESET,
 )
 from app.core.exceptions import (
-    ApplicationError,
     AuthenticationError,
     ValidationError,
     ConflictError,
@@ -55,6 +58,8 @@ class AuthenticationService:
             ValidationError: If email or password invalid
             ConflictError: If email already exists
         """
+        email = email.strip().lower()
+
         # Validate email format
         if "@" not in email or len(email) < 5:
             raise ValidationError("Invalid email format", "invalid_email")
@@ -70,14 +75,18 @@ class AuthenticationService:
         # Create organization if not provided
         if organization_name:
             # Create new organization
-            org_slug = organization_slug or organization_name.lower().replace(" ", "-")
+            org_slug = (organization_slug or organization_name).strip().lower().replace(" ", "-")
+            if OrganizationRepository.get_by_slug(db, org_slug):
+                raise ConflictError("Organization slug already in use", "org_slug_exists")
             organization = OrganizationRepository.create(
                 db,
                 name=organization_name,
                 slug=org_slug
             )
         else:
-            # Use development organization
+            # Joining the shared development organization is a dev-only shortcut
+            if os.getenv("ENVIRONMENT", "development") not in ("development", "test"):
+                raise ValidationError("organization_name is required", "organization_required")
             organization = OrganizationRepository.get_by_slug(db, "development-org")
             if not organization:
                 raise NotFoundError("Default organization not found", "org_not_found")
@@ -139,6 +148,7 @@ class AuthenticationService:
             AuthenticationError: If credentials invalid
         """
         # Find active user
+        email = email.strip().lower()
         user = UserRepository.get_active_by_email(db, email)
         if not user:
             raise AuthenticationError("Invalid email or password", "invalid_credentials")
@@ -198,17 +208,20 @@ class AuthenticationService:
             AuthenticationError: If token invalid or expired
         """
         # Decode refresh token
-        claims = decode_token(refresh_token, "refresh")
+        claims = decode_token(refresh_token, TOKEN_REFRESH)
 
         if not claims:
             raise AuthenticationError("Invalid or expired refresh token", "invalid_refresh_token")
 
-        user_id = UUID(claims.get("sub"))
-        organization_id = UUID(claims.get("org_id"))
+        try:
+            user_id = UUID(claims.get("sub"))
+            organization_id = UUID(claims.get("org_id"))
+        except (TypeError, ValueError):
+            raise AuthenticationError("Invalid or expired refresh token", "invalid_refresh_token")
 
         # Verify user still exists and is active
         user = UserRepository.get_by_id(db, user_id)
-        if not user or not user.is_active:
+        if not user or not user.is_active or user.organization_id != organization_id:
             raise AuthenticationError("User no longer active", "user_inactive")
 
         # Verify organization still exists and is active
@@ -242,7 +255,7 @@ class AuthenticationService:
         Returns:
             Dict with reset token (in production, would send via email)
         """
-        user = UserRepository.get_active_by_email(db, email)
+        user = UserRepository.get_active_by_email(db, email.strip().lower())
 
         # Always return success for security (don't reveal if email exists)
         if not user:
@@ -251,22 +264,23 @@ class AuthenticationService:
                 "success": True
             }
 
-        # Create reset token (short-lived, 1 hour)
-        reset_token = create_access_token(
+        # Single-purpose reset token (1 hour, invalidated once password changes)
+        reset_token = create_password_reset_token(
             user_id=str(user.id),
-            organization_id=str(user.organization_id),
-            email=user.email,
-            role="reset_password",
-            expires_delta=timedelta(hours=1)
+            password_hash=user.password_hash
         )
 
-        # In production, send reset_token via email
-        # For now, return it in response (development only)
-        return {
+        response = {
             "message": "If email exists, password reset link sent",
-            "success": True,
-            "reset_token": reset_token  # Remove in production!
+            "success": True
         }
+
+        # TODO(email): deliver reset_token by e-mail. Until the e-mail service
+        # exists, the token is exposed ONLY in development/test environments.
+        if os.getenv("ENVIRONMENT", "development") in ("development", "test"):
+            response["reset_token"] = reset_token
+
+        return response
 
     @staticmethod
     def reset_password(db: Session, reset_token: str, new_password: str) -> Dict:
@@ -290,12 +304,23 @@ class AuthenticationService:
             raise ValidationError("Password must be at least 8 characters", "weak_password")
 
         # Decode reset token
-        claims = decode_token(reset_token, "access")
+        claims = decode_token(reset_token, TOKEN_RESET)
 
-        if not claims or claims.get("role") != "reset_password":
+        if not claims:
             raise AuthenticationError("Invalid or expired reset token", "invalid_reset_token")
 
-        user_id = UUID(claims.get("sub"))
+        try:
+            user_id = UUID(claims.get("sub"))
+        except (TypeError, ValueError):
+            raise AuthenticationError("Invalid or expired reset token", "invalid_reset_token")
+
+        user = UserRepository.get_by_id(db, user_id)
+        if not user or not user.is_active:
+            raise AuthenticationError("Invalid or expired reset token", "invalid_reset_token")
+
+        # Token is single-use: it is bound to the password hash it was issued for
+        if claims.get("pwd") != password_fingerprint(user.password_hash):
+            raise AuthenticationError("Invalid or expired reset token", "invalid_reset_token")
 
         # Update password
         password_hash = hash_password(new_password)

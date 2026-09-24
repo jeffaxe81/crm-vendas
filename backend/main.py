@@ -12,10 +12,10 @@ import os
 import logging
 
 from app.core.exceptions import ApplicationError
+from app.core.security import ensure_secure_config
 from app.middleware import AuthenticationMiddleware
 from app.routers import auth_router, health_router
 from app.database import engine
-from app.models import Base
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -34,6 +34,7 @@ async def lifespan(app: FastAPI):
     """
     # Startup
     logger.info("🚀 CRM-VENDAS Backend starting...")
+    ensure_secure_config()
 
     # Create tables (for development, use Alembic in production)
     # Base.metadata.create_all(bind=engine)  # Commented: use Alembic migrations
@@ -71,10 +72,9 @@ app = FastAPI(
 app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=[
-        "localhost",
-        "127.0.0.1",
-        "*.example.com",
-        os.getenv("ALLOWED_HOSTS", "localhost").split(",")
+        host.strip()
+        for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,backend,testserver").split(",")
+        if host.strip()
     ]
 )
 
@@ -110,12 +110,17 @@ async def application_error_handler(request: Request, exc: ApplicationError):
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
-    """Handle HTTP exceptions"""
+    """Handle HTTP exceptions with a consistent error envelope"""
+    if isinstance(exc.detail, dict):
+        error = exc.detail.get("error", "http_error")
+        message = exc.detail.get("message", "")
+    else:
+        error, message = "http_error", str(exc.detail)
     return JSONResponse(
         status_code=exc.status_code,
         content={
-            "error": "http_error",
-            "message": exc.detail if isinstance(exc.detail, str) else str(exc.detail),
+            "error": error,
+            "message": message,
             "status_code": exc.status_code
         }
     )
