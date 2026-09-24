@@ -1,4 +1,5 @@
 # Resource Planning & Hiring Guide for CRM SaaS Development
+
 **Document Version**: 1.0  
 **Scope**: Cycles 3-7 (Feb 2026 - Mar 2027) | **Total Duration**: 12 months  
 **Prepared For**: Fundraising, HR, Executive Leadership
@@ -84,6 +85,7 @@
    - Hiring Timeline: June 2026 (2-month lead time)
 
 **Hiring Strategy for Cycle 3**:
+
 - Source through technical networks, referrals (best for senior hires)
 - Offer competitive compensation + equity (0.5-1% for leads, 0.25-0.5% for mid-level)
 - Remote-friendly roles (global talent pool)
@@ -99,7 +101,7 @@
 
 #### New Hires:
 
-5. **Backend Engineer (Feature)** (1 FTE) - *New*
+5. **Backend Engineer (Feature)** (1 FTE) - _New_
    - Title: Backend Engineer
    - Salary: $110K-130K/yr
    - Responsibilities:
@@ -112,7 +114,7 @@
      - SQL optimization knowledge
    - Hiring Timeline: August 2026 (1-month lead time)
 
-6. **Frontend Engineer (Feature)** (1 FTE) - *New*
+6. **Frontend Engineer (Feature)** (1 FTE) - _New_
    - Title: Frontend Engineer
    - Salary: $100K-120K/yr
    - Responsibilities:
@@ -126,12 +128,14 @@
    - Hiring Timeline: August 2026 (1-month lead time)
 
 #### Existing Team Role Shifts:
+
 - **Backend Lead**: Shifts to Backend Tech Lead (mentoring new engineer, architecture decisions)
 - **Frontend Lead**: Shifts to Frontend Tech Lead (component library expansion)
 - **DevOps**: Continues infrastructure + database optimization
 - **Full-stack**: Specialize toward testing framework + performance optimization
 
 **Hiring Strategy for Cycle 4**:
+
 - 1-2 new engineers from referrals or active recruiting
 - Prioritize engineers who can ship quickly (less time for onboarding)
 - Offer 2-3 week ramp-up with pair programming
@@ -152,6 +156,7 @@
 - **Optional Contractor (0.5 FTE)**: Email integration specialist (SendGrid, Gmail APIs)
 
 **Hiring Strategy for Cycle 5**:
+
 - No new full-time hires (use existing team + optional contractor)
 - Contract speciality expert for 2-3 months (email integration spikes)
 - Cost: $15K-20K for contractor (2-3 month contract)
@@ -166,7 +171,7 @@
 
 #### New Hires:
 
-7. **ML/Data Engineer** (1 FTE) - *New*
+7. **ML/Data Engineer** (1 FTE) - _New_
    - Title: Machine Learning Engineer
    - Salary: $140K-170K/yr (ML specialists command premium)
    - Responsibilities:
@@ -181,7 +186,7 @@
      - SQL for data extraction
    - Hiring Timeline: July 2026 (3-month lead time - critical path)
 
-8. **Senior Frontend Engineer (Analytics)** (1 FTE) - *New*
+8. **Senior Frontend Engineer (Analytics)** (1 FTE) - _New_
    - Title: Senior Frontend Engineer (Analytics/Data Viz)
    - Salary: $130K-150K/yr
    - Responsibilities:
@@ -197,12 +202,14 @@
    - Hiring Timeline: July 2026 (2-month lead time)
 
 #### Team Composition:
+
 - **Backend (2 FTE)**: Continue feature work + new analytics services
 - **Frontend (2 FTE)**: Analytics dashboards (new hire focuses on data viz)
 - **DevOps (1 FTE)**: Caching strategy (Redis), materialized view maintenance
 - **ML Engineer (1 FTE)**: New - scoring & forecasting models
 
 **Hiring Strategy for Cycle 6**:
+
 - **Critical Hire**: ML Engineer (longest lead time, foundational for Cycle 6)
 - Recruit from:
   - Academia (PhD programs, data science bootcamp instructors)
@@ -221,7 +228,7 @@
 
 #### New Hires:
 
-9. **ML/Data Engineer (Advanced Models)** (1 FTE) - *New*
+9. **ML/Data Engineer (Advanced Models)** (1 FTE) - _New_
    - Title: ML Engineer (Advanced Models)
    - Salary: $150K-180K/yr
    - Responsibilities:
@@ -236,7 +243,7 @@
      - Experiment tracking (MLflow, Weights & Biases)
    - Hiring Timeline: December 2026 (2-month lead time)
 
-10. **Full-stack Engineer (Workflow Automation)** (1 FTE) - *New*
+10. **Full-stack Engineer (Workflow Automation)** (1 FTE) - _New_
     - Title: Senior Full-stack Engineer
     - Salary: $130K-150K/yr
     - Responsibilities:
@@ -252,6 +259,7 @@
     - Hiring Timeline: December 2026 (2-month lead time)
 
 #### Team Composition (Cycle 7):
+
 - **Backend (2 FTE)**: Workflow services, recommendation engine
 - **Frontend (2 FTE)**: Workflow builder UI, analytics dashboards
 - **ML Engineers (2 FTE)**: Ensemble models, churn prediction, territory optimization
@@ -259,6 +267,7 @@
 - **Full-stack Specialist (1 FTE)**: Automation engine (new hire focuses on this)
 
 **Hiring Strategy for Cycle 7**:
+
 - Recruit experienced ML engineers (harder than junior)
 - Full-stack automation specialist (rare skillset)
 - Offer equity sweeteners (0.5-1%) given later stage hiring
@@ -308,6 +317,7 @@ TOTAL INVESTMENT:               $1.72M
 ### **Break-even Analysis**
 
 **Customer Acquisition Model:**
+
 - ASP (Annual Subscription Price): $30K (SMB), $50K (Mid-market), $100K+ (Enterprise)
 - Blended ASP: $50K/year → $4,166/month MRR per customer
 - Churn Rate: 5% monthly initially (high-touch sales)
@@ -323,6 +333,7 @@ End of C7 (Mar):       35 customers  $146K/MRR   (Advanced features)
 ```
 
 **Payback Period:**
+
 - Investment: $1.72M
 - Monthly burn (avg): $150K ($1.8M/year)
 - MRR at Mar 2027: $146K
@@ -346,24 +357,25 @@ End of C7 (Mar):       35 customers  $146K/MRR   (Advanced features)
 
 ### **Detailed Hiring Timeline**
 
-| Date | Role | Position | Level | Salary | Status |
-|------|------|----------|-------|--------|--------|
-| Jun 2026 | Backend Lead | Sr Backend Eng | Lead | $140-160K | **HIRE FIRST** |
-| Jun 2026 | Frontend Lead | Sr Frontend Eng | Lead | $130-150K | **HIRE FIRST** |
-| Jun 2026 | DevOps | DevOps Eng | Mid | $120-140K | **HIRE FIRST** |
-| Jun 2026 | Full-stack | Full-stack Eng | Mid | $100-120K | **HIRE FIRST** |
-| Jul 2026 | ML Engineer | ML Eng (Baseline) | Senior | $140-170K | **CRITICAL** |
-| Jul 2026 | Analytics FE | Sr Frontend Eng | Senior | $130-150K | **PRIORITY** |
-| Aug 2026 | Backend Feature | Backend Eng | Mid | $110-130K | Standard |
-| Aug 2026 | Frontend Feature | Frontend Eng | Mid | $100-120K | Standard |
-| Dec 2026 | ML Advanced | ML Eng (Ensemble) | Senior | $150-180K | Priority |
-| Dec 2026 | Workflow Eng | Sr Full-stack Eng | Senior | $130-150K | Priority |
+| Date     | Role             | Position          | Level  | Salary    | Status         |
+| -------- | ---------------- | ----------------- | ------ | --------- | -------------- |
+| Jun 2026 | Backend Lead     | Sr Backend Eng    | Lead   | $140-160K | **HIRE FIRST** |
+| Jun 2026 | Frontend Lead    | Sr Frontend Eng   | Lead   | $130-150K | **HIRE FIRST** |
+| Jun 2026 | DevOps           | DevOps Eng        | Mid    | $120-140K | **HIRE FIRST** |
+| Jun 2026 | Full-stack       | Full-stack Eng    | Mid    | $100-120K | **HIRE FIRST** |
+| Jul 2026 | ML Engineer      | ML Eng (Baseline) | Senior | $140-170K | **CRITICAL**   |
+| Jul 2026 | Analytics FE     | Sr Frontend Eng   | Senior | $130-150K | **PRIORITY**   |
+| Aug 2026 | Backend Feature  | Backend Eng       | Mid    | $110-130K | Standard       |
+| Aug 2026 | Frontend Feature | Frontend Eng      | Mid    | $100-120K | Standard       |
+| Dec 2026 | ML Advanced      | ML Eng (Ensemble) | Senior | $150-180K | Priority       |
+| Dec 2026 | Workflow Eng     | Sr Full-stack Eng | Senior | $130-150K | Priority       |
 
 ---
 
 ## 🎯 Key Hiring Criteria & Interview Process
 
 ### **Universal Criteria (All Roles)**
+
 1. **Strong Communication**: Can explain technical concepts clearly
 2. **Problem Solving**: Creative solutions to ambiguous problems
 3. **Ownership Mentality**: Takes responsibility for outcomes
@@ -373,26 +385,31 @@ End of C7 (Mar):       35 customers  $146K/MRR   (Advanced features)
 ### **Backend Engineer Interviews** (4-5 rounds, 6 hours total)
 
 **Round 1: Screening Call (30 min)**
+
 - Background, experience, motivation
 - Quick tech questions (multi-tenancy architecture, PostgreSQL optimization)
 - Compensation expectations
 
 **Round 2: Take-home Coding Challenge (2 hours)**
+
 - Build a small REST API (Python/FastAPI or Node.js)
 - Include database design, error handling, tests
 - Evaluation: Code quality, architecture, testing mindset
 
 **Round 3: System Design (90 min)**
+
 - Design a multi-tenant CRM pipeline management system
 - Cover: Schema design, API layer, scaling considerations
 - Evaluate: Architecture knowledge, trade-offs thinking
 
 **Round 4: Technical Deep-dive (60 min)**
+
 - Review take-home code, ask follow-up questions
 - Discuss production challenges (database performance, caching, monitoring)
 - Evaluate: Technical depth, experience with real systems
 
 **Round 5: Culture Fit (30 min)**
+
 - Chat with Backend Lead or CEO
 - Discuss team, culture, growth opportunities
 - Final questions
@@ -400,20 +417,24 @@ End of C7 (Mar):       35 customers  $146K/MRR   (Advanced features)
 ### **Frontend Engineer Interviews** (4 rounds, 5 hours total)
 
 **Round 1: Screening Call (30 min)**
+
 - Background, React experience, component library knowledge
 - Quick tech questions (state management, performance optimization)
 
 **Round 2: Component Building Challenge (2 hours)**
+
 - Build a reusable React component with specific requirements
 - Include TypeScript, tests, documentation
 - Evaluation: React patterns, accessibility, testing
 
 **Round 3: System Design (90 min)**
+
 - Design a real-time analytics dashboard (like Cycle 6 requirements)
 - Cover: Component hierarchy, state management, performance
 - Evaluate: Architecture thinking, UX awareness
 
 **Round 4: Culture Fit & Pairing (60 min)**
+
 - Pair program with Frontend Lead on real codebase
 - Small feature implementation or bug fix
 - Evaluate: Collaboration, code quality, learning
@@ -421,25 +442,30 @@ End of C7 (Mar):       35 customers  $146K/MRR   (Advanced features)
 ### **ML Engineer Interviews** (5 rounds, 7-8 hours total)
 
 **Round 1: Screening Call (30 min)**
+
 - ML background, projects, why interested
 - Quick ML questions (model evaluation, feature engineering)
 
 **Round 2: Machine Learning Challenge (3 hours, take-home)**
+
 - Build ML model with provided dataset (opportunity scoring)
 - Deliverables: EDA, model training, evaluation, interpretation
 - Evaluation: ML fundamentals, experimentation approach
 
 **Round 3: System Design (90 min)**
+
 - Design ML system for opportunity scoring (Cycle 6 requirements)
 - Cover: Feature pipeline, model training, monitoring, serving
 - Evaluate: ML systems thinking, production awareness
 
 **Round 4: Deep Technical (90 min)**
+
 - Present past ML project (from portfolio)
 - Discuss challenges, decisions, results
 - Evaluate: Technical depth, real-world experience
 
 **Round 5: Culture Fit (30 min)**
+
 - Chat with ML lead and team
 - Discuss collaboration with engineers, product thinking
 
@@ -448,30 +474,35 @@ End of C7 (Mar):       35 customers  $146K/MRR   (Advanced features)
 ## 🌱 Onboarding & Training Program
 
 ### **Week 1: Orientation**
+
 - Day 1: Company overview, culture, product vision
 - Day 2: Development environment setup (GitHub, IDE, local dev server)
 - Day 3: First pull request (documentation, test fix)
 - Day 4-5: Code walkthrough (architecture, key components)
 
 ### **Weeks 2-3: Deep Dive**
+
 - Pair programming with team lead (2-3 days/week)
 - Small feature implementation under supervision
 - Code review feedback & learning
 - Weekly 1-on-1 with manager
 
 ### **Week 4: First Solo Feature**
+
 - Pick small story (8 pts or less)
 - Implement independently with PR reviews
 - Deployment to staging environment
 - Participation in sprint retro
 
 ### **Ongoing (Months 2-3)**
+
 - Gradually increasing complexity of tasks
 - Mentorship from team lead (1-2 hrs/week)
 - Tech talks & knowledge sharing sessions
 - Goal: Full productivity by week 8-12
 
 ### **Success Metrics**
+
 - First PR merged by Day 3 (docs/tests)
 - Independent feature shipped by Week 4
 - On the critical path by Month 2
@@ -512,6 +543,7 @@ CEO / Founder
 ## 🎓 Professional Development Budget
 
 **Per Engineer**: $2,500-3,500/year
+
 - Conference attendance: $1,500 (1 major conference/year)
 - Online courses: $500 (ML, cloud, leadership)
 - Books & learning: $200
@@ -524,6 +556,7 @@ CEO / Founder
 ## 🔄 Performance Metrics & Retention
 
 ### **Engineering KPIs**
+
 - **Velocity**: Story points shipped per sprint (target: 20-25 pts/week/engineer)
 - **Quality**: Bug escape rate <5%, test coverage >90%
 - **Deployment Frequency**: Deploys multiple times/week
@@ -531,6 +564,7 @@ CEO / Founder
 - **MTTR**: Mean time to recovery from incidents <1 hour
 
 ### **Retention Strategy**
+
 1. **Competitive Compensation**: 75th percentile for market
 2. **Equity**: 0.25-1% depending on level & timing
 3. **Career Growth**: Clear path (IC → Tech Lead → Manager)
@@ -545,13 +579,13 @@ CEO / Founder
 
 ## 📋 Hiring Challenges & Mitigations
 
-| Challenge | Impact | Mitigation |
-|-----------|--------|-----------|
-| ML Engineer shortage | High | Start recruiting 3 months early, referral bonuses |
-| Remote competition | Medium | Competitive salary, equity, mission-driven pitch |
-| Onboarding complexity | Medium | Detailed runbooks, pair programming, internal wiki |
-| Burnout in scaling phase | Medium | Watch velocity, add headcount early, 20% time |
-| Skill gaps (async, distributed teams) | Low | Training, documentation, async communication norms |
+| Challenge                             | Impact | Mitigation                                         |
+| ------------------------------------- | ------ | -------------------------------------------------- |
+| ML Engineer shortage                  | High   | Start recruiting 3 months early, referral bonuses  |
+| Remote competition                    | Medium | Competitive salary, equity, mission-driven pitch   |
+| Onboarding complexity                 | Medium | Detailed runbooks, pair programming, internal wiki |
+| Burnout in scaling phase              | Medium | Watch velocity, add headcount early, 20% time      |
+| Skill gaps (async, distributed teams) | Low    | Training, documentation, async communication norms |
 
 ---
 
@@ -595,4 +629,3 @@ CEO / Founder
 **Last Updated**: September 15, 2026  
 **Next Review**: December 2026 (post-Cycle 4 assessment)  
 **Owner**: CEO / VP Engineering
-

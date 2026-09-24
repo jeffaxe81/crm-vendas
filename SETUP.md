@@ -1,5 +1,10 @@
 # 🚀 Local Development Setup - CRM Vendas
 
+> **⚠️ Este guia cobre apenas o serviço Python (`backend/`, `docker-compose.yml`).**
+> Pelo [ADR-0002](./docs/decisions/ADR-0002-stack-principal-typescript.md), o CRM é desenvolvido no
+> monorepositório TypeScript (`compose.yaml` + pnpm: `pnpm install`, `pnpm dev`, `pnpm verify`).
+> O `backend/` fica congelado até o Ciclo 6 (serviço de ML).
+
 Guia passo a passo para configurar o ambiente de desenvolvimento local.
 
 ---
@@ -82,6 +87,7 @@ docker compose -f docker-compose.yml ps
 ```
 
 Saída esperada:
+
 ```
 NAME                    STATUS
 crm-vendas-postgres     Up (healthy)
@@ -110,14 +116,14 @@ start http://localhost:3000  # Windows
 
 ## 🌐 URLs de Acesso
 
-| Serviço | URL | Descrição |
-|---------|-----|-----------|
-| **Frontend** | http://localhost:3000 | React App |
-| **Backend API** | http://localhost:8000 | FastAPI Server |
-| **Swagger Docs** | http://localhost:8000/api/v1/docs | API Documentation |
-| **ReDoc** | http://localhost:8000/api/v1/redoc | Alternative API Docs |
-| **Database** | localhost:5432 | PostgreSQL |
-| **Redis** | localhost:6379 | Cache Server |
+| Serviço          | URL                                | Descrição            |
+| ---------------- | ---------------------------------- | -------------------- |
+| **Frontend**     | http://localhost:3000              | React App            |
+| **Backend API**  | http://localhost:8000              | FastAPI Server       |
+| **Swagger Docs** | http://localhost:8000/api/v1/docs  | API Documentation    |
+| **ReDoc**        | http://localhost:8000/api/v1/redoc | Alternative API Docs |
+| **Database**     | localhost:5432                     | PostgreSQL           |
+| **Redis**        | localhost:6379                     | Cache Server         |
 
 ---
 
