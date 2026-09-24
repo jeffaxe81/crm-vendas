@@ -3,7 +3,10 @@
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
-import { formatMoney } from "../opportunities/opportunity-items-panel";
+import {
+  formatMoney,
+  normalizeDecimal,
+} from "../opportunities/opportunity-items-panel";
 
 type ProductRecord = {
   id: string;
@@ -110,7 +113,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
     event.preventDefault();
     const code = form.code.trim();
     const name = form.name.trim();
-    const unitPrice = form.unitPrice.trim().replace(",", ".");
+    const unitPrice = normalizeDecimal(form.unitPrice);
     if (!code || !name || !unitPrice) {
       setError("Informe código, nome e preço.");
       return;

@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 
-import { apiRequest } from "../../lib/api-client";
+import { ApiError, apiRequest } from "../../lib/api-client";
 
 export type OpportunityItemRecord = {
   id: string;
@@ -42,7 +42,42 @@ const money = new Intl.NumberFormat("pt-BR", {
 
 export const formatMoney = (value: string) => money.format(Number(value));
 
-/** C4.3.1 — itens da oportunidade; o valor é recalculado pela API. */
+export const VERSION_CONFLICT_MESSAGE =
+  "Esta oportunidade foi alterada em outra operação. Recarregue a página para ver os dados atuais antes de tentar novamente.";
+
+/**
+ * Aceita vírgula decimal ("1.234,5" → "1234.5"). Sem vírgula, o ponto é o
+ * separador decimal ("12.5" → "12.5").
+ */
+export function normalizeDecimal(value: string): string {
+  const trimmed = value.trim().replace(/\s/g, "");
+  return trimmed.includes(",")
+    ? trimmed.replace(/\./g, "").replace(",", ".")
+    : trimmed;
+}
+
+/** Valor da API ("12.50") para edição com vírgula ("12,5"). */
+function toInputValue(value: string): string {
+  return String(Number(value)).replace(".", ",");
+}
+
+function describeError(cause: unknown, fallback: string): string {
+  if (cause instanceof ApiError && cause.status === 409) {
+    return VERSION_CONFLICT_MESSAGE;
+  }
+  return cause instanceof Error ? cause.message : fallback;
+}
+
+type ItemDraft = {
+  quantity: string;
+  unitPrice: string;
+  discountPercent: string;
+};
+
+/**
+ * C4.3.1/C4.3.3 — itens da oportunidade (incluir, editar e remover); o valor
+ * é recalculado pela API.
+ */
 export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
   accessToken,
   opportunity,
@@ -57,6 +92,12 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
   const [productId, setProductId] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [discountPercent, setDiscountPercent] = useState("0");
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [draft, setDraft] = useState<ItemDraft>({
+    quantity: "",
+    unitPrice: "",
+    discountPercent: "",
+  });
 
   useEffect(() => {
     let active = true;
@@ -83,11 +124,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
         }
       } catch (cause) {
         if (active) {
-          setError(
-            cause instanceof Error
-              ? cause.message
-              : "Não foi possível carregar os itens."
-          );
+          setError(describeError(cause, "Não foi possível carregar os itens."));
         }
       } finally {
         if (active) setLoading(false);
@@ -126,8 +163,8 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
         method: "POST",
         body: {
           productId,
-          quantity: quantity.trim().replace(",", "."),
-          discountPercent: discountPercent.trim().replace(",", ".") || "0",
+          quantity: normalizeDecimal(quantity),
+          discountPercent: normalizeDecimal(discountPercent) || "0",
           version: opportunity.version,
         },
       });
@@ -137,11 +174,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
       setQuantity("1");
       setDiscountPercent("0");
     } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "Não foi possível adicionar o item."
-      );
+      setError(describeError(cause, "Não foi possível adicionar o item."));
     } finally {
       setBusy(false);
     }
@@ -158,11 +191,59 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
       setItems(current => current.filter(entry => entry.id !== item.id));
       applyOpportunity(result.opportunity);
     } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "Não foi possível remover o item."
+      setError(describeError(cause, "Não foi possível remover o item."));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function startEdit(item: OpportunityItemRecord) {
+    setError("");
+    setEditingItemId(item.id);
+    setDraft({
+      quantity: toInputValue(item.quantity),
+      unitPrice: toInputValue(item.unitPrice),
+      discountPercent: toInputValue(item.discountPercent),
+    });
+  }
+
+  function cancelEdit() {
+    setEditingItemId(null);
+    setError("");
+  }
+
+  async function saveItem(item: OpportunityItemRecord) {
+    const nextQuantity = normalizeDecimal(draft.quantity);
+    const nextUnitPrice = normalizeDecimal(draft.unitPrice);
+    const nextDiscount = normalizeDecimal(draft.discountPercent);
+    if (!nextQuantity || !nextUnitPrice || !nextDiscount) {
+      setError("Informe quantidade, preço unitário e desconto.");
+      return;
+    }
+
+    setBusy(true);
+    setError("");
+    try {
+      const result = await apiRequest<{
+        item: OpportunityItemRecord;
+        opportunity: T;
+      }>(`/opportunities/${opportunity.id}/items/${item.id}`, {
+        accessToken,
+        method: "PATCH",
+        body: {
+          quantity: nextQuantity,
+          unitPrice: nextUnitPrice,
+          discountPercent: nextDiscount,
+          version: opportunity.version,
+        },
+      });
+      setItems(current =>
+        current.map(entry => (entry.id === item.id ? result.item : entry))
       );
+      applyOpportunity(result.opportunity);
+      setEditingItemId(null);
+    } catch (cause) {
+      setError(describeError(cause, "Não foi possível alterar o item."));
     } finally {
       setBusy(false);
     }
@@ -197,27 +278,104 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
             </tr>
           </thead>
           <tbody>
-            {items.map(item => (
-              <tr key={item.id}>
-                <td>{item.description}</td>
-                <td>{Number(item.quantity).toLocaleString("pt-BR")}</td>
-                <td>{formatMoney(item.unitPrice)}</td>
-                <td>{Number(item.discountPercent).toLocaleString("pt-BR")}</td>
-                <td>{formatMoney(item.lineTotal)}</td>
-                {canWrite ? (
+            {items.map(item =>
+              canWrite && editingItemId === item.id ? (
+                <tr key={item.id}>
+                  <td>{item.description}</td>
+                  <td>
+                    <input
+                      inputMode="decimal"
+                      aria-label={`Quantidade de ${item.description}`}
+                      value={draft.quantity}
+                      disabled={busy}
+                      onChange={event =>
+                        setDraft(current => ({
+                          ...current,
+                          quantity: event.target.value,
+                        }))
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      inputMode="decimal"
+                      aria-label={`Preço unitário de ${item.description}`}
+                      value={draft.unitPrice}
+                      disabled={busy}
+                      onChange={event =>
+                        setDraft(current => ({
+                          ...current,
+                          unitPrice: event.target.value,
+                        }))
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      inputMode="decimal"
+                      aria-label={`Desconto (%) de ${item.description}`}
+                      value={draft.discountPercent}
+                      disabled={busy}
+                      onChange={event =>
+                        setDraft(current => ({
+                          ...current,
+                          discountPercent: event.target.value,
+                        }))
+                      }
+                    />
+                  </td>
+                  <td>{formatMoney(item.lineTotal)}</td>
                   <td>
                     <button
                       type="button"
                       disabled={busy}
-                      onClick={() => void removeItem(item)}
-                      aria-label={`Remover ${item.description}`}
+                      onClick={() => void saveItem(item)}
+                      aria-label={`Salvar ${item.description}`}
                     >
-                      Remover
+                      {busy ? "Salvando..." : "Salvar"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={cancelEdit}
+                      aria-label={`Cancelar edição de ${item.description}`}
+                    >
+                      Cancelar
                     </button>
                   </td>
-                ) : null}
-              </tr>
-            ))}
+                </tr>
+              ) : (
+                <tr key={item.id}>
+                  <td>{item.description}</td>
+                  <td>{Number(item.quantity).toLocaleString("pt-BR")}</td>
+                  <td>{formatMoney(item.unitPrice)}</td>
+                  <td>
+                    {Number(item.discountPercent).toLocaleString("pt-BR")}
+                  </td>
+                  <td>{formatMoney(item.lineTotal)}</td>
+                  {canWrite ? (
+                    <td>
+                      <button
+                        type="button"
+                        disabled={busy || editingItemId !== null}
+                        onClick={() => startEdit(item)}
+                        aria-label={`Editar ${item.description}`}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy || editingItemId !== null}
+                        onClick={() => void removeItem(item)}
+                        aria-label={`Remover ${item.description}`}
+                      >
+                        Remover
+                      </button>
+                    </td>
+                  ) : null}
+                </tr>
+              )
+            )}
           </tbody>
           <tfoot>
             <tr>
