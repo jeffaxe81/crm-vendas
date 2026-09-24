@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # PostgreSQL Database
   postgres:
@@ -44,6 +42,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        INSTALL_DEV: "true"
     container_name: crm-vendas-backend
     environment:
       DATABASE_URL: postgresql://${DB_USER:-vendas_user}:${DB_PASSWORD:-vendas_pass_dev}@postgres:5432/${DB_NAME:-crm_vendas_dev}
@@ -52,6 +52,9 @@ services:
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600}
       ENVIRONMENT: ${ENVIRONMENT:-development}
+      TEST_DATABASE_URL: postgresql://${DB_USER:-vendas_user}:${DB_PASSWORD:-vendas_pass_dev}@postgres:5432/${DB_NAME:-crm_vendas_dev}_test
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:5173}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
@@ -64,15 +67,20 @@ services:
         condition: service_healthy
     networks:
       - crm-network
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    # Apply database migrations (Alembic) before starting the API
+    command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   # React Frontend
+  # Behind the "frontend" profile until the React app is scaffolded in
+  # ./frontend (package.json does not exist yet). Enable with:
+  #   docker compose --profile frontend up
   frontend:
+    profiles: ["frontend"]
     build:
       context: ./frontend
       dockerfile: Dockerfile

@@ -5,6 +5,8 @@ Revises: 001_20260921_000000
 Create Date: 2026-09-21 00:01:00.000000
 
 """
+import os
+
 from alembic import op
 import sqlalchemy as sa
 from uuid import uuid4
@@ -18,7 +20,9 @@ depends_on = None
 
 
 def upgrade() -> None:
-    """Insert seed data for development"""
+    """Insert seed data for development (skipped when ENVIRONMENT=production)"""
+    if os.getenv("ENVIRONMENT", "development") == "production":
+        return
 
     # Generate consistent UUIDs for seed data
     dev_org_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
@@ -29,13 +33,12 @@ def upgrade() -> None:
         f"""
         INSERT INTO crm_core.organizations (id, name, slug, description, is_active)
         VALUES ('{dev_org_id}'::uuid, 'Development Org', 'development-org', 'Default organization for development and testing', true)
+        ON CONFLICT (slug) DO NOTHING
         """
     )
 
-    # Create default development user (demo@example.com)
-    # Note: Password hash should be bcrypt hash of 'demo1234'
-    # This is a placeholder - in production, use proper hashing
-    demo_password_hash = '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5YmMxSUmGEJiq'  # bcrypt hash of 'demo1234'
+    # Create default development user: demo@example.com / demo1234
+    demo_password_hash = '$2b$12$9YL/uV.tS1bnFvs.QWeBNeoVTWyBjxURuKAtvVr6OtPFeSXoKlqoa'  # bcrypt(12) of 'demo1234'
 
     op.execute(
         f"""
@@ -52,6 +55,7 @@ def upgrade() -> None:
             true,
             true
         )
+        ON CONFLICT DO NOTHING
         """
     )
 

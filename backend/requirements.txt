@@ -1,10 +1,12 @@
-fastapi==0.83.0
-uvicorn==0.17.0
-sqlalchemy==1.4.46
-alembic==1.7.7
-pydantic==1.9.2
-python-dotenv==0.20.0
-passlib==1.7.4
-pyjwt==2.4.0
-python-multipart==0.0.4
-httpx==0.22.0
+# Runtime dependencies — CRM-VENDAS backend (Python 3.11)
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.4
+email-validator==2.2.0
+sqlalchemy==2.0.36
+alembic==1.14.0
+psycopg2-binary==2.9.10
+pyjwt==2.10.1
+bcrypt==4.2.1
+python-dotenv==1.0.1
+python-multipart==0.0.20

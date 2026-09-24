@@ -7,25 +7,28 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 from app.core.security import decode_token, extract_token_from_header
-from app.core.exceptions import AuthenticationError
-from typing import List
 
 
-# Routes that don't require authentication
-PUBLIC_ROUTES = [
-    "/health",
-    "/ready",
-    "/live",
+# Routes that don't require authentication (exact match)
+PUBLIC_ROUTES = {
+    "/",
+    "/api/v1",
     "/api/v1/health",
     "/api/v1/ready",
     "/api/v1/live",
     "/api/v1/auth/login",
     "/api/v1/auth/register",
     "/api/v1/auth/refresh",
-    "/docs",
-    "/redoc",
-    "/openapi.json"
-]
+    "/api/v1/auth/reset-password-request",
+    "/api/v1/auth/reset-password",
+    "/api/v1/openapi.json",
+}
+
+# Route prefixes that don't require authentication (API documentation UI)
+PUBLIC_PREFIXES = (
+    "/api/v1/docs",
+    "/api/v1/redoc",
+)
 
 
 class AuthenticationMiddleware(BaseHTTPMiddleware):
@@ -37,8 +40,8 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         """Process request and extract authentication"""
 
-        # Check if route is public
-        if self._is_public_route(request.url.path):
+        # CORS preflight requests never carry credentials
+        if request.method == "OPTIONS" or self._is_public_route(request.url.path):
             return await call_next(request)
 
         # Extract token from Authorization header
@@ -83,14 +86,8 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
 
     @staticmethod
     def _is_public_route(path: str) -> bool:
-        """Check if route is in public routes list"""
-        # Exact match
-        if path in PUBLIC_ROUTES:
+        """Check if route is public (exact match, or documentation prefix)"""
+        normalized = path.rstrip("/") or "/"
+        if normalized in PUBLIC_ROUTES:
             return True
-
-        # Prefix match
-        for public_route in PUBLIC_ROUTES:
-            if path.startswith(public_route):
-                return True
-
-        return False
+        return normalized.startswith(PUBLIC_PREFIXES)
