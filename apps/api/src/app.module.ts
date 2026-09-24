@@ -8,6 +8,7 @@ import { AuthModule } from "./auth/auth.module";
 import { AuthorizationModule } from "./authorization/authorization.module";
 import { CompanyImportModule } from "./company-imports/company-import.module";
 import { ContactImportModule } from "./contact-imports/contact-import.module";
+import { ProductImportModule } from "./product-imports/product-import.module";
 import { ProductsModule } from "./products/products.module";
 import { CompaniesModule } from "./companies/companies.module";
 import { parseApiEnvironment } from "./config/environment";
@@ -42,6 +43,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     CompanyImportModule,
     ContactImportModule,
     ProductsModule,
+    ProductImportModule,
     ContactsModule,
     RelationshipsModule,
     TagsModule,

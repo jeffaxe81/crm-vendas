@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { formatMoney } from "../opportunities/opportunity-items-panel";
+import { ProductImportPanel } from "./product-import-panel";
 
 type ProductRecord = {
   id: string;
@@ -48,6 +49,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [refresh, setRefresh] = useState(0);
+  const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -82,6 +84,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
 
   function openCreate() {
     setError("");
+    setImportOpen(false);
     setEditing(null);
     setForm(emptyForm);
     setFormMode("create");
@@ -89,6 +92,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
 
   function openEdit(product: ProductRecord) {
     setError("");
+    setImportOpen(false);
     setEditing(product);
     setForm({
       code: product.code,
@@ -188,6 +192,15 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
           <div className="companies-view__header-actions">
             <button
               type="button"
+              onClick={() => {
+                closeForm();
+                setImportOpen(true);
+              }}
+            >
+              Importar CSV
+            </button>
+            <button
+              type="button"
               className="button companies-view__primary"
               onClick={openCreate}
             >
@@ -222,6 +235,14 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
         <p className="companies-view__error" role="alert">
           {error}
         </p>
+      ) : null}
+
+      {importOpen && canWrite ? (
+        <ProductImportPanel
+          accessToken={accessToken}
+          onClose={() => setImportOpen(false)}
+          onImported={() => setRefresh(current => current + 1)}
+        />
       ) : null}
 
       {formMode ? (

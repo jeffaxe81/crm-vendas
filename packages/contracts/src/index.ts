@@ -95,6 +95,14 @@ export {
 } from "./opportunities";
 
 export {
+  type ProductImportPreview,
+  type ProductImportPreviewRow,
+  type ProductImportResult,
+  type ProductImportResultRow,
+  type ProductImportRowData,
+} from "./product-imports";
+
+export {
   RelationshipEntryCreateInputSchema,
   RelationshipEntryKindSchema,
   type RelationshipEntryCreateInput,

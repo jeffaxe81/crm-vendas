@@ -122,6 +122,40 @@ export class ProductsService {
     return this.toPublic(product);
   }
 
+  /**
+   * Códigos (em minúsculas) já usados por produtos não excluídos do tenant,
+   * dentre os informados. Usado pela importação CSV (C4.3.2).
+   */
+  async existingCodes(
+    codes: string[],
+    organizationId: string
+  ): Promise<Set<string>> {
+    const normalized = Array.from(
+      new Set(codes.map(code => code.trim().toLocaleLowerCase("pt-BR")))
+    ).filter(code => code.length > 0);
+
+    if (normalized.length === 0) {
+      return new Set();
+    }
+
+    const products = await this.prisma.withTenant(organizationId, tenant =>
+      tenant.product.findMany({
+        where: {
+          organizationId,
+          deletedAt: null,
+          OR: normalized.map(code => ({
+            code: { equals: code, mode: "insensitive" as const },
+          })),
+        },
+        select: { code: true },
+      })
+    );
+
+    return new Set(
+      products.map(product => product.code.toLocaleLowerCase("pt-BR"))
+    );
+  }
+
   async update(
     id: string,
     input: ProductUpdateInput,
