@@ -1029,3 +1029,64 @@ textarea {
     width: 100%;
   }
 }
+
+.sales-report {
+  display: grid;
+  gap: 14px;
+}
+
+.sales-report__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.sales-report__filters label {
+  display: grid;
+  gap: 6px;
+  color: #263e58;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.sales-report__filters input {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid #bfcddd;
+  border-radius: 9px;
+  background: #fbfdff;
+  color: #10243e;
+}
+
+.sales-report__filters button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid #c7d4e3;
+  border-radius: 9px;
+  background: #f7f9fc;
+  color: #27445f;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sales-report__filters button[type="submit"] {
+  border-color: #185b9e;
+  background: #185b9e;
+  color: #ffffff;
+}
+
+.sales-report__table {
+  overflow-x: auto;
+}
+
+.sales-report__table td,
+.sales-report__table th {
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.sales-report__table small {
+  color: #73859a;
+}

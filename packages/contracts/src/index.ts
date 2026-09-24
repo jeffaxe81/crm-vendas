@@ -119,6 +119,19 @@ export {
   type ProductUpdateInput,
 } from "./products";
 
+export {
+  ReportMoneySchema,
+  ReportQuantitySchema,
+  SalesByProductBucketSchema,
+  SalesByProductQuerySchema,
+  SalesByProductReportSchema,
+  SalesByProductRowSchema,
+  type SalesByProductBucket,
+  type SalesByProductQuery,
+  type SalesByProductReport,
+  type SalesByProductRow,
+} from "./sales-by-product";
+
 export { TagInputSchema, type TagInput } from "./tags";
 
 export {
