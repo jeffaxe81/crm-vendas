@@ -134,7 +134,10 @@ export default function Home() {
             canWrite={session.permissions.includes("company.write")}
           />
         ) : activeSection === "contacts" ? (
-          <ContactsView accessToken={session.accessToken} />
+          <ContactsView
+            accessToken={session.accessToken}
+            canWrite={session.permissions.includes("contact.write")}
+          />
         ) : activeSection === "activities" ? (
           <ActivitiesView
             accessToken={session.accessToken}

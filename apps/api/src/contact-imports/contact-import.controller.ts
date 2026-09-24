@@ -18,26 +18,26 @@ import { PermissionsGuard } from "../authorization/permissions.guard";
 import { RequirePermissions } from "../authorization/require-permissions.decorator";
 import type { RequestWithId } from "../observability/request-id.middleware";
 import { CsvValidationError } from "../csv/csv-table-parser";
-import { CompanyImportService } from "./company-import.service";
+import { ContactImportService } from "./contact-import.service";
 
-type CompanyImportRequest = AuthenticatedRequest & RequestWithId;
+type ContactImportRequest = AuthenticatedRequest & RequestWithId;
 
 type UploadedCsvFile = {
   buffer: Buffer;
   originalname?: string;
 };
 
-@Controller("company-imports")
+@Controller("contact-imports")
 @UseGuards(AuthenticationGuard, PermissionsGuard)
-export class CompanyImportController {
+export class ContactImportController {
   constructor(
-    @Inject(CompanyImportService)
-    private readonly companyImports: CompanyImportService
+    @Inject(ContactImportService)
+    private readonly contactImports: ContactImportService
   ) {}
 
   @Post("preview")
   @HttpCode(200)
-  @RequirePermissions("company.write")
+  @RequirePermissions("contact.write")
   @UseInterceptors(
     FileInterceptor("file", {
       limits: { fileSize: 8 * 1024 * 1024 },
@@ -45,12 +45,12 @@ export class CompanyImportController {
   )
   async preview(
     @UploadedFile() file: UploadedCsvFile | undefined,
-    @Req() request: CompanyImportRequest
+    @Req() request: ContactImportRequest
   ) {
     const csv = this.requireCsvFile(file);
 
     try {
-      return await this.companyImports.preview(
+      return await this.contactImports.preview(
         csv.buffer,
         this.requirePrincipal(request).organizationId
       );
@@ -61,7 +61,7 @@ export class CompanyImportController {
 
   @Post("confirm")
   @HttpCode(200)
-  @RequirePermissions("company.write")
+  @RequirePermissions("contact.write")
   @UseInterceptors(
     FileInterceptor("file", {
       limits: { fileSize: 8 * 1024 * 1024 },
@@ -70,7 +70,7 @@ export class CompanyImportController {
   async confirm(
     @UploadedFile() file: UploadedCsvFile | undefined,
     @Body("fingerprint") fingerprint: string | undefined,
-    @Req() request: CompanyImportRequest
+    @Req() request: ContactImportRequest
   ) {
     const csv = this.requireCsvFile(file);
 
@@ -82,7 +82,7 @@ export class CompanyImportController {
     }
 
     try {
-      return await this.companyImports.confirm(
+      return await this.contactImports.confirm(
         csv.buffer,
         fingerprint.trim(),
         this.contextFrom(request)
@@ -124,14 +124,14 @@ export class CompanyImportController {
     throw error;
   }
 
-  private requirePrincipal(request: CompanyImportRequest) {
+  private requirePrincipal(request: ContactImportRequest) {
     if (!request.auth) {
       throw new Error("Authenticated principal unavailable after guard.");
     }
     return request.auth;
   }
 
-  private contextFrom(request: CompanyImportRequest) {
+  private contextFrom(request: ContactImportRequest) {
     const principal = this.requirePrincipal(request);
     return {
       organizationId: principal.organizationId,

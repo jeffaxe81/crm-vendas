@@ -41,6 +41,14 @@ export {
 } from "./company-imports";
 
 export {
+  type ContactImportPreview,
+  type ContactImportPreviewRow,
+  type ContactImportResult,
+  type ContactImportResultRow,
+  type ContactImportRowData,
+} from "./contact-imports";
+
+export {
   ContactChannelInputSchema,
   ContactChannelTypeSchema,
   ContactCreateInputSchema,

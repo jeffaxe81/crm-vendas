@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased] - C4.2.2 Importação CSV de contatos
+
+- `POST /api/v1/contact-imports/preview` e `/confirm` (permissão `contact.write`), com fluxo Preview → Confirmar e fingerprint SHA-256;
+- colunas `fullName`, `jobTitle`, `email`, `phone`, `mobile`, `whatsapp`, `notes`; canais criados como principais;
+- deduplicação por e-mail no arquivo e no tenant; contato e canais gravados na mesma transação, com auditoria;
+- parser CSV genérico (`CsvTableParser`) compartilhado com a importação de empresas, sem mudança de comportamento na C4.2.1;
+- tela de Contatos: ação **Importar CSV** com preview, erros por linha e resumo, visível só com `contact.write`;
+- testes: 20 novos na API e 3 na web; gate local completo verde (lint, typecheck, 143 testes de API, 44 web, 25 contratos, build e E2E 4/4).
+
 ## [Unreleased] - Decisão de stack (ADR-0002)
 
 - ADR-0002: monorepositório TypeScript (NestJS + Next.js) é a stack principal do CRM; `backend/` FastAPI congelado e reservado ao serviço de ML do Ciclo 6;

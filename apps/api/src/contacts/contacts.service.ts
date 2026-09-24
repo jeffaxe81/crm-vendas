@@ -136,6 +136,117 @@ export class ContactsService {
     return contact;
   }
 
+  /**
+   * Cria o contato e seus canais numa única transação do tenant (usado pela
+   * importação C4.2.2), preservando a mesma auditoria dos fluxos unitários.
+   */
+  async createWithChannels(
+    input: ContactCreateInput,
+    channels: ContactChannelInput[],
+    context: ContactAdministrationContext
+  ) {
+    const { contact, createdChannels } = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const created = await tenant.contact.create({
+          data: {
+            organizationId: context.organizationId,
+            fullName: input.fullName,
+            jobTitle: input.jobTitle,
+            notes: input.notes,
+            createdBy: context.actorUserId,
+            updatedBy: context.actorUserId,
+          },
+        });
+
+        const channelRows = [];
+        for (const channel of channels) {
+          channelRows.push(
+            await tenant.contactChannel.create({
+              data: {
+                organizationId: context.organizationId,
+                contactId: created.id,
+                type: channel.type,
+                value: channel.value,
+                label: channel.label,
+                isPrimary: channel.isPrimary,
+              },
+            })
+          );
+        }
+
+        return { contact: created, createdChannels: channelRows };
+      }
+    );
+
+    await this.audit.record({
+      organizationId: context.organizationId,
+      actorUserId: context.actorUserId,
+      requestId: context.requestId,
+      action: "contact.created",
+      entityType: "contact",
+      entityId: contact.id,
+      after: this.toAuditContact(contact),
+      ipAddress: context.ipAddress ?? null,
+    });
+
+    for (const channel of createdChannels) {
+      await this.audit.record({
+        organizationId: context.organizationId,
+        actorUserId: context.actorUserId,
+        requestId: context.requestId,
+        action: "contact.channel_created",
+        entityType: "contact_channel",
+        entityId: channel.id,
+        after: this.toAuditChannel(channel),
+        metadata: { contactId: contact.id },
+        ipAddress: context.ipAddress ?? null,
+      });
+    }
+
+    return { contact, channels: createdChannels };
+  }
+
+  /**
+   * Retorna, em minúsculas, os e-mails informados que já pertencem a
+   * contatos ativos do tenant.
+   */
+  async existingEmails(
+    emails: string[],
+    organizationId: string
+  ): Promise<Set<string>> {
+    const normalized = Array.from(
+      new Set(emails.map(email => email.trim().toLocaleLowerCase("pt-BR")))
+    ).filter(email => email.length > 0);
+
+    if (normalized.length === 0) {
+      return new Set();
+    }
+
+    const channels = await this.prisma.withTenant(organizationId, tenant =>
+      tenant.contactChannel.findMany({
+        where: {
+          organizationId,
+          type: "EMAIL",
+          contact: { deletedAt: null },
+          OR: normalized.map(email => ({
+            // `contains` tolera espaços salvos ao redor do valor legado;
+            // a comparação exata é feita abaixo, após normalização.
+            value: { contains: email, mode: "insensitive" as const },
+          })),
+        },
+        select: { value: true },
+      })
+    );
+
+    const requested = new Set(normalized);
+    return new Set(
+      channels
+        .map(channel => channel.value.trim().toLocaleLowerCase("pt-BR"))
+        .filter(email => requested.has(email))
+    );
+  }
+
   async update(
     id: string,
     input: ContactUpdateInput,

@@ -7,6 +7,7 @@ import { AuditAdminModule } from "./audit/audit-admin.module";
 import { AuthModule } from "./auth/auth.module";
 import { AuthorizationModule } from "./authorization/authorization.module";
 import { CompanyImportModule } from "./company-imports/company-import.module";
+import { ContactImportModule } from "./contact-imports/contact-import.module";
 import { CompaniesModule } from "./companies/companies.module";
 import { parseApiEnvironment } from "./config/environment";
 import { ContactsModule } from "./contacts/contacts.module";
@@ -38,6 +39,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     OrganizationUsersModule,
     CompaniesModule,
     CompanyImportModule,
+    ContactImportModule,
     ContactsModule,
     RelationshipsModule,
     TagsModule,

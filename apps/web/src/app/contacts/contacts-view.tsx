@@ -8,6 +8,7 @@ import type {
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { ContactImportPanel } from "./contact-import-panel";
 import {
   CustomFieldsEditor,
   type CustomFieldDefinitionView,
@@ -72,6 +73,7 @@ type ContactCustomFieldValueRecord = {
 
 type ContactsViewProps = {
   accessToken: string;
+  canWrite?: boolean;
 };
 
 type ContactFormState = {
@@ -98,13 +100,17 @@ const emptyChannelForm: ChannelFormState = {
   isPrimary: false,
 };
 
-export function ContactsView({ accessToken }: ContactsViewProps) {
+export function ContactsView({
+  accessToken,
+  canWrite = true,
+}: ContactsViewProps) {
   const [contacts, setContacts] = useState<ContactRecord[]>([]);
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
   const [history, setHistory] = useState<RelationshipEntryRecord[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [contactFormOpen, setContactFormOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [contactForm, setContactForm] =
     useState<ContactFormState>(emptyContactForm);
   const [channelContactId, setChannelContactId] = useState<string | null>(null);
@@ -189,6 +195,17 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
       active = false;
     };
   }, [accessToken]);
+
+  async function reloadContacts() {
+    const contactResult = await apiRequest<ListResponse<ContactRecord>>(
+      "/contacts?page=1&limit=20",
+      { accessToken }
+    );
+    setContacts(contactResult.items);
+    setHistory(
+      contactResult.items.flatMap(contact => contact.relationshipEntries ?? [])
+    );
+  }
 
   async function createContact(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -480,14 +497,48 @@ export function ContactsView({ accessToken }: ContactsViewProps) {
           <h1 id="contacts-title">Contatos</h1>
           <p>Gerencie pessoas, canais e vínculos comerciais.</p>
         </div>
-        <button
-          type="button"
-          className="button contacts-view__primary"
-          onClick={() => setContactFormOpen(true)}
-        >
-          Novo contato
-        </button>
+        <div className="companies-view__header-actions">
+          {canWrite ? (
+            <button
+              type="button"
+              onClick={() => {
+                setContactFormOpen(false);
+                setImportOpen(true);
+              }}
+            >
+              Importar CSV
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="button contacts-view__primary"
+            onClick={() => {
+              setImportOpen(false);
+              setContactFormOpen(true);
+            }}
+          >
+            Novo contato
+          </button>
+        </div>
       </header>
+
+      {importOpen && canWrite ? (
+        <ContactImportPanel
+          accessToken={accessToken}
+          onClose={() => setImportOpen(false)}
+          onImported={async () => {
+            try {
+              await reloadContacts();
+            } catch (cause) {
+              setError(
+                cause instanceof Error
+                  ? cause.message
+                  : "Não foi possível atualizar a lista de contatos."
+              );
+            }
+          }}
+        />
+      ) : null}
 
       {error ? (
         <p className="contacts-view__error" role="alert">
