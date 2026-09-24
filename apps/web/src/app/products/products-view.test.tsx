@@ -64,7 +64,7 @@ describe("C4.3 products view", () => {
       target: { value: "Implantação" },
     });
     fireEvent.change(within(form).getByLabelText("Preço unitário"), {
-      target: { value: "2500,00" },
+      target: { value: "2.500,00" },
     });
     fireEvent.click(
       within(form).getByRole("button", { name: "Salvar produto" })
