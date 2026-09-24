@@ -9,6 +9,7 @@ export type CrmSection =
   | "activities"
   | "agenda"
   | "opportunities"
+  | "products"
   | "management-summary";
 
 type CrmShellProps = {
@@ -29,6 +30,8 @@ export function CrmShell({
   const canReadActivities = session.permissions.includes("activity.read");
   const canReadOpportunities = session.permissions.includes("opportunity.read");
   const canReadReports = session.permissions.includes("reports.read");
+  const canReadProducts = session.permissions.includes("product.read");
+  const isProductsActive = activeSection === "products";
   const isActivitiesActive = activeSection === "activities";
   const isAgendaActive = activeSection === "agenda";
   const isOpportunitiesActive = activeSection === "opportunities";
@@ -97,6 +100,16 @@ export function CrmShell({
               onClick={() => onNavigate("opportunities")}
             >
               Oportunidades
+            </button>
+          ) : null}
+          {canReadProducts ? (
+            <button
+              type="button"
+              className={isProductsActive ? "is-active" : undefined}
+              aria-current={isProductsActive ? "page" : undefined}
+              onClick={() => onNavigate("products")}
+            >
+              Produtos
             </button>
           ) : null}
           {canReadReports ? (

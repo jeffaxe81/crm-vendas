@@ -19,6 +19,16 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type Organization = $Result.DefaultSelection<Prisma.$OrganizationPayload>
 /**
+ * Model Role
+ * 
+ */
+export type Role = $Result.DefaultSelection<Prisma.$RolePayload>
+/**
+ * Model RolePermission
+ * 
+ */
+export type RolePermission = $Result.DefaultSelection<Prisma.$RolePermissionPayload>
+/**
  * Model User
  * 
  */
@@ -113,6 +123,17 @@ export type Activity = $Result.DefaultSelection<Prisma.$ActivityPayload>
  * 
  */
 export type Opportunity = $Result.DefaultSelection<Prisma.$OpportunityPayload>
+/**
+ * Model Product
+ * C4.3 — catálogo de produtos. Unicidade de `code` por tenant (sem caixa,
+ * apenas não excluídos) é garantida por índice único parcial na migration.
+ */
+export type Product = $Result.DefaultSelection<Prisma.$ProductPayload>
+/**
+ * Model OpportunityItem
+ * C4.3.1 — itens da oportunidade (snapshot de descrição e preço).
+ */
+export type OpportunityItem = $Result.DefaultSelection<Prisma.$OpportunityItemPayload>
 
 /**
  * Enums
@@ -373,6 +394,26 @@ export class PrismaClient<
   get organization(): Prisma.OrganizationDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.role`: Exposes CRUD operations for the **Role** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Roles
+    * const roles = await prisma.role.findMany()
+    * ```
+    */
+  get role(): Prisma.RoleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.rolePermission`: Exposes CRUD operations for the **RolePermission** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RolePermissions
+    * const rolePermissions = await prisma.rolePermission.findMany()
+    * ```
+    */
+  get rolePermission(): Prisma.RolePermissionDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
     * Example usage:
     * ```ts
@@ -561,6 +602,26 @@ export class PrismaClient<
     * ```
     */
   get opportunity(): Prisma.OpportunityDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.product`: Exposes CRUD operations for the **Product** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Products
+    * const products = await prisma.product.findMany()
+    * ```
+    */
+  get product(): Prisma.ProductDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.opportunityItem`: Exposes CRUD operations for the **OpportunityItem** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OpportunityItems
+    * const opportunityItems = await prisma.opportunityItem.findMany()
+    * ```
+    */
+  get opportunityItem(): Prisma.OpportunityItemDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1009,6 +1070,8 @@ export namespace Prisma {
 
   export const ModelName: {
     Organization: 'Organization',
+    Role: 'Role',
+    RolePermission: 'RolePermission',
     User: 'User',
     OrganizationMembership: 'OrganizationMembership',
     RefreshSession: 'RefreshSession',
@@ -1027,7 +1090,9 @@ export namespace Prisma {
     Pipeline: 'Pipeline',
     PipelineStage: 'PipelineStage',
     Activity: 'Activity',
-    Opportunity: 'Opportunity'
+    Opportunity: 'Opportunity',
+    Product: 'Product',
+    OpportunityItem: 'OpportunityItem'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1043,7 +1108,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "organization" | "user" | "organizationMembership" | "refreshSession" | "auditLog" | "company" | "contact" | "contactChannel" | "companyContact" | "relationshipEntry" | "tag" | "companyTag" | "contactTag" | "customFieldDefinition" | "companyCustomFieldValue" | "contactCustomFieldValue" | "pipeline" | "pipelineStage" | "activity" | "opportunity"
+      modelProps: "organization" | "role" | "rolePermission" | "user" | "organizationMembership" | "refreshSession" | "auditLog" | "company" | "contact" | "contactChannel" | "companyContact" | "relationshipEntry" | "tag" | "companyTag" | "contactTag" | "customFieldDefinition" | "companyCustomFieldValue" | "contactCustomFieldValue" | "pipeline" | "pipelineStage" | "activity" | "opportunity" | "product" | "opportunityItem"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1118,6 +1183,154 @@ export namespace Prisma {
           count: {
             args: Prisma.OrganizationCountArgs<ExtArgs>
             result: $Utils.Optional<OrganizationCountAggregateOutputType> | number
+          }
+        }
+      }
+      Role: {
+        payload: Prisma.$RolePayload<ExtArgs>
+        fields: Prisma.RoleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RoleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RoleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload>
+          }
+          findFirst: {
+            args: Prisma.RoleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RoleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload>
+          }
+          findMany: {
+            args: Prisma.RoleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload>[]
+          }
+          create: {
+            args: Prisma.RoleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload>
+          }
+          createMany: {
+            args: Prisma.RoleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RoleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload>[]
+          }
+          delete: {
+            args: Prisma.RoleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload>
+          }
+          update: {
+            args: Prisma.RoleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload>
+          }
+          deleteMany: {
+            args: Prisma.RoleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RoleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RoleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload>[]
+          }
+          upsert: {
+            args: Prisma.RoleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePayload>
+          }
+          aggregate: {
+            args: Prisma.RoleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRole>
+          }
+          groupBy: {
+            args: Prisma.RoleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RoleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RoleCountArgs<ExtArgs>
+            result: $Utils.Optional<RoleCountAggregateOutputType> | number
+          }
+        }
+      }
+      RolePermission: {
+        payload: Prisma.$RolePermissionPayload<ExtArgs>
+        fields: Prisma.RolePermissionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RolePermissionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RolePermissionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload>
+          }
+          findFirst: {
+            args: Prisma.RolePermissionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RolePermissionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload>
+          }
+          findMany: {
+            args: Prisma.RolePermissionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload>[]
+          }
+          create: {
+            args: Prisma.RolePermissionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload>
+          }
+          createMany: {
+            args: Prisma.RolePermissionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RolePermissionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload>[]
+          }
+          delete: {
+            args: Prisma.RolePermissionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload>
+          }
+          update: {
+            args: Prisma.RolePermissionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload>
+          }
+          deleteMany: {
+            args: Prisma.RolePermissionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RolePermissionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RolePermissionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload>[]
+          }
+          upsert: {
+            args: Prisma.RolePermissionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RolePermissionPayload>
+          }
+          aggregate: {
+            args: Prisma.RolePermissionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRolePermission>
+          }
+          groupBy: {
+            args: Prisma.RolePermissionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RolePermissionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RolePermissionCountArgs<ExtArgs>
+            result: $Utils.Optional<RolePermissionCountAggregateOutputType> | number
           }
         }
       }
@@ -2527,6 +2740,154 @@ export namespace Prisma {
           }
         }
       }
+      Product: {
+        payload: Prisma.$ProductPayload<ExtArgs>
+        fields: Prisma.ProductFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProductFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProductFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          findFirst: {
+            args: Prisma.ProductFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProductFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          findMany: {
+            args: Prisma.ProductFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>[]
+          }
+          create: {
+            args: Prisma.ProductCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          createMany: {
+            args: Prisma.ProductCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProductCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>[]
+          }
+          delete: {
+            args: Prisma.ProductDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          update: {
+            args: Prisma.ProductUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProductDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProductUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProductUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProductUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductPayload>
+          }
+          aggregate: {
+            args: Prisma.ProductAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProduct>
+          }
+          groupBy: {
+            args: Prisma.ProductGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProductGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProductCountArgs<ExtArgs>
+            result: $Utils.Optional<ProductCountAggregateOutputType> | number
+          }
+        }
+      }
+      OpportunityItem: {
+        payload: Prisma.$OpportunityItemPayload<ExtArgs>
+        fields: Prisma.OpportunityItemFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OpportunityItemFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OpportunityItemFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload>
+          }
+          findFirst: {
+            args: Prisma.OpportunityItemFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OpportunityItemFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload>
+          }
+          findMany: {
+            args: Prisma.OpportunityItemFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload>[]
+          }
+          create: {
+            args: Prisma.OpportunityItemCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload>
+          }
+          createMany: {
+            args: Prisma.OpportunityItemCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OpportunityItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload>[]
+          }
+          delete: {
+            args: Prisma.OpportunityItemDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload>
+          }
+          update: {
+            args: Prisma.OpportunityItemUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload>
+          }
+          deleteMany: {
+            args: Prisma.OpportunityItemDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OpportunityItemUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OpportunityItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload>[]
+          }
+          upsert: {
+            args: Prisma.OpportunityItemUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OpportunityItemPayload>
+          }
+          aggregate: {
+            args: Prisma.OpportunityItemAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOpportunityItem>
+          }
+          groupBy: {
+            args: Prisma.OpportunityItemGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OpportunityItemGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OpportunityItemCountArgs<ExtArgs>
+            result: $Utils.Optional<OpportunityItemCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2651,6 +3012,8 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     organization?: OrganizationOmit
+    role?: RoleOmit
+    rolePermission?: RolePermissionOmit
     user?: UserOmit
     organizationMembership?: OrganizationMembershipOmit
     refreshSession?: RefreshSessionOmit
@@ -2670,6 +3033,8 @@ export namespace Prisma {
     pipelineStage?: PipelineStageOmit
     activity?: ActivityOmit
     opportunity?: OpportunityOmit
+    product?: ProductOmit
+    opportunityItem?: OpportunityItemOmit
   }
 
   /* Types for Logging */
@@ -2767,6 +3132,9 @@ export namespace Prisma {
     pipelines: number
     activities: number
     opportunities: number
+    roles: number
+    products: number
+    opportunityItems: number
   }
 
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2787,6 +3155,9 @@ export namespace Prisma {
     pipelines?: boolean | OrganizationCountOutputTypeCountPipelinesArgs
     activities?: boolean | OrganizationCountOutputTypeCountActivitiesArgs
     opportunities?: boolean | OrganizationCountOutputTypeCountOpportunitiesArgs
+    roles?: boolean | OrganizationCountOutputTypeCountRolesArgs
+    products?: boolean | OrganizationCountOutputTypeCountProductsArgs
+    opportunityItems?: boolean | OrganizationCountOutputTypeCountOpportunityItemsArgs
   }
 
   // Custom InputTypes
@@ -2919,6 +3290,58 @@ export namespace Prisma {
     where?: OpportunityWhereInput
   }
 
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountRolesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RoleWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountOpportunityItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OpportunityItemWhereInput
+  }
+
+
+  /**
+   * Count Type RoleCountOutputType
+   */
+
+  export type RoleCountOutputType = {
+    permissions: number
+  }
+
+  export type RoleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    permissions?: boolean | RoleCountOutputTypeCountPermissionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * RoleCountOutputType without action
+   */
+  export type RoleCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RoleCountOutputType
+     */
+    select?: RoleCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * RoleCountOutputType without action
+   */
+  export type RoleCountOutputTypeCountPermissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RolePermissionWhereInput
+  }
+
 
   /**
    * Count Type UserCountOutputType
@@ -2943,6 +3366,11 @@ export namespace Prisma {
     opportunitiesCreated: number
     opportunitiesUpdated: number
     opportunitiesDeleted: number
+    productsCreated: number
+    productsUpdated: number
+    productsDeleted: number
+    opportunityItemsCreated: number
+    opportunityItemsUpdated: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2964,6 +3392,11 @@ export namespace Prisma {
     opportunitiesCreated?: boolean | UserCountOutputTypeCountOpportunitiesCreatedArgs
     opportunitiesUpdated?: boolean | UserCountOutputTypeCountOpportunitiesUpdatedArgs
     opportunitiesDeleted?: boolean | UserCountOutputTypeCountOpportunitiesDeletedArgs
+    productsCreated?: boolean | UserCountOutputTypeCountProductsCreatedArgs
+    productsUpdated?: boolean | UserCountOutputTypeCountProductsUpdatedArgs
+    productsDeleted?: boolean | UserCountOutputTypeCountProductsDeletedArgs
+    opportunityItemsCreated?: boolean | UserCountOutputTypeCountOpportunityItemsCreatedArgs
+    opportunityItemsUpdated?: boolean | UserCountOutputTypeCountOpportunityItemsUpdatedArgs
   }
 
   // Custom InputTypes
@@ -3100,6 +3533,72 @@ export namespace Prisma {
    * UserCountOutputType without action
    */
   export type UserCountOutputTypeCountOpportunitiesDeletedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OpportunityWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountProductsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountProductsUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountProductsDeletedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOpportunityItemsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OpportunityItemWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOpportunityItemsUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OpportunityItemWhereInput
+  }
+
+
+  /**
+   * Count Type OrganizationMembershipCountOutputType
+   */
+
+  export type OrganizationMembershipCountOutputType = {
+    ownedOpportunities: number
+  }
+
+  export type OrganizationMembershipCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ownedOpportunities?: boolean | OrganizationMembershipCountOutputTypeCountOwnedOpportunitiesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * OrganizationMembershipCountOutputType without action
+   */
+  export type OrganizationMembershipCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrganizationMembershipCountOutputType
+     */
+    select?: OrganizationMembershipCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * OrganizationMembershipCountOutputType without action
+   */
+  export type OrganizationMembershipCountOutputTypeCountOwnedOpportunitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OpportunityWhereInput
   }
 
@@ -3422,10 +3921,12 @@ export namespace Prisma {
 
   export type OpportunityCountOutputType = {
     activities: number
+    items: number
   }
 
   export type OpportunityCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     activities?: boolean | OpportunityCountOutputTypeCountActivitiesArgs
+    items?: boolean | OpportunityCountOutputTypeCountItemsArgs
   }
 
   // Custom InputTypes
@@ -3444,6 +3945,44 @@ export namespace Prisma {
    */
   export type OpportunityCountOutputTypeCountActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ActivityWhereInput
+  }
+
+  /**
+   * OpportunityCountOutputType without action
+   */
+  export type OpportunityCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OpportunityItemWhereInput
+  }
+
+
+  /**
+   * Count Type ProductCountOutputType
+   */
+
+  export type ProductCountOutputType = {
+    opportunityItems: number
+  }
+
+  export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    opportunityItems?: boolean | ProductCountOutputTypeCountOpportunityItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductCountOutputType
+     */
+    select?: ProductCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountOpportunityItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OpportunityItemWhereInput
   }
 
 
@@ -3640,6 +4179,9 @@ export namespace Prisma {
     pipelines?: boolean | Organization$pipelinesArgs<ExtArgs>
     activities?: boolean | Organization$activitiesArgs<ExtArgs>
     opportunities?: boolean | Organization$opportunitiesArgs<ExtArgs>
+    roles?: boolean | Organization$rolesArgs<ExtArgs>
+    products?: boolean | Organization$productsArgs<ExtArgs>
+    opportunityItems?: boolean | Organization$opportunityItemsArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -3689,6 +4231,9 @@ export namespace Prisma {
     pipelines?: boolean | Organization$pipelinesArgs<ExtArgs>
     activities?: boolean | Organization$activitiesArgs<ExtArgs>
     opportunities?: boolean | Organization$opportunitiesArgs<ExtArgs>
+    roles?: boolean | Organization$rolesArgs<ExtArgs>
+    products?: boolean | Organization$productsArgs<ExtArgs>
+    opportunityItems?: boolean | Organization$opportunityItemsArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3714,6 +4259,9 @@ export namespace Prisma {
       pipelines: Prisma.$PipelinePayload<ExtArgs>[]
       activities: Prisma.$ActivityPayload<ExtArgs>[]
       opportunities: Prisma.$OpportunityPayload<ExtArgs>[]
+      roles: Prisma.$RolePayload<ExtArgs>[]
+      products: Prisma.$ProductPayload<ExtArgs>[]
+      opportunityItems: Prisma.$OpportunityItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4133,6 +4681,9 @@ export namespace Prisma {
     pipelines<T extends Organization$pipelinesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$pipelinesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PipelinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     activities<T extends Organization$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     opportunities<T extends Organization$opportunitiesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$opportunitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    roles<T extends Organization$rolesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    products<T extends Organization$productsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    opportunityItems<T extends Organization$opportunityItemsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$opportunityItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4969,6 +5520,78 @@ export namespace Prisma {
   }
 
   /**
+   * Organization.roles
+   */
+  export type Organization$rolesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    where?: RoleWhereInput
+    orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
+    cursor?: RoleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.products
+   */
+  export type Organization$productsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    cursor?: ProductWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.opportunityItems
+   */
+  export type Organization$opportunityItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    where?: OpportunityItemWhereInput
+    orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
+    cursor?: OpportunityItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
+  }
+
+  /**
    * Organization without action
    */
   export type OrganizationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4984,6 +5607,2188 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OrganizationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Role
+   */
+
+  export type AggregateRole = {
+    _count: RoleCountAggregateOutputType | null
+    _min: RoleMinAggregateOutputType | null
+    _max: RoleMaxAggregateOutputType | null
+  }
+
+  export type RoleMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    code: string | null
+    name: string | null
+    isSystem: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RoleMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    code: string | null
+    name: string | null
+    isSystem: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RoleCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    code: number
+    name: number
+    isSystem: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type RoleMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    code?: true
+    name?: true
+    isSystem?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RoleMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    code?: true
+    name?: true
+    isSystem?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RoleCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    code?: true
+    name?: true
+    isSystem?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type RoleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Role to aggregate.
+     */
+    where?: RoleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Roles to fetch.
+     */
+    orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RoleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Roles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Roles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Roles
+    **/
+    _count?: true | RoleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RoleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RoleMaxAggregateInputType
+  }
+
+  export type GetRoleAggregateType<T extends RoleAggregateArgs> = {
+        [P in keyof T & keyof AggregateRole]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRole[P]>
+      : GetScalarType<T[P], AggregateRole[P]>
+  }
+
+
+
+
+  export type RoleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RoleWhereInput
+    orderBy?: RoleOrderByWithAggregationInput | RoleOrderByWithAggregationInput[]
+    by: RoleScalarFieldEnum[] | RoleScalarFieldEnum
+    having?: RoleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RoleCountAggregateInputType | true
+    _min?: RoleMinAggregateInputType
+    _max?: RoleMaxAggregateInputType
+  }
+
+  export type RoleGroupByOutputType = {
+    id: string
+    organizationId: string
+    code: string
+    name: string
+    isSystem: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: RoleCountAggregateOutputType | null
+    _min: RoleMinAggregateOutputType | null
+    _max: RoleMaxAggregateOutputType | null
+  }
+
+  type GetRoleGroupByPayload<T extends RoleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RoleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RoleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RoleGroupByOutputType[P]>
+            : GetScalarType<T[P], RoleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RoleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    code?: boolean
+    name?: boolean
+    isSystem?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    permissions?: boolean | Role$permissionsArgs<ExtArgs>
+    _count?: boolean | RoleCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["role"]>
+
+  export type RoleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    code?: boolean
+    name?: boolean
+    isSystem?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["role"]>
+
+  export type RoleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    code?: boolean
+    name?: boolean
+    isSystem?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["role"]>
+
+  export type RoleSelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    code?: boolean
+    name?: boolean
+    isSystem?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type RoleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "code" | "name" | "isSystem" | "createdAt" | "updatedAt", ExtArgs["result"]["role"]>
+  export type RoleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    permissions?: boolean | Role$permissionsArgs<ExtArgs>
+    _count?: boolean | RoleCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type RoleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type RoleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+
+  export type $RolePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Role"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      permissions: Prisma.$RolePermissionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      code: string
+      name: string
+      isSystem: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["role"]>
+    composites: {}
+  }
+
+  type RoleGetPayload<S extends boolean | null | undefined | RoleDefaultArgs> = $Result.GetResult<Prisma.$RolePayload, S>
+
+  type RoleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RoleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RoleCountAggregateInputType | true
+    }
+
+  export interface RoleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Role'], meta: { name: 'Role' } }
+    /**
+     * Find zero or one Role that matches the filter.
+     * @param {RoleFindUniqueArgs} args - Arguments to find a Role
+     * @example
+     * // Get one Role
+     * const role = await prisma.role.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RoleFindUniqueArgs>(args: SelectSubset<T, RoleFindUniqueArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Role that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RoleFindUniqueOrThrowArgs} args - Arguments to find a Role
+     * @example
+     * // Get one Role
+     * const role = await prisma.role.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RoleFindUniqueOrThrowArgs>(args: SelectSubset<T, RoleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Role that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RoleFindFirstArgs} args - Arguments to find a Role
+     * @example
+     * // Get one Role
+     * const role = await prisma.role.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RoleFindFirstArgs>(args?: SelectSubset<T, RoleFindFirstArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Role that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RoleFindFirstOrThrowArgs} args - Arguments to find a Role
+     * @example
+     * // Get one Role
+     * const role = await prisma.role.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RoleFindFirstOrThrowArgs>(args?: SelectSubset<T, RoleFindFirstOrThrowArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Roles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RoleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Roles
+     * const roles = await prisma.role.findMany()
+     * 
+     * // Get first 10 Roles
+     * const roles = await prisma.role.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const roleWithIdOnly = await prisma.role.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RoleFindManyArgs>(args?: SelectSubset<T, RoleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Role.
+     * @param {RoleCreateArgs} args - Arguments to create a Role.
+     * @example
+     * // Create one Role
+     * const Role = await prisma.role.create({
+     *   data: {
+     *     // ... data to create a Role
+     *   }
+     * })
+     * 
+     */
+    create<T extends RoleCreateArgs>(args: SelectSubset<T, RoleCreateArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Roles.
+     * @param {RoleCreateManyArgs} args - Arguments to create many Roles.
+     * @example
+     * // Create many Roles
+     * const role = await prisma.role.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RoleCreateManyArgs>(args?: SelectSubset<T, RoleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Roles and returns the data saved in the database.
+     * @param {RoleCreateManyAndReturnArgs} args - Arguments to create many Roles.
+     * @example
+     * // Create many Roles
+     * const role = await prisma.role.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Roles and only return the `id`
+     * const roleWithIdOnly = await prisma.role.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RoleCreateManyAndReturnArgs>(args?: SelectSubset<T, RoleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Role.
+     * @param {RoleDeleteArgs} args - Arguments to delete one Role.
+     * @example
+     * // Delete one Role
+     * const Role = await prisma.role.delete({
+     *   where: {
+     *     // ... filter to delete one Role
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RoleDeleteArgs>(args: SelectSubset<T, RoleDeleteArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Role.
+     * @param {RoleUpdateArgs} args - Arguments to update one Role.
+     * @example
+     * // Update one Role
+     * const role = await prisma.role.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RoleUpdateArgs>(args: SelectSubset<T, RoleUpdateArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Roles.
+     * @param {RoleDeleteManyArgs} args - Arguments to filter Roles to delete.
+     * @example
+     * // Delete a few Roles
+     * const { count } = await prisma.role.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RoleDeleteManyArgs>(args?: SelectSubset<T, RoleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Roles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RoleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Roles
+     * const role = await prisma.role.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RoleUpdateManyArgs>(args: SelectSubset<T, RoleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Roles and returns the data updated in the database.
+     * @param {RoleUpdateManyAndReturnArgs} args - Arguments to update many Roles.
+     * @example
+     * // Update many Roles
+     * const role = await prisma.role.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Roles and only return the `id`
+     * const roleWithIdOnly = await prisma.role.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RoleUpdateManyAndReturnArgs>(args: SelectSubset<T, RoleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Role.
+     * @param {RoleUpsertArgs} args - Arguments to update or create a Role.
+     * @example
+     * // Update or create a Role
+     * const role = await prisma.role.upsert({
+     *   create: {
+     *     // ... data to create a Role
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Role we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RoleUpsertArgs>(args: SelectSubset<T, RoleUpsertArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Roles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RoleCountArgs} args - Arguments to filter Roles to count.
+     * @example
+     * // Count the number of Roles
+     * const count = await prisma.role.count({
+     *   where: {
+     *     // ... the filter for the Roles we want to count
+     *   }
+     * })
+    **/
+    count<T extends RoleCountArgs>(
+      args?: Subset<T, RoleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RoleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Role.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RoleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RoleAggregateArgs>(args: Subset<T, RoleAggregateArgs>): Prisma.PrismaPromise<GetRoleAggregateType<T>>
+
+    /**
+     * Group by Role.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RoleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RoleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RoleGroupByArgs['orderBy'] }
+        : { orderBy?: RoleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RoleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRoleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Role model
+   */
+  readonly fields: RoleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Role.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RoleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    permissions<T extends Role$permissionsArgs<ExtArgs> = {}>(args?: Subset<T, Role$permissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Role model
+   */
+  interface RoleFieldRefs {
+    readonly id: FieldRef<"Role", 'String'>
+    readonly organizationId: FieldRef<"Role", 'String'>
+    readonly code: FieldRef<"Role", 'String'>
+    readonly name: FieldRef<"Role", 'String'>
+    readonly isSystem: FieldRef<"Role", 'Boolean'>
+    readonly createdAt: FieldRef<"Role", 'DateTime'>
+    readonly updatedAt: FieldRef<"Role", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Role findUnique
+   */
+  export type RoleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    /**
+     * Filter, which Role to fetch.
+     */
+    where: RoleWhereUniqueInput
+  }
+
+  /**
+   * Role findUniqueOrThrow
+   */
+  export type RoleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    /**
+     * Filter, which Role to fetch.
+     */
+    where: RoleWhereUniqueInput
+  }
+
+  /**
+   * Role findFirst
+   */
+  export type RoleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    /**
+     * Filter, which Role to fetch.
+     */
+    where?: RoleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Roles to fetch.
+     */
+    orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Roles.
+     */
+    cursor?: RoleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Roles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Roles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Roles.
+     */
+    distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
+  }
+
+  /**
+   * Role findFirstOrThrow
+   */
+  export type RoleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    /**
+     * Filter, which Role to fetch.
+     */
+    where?: RoleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Roles to fetch.
+     */
+    orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Roles.
+     */
+    cursor?: RoleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Roles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Roles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Roles.
+     */
+    distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
+  }
+
+  /**
+   * Role findMany
+   */
+  export type RoleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    /**
+     * Filter, which Roles to fetch.
+     */
+    where?: RoleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Roles to fetch.
+     */
+    orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Roles.
+     */
+    cursor?: RoleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Roles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Roles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Roles.
+     */
+    distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
+  }
+
+  /**
+   * Role create
+   */
+  export type RoleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Role.
+     */
+    data: XOR<RoleCreateInput, RoleUncheckedCreateInput>
+  }
+
+  /**
+   * Role createMany
+   */
+  export type RoleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Roles.
+     */
+    data: RoleCreateManyInput | RoleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Role createManyAndReturn
+   */
+  export type RoleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * The data used to create many Roles.
+     */
+    data: RoleCreateManyInput | RoleCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Role update
+   */
+  export type RoleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Role.
+     */
+    data: XOR<RoleUpdateInput, RoleUncheckedUpdateInput>
+    /**
+     * Choose, which Role to update.
+     */
+    where: RoleWhereUniqueInput
+  }
+
+  /**
+   * Role updateMany
+   */
+  export type RoleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Roles.
+     */
+    data: XOR<RoleUpdateManyMutationInput, RoleUncheckedUpdateManyInput>
+    /**
+     * Filter which Roles to update
+     */
+    where?: RoleWhereInput
+    /**
+     * Limit how many Roles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Role updateManyAndReturn
+   */
+  export type RoleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * The data used to update Roles.
+     */
+    data: XOR<RoleUpdateManyMutationInput, RoleUncheckedUpdateManyInput>
+    /**
+     * Filter which Roles to update
+     */
+    where?: RoleWhereInput
+    /**
+     * Limit how many Roles to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Role upsert
+   */
+  export type RoleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Role to update in case it exists.
+     */
+    where: RoleWhereUniqueInput
+    /**
+     * In case the Role found by the `where` argument doesn't exist, create a new Role with this data.
+     */
+    create: XOR<RoleCreateInput, RoleUncheckedCreateInput>
+    /**
+     * In case the Role was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RoleUpdateInput, RoleUncheckedUpdateInput>
+  }
+
+  /**
+   * Role delete
+   */
+  export type RoleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    /**
+     * Filter which Role to delete.
+     */
+    where: RoleWhereUniqueInput
+  }
+
+  /**
+   * Role deleteMany
+   */
+  export type RoleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Roles to delete
+     */
+    where?: RoleWhereInput
+    /**
+     * Limit how many Roles to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Role.permissions
+   */
+  export type Role$permissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    where?: RolePermissionWhereInput
+    orderBy?: RolePermissionOrderByWithRelationInput | RolePermissionOrderByWithRelationInput[]
+    cursor?: RolePermissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RolePermissionScalarFieldEnum | RolePermissionScalarFieldEnum[]
+  }
+
+  /**
+   * Role without action
+   */
+  export type RoleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model RolePermission
+   */
+
+  export type AggregateRolePermission = {
+    _count: RolePermissionCountAggregateOutputType | null
+    _min: RolePermissionMinAggregateOutputType | null
+    _max: RolePermissionMaxAggregateOutputType | null
+  }
+
+  export type RolePermissionMinAggregateOutputType = {
+    id: string | null
+    roleId: string | null
+    organizationId: string | null
+    permission: string | null
+    scope: string | null
+  }
+
+  export type RolePermissionMaxAggregateOutputType = {
+    id: string | null
+    roleId: string | null
+    organizationId: string | null
+    permission: string | null
+    scope: string | null
+  }
+
+  export type RolePermissionCountAggregateOutputType = {
+    id: number
+    roleId: number
+    organizationId: number
+    permission: number
+    scope: number
+    _all: number
+  }
+
+
+  export type RolePermissionMinAggregateInputType = {
+    id?: true
+    roleId?: true
+    organizationId?: true
+    permission?: true
+    scope?: true
+  }
+
+  export type RolePermissionMaxAggregateInputType = {
+    id?: true
+    roleId?: true
+    organizationId?: true
+    permission?: true
+    scope?: true
+  }
+
+  export type RolePermissionCountAggregateInputType = {
+    id?: true
+    roleId?: true
+    organizationId?: true
+    permission?: true
+    scope?: true
+    _all?: true
+  }
+
+  export type RolePermissionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RolePermission to aggregate.
+     */
+    where?: RolePermissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RolePermissions to fetch.
+     */
+    orderBy?: RolePermissionOrderByWithRelationInput | RolePermissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RolePermissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RolePermissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RolePermissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RolePermissions
+    **/
+    _count?: true | RolePermissionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RolePermissionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RolePermissionMaxAggregateInputType
+  }
+
+  export type GetRolePermissionAggregateType<T extends RolePermissionAggregateArgs> = {
+        [P in keyof T & keyof AggregateRolePermission]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRolePermission[P]>
+      : GetScalarType<T[P], AggregateRolePermission[P]>
+  }
+
+
+
+
+  export type RolePermissionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RolePermissionWhereInput
+    orderBy?: RolePermissionOrderByWithAggregationInput | RolePermissionOrderByWithAggregationInput[]
+    by: RolePermissionScalarFieldEnum[] | RolePermissionScalarFieldEnum
+    having?: RolePermissionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RolePermissionCountAggregateInputType | true
+    _min?: RolePermissionMinAggregateInputType
+    _max?: RolePermissionMaxAggregateInputType
+  }
+
+  export type RolePermissionGroupByOutputType = {
+    id: string
+    roleId: string
+    organizationId: string
+    permission: string
+    scope: string
+    _count: RolePermissionCountAggregateOutputType | null
+    _min: RolePermissionMinAggregateOutputType | null
+    _max: RolePermissionMaxAggregateOutputType | null
+  }
+
+  type GetRolePermissionGroupByPayload<T extends RolePermissionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RolePermissionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RolePermissionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RolePermissionGroupByOutputType[P]>
+            : GetScalarType<T[P], RolePermissionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RolePermissionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    roleId?: boolean
+    organizationId?: boolean
+    permission?: boolean
+    scope?: boolean
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rolePermission"]>
+
+  export type RolePermissionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    roleId?: boolean
+    organizationId?: boolean
+    permission?: boolean
+    scope?: boolean
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rolePermission"]>
+
+  export type RolePermissionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    roleId?: boolean
+    organizationId?: boolean
+    permission?: boolean
+    scope?: boolean
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rolePermission"]>
+
+  export type RolePermissionSelectScalar = {
+    id?: boolean
+    roleId?: boolean
+    organizationId?: boolean
+    permission?: boolean
+    scope?: boolean
+  }
+
+  export type RolePermissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "roleId" | "organizationId" | "permission" | "scope", ExtArgs["result"]["rolePermission"]>
+  export type RolePermissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }
+  export type RolePermissionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }
+  export type RolePermissionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }
+
+  export type $RolePermissionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RolePermission"
+    objects: {
+      role: Prisma.$RolePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      roleId: string
+      organizationId: string
+      permission: string
+      scope: string
+    }, ExtArgs["result"]["rolePermission"]>
+    composites: {}
+  }
+
+  type RolePermissionGetPayload<S extends boolean | null | undefined | RolePermissionDefaultArgs> = $Result.GetResult<Prisma.$RolePermissionPayload, S>
+
+  type RolePermissionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RolePermissionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RolePermissionCountAggregateInputType | true
+    }
+
+  export interface RolePermissionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RolePermission'], meta: { name: 'RolePermission' } }
+    /**
+     * Find zero or one RolePermission that matches the filter.
+     * @param {RolePermissionFindUniqueArgs} args - Arguments to find a RolePermission
+     * @example
+     * // Get one RolePermission
+     * const rolePermission = await prisma.rolePermission.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RolePermissionFindUniqueArgs>(args: SelectSubset<T, RolePermissionFindUniqueArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RolePermission that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RolePermissionFindUniqueOrThrowArgs} args - Arguments to find a RolePermission
+     * @example
+     * // Get one RolePermission
+     * const rolePermission = await prisma.rolePermission.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RolePermissionFindUniqueOrThrowArgs>(args: SelectSubset<T, RolePermissionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RolePermission that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RolePermissionFindFirstArgs} args - Arguments to find a RolePermission
+     * @example
+     * // Get one RolePermission
+     * const rolePermission = await prisma.rolePermission.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RolePermissionFindFirstArgs>(args?: SelectSubset<T, RolePermissionFindFirstArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RolePermission that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RolePermissionFindFirstOrThrowArgs} args - Arguments to find a RolePermission
+     * @example
+     * // Get one RolePermission
+     * const rolePermission = await prisma.rolePermission.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RolePermissionFindFirstOrThrowArgs>(args?: SelectSubset<T, RolePermissionFindFirstOrThrowArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RolePermissions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RolePermissionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RolePermissions
+     * const rolePermissions = await prisma.rolePermission.findMany()
+     * 
+     * // Get first 10 RolePermissions
+     * const rolePermissions = await prisma.rolePermission.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const rolePermissionWithIdOnly = await prisma.rolePermission.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RolePermissionFindManyArgs>(args?: SelectSubset<T, RolePermissionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RolePermission.
+     * @param {RolePermissionCreateArgs} args - Arguments to create a RolePermission.
+     * @example
+     * // Create one RolePermission
+     * const RolePermission = await prisma.rolePermission.create({
+     *   data: {
+     *     // ... data to create a RolePermission
+     *   }
+     * })
+     * 
+     */
+    create<T extends RolePermissionCreateArgs>(args: SelectSubset<T, RolePermissionCreateArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RolePermissions.
+     * @param {RolePermissionCreateManyArgs} args - Arguments to create many RolePermissions.
+     * @example
+     * // Create many RolePermissions
+     * const rolePermission = await prisma.rolePermission.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RolePermissionCreateManyArgs>(args?: SelectSubset<T, RolePermissionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RolePermissions and returns the data saved in the database.
+     * @param {RolePermissionCreateManyAndReturnArgs} args - Arguments to create many RolePermissions.
+     * @example
+     * // Create many RolePermissions
+     * const rolePermission = await prisma.rolePermission.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RolePermissions and only return the `id`
+     * const rolePermissionWithIdOnly = await prisma.rolePermission.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RolePermissionCreateManyAndReturnArgs>(args?: SelectSubset<T, RolePermissionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RolePermission.
+     * @param {RolePermissionDeleteArgs} args - Arguments to delete one RolePermission.
+     * @example
+     * // Delete one RolePermission
+     * const RolePermission = await prisma.rolePermission.delete({
+     *   where: {
+     *     // ... filter to delete one RolePermission
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RolePermissionDeleteArgs>(args: SelectSubset<T, RolePermissionDeleteArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RolePermission.
+     * @param {RolePermissionUpdateArgs} args - Arguments to update one RolePermission.
+     * @example
+     * // Update one RolePermission
+     * const rolePermission = await prisma.rolePermission.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RolePermissionUpdateArgs>(args: SelectSubset<T, RolePermissionUpdateArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RolePermissions.
+     * @param {RolePermissionDeleteManyArgs} args - Arguments to filter RolePermissions to delete.
+     * @example
+     * // Delete a few RolePermissions
+     * const { count } = await prisma.rolePermission.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RolePermissionDeleteManyArgs>(args?: SelectSubset<T, RolePermissionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RolePermissions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RolePermissionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RolePermissions
+     * const rolePermission = await prisma.rolePermission.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RolePermissionUpdateManyArgs>(args: SelectSubset<T, RolePermissionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RolePermissions and returns the data updated in the database.
+     * @param {RolePermissionUpdateManyAndReturnArgs} args - Arguments to update many RolePermissions.
+     * @example
+     * // Update many RolePermissions
+     * const rolePermission = await prisma.rolePermission.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RolePermissions and only return the `id`
+     * const rolePermissionWithIdOnly = await prisma.rolePermission.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RolePermissionUpdateManyAndReturnArgs>(args: SelectSubset<T, RolePermissionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RolePermission.
+     * @param {RolePermissionUpsertArgs} args - Arguments to update or create a RolePermission.
+     * @example
+     * // Update or create a RolePermission
+     * const rolePermission = await prisma.rolePermission.upsert({
+     *   create: {
+     *     // ... data to create a RolePermission
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RolePermission we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RolePermissionUpsertArgs>(args: SelectSubset<T, RolePermissionUpsertArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RolePermissions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RolePermissionCountArgs} args - Arguments to filter RolePermissions to count.
+     * @example
+     * // Count the number of RolePermissions
+     * const count = await prisma.rolePermission.count({
+     *   where: {
+     *     // ... the filter for the RolePermissions we want to count
+     *   }
+     * })
+    **/
+    count<T extends RolePermissionCountArgs>(
+      args?: Subset<T, RolePermissionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RolePermissionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RolePermission.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RolePermissionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RolePermissionAggregateArgs>(args: Subset<T, RolePermissionAggregateArgs>): Prisma.PrismaPromise<GetRolePermissionAggregateType<T>>
+
+    /**
+     * Group by RolePermission.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RolePermissionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RolePermissionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RolePermissionGroupByArgs['orderBy'] }
+        : { orderBy?: RolePermissionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RolePermissionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRolePermissionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RolePermission model
+   */
+  readonly fields: RolePermissionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RolePermission.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RolePermissionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    role<T extends RoleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RoleDefaultArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RolePermission model
+   */
+  interface RolePermissionFieldRefs {
+    readonly id: FieldRef<"RolePermission", 'String'>
+    readonly roleId: FieldRef<"RolePermission", 'String'>
+    readonly organizationId: FieldRef<"RolePermission", 'String'>
+    readonly permission: FieldRef<"RolePermission", 'String'>
+    readonly scope: FieldRef<"RolePermission", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RolePermission findUnique
+   */
+  export type RolePermissionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which RolePermission to fetch.
+     */
+    where: RolePermissionWhereUniqueInput
+  }
+
+  /**
+   * RolePermission findUniqueOrThrow
+   */
+  export type RolePermissionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which RolePermission to fetch.
+     */
+    where: RolePermissionWhereUniqueInput
+  }
+
+  /**
+   * RolePermission findFirst
+   */
+  export type RolePermissionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which RolePermission to fetch.
+     */
+    where?: RolePermissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RolePermissions to fetch.
+     */
+    orderBy?: RolePermissionOrderByWithRelationInput | RolePermissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RolePermissions.
+     */
+    cursor?: RolePermissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RolePermissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RolePermissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RolePermissions.
+     */
+    distinct?: RolePermissionScalarFieldEnum | RolePermissionScalarFieldEnum[]
+  }
+
+  /**
+   * RolePermission findFirstOrThrow
+   */
+  export type RolePermissionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which RolePermission to fetch.
+     */
+    where?: RolePermissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RolePermissions to fetch.
+     */
+    orderBy?: RolePermissionOrderByWithRelationInput | RolePermissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RolePermissions.
+     */
+    cursor?: RolePermissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RolePermissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RolePermissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RolePermissions.
+     */
+    distinct?: RolePermissionScalarFieldEnum | RolePermissionScalarFieldEnum[]
+  }
+
+  /**
+   * RolePermission findMany
+   */
+  export type RolePermissionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which RolePermissions to fetch.
+     */
+    where?: RolePermissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RolePermissions to fetch.
+     */
+    orderBy?: RolePermissionOrderByWithRelationInput | RolePermissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RolePermissions.
+     */
+    cursor?: RolePermissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RolePermissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RolePermissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RolePermissions.
+     */
+    distinct?: RolePermissionScalarFieldEnum | RolePermissionScalarFieldEnum[]
+  }
+
+  /**
+   * RolePermission create
+   */
+  export type RolePermissionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RolePermission.
+     */
+    data: XOR<RolePermissionCreateInput, RolePermissionUncheckedCreateInput>
+  }
+
+  /**
+   * RolePermission createMany
+   */
+  export type RolePermissionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RolePermissions.
+     */
+    data: RolePermissionCreateManyInput | RolePermissionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RolePermission createManyAndReturn
+   */
+  export type RolePermissionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * The data used to create many RolePermissions.
+     */
+    data: RolePermissionCreateManyInput | RolePermissionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RolePermission update
+   */
+  export type RolePermissionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RolePermission.
+     */
+    data: XOR<RolePermissionUpdateInput, RolePermissionUncheckedUpdateInput>
+    /**
+     * Choose, which RolePermission to update.
+     */
+    where: RolePermissionWhereUniqueInput
+  }
+
+  /**
+   * RolePermission updateMany
+   */
+  export type RolePermissionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RolePermissions.
+     */
+    data: XOR<RolePermissionUpdateManyMutationInput, RolePermissionUncheckedUpdateManyInput>
+    /**
+     * Filter which RolePermissions to update
+     */
+    where?: RolePermissionWhereInput
+    /**
+     * Limit how many RolePermissions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RolePermission updateManyAndReturn
+   */
+  export type RolePermissionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * The data used to update RolePermissions.
+     */
+    data: XOR<RolePermissionUpdateManyMutationInput, RolePermissionUncheckedUpdateManyInput>
+    /**
+     * Filter which RolePermissions to update
+     */
+    where?: RolePermissionWhereInput
+    /**
+     * Limit how many RolePermissions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RolePermission upsert
+   */
+  export type RolePermissionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RolePermission to update in case it exists.
+     */
+    where: RolePermissionWhereUniqueInput
+    /**
+     * In case the RolePermission found by the `where` argument doesn't exist, create a new RolePermission with this data.
+     */
+    create: XOR<RolePermissionCreateInput, RolePermissionUncheckedCreateInput>
+    /**
+     * In case the RolePermission was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RolePermissionUpdateInput, RolePermissionUncheckedUpdateInput>
+  }
+
+  /**
+   * RolePermission delete
+   */
+  export type RolePermissionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
+    /**
+     * Filter which RolePermission to delete.
+     */
+    where: RolePermissionWhereUniqueInput
+  }
+
+  /**
+   * RolePermission deleteMany
+   */
+  export type RolePermissionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RolePermissions to delete
+     */
+    where?: RolePermissionWhereInput
+    /**
+     * Limit how many RolePermissions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RolePermission without action
+   */
+  export type RolePermissionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolePermission
+     */
+    select?: RolePermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RolePermission
+     */
+    omit?: RolePermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolePermissionInclude<ExtArgs> | null
   }
 
 
@@ -5193,6 +7998,11 @@ export namespace Prisma {
     opportunitiesCreated?: boolean | User$opportunitiesCreatedArgs<ExtArgs>
     opportunitiesUpdated?: boolean | User$opportunitiesUpdatedArgs<ExtArgs>
     opportunitiesDeleted?: boolean | User$opportunitiesDeletedArgs<ExtArgs>
+    productsCreated?: boolean | User$productsCreatedArgs<ExtArgs>
+    productsUpdated?: boolean | User$productsUpdatedArgs<ExtArgs>
+    productsDeleted?: boolean | User$productsDeletedArgs<ExtArgs>
+    opportunityItemsCreated?: boolean | User$opportunityItemsCreatedArgs<ExtArgs>
+    opportunityItemsUpdated?: boolean | User$opportunityItemsUpdatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -5249,6 +8059,11 @@ export namespace Prisma {
     opportunitiesCreated?: boolean | User$opportunitiesCreatedArgs<ExtArgs>
     opportunitiesUpdated?: boolean | User$opportunitiesUpdatedArgs<ExtArgs>
     opportunitiesDeleted?: boolean | User$opportunitiesDeletedArgs<ExtArgs>
+    productsCreated?: boolean | User$productsCreatedArgs<ExtArgs>
+    productsUpdated?: boolean | User$productsUpdatedArgs<ExtArgs>
+    productsDeleted?: boolean | User$productsDeletedArgs<ExtArgs>
+    opportunityItemsCreated?: boolean | User$opportunityItemsCreatedArgs<ExtArgs>
+    opportunityItemsUpdated?: boolean | User$opportunityItemsUpdatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5275,6 +8090,11 @@ export namespace Prisma {
       opportunitiesCreated: Prisma.$OpportunityPayload<ExtArgs>[]
       opportunitiesUpdated: Prisma.$OpportunityPayload<ExtArgs>[]
       opportunitiesDeleted: Prisma.$OpportunityPayload<ExtArgs>[]
+      productsCreated: Prisma.$ProductPayload<ExtArgs>[]
+      productsUpdated: Prisma.$ProductPayload<ExtArgs>[]
+      productsDeleted: Prisma.$ProductPayload<ExtArgs>[]
+      opportunityItemsCreated: Prisma.$OpportunityItemPayload<ExtArgs>[]
+      opportunityItemsUpdated: Prisma.$OpportunityItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5697,6 +8517,11 @@ export namespace Prisma {
     opportunitiesCreated<T extends User$opportunitiesCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$opportunitiesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     opportunitiesUpdated<T extends User$opportunitiesUpdatedArgs<ExtArgs> = {}>(args?: Subset<T, User$opportunitiesUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     opportunitiesDeleted<T extends User$opportunitiesDeletedArgs<ExtArgs> = {}>(args?: Subset<T, User$opportunitiesDeletedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    productsCreated<T extends User$productsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$productsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    productsUpdated<T extends User$productsUpdatedArgs<ExtArgs> = {}>(args?: Subset<T, User$productsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    productsDeleted<T extends User$productsDeletedArgs<ExtArgs> = {}>(args?: Subset<T, User$productsDeletedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    opportunityItemsCreated<T extends User$opportunityItemsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$opportunityItemsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    opportunityItemsUpdated<T extends User$opportunityItemsUpdatedArgs<ExtArgs> = {}>(args?: Subset<T, User$opportunityItemsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6559,6 +9384,126 @@ export namespace Prisma {
   }
 
   /**
+   * User.productsCreated
+   */
+  export type User$productsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    cursor?: ProductWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * User.productsUpdated
+   */
+  export type User$productsUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    cursor?: ProductWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * User.productsDeleted
+   */
+  export type User$productsDeletedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    cursor?: ProductWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * User.opportunityItemsCreated
+   */
+  export type User$opportunityItemsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    where?: OpportunityItemWhereInput
+    orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
+    cursor?: OpportunityItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
+  }
+
+  /**
+   * User.opportunityItemsUpdated
+   */
+  export type User$opportunityItemsUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    where?: OpportunityItemWhereInput
+    orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
+    cursor?: OpportunityItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6759,6 +9704,8 @@ export namespace Prisma {
     updatedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    ownedOpportunities?: boolean | OrganizationMembership$ownedOpportunitiesArgs<ExtArgs>
+    _count?: boolean | OrganizationMembershipCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organizationMembership"]>
 
   export type OrganizationMembershipSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6799,6 +9746,8 @@ export namespace Prisma {
   export type OrganizationMembershipInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    ownedOpportunities?: boolean | OrganizationMembership$ownedOpportunitiesArgs<ExtArgs>
+    _count?: boolean | OrganizationMembershipCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganizationMembershipIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -6814,6 +9763,7 @@ export namespace Prisma {
     objects: {
       organization: Prisma.$OrganizationPayload<ExtArgs>
       user: Prisma.$UserPayload<ExtArgs>
+      ownedOpportunities: Prisma.$OpportunityPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7219,6 +10169,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    ownedOpportunities<T extends OrganizationMembership$ownedOpportunitiesArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationMembership$ownedOpportunitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7653,6 +10604,30 @@ export namespace Prisma {
      * Limit how many OrganizationMemberships to delete.
      */
     limit?: number
+  }
+
+  /**
+   * OrganizationMembership.ownedOpportunities
+   */
+  export type OrganizationMembership$ownedOpportunitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Opportunity
+     */
+    select?: OpportunitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Opportunity
+     */
+    omit?: OpportunityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityInclude<ExtArgs> | null
+    where?: OpportunityWhereInput
+    orderBy?: OpportunityOrderByWithRelationInput | OpportunityOrderByWithRelationInput[]
+    cursor?: OpportunityWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OpportunityScalarFieldEnum | OpportunityScalarFieldEnum[]
   }
 
   /**
@@ -26931,10 +29906,12 @@ export namespace Prisma {
     company?: boolean | Opportunity$companyArgs<ExtArgs>
     contact?: boolean | Opportunity$contactArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
+    ownerMembership?: boolean | OrganizationMembershipDefaultArgs<ExtArgs>
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Opportunity$deleterArgs<ExtArgs>
     activities?: boolean | Opportunity$activitiesArgs<ExtArgs>
+    items?: boolean | Opportunity$itemsArgs<ExtArgs>
     _count?: boolean | OpportunityCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["opportunity"]>
 
@@ -26963,6 +29940,7 @@ export namespace Prisma {
     company?: boolean | Opportunity$companyArgs<ExtArgs>
     contact?: boolean | Opportunity$contactArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
+    ownerMembership?: boolean | OrganizationMembershipDefaultArgs<ExtArgs>
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Opportunity$deleterArgs<ExtArgs>
@@ -26993,6 +29971,7 @@ export namespace Prisma {
     company?: boolean | Opportunity$companyArgs<ExtArgs>
     contact?: boolean | Opportunity$contactArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
+    ownerMembership?: boolean | OrganizationMembershipDefaultArgs<ExtArgs>
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Opportunity$deleterArgs<ExtArgs>
@@ -27027,10 +30006,12 @@ export namespace Prisma {
     company?: boolean | Opportunity$companyArgs<ExtArgs>
     contact?: boolean | Opportunity$contactArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
+    ownerMembership?: boolean | OrganizationMembershipDefaultArgs<ExtArgs>
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Opportunity$deleterArgs<ExtArgs>
     activities?: boolean | Opportunity$activitiesArgs<ExtArgs>
+    items?: boolean | Opportunity$itemsArgs<ExtArgs>
     _count?: boolean | OpportunityCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OpportunityIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -27040,6 +30021,7 @@ export namespace Prisma {
     company?: boolean | Opportunity$companyArgs<ExtArgs>
     contact?: boolean | Opportunity$contactArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
+    ownerMembership?: boolean | OrganizationMembershipDefaultArgs<ExtArgs>
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Opportunity$deleterArgs<ExtArgs>
@@ -27051,6 +30033,7 @@ export namespace Prisma {
     company?: boolean | Opportunity$companyArgs<ExtArgs>
     contact?: boolean | Opportunity$contactArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
+    ownerMembership?: boolean | OrganizationMembershipDefaultArgs<ExtArgs>
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Opportunity$deleterArgs<ExtArgs>
@@ -27065,10 +30048,12 @@ export namespace Prisma {
       company: Prisma.$CompanyPayload<ExtArgs> | null
       contact: Prisma.$ContactPayload<ExtArgs> | null
       owner: Prisma.$UserPayload<ExtArgs>
+      ownerMembership: Prisma.$OrganizationMembershipPayload<ExtArgs>
       creator: Prisma.$UserPayload<ExtArgs>
       updater: Prisma.$UserPayload<ExtArgs>
       deleter: Prisma.$UserPayload<ExtArgs> | null
       activities: Prisma.$ActivityPayload<ExtArgs>[]
+      items: Prisma.$OpportunityItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -27489,10 +30474,12 @@ export namespace Prisma {
     company<T extends Opportunity$companyArgs<ExtArgs> = {}>(args?: Subset<T, Opportunity$companyArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     contact<T extends Opportunity$contactArgs<ExtArgs> = {}>(args?: Subset<T, Opportunity$contactArgs<ExtArgs>>): Prisma__ContactClient<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    ownerMembership<T extends OrganizationMembershipDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationMembershipDefaultArgs<ExtArgs>>): Prisma__OrganizationMembershipClient<$Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     creator<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     updater<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     deleter<T extends Opportunity$deleterArgs<ExtArgs> = {}>(args?: Subset<T, Opportunity$deleterArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     activities<T extends Opportunity$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, Opportunity$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    items<T extends Opportunity$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Opportunity$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -28022,6 +31009,30 @@ export namespace Prisma {
   }
 
   /**
+   * Opportunity.items
+   */
+  export type Opportunity$itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    where?: OpportunityItemWhereInput
+    orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
+    cursor?: OpportunityItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
+  }
+
+  /**
    * Opportunity without action
    */
   export type OpportunityDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -28037,6 +31048,2542 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OpportunityInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Product
+   */
+
+  export type AggregateProduct = {
+    _count: ProductCountAggregateOutputType | null
+    _avg: ProductAvgAggregateOutputType | null
+    _sum: ProductSumAggregateOutputType | null
+    _min: ProductMinAggregateOutputType | null
+    _max: ProductMaxAggregateOutputType | null
+  }
+
+  export type ProductAvgAggregateOutputType = {
+    unitPrice: Decimal | null
+    version: number | null
+  }
+
+  export type ProductSumAggregateOutputType = {
+    unitPrice: Decimal | null
+    version: number | null
+  }
+
+  export type ProductMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    code: string | null
+    name: string | null
+    description: string | null
+    unitPrice: Decimal | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+    version: number | null
+    deletedAt: Date | null
+    deletedBy: string | null
+  }
+
+  export type ProductMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    code: string | null
+    name: string | null
+    description: string | null
+    unitPrice: Decimal | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+    version: number | null
+    deletedAt: Date | null
+    deletedBy: string | null
+  }
+
+  export type ProductCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    code: number
+    name: number
+    description: number
+    unitPrice: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    createdBy: number
+    updatedBy: number
+    version: number
+    deletedAt: number
+    deletedBy: number
+    _all: number
+  }
+
+
+  export type ProductAvgAggregateInputType = {
+    unitPrice?: true
+    version?: true
+  }
+
+  export type ProductSumAggregateInputType = {
+    unitPrice?: true
+    version?: true
+  }
+
+  export type ProductMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    code?: true
+    name?: true
+    description?: true
+    unitPrice?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    version?: true
+    deletedAt?: true
+    deletedBy?: true
+  }
+
+  export type ProductMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    code?: true
+    name?: true
+    description?: true
+    unitPrice?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    version?: true
+    deletedAt?: true
+    deletedBy?: true
+  }
+
+  export type ProductCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    code?: true
+    name?: true
+    description?: true
+    unitPrice?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    version?: true
+    deletedAt?: true
+    deletedBy?: true
+    _all?: true
+  }
+
+  export type ProductAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Product to aggregate.
+     */
+    where?: ProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Products to fetch.
+     */
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Products from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Products.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Products
+    **/
+    _count?: true | ProductCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProductAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProductSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProductMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProductMaxAggregateInputType
+  }
+
+  export type GetProductAggregateType<T extends ProductAggregateArgs> = {
+        [P in keyof T & keyof AggregateProduct]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProduct[P]>
+      : GetScalarType<T[P], AggregateProduct[P]>
+  }
+
+
+
+
+  export type ProductGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByWithAggregationInput | ProductOrderByWithAggregationInput[]
+    by: ProductScalarFieldEnum[] | ProductScalarFieldEnum
+    having?: ProductScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProductCountAggregateInputType | true
+    _avg?: ProductAvgAggregateInputType
+    _sum?: ProductSumAggregateInputType
+    _min?: ProductMinAggregateInputType
+    _max?: ProductMaxAggregateInputType
+  }
+
+  export type ProductGroupByOutputType = {
+    id: string
+    organizationId: string
+    code: string
+    name: string
+    description: string | null
+    unitPrice: Decimal
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    createdBy: string
+    updatedBy: string
+    version: number
+    deletedAt: Date | null
+    deletedBy: string | null
+    _count: ProductCountAggregateOutputType | null
+    _avg: ProductAvgAggregateOutputType | null
+    _sum: ProductSumAggregateOutputType | null
+    _min: ProductMinAggregateOutputType | null
+    _max: ProductMaxAggregateOutputType | null
+  }
+
+  type GetProductGroupByPayload<T extends ProductGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProductGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProductGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProductGroupByOutputType[P]>
+            : GetScalarType<T[P], ProductGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProductSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    code?: boolean
+    name?: boolean
+    description?: boolean
+    unitPrice?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    deletedAt?: boolean
+    deletedBy?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | Product$deleterArgs<ExtArgs>
+    opportunityItems?: boolean | Product$opportunityItemsArgs<ExtArgs>
+    _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["product"]>
+
+  export type ProductSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    code?: boolean
+    name?: boolean
+    description?: boolean
+    unitPrice?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    deletedAt?: boolean
+    deletedBy?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | Product$deleterArgs<ExtArgs>
+  }, ExtArgs["result"]["product"]>
+
+  export type ProductSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    code?: boolean
+    name?: boolean
+    description?: boolean
+    unitPrice?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    deletedAt?: boolean
+    deletedBy?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | Product$deleterArgs<ExtArgs>
+  }, ExtArgs["result"]["product"]>
+
+  export type ProductSelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    code?: boolean
+    name?: boolean
+    description?: boolean
+    unitPrice?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    deletedAt?: boolean
+    deletedBy?: boolean
+  }
+
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "code" | "name" | "description" | "unitPrice" | "isActive" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "version" | "deletedAt" | "deletedBy", ExtArgs["result"]["product"]>
+  export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | Product$deleterArgs<ExtArgs>
+    opportunityItems?: boolean | Product$opportunityItemsArgs<ExtArgs>
+    _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | Product$deleterArgs<ExtArgs>
+  }
+  export type ProductIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | Product$deleterArgs<ExtArgs>
+  }
+
+  export type $ProductPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Product"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      creator: Prisma.$UserPayload<ExtArgs>
+      updater: Prisma.$UserPayload<ExtArgs>
+      deleter: Prisma.$UserPayload<ExtArgs> | null
+      opportunityItems: Prisma.$OpportunityItemPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      code: string
+      name: string
+      description: string | null
+      unitPrice: Prisma.Decimal
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+      createdBy: string
+      updatedBy: string
+      version: number
+      deletedAt: Date | null
+      deletedBy: string | null
+    }, ExtArgs["result"]["product"]>
+    composites: {}
+  }
+
+  type ProductGetPayload<S extends boolean | null | undefined | ProductDefaultArgs> = $Result.GetResult<Prisma.$ProductPayload, S>
+
+  type ProductCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProductFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProductCountAggregateInputType | true
+    }
+
+  export interface ProductDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Product'], meta: { name: 'Product' } }
+    /**
+     * Find zero or one Product that matches the filter.
+     * @param {ProductFindUniqueArgs} args - Arguments to find a Product
+     * @example
+     * // Get one Product
+     * const product = await prisma.product.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProductFindUniqueArgs>(args: SelectSubset<T, ProductFindUniqueArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Product that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProductFindUniqueOrThrowArgs} args - Arguments to find a Product
+     * @example
+     * // Get one Product
+     * const product = await prisma.product.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProductFindUniqueOrThrowArgs>(args: SelectSubset<T, ProductFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Product that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductFindFirstArgs} args - Arguments to find a Product
+     * @example
+     * // Get one Product
+     * const product = await prisma.product.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProductFindFirstArgs>(args?: SelectSubset<T, ProductFindFirstArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Product that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductFindFirstOrThrowArgs} args - Arguments to find a Product
+     * @example
+     * // Get one Product
+     * const product = await prisma.product.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProductFindFirstOrThrowArgs>(args?: SelectSubset<T, ProductFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Products that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Products
+     * const products = await prisma.product.findMany()
+     * 
+     * // Get first 10 Products
+     * const products = await prisma.product.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const productWithIdOnly = await prisma.product.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProductFindManyArgs>(args?: SelectSubset<T, ProductFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Product.
+     * @param {ProductCreateArgs} args - Arguments to create a Product.
+     * @example
+     * // Create one Product
+     * const Product = await prisma.product.create({
+     *   data: {
+     *     // ... data to create a Product
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProductCreateArgs>(args: SelectSubset<T, ProductCreateArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Products.
+     * @param {ProductCreateManyArgs} args - Arguments to create many Products.
+     * @example
+     * // Create many Products
+     * const product = await prisma.product.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProductCreateManyArgs>(args?: SelectSubset<T, ProductCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Products and returns the data saved in the database.
+     * @param {ProductCreateManyAndReturnArgs} args - Arguments to create many Products.
+     * @example
+     * // Create many Products
+     * const product = await prisma.product.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Products and only return the `id`
+     * const productWithIdOnly = await prisma.product.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProductCreateManyAndReturnArgs>(args?: SelectSubset<T, ProductCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Product.
+     * @param {ProductDeleteArgs} args - Arguments to delete one Product.
+     * @example
+     * // Delete one Product
+     * const Product = await prisma.product.delete({
+     *   where: {
+     *     // ... filter to delete one Product
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProductDeleteArgs>(args: SelectSubset<T, ProductDeleteArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Product.
+     * @param {ProductUpdateArgs} args - Arguments to update one Product.
+     * @example
+     * // Update one Product
+     * const product = await prisma.product.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProductUpdateArgs>(args: SelectSubset<T, ProductUpdateArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Products.
+     * @param {ProductDeleteManyArgs} args - Arguments to filter Products to delete.
+     * @example
+     * // Delete a few Products
+     * const { count } = await prisma.product.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProductDeleteManyArgs>(args?: SelectSubset<T, ProductDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Products.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Products
+     * const product = await prisma.product.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProductUpdateManyArgs>(args: SelectSubset<T, ProductUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Products and returns the data updated in the database.
+     * @param {ProductUpdateManyAndReturnArgs} args - Arguments to update many Products.
+     * @example
+     * // Update many Products
+     * const product = await prisma.product.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Products and only return the `id`
+     * const productWithIdOnly = await prisma.product.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProductUpdateManyAndReturnArgs>(args: SelectSubset<T, ProductUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Product.
+     * @param {ProductUpsertArgs} args - Arguments to update or create a Product.
+     * @example
+     * // Update or create a Product
+     * const product = await prisma.product.upsert({
+     *   create: {
+     *     // ... data to create a Product
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Product we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProductUpsertArgs>(args: SelectSubset<T, ProductUpsertArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Products.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductCountArgs} args - Arguments to filter Products to count.
+     * @example
+     * // Count the number of Products
+     * const count = await prisma.product.count({
+     *   where: {
+     *     // ... the filter for the Products we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProductCountArgs>(
+      args?: Subset<T, ProductCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProductCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Product.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProductAggregateArgs>(args: Subset<T, ProductAggregateArgs>): Prisma.PrismaPromise<GetProductAggregateType<T>>
+
+    /**
+     * Group by Product.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProductGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProductGroupByArgs['orderBy'] }
+        : { orderBy?: ProductGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProductGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProductGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Product model
+   */
+  readonly fields: ProductFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Product.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProductClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    creator<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    updater<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    deleter<T extends Product$deleterArgs<ExtArgs> = {}>(args?: Subset<T, Product$deleterArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    opportunityItems<T extends Product$opportunityItemsArgs<ExtArgs> = {}>(args?: Subset<T, Product$opportunityItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Product model
+   */
+  interface ProductFieldRefs {
+    readonly id: FieldRef<"Product", 'String'>
+    readonly organizationId: FieldRef<"Product", 'String'>
+    readonly code: FieldRef<"Product", 'String'>
+    readonly name: FieldRef<"Product", 'String'>
+    readonly description: FieldRef<"Product", 'String'>
+    readonly unitPrice: FieldRef<"Product", 'Decimal'>
+    readonly isActive: FieldRef<"Product", 'Boolean'>
+    readonly createdAt: FieldRef<"Product", 'DateTime'>
+    readonly updatedAt: FieldRef<"Product", 'DateTime'>
+    readonly createdBy: FieldRef<"Product", 'String'>
+    readonly updatedBy: FieldRef<"Product", 'String'>
+    readonly version: FieldRef<"Product", 'Int'>
+    readonly deletedAt: FieldRef<"Product", 'DateTime'>
+    readonly deletedBy: FieldRef<"Product", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Product findUnique
+   */
+  export type ProductFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Product to fetch.
+     */
+    where: ProductWhereUniqueInput
+  }
+
+  /**
+   * Product findUniqueOrThrow
+   */
+  export type ProductFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Product to fetch.
+     */
+    where: ProductWhereUniqueInput
+  }
+
+  /**
+   * Product findFirst
+   */
+  export type ProductFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Product to fetch.
+     */
+    where?: ProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Products to fetch.
+     */
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Products.
+     */
+    cursor?: ProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Products from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Products.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Products.
+     */
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * Product findFirstOrThrow
+   */
+  export type ProductFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Product to fetch.
+     */
+    where?: ProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Products to fetch.
+     */
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Products.
+     */
+    cursor?: ProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Products from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Products.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Products.
+     */
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * Product findMany
+   */
+  export type ProductFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter, which Products to fetch.
+     */
+    where?: ProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Products to fetch.
+     */
+    orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Products.
+     */
+    cursor?: ProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Products from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Products.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Products.
+     */
+    distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
+  }
+
+  /**
+   * Product create
+   */
+  export type ProductCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Product.
+     */
+    data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+  }
+
+  /**
+   * Product createMany
+   */
+  export type ProductCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Products.
+     */
+    data: ProductCreateManyInput | ProductCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Product createManyAndReturn
+   */
+  export type ProductCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * The data used to create many Products.
+     */
+    data: ProductCreateManyInput | ProductCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Product update
+   */
+  export type ProductUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Product.
+     */
+    data: XOR<ProductUpdateInput, ProductUncheckedUpdateInput>
+    /**
+     * Choose, which Product to update.
+     */
+    where: ProductWhereUniqueInput
+  }
+
+  /**
+   * Product updateMany
+   */
+  export type ProductUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Products.
+     */
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyInput>
+    /**
+     * Filter which Products to update
+     */
+    where?: ProductWhereInput
+    /**
+     * Limit how many Products to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Product updateManyAndReturn
+   */
+  export type ProductUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * The data used to update Products.
+     */
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyInput>
+    /**
+     * Filter which Products to update
+     */
+    where?: ProductWhereInput
+    /**
+     * Limit how many Products to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Product upsert
+   */
+  export type ProductUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Product to update in case it exists.
+     */
+    where: ProductWhereUniqueInput
+    /**
+     * In case the Product found by the `where` argument doesn't exist, create a new Product with this data.
+     */
+    create: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    /**
+     * In case the Product was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProductUpdateInput, ProductUncheckedUpdateInput>
+  }
+
+  /**
+   * Product delete
+   */
+  export type ProductDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    /**
+     * Filter which Product to delete.
+     */
+    where: ProductWhereUniqueInput
+  }
+
+  /**
+   * Product deleteMany
+   */
+  export type ProductDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Products to delete
+     */
+    where?: ProductWhereInput
+    /**
+     * Limit how many Products to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Product.deleter
+   */
+  export type Product$deleterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Product.opportunityItems
+   */
+  export type Product$opportunityItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    where?: OpportunityItemWhereInput
+    orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
+    cursor?: OpportunityItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
+  }
+
+  /**
+   * Product without action
+   */
+  export type ProductDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model OpportunityItem
+   */
+
+  export type AggregateOpportunityItem = {
+    _count: OpportunityItemCountAggregateOutputType | null
+    _avg: OpportunityItemAvgAggregateOutputType | null
+    _sum: OpportunityItemSumAggregateOutputType | null
+    _min: OpportunityItemMinAggregateOutputType | null
+    _max: OpportunityItemMaxAggregateOutputType | null
+  }
+
+  export type OpportunityItemAvgAggregateOutputType = {
+    quantity: Decimal | null
+    unitPrice: Decimal | null
+    discountPercent: Decimal | null
+    lineTotal: Decimal | null
+  }
+
+  export type OpportunityItemSumAggregateOutputType = {
+    quantity: Decimal | null
+    unitPrice: Decimal | null
+    discountPercent: Decimal | null
+    lineTotal: Decimal | null
+  }
+
+  export type OpportunityItemMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    opportunityId: string | null
+    productId: string | null
+    description: string | null
+    quantity: Decimal | null
+    unitPrice: Decimal | null
+    discountPercent: Decimal | null
+    lineTotal: Decimal | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+  }
+
+  export type OpportunityItemMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    opportunityId: string | null
+    productId: string | null
+    description: string | null
+    quantity: Decimal | null
+    unitPrice: Decimal | null
+    discountPercent: Decimal | null
+    lineTotal: Decimal | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+  }
+
+  export type OpportunityItemCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    opportunityId: number
+    productId: number
+    description: number
+    quantity: number
+    unitPrice: number
+    discountPercent: number
+    lineTotal: number
+    createdAt: number
+    updatedAt: number
+    createdBy: number
+    updatedBy: number
+    _all: number
+  }
+
+
+  export type OpportunityItemAvgAggregateInputType = {
+    quantity?: true
+    unitPrice?: true
+    discountPercent?: true
+    lineTotal?: true
+  }
+
+  export type OpportunityItemSumAggregateInputType = {
+    quantity?: true
+    unitPrice?: true
+    discountPercent?: true
+    lineTotal?: true
+  }
+
+  export type OpportunityItemMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    opportunityId?: true
+    productId?: true
+    description?: true
+    quantity?: true
+    unitPrice?: true
+    discountPercent?: true
+    lineTotal?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+  }
+
+  export type OpportunityItemMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    opportunityId?: true
+    productId?: true
+    description?: true
+    quantity?: true
+    unitPrice?: true
+    discountPercent?: true
+    lineTotal?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+  }
+
+  export type OpportunityItemCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    opportunityId?: true
+    productId?: true
+    description?: true
+    quantity?: true
+    unitPrice?: true
+    discountPercent?: true
+    lineTotal?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    _all?: true
+  }
+
+  export type OpportunityItemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OpportunityItem to aggregate.
+     */
+    where?: OpportunityItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OpportunityItems to fetch.
+     */
+    orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OpportunityItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OpportunityItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OpportunityItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OpportunityItems
+    **/
+    _count?: true | OpportunityItemCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: OpportunityItemAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: OpportunityItemSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OpportunityItemMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OpportunityItemMaxAggregateInputType
+  }
+
+  export type GetOpportunityItemAggregateType<T extends OpportunityItemAggregateArgs> = {
+        [P in keyof T & keyof AggregateOpportunityItem]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOpportunityItem[P]>
+      : GetScalarType<T[P], AggregateOpportunityItem[P]>
+  }
+
+
+
+
+  export type OpportunityItemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OpportunityItemWhereInput
+    orderBy?: OpportunityItemOrderByWithAggregationInput | OpportunityItemOrderByWithAggregationInput[]
+    by: OpportunityItemScalarFieldEnum[] | OpportunityItemScalarFieldEnum
+    having?: OpportunityItemScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OpportunityItemCountAggregateInputType | true
+    _avg?: OpportunityItemAvgAggregateInputType
+    _sum?: OpportunityItemSumAggregateInputType
+    _min?: OpportunityItemMinAggregateInputType
+    _max?: OpportunityItemMaxAggregateInputType
+  }
+
+  export type OpportunityItemGroupByOutputType = {
+    id: string
+    organizationId: string
+    opportunityId: string
+    productId: string
+    description: string
+    quantity: Decimal
+    unitPrice: Decimal
+    discountPercent: Decimal
+    lineTotal: Decimal
+    createdAt: Date
+    updatedAt: Date
+    createdBy: string
+    updatedBy: string
+    _count: OpportunityItemCountAggregateOutputType | null
+    _avg: OpportunityItemAvgAggregateOutputType | null
+    _sum: OpportunityItemSumAggregateOutputType | null
+    _min: OpportunityItemMinAggregateOutputType | null
+    _max: OpportunityItemMaxAggregateOutputType | null
+  }
+
+  type GetOpportunityItemGroupByPayload<T extends OpportunityItemGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OpportunityItemGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OpportunityItemGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OpportunityItemGroupByOutputType[P]>
+            : GetScalarType<T[P], OpportunityItemGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OpportunityItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    opportunityId?: boolean
+    productId?: boolean
+    description?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    discountPercent?: boolean
+    lineTotal?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    opportunity?: boolean | OpportunityDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["opportunityItem"]>
+
+  export type OpportunityItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    opportunityId?: boolean
+    productId?: boolean
+    description?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    discountPercent?: boolean
+    lineTotal?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    opportunity?: boolean | OpportunityDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["opportunityItem"]>
+
+  export type OpportunityItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    opportunityId?: boolean
+    productId?: boolean
+    description?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    discountPercent?: boolean
+    lineTotal?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    opportunity?: boolean | OpportunityDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["opportunityItem"]>
+
+  export type OpportunityItemSelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    opportunityId?: boolean
+    productId?: boolean
+    description?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    discountPercent?: boolean
+    lineTotal?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+  }
+
+  export type OpportunityItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "opportunityId" | "productId" | "description" | "quantity" | "unitPrice" | "discountPercent" | "lineTotal" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy", ExtArgs["result"]["opportunityItem"]>
+  export type OpportunityItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    opportunity?: boolean | OpportunityDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type OpportunityItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    opportunity?: boolean | OpportunityDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type OpportunityItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    opportunity?: boolean | OpportunityDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $OpportunityItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OpportunityItem"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      opportunity: Prisma.$OpportunityPayload<ExtArgs>
+      product: Prisma.$ProductPayload<ExtArgs>
+      creator: Prisma.$UserPayload<ExtArgs>
+      updater: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      opportunityId: string
+      productId: string
+      description: string
+      quantity: Prisma.Decimal
+      unitPrice: Prisma.Decimal
+      discountPercent: Prisma.Decimal
+      lineTotal: Prisma.Decimal
+      createdAt: Date
+      updatedAt: Date
+      createdBy: string
+      updatedBy: string
+    }, ExtArgs["result"]["opportunityItem"]>
+    composites: {}
+  }
+
+  type OpportunityItemGetPayload<S extends boolean | null | undefined | OpportunityItemDefaultArgs> = $Result.GetResult<Prisma.$OpportunityItemPayload, S>
+
+  type OpportunityItemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OpportunityItemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OpportunityItemCountAggregateInputType | true
+    }
+
+  export interface OpportunityItemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OpportunityItem'], meta: { name: 'OpportunityItem' } }
+    /**
+     * Find zero or one OpportunityItem that matches the filter.
+     * @param {OpportunityItemFindUniqueArgs} args - Arguments to find a OpportunityItem
+     * @example
+     * // Get one OpportunityItem
+     * const opportunityItem = await prisma.opportunityItem.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OpportunityItemFindUniqueArgs>(args: SelectSubset<T, OpportunityItemFindUniqueArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one OpportunityItem that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OpportunityItemFindUniqueOrThrowArgs} args - Arguments to find a OpportunityItem
+     * @example
+     * // Get one OpportunityItem
+     * const opportunityItem = await prisma.opportunityItem.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OpportunityItemFindUniqueOrThrowArgs>(args: SelectSubset<T, OpportunityItemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OpportunityItem that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OpportunityItemFindFirstArgs} args - Arguments to find a OpportunityItem
+     * @example
+     * // Get one OpportunityItem
+     * const opportunityItem = await prisma.opportunityItem.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OpportunityItemFindFirstArgs>(args?: SelectSubset<T, OpportunityItemFindFirstArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OpportunityItem that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OpportunityItemFindFirstOrThrowArgs} args - Arguments to find a OpportunityItem
+     * @example
+     * // Get one OpportunityItem
+     * const opportunityItem = await prisma.opportunityItem.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OpportunityItemFindFirstOrThrowArgs>(args?: SelectSubset<T, OpportunityItemFindFirstOrThrowArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more OpportunityItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OpportunityItemFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OpportunityItems
+     * const opportunityItems = await prisma.opportunityItem.findMany()
+     * 
+     * // Get first 10 OpportunityItems
+     * const opportunityItems = await prisma.opportunityItem.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const opportunityItemWithIdOnly = await prisma.opportunityItem.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OpportunityItemFindManyArgs>(args?: SelectSubset<T, OpportunityItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a OpportunityItem.
+     * @param {OpportunityItemCreateArgs} args - Arguments to create a OpportunityItem.
+     * @example
+     * // Create one OpportunityItem
+     * const OpportunityItem = await prisma.opportunityItem.create({
+     *   data: {
+     *     // ... data to create a OpportunityItem
+     *   }
+     * })
+     * 
+     */
+    create<T extends OpportunityItemCreateArgs>(args: SelectSubset<T, OpportunityItemCreateArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many OpportunityItems.
+     * @param {OpportunityItemCreateManyArgs} args - Arguments to create many OpportunityItems.
+     * @example
+     * // Create many OpportunityItems
+     * const opportunityItem = await prisma.opportunityItem.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OpportunityItemCreateManyArgs>(args?: SelectSubset<T, OpportunityItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OpportunityItems and returns the data saved in the database.
+     * @param {OpportunityItemCreateManyAndReturnArgs} args - Arguments to create many OpportunityItems.
+     * @example
+     * // Create many OpportunityItems
+     * const opportunityItem = await prisma.opportunityItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OpportunityItems and only return the `id`
+     * const opportunityItemWithIdOnly = await prisma.opportunityItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OpportunityItemCreateManyAndReturnArgs>(args?: SelectSubset<T, OpportunityItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a OpportunityItem.
+     * @param {OpportunityItemDeleteArgs} args - Arguments to delete one OpportunityItem.
+     * @example
+     * // Delete one OpportunityItem
+     * const OpportunityItem = await prisma.opportunityItem.delete({
+     *   where: {
+     *     // ... filter to delete one OpportunityItem
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OpportunityItemDeleteArgs>(args: SelectSubset<T, OpportunityItemDeleteArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one OpportunityItem.
+     * @param {OpportunityItemUpdateArgs} args - Arguments to update one OpportunityItem.
+     * @example
+     * // Update one OpportunityItem
+     * const opportunityItem = await prisma.opportunityItem.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OpportunityItemUpdateArgs>(args: SelectSubset<T, OpportunityItemUpdateArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more OpportunityItems.
+     * @param {OpportunityItemDeleteManyArgs} args - Arguments to filter OpportunityItems to delete.
+     * @example
+     * // Delete a few OpportunityItems
+     * const { count } = await prisma.opportunityItem.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OpportunityItemDeleteManyArgs>(args?: SelectSubset<T, OpportunityItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OpportunityItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OpportunityItemUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OpportunityItems
+     * const opportunityItem = await prisma.opportunityItem.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OpportunityItemUpdateManyArgs>(args: SelectSubset<T, OpportunityItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OpportunityItems and returns the data updated in the database.
+     * @param {OpportunityItemUpdateManyAndReturnArgs} args - Arguments to update many OpportunityItems.
+     * @example
+     * // Update many OpportunityItems
+     * const opportunityItem = await prisma.opportunityItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more OpportunityItems and only return the `id`
+     * const opportunityItemWithIdOnly = await prisma.opportunityItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OpportunityItemUpdateManyAndReturnArgs>(args: SelectSubset<T, OpportunityItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one OpportunityItem.
+     * @param {OpportunityItemUpsertArgs} args - Arguments to update or create a OpportunityItem.
+     * @example
+     * // Update or create a OpportunityItem
+     * const opportunityItem = await prisma.opportunityItem.upsert({
+     *   create: {
+     *     // ... data to create a OpportunityItem
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OpportunityItem we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OpportunityItemUpsertArgs>(args: SelectSubset<T, OpportunityItemUpsertArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of OpportunityItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OpportunityItemCountArgs} args - Arguments to filter OpportunityItems to count.
+     * @example
+     * // Count the number of OpportunityItems
+     * const count = await prisma.opportunityItem.count({
+     *   where: {
+     *     // ... the filter for the OpportunityItems we want to count
+     *   }
+     * })
+    **/
+    count<T extends OpportunityItemCountArgs>(
+      args?: Subset<T, OpportunityItemCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OpportunityItemCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OpportunityItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OpportunityItemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OpportunityItemAggregateArgs>(args: Subset<T, OpportunityItemAggregateArgs>): Prisma.PrismaPromise<GetOpportunityItemAggregateType<T>>
+
+    /**
+     * Group by OpportunityItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OpportunityItemGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OpportunityItemGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OpportunityItemGroupByArgs['orderBy'] }
+        : { orderBy?: OpportunityItemGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OpportunityItemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOpportunityItemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OpportunityItem model
+   */
+  readonly fields: OpportunityItemFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OpportunityItem.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OpportunityItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    opportunity<T extends OpportunityDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OpportunityDefaultArgs<ExtArgs>>): Prisma__OpportunityClient<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    creator<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    updater<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OpportunityItem model
+   */
+  interface OpportunityItemFieldRefs {
+    readonly id: FieldRef<"OpportunityItem", 'String'>
+    readonly organizationId: FieldRef<"OpportunityItem", 'String'>
+    readonly opportunityId: FieldRef<"OpportunityItem", 'String'>
+    readonly productId: FieldRef<"OpportunityItem", 'String'>
+    readonly description: FieldRef<"OpportunityItem", 'String'>
+    readonly quantity: FieldRef<"OpportunityItem", 'Decimal'>
+    readonly unitPrice: FieldRef<"OpportunityItem", 'Decimal'>
+    readonly discountPercent: FieldRef<"OpportunityItem", 'Decimal'>
+    readonly lineTotal: FieldRef<"OpportunityItem", 'Decimal'>
+    readonly createdAt: FieldRef<"OpportunityItem", 'DateTime'>
+    readonly updatedAt: FieldRef<"OpportunityItem", 'DateTime'>
+    readonly createdBy: FieldRef<"OpportunityItem", 'String'>
+    readonly updatedBy: FieldRef<"OpportunityItem", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OpportunityItem findUnique
+   */
+  export type OpportunityItemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OpportunityItem to fetch.
+     */
+    where: OpportunityItemWhereUniqueInput
+  }
+
+  /**
+   * OpportunityItem findUniqueOrThrow
+   */
+  export type OpportunityItemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OpportunityItem to fetch.
+     */
+    where: OpportunityItemWhereUniqueInput
+  }
+
+  /**
+   * OpportunityItem findFirst
+   */
+  export type OpportunityItemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OpportunityItem to fetch.
+     */
+    where?: OpportunityItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OpportunityItems to fetch.
+     */
+    orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OpportunityItems.
+     */
+    cursor?: OpportunityItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OpportunityItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OpportunityItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OpportunityItems.
+     */
+    distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
+  }
+
+  /**
+   * OpportunityItem findFirstOrThrow
+   */
+  export type OpportunityItemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OpportunityItem to fetch.
+     */
+    where?: OpportunityItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OpportunityItems to fetch.
+     */
+    orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OpportunityItems.
+     */
+    cursor?: OpportunityItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OpportunityItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OpportunityItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OpportunityItems.
+     */
+    distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
+  }
+
+  /**
+   * OpportunityItem findMany
+   */
+  export type OpportunityItemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OpportunityItems to fetch.
+     */
+    where?: OpportunityItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OpportunityItems to fetch.
+     */
+    orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OpportunityItems.
+     */
+    cursor?: OpportunityItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OpportunityItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OpportunityItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OpportunityItems.
+     */
+    distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
+  }
+
+  /**
+   * OpportunityItem create
+   */
+  export type OpportunityItemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    /**
+     * The data needed to create a OpportunityItem.
+     */
+    data: XOR<OpportunityItemCreateInput, OpportunityItemUncheckedCreateInput>
+  }
+
+  /**
+   * OpportunityItem createMany
+   */
+  export type OpportunityItemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OpportunityItems.
+     */
+    data: OpportunityItemCreateManyInput | OpportunityItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OpportunityItem createManyAndReturn
+   */
+  export type OpportunityItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many OpportunityItems.
+     */
+    data: OpportunityItemCreateManyInput | OpportunityItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OpportunityItem update
+   */
+  export type OpportunityItemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    /**
+     * The data needed to update a OpportunityItem.
+     */
+    data: XOR<OpportunityItemUpdateInput, OpportunityItemUncheckedUpdateInput>
+    /**
+     * Choose, which OpportunityItem to update.
+     */
+    where: OpportunityItemWhereUniqueInput
+  }
+
+  /**
+   * OpportunityItem updateMany
+   */
+  export type OpportunityItemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OpportunityItems.
+     */
+    data: XOR<OpportunityItemUpdateManyMutationInput, OpportunityItemUncheckedUpdateManyInput>
+    /**
+     * Filter which OpportunityItems to update
+     */
+    where?: OpportunityItemWhereInput
+    /**
+     * Limit how many OpportunityItems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OpportunityItem updateManyAndReturn
+   */
+  export type OpportunityItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * The data used to update OpportunityItems.
+     */
+    data: XOR<OpportunityItemUpdateManyMutationInput, OpportunityItemUncheckedUpdateManyInput>
+    /**
+     * Filter which OpportunityItems to update
+     */
+    where?: OpportunityItemWhereInput
+    /**
+     * Limit how many OpportunityItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OpportunityItem upsert
+   */
+  export type OpportunityItemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    /**
+     * The filter to search for the OpportunityItem to update in case it exists.
+     */
+    where: OpportunityItemWhereUniqueInput
+    /**
+     * In case the OpportunityItem found by the `where` argument doesn't exist, create a new OpportunityItem with this data.
+     */
+    create: XOR<OpportunityItemCreateInput, OpportunityItemUncheckedCreateInput>
+    /**
+     * In case the OpportunityItem was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OpportunityItemUpdateInput, OpportunityItemUncheckedUpdateInput>
+  }
+
+  /**
+   * OpportunityItem delete
+   */
+  export type OpportunityItemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
+    /**
+     * Filter which OpportunityItem to delete.
+     */
+    where: OpportunityItemWhereUniqueInput
+  }
+
+  /**
+   * OpportunityItem deleteMany
+   */
+  export type OpportunityItemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OpportunityItems to delete
+     */
+    where?: OpportunityItemWhereInput
+    /**
+     * Limit how many OpportunityItems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * OpportunityItem without action
+   */
+  export type OpportunityItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunityItem
+     */
+    select?: OpportunityItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OpportunityItem
+     */
+    omit?: OpportunityItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OpportunityItemInclude<ExtArgs> | null
   }
 
 
@@ -28064,6 +33611,30 @@ export namespace Prisma {
   };
 
   export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
+
+
+  export const RoleScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    code: 'code',
+    name: 'name',
+    isSystem: 'isSystem',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
+
+
+  export const RolePermissionScalarFieldEnum: {
+    id: 'id',
+    roleId: 'roleId',
+    organizationId: 'organizationId',
+    permission: 'permission',
+    scope: 'scope'
+  };
+
+  export type RolePermissionScalarFieldEnum = (typeof RolePermissionScalarFieldEnum)[keyof typeof RolePermissionScalarFieldEnum]
 
 
   export const UserScalarFieldEnum: {
@@ -28359,6 +33930,45 @@ export namespace Prisma {
   };
 
   export type OpportunityScalarFieldEnum = (typeof OpportunityScalarFieldEnum)[keyof typeof OpportunityScalarFieldEnum]
+
+
+  export const ProductScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    code: 'code',
+    name: 'name',
+    description: 'description',
+    unitPrice: 'unitPrice',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    createdBy: 'createdBy',
+    updatedBy: 'updatedBy',
+    version: 'version',
+    deletedAt: 'deletedAt',
+    deletedBy: 'deletedBy'
+  };
+
+  export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+  export const OpportunityItemScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    opportunityId: 'opportunityId',
+    productId: 'productId',
+    description: 'description',
+    quantity: 'quantity',
+    unitPrice: 'unitPrice',
+    discountPercent: 'discountPercent',
+    lineTotal: 'lineTotal',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    createdBy: 'createdBy',
+    updatedBy: 'updatedBy'
+  };
+
+  export type OpportunityItemScalarFieldEnum = (typeof OpportunityItemScalarFieldEnum)[keyof typeof OpportunityItemScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -28661,6 +34271,9 @@ export namespace Prisma {
     pipelines?: PipelineListRelationFilter
     activities?: ActivityListRelationFilter
     opportunities?: OpportunityListRelationFilter
+    roles?: RoleListRelationFilter
+    products?: ProductListRelationFilter
+    opportunityItems?: OpportunityItemListRelationFilter
   }
 
   export type OrganizationOrderByWithRelationInput = {
@@ -28687,6 +34300,9 @@ export namespace Prisma {
     pipelines?: PipelineOrderByRelationAggregateInput
     activities?: ActivityOrderByRelationAggregateInput
     opportunities?: OpportunityOrderByRelationAggregateInput
+    roles?: RoleOrderByRelationAggregateInput
+    products?: ProductOrderByRelationAggregateInput
+    opportunityItems?: OpportunityItemOrderByRelationAggregateInput
   }
 
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -28716,6 +34332,9 @@ export namespace Prisma {
     pipelines?: PipelineListRelationFilter
     activities?: ActivityListRelationFilter
     opportunities?: OpportunityListRelationFilter
+    roles?: RoleListRelationFilter
+    products?: ProductListRelationFilter
+    opportunityItems?: OpportunityItemListRelationFilter
   }, "id" | "slug">
 
   export type OrganizationOrderByWithAggregationInput = {
@@ -28740,6 +34359,131 @@ export namespace Prisma {
     isActive?: BoolWithAggregatesFilter<"Organization"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
+  }
+
+  export type RoleWhereInput = {
+    AND?: RoleWhereInput | RoleWhereInput[]
+    OR?: RoleWhereInput[]
+    NOT?: RoleWhereInput | RoleWhereInput[]
+    id?: UuidFilter<"Role"> | string
+    organizationId?: UuidFilter<"Role"> | string
+    code?: StringFilter<"Role"> | string
+    name?: StringFilter<"Role"> | string
+    isSystem?: BoolFilter<"Role"> | boolean
+    createdAt?: DateTimeFilter<"Role"> | Date | string
+    updatedAt?: DateTimeFilter<"Role"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    permissions?: RolePermissionListRelationFilter
+  }
+
+  export type RoleOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isSystem?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+    permissions?: RolePermissionOrderByRelationAggregateInput
+  }
+
+  export type RoleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    organizationId_code?: RoleOrganizationIdCodeCompoundUniqueInput
+    AND?: RoleWhereInput | RoleWhereInput[]
+    OR?: RoleWhereInput[]
+    NOT?: RoleWhereInput | RoleWhereInput[]
+    organizationId?: UuidFilter<"Role"> | string
+    code?: StringFilter<"Role"> | string
+    name?: StringFilter<"Role"> | string
+    isSystem?: BoolFilter<"Role"> | boolean
+    createdAt?: DateTimeFilter<"Role"> | Date | string
+    updatedAt?: DateTimeFilter<"Role"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    permissions?: RolePermissionListRelationFilter
+  }, "id" | "organizationId_code">
+
+  export type RoleOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isSystem?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: RoleCountOrderByAggregateInput
+    _max?: RoleMaxOrderByAggregateInput
+    _min?: RoleMinOrderByAggregateInput
+  }
+
+  export type RoleScalarWhereWithAggregatesInput = {
+    AND?: RoleScalarWhereWithAggregatesInput | RoleScalarWhereWithAggregatesInput[]
+    OR?: RoleScalarWhereWithAggregatesInput[]
+    NOT?: RoleScalarWhereWithAggregatesInput | RoleScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"Role"> | string
+    organizationId?: UuidWithAggregatesFilter<"Role"> | string
+    code?: StringWithAggregatesFilter<"Role"> | string
+    name?: StringWithAggregatesFilter<"Role"> | string
+    isSystem?: BoolWithAggregatesFilter<"Role"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Role"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Role"> | Date | string
+  }
+
+  export type RolePermissionWhereInput = {
+    AND?: RolePermissionWhereInput | RolePermissionWhereInput[]
+    OR?: RolePermissionWhereInput[]
+    NOT?: RolePermissionWhereInput | RolePermissionWhereInput[]
+    id?: UuidFilter<"RolePermission"> | string
+    roleId?: UuidFilter<"RolePermission"> | string
+    organizationId?: UuidFilter<"RolePermission"> | string
+    permission?: StringFilter<"RolePermission"> | string
+    scope?: StringFilter<"RolePermission"> | string
+    role?: XOR<RoleScalarRelationFilter, RoleWhereInput>
+  }
+
+  export type RolePermissionOrderByWithRelationInput = {
+    id?: SortOrder
+    roleId?: SortOrder
+    organizationId?: SortOrder
+    permission?: SortOrder
+    scope?: SortOrder
+    role?: RoleOrderByWithRelationInput
+  }
+
+  export type RolePermissionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    roleId_permission?: RolePermissionRoleIdPermissionCompoundUniqueInput
+    AND?: RolePermissionWhereInput | RolePermissionWhereInput[]
+    OR?: RolePermissionWhereInput[]
+    NOT?: RolePermissionWhereInput | RolePermissionWhereInput[]
+    roleId?: UuidFilter<"RolePermission"> | string
+    organizationId?: UuidFilter<"RolePermission"> | string
+    permission?: StringFilter<"RolePermission"> | string
+    scope?: StringFilter<"RolePermission"> | string
+    role?: XOR<RoleScalarRelationFilter, RoleWhereInput>
+  }, "id" | "roleId_permission">
+
+  export type RolePermissionOrderByWithAggregationInput = {
+    id?: SortOrder
+    roleId?: SortOrder
+    organizationId?: SortOrder
+    permission?: SortOrder
+    scope?: SortOrder
+    _count?: RolePermissionCountOrderByAggregateInput
+    _max?: RolePermissionMaxOrderByAggregateInput
+    _min?: RolePermissionMinOrderByAggregateInput
+  }
+
+  export type RolePermissionScalarWhereWithAggregatesInput = {
+    AND?: RolePermissionScalarWhereWithAggregatesInput | RolePermissionScalarWhereWithAggregatesInput[]
+    OR?: RolePermissionScalarWhereWithAggregatesInput[]
+    NOT?: RolePermissionScalarWhereWithAggregatesInput | RolePermissionScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"RolePermission"> | string
+    roleId?: UuidWithAggregatesFilter<"RolePermission"> | string
+    organizationId?: UuidWithAggregatesFilter<"RolePermission"> | string
+    permission?: StringWithAggregatesFilter<"RolePermission"> | string
+    scope?: StringWithAggregatesFilter<"RolePermission"> | string
   }
 
   export type UserWhereInput = {
@@ -28772,6 +34516,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityListRelationFilter
     opportunitiesUpdated?: OpportunityListRelationFilter
     opportunitiesDeleted?: OpportunityListRelationFilter
+    productsCreated?: ProductListRelationFilter
+    productsUpdated?: ProductListRelationFilter
+    productsDeleted?: ProductListRelationFilter
+    opportunityItemsCreated?: OpportunityItemListRelationFilter
+    opportunityItemsUpdated?: OpportunityItemListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -28801,6 +34550,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityOrderByRelationAggregateInput
     opportunitiesUpdated?: OpportunityOrderByRelationAggregateInput
     opportunitiesDeleted?: OpportunityOrderByRelationAggregateInput
+    productsCreated?: ProductOrderByRelationAggregateInput
+    productsUpdated?: ProductOrderByRelationAggregateInput
+    productsDeleted?: ProductOrderByRelationAggregateInput
+    opportunityItemsCreated?: OpportunityItemOrderByRelationAggregateInput
+    opportunityItemsUpdated?: OpportunityItemOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -28833,6 +34587,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityListRelationFilter
     opportunitiesUpdated?: OpportunityListRelationFilter
     opportunitiesDeleted?: OpportunityListRelationFilter
+    productsCreated?: ProductListRelationFilter
+    productsUpdated?: ProductListRelationFilter
+    productsDeleted?: ProductListRelationFilter
+    opportunityItemsCreated?: OpportunityItemListRelationFilter
+    opportunityItemsUpdated?: OpportunityItemListRelationFilter
   }, "id" | "emailNormalized">
 
   export type UserOrderByWithAggregationInput = {
@@ -28876,6 +34635,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"OrganizationMembership"> | Date | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    ownedOpportunities?: OpportunityListRelationFilter
   }
 
   export type OrganizationMembershipOrderByWithRelationInput = {
@@ -28888,6 +34648,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     organization?: OrganizationOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
+    ownedOpportunities?: OpportunityOrderByRelationAggregateInput
   }
 
   export type OrganizationMembershipWhereUniqueInput = Prisma.AtLeast<{
@@ -28904,6 +34665,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"OrganizationMembership"> | Date | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    ownedOpportunities?: OpportunityListRelationFilter
   }, "id" | "organizationId_userId">
 
   export type OrganizationMembershipOrderByWithAggregationInput = {
@@ -30346,10 +36108,12 @@ export namespace Prisma {
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     contact?: XOR<ContactNullableScalarRelationFilter, ContactWhereInput> | null
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
+    ownerMembership?: XOR<OrganizationMembershipScalarRelationFilter, OrganizationMembershipWhereInput>
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
     updater?: XOR<UserScalarRelationFilter, UserWhereInput>
     deleter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     activities?: ActivityListRelationFilter
+    items?: OpportunityItemListRelationFilter
   }
 
   export type OpportunityOrderByWithRelationInput = {
@@ -30377,10 +36141,12 @@ export namespace Prisma {
     company?: CompanyOrderByWithRelationInput
     contact?: ContactOrderByWithRelationInput
     owner?: UserOrderByWithRelationInput
+    ownerMembership?: OrganizationMembershipOrderByWithRelationInput
     creator?: UserOrderByWithRelationInput
     updater?: UserOrderByWithRelationInput
     deleter?: UserOrderByWithRelationInput
     activities?: ActivityOrderByRelationAggregateInput
+    items?: OpportunityItemOrderByRelationAggregateInput
   }
 
   export type OpportunityWhereUniqueInput = Prisma.AtLeast<{
@@ -30412,10 +36178,12 @@ export namespace Prisma {
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     contact?: XOR<ContactNullableScalarRelationFilter, ContactWhereInput> | null
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
+    ownerMembership?: XOR<OrganizationMembershipScalarRelationFilter, OrganizationMembershipWhereInput>
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
     updater?: XOR<UserScalarRelationFilter, UserWhereInput>
     deleter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     activities?: ActivityListRelationFilter
+    items?: OpportunityItemListRelationFilter
   }, "id" | "id_organizationId">
 
   export type OpportunityOrderByWithAggregationInput = {
@@ -30468,6 +36236,230 @@ export namespace Prisma {
     deletedBy?: UuidNullableWithAggregatesFilter<"Opportunity"> | string | null
   }
 
+  export type ProductWhereInput = {
+    AND?: ProductWhereInput | ProductWhereInput[]
+    OR?: ProductWhereInput[]
+    NOT?: ProductWhereInput | ProductWhereInput[]
+    id?: UuidFilter<"Product"> | string
+    organizationId?: UuidFilter<"Product"> | string
+    code?: StringFilter<"Product"> | string
+    name?: StringFilter<"Product"> | string
+    description?: StringNullableFilter<"Product"> | string | null
+    unitPrice?: DecimalFilter<"Product"> | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFilter<"Product"> | boolean
+    createdAt?: DateTimeFilter<"Product"> | Date | string
+    updatedAt?: DateTimeFilter<"Product"> | Date | string
+    createdBy?: UuidFilter<"Product"> | string
+    updatedBy?: UuidFilter<"Product"> | string
+    version?: IntFilter<"Product"> | number
+    deletedAt?: DateTimeNullableFilter<"Product"> | Date | string | null
+    deletedBy?: UuidNullableFilter<"Product"> | string | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updater?: XOR<UserScalarRelationFilter, UserWhereInput>
+    deleter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    opportunityItems?: OpportunityItemListRelationFilter
+  }
+
+  export type ProductOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    unitPrice?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    deletedBy?: SortOrderInput | SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+    creator?: UserOrderByWithRelationInput
+    updater?: UserOrderByWithRelationInput
+    deleter?: UserOrderByWithRelationInput
+    opportunityItems?: OpportunityItemOrderByRelationAggregateInput
+  }
+
+  export type ProductWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    id_organizationId?: ProductIdOrganizationIdCompoundUniqueInput
+    AND?: ProductWhereInput | ProductWhereInput[]
+    OR?: ProductWhereInput[]
+    NOT?: ProductWhereInput | ProductWhereInput[]
+    organizationId?: UuidFilter<"Product"> | string
+    code?: StringFilter<"Product"> | string
+    name?: StringFilter<"Product"> | string
+    description?: StringNullableFilter<"Product"> | string | null
+    unitPrice?: DecimalFilter<"Product"> | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFilter<"Product"> | boolean
+    createdAt?: DateTimeFilter<"Product"> | Date | string
+    updatedAt?: DateTimeFilter<"Product"> | Date | string
+    createdBy?: UuidFilter<"Product"> | string
+    updatedBy?: UuidFilter<"Product"> | string
+    version?: IntFilter<"Product"> | number
+    deletedAt?: DateTimeNullableFilter<"Product"> | Date | string | null
+    deletedBy?: UuidNullableFilter<"Product"> | string | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updater?: XOR<UserScalarRelationFilter, UserWhereInput>
+    deleter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    opportunityItems?: OpportunityItemListRelationFilter
+  }, "id" | "id_organizationId">
+
+  export type ProductOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    unitPrice?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    deletedBy?: SortOrderInput | SortOrder
+    _count?: ProductCountOrderByAggregateInput
+    _avg?: ProductAvgOrderByAggregateInput
+    _max?: ProductMaxOrderByAggregateInput
+    _min?: ProductMinOrderByAggregateInput
+    _sum?: ProductSumOrderByAggregateInput
+  }
+
+  export type ProductScalarWhereWithAggregatesInput = {
+    AND?: ProductScalarWhereWithAggregatesInput | ProductScalarWhereWithAggregatesInput[]
+    OR?: ProductScalarWhereWithAggregatesInput[]
+    NOT?: ProductScalarWhereWithAggregatesInput | ProductScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"Product"> | string
+    organizationId?: UuidWithAggregatesFilter<"Product"> | string
+    code?: StringWithAggregatesFilter<"Product"> | string
+    name?: StringWithAggregatesFilter<"Product"> | string
+    description?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    unitPrice?: DecimalWithAggregatesFilter<"Product"> | Decimal | DecimalJsLike | number | string
+    isActive?: BoolWithAggregatesFilter<"Product"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
+    createdBy?: UuidWithAggregatesFilter<"Product"> | string
+    updatedBy?: UuidWithAggregatesFilter<"Product"> | string
+    version?: IntWithAggregatesFilter<"Product"> | number
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
+    deletedBy?: UuidNullableWithAggregatesFilter<"Product"> | string | null
+  }
+
+  export type OpportunityItemWhereInput = {
+    AND?: OpportunityItemWhereInput | OpportunityItemWhereInput[]
+    OR?: OpportunityItemWhereInput[]
+    NOT?: OpportunityItemWhereInput | OpportunityItemWhereInput[]
+    id?: UuidFilter<"OpportunityItem"> | string
+    organizationId?: UuidFilter<"OpportunityItem"> | string
+    opportunityId?: UuidFilter<"OpportunityItem"> | string
+    productId?: UuidFilter<"OpportunityItem"> | string
+    description?: StringFilter<"OpportunityItem"> | string
+    quantity?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFilter<"OpportunityItem"> | Date | string
+    updatedAt?: DateTimeFilter<"OpportunityItem"> | Date | string
+    createdBy?: UuidFilter<"OpportunityItem"> | string
+    updatedBy?: UuidFilter<"OpportunityItem"> | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    opportunity?: XOR<OpportunityScalarRelationFilter, OpportunityWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updater?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type OpportunityItemOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    opportunityId?: SortOrder
+    productId?: SortOrder
+    description?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    discountPercent?: SortOrder
+    lineTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+    opportunity?: OpportunityOrderByWithRelationInput
+    product?: ProductOrderByWithRelationInput
+    creator?: UserOrderByWithRelationInput
+    updater?: UserOrderByWithRelationInput
+  }
+
+  export type OpportunityItemWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: OpportunityItemWhereInput | OpportunityItemWhereInput[]
+    OR?: OpportunityItemWhereInput[]
+    NOT?: OpportunityItemWhereInput | OpportunityItemWhereInput[]
+    organizationId?: UuidFilter<"OpportunityItem"> | string
+    opportunityId?: UuidFilter<"OpportunityItem"> | string
+    productId?: UuidFilter<"OpportunityItem"> | string
+    description?: StringFilter<"OpportunityItem"> | string
+    quantity?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFilter<"OpportunityItem"> | Date | string
+    updatedAt?: DateTimeFilter<"OpportunityItem"> | Date | string
+    createdBy?: UuidFilter<"OpportunityItem"> | string
+    updatedBy?: UuidFilter<"OpportunityItem"> | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    opportunity?: XOR<OpportunityScalarRelationFilter, OpportunityWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updater?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type OpportunityItemOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    opportunityId?: SortOrder
+    productId?: SortOrder
+    description?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    discountPercent?: SortOrder
+    lineTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    _count?: OpportunityItemCountOrderByAggregateInput
+    _avg?: OpportunityItemAvgOrderByAggregateInput
+    _max?: OpportunityItemMaxOrderByAggregateInput
+    _min?: OpportunityItemMinOrderByAggregateInput
+    _sum?: OpportunityItemSumOrderByAggregateInput
+  }
+
+  export type OpportunityItemScalarWhereWithAggregatesInput = {
+    AND?: OpportunityItemScalarWhereWithAggregatesInput | OpportunityItemScalarWhereWithAggregatesInput[]
+    OR?: OpportunityItemScalarWhereWithAggregatesInput[]
+    NOT?: OpportunityItemScalarWhereWithAggregatesInput | OpportunityItemScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"OpportunityItem"> | string
+    organizationId?: UuidWithAggregatesFilter<"OpportunityItem"> | string
+    opportunityId?: UuidWithAggregatesFilter<"OpportunityItem"> | string
+    productId?: UuidWithAggregatesFilter<"OpportunityItem"> | string
+    description?: StringWithAggregatesFilter<"OpportunityItem"> | string
+    quantity?: DecimalWithAggregatesFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalWithAggregatesFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalWithAggregatesFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalWithAggregatesFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeWithAggregatesFilter<"OpportunityItem"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"OpportunityItem"> | Date | string
+    createdBy?: UuidWithAggregatesFilter<"OpportunityItem"> | string
+    updatedBy?: UuidWithAggregatesFilter<"OpportunityItem"> | string
+  }
+
   export type OrganizationCreateInput = {
     id?: string
     name: string
@@ -30492,6 +36484,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateInput = {
@@ -30518,6 +36513,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUpdateInput = {
@@ -30544,6 +36542,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateInput = {
@@ -30570,6 +36571,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateManyInput = {
@@ -30599,6 +36603,134 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type RoleCreateInput = {
+    id?: string
+    code: string
+    name: string
+    isSystem?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutRolesInput
+    permissions?: RolePermissionCreateNestedManyWithoutRoleInput
+  }
+
+  export type RoleUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    isSystem?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
+  }
+
+  export type RoleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutRolesNestedInput
+    permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
+  }
+
+  export type RoleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
+  }
+
+  export type RoleCreateManyInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    isSystem?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RoleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RoleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RolePermissionCreateInput = {
+    id?: string
+    organizationId: string
+    permission: string
+    scope?: string
+    role: RoleCreateNestedOneWithoutPermissionsInput
+  }
+
+  export type RolePermissionUncheckedCreateInput = {
+    id?: string
+    roleId: string
+    organizationId: string
+    permission: string
+    scope?: string
+  }
+
+  export type RolePermissionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    permission?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+    role?: RoleUpdateOneRequiredWithoutPermissionsNestedInput
+  }
+
+  export type RolePermissionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roleId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    permission?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RolePermissionCreateManyInput = {
+    id?: string
+    roleId: string
+    organizationId: string
+    permission: string
+    scope?: string
+  }
+
+  export type RolePermissionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    permission?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RolePermissionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roleId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    permission?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -30626,6 +36758,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -30655,6 +36792,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUpdateInput = {
@@ -30684,6 +36826,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -30713,6 +36860,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -30756,6 +36908,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     organization: OrganizationCreateNestedOneWithoutMembershipsInput
     user: UserCreateNestedOneWithoutMembershipsInput
+    ownedOpportunities?: OpportunityCreateNestedManyWithoutOwnerMembershipInput
   }
 
   export type OrganizationMembershipUncheckedCreateInput = {
@@ -30766,6 +36919,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    ownedOpportunities?: OpportunityUncheckedCreateNestedManyWithoutOwnerMembershipInput
   }
 
   export type OrganizationMembershipUpdateInput = {
@@ -30776,6 +36930,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organization?: OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
     user?: UserUpdateOneRequiredWithoutMembershipsNestedInput
+    ownedOpportunities?: OpportunityUpdateManyWithoutOwnerMembershipNestedInput
   }
 
   export type OrganizationMembershipUncheckedUpdateInput = {
@@ -30786,6 +36941,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownedOpportunities?: OpportunityUncheckedUpdateManyWithoutOwnerMembershipNestedInput
   }
 
   export type OrganizationMembershipCreateManyInput = {
@@ -32236,10 +38392,12 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateInput = {
@@ -32262,6 +38420,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUpdateInput = {
@@ -32280,10 +38439,12 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateInput = {
@@ -32306,6 +38467,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityCreateManyInput = {
@@ -32360,6 +38522,232 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ProductCreateInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutProductsInput
+    creator: UserCreateNestedOneWithoutProductsCreatedInput
+    updater: UserCreateNestedOneWithoutProductsUpdatedInput
+    deleter?: UserCreateNestedOneWithoutProductsDeletedInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutProductsNestedInput
+    creator?: UserUpdateOneRequiredWithoutProductsCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutProductsUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutProductsDeletedNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductCreateManyInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type ProductUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ProductUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OpportunityItemCreateInput = {
+    id?: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutOpportunityItemsInput
+    opportunity: OpportunityCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutOpportunityItemsInput
+    creator: UserCreateNestedOneWithoutOpportunityItemsCreatedInput
+    updater: UserCreateNestedOneWithoutOpportunityItemsUpdatedInput
+  }
+
+  export type OpportunityItemUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    opportunityId: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+  }
+
+  export type OpportunityItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    opportunity?: OpportunityUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    creator?: UserUpdateOneRequiredWithoutOpportunityItemsCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutOpportunityItemsUpdatedNestedInput
+  }
+
+  export type OpportunityItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OpportunityItemCreateManyInput = {
+    id?: string
+    organizationId: string
+    opportunityId: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+  }
+
+  export type OpportunityItemUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OpportunityItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -32507,6 +38895,24 @@ export namespace Prisma {
     none?: OpportunityWhereInput
   }
 
+  export type RoleListRelationFilter = {
+    every?: RoleWhereInput
+    some?: RoleWhereInput
+    none?: RoleWhereInput
+  }
+
+  export type ProductListRelationFilter = {
+    every?: ProductWhereInput
+    some?: ProductWhereInput
+    none?: ProductWhereInput
+  }
+
+  export type OpportunityItemListRelationFilter = {
+    every?: OpportunityItemWhereInput
+    some?: OpportunityItemWhereInput
+    none?: OpportunityItemWhereInput
+  }
+
   export type OrganizationMembershipOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -32572,6 +38978,18 @@ export namespace Prisma {
   }
 
   export type OpportunityOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RoleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProductOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type OpportunityItemOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -32657,6 +39075,90 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type OrganizationScalarRelationFilter = {
+    is?: OrganizationWhereInput
+    isNot?: OrganizationWhereInput
+  }
+
+  export type RolePermissionListRelationFilter = {
+    every?: RolePermissionWhereInput
+    some?: RolePermissionWhereInput
+    none?: RolePermissionWhereInput
+  }
+
+  export type RolePermissionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RoleOrganizationIdCodeCompoundUniqueInput = {
+    organizationId: string
+    code: string
+  }
+
+  export type RoleCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isSystem?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RoleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isSystem?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RoleMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isSystem?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RoleScalarRelationFilter = {
+    is?: RoleWhereInput
+    isNot?: RoleWhereInput
+  }
+
+  export type RolePermissionRoleIdPermissionCompoundUniqueInput = {
+    roleId: string
+    permission: string
+  }
+
+  export type RolePermissionCountOrderByAggregateInput = {
+    id?: SortOrder
+    roleId?: SortOrder
+    organizationId?: SortOrder
+    permission?: SortOrder
+    scope?: SortOrder
+  }
+
+  export type RolePermissionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    roleId?: SortOrder
+    organizationId?: SortOrder
+    permission?: SortOrder
+    scope?: SortOrder
+  }
+
+  export type RolePermissionMinOrderByAggregateInput = {
+    id?: SortOrder
+    roleId?: SortOrder
+    organizationId?: SortOrder
+    permission?: SortOrder
+    scope?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
@@ -32695,11 +39197,6 @@ export namespace Prisma {
     in?: $Enums.MembershipRole[] | ListEnumMembershipRoleFieldRefInput<$PrismaModel>
     notIn?: $Enums.MembershipRole[] | ListEnumMembershipRoleFieldRefInput<$PrismaModel>
     not?: NestedEnumMembershipRoleFilter<$PrismaModel> | $Enums.MembershipRole
-  }
-
-  export type OrganizationScalarRelationFilter = {
-    is?: OrganizationWhereInput
-    isNot?: OrganizationWhereInput
   }
 
   export type UserScalarRelationFilter = {
@@ -33846,6 +40343,11 @@ export namespace Prisma {
     isNot?: PipelineStageWhereInput
   }
 
+  export type OrganizationMembershipScalarRelationFilter = {
+    is?: OrganizationMembershipWhereInput
+    isNot?: OrganizationMembershipWhereInput
+  }
+
   export type OpportunityIdOrganizationIdCompoundUniqueInput = {
     id: string
     organizationId: string
@@ -33938,6 +40440,144 @@ export namespace Prisma {
     _sum?: NestedDecimalFilter<$PrismaModel>
     _min?: NestedDecimalFilter<$PrismaModel>
     _max?: NestedDecimalFilter<$PrismaModel>
+  }
+
+  export type ProductIdOrganizationIdCompoundUniqueInput = {
+    id: string
+    organizationId: string
+  }
+
+  export type ProductCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    unitPrice?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrder
+    deletedBy?: SortOrder
+  }
+
+  export type ProductAvgOrderByAggregateInput = {
+    unitPrice?: SortOrder
+    version?: SortOrder
+  }
+
+  export type ProductMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    unitPrice?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrder
+    deletedBy?: SortOrder
+  }
+
+  export type ProductMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    unitPrice?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrder
+    deletedBy?: SortOrder
+  }
+
+  export type ProductSumOrderByAggregateInput = {
+    unitPrice?: SortOrder
+    version?: SortOrder
+  }
+
+  export type OpportunityScalarRelationFilter = {
+    is?: OpportunityWhereInput
+    isNot?: OpportunityWhereInput
+  }
+
+  export type ProductScalarRelationFilter = {
+    is?: ProductWhereInput
+    isNot?: ProductWhereInput
+  }
+
+  export type OpportunityItemCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    opportunityId?: SortOrder
+    productId?: SortOrder
+    description?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    discountPercent?: SortOrder
+    lineTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+  }
+
+  export type OpportunityItemAvgOrderByAggregateInput = {
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    discountPercent?: SortOrder
+    lineTotal?: SortOrder
+  }
+
+  export type OpportunityItemMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    opportunityId?: SortOrder
+    productId?: SortOrder
+    description?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    discountPercent?: SortOrder
+    lineTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+  }
+
+  export type OpportunityItemMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    opportunityId?: SortOrder
+    productId?: SortOrder
+    description?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    discountPercent?: SortOrder
+    lineTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+  }
+
+  export type OpportunityItemSumOrderByAggregateInput = {
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    discountPercent?: SortOrder
+    lineTotal?: SortOrder
   }
 
   export type OrganizationMembershipCreateNestedManyWithoutOrganizationInput = {
@@ -34059,6 +40699,27 @@ export namespace Prisma {
     connect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
   }
 
+  export type RoleCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<RoleCreateWithoutOrganizationInput, RoleUncheckedCreateWithoutOrganizationInput> | RoleCreateWithoutOrganizationInput[] | RoleUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: RoleCreateOrConnectWithoutOrganizationInput | RoleCreateOrConnectWithoutOrganizationInput[]
+    createMany?: RoleCreateManyOrganizationInputEnvelope
+    connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+  }
+
+  export type ProductCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<ProductCreateWithoutOrganizationInput, ProductUncheckedCreateWithoutOrganizationInput> | ProductCreateWithoutOrganizationInput[] | ProductUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutOrganizationInput | ProductCreateOrConnectWithoutOrganizationInput[]
+    createMany?: ProductCreateManyOrganizationInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type OpportunityItemCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<OpportunityItemCreateWithoutOrganizationInput, OpportunityItemUncheckedCreateWithoutOrganizationInput> | OpportunityItemCreateWithoutOrganizationInput[] | OpportunityItemUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutOrganizationInput | OpportunityItemCreateOrConnectWithoutOrganizationInput[]
+    createMany?: OpportunityItemCreateManyOrganizationInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+  }
+
   export type OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<OrganizationMembershipCreateWithoutOrganizationInput, OrganizationMembershipUncheckedCreateWithoutOrganizationInput> | OrganizationMembershipCreateWithoutOrganizationInput[] | OrganizationMembershipUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOrganizationInput | OrganizationMembershipCreateOrConnectWithoutOrganizationInput[]
@@ -34176,6 +40837,27 @@ export namespace Prisma {
     connectOrCreate?: OpportunityCreateOrConnectWithoutOrganizationInput | OpportunityCreateOrConnectWithoutOrganizationInput[]
     createMany?: OpportunityCreateManyOrganizationInputEnvelope
     connect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+  }
+
+  export type RoleUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<RoleCreateWithoutOrganizationInput, RoleUncheckedCreateWithoutOrganizationInput> | RoleCreateWithoutOrganizationInput[] | RoleUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: RoleCreateOrConnectWithoutOrganizationInput | RoleCreateOrConnectWithoutOrganizationInput[]
+    createMany?: RoleCreateManyOrganizationInputEnvelope
+    connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+  }
+
+  export type ProductUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<ProductCreateWithoutOrganizationInput, ProductUncheckedCreateWithoutOrganizationInput> | ProductCreateWithoutOrganizationInput[] | ProductUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutOrganizationInput | ProductCreateOrConnectWithoutOrganizationInput[]
+    createMany?: ProductCreateManyOrganizationInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<OpportunityItemCreateWithoutOrganizationInput, OpportunityItemUncheckedCreateWithoutOrganizationInput> | OpportunityItemCreateWithoutOrganizationInput[] | OpportunityItemUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutOrganizationInput | OpportunityItemCreateOrConnectWithoutOrganizationInput[]
+    createMany?: OpportunityItemCreateManyOrganizationInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -34428,6 +41110,48 @@ export namespace Prisma {
     deleteMany?: OpportunityScalarWhereInput | OpportunityScalarWhereInput[]
   }
 
+  export type RoleUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<RoleCreateWithoutOrganizationInput, RoleUncheckedCreateWithoutOrganizationInput> | RoleCreateWithoutOrganizationInput[] | RoleUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: RoleCreateOrConnectWithoutOrganizationInput | RoleCreateOrConnectWithoutOrganizationInput[]
+    upsert?: RoleUpsertWithWhereUniqueWithoutOrganizationInput | RoleUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: RoleCreateManyOrganizationInputEnvelope
+    set?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    disconnect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    delete?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    update?: RoleUpdateWithWhereUniqueWithoutOrganizationInput | RoleUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: RoleUpdateManyWithWhereWithoutOrganizationInput | RoleUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: RoleScalarWhereInput | RoleScalarWhereInput[]
+  }
+
+  export type ProductUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<ProductCreateWithoutOrganizationInput, ProductUncheckedCreateWithoutOrganizationInput> | ProductCreateWithoutOrganizationInput[] | ProductUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutOrganizationInput | ProductCreateOrConnectWithoutOrganizationInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutOrganizationInput | ProductUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: ProductCreateManyOrganizationInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutOrganizationInput | ProductUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutOrganizationInput | ProductUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type OpportunityItemUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutOrganizationInput, OpportunityItemUncheckedCreateWithoutOrganizationInput> | OpportunityItemCreateWithoutOrganizationInput[] | OpportunityItemUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutOrganizationInput | OpportunityItemCreateOrConnectWithoutOrganizationInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutOrganizationInput | OpportunityItemUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: OpportunityItemCreateManyOrganizationInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutOrganizationInput | OpportunityItemUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutOrganizationInput | OpportunityItemUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
   export type OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<OrganizationMembershipCreateWithoutOrganizationInput, OrganizationMembershipUncheckedCreateWithoutOrganizationInput> | OrganizationMembershipCreateWithoutOrganizationInput[] | OrganizationMembershipUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOrganizationInput | OrganizationMembershipCreateOrConnectWithoutOrganizationInput[]
@@ -34666,6 +41390,118 @@ export namespace Prisma {
     deleteMany?: OpportunityScalarWhereInput | OpportunityScalarWhereInput[]
   }
 
+  export type RoleUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<RoleCreateWithoutOrganizationInput, RoleUncheckedCreateWithoutOrganizationInput> | RoleCreateWithoutOrganizationInput[] | RoleUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: RoleCreateOrConnectWithoutOrganizationInput | RoleCreateOrConnectWithoutOrganizationInput[]
+    upsert?: RoleUpsertWithWhereUniqueWithoutOrganizationInput | RoleUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: RoleCreateManyOrganizationInputEnvelope
+    set?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    disconnect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    delete?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    update?: RoleUpdateWithWhereUniqueWithoutOrganizationInput | RoleUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: RoleUpdateManyWithWhereWithoutOrganizationInput | RoleUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: RoleScalarWhereInput | RoleScalarWhereInput[]
+  }
+
+  export type ProductUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<ProductCreateWithoutOrganizationInput, ProductUncheckedCreateWithoutOrganizationInput> | ProductCreateWithoutOrganizationInput[] | ProductUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutOrganizationInput | ProductCreateOrConnectWithoutOrganizationInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutOrganizationInput | ProductUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: ProductCreateManyOrganizationInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutOrganizationInput | ProductUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutOrganizationInput | ProductUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutOrganizationInput, OpportunityItemUncheckedCreateWithoutOrganizationInput> | OpportunityItemCreateWithoutOrganizationInput[] | OpportunityItemUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutOrganizationInput | OpportunityItemCreateOrConnectWithoutOrganizationInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutOrganizationInput | OpportunityItemUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: OpportunityItemCreateManyOrganizationInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutOrganizationInput | OpportunityItemUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutOrganizationInput | OpportunityItemUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
+  export type OrganizationCreateNestedOneWithoutRolesInput = {
+    create?: XOR<OrganizationCreateWithoutRolesInput, OrganizationUncheckedCreateWithoutRolesInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutRolesInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type RolePermissionCreateNestedManyWithoutRoleInput = {
+    create?: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput> | RolePermissionCreateWithoutRoleInput[] | RolePermissionUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: RolePermissionCreateOrConnectWithoutRoleInput | RolePermissionCreateOrConnectWithoutRoleInput[]
+    createMany?: RolePermissionCreateManyRoleInputEnvelope
+    connect?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+  }
+
+  export type RolePermissionUncheckedCreateNestedManyWithoutRoleInput = {
+    create?: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput> | RolePermissionCreateWithoutRoleInput[] | RolePermissionUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: RolePermissionCreateOrConnectWithoutRoleInput | RolePermissionCreateOrConnectWithoutRoleInput[]
+    createMany?: RolePermissionCreateManyRoleInputEnvelope
+    connect?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutRolesNestedInput = {
+    create?: XOR<OrganizationCreateWithoutRolesInput, OrganizationUncheckedCreateWithoutRolesInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutRolesInput
+    upsert?: OrganizationUpsertWithoutRolesInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutRolesInput, OrganizationUpdateWithoutRolesInput>, OrganizationUncheckedUpdateWithoutRolesInput>
+  }
+
+  export type RolePermissionUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput> | RolePermissionCreateWithoutRoleInput[] | RolePermissionUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: RolePermissionCreateOrConnectWithoutRoleInput | RolePermissionCreateOrConnectWithoutRoleInput[]
+    upsert?: RolePermissionUpsertWithWhereUniqueWithoutRoleInput | RolePermissionUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: RolePermissionCreateManyRoleInputEnvelope
+    set?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+    disconnect?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+    delete?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+    connect?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+    update?: RolePermissionUpdateWithWhereUniqueWithoutRoleInput | RolePermissionUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: RolePermissionUpdateManyWithWhereWithoutRoleInput | RolePermissionUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: RolePermissionScalarWhereInput | RolePermissionScalarWhereInput[]
+  }
+
+  export type RolePermissionUncheckedUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput> | RolePermissionCreateWithoutRoleInput[] | RolePermissionUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: RolePermissionCreateOrConnectWithoutRoleInput | RolePermissionCreateOrConnectWithoutRoleInput[]
+    upsert?: RolePermissionUpsertWithWhereUniqueWithoutRoleInput | RolePermissionUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: RolePermissionCreateManyRoleInputEnvelope
+    set?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+    disconnect?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+    delete?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+    connect?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+    update?: RolePermissionUpdateWithWhereUniqueWithoutRoleInput | RolePermissionUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: RolePermissionUpdateManyWithWhereWithoutRoleInput | RolePermissionUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: RolePermissionScalarWhereInput | RolePermissionScalarWhereInput[]
+  }
+
+  export type RoleCreateNestedOneWithoutPermissionsInput = {
+    create?: XOR<RoleCreateWithoutPermissionsInput, RoleUncheckedCreateWithoutPermissionsInput>
+    connectOrCreate?: RoleCreateOrConnectWithoutPermissionsInput
+    connect?: RoleWhereUniqueInput
+  }
+
+  export type RoleUpdateOneRequiredWithoutPermissionsNestedInput = {
+    create?: XOR<RoleCreateWithoutPermissionsInput, RoleUncheckedCreateWithoutPermissionsInput>
+    connectOrCreate?: RoleCreateOrConnectWithoutPermissionsInput
+    upsert?: RoleUpsertWithoutPermissionsInput
+    connect?: RoleWhereUniqueInput
+    update?: XOR<XOR<RoleUpdateToOneWithWhereWithoutPermissionsInput, RoleUpdateWithoutPermissionsInput>, RoleUncheckedUpdateWithoutPermissionsInput>
+  }
+
   export type OrganizationMembershipCreateNestedManyWithoutUserInput = {
     create?: XOR<OrganizationMembershipCreateWithoutUserInput, OrganizationMembershipUncheckedCreateWithoutUserInput> | OrganizationMembershipCreateWithoutUserInput[] | OrganizationMembershipUncheckedCreateWithoutUserInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutUserInput | OrganizationMembershipCreateOrConnectWithoutUserInput[]
@@ -34792,6 +41628,41 @@ export namespace Prisma {
     connect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
   }
 
+  export type ProductCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<ProductCreateWithoutCreatorInput, ProductUncheckedCreateWithoutCreatorInput> | ProductCreateWithoutCreatorInput[] | ProductUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutCreatorInput | ProductCreateOrConnectWithoutCreatorInput[]
+    createMany?: ProductCreateManyCreatorInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type ProductCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<ProductCreateWithoutUpdaterInput, ProductUncheckedCreateWithoutUpdaterInput> | ProductCreateWithoutUpdaterInput[] | ProductUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutUpdaterInput | ProductCreateOrConnectWithoutUpdaterInput[]
+    createMany?: ProductCreateManyUpdaterInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type ProductCreateNestedManyWithoutDeleterInput = {
+    create?: XOR<ProductCreateWithoutDeleterInput, ProductUncheckedCreateWithoutDeleterInput> | ProductCreateWithoutDeleterInput[] | ProductUncheckedCreateWithoutDeleterInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutDeleterInput | ProductCreateOrConnectWithoutDeleterInput[]
+    createMany?: ProductCreateManyDeleterInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type OpportunityItemCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<OpportunityItemCreateWithoutCreatorInput, OpportunityItemUncheckedCreateWithoutCreatorInput> | OpportunityItemCreateWithoutCreatorInput[] | OpportunityItemUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutCreatorInput | OpportunityItemCreateOrConnectWithoutCreatorInput[]
+    createMany?: OpportunityItemCreateManyCreatorInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+  }
+
+  export type OpportunityItemCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<OpportunityItemCreateWithoutUpdaterInput, OpportunityItemUncheckedCreateWithoutUpdaterInput> | OpportunityItemCreateWithoutUpdaterInput[] | OpportunityItemUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutUpdaterInput | OpportunityItemCreateOrConnectWithoutUpdaterInput[]
+    createMany?: OpportunityItemCreateManyUpdaterInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+  }
+
   export type OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<OrganizationMembershipCreateWithoutUserInput, OrganizationMembershipUncheckedCreateWithoutUserInput> | OrganizationMembershipCreateWithoutUserInput[] | OrganizationMembershipUncheckedCreateWithoutUserInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutUserInput | OrganizationMembershipCreateOrConnectWithoutUserInput[]
@@ -34916,6 +41787,41 @@ export namespace Prisma {
     connectOrCreate?: OpportunityCreateOrConnectWithoutDeleterInput | OpportunityCreateOrConnectWithoutDeleterInput[]
     createMany?: OpportunityCreateManyDeleterInputEnvelope
     connect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+  }
+
+  export type ProductUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<ProductCreateWithoutCreatorInput, ProductUncheckedCreateWithoutCreatorInput> | ProductCreateWithoutCreatorInput[] | ProductUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutCreatorInput | ProductCreateOrConnectWithoutCreatorInput[]
+    createMany?: ProductCreateManyCreatorInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type ProductUncheckedCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<ProductCreateWithoutUpdaterInput, ProductUncheckedCreateWithoutUpdaterInput> | ProductCreateWithoutUpdaterInput[] | ProductUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutUpdaterInput | ProductCreateOrConnectWithoutUpdaterInput[]
+    createMany?: ProductCreateManyUpdaterInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type ProductUncheckedCreateNestedManyWithoutDeleterInput = {
+    create?: XOR<ProductCreateWithoutDeleterInput, ProductUncheckedCreateWithoutDeleterInput> | ProductCreateWithoutDeleterInput[] | ProductUncheckedCreateWithoutDeleterInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutDeleterInput | ProductCreateOrConnectWithoutDeleterInput[]
+    createMany?: ProductCreateManyDeleterInputEnvelope
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<OpportunityItemCreateWithoutCreatorInput, OpportunityItemUncheckedCreateWithoutCreatorInput> | OpportunityItemCreateWithoutCreatorInput[] | OpportunityItemUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutCreatorInput | OpportunityItemCreateOrConnectWithoutCreatorInput[]
+    createMany?: OpportunityItemCreateManyCreatorInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+  }
+
+  export type OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<OpportunityItemCreateWithoutUpdaterInput, OpportunityItemUncheckedCreateWithoutUpdaterInput> | OpportunityItemCreateWithoutUpdaterInput[] | OpportunityItemUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutUpdaterInput | OpportunityItemCreateOrConnectWithoutUpdaterInput[]
+    createMany?: OpportunityItemCreateManyUpdaterInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
   }
 
   export type OrganizationMembershipUpdateManyWithoutUserNestedInput = {
@@ -35170,6 +42076,76 @@ export namespace Prisma {
     deleteMany?: OpportunityScalarWhereInput | OpportunityScalarWhereInput[]
   }
 
+  export type ProductUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<ProductCreateWithoutCreatorInput, ProductUncheckedCreateWithoutCreatorInput> | ProductCreateWithoutCreatorInput[] | ProductUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutCreatorInput | ProductCreateOrConnectWithoutCreatorInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutCreatorInput | ProductUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: ProductCreateManyCreatorInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutCreatorInput | ProductUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutCreatorInput | ProductUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type ProductUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<ProductCreateWithoutUpdaterInput, ProductUncheckedCreateWithoutUpdaterInput> | ProductCreateWithoutUpdaterInput[] | ProductUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutUpdaterInput | ProductCreateOrConnectWithoutUpdaterInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutUpdaterInput | ProductUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: ProductCreateManyUpdaterInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutUpdaterInput | ProductUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutUpdaterInput | ProductUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type ProductUpdateManyWithoutDeleterNestedInput = {
+    create?: XOR<ProductCreateWithoutDeleterInput, ProductUncheckedCreateWithoutDeleterInput> | ProductCreateWithoutDeleterInput[] | ProductUncheckedCreateWithoutDeleterInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutDeleterInput | ProductCreateOrConnectWithoutDeleterInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutDeleterInput | ProductUpsertWithWhereUniqueWithoutDeleterInput[]
+    createMany?: ProductCreateManyDeleterInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutDeleterInput | ProductUpdateWithWhereUniqueWithoutDeleterInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutDeleterInput | ProductUpdateManyWithWhereWithoutDeleterInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type OpportunityItemUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutCreatorInput, OpportunityItemUncheckedCreateWithoutCreatorInput> | OpportunityItemCreateWithoutCreatorInput[] | OpportunityItemUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutCreatorInput | OpportunityItemCreateOrConnectWithoutCreatorInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutCreatorInput | OpportunityItemUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: OpportunityItemCreateManyCreatorInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutCreatorInput | OpportunityItemUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutCreatorInput | OpportunityItemUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
+  export type OpportunityItemUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutUpdaterInput, OpportunityItemUncheckedCreateWithoutUpdaterInput> | OpportunityItemCreateWithoutUpdaterInput[] | OpportunityItemUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutUpdaterInput | OpportunityItemCreateOrConnectWithoutUpdaterInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutUpdaterInput | OpportunityItemUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: OpportunityItemCreateManyUpdaterInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutUpdaterInput | OpportunityItemUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutUpdaterInput | OpportunityItemUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
   export type OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<OrganizationMembershipCreateWithoutUserInput, OrganizationMembershipUncheckedCreateWithoutUserInput> | OrganizationMembershipCreateWithoutUserInput[] | OrganizationMembershipUncheckedCreateWithoutUserInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutUserInput | OrganizationMembershipCreateOrConnectWithoutUserInput[]
@@ -35422,6 +42398,76 @@ export namespace Prisma {
     deleteMany?: OpportunityScalarWhereInput | OpportunityScalarWhereInput[]
   }
 
+  export type ProductUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<ProductCreateWithoutCreatorInput, ProductUncheckedCreateWithoutCreatorInput> | ProductCreateWithoutCreatorInput[] | ProductUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutCreatorInput | ProductCreateOrConnectWithoutCreatorInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutCreatorInput | ProductUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: ProductCreateManyCreatorInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutCreatorInput | ProductUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutCreatorInput | ProductUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type ProductUncheckedUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<ProductCreateWithoutUpdaterInput, ProductUncheckedCreateWithoutUpdaterInput> | ProductCreateWithoutUpdaterInput[] | ProductUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutUpdaterInput | ProductCreateOrConnectWithoutUpdaterInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutUpdaterInput | ProductUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: ProductCreateManyUpdaterInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutUpdaterInput | ProductUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutUpdaterInput | ProductUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type ProductUncheckedUpdateManyWithoutDeleterNestedInput = {
+    create?: XOR<ProductCreateWithoutDeleterInput, ProductUncheckedCreateWithoutDeleterInput> | ProductCreateWithoutDeleterInput[] | ProductUncheckedCreateWithoutDeleterInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutDeleterInput | ProductCreateOrConnectWithoutDeleterInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutDeleterInput | ProductUpsertWithWhereUniqueWithoutDeleterInput[]
+    createMany?: ProductCreateManyDeleterInputEnvelope
+    set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutDeleterInput | ProductUpdateWithWhereUniqueWithoutDeleterInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutDeleterInput | ProductUpdateManyWithWhereWithoutDeleterInput[]
+    deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutCreatorInput, OpportunityItemUncheckedCreateWithoutCreatorInput> | OpportunityItemCreateWithoutCreatorInput[] | OpportunityItemUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutCreatorInput | OpportunityItemCreateOrConnectWithoutCreatorInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutCreatorInput | OpportunityItemUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: OpportunityItemCreateManyCreatorInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutCreatorInput | OpportunityItemUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutCreatorInput | OpportunityItemUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutUpdaterInput, OpportunityItemUncheckedCreateWithoutUpdaterInput> | OpportunityItemCreateWithoutUpdaterInput[] | OpportunityItemUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutUpdaterInput | OpportunityItemCreateOrConnectWithoutUpdaterInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutUpdaterInput | OpportunityItemUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: OpportunityItemCreateManyUpdaterInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutUpdaterInput | OpportunityItemUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutUpdaterInput | OpportunityItemUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
   export type OrganizationCreateNestedOneWithoutMembershipsInput = {
     create?: XOR<OrganizationCreateWithoutMembershipsInput, OrganizationUncheckedCreateWithoutMembershipsInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutMembershipsInput
@@ -35432,6 +42478,20 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutMembershipsInput, UserUncheckedCreateWithoutMembershipsInput>
     connectOrCreate?: UserCreateOrConnectWithoutMembershipsInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type OpportunityCreateNestedManyWithoutOwnerMembershipInput = {
+    create?: XOR<OpportunityCreateWithoutOwnerMembershipInput, OpportunityUncheckedCreateWithoutOwnerMembershipInput> | OpportunityCreateWithoutOwnerMembershipInput[] | OpportunityUncheckedCreateWithoutOwnerMembershipInput[]
+    connectOrCreate?: OpportunityCreateOrConnectWithoutOwnerMembershipInput | OpportunityCreateOrConnectWithoutOwnerMembershipInput[]
+    createMany?: OpportunityCreateManyOwnerMembershipInputEnvelope
+    connect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+  }
+
+  export type OpportunityUncheckedCreateNestedManyWithoutOwnerMembershipInput = {
+    create?: XOR<OpportunityCreateWithoutOwnerMembershipInput, OpportunityUncheckedCreateWithoutOwnerMembershipInput> | OpportunityCreateWithoutOwnerMembershipInput[] | OpportunityUncheckedCreateWithoutOwnerMembershipInput[]
+    connectOrCreate?: OpportunityCreateOrConnectWithoutOwnerMembershipInput | OpportunityCreateOrConnectWithoutOwnerMembershipInput[]
+    createMany?: OpportunityCreateManyOwnerMembershipInputEnvelope
+    connect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
   }
 
   export type EnumMembershipRoleFieldUpdateOperationsInput = {
@@ -35452,6 +42512,34 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutMembershipsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMembershipsInput, UserUpdateWithoutMembershipsInput>, UserUncheckedUpdateWithoutMembershipsInput>
+  }
+
+  export type OpportunityUpdateManyWithoutOwnerMembershipNestedInput = {
+    create?: XOR<OpportunityCreateWithoutOwnerMembershipInput, OpportunityUncheckedCreateWithoutOwnerMembershipInput> | OpportunityCreateWithoutOwnerMembershipInput[] | OpportunityUncheckedCreateWithoutOwnerMembershipInput[]
+    connectOrCreate?: OpportunityCreateOrConnectWithoutOwnerMembershipInput | OpportunityCreateOrConnectWithoutOwnerMembershipInput[]
+    upsert?: OpportunityUpsertWithWhereUniqueWithoutOwnerMembershipInput | OpportunityUpsertWithWhereUniqueWithoutOwnerMembershipInput[]
+    createMany?: OpportunityCreateManyOwnerMembershipInputEnvelope
+    set?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+    disconnect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+    delete?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+    connect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+    update?: OpportunityUpdateWithWhereUniqueWithoutOwnerMembershipInput | OpportunityUpdateWithWhereUniqueWithoutOwnerMembershipInput[]
+    updateMany?: OpportunityUpdateManyWithWhereWithoutOwnerMembershipInput | OpportunityUpdateManyWithWhereWithoutOwnerMembershipInput[]
+    deleteMany?: OpportunityScalarWhereInput | OpportunityScalarWhereInput[]
+  }
+
+  export type OpportunityUncheckedUpdateManyWithoutOwnerMembershipNestedInput = {
+    create?: XOR<OpportunityCreateWithoutOwnerMembershipInput, OpportunityUncheckedCreateWithoutOwnerMembershipInput> | OpportunityCreateWithoutOwnerMembershipInput[] | OpportunityUncheckedCreateWithoutOwnerMembershipInput[]
+    connectOrCreate?: OpportunityCreateOrConnectWithoutOwnerMembershipInput | OpportunityCreateOrConnectWithoutOwnerMembershipInput[]
+    upsert?: OpportunityUpsertWithWhereUniqueWithoutOwnerMembershipInput | OpportunityUpsertWithWhereUniqueWithoutOwnerMembershipInput[]
+    createMany?: OpportunityCreateManyOwnerMembershipInputEnvelope
+    set?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+    disconnect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+    delete?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+    connect?: OpportunityWhereUniqueInput | OpportunityWhereUniqueInput[]
+    update?: OpportunityUpdateWithWhereUniqueWithoutOwnerMembershipInput | OpportunityUpdateWithWhereUniqueWithoutOwnerMembershipInput[]
+    updateMany?: OpportunityUpdateManyWithWhereWithoutOwnerMembershipInput | OpportunityUpdateManyWithWhereWithoutOwnerMembershipInput[]
+    deleteMany?: OpportunityScalarWhereInput | OpportunityScalarWhereInput[]
   }
 
   export type OrganizationCreateNestedOneWithoutRefreshSessionsInput = {
@@ -37026,6 +44114,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput = {
+    create?: XOR<OrganizationMembershipCreateWithoutOwnedOpportunitiesInput, OrganizationMembershipUncheckedCreateWithoutOwnedOpportunitiesInput>
+    connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOwnedOpportunitiesInput
+    connect?: OrganizationMembershipWhereUniqueInput
+  }
+
   export type UserCreateNestedOneWithoutOpportunitiesCreatedInput = {
     create?: XOR<UserCreateWithoutOpportunitiesCreatedInput, UserUncheckedCreateWithoutOpportunitiesCreatedInput>
     connectOrCreate?: UserCreateOrConnectWithoutOpportunitiesCreatedInput
@@ -37051,11 +44145,25 @@ export namespace Prisma {
     connect?: ActivityWhereUniqueInput | ActivityWhereUniqueInput[]
   }
 
+  export type OpportunityItemCreateNestedManyWithoutOpportunityInput = {
+    create?: XOR<OpportunityItemCreateWithoutOpportunityInput, OpportunityItemUncheckedCreateWithoutOpportunityInput> | OpportunityItemCreateWithoutOpportunityInput[] | OpportunityItemUncheckedCreateWithoutOpportunityInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutOpportunityInput | OpportunityItemCreateOrConnectWithoutOpportunityInput[]
+    createMany?: OpportunityItemCreateManyOpportunityInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+  }
+
   export type ActivityUncheckedCreateNestedManyWithoutOpportunityInput = {
     create?: XOR<ActivityCreateWithoutOpportunityInput, ActivityUncheckedCreateWithoutOpportunityInput> | ActivityCreateWithoutOpportunityInput[] | ActivityUncheckedCreateWithoutOpportunityInput[]
     connectOrCreate?: ActivityCreateOrConnectWithoutOpportunityInput | ActivityCreateOrConnectWithoutOpportunityInput[]
     createMany?: ActivityCreateManyOpportunityInputEnvelope
     connect?: ActivityWhereUniqueInput | ActivityWhereUniqueInput[]
+  }
+
+  export type OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput = {
+    create?: XOR<OpportunityItemCreateWithoutOpportunityInput, OpportunityItemUncheckedCreateWithoutOpportunityInput> | OpportunityItemCreateWithoutOpportunityInput[] | OpportunityItemUncheckedCreateWithoutOpportunityInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutOpportunityInput | OpportunityItemCreateOrConnectWithoutOpportunityInput[]
+    createMany?: OpportunityItemCreateManyOpportunityInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
   }
 
   export type DecimalFieldUpdateOperationsInput = {
@@ -37118,6 +44226,14 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOpportunitiesOwnedInput, UserUpdateWithoutOpportunitiesOwnedInput>, UserUncheckedUpdateWithoutOpportunitiesOwnedInput>
   }
 
+  export type OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput = {
+    create?: XOR<OrganizationMembershipCreateWithoutOwnedOpportunitiesInput, OrganizationMembershipUncheckedCreateWithoutOwnedOpportunitiesInput>
+    connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOwnedOpportunitiesInput
+    upsert?: OrganizationMembershipUpsertWithoutOwnedOpportunitiesInput
+    connect?: OrganizationMembershipWhereUniqueInput
+    update?: XOR<XOR<OrganizationMembershipUpdateToOneWithWhereWithoutOwnedOpportunitiesInput, OrganizationMembershipUpdateWithoutOwnedOpportunitiesInput>, OrganizationMembershipUncheckedUpdateWithoutOwnedOpportunitiesInput>
+  }
+
   export type UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput = {
     create?: XOR<UserCreateWithoutOpportunitiesCreatedInput, UserUncheckedCreateWithoutOpportunitiesCreatedInput>
     connectOrCreate?: UserCreateOrConnectWithoutOpportunitiesCreatedInput
@@ -37158,6 +44274,20 @@ export namespace Prisma {
     deleteMany?: ActivityScalarWhereInput | ActivityScalarWhereInput[]
   }
 
+  export type OpportunityItemUpdateManyWithoutOpportunityNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutOpportunityInput, OpportunityItemUncheckedCreateWithoutOpportunityInput> | OpportunityItemCreateWithoutOpportunityInput[] | OpportunityItemUncheckedCreateWithoutOpportunityInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutOpportunityInput | OpportunityItemCreateOrConnectWithoutOpportunityInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutOpportunityInput | OpportunityItemUpsertWithWhereUniqueWithoutOpportunityInput[]
+    createMany?: OpportunityItemCreateManyOpportunityInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutOpportunityInput | OpportunityItemUpdateWithWhereUniqueWithoutOpportunityInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutOpportunityInput | OpportunityItemUpdateManyWithWhereWithoutOpportunityInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
   export type ActivityUncheckedUpdateManyWithoutOpportunityNestedInput = {
     create?: XOR<ActivityCreateWithoutOpportunityInput, ActivityUncheckedCreateWithoutOpportunityInput> | ActivityCreateWithoutOpportunityInput[] | ActivityUncheckedCreateWithoutOpportunityInput[]
     connectOrCreate?: ActivityCreateOrConnectWithoutOpportunityInput | ActivityCreateOrConnectWithoutOpportunityInput[]
@@ -37170,6 +44300,190 @@ export namespace Prisma {
     update?: ActivityUpdateWithWhereUniqueWithoutOpportunityInput | ActivityUpdateWithWhereUniqueWithoutOpportunityInput[]
     updateMany?: ActivityUpdateManyWithWhereWithoutOpportunityInput | ActivityUpdateManyWithWhereWithoutOpportunityInput[]
     deleteMany?: ActivityScalarWhereInput | ActivityScalarWhereInput[]
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutOpportunityInput, OpportunityItemUncheckedCreateWithoutOpportunityInput> | OpportunityItemCreateWithoutOpportunityInput[] | OpportunityItemUncheckedCreateWithoutOpportunityInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutOpportunityInput | OpportunityItemCreateOrConnectWithoutOpportunityInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutOpportunityInput | OpportunityItemUpsertWithWhereUniqueWithoutOpportunityInput[]
+    createMany?: OpportunityItemCreateManyOpportunityInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutOpportunityInput | OpportunityItemUpdateWithWhereUniqueWithoutOpportunityInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutOpportunityInput | OpportunityItemUpdateManyWithWhereWithoutOpportunityInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
+  export type OrganizationCreateNestedOneWithoutProductsInput = {
+    create?: XOR<OrganizationCreateWithoutProductsInput, OrganizationUncheckedCreateWithoutProductsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutProductsInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutProductsCreatedInput = {
+    create?: XOR<UserCreateWithoutProductsCreatedInput, UserUncheckedCreateWithoutProductsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProductsCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutProductsUpdatedInput = {
+    create?: XOR<UserCreateWithoutProductsUpdatedInput, UserUncheckedCreateWithoutProductsUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProductsUpdatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutProductsDeletedInput = {
+    create?: XOR<UserCreateWithoutProductsDeletedInput, UserUncheckedCreateWithoutProductsDeletedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProductsDeletedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type OpportunityItemCreateNestedManyWithoutProductInput = {
+    create?: XOR<OpportunityItemCreateWithoutProductInput, OpportunityItemUncheckedCreateWithoutProductInput> | OpportunityItemCreateWithoutProductInput[] | OpportunityItemUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutProductInput | OpportunityItemCreateOrConnectWithoutProductInput[]
+    createMany?: OpportunityItemCreateManyProductInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+  }
+
+  export type OpportunityItemUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<OpportunityItemCreateWithoutProductInput, OpportunityItemUncheckedCreateWithoutProductInput> | OpportunityItemCreateWithoutProductInput[] | OpportunityItemUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutProductInput | OpportunityItemCreateOrConnectWithoutProductInput[]
+    createMany?: OpportunityItemCreateManyProductInputEnvelope
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutProductsNestedInput = {
+    create?: XOR<OrganizationCreateWithoutProductsInput, OrganizationUncheckedCreateWithoutProductsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutProductsInput
+    upsert?: OrganizationUpsertWithoutProductsInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutProductsInput, OrganizationUpdateWithoutProductsInput>, OrganizationUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutProductsCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutProductsCreatedInput, UserUncheckedCreateWithoutProductsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProductsCreatedInput
+    upsert?: UserUpsertWithoutProductsCreatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProductsCreatedInput, UserUpdateWithoutProductsCreatedInput>, UserUncheckedUpdateWithoutProductsCreatedInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutProductsUpdatedNestedInput = {
+    create?: XOR<UserCreateWithoutProductsUpdatedInput, UserUncheckedCreateWithoutProductsUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProductsUpdatedInput
+    upsert?: UserUpsertWithoutProductsUpdatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProductsUpdatedInput, UserUpdateWithoutProductsUpdatedInput>, UserUncheckedUpdateWithoutProductsUpdatedInput>
+  }
+
+  export type UserUpdateOneWithoutProductsDeletedNestedInput = {
+    create?: XOR<UserCreateWithoutProductsDeletedInput, UserUncheckedCreateWithoutProductsDeletedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProductsDeletedInput
+    upsert?: UserUpsertWithoutProductsDeletedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProductsDeletedInput, UserUpdateWithoutProductsDeletedInput>, UserUncheckedUpdateWithoutProductsDeletedInput>
+  }
+
+  export type OpportunityItemUpdateManyWithoutProductNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutProductInput, OpportunityItemUncheckedCreateWithoutProductInput> | OpportunityItemCreateWithoutProductInput[] | OpportunityItemUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutProductInput | OpportunityItemCreateOrConnectWithoutProductInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutProductInput | OpportunityItemUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: OpportunityItemCreateManyProductInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutProductInput | OpportunityItemUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutProductInput | OpportunityItemUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<OpportunityItemCreateWithoutProductInput, OpportunityItemUncheckedCreateWithoutProductInput> | OpportunityItemCreateWithoutProductInput[] | OpportunityItemUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OpportunityItemCreateOrConnectWithoutProductInput | OpportunityItemCreateOrConnectWithoutProductInput[]
+    upsert?: OpportunityItemUpsertWithWhereUniqueWithoutProductInput | OpportunityItemUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: OpportunityItemCreateManyProductInputEnvelope
+    set?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    disconnect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    delete?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    connect?: OpportunityItemWhereUniqueInput | OpportunityItemWhereUniqueInput[]
+    update?: OpportunityItemUpdateWithWhereUniqueWithoutProductInput | OpportunityItemUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: OpportunityItemUpdateManyWithWhereWithoutProductInput | OpportunityItemUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+  }
+
+  export type OrganizationCreateNestedOneWithoutOpportunityItemsInput = {
+    create?: XOR<OrganizationCreateWithoutOpportunityItemsInput, OrganizationUncheckedCreateWithoutOpportunityItemsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutOpportunityItemsInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type OpportunityCreateNestedOneWithoutItemsInput = {
+    create?: XOR<OpportunityCreateWithoutItemsInput, OpportunityUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: OpportunityCreateOrConnectWithoutItemsInput
+    connect?: OpportunityWhereUniqueInput
+  }
+
+  export type ProductCreateNestedOneWithoutOpportunityItemsInput = {
+    create?: XOR<ProductCreateWithoutOpportunityItemsInput, ProductUncheckedCreateWithoutOpportunityItemsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutOpportunityItemsInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutOpportunityItemsCreatedInput = {
+    create?: XOR<UserCreateWithoutOpportunityItemsCreatedInput, UserUncheckedCreateWithoutOpportunityItemsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOpportunityItemsCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutOpportunityItemsUpdatedInput = {
+    create?: XOR<UserCreateWithoutOpportunityItemsUpdatedInput, UserUncheckedCreateWithoutOpportunityItemsUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOpportunityItemsUpdatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutOpportunityItemsNestedInput = {
+    create?: XOR<OrganizationCreateWithoutOpportunityItemsInput, OrganizationUncheckedCreateWithoutOpportunityItemsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutOpportunityItemsInput
+    upsert?: OrganizationUpsertWithoutOpportunityItemsInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutOpportunityItemsInput, OrganizationUpdateWithoutOpportunityItemsInput>, OrganizationUncheckedUpdateWithoutOpportunityItemsInput>
+  }
+
+  export type OpportunityUpdateOneRequiredWithoutItemsNestedInput = {
+    create?: XOR<OpportunityCreateWithoutItemsInput, OpportunityUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: OpportunityCreateOrConnectWithoutItemsInput
+    upsert?: OpportunityUpsertWithoutItemsInput
+    connect?: OpportunityWhereUniqueInput
+    update?: XOR<XOR<OpportunityUpdateToOneWithWhereWithoutItemsInput, OpportunityUpdateWithoutItemsInput>, OpportunityUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type ProductUpdateOneRequiredWithoutOpportunityItemsNestedInput = {
+    create?: XOR<ProductCreateWithoutOpportunityItemsInput, ProductUncheckedCreateWithoutOpportunityItemsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutOpportunityItemsInput
+    upsert?: ProductUpsertWithoutOpportunityItemsInput
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutOpportunityItemsInput, ProductUpdateWithoutOpportunityItemsInput>, ProductUncheckedUpdateWithoutOpportunityItemsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutOpportunityItemsCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutOpportunityItemsCreatedInput, UserUncheckedCreateWithoutOpportunityItemsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOpportunityItemsCreatedInput
+    upsert?: UserUpsertWithoutOpportunityItemsCreatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOpportunityItemsCreatedInput, UserUpdateWithoutOpportunityItemsCreatedInput>, UserUncheckedUpdateWithoutOpportunityItemsCreatedInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutOpportunityItemsUpdatedNestedInput = {
+    create?: XOR<UserCreateWithoutOpportunityItemsUpdatedInput, UserUncheckedCreateWithoutOpportunityItemsUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOpportunityItemsUpdatedInput
+    upsert?: UserUpsertWithoutOpportunityItemsUpdatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOpportunityItemsUpdatedInput, UserUpdateWithoutOpportunityItemsUpdatedInput>, UserUncheckedUpdateWithoutOpportunityItemsUpdatedInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -37629,6 +44943,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutMembershipsInput
+    ownedOpportunities?: OpportunityCreateNestedManyWithoutOwnerMembershipInput
   }
 
   export type OrganizationMembershipUncheckedCreateWithoutOrganizationInput = {
@@ -37638,6 +44953,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    ownedOpportunities?: OpportunityUncheckedCreateNestedManyWithoutOwnerMembershipInput
   }
 
   export type OrganizationMembershipCreateOrConnectWithoutOrganizationInput = {
@@ -38191,10 +45507,12 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutOrganizationInput = {
@@ -38216,6 +45534,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutOrganizationInput = {
@@ -38225,6 +45544,120 @@ export namespace Prisma {
 
   export type OpportunityCreateManyOrganizationInputEnvelope = {
     data: OpportunityCreateManyOrganizationInput | OpportunityCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RoleCreateWithoutOrganizationInput = {
+    id?: string
+    code: string
+    name: string
+    isSystem?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    permissions?: RolePermissionCreateNestedManyWithoutRoleInput
+  }
+
+  export type RoleUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    code: string
+    name: string
+    isSystem?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
+  }
+
+  export type RoleCreateOrConnectWithoutOrganizationInput = {
+    where: RoleWhereUniqueInput
+    create: XOR<RoleCreateWithoutOrganizationInput, RoleUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type RoleCreateManyOrganizationInputEnvelope = {
+    data: RoleCreateManyOrganizationInput | RoleCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProductCreateWithoutOrganizationInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    creator: UserCreateNestedOneWithoutProductsCreatedInput
+    updater: UserCreateNestedOneWithoutProductsUpdatedInput
+    deleter?: UserCreateNestedOneWithoutProductsDeletedInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutOrganizationInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutOrganizationInput, ProductUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type ProductCreateManyOrganizationInputEnvelope = {
+    data: ProductCreateManyOrganizationInput | ProductCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OpportunityItemCreateWithoutOrganizationInput = {
+    id?: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    opportunity: OpportunityCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutOpportunityItemsInput
+    creator: UserCreateNestedOneWithoutOpportunityItemsCreatedInput
+    updater: UserCreateNestedOneWithoutOpportunityItemsUpdatedInput
+  }
+
+  export type OpportunityItemUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    opportunityId: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+  }
+
+  export type OpportunityItemCreateOrConnectWithoutOrganizationInput = {
+    where: OpportunityItemWhereUniqueInput
+    create: XOR<OpportunityItemCreateWithoutOrganizationInput, OpportunityItemUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type OpportunityItemCreateManyOrganizationInputEnvelope = {
+    data: OpportunityItemCreateManyOrganizationInput | OpportunityItemCreateManyOrganizationInput[]
     skipDuplicates?: boolean
   }
 
@@ -38766,6 +46199,341 @@ export namespace Prisma {
     deletedBy?: UuidNullableFilter<"Opportunity"> | string | null
   }
 
+  export type RoleUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: RoleWhereUniqueInput
+    update: XOR<RoleUpdateWithoutOrganizationInput, RoleUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<RoleCreateWithoutOrganizationInput, RoleUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type RoleUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: RoleWhereUniqueInput
+    data: XOR<RoleUpdateWithoutOrganizationInput, RoleUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type RoleUpdateManyWithWhereWithoutOrganizationInput = {
+    where: RoleScalarWhereInput
+    data: XOR<RoleUpdateManyMutationInput, RoleUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type RoleScalarWhereInput = {
+    AND?: RoleScalarWhereInput | RoleScalarWhereInput[]
+    OR?: RoleScalarWhereInput[]
+    NOT?: RoleScalarWhereInput | RoleScalarWhereInput[]
+    id?: UuidFilter<"Role"> | string
+    organizationId?: UuidFilter<"Role"> | string
+    code?: StringFilter<"Role"> | string
+    name?: StringFilter<"Role"> | string
+    isSystem?: BoolFilter<"Role"> | boolean
+    createdAt?: DateTimeFilter<"Role"> | Date | string
+    updatedAt?: DateTimeFilter<"Role"> | Date | string
+  }
+
+  export type ProductUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: ProductWhereUniqueInput
+    update: XOR<ProductUpdateWithoutOrganizationInput, ProductUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<ProductCreateWithoutOrganizationInput, ProductUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type ProductUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: ProductWhereUniqueInput
+    data: XOR<ProductUpdateWithoutOrganizationInput, ProductUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type ProductUpdateManyWithWhereWithoutOrganizationInput = {
+    where: ProductScalarWhereInput
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type ProductScalarWhereInput = {
+    AND?: ProductScalarWhereInput | ProductScalarWhereInput[]
+    OR?: ProductScalarWhereInput[]
+    NOT?: ProductScalarWhereInput | ProductScalarWhereInput[]
+    id?: UuidFilter<"Product"> | string
+    organizationId?: UuidFilter<"Product"> | string
+    code?: StringFilter<"Product"> | string
+    name?: StringFilter<"Product"> | string
+    description?: StringNullableFilter<"Product"> | string | null
+    unitPrice?: DecimalFilter<"Product"> | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFilter<"Product"> | boolean
+    createdAt?: DateTimeFilter<"Product"> | Date | string
+    updatedAt?: DateTimeFilter<"Product"> | Date | string
+    createdBy?: UuidFilter<"Product"> | string
+    updatedBy?: UuidFilter<"Product"> | string
+    version?: IntFilter<"Product"> | number
+    deletedAt?: DateTimeNullableFilter<"Product"> | Date | string | null
+    deletedBy?: UuidNullableFilter<"Product"> | string | null
+  }
+
+  export type OpportunityItemUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: OpportunityItemWhereUniqueInput
+    update: XOR<OpportunityItemUpdateWithoutOrganizationInput, OpportunityItemUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<OpportunityItemCreateWithoutOrganizationInput, OpportunityItemUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type OpportunityItemUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: OpportunityItemWhereUniqueInput
+    data: XOR<OpportunityItemUpdateWithoutOrganizationInput, OpportunityItemUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type OpportunityItemUpdateManyWithWhereWithoutOrganizationInput = {
+    where: OpportunityItemScalarWhereInput
+    data: XOR<OpportunityItemUpdateManyMutationInput, OpportunityItemUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type OpportunityItemScalarWhereInput = {
+    AND?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+    OR?: OpportunityItemScalarWhereInput[]
+    NOT?: OpportunityItemScalarWhereInput | OpportunityItemScalarWhereInput[]
+    id?: UuidFilter<"OpportunityItem"> | string
+    organizationId?: UuidFilter<"OpportunityItem"> | string
+    opportunityId?: UuidFilter<"OpportunityItem"> | string
+    productId?: UuidFilter<"OpportunityItem"> | string
+    description?: StringFilter<"OpportunityItem"> | string
+    quantity?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFilter<"OpportunityItem"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFilter<"OpportunityItem"> | Date | string
+    updatedAt?: DateTimeFilter<"OpportunityItem"> | Date | string
+    createdBy?: UuidFilter<"OpportunityItem"> | string
+    updatedBy?: UuidFilter<"OpportunityItem"> | string
+  }
+
+  export type OrganizationCreateWithoutRolesInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryCreateNestedManyWithoutOrganizationInput
+    tags?: TagCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutRolesInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelUncheckedCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactUncheckedCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryUncheckedCreateNestedManyWithoutOrganizationInput
+    tags?: TagUncheckedCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagUncheckedCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagUncheckedCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutRolesInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutRolesInput, OrganizationUncheckedCreateWithoutRolesInput>
+  }
+
+  export type RolePermissionCreateWithoutRoleInput = {
+    id?: string
+    organizationId: string
+    permission: string
+    scope?: string
+  }
+
+  export type RolePermissionUncheckedCreateWithoutRoleInput = {
+    id?: string
+    organizationId: string
+    permission: string
+    scope?: string
+  }
+
+  export type RolePermissionCreateOrConnectWithoutRoleInput = {
+    where: RolePermissionWhereUniqueInput
+    create: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput>
+  }
+
+  export type RolePermissionCreateManyRoleInputEnvelope = {
+    data: RolePermissionCreateManyRoleInput | RolePermissionCreateManyRoleInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OrganizationUpsertWithoutRolesInput = {
+    update: XOR<OrganizationUpdateWithoutRolesInput, OrganizationUncheckedUpdateWithoutRolesInput>
+    create: XOR<OrganizationCreateWithoutRolesInput, OrganizationUncheckedCreateWithoutRolesInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutRolesInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutRolesInput, OrganizationUncheckedUpdateWithoutRolesInput>
+  }
+
+  export type OrganizationUpdateWithoutRolesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutRolesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type RolePermissionUpsertWithWhereUniqueWithoutRoleInput = {
+    where: RolePermissionWhereUniqueInput
+    update: XOR<RolePermissionUpdateWithoutRoleInput, RolePermissionUncheckedUpdateWithoutRoleInput>
+    create: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput>
+  }
+
+  export type RolePermissionUpdateWithWhereUniqueWithoutRoleInput = {
+    where: RolePermissionWhereUniqueInput
+    data: XOR<RolePermissionUpdateWithoutRoleInput, RolePermissionUncheckedUpdateWithoutRoleInput>
+  }
+
+  export type RolePermissionUpdateManyWithWhereWithoutRoleInput = {
+    where: RolePermissionScalarWhereInput
+    data: XOR<RolePermissionUpdateManyMutationInput, RolePermissionUncheckedUpdateManyWithoutRoleInput>
+  }
+
+  export type RolePermissionScalarWhereInput = {
+    AND?: RolePermissionScalarWhereInput | RolePermissionScalarWhereInput[]
+    OR?: RolePermissionScalarWhereInput[]
+    NOT?: RolePermissionScalarWhereInput | RolePermissionScalarWhereInput[]
+    id?: UuidFilter<"RolePermission"> | string
+    roleId?: UuidFilter<"RolePermission"> | string
+    organizationId?: UuidFilter<"RolePermission"> | string
+    permission?: StringFilter<"RolePermission"> | string
+    scope?: StringFilter<"RolePermission"> | string
+  }
+
+  export type RoleCreateWithoutPermissionsInput = {
+    id?: string
+    code: string
+    name: string
+    isSystem?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutRolesInput
+  }
+
+  export type RoleUncheckedCreateWithoutPermissionsInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    isSystem?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RoleCreateOrConnectWithoutPermissionsInput = {
+    where: RoleWhereUniqueInput
+    create: XOR<RoleCreateWithoutPermissionsInput, RoleUncheckedCreateWithoutPermissionsInput>
+  }
+
+  export type RoleUpsertWithoutPermissionsInput = {
+    update: XOR<RoleUpdateWithoutPermissionsInput, RoleUncheckedUpdateWithoutPermissionsInput>
+    create: XOR<RoleCreateWithoutPermissionsInput, RoleUncheckedCreateWithoutPermissionsInput>
+    where?: RoleWhereInput
+  }
+
+  export type RoleUpdateToOneWithWhereWithoutPermissionsInput = {
+    where?: RoleWhereInput
+    data: XOR<RoleUpdateWithoutPermissionsInput, RoleUncheckedUpdateWithoutPermissionsInput>
+  }
+
+  export type RoleUpdateWithoutPermissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutRolesNestedInput
+  }
+
+  export type RoleUncheckedUpdateWithoutPermissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type OrganizationMembershipCreateWithoutUserInput = {
     id?: string
     role: $Enums.MembershipRole
@@ -38773,6 +46541,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     organization: OrganizationCreateNestedOneWithoutMembershipsInput
+    ownedOpportunities?: OpportunityCreateNestedManyWithoutOwnerMembershipInput
   }
 
   export type OrganizationMembershipUncheckedCreateWithoutUserInput = {
@@ -38782,6 +46551,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    ownedOpportunities?: OpportunityUncheckedCreateNestedManyWithoutOwnerMembershipInput
   }
 
   export type OrganizationMembershipCreateOrConnectWithoutUserInput = {
@@ -39445,10 +47215,12 @@ export namespace Prisma {
     stage: PipelineStageCreateNestedOneWithoutOpportunitiesInput
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutOwnerInput = {
@@ -39470,6 +47242,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutOwnerInput = {
@@ -39498,9 +47271,11 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutCreatorInput = {
@@ -39522,6 +47297,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutCreatorInput = {
@@ -39550,9 +47326,11 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutUpdaterInput = {
@@ -39574,6 +47352,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutUpdaterInput = {
@@ -39602,9 +47381,11 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutDeleterInput = {
@@ -39626,6 +47407,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutDeleterInput = {
@@ -39635,6 +47417,218 @@ export namespace Prisma {
 
   export type OpportunityCreateManyDeleterInputEnvelope = {
     data: OpportunityCreateManyDeleterInput | OpportunityCreateManyDeleterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProductCreateWithoutCreatorInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutProductsInput
+    updater: UserCreateNestedOneWithoutProductsUpdatedInput
+    deleter?: UserCreateNestedOneWithoutProductsDeletedInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutCreatorInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutCreatorInput, ProductUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type ProductCreateManyCreatorInputEnvelope = {
+    data: ProductCreateManyCreatorInput | ProductCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProductCreateWithoutUpdaterInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutProductsInput
+    creator: UserCreateNestedOneWithoutProductsCreatedInput
+    deleter?: UserCreateNestedOneWithoutProductsDeletedInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutUpdaterInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutUpdaterInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutUpdaterInput, ProductUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type ProductCreateManyUpdaterInputEnvelope = {
+    data: ProductCreateManyUpdaterInput | ProductCreateManyUpdaterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProductCreateWithoutDeleterInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutProductsInput
+    creator: UserCreateNestedOneWithoutProductsCreatedInput
+    updater: UserCreateNestedOneWithoutProductsUpdatedInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutDeleterInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutDeleterInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutDeleterInput, ProductUncheckedCreateWithoutDeleterInput>
+  }
+
+  export type ProductCreateManyDeleterInputEnvelope = {
+    data: ProductCreateManyDeleterInput | ProductCreateManyDeleterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OpportunityItemCreateWithoutCreatorInput = {
+    id?: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutOpportunityItemsInput
+    opportunity: OpportunityCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutOpportunityItemsInput
+    updater: UserCreateNestedOneWithoutOpportunityItemsUpdatedInput
+  }
+
+  export type OpportunityItemUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    organizationId: string
+    opportunityId: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy: string
+  }
+
+  export type OpportunityItemCreateOrConnectWithoutCreatorInput = {
+    where: OpportunityItemWhereUniqueInput
+    create: XOR<OpportunityItemCreateWithoutCreatorInput, OpportunityItemUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type OpportunityItemCreateManyCreatorInputEnvelope = {
+    data: OpportunityItemCreateManyCreatorInput | OpportunityItemCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OpportunityItemCreateWithoutUpdaterInput = {
+    id?: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutOpportunityItemsInput
+    opportunity: OpportunityCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutOpportunityItemsInput
+    creator: UserCreateNestedOneWithoutOpportunityItemsCreatedInput
+  }
+
+  export type OpportunityItemUncheckedCreateWithoutUpdaterInput = {
+    id?: string
+    organizationId: string
+    opportunityId: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+  }
+
+  export type OpportunityItemCreateOrConnectWithoutUpdaterInput = {
+    where: OpportunityItemWhereUniqueInput
+    create: XOR<OpportunityItemCreateWithoutUpdaterInput, OpportunityItemUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type OpportunityItemCreateManyUpdaterInputEnvelope = {
+    data: OpportunityItemCreateManyUpdaterInput | OpportunityItemCreateManyUpdaterInput[]
     skipDuplicates?: boolean
   }
 
@@ -39926,6 +47920,86 @@ export namespace Prisma {
     data: XOR<OpportunityUpdateManyMutationInput, OpportunityUncheckedUpdateManyWithoutDeleterInput>
   }
 
+  export type ProductUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: ProductWhereUniqueInput
+    update: XOR<ProductUpdateWithoutCreatorInput, ProductUncheckedUpdateWithoutCreatorInput>
+    create: XOR<ProductCreateWithoutCreatorInput, ProductUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type ProductUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: ProductWhereUniqueInput
+    data: XOR<ProductUpdateWithoutCreatorInput, ProductUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type ProductUpdateManyWithWhereWithoutCreatorInput = {
+    where: ProductScalarWhereInput
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type ProductUpsertWithWhereUniqueWithoutUpdaterInput = {
+    where: ProductWhereUniqueInput
+    update: XOR<ProductUpdateWithoutUpdaterInput, ProductUncheckedUpdateWithoutUpdaterInput>
+    create: XOR<ProductCreateWithoutUpdaterInput, ProductUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type ProductUpdateWithWhereUniqueWithoutUpdaterInput = {
+    where: ProductWhereUniqueInput
+    data: XOR<ProductUpdateWithoutUpdaterInput, ProductUncheckedUpdateWithoutUpdaterInput>
+  }
+
+  export type ProductUpdateManyWithWhereWithoutUpdaterInput = {
+    where: ProductScalarWhereInput
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutUpdaterInput>
+  }
+
+  export type ProductUpsertWithWhereUniqueWithoutDeleterInput = {
+    where: ProductWhereUniqueInput
+    update: XOR<ProductUpdateWithoutDeleterInput, ProductUncheckedUpdateWithoutDeleterInput>
+    create: XOR<ProductCreateWithoutDeleterInput, ProductUncheckedCreateWithoutDeleterInput>
+  }
+
+  export type ProductUpdateWithWhereUniqueWithoutDeleterInput = {
+    where: ProductWhereUniqueInput
+    data: XOR<ProductUpdateWithoutDeleterInput, ProductUncheckedUpdateWithoutDeleterInput>
+  }
+
+  export type ProductUpdateManyWithWhereWithoutDeleterInput = {
+    where: ProductScalarWhereInput
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutDeleterInput>
+  }
+
+  export type OpportunityItemUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: OpportunityItemWhereUniqueInput
+    update: XOR<OpportunityItemUpdateWithoutCreatorInput, OpportunityItemUncheckedUpdateWithoutCreatorInput>
+    create: XOR<OpportunityItemCreateWithoutCreatorInput, OpportunityItemUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type OpportunityItemUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: OpportunityItemWhereUniqueInput
+    data: XOR<OpportunityItemUpdateWithoutCreatorInput, OpportunityItemUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type OpportunityItemUpdateManyWithWhereWithoutCreatorInput = {
+    where: OpportunityItemScalarWhereInput
+    data: XOR<OpportunityItemUpdateManyMutationInput, OpportunityItemUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type OpportunityItemUpsertWithWhereUniqueWithoutUpdaterInput = {
+    where: OpportunityItemWhereUniqueInput
+    update: XOR<OpportunityItemUpdateWithoutUpdaterInput, OpportunityItemUncheckedUpdateWithoutUpdaterInput>
+    create: XOR<OpportunityItemCreateWithoutUpdaterInput, OpportunityItemUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type OpportunityItemUpdateWithWhereUniqueWithoutUpdaterInput = {
+    where: OpportunityItemWhereUniqueInput
+    data: XOR<OpportunityItemUpdateWithoutUpdaterInput, OpportunityItemUncheckedUpdateWithoutUpdaterInput>
+  }
+
+  export type OpportunityItemUpdateManyWithWhereWithoutUpdaterInput = {
+    where: OpportunityItemScalarWhereInput
+    data: XOR<OpportunityItemUpdateManyMutationInput, OpportunityItemUncheckedUpdateManyWithoutUpdaterInput>
+  }
+
   export type OrganizationCreateWithoutMembershipsInput = {
     id?: string
     name: string
@@ -39949,6 +48023,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutMembershipsInput = {
@@ -39974,6 +48051,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutMembershipsInput = {
@@ -40007,6 +48087,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -40035,11 +48120,70 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutMembershipsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutMembershipsInput, UserUncheckedCreateWithoutMembershipsInput>
+  }
+
+  export type OpportunityCreateWithoutOwnerMembershipInput = {
+    id?: string
+    title: string
+    estimatedValue: Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutOpportunitiesInput
+    pipeline: PipelineCreateNestedOneWithoutOpportunitiesInput
+    stage: PipelineStageCreateNestedOneWithoutOpportunitiesInput
+    company?: CompanyCreateNestedOneWithoutOpportunitiesInput
+    contact?: ContactCreateNestedOneWithoutOpportunitiesInput
+    owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
+    updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
+    deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
+    activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
+  }
+
+  export type OpportunityUncheckedCreateWithoutOwnerMembershipInput = {
+    id?: string
+    pipelineId: string
+    stageId: string
+    companyId?: string | null
+    contactId?: string | null
+    title: string
+    estimatedValue: Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
+  }
+
+  export type OpportunityCreateOrConnectWithoutOwnerMembershipInput = {
+    where: OpportunityWhereUniqueInput
+    create: XOR<OpportunityCreateWithoutOwnerMembershipInput, OpportunityUncheckedCreateWithoutOwnerMembershipInput>
+  }
+
+  export type OpportunityCreateManyOwnerMembershipInputEnvelope = {
+    data: OpportunityCreateManyOwnerMembershipInput | OpportunityCreateManyOwnerMembershipInput[]
+    skipDuplicates?: boolean
   }
 
   export type OrganizationUpsertWithoutMembershipsInput = {
@@ -40076,6 +48220,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
@@ -40101,6 +48248,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutMembershipsInput = {
@@ -40140,6 +48290,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -40168,6 +48323,27 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type OpportunityUpsertWithWhereUniqueWithoutOwnerMembershipInput = {
+    where: OpportunityWhereUniqueInput
+    update: XOR<OpportunityUpdateWithoutOwnerMembershipInput, OpportunityUncheckedUpdateWithoutOwnerMembershipInput>
+    create: XOR<OpportunityCreateWithoutOwnerMembershipInput, OpportunityUncheckedCreateWithoutOwnerMembershipInput>
+  }
+
+  export type OpportunityUpdateWithWhereUniqueWithoutOwnerMembershipInput = {
+    where: OpportunityWhereUniqueInput
+    data: XOR<OpportunityUpdateWithoutOwnerMembershipInput, OpportunityUncheckedUpdateWithoutOwnerMembershipInput>
+  }
+
+  export type OpportunityUpdateManyWithWhereWithoutOwnerMembershipInput = {
+    where: OpportunityScalarWhereInput
+    data: XOR<OpportunityUpdateManyMutationInput, OpportunityUncheckedUpdateManyWithoutOwnerMembershipInput>
   }
 
   export type OrganizationCreateWithoutRefreshSessionsInput = {
@@ -40193,6 +48369,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRefreshSessionsInput = {
@@ -40218,6 +48397,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRefreshSessionsInput = {
@@ -40251,6 +48433,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutRefreshSessionsInput = {
@@ -40279,6 +48466,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutRefreshSessionsInput = {
@@ -40320,6 +48512,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRefreshSessionsInput = {
@@ -40345,6 +48540,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutRefreshSessionsInput = {
@@ -40384,6 +48582,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRefreshSessionsInput = {
@@ -40412,6 +48615,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutAuditLogsInput = {
@@ -40437,6 +48645,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
@@ -40462,6 +48673,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutAuditLogsInput = {
@@ -40495,6 +48709,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -40523,6 +48742,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -40564,6 +48788,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
@@ -40589,6 +48816,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutAuditLogsInput = {
@@ -40628,6 +48858,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -40656,6 +48891,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutCompaniesInput = {
@@ -40681,6 +48921,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompaniesInput = {
@@ -40706,6 +48949,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompaniesInput = {
@@ -40739,6 +48985,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutCompaniesCreatedInput = {
@@ -40767,6 +49018,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutCompaniesCreatedInput = {
@@ -40800,6 +49056,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutCompaniesUpdatedInput = {
@@ -40828,6 +49089,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutCompaniesUpdatedInput = {
@@ -40861,6 +49127,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutCompaniesDeletedInput = {
@@ -40889,6 +49160,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutCompaniesDeletedInput = {
@@ -40907,7 +49183,6 @@ export namespace Prisma {
 
   export type CompanyContactUncheckedCreateWithoutCompanyInput = {
     id?: string
-    organizationId: string
     contactId: string
     relationshipLabel?: string | null
     isPrimary?: boolean
@@ -41077,15 +49352,16 @@ export namespace Prisma {
     stage: PipelineStageCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutCompanyInput = {
     id?: string
-    organizationId: string
     pipelineId: string
     stageId: string
     contactId?: string | null
@@ -41102,6 +49378,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutCompanyInput = {
@@ -41148,6 +49425,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompaniesInput = {
@@ -41173,6 +49453,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutCompaniesCreatedInput = {
@@ -41212,6 +49495,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompaniesCreatedInput = {
@@ -41240,6 +49528,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutCompaniesUpdatedInput = {
@@ -41279,6 +49572,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompaniesUpdatedInput = {
@@ -41307,6 +49605,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutCompaniesDeletedInput = {
@@ -41346,6 +49649,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompaniesDeletedInput = {
@@ -41374,6 +49682,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type CompanyContactUpsertWithWhereUniqueWithoutCompanyInput = {
@@ -41495,6 +49808,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactsInput = {
@@ -41520,6 +49836,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactsInput = {
@@ -41553,6 +49872,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutContactsCreatedInput = {
@@ -41581,6 +49905,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutContactsCreatedInput = {
@@ -41614,6 +49943,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutContactsUpdatedInput = {
@@ -41642,6 +49976,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutContactsUpdatedInput = {
@@ -41675,6 +50014,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutContactsDeletedInput = {
@@ -41703,6 +50047,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutContactsDeletedInput = {
@@ -41753,7 +50102,6 @@ export namespace Prisma {
 
   export type CompanyContactUncheckedCreateWithoutContactInput = {
     id?: string
-    organizationId: string
     companyId: string
     relationshipLabel?: string | null
     isPrimary?: boolean
@@ -41923,15 +50271,16 @@ export namespace Prisma {
     stage: PipelineStageCreateNestedOneWithoutOpportunitiesInput
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutContactInput = {
     id?: string
-    organizationId: string
     pipelineId: string
     stageId: string
     companyId?: string | null
@@ -41948,6 +50297,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutContactInput = {
@@ -41994,6 +50344,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactsInput = {
@@ -42019,6 +50372,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutContactsCreatedInput = {
@@ -42058,6 +50414,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContactsCreatedInput = {
@@ -42086,6 +50447,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutContactsUpdatedInput = {
@@ -42125,6 +50491,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContactsUpdatedInput = {
@@ -42153,6 +50524,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutContactsDeletedInput = {
@@ -42192,6 +50568,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContactsDeletedInput = {
@@ -42220,6 +50601,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type ContactChannelUpsertWithWhereUniqueWithoutContactInput = {
@@ -42357,6 +50743,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactChannelsInput = {
@@ -42382,6 +50771,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactChannelsInput = {
@@ -42470,6 +50862,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactChannelsInput = {
@@ -42495,6 +50890,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ContactUpsertWithoutChannelsInput = {
@@ -42573,6 +50971,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompanyContactsInput = {
@@ -42598,6 +50999,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompanyContactsInput = {
@@ -42735,6 +51139,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompanyContactsInput = {
@@ -42760,6 +51167,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutContactLinksInput = {
@@ -42893,6 +51303,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRelationshipEntriesInput = {
@@ -42918,6 +51331,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRelationshipEntriesInput = {
@@ -43047,6 +51463,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutRelationshipEntriesAuthoredInput = {
@@ -43075,6 +51496,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutRelationshipEntriesAuthoredInput = {
@@ -43116,6 +51542,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRelationshipEntriesInput = {
@@ -43141,6 +51570,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutRelationshipEntriesInput = {
@@ -43288,6 +51720,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRelationshipEntriesAuthoredInput = {
@@ -43316,6 +51753,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutTagsInput = {
@@ -43341,6 +51783,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTagsInput = {
@@ -43366,6 +51811,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTagsInput = {
@@ -43455,6 +51903,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTagsInput = {
@@ -43480,6 +51931,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyTagUpsertWithWhereUniqueWithoutTagInput = {
@@ -43537,6 +51991,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompanyTagsInput = {
@@ -43562,6 +52019,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompanyTagsInput = {
@@ -43675,6 +52135,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompanyTagsInput = {
@@ -43700,6 +52163,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutTagLinksInput = {
@@ -43809,6 +52275,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactTagsInput = {
@@ -43834,6 +52303,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactTagsInput = {
@@ -43945,6 +52417,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactTagsInput = {
@@ -43970,6 +52445,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ContactUpsertWithoutTagLinksInput = {
@@ -44077,6 +52555,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput = {
@@ -44102,6 +52583,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCustomFieldDefinitionsInput = {
@@ -44199,6 +52683,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput = {
@@ -44224,6 +52711,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyCustomFieldValueUpsertWithWhereUniqueWithoutDefinitionInput = {
@@ -44281,6 +52771,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompanyCustomFieldValuesInput = {
@@ -44306,6 +52799,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompanyCustomFieldValuesInput = {
@@ -44431,6 +52927,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompanyCustomFieldValuesInput = {
@@ -44456,6 +52955,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutCustomFieldValuesInput = {
@@ -44577,6 +53079,9 @@ export namespace Prisma {
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactCustomFieldValuesInput = {
@@ -44602,6 +53107,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactCustomFieldValuesInput = {
@@ -44725,6 +53233,9 @@ export namespace Prisma {
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactCustomFieldValuesInput = {
@@ -44750,6 +53261,9 @@ export namespace Prisma {
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ContactUpsertWithoutCustomFieldValuesInput = {
@@ -44869,6 +53383,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutPipelinesInput = {
@@ -44894,6 +53411,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutPipelinesInput = {
@@ -44948,15 +53468,16 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutPipelineInput = {
     id?: string
-    organizationId: string
     stageId: string
     companyId?: string | null
     contactId?: string | null
@@ -44973,6 +53494,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutPipelineInput = {
@@ -45019,6 +53541,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutPipelinesInput = {
@@ -45044,6 +53569,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type PipelineStageUpsertWithWhereUniqueWithoutPipelineInput = {
@@ -45135,16 +53663,16 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
     activities?: ActivityCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutStageInput = {
     id?: string
-    organizationId: string
-    pipelineId: string
     companyId?: string | null
     contactId?: string | null
     ownerUserId: string
@@ -45160,6 +53688,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutStageInput = {
@@ -45244,6 +53773,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutActivitiesInput = {
@@ -45269,6 +53801,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutActivitiesInput = {
@@ -45388,9 +53923,11 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutOpportunitiesInput
     contact?: ContactCreateNestedOneWithoutOpportunitiesInput
     owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
     creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
     updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
     deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
+    items?: OpportunityItemCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityUncheckedCreateWithoutActivitiesInput = {
@@ -45412,6 +53949,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    items?: OpportunityItemUncheckedCreateNestedManyWithoutOpportunityInput
   }
 
   export type OpportunityCreateOrConnectWithoutActivitiesInput = {
@@ -45445,6 +53983,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesOwnedInput = {
@@ -45473,6 +54016,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesOwnedInput = {
@@ -45506,6 +54054,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesCreatedInput = {
@@ -45534,6 +54087,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesCreatedInput = {
@@ -45567,6 +54125,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesUpdatedInput = {
@@ -45595,6 +54158,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesUpdatedInput = {
@@ -45628,6 +54196,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesDeletedInput = {
@@ -45656,6 +54229,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesDeletedInput = {
@@ -45697,6 +54275,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutActivitiesInput = {
@@ -45722,6 +54303,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutActivitiesInput = {
@@ -45859,9 +54443,11 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutActivitiesInput = {
@@ -45883,6 +54469,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type UserUpsertWithoutActivitiesOwnedInput = {
@@ -45922,6 +54509,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesOwnedInput = {
@@ -45950,6 +54542,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutActivitiesCreatedInput = {
@@ -45989,6 +54586,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesCreatedInput = {
@@ -46017,6 +54619,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutActivitiesUpdatedInput = {
@@ -46056,6 +54663,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesUpdatedInput = {
@@ -46084,6 +54696,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutActivitiesDeletedInput = {
@@ -46123,6 +54740,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesDeletedInput = {
@@ -46151,6 +54773,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutOpportunitiesInput = {
@@ -46176,6 +54803,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
     pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
     activities?: ActivityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutOpportunitiesInput = {
@@ -46201,6 +54831,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
     pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
     activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutOpportunitiesInput = {
@@ -46385,6 +55018,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesOwnedInput = {
@@ -46413,11 +55051,41 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesOwnedInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutOpportunitiesOwnedInput, UserUncheckedCreateWithoutOpportunitiesOwnedInput>
+  }
+
+  export type OrganizationMembershipCreateWithoutOwnedOpportunitiesInput = {
+    id?: string
+    role: $Enums.MembershipRole
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutMembershipsInput
+    user: UserCreateNestedOneWithoutMembershipsInput
+  }
+
+  export type OrganizationMembershipUncheckedCreateWithoutOwnedOpportunitiesInput = {
+    id?: string
+    organizationId: string
+    userId: string
+    role: $Enums.MembershipRole
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OrganizationMembershipCreateOrConnectWithoutOwnedOpportunitiesInput = {
+    where: OrganizationMembershipWhereUniqueInput
+    create: XOR<OrganizationMembershipCreateWithoutOwnedOpportunitiesInput, OrganizationMembershipUncheckedCreateWithoutOwnedOpportunitiesInput>
   }
 
   export type UserCreateWithoutOpportunitiesCreatedInput = {
@@ -46446,6 +55114,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesCreatedInput = {
@@ -46474,6 +55147,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesCreatedInput = {
@@ -46507,6 +55185,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesUpdatedInput = {
@@ -46535,6 +55218,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesUpdatedInput = {
@@ -46568,6 +55256,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
     opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesDeletedInput = {
@@ -46596,6 +55289,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
     opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
     opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesDeletedInput = {
@@ -46656,6 +55354,45 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type OpportunityItemCreateWithoutOpportunityInput = {
+    id?: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutOpportunityItemsInput
+    product: ProductCreateNestedOneWithoutOpportunityItemsInput
+    creator: UserCreateNestedOneWithoutOpportunityItemsCreatedInput
+    updater: UserCreateNestedOneWithoutOpportunityItemsUpdatedInput
+  }
+
+  export type OpportunityItemUncheckedCreateWithoutOpportunityInput = {
+    id?: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+  }
+
+  export type OpportunityItemCreateOrConnectWithoutOpportunityInput = {
+    where: OpportunityItemWhereUniqueInput
+    create: XOR<OpportunityItemCreateWithoutOpportunityInput, OpportunityItemUncheckedCreateWithoutOpportunityInput>
+  }
+
+  export type OpportunityItemCreateManyOpportunityInputEnvelope = {
+    data: OpportunityItemCreateManyOpportunityInput | OpportunityItemCreateManyOpportunityInput[]
+    skipDuplicates?: boolean
+  }
+
   export type OrganizationUpsertWithoutOpportunitiesInput = {
     update: XOR<OrganizationUpdateWithoutOpportunitiesInput, OrganizationUncheckedUpdateWithoutOpportunitiesInput>
     create: XOR<OrganizationCreateWithoutOpportunitiesInput, OrganizationUncheckedCreateWithoutOpportunitiesInput>
@@ -46690,6 +55427,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
     pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutOpportunitiesInput = {
@@ -46715,6 +55455,9 @@ export namespace Prisma {
     contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
     pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
     activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type PipelineUpsertWithoutOpportunitiesInput = {
@@ -46929,6 +55672,11 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesOwnedInput = {
@@ -46957,6 +55705,42 @@ export namespace Prisma {
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type OrganizationMembershipUpsertWithoutOwnedOpportunitiesInput = {
+    update: XOR<OrganizationMembershipUpdateWithoutOwnedOpportunitiesInput, OrganizationMembershipUncheckedUpdateWithoutOwnedOpportunitiesInput>
+    create: XOR<OrganizationMembershipCreateWithoutOwnedOpportunitiesInput, OrganizationMembershipUncheckedCreateWithoutOwnedOpportunitiesInput>
+    where?: OrganizationMembershipWhereInput
+  }
+
+  export type OrganizationMembershipUpdateToOneWithWhereWithoutOwnedOpportunitiesInput = {
+    where?: OrganizationMembershipWhereInput
+    data: XOR<OrganizationMembershipUpdateWithoutOwnedOpportunitiesInput, OrganizationMembershipUncheckedUpdateWithoutOwnedOpportunitiesInput>
+  }
+
+  export type OrganizationMembershipUpdateWithoutOwnedOpportunitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumMembershipRoleFieldUpdateOperationsInput | $Enums.MembershipRole
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
+    user?: UserUpdateOneRequiredWithoutMembershipsNestedInput
+  }
+
+  export type OrganizationMembershipUncheckedUpdateWithoutOwnedOpportunitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    role?: EnumMembershipRoleFieldUpdateOperationsInput | $Enums.MembershipRole
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUpsertWithoutOpportunitiesCreatedInput = {
@@ -46996,6 +55780,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesCreatedInput = {
@@ -47024,6 +55813,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutOpportunitiesUpdatedInput = {
@@ -47063,6 +55857,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesUpdatedInput = {
@@ -47091,6 +55890,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutOpportunitiesDeletedInput = {
@@ -47130,6 +55934,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
     opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesDeletedInput = {
@@ -47158,6 +55967,11 @@ export namespace Prisma {
     opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
     opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
     opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type ActivityUpsertWithWhereUniqueWithoutOpportunityInput = {
@@ -47174,6 +55988,1263 @@ export namespace Prisma {
   export type ActivityUpdateManyWithWhereWithoutOpportunityInput = {
     where: ActivityScalarWhereInput
     data: XOR<ActivityUpdateManyMutationInput, ActivityUncheckedUpdateManyWithoutOpportunityInput>
+  }
+
+  export type OpportunityItemUpsertWithWhereUniqueWithoutOpportunityInput = {
+    where: OpportunityItemWhereUniqueInput
+    update: XOR<OpportunityItemUpdateWithoutOpportunityInput, OpportunityItemUncheckedUpdateWithoutOpportunityInput>
+    create: XOR<OpportunityItemCreateWithoutOpportunityInput, OpportunityItemUncheckedCreateWithoutOpportunityInput>
+  }
+
+  export type OpportunityItemUpdateWithWhereUniqueWithoutOpportunityInput = {
+    where: OpportunityItemWhereUniqueInput
+    data: XOR<OpportunityItemUpdateWithoutOpportunityInput, OpportunityItemUncheckedUpdateWithoutOpportunityInput>
+  }
+
+  export type OpportunityItemUpdateManyWithWhereWithoutOpportunityInput = {
+    where: OpportunityItemScalarWhereInput
+    data: XOR<OpportunityItemUpdateManyMutationInput, OpportunityItemUncheckedUpdateManyWithoutOpportunityInput>
+  }
+
+  export type OrganizationCreateWithoutProductsInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryCreateNestedManyWithoutOrganizationInput
+    tags?: TagCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutProductsInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelUncheckedCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactUncheckedCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryUncheckedCreateNestedManyWithoutOrganizationInput
+    tags?: TagUncheckedCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagUncheckedCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagUncheckedCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutProductsInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutProductsInput, OrganizationUncheckedCreateWithoutProductsInput>
+  }
+
+  export type UserCreateWithoutProductsCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserUncheckedCreateWithoutProductsCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserCreateOrConnectWithoutProductsCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProductsCreatedInput, UserUncheckedCreateWithoutProductsCreatedInput>
+  }
+
+  export type UserCreateWithoutProductsUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserUncheckedCreateWithoutProductsUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserCreateOrConnectWithoutProductsUpdatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProductsUpdatedInput, UserUncheckedCreateWithoutProductsUpdatedInput>
+  }
+
+  export type UserCreateWithoutProductsDeletedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserUncheckedCreateWithoutProductsDeletedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserCreateOrConnectWithoutProductsDeletedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProductsDeletedInput, UserUncheckedCreateWithoutProductsDeletedInput>
+  }
+
+  export type OpportunityItemCreateWithoutProductInput = {
+    id?: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutOpportunityItemsInput
+    opportunity: OpportunityCreateNestedOneWithoutItemsInput
+    creator: UserCreateNestedOneWithoutOpportunityItemsCreatedInput
+    updater: UserCreateNestedOneWithoutOpportunityItemsUpdatedInput
+  }
+
+  export type OpportunityItemUncheckedCreateWithoutProductInput = {
+    id?: string
+    opportunityId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+  }
+
+  export type OpportunityItemCreateOrConnectWithoutProductInput = {
+    where: OpportunityItemWhereUniqueInput
+    create: XOR<OpportunityItemCreateWithoutProductInput, OpportunityItemUncheckedCreateWithoutProductInput>
+  }
+
+  export type OpportunityItemCreateManyProductInputEnvelope = {
+    data: OpportunityItemCreateManyProductInput | OpportunityItemCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OrganizationUpsertWithoutProductsInput = {
+    update: XOR<OrganizationUpdateWithoutProductsInput, OrganizationUncheckedUpdateWithoutProductsInput>
+    create: XOR<OrganizationCreateWithoutProductsInput, OrganizationUncheckedCreateWithoutProductsInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutProductsInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutProductsInput, OrganizationUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type OrganizationUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type UserUpsertWithoutProductsCreatedInput = {
+    update: XOR<UserUpdateWithoutProductsCreatedInput, UserUncheckedUpdateWithoutProductsCreatedInput>
+    create: XOR<UserCreateWithoutProductsCreatedInput, UserUncheckedCreateWithoutProductsCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutProductsCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutProductsCreatedInput, UserUncheckedUpdateWithoutProductsCreatedInput>
+  }
+
+  export type UserUpdateWithoutProductsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutProductsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUpsertWithoutProductsUpdatedInput = {
+    update: XOR<UserUpdateWithoutProductsUpdatedInput, UserUncheckedUpdateWithoutProductsUpdatedInput>
+    create: XOR<UserCreateWithoutProductsUpdatedInput, UserUncheckedCreateWithoutProductsUpdatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutProductsUpdatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutProductsUpdatedInput, UserUncheckedUpdateWithoutProductsUpdatedInput>
+  }
+
+  export type UserUpdateWithoutProductsUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutProductsUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUpsertWithoutProductsDeletedInput = {
+    update: XOR<UserUpdateWithoutProductsDeletedInput, UserUncheckedUpdateWithoutProductsDeletedInput>
+    create: XOR<UserCreateWithoutProductsDeletedInput, UserUncheckedCreateWithoutProductsDeletedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutProductsDeletedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutProductsDeletedInput, UserUncheckedUpdateWithoutProductsDeletedInput>
+  }
+
+  export type UserUpdateWithoutProductsDeletedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutProductsDeletedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type OpportunityItemUpsertWithWhereUniqueWithoutProductInput = {
+    where: OpportunityItemWhereUniqueInput
+    update: XOR<OpportunityItemUpdateWithoutProductInput, OpportunityItemUncheckedUpdateWithoutProductInput>
+    create: XOR<OpportunityItemCreateWithoutProductInput, OpportunityItemUncheckedCreateWithoutProductInput>
+  }
+
+  export type OpportunityItemUpdateWithWhereUniqueWithoutProductInput = {
+    where: OpportunityItemWhereUniqueInput
+    data: XOR<OpportunityItemUpdateWithoutProductInput, OpportunityItemUncheckedUpdateWithoutProductInput>
+  }
+
+  export type OpportunityItemUpdateManyWithWhereWithoutProductInput = {
+    where: OpportunityItemScalarWhereInput
+    data: XOR<OpportunityItemUpdateManyMutationInput, OpportunityItemUncheckedUpdateManyWithoutProductInput>
+  }
+
+  export type OrganizationCreateWithoutOpportunityItemsInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryCreateNestedManyWithoutOrganizationInput
+    tags?: TagCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutOpportunityItemsInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelUncheckedCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactUncheckedCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryUncheckedCreateNestedManyWithoutOrganizationInput
+    tags?: TagUncheckedCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagUncheckedCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagUncheckedCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutOpportunityItemsInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutOpportunityItemsInput, OrganizationUncheckedCreateWithoutOpportunityItemsInput>
+  }
+
+  export type OpportunityCreateWithoutItemsInput = {
+    id?: string
+    title: string
+    estimatedValue: Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutOpportunitiesInput
+    pipeline: PipelineCreateNestedOneWithoutOpportunitiesInput
+    stage: PipelineStageCreateNestedOneWithoutOpportunitiesInput
+    company?: CompanyCreateNestedOneWithoutOpportunitiesInput
+    contact?: ContactCreateNestedOneWithoutOpportunitiesInput
+    owner: UserCreateNestedOneWithoutOpportunitiesOwnedInput
+    ownerMembership: OrganizationMembershipCreateNestedOneWithoutOwnedOpportunitiesInput
+    creator: UserCreateNestedOneWithoutOpportunitiesCreatedInput
+    updater: UserCreateNestedOneWithoutOpportunitiesUpdatedInput
+    deleter?: UserCreateNestedOneWithoutOpportunitiesDeletedInput
+    activities?: ActivityCreateNestedManyWithoutOpportunityInput
+  }
+
+  export type OpportunityUncheckedCreateWithoutItemsInput = {
+    id?: string
+    organizationId: string
+    pipelineId: string
+    stageId: string
+    companyId?: string | null
+    contactId?: string | null
+    ownerUserId: string
+    title: string
+    estimatedValue: Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    activities?: ActivityUncheckedCreateNestedManyWithoutOpportunityInput
+  }
+
+  export type OpportunityCreateOrConnectWithoutItemsInput = {
+    where: OpportunityWhereUniqueInput
+    create: XOR<OpportunityCreateWithoutItemsInput, OpportunityUncheckedCreateWithoutItemsInput>
+  }
+
+  export type ProductCreateWithoutOpportunityItemsInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutProductsInput
+    creator: UserCreateNestedOneWithoutProductsCreatedInput
+    updater: UserCreateNestedOneWithoutProductsUpdatedInput
+    deleter?: UserCreateNestedOneWithoutProductsDeletedInput
+  }
+
+  export type ProductUncheckedCreateWithoutOpportunityItemsInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type ProductCreateOrConnectWithoutOpportunityItemsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutOpportunityItemsInput, ProductUncheckedCreateWithoutOpportunityItemsInput>
+  }
+
+  export type UserCreateWithoutOpportunityItemsCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserUncheckedCreateWithoutOpportunityItemsCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserCreateOrConnectWithoutOpportunityItemsCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOpportunityItemsCreatedInput, UserUncheckedCreateWithoutOpportunityItemsCreatedInput>
+  }
+
+  export type UserCreateWithoutOpportunityItemsUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+  }
+
+  export type UserUncheckedCreateWithoutOpportunityItemsUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+  }
+
+  export type UserCreateOrConnectWithoutOpportunityItemsUpdatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOpportunityItemsUpdatedInput, UserUncheckedCreateWithoutOpportunityItemsUpdatedInput>
+  }
+
+  export type OrganizationUpsertWithoutOpportunityItemsInput = {
+    update: XOR<OrganizationUpdateWithoutOpportunityItemsInput, OrganizationUncheckedUpdateWithoutOpportunityItemsInput>
+    create: XOR<OrganizationCreateWithoutOpportunityItemsInput, OrganizationUncheckedCreateWithoutOpportunityItemsInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutOpportunityItemsInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutOpportunityItemsInput, OrganizationUncheckedUpdateWithoutOpportunityItemsInput>
+  }
+
+  export type OrganizationUpdateWithoutOpportunityItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutOpportunityItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OpportunityUpsertWithoutItemsInput = {
+    update: XOR<OpportunityUpdateWithoutItemsInput, OpportunityUncheckedUpdateWithoutItemsInput>
+    create: XOR<OpportunityCreateWithoutItemsInput, OpportunityUncheckedCreateWithoutItemsInput>
+    where?: OpportunityWhereInput
+  }
+
+  export type OpportunityUpdateToOneWithWhereWithoutItemsInput = {
+    where?: OpportunityWhereInput
+    data: XOR<OpportunityUpdateWithoutItemsInput, OpportunityUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type OpportunityUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    estimatedValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutOpportunitiesNestedInput
+    pipeline?: PipelineUpdateOneRequiredWithoutOpportunitiesNestedInput
+    stage?: PipelineStageUpdateOneRequiredWithoutOpportunitiesNestedInput
+    company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
+    contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
+    owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
+    creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
+    activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+  }
+
+  export type OpportunityUncheckedUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    pipelineId?: StringFieldUpdateOperationsInput | string
+    stageId?: StringFieldUpdateOperationsInput | string
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerUserId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    estimatedValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+  }
+
+  export type ProductUpsertWithoutOpportunityItemsInput = {
+    update: XOR<ProductUpdateWithoutOpportunityItemsInput, ProductUncheckedUpdateWithoutOpportunityItemsInput>
+    create: XOR<ProductCreateWithoutOpportunityItemsInput, ProductUncheckedCreateWithoutOpportunityItemsInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutOpportunityItemsInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutOpportunityItemsInput, ProductUncheckedUpdateWithoutOpportunityItemsInput>
+  }
+
+  export type ProductUpdateWithoutOpportunityItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutProductsNestedInput
+    creator?: UserUpdateOneRequiredWithoutProductsCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutProductsUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutProductsDeletedNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutOpportunityItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type UserUpsertWithoutOpportunityItemsCreatedInput = {
+    update: XOR<UserUpdateWithoutOpportunityItemsCreatedInput, UserUncheckedUpdateWithoutOpportunityItemsCreatedInput>
+    create: XOR<UserCreateWithoutOpportunityItemsCreatedInput, UserUncheckedCreateWithoutOpportunityItemsCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOpportunityItemsCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOpportunityItemsCreatedInput, UserUncheckedUpdateWithoutOpportunityItemsCreatedInput>
+  }
+
+  export type UserUpdateWithoutOpportunityItemsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOpportunityItemsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUpsertWithoutOpportunityItemsUpdatedInput = {
+    update: XOR<UserUpdateWithoutOpportunityItemsUpdatedInput, UserUncheckedUpdateWithoutOpportunityItemsUpdatedInput>
+    create: XOR<UserCreateWithoutOpportunityItemsUpdatedInput, UserUncheckedCreateWithoutOpportunityItemsUpdatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOpportunityItemsUpdatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOpportunityItemsUpdatedInput, UserUncheckedUpdateWithoutOpportunityItemsUpdatedInput>
+  }
+
+  export type UserUpdateWithoutOpportunityItemsUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOpportunityItemsUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type OrganizationMembershipCreateManyOrganizationInput = {
@@ -47374,6 +57445,46 @@ export namespace Prisma {
     deletedBy?: string | null
   }
 
+  export type RoleCreateManyOrganizationInput = {
+    id?: string
+    code: string
+    name: string
+    isSystem?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductCreateManyOrganizationInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type OpportunityItemCreateManyOrganizationInput = {
+    id?: string
+    opportunityId: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+  }
+
   export type OrganizationMembershipUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     role?: EnumMembershipRoleFieldUpdateOperationsInput | $Enums.MembershipRole
@@ -47381,6 +57492,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutMembershipsNestedInput
+    ownedOpportunities?: OpportunityUpdateManyWithoutOwnerMembershipNestedInput
   }
 
   export type OrganizationMembershipUncheckedUpdateWithoutOrganizationInput = {
@@ -47390,6 +57502,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownedOpportunities?: OpportunityUncheckedUpdateManyWithoutOwnerMembershipNestedInput
   }
 
   export type OrganizationMembershipUncheckedUpdateManyWithoutOrganizationInput = {
@@ -47961,10 +58074,12 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutOrganizationInput = {
@@ -47986,6 +58101,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateManyWithoutOrganizationInput = {
@@ -48006,6 +58122,158 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type RoleUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
+  }
+
+  export type RoleUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
+  }
+
+  export type RoleUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    creator?: UserUpdateOneRequiredWithoutProductsCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutProductsUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutProductsDeletedNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OpportunityItemUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    opportunity?: OpportunityUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    creator?: UserUpdateOneRequiredWithoutOpportunityItemsCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutOpportunityItemsUpdatedNestedInput
+  }
+
+  export type OpportunityItemUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RolePermissionCreateManyRoleInput = {
+    id?: string
+    organizationId: string
+    permission: string
+    scope?: string
+  }
+
+  export type RolePermissionUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    permission?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RolePermissionUncheckedUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    permission?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RolePermissionUncheckedUpdateManyWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    permission?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
   }
 
   export type OrganizationMembershipCreateManyUserInput = {
@@ -48311,6 +58579,84 @@ export namespace Prisma {
     deletedAt?: Date | string | null
   }
 
+  export type ProductCreateManyCreatorInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type ProductCreateManyUpdaterInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type ProductCreateManyDeleterInput = {
+    id?: string
+    organizationId: string
+    code: string
+    name: string
+    description?: string | null
+    unitPrice: Decimal | DecimalJsLike | number | string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+  }
+
+  export type OpportunityItemCreateManyCreatorInput = {
+    id?: string
+    organizationId: string
+    opportunityId: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy: string
+  }
+
+  export type OpportunityItemCreateManyUpdaterInput = {
+    id?: string
+    organizationId: string
+    opportunityId: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+  }
+
   export type OrganizationMembershipUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     role?: EnumMembershipRoleFieldUpdateOperationsInput | $Enums.MembershipRole
@@ -48318,6 +58664,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organization?: OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
+    ownedOpportunities?: OpportunityUpdateManyWithoutOwnerMembershipNestedInput
   }
 
   export type OrganizationMembershipUncheckedUpdateWithoutUserInput = {
@@ -48327,6 +58674,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownedOpportunities?: OpportunityUncheckedUpdateManyWithoutOwnerMembershipNestedInput
   }
 
   export type OrganizationMembershipUncheckedUpdateManyWithoutUserInput = {
@@ -49073,10 +59421,12 @@ export namespace Prisma {
     stage?: PipelineStageUpdateOneRequiredWithoutOpportunitiesNestedInput
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutOwnerInput = {
@@ -49098,6 +59448,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateManyWithoutOwnerInput = {
@@ -49136,9 +59487,11 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutCreatorInput = {
@@ -49160,6 +59513,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateManyWithoutCreatorInput = {
@@ -49198,9 +59552,11 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutUpdaterInput = {
@@ -49222,6 +59578,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateManyWithoutUpdaterInput = {
@@ -49260,9 +59617,11 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutDeleterInput = {
@@ -49284,6 +59643,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateManyWithoutDeleterInput = {
@@ -49306,9 +59666,330 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type ProductUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutProductsNestedInput
+    updater?: UserUpdateOneRequiredWithoutProductsUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutProductsDeletedNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ProductUpdateWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutProductsNestedInput
+    creator?: UserUpdateOneRequiredWithoutProductsCreatedNestedInput
+    deleter?: UserUpdateOneWithoutProductsDeletedNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateManyWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ProductUpdateWithoutDeleterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutProductsNestedInput
+    creator?: UserUpdateOneRequiredWithoutProductsCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutProductsUpdatedNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutDeleterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateManyWithoutDeleterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type OpportunityItemUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    opportunity?: OpportunityUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    updater?: UserUpdateOneRequiredWithoutOpportunityItemsUpdatedNestedInput
+  }
+
+  export type OpportunityItemUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OpportunityItemUpdateWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    opportunity?: OpportunityUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    creator?: UserUpdateOneRequiredWithoutOpportunityItemsCreatedNestedInput
+  }
+
+  export type OpportunityItemUncheckedUpdateWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OpportunityCreateManyOwnerMembershipInput = {
+    id?: string
+    pipelineId: string
+    stageId: string
+    companyId?: string | null
+    contactId?: string | null
+    title: string
+    estimatedValue: Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type OpportunityUpdateWithoutOwnerMembershipInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    estimatedValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutOpportunitiesNestedInput
+    pipeline?: PipelineUpdateOneRequiredWithoutOpportunitiesNestedInput
+    stage?: PipelineStageUpdateOneRequiredWithoutOpportunitiesNestedInput
+    company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
+    contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
+    owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
+    activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
+  }
+
+  export type OpportunityUncheckedUpdateWithoutOwnerMembershipInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pipelineId?: StringFieldUpdateOperationsInput | string
+    stageId?: StringFieldUpdateOperationsInput | string
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    estimatedValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
+  }
+
+  export type OpportunityUncheckedUpdateManyWithoutOwnerMembershipInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pipelineId?: StringFieldUpdateOperationsInput | string
+    stageId?: StringFieldUpdateOperationsInput | string
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    estimatedValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    expectedCloseAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type CompanyContactCreateManyCompanyInput = {
     id?: string
-    organizationId: string
     contactId: string
     relationshipLabel?: string | null
     isPrimary?: boolean
@@ -49366,7 +60047,6 @@ export namespace Prisma {
 
   export type OpportunityCreateManyCompanyInput = {
     id?: string
-    organizationId: string
     pipelineId: string
     stageId: string
     contactId?: string | null
@@ -49395,7 +60075,6 @@ export namespace Prisma {
 
   export type CompanyContactUncheckedUpdateWithoutCompanyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     contactId?: StringFieldUpdateOperationsInput | string
     relationshipLabel?: NullableStringFieldUpdateOperationsInput | string | null
     isPrimary?: BoolFieldUpdateOperationsInput | boolean
@@ -49404,7 +60083,6 @@ export namespace Prisma {
 
   export type CompanyContactUncheckedUpdateManyWithoutCompanyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     contactId?: StringFieldUpdateOperationsInput | string
     relationshipLabel?: NullableStringFieldUpdateOperationsInput | string | null
     isPrimary?: BoolFieldUpdateOperationsInput | boolean
@@ -49573,15 +60251,16 @@ export namespace Prisma {
     stage?: PipelineStageUpdateOneRequiredWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutCompanyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     pipelineId?: StringFieldUpdateOperationsInput | string
     stageId?: StringFieldUpdateOperationsInput | string
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -49598,11 +60277,11 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateManyWithoutCompanyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     pipelineId?: StringFieldUpdateOperationsInput | string
     stageId?: StringFieldUpdateOperationsInput | string
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -49633,7 +60312,6 @@ export namespace Prisma {
 
   export type CompanyContactCreateManyContactInput = {
     id?: string
-    organizationId: string
     companyId: string
     relationshipLabel?: string | null
     isPrimary?: boolean
@@ -49691,7 +60369,6 @@ export namespace Prisma {
 
   export type OpportunityCreateManyContactInput = {
     id?: string
-    organizationId: string
     pipelineId: string
     stageId: string
     companyId?: string | null
@@ -49753,7 +60430,6 @@ export namespace Prisma {
 
   export type CompanyContactUncheckedUpdateWithoutContactInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
     relationshipLabel?: NullableStringFieldUpdateOperationsInput | string | null
     isPrimary?: BoolFieldUpdateOperationsInput | boolean
@@ -49762,7 +60438,6 @@ export namespace Prisma {
 
   export type CompanyContactUncheckedUpdateManyWithoutContactInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
     relationshipLabel?: NullableStringFieldUpdateOperationsInput | string | null
     isPrimary?: BoolFieldUpdateOperationsInput | boolean
@@ -49931,15 +60606,16 @@ export namespace Prisma {
     stage?: PipelineStageUpdateOneRequiredWithoutOpportunitiesNestedInput
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutContactInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     pipelineId?: StringFieldUpdateOperationsInput | string
     stageId?: StringFieldUpdateOperationsInput | string
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -49956,11 +60632,11 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateManyWithoutContactInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     pipelineId?: StringFieldUpdateOperationsInput | string
     stageId?: StringFieldUpdateOperationsInput | string
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50118,7 +60794,6 @@ export namespace Prisma {
 
   export type OpportunityCreateManyPipelineInput = {
     id?: string
-    organizationId: string
     stageId: string
     companyId?: string | null
     contactId?: string | null
@@ -50183,15 +60858,16 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutPipelineInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     stageId?: StringFieldUpdateOperationsInput | string
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50208,11 +60884,11 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateManyWithoutPipelineInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     stageId?: StringFieldUpdateOperationsInput | string
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50232,8 +60908,6 @@ export namespace Prisma {
 
   export type OpportunityCreateManyStageInput = {
     id?: string
-    organizationId: string
-    pipelineId: string
     companyId?: string | null
     contactId?: string | null
     ownerUserId: string
@@ -50265,16 +60939,16 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutOpportunitiesNestedInput
     contact?: ContactUpdateOneWithoutOpportunitiesNestedInput
     owner?: UserUpdateOneRequiredWithoutOpportunitiesOwnedNestedInput
+    ownerMembership?: OrganizationMembershipUpdateOneRequiredWithoutOwnedOpportunitiesNestedInput
     creator?: UserUpdateOneRequiredWithoutOpportunitiesCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutOpportunitiesUpdatedNestedInput
     deleter?: UserUpdateOneWithoutOpportunitiesDeletedNestedInput
     activities?: ActivityUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateWithoutStageInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
-    pipelineId?: StringFieldUpdateOperationsInput | string
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerUserId?: StringFieldUpdateOperationsInput | string
@@ -50290,12 +60964,11 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     activities?: ActivityUncheckedUpdateManyWithoutOpportunityNestedInput
+    items?: OpportunityItemUncheckedUpdateManyWithoutOpportunityNestedInput
   }
 
   export type OpportunityUncheckedUpdateManyWithoutStageInput = {
     id?: StringFieldUpdateOperationsInput | string
-    organizationId?: StringFieldUpdateOperationsInput | string
-    pipelineId?: StringFieldUpdateOperationsInput | string
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerUserId?: StringFieldUpdateOperationsInput | string
@@ -50331,6 +61004,20 @@ export namespace Prisma {
     updatedBy: string
     deletedAt?: Date | string | null
     deletedBy?: string | null
+  }
+
+  export type OpportunityItemCreateManyOpportunityInput = {
+    id?: string
+    productId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
   }
 
   export type ActivityUpdateWithoutOpportunityInput = {
@@ -50395,6 +61082,106 @@ export namespace Prisma {
     updatedBy?: StringFieldUpdateOperationsInput | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OpportunityItemUpdateWithoutOpportunityInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    creator?: UserUpdateOneRequiredWithoutOpportunityItemsCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutOpportunityItemsUpdatedNestedInput
+  }
+
+  export type OpportunityItemUncheckedUpdateWithoutOpportunityInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutOpportunityInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OpportunityItemCreateManyProductInput = {
+    id?: string
+    opportunityId: string
+    description: string
+    quantity: Decimal | DecimalJsLike | number | string
+    unitPrice: Decimal | DecimalJsLike | number | string
+    discountPercent?: Decimal | DecimalJsLike | number | string
+    lineTotal: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+  }
+
+  export type OpportunityItemUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutOpportunityItemsNestedInput
+    opportunity?: OpportunityUpdateOneRequiredWithoutItemsNestedInput
+    creator?: UserUpdateOneRequiredWithoutOpportunityItemsCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutOpportunityItemsUpdatedNestedInput
+  }
+
+  export type OpportunityItemUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OpportunityItemUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountPercent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
   }
 
 

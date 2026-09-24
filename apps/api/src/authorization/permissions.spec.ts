@@ -30,3 +30,15 @@ describe("role permissions", () => {
     expect(roleHasPermission("VIEWER", "pipeline.manage")).toBe(false);
   });
 });
+
+describe("C4.3 product permissions", () => {
+  it("grants product.read to every role and product.write to ADMIN/MANAGER", () => {
+    for (const role of ["ADMIN", "MANAGER", "SELLER", "VIEWER"] as const) {
+      expect(roleHasPermission(role, "product.read")).toBe(true);
+    }
+    expect(roleHasPermission("ADMIN", "product.write")).toBe(true);
+    expect(roleHasPermission("MANAGER", "product.write")).toBe(true);
+    expect(roleHasPermission("SELLER", "product.write")).toBe(false);
+    expect(roleHasPermission("VIEWER", "product.write")).toBe(false);
+  });
+});
