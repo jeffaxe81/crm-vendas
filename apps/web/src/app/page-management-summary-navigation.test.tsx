@@ -60,6 +60,30 @@ const managementSummary = {
   undatedActivities: 1,
 };
 
+const salesByProduct = {
+  asOf: "2026-09-23T12:00:00.000Z",
+  filters: { from: null, to: null, pipelineId: null, ownerUserId: null },
+  items: [
+    {
+      productId: "66666666-6666-4666-8666-666666666666",
+      productCode: "LIC",
+      productName: "Licença PABX",
+      productActive: true,
+      productDeleted: false,
+      open: { quantity: "0.000", opportunities: 0, value: "0.00" },
+      won: { quantity: "2.000", opportunities: 1, value: "2400.00" },
+      lost: { quantity: "0.000", opportunities: 0, value: "0.00" },
+      total: { quantity: "2.000", opportunities: 1, value: "2400.00" },
+    },
+  ],
+  totals: {
+    open: { quantity: "0.000", opportunities: 0, value: "0.00" },
+    won: { quantity: "2.000", opportunities: 1, value: "2400.00" },
+    lost: { quantity: "0.000", opportunities: 0, value: "0.00" },
+    total: { quantity: "2.000", opportunities: 1, value: "2400.00" },
+  },
+};
+
 function response(body: unknown, status = 200): Response {
   return {
     ok: status >= 200 && status < 300,
@@ -87,6 +111,9 @@ function renderWithSession(session: typeof sessionWithReports) {
     if (url.endsWith("/reports/management-summary")) {
       return response(managementSummary);
     }
+    if (url.endsWith("/reports/sales-by-product")) {
+      return response(salesByProduct);
+    }
     throw new Error(`Unexpected request: ${url}`);
   });
   vi.stubGlobal("fetch", fetchMock);
@@ -107,6 +134,29 @@ describe("C4.1.1 management summary navigation", () => {
     expect(screen.getByText("R$ 12.500,50")).toBeInTheDocument();
     expect(screen.getByText("7")).toBeInTheDocument();
     expect(screen.getByText("Proposta")).toBeInTheDocument();
+  });
+
+  it("opens the sales by product tab inside the reports section", async () => {
+    renderWithSession(sessionWithReports);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Resumo gerencial" })
+    );
+    await screen.findByText("R$ 12.500,50");
+
+    const tab = screen.getByRole("tab", { name: "Vendas por produto" });
+    expect(tab).toHaveAttribute("aria-selected", "false");
+    fireEvent.click(tab);
+
+    expect(tab).toHaveAttribute("aria-selected", "true");
+    expect(
+      await screen.findByRole("heading", { name: "Vendas por produto" })
+    ).toBeInTheDocument();
+    expect(await screen.findByText("LIC — Licença PABX")).toBeInTheDocument();
+    expect(screen.queryByText("R$ 12.500,50")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Indicadores" }));
+    expect(screen.getByText("R$ 12.500,50")).toBeInTheDocument();
   });
 
   it("hides the management summary without reports.read", async () => {
