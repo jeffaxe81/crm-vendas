@@ -11,7 +11,11 @@
 | MVP-07 | Oportunidades       | Cadastro e movimentação no funil              | P0         | 1    | Concluído             | MVP-03                      | Alto    |
 | MVP-08 | Painel              | Indicadores e visão de trabalho diário        | P1         | 1    | Concluído             | MVP-06, MVP-07              | Médio   |
 | MVP-09 | Auditoria           | Registro das ações principais                 | P1         | 1    | Concluído             | Usuário autenticado         | Médio   |
-| F2-01  | Produtividade       | Agenda Comercial semanal                      | P0         | 2    | Em validação          | MVP-06, activity.read       | Médio   |
+| F2-01  | Produtividade       | Agenda Comercial semanal                      | P0         | 2    | Concluído             | MVP-06, activity.read       | Médio   |
+| F2-02  | Produtividade       | Resumo gerencial (C4.1.1)                     | P1         | 2    | Concluído             | MVP-07, MVP-08              | Médio   |
+| F2-03  | Importação          | Importação CSV de empresas (C4.2.1)           | P0         | 2    | Concluído             | company.write               | Médio   |
+| F2-04  | Importação          | Importação CSV de contatos (C4.2.2)           | P0         | 2    | Concluído             | contact.write, F2-03        | Médio   |
+| F2-05  | Importação          | Vínculo de contatos importados a empresas     | P1         | 2    | Próximo               | F2-03, F2-04                | Baixo   |
 
 ## Histórias de usuário prioritárias
 
@@ -26,6 +30,6 @@
 
 ## Delimitação do incremento
 
-A **Fase 1 — MVP Comercial** está encerrada. O incremento atual inicia a **Fase 2 — Produtividade** exclusivamente pela **F2-01 / C4.1 — Agenda Comercial**.
+A **Fase 1 — MVP Comercial** está encerrada. Na **Fase 2 — Produtividade** já foram entregues a Agenda Comercial (C4.1), o Resumo gerencial (C4.1.1) e as importações CSV de empresas (C4.2.1) e de contatos (C4.2.2). O próximo item é o vínculo de contatos importados a empresas (C4.2.3).
 
 Campos personalizados e tags já estão presentes na base atual e não serão duplicados. Importação, produtos, relatórios e demais evoluções continuam planejados para incrementos posteriores.
