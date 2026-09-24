@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased] - C4.2.3 Vínculo de contatos importados a empresas
+
+- coluna opcional `companyDocument` no CSV de contatos, resolvida para uma empresa ativa do mesmo tenant;
+- erros por linha para documento inexistente, documento ambíguo e falta de `company.write`;
+- vínculo `company_contacts` criado na mesma transação do contato, com auditoria `company.contact_linked`;
+- coluna **Empresa** no preview da tela de Contatos;
+- gate local: API 147/147, web 44/44, contratos 25/25, build e E2E 4/4.
+
 ## [Unreleased] - C4.2.2 Importação CSV de contatos
 
 - `POST /api/v1/contact-imports/preview` e `/confirm` (permissão `contact.write`), com fluxo Preview → Confirmar e fingerprint SHA-256;

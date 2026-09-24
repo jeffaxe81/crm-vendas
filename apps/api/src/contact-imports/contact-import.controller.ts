@@ -15,6 +15,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { AuthenticationGuard } from "../authorization/authentication.guard";
 import type { AuthenticatedRequest } from "../authorization/authenticated-request";
 import { PermissionsGuard } from "../authorization/permissions.guard";
+import { roleHasPermission } from "../authorization/permissions";
 import { RequirePermissions } from "../authorization/require-permissions.decorator";
 import type { RequestWithId } from "../observability/request-id.middleware";
 import { CsvValidationError } from "../csv/csv-table-parser";
@@ -50,9 +51,11 @@ export class ContactImportController {
     const csv = this.requireCsvFile(file);
 
     try {
+      const principal = this.requirePrincipal(request);
       return await this.contactImports.preview(
         csv.buffer,
-        this.requirePrincipal(request).organizationId
+        principal.organizationId,
+        this.optionsFrom(request)
       );
     } catch (error) {
       this.rethrowExpectedValidation(error);
@@ -85,7 +88,8 @@ export class ContactImportController {
       return await this.contactImports.confirm(
         csv.buffer,
         fingerprint.trim(),
-        this.contextFrom(request)
+        this.contextFrom(request),
+        this.optionsFrom(request)
       );
     } catch (error) {
       this.rethrowExpectedValidation(error);
@@ -129,6 +133,15 @@ export class ContactImportController {
       throw new Error("Authenticated principal unavailable after guard.");
     }
     return request.auth;
+  }
+
+  private optionsFrom(request: ContactImportRequest) {
+    return {
+      canLinkCompanies: roleHasPermission(
+        this.requirePrincipal(request).role,
+        "company.write"
+      ),
+    };
   }
 
   private contextFrom(request: ContactImportRequest) {
