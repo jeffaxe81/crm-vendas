@@ -1,19 +1,36 @@
 "use client";
 
 import {
+  SalesByProductOwnersSchema,
   SalesByProductReportSchema,
   type SalesByProductBucket,
+  type SalesByProductOwner,
   type SalesByProductReport,
 } from "@axes/contracts";
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { downloadAuthenticatedFile } from "../../lib/api-download";
 
 type SalesByProductViewProps = {
   accessToken: string;
 };
 
-type Period = { from: string; to: string };
+export type SalesByProductFilters = {
+  from: string;
+  to: string;
+  pipelineId?: string;
+  ownerUserId?: string;
+};
+
+type PipelineOption = { id: string; name: string };
+
+const EMPTY_FILTERS: SalesByProductFilters = {
+  from: "",
+  to: "",
+  pipelineId: "",
+  ownerUserId: "",
+};
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -38,16 +55,58 @@ export function periodBoundary(date: string, edge: "start" | "end"): string {
   return new Date(`${date}${time}`).toISOString();
 }
 
-export function salesByProductPath(period: Period): string {
+function salesByProductQuery(filters: SalesByProductFilters): string {
   const params = new URLSearchParams();
-  if (period.from) {
-    params.set("from", periodBoundary(period.from, "start"));
+  if (filters.from) {
+    params.set("from", periodBoundary(filters.from, "start"));
   }
-  if (period.to) {
-    params.set("to", periodBoundary(period.to, "end"));
+  if (filters.to) {
+    params.set("to", periodBoundary(filters.to, "end"));
+  }
+  if (filters.pipelineId) {
+    params.set("pipelineId", filters.pipelineId);
+  }
+  if (filters.ownerUserId) {
+    params.set("ownerUserId", filters.ownerUserId);
   }
   const query = params.toString();
-  return `/reports/sales-by-product${query ? `?${query}` : ""}`;
+  return query ? `?${query}` : "";
+}
+
+export function salesByProductPath(filters: SalesByProductFilters): string {
+  return `/reports/sales-by-product${salesByProductQuery(filters)}`;
+}
+
+export function salesByProductExportPath(
+  filters: SalesByProductFilters
+): string {
+  return `/reports/sales-by-product/export${salesByProductQuery(filters)}`;
+}
+
+/** Nome de reserva caso o navegador não exponha o Content-Disposition. */
+function fallbackCsvFilename(): string {
+  const now = new Date();
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `vendas-por-produto-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.csv`;
+}
+
+function parsePipelines(payload: unknown): PipelineOption[] {
+  if (!Array.isArray(payload)) {
+    throw new Error("Resposta inválida da lista de funis.");
+  }
+  return payload.flatMap(entry =>
+    entry &&
+    typeof entry === "object" &&
+    typeof (entry as PipelineOption).id === "string" &&
+    typeof (entry as PipelineOption).name === "string"
+      ? [
+          {
+            id: (entry as PipelineOption).id,
+            name: (entry as PipelineOption).name,
+          },
+        ]
+      : []
+  );
 }
 
 function BucketCell({ bucket }: { bucket: SalesByProductBucket }) {
@@ -64,12 +123,52 @@ function BucketCell({ bucket }: { bucket: SalesByProductBucket }) {
 }
 
 export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
-  const [draft, setDraft] = useState<Period>({ from: "", to: "" });
-  const [period, setPeriod] = useState<Period>({ from: "", to: "" });
+  const [draft, setDraft] = useState<SalesByProductFilters>(EMPTY_FILTERS);
+  const [filters, setFilters] = useState<SalesByProductFilters>(EMPTY_FILTERS);
   const [report, setReport] = useState<SalesByProductReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filterError, setFilterError] = useState("");
+  const [pipelines, setPipelines] = useState<PipelineOption[]>([]);
+  const [owners, setOwners] = useState<SalesByProductOwner[]>([]);
+  const [optionsError, setOptionsError] = useState("");
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    // Opções dos filtros: uma falha aqui não impede o relatório.
+    async function loadOptions() {
+      const [pipelineResult, ownerResult] = await Promise.allSettled([
+        apiRequest<unknown>("/pipelines", { accessToken }).then(parsePipelines),
+        apiRequest<unknown>("/reports/sales-by-product/owners", {
+          accessToken,
+        }).then(payload => SalesByProductOwnersSchema.parse(payload)),
+      ]);
+      if (!active) {
+        return;
+      }
+      if (pipelineResult.status === "fulfilled") {
+        setPipelines(pipelineResult.value);
+      }
+      if (ownerResult.status === "fulfilled") {
+        setOwners(ownerResult.value);
+      }
+      setOptionsError(
+        pipelineResult.status === "rejected" ||
+          ownerResult.status === "rejected"
+          ? "Não foi possível carregar todas as opções de funil e responsável."
+          : ""
+      );
+    }
+
+    void loadOptions();
+
+    return () => {
+      active = false;
+    };
+  }, [accessToken]);
 
   useEffect(() => {
     let active = true;
@@ -79,7 +178,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
       setError("");
 
       try {
-        const payload = await apiRequest<unknown>(salesByProductPath(period), {
+        const payload = await apiRequest<unknown>(salesByProductPath(filters), {
           accessToken,
         });
         const parsed = SalesByProductReportSchema.parse(payload);
@@ -107,7 +206,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
     return () => {
       active = false;
     };
-  }, [accessToken, period]);
+  }, [accessToken, filters]);
 
   function applyFilters(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -116,13 +215,34 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
       return;
     }
     setFilterError("");
-    setPeriod({ ...draft });
+    setFilters({ ...draft });
   }
 
   function clearFilters() {
     setFilterError("");
-    setDraft({ from: "", to: "" });
-    setPeriod({ from: "", to: "" });
+    setDraft(EMPTY_FILTERS);
+    setFilters(EMPTY_FILTERS);
+  }
+
+  async function exportCsv() {
+    setExporting(true);
+    setExportError("");
+    try {
+      // Exporta os filtros aplicados (os mesmos da tabela exibida).
+      await downloadAuthenticatedFile(
+        salesByProductExportPath(filters),
+        accessToken,
+        fallbackCsvFilename()
+      );
+    } catch (cause) {
+      setExportError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível exportar o relatório."
+      );
+    } finally {
+      setExporting(false);
+    }
   }
 
   return (
@@ -130,7 +250,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
       <h2 id="sales-by-product-title">Vendas por produto</h2>
       <p className="activities-view__status">
         Itens das oportunidades por situação da etapa. O período considera a
-        previsão de fechamento.
+        previsão de fechamento; o responsável é o dono da oportunidade.
       </p>
 
       <form
@@ -158,14 +278,68 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
             }
           />
         </label>
+        <label>
+          <span>Funil</span>
+          <select
+            value={draft.pipelineId}
+            onChange={event =>
+              setDraft(current => ({
+                ...current,
+                pipelineId: event.target.value,
+              }))
+            }
+          >
+            <option value="">Todos os funis</option>
+            {pipelines.map(pipeline => (
+              <option key={pipeline.id} value={pipeline.id}>
+                {pipeline.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span>Responsável</span>
+          <select
+            value={draft.ownerUserId}
+            onChange={event =>
+              setDraft(current => ({
+                ...current,
+                ownerUserId: event.target.value,
+              }))
+            }
+          >
+            <option value="">Todos os responsáveis</option>
+            {owners.map(owner => (
+              <option key={owner.userId} value={owner.userId}>
+                {owner.displayName}
+                {owner.membershipActive ? "" : " (inativo)"}
+              </option>
+            ))}
+          </select>
+        </label>
         <button type="submit">Aplicar</button>
         <button type="button" onClick={clearFilters}>
           Limpar
+        </button>
+        <button
+          type="button"
+          onClick={() => void exportCsv()}
+          disabled={exporting || loading || Boolean(error)}
+        >
+          {exporting ? "Exportando..." : "Exportar CSV"}
         </button>
       </form>
       {filterError ? (
         <p className="activities-view__error" role="alert">
           {filterError}
+        </p>
+      ) : null}
+      {optionsError ? (
+        <p className="activities-view__status">{optionsError}</p>
+      ) : null}
+      {exportError ? (
+        <p className="activities-view__error" role="alert">
+          {exportError}
         </p>
       ) : null}
 
@@ -179,7 +353,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
         </p>
       ) : report && report.items.length === 0 ? (
         <p className="activities-view__status">
-          Nenhum item de oportunidade encontrado no período.
+          Nenhum item de oportunidade encontrado com os filtros aplicados.
         </p>
       ) : report ? (
         <div className="sales-report__table">
