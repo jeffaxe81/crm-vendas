@@ -1,6 +1,7 @@
 import {
   SalesByProductQuerySchema,
   type SalesByProductQuery,
+  FunnelQuerySchema,
 } from "@axes/contracts";
 import {
   BadRequestException,
@@ -26,6 +27,7 @@ import {
   salesByProductCsvFilename,
 } from "./sales-by-product-csv";
 import { SalesByProductOwnersService } from "./sales-by-product-owners.service";
+import { FunnelService } from "./funnel.service";
 
 @Controller("reports")
 @UseGuards(AuthenticationGuard, PermissionsGuard)
@@ -36,7 +38,9 @@ export class ReportsController {
     @Inject(SalesByProductService)
     private readonly salesByProduct: SalesByProductService,
     @Inject(SalesByProductOwnersService)
-    private readonly salesByProductOwners: SalesByProductOwnersService
+    private readonly salesByProductOwners: SalesByProductOwnersService,
+    @Inject(FunnelService)
+    private readonly funnel: FunnelService
   ) {}
 
   @Get("management-summary")
@@ -126,6 +130,23 @@ export class ReportsController {
       });
     }
     return this.salesByProductOwners.list(this.requireOrganizationId(request));
+  }
+
+  @Get("funnel")
+  @RequirePermissions("reports.read")
+  readFunnel(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = FunnelQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+
+    return this.funnel.read(this.requireOrganizationId(request), parsed.data);
   }
 
   private requireOrganizationId(request: AuthenticatedRequest): string {

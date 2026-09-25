@@ -6,6 +6,7 @@ import { ManagementSummaryService } from "./management-summary.service";
 import { SalesByProductService } from "./sales-by-product.service";
 import { ReportsController } from "./reports.controller";
 import { SalesByProductOwnersService } from "./sales-by-product-owners.service";
+import { FunnelService } from "./funnel.service";
 
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
@@ -14,11 +15,13 @@ import { SalesByProductOwnersService } from "./sales-by-product-owners.service";
     ManagementSummaryService,
     SalesByProductService,
     SalesByProductOwnersService,
+    FunnelService,
   ],
   exports: [
     ManagementSummaryService,
     SalesByProductService,
     SalesByProductOwnersService,
+    FunnelService,
   ],
 })
 export class ReportsModule {}
