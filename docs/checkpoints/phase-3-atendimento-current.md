@@ -7,7 +7,7 @@ Data: 24/09/2026
 - fase: Fase 3 — Atendimento;
 - situação: autorizada para execução autônoma;
 - branch documental inicial: `docs/phase-3-atendimento`;
-- base: `main` vigente na criação da branch;
+- base da branch: `main` @ `d418c7f63e7a2f49475ff58563b64bd1720835bb`;
 - design: `docs/superpowers/specs/2026-09-24-phase-3-atendimento-design.md`;
 - plano: `docs/superpowers/plans/2026-09-24-phase-3-atendimento.md`.
 
@@ -84,6 +84,20 @@ A F3.1 deverá provar antes de qualquer expansão:
 - não substituir auditoria canônica;
 - não reescrever histórico da Fase 1 ou Fase 2;
 - não tratar documentação aspiracional antiga como código já entregue.
+
+## Gate operacional
+
+Cada microentrega deve manter:
+
+- TDD quando houver comportamento novo;
+- isolamento multi-tenant;
+- RBAC;
+- auditoria;
+- migration reproduzível quando aplicável;
+- testes direcionados;
+- regressão;
+- quality gate;
+- PR Draft durante desenvolvimento.
 
 ## Próximo passo técnico
 
