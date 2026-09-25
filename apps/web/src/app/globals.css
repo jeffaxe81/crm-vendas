@@ -1050,7 +1050,8 @@ textarea {
   font-weight: 800;
 }
 
-.sales-report__filters input {
+.sales-report__filters input,
+.sales-report__filters select {
   min-height: 40px;
   padding: 0 10px;
   border: 1px solid #bfcddd;
@@ -1078,6 +1079,28 @@ textarea {
 
 .sales-report__table {
   overflow-x: auto;
+}
+
+.sales-report__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.sales-report__actions button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #185b9e;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #185b9e;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sales-report__actions button:focus-visible {
+  outline: 2px solid #185b9e;
+  outline-offset: 2px;
 }
 
 .sales-report__table td,

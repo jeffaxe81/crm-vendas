@@ -7,13 +7,15 @@ import {
 import { useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { SalesByOwnerView } from "./sales-by-owner-view";
 import { SalesByProductView } from "./sales-by-product-view";
 
-type ReportTab = "summary" | "sales-by-product";
+type ReportTab = "summary" | "sales-by-product" | "sales-by-owner";
 
 const reportTabs: Array<{ id: ReportTab; label: string }> = [
   { id: "summary", label: "Indicadores" },
   { id: "sales-by-product", label: "Vendas por produto" },
+  { id: "sales-by-owner", label: "Vendas por vendedor" },
 ];
 
 type ManagementSummaryViewProps = {
@@ -125,6 +127,14 @@ export function ManagementSummaryView({
           aria-labelledby="report-tab-sales-by-product"
         >
           <SalesByProductView accessToken={accessToken} />
+        </div>
+      ) : tab === "sales-by-owner" ? (
+        <div
+          role="tabpanel"
+          id="report-panel-sales-by-owner"
+          aria-labelledby="report-tab-sales-by-owner"
+        >
+          <SalesByOwnerView accessToken={accessToken} />
         </div>
       ) : loading ? (
         <p className="activities-view__status">
