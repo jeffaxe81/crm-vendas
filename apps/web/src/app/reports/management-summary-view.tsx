@@ -8,14 +8,17 @@ import { useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { SalesByProductView } from "./sales-by-product-view";
+import { ActivitiesByOwnerView } from "./activities-by-owner-view";
 import { FunnelView } from "./funnel-view";
 
-type ReportTab = "summary" | "sales-by-product" | "funnel";
+type ReportTab =
+  "summary" | "sales-by-product" | "funnel" | "activities-by-owner";
 
 const reportTabs: Array<{ id: ReportTab; label: string }> = [
   { id: "summary", label: "Indicadores" },
   { id: "sales-by-product", label: "Vendas por produto" },
   { id: "funnel", label: "Funil" },
+  { id: "activities-by-owner", label: "Atividades" },
 ];
 
 type ManagementSummaryViewProps = {
@@ -135,6 +138,14 @@ export function ManagementSummaryView({
           aria-labelledby="report-tab-funnel"
         >
           <FunnelView accessToken={accessToken} />
+        </div>
+      ) : tab === "activities-by-owner" ? (
+        <div
+          role="tabpanel"
+          id="report-panel-activities-by-owner"
+          aria-labelledby="report-tab-activities-by-owner"
+        >
+          <ActivitiesByOwnerView accessToken={accessToken} />
         </div>
       ) : loading ? (
         <p className="activities-view__status">

@@ -21,6 +21,10 @@ import type { AuthenticatedRequest } from "../authorization/authenticated-reques
 import { PermissionsGuard } from "../authorization/permissions.guard";
 import { RequirePermissions } from "../authorization/require-permissions.decorator";
 import { ManagementSummaryService } from "./management-summary.service";
+import {
+  ActivitiesByOwnerService,
+  parseActivitiesByOwnerQuery,
+} from "./activities-by-owner.service";
 import { SalesByProductService } from "./sales-by-product.service";
 import {
   formatSalesByProductCsv,
@@ -97,6 +101,9 @@ export class ReportsController {
     return parsed.data;
   }
 
+  @Inject(ActivitiesByOwnerService)
+  private readonly activitiesByOwner!: ActivitiesByOwnerService;
+
   @Get("sales-by-product/export")
   @RequirePermissions("reports.read")
   async exportSalesByProduct(
@@ -147,6 +154,19 @@ export class ReportsController {
     }
 
     return this.funnel.read(this.requireOrganizationId(request), parsed.data);
+  }
+
+  @Get("activities-by-owner")
+  @RequirePermissions("reports.read")
+  readActivitiesByOwner(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = parseActivitiesByOwnerQuery(query);
+    return this.activitiesByOwner.read(
+      this.requireOrganizationId(request),
+      parsed
+    );
   }
 
   private requireOrganizationId(request: AuthenticatedRequest): string {

@@ -1121,3 +1121,21 @@ textarea {
   background: #fbfdff;
   color: #10243e;
 }
+
+.activities-report__row--overdue th {
+  border-left: 3px solid #c2410c;
+}
+
+.activities-report__overdue {
+  color: #b42318;
+}
+
+.activities-report__badge {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #fde8e6;
+  color: #b42318;
+  font-size: 0.72rem;
+  font-weight: 800;
+}

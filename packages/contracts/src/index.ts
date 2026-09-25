@@ -172,3 +172,14 @@ export {
   type FunnelStageKind,
   type FunnelStageRow,
 } from "./funnel";
+
+export {
+  ActivitiesByOwnerCountsSchema,
+  ActivitiesByOwnerQuerySchema,
+  ActivitiesByOwnerReportSchema,
+  ActivitiesByOwnerRowSchema,
+  type ActivitiesByOwnerCounts,
+  type ActivitiesByOwnerQuery,
+  type ActivitiesByOwnerReport,
+  type ActivitiesByOwnerRow,
+} from "./activities-by-owner";

@@ -7,6 +7,11 @@ import { SalesByProductService } from "./sales-by-product.service";
 import { ReportsController } from "./reports.controller";
 import { SalesByProductOwnersService } from "./sales-by-product-owners.service";
 import { FunnelService } from "./funnel.service";
+import {
+  ACTIVITIES_BY_OWNER_CLOCK,
+  ActivitiesByOwnerService,
+  systemReportClock,
+} from "./activities-by-owner.service";
 
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
@@ -16,12 +21,15 @@ import { FunnelService } from "./funnel.service";
     SalesByProductService,
     SalesByProductOwnersService,
     FunnelService,
+    ActivitiesByOwnerService,
+    { provide: ACTIVITIES_BY_OWNER_CLOCK, useValue: systemReportClock },
   ],
   exports: [
     ManagementSummaryService,
     SalesByProductService,
     SalesByProductOwnersService,
     FunnelService,
+    ActivitiesByOwnerService,
   ],
 })
 export class ReportsModule {}
