@@ -18,6 +18,10 @@ import type { AuthenticatedRequest } from "../authorization/authenticated-reques
 import { PermissionsGuard } from "../authorization/permissions.guard";
 import { RequirePermissions } from "../authorization/require-permissions.decorator";
 import { ManagementSummaryService } from "./management-summary.service";
+import {
+  ActivitiesByOwnerService,
+  parseActivitiesByOwnerQuery,
+} from "./activities-by-owner.service";
 import { SalesByProductService } from "./sales-by-product.service";
 
 @Controller("reports")
@@ -82,5 +86,26 @@ export class ReportsController {
       });
     }
     return parsed.data;
+  }
+
+  @Inject(ActivitiesByOwnerService)
+  private readonly activitiesByOwner!: ActivitiesByOwnerService;
+
+  @Get("activities-by-owner")
+  @RequirePermissions("reports.read")
+  readActivitiesByOwner(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = parseActivitiesByOwnerQuery(query);
+
+    if (!request.auth) {
+      throw new UnauthorizedException({
+        code: "AUTHENTICATION_REQUIRED",
+        message: "Sessão autenticada obrigatória.",
+      });
+    }
+
+    return this.activitiesByOwner.read(request.auth.organizationId, parsed);
   }
 }

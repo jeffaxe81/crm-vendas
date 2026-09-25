@@ -1090,3 +1090,30 @@ textarea {
 .sales-report__table small {
   color: #73859a;
 }
+
+.sales-report__filters select {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid #bfcddd;
+  border-radius: 9px;
+  background: #fbfdff;
+  color: #10243e;
+}
+
+.activities-report__row--overdue th {
+  border-left: 3px solid #c2410c;
+}
+
+.activities-report__overdue {
+  color: #b42318;
+}
+
+.activities-report__badge {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #fde8e6;
+  color: #b42318;
+  font-size: 0.72rem;
+  font-weight: 800;
+}

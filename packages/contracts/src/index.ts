@@ -150,3 +150,14 @@ export {
   type OrganizationUserResponse,
   type UpdateOrganizationMembershipInput,
 } from "./users";
+
+export {
+  ActivitiesByOwnerCountsSchema,
+  ActivitiesByOwnerQuerySchema,
+  ActivitiesByOwnerReportSchema,
+  ActivitiesByOwnerRowSchema,
+  type ActivitiesByOwnerCounts,
+  type ActivitiesByOwnerQuery,
+  type ActivitiesByOwnerReport,
+  type ActivitiesByOwnerRow,
+} from "./activities-by-owner";
