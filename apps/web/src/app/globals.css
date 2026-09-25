@@ -1050,7 +1050,8 @@ textarea {
   font-weight: 800;
 }
 
-.sales-report__filters input {
+.sales-report__filters input,
+.sales-report__filters select {
   min-height: 40px;
   padding: 0 10px;
   border: 1px solid #bfcddd;
@@ -1068,6 +1069,11 @@ textarea {
   color: #27445f;
   font-weight: 800;
   cursor: pointer;
+}
+
+.sales-report__filters button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .sales-report__filters button[type="submit"] {

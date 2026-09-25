@@ -150,3 +150,9 @@ export {
   type OrganizationUserResponse,
   type UpdateOrganizationMembershipInput,
 } from "./users";
+
+export {
+  SalesByProductOwnerSchema,
+  SalesByProductOwnersSchema,
+  type SalesByProductOwner,
+} from "./sales-by-product-filters";
