@@ -1,5 +1,7 @@
 import {
+  SalesByOwnerQuerySchema,
   SalesByProductQuerySchema,
+  type SalesByOwnerQuery,
   type SalesByProductQuery,
 } from "@axes/contracts";
 import {
@@ -18,6 +20,7 @@ import type { AuthenticatedRequest } from "../authorization/authenticated-reques
 import { PermissionsGuard } from "../authorization/permissions.guard";
 import { RequirePermissions } from "../authorization/require-permissions.decorator";
 import { ManagementSummaryService } from "./management-summary.service";
+import { SalesByOwnerService } from "./sales-by-owner.service";
 import { SalesByProductService } from "./sales-by-product.service";
 
 @Controller("reports")
@@ -27,7 +30,9 @@ export class ReportsController {
     @Inject(ManagementSummaryService)
     private readonly managementSummary: ManagementSummaryService,
     @Inject(SalesByProductService)
-    private readonly salesByProduct: SalesByProductService
+    private readonly salesByProduct: SalesByProductService,
+    @Inject(SalesByOwnerService)
+    private readonly salesByOwner: SalesByOwnerService
   ) {}
 
   @Get("management-summary")
@@ -69,6 +74,37 @@ export class ReportsController {
     }
 
     return this.salesByProduct.read(request.auth.organizationId, parsed);
+  }
+
+  @Get("sales-by-owner")
+  @RequirePermissions("reports.read")
+  readSalesByOwner(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = this.parseSalesByOwnerQuery(query);
+
+    if (!request.auth) {
+      throw new UnauthorizedException({
+        code: "AUTHENTICATION_REQUIRED",
+        message: "Sessão autenticada obrigatória.",
+      });
+    }
+
+    return this.salesByOwner.read(request.auth.organizationId, parsed);
+  }
+
+  private parseSalesByOwnerQuery(
+    query: Record<string, unknown>
+  ): SalesByOwnerQuery {
+    const parsed = SalesByOwnerQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+    return parsed.data;
   }
 
   private parseSalesByProductQuery(
