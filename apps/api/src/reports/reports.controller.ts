@@ -1,6 +1,7 @@
 import {
   SalesByProductQuerySchema,
   type SalesByProductQuery,
+  FunnelQuerySchema,
 } from "@axes/contracts";
 import {
   BadRequestException,
@@ -19,6 +20,7 @@ import { PermissionsGuard } from "../authorization/permissions.guard";
 import { RequirePermissions } from "../authorization/require-permissions.decorator";
 import { ManagementSummaryService } from "./management-summary.service";
 import { SalesByProductService } from "./sales-by-product.service";
+import { FunnelService } from "./funnel.service";
 
 @Controller("reports")
 @UseGuards(AuthenticationGuard, PermissionsGuard)
@@ -27,7 +29,9 @@ export class ReportsController {
     @Inject(ManagementSummaryService)
     private readonly managementSummary: ManagementSummaryService,
     @Inject(SalesByProductService)
-    private readonly salesByProduct: SalesByProductService
+    private readonly salesByProduct: SalesByProductService,
+    @Inject(FunnelService)
+    private readonly funnel: FunnelService
   ) {}
 
   @Get("management-summary")
@@ -82,5 +86,29 @@ export class ReportsController {
       });
     }
     return parsed.data;
+  }
+
+  @Get("funnel")
+  @RequirePermissions("reports.read")
+  readFunnel(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = FunnelQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+
+    if (!request.auth) {
+      throw new UnauthorizedException({
+        code: "AUTHENTICATION_REQUIRED",
+        message: "Sessão autenticada obrigatória.",
+      });
+    }
+
+    return this.funnel.read(request.auth.organizationId, parsed.data);
   }
 }

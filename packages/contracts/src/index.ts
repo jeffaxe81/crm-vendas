@@ -150,3 +150,19 @@ export {
   type OrganizationUserResponse,
   type UpdateOrganizationMembershipInput,
 } from "./users";
+
+export {
+  FunnelBucketSchema,
+  FunnelIndicatorsSchema,
+  FunnelPercentSchema,
+  FunnelQuerySchema,
+  FunnelReportSchema,
+  FunnelStageKindSchema,
+  FunnelStageRowSchema,
+  type FunnelBucket,
+  type FunnelIndicators,
+  type FunnelQuery,
+  type FunnelReport,
+  type FunnelStageKind,
+  type FunnelStageRow,
+} from "./funnel";

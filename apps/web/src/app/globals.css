@@ -1090,3 +1090,28 @@ textarea {
 .sales-report__table small {
   color: #73859a;
 }
+
+.funnel-report__bar {
+  display: block;
+  min-width: 0;
+  height: 12px;
+  border-radius: 6px;
+  background: #185b9e;
+}
+
+.funnel-report__bar--won {
+  background: #1f8a4c;
+}
+
+.funnel-report__bar--lost {
+  background: #b8433a;
+}
+
+.sales-report__filters select {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid #bfcddd;
+  border-radius: 9px;
+  background: #fbfdff;
+  color: #10243e;
+}
