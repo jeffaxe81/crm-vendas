@@ -11,6 +11,8 @@ import {
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { SlaBadge, worstSlaState } from "./sla-labels";
+import { SlaPoliciesPanel } from "./sla-policies-panel";
 import { TicketDetail } from "./ticket-detail";
 import {
   channelLabels,
@@ -23,6 +25,8 @@ import {
 type TicketsViewProps = {
   accessToken: string;
   canWrite: boolean;
+  /** C5.3 — `support.manage`: configura as políticas de SLA. */
+  canManageSla?: boolean;
 };
 
 type NewTicketForm = {
@@ -40,7 +44,11 @@ const emptyForm: NewTicketForm = {
 };
 
 /** C5.1 — Atendimento: lista, abertura e detalhe de solicitações. */
-export function TicketsView({ accessToken, canWrite }: TicketsViewProps) {
+export function TicketsView({
+  accessToken,
+  canWrite,
+  canManageSla = false,
+}: TicketsViewProps) {
   const [tickets, setTickets] = useState<TicketRecord[]>([]);
   const [status, setStatus] = useState<TicketStatus | "">("");
   const [queryInput, setQueryInput] = useState("");
@@ -52,6 +60,7 @@ export function TicketsView({ accessToken, canWrite }: TicketsViewProps) {
   const [submitting, setSubmitting] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
+  const [slaOpen, setSlaOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -132,15 +141,22 @@ export function TicketsView({ accessToken, canWrite }: TicketsViewProps) {
           <h1 id="tickets-title">Solicitações</h1>
           <p>Protocolos, andamento e histórico do atendimento aos clientes.</p>
         </div>
-        {canWrite ? (
+        {canWrite || canManageSla ? (
           <div className="companies-view__header-actions">
-            <button
-              type="button"
-              className="button companies-view__primary"
-              onClick={() => setFormOpen(true)}
-            >
-              Nova solicitação
-            </button>
+            {canManageSla ? (
+              <button type="button" onClick={() => setSlaOpen(true)}>
+                Políticas de SLA
+              </button>
+            ) : null}
+            {canWrite ? (
+              <button
+                type="button"
+                className="button companies-view__primary"
+                onClick={() => setFormOpen(true)}
+              >
+                Nova solicitação
+              </button>
+            ) : null}
           </div>
         ) : null}
       </header>
@@ -187,6 +203,16 @@ export function TicketsView({ accessToken, canWrite }: TicketsViewProps) {
         <p className="companies-view__error" role="alert">
           {error}
         </p>
+      ) : null}
+
+      {canManageSla && slaOpen ? (
+        <SlaPoliciesPanel
+          accessToken={accessToken}
+          onClose={() => {
+            setSlaOpen(false);
+            setRefresh(current => current + 1);
+          }}
+        />
       ) : null}
 
       {formOpen ? (
@@ -303,6 +329,7 @@ export function TicketsView({ accessToken, canWrite }: TicketsViewProps) {
                 <th>Status</th>
                 <th>Prioridade</th>
                 <th>Aberta em</th>
+                <th>SLA</th>
               </tr>
             </thead>
             <tbody>
@@ -321,6 +348,9 @@ export function TicketsView({ accessToken, canWrite }: TicketsViewProps) {
                   <td>{statusLabels[ticket.status]}</td>
                   <td>{priorityLabels[ticket.priority]}</td>
                   <td>{dateTime.format(new Date(ticket.openedAt))}</td>
+                  <td>
+                    <SlaBadge state={worstSlaState(ticket.sla)} />
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -155,6 +155,7 @@ export default function Home() {
           <TicketsView
             accessToken={session.accessToken}
             canWrite={session.permissions.includes("ticket.write")}
+            canManageSla={session.permissions.includes("support.manage")}
           />
         ) : activeSection === "products" ? (
           <ProductsView

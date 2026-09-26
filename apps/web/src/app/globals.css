@@ -1156,3 +1156,32 @@ textarea {
 .ticket-detail__timeline .is-internal {
   color: #6b4e16;
 }
+
+/* C5.3 — indicadores de SLA */
+.sla-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+  background: #eef2f6;
+  color: #475467;
+}
+
+.sla-badge--ok,
+.sla-badge--met {
+  background: #e7f6ec;
+  color: #067647;
+}
+
+.sla-badge--at_risk {
+  background: #fef4e6;
+  color: #b54708;
+}
+
+.sla-badge--breached,
+.sla-badge--missed {
+  background: #fde8e6;
+  color: #b42318;
+}

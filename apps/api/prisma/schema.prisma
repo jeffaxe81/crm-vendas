@@ -155,6 +155,7 @@ model Organization {
   tickets                  Ticket[]
   ticketEvents             TicketEvent[]
   ticketProtocolCounters   TicketProtocolCounter[]
+  slaPolicies              SlaPolicy[]
 
   @@map("organizations")
 }
@@ -224,6 +225,8 @@ model User {
   ticketsUpdated              Ticket[]                 @relation("TicketUpdatedBy")
   ticketsDeleted              Ticket[]                 @relation("TicketDeletedBy")
   ticketEventsAuthored        TicketEvent[]            @relation("TicketEventAuthor")
+  slaPoliciesCreated          SlaPolicy[]              @relation("SlaPolicyCreatedBy")
+  slaPoliciesUpdated          SlaPolicy[]              @relation("SlaPolicyUpdatedBy")
 
   @@map("users")
 }
@@ -710,6 +713,8 @@ model Ticket {
   updater            User                    @relation("TicketUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
   deleter            User?                   @relation("TicketDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
   events             TicketEvent[]
+  firstResponseDueAt DateTime?               @map("first_response_due_at") @db.Timestamptz(6)
+  resolutionDueAt    DateTime?               @map("resolution_due_at") @db.Timestamptz(6)
 
   @@unique([id, organizationId], map: "tickets_id_organization_key")
   @@unique([organizationId, protocol], map: "tickets_org_protocol_key")
@@ -750,4 +755,25 @@ model TicketProtocolCounter {
 
   @@id([organizationId, year])
   @@map("ticket_protocol_counters")
+}
+
+/// C5.3 — política de SLA por prioridade (minutos corridos, 24x7).
+model SlaPolicy {
+  id                   String         @id @default(uuid()) @db.Uuid
+  organizationId       String         @map("organization_id") @db.Uuid
+  priority             TicketPriority
+  firstResponseMinutes Int            @map("first_response_minutes")
+  resolutionMinutes    Int            @map("resolution_minutes")
+  isActive             Boolean        @default(true) @map("is_active")
+  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy            String         @map("created_by") @db.Uuid
+  updatedBy            String         @map("updated_by") @db.Uuid
+  version              Int            @default(1)
+  organization         Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  creator              User           @relation("SlaPolicyCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater              User           @relation("SlaPolicyUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, priority], map: "sla_policies_org_priority_key")
+  @@map("sla_policies")
 }

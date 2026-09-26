@@ -54,3 +54,12 @@ describe("C5.1 ticket permissions", () => {
     expect(roleHasPermission("VIEWER", "ticket.write")).toBe(false);
   });
 });
+
+describe("C5.3 support permissions", () => {
+  it("grants support.manage only to ADMIN and MANAGER", () => {
+    expect(roleHasPermission("ADMIN", "support.manage")).toBe(true);
+    expect(roleHasPermission("MANAGER", "support.manage")).toBe(true);
+    expect(roleHasPermission("SELLER", "support.manage")).toBe(false);
+    expect(roleHasPermission("VIEWER", "support.manage")).toBe(false);
+  });
+});
