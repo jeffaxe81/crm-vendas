@@ -49,6 +49,17 @@ export const TICKET_FINAL_STATUSES: readonly TicketStatus[] = [
   "CANCELLED",
 ];
 
+/**
+ * C5.2 — solicitações "abertas" (carga de trabalho): ainda não resolvidas
+ * nem encerradas. Usado na distribuição automática e no bloqueio de
+ * exclusão de filas.
+ */
+export const TICKET_OPEN_STATUSES: readonly TicketStatus[] = [
+  "OPEN",
+  "IN_PROGRESS",
+  "WAITING_CUSTOMER",
+];
+
 export function canTransitionTicket(
   from: TicketStatus,
   to: TicketStatus
@@ -65,6 +76,7 @@ export const TicketCreateInputSchema = z
     companyId: z.string().uuid().optional(),
     contactId: z.string().uuid().optional(),
     assigneeUserId: z.string().uuid().optional(),
+    queueId: z.string().uuid().optional(),
   })
   .strict();
 
@@ -77,6 +89,7 @@ export const TicketUpdateInputSchema = z
     companyId: z.string().uuid().nullable().optional(),
     contactId: z.string().uuid().nullable().optional(),
     assigneeUserId: z.string().uuid().nullable().optional(),
+    queueId: z.string().uuid().nullable().optional(),
     version: z.number().int().min(1),
   })
   .strict()
@@ -108,7 +121,9 @@ export const TicketListQuerySchema = PaginationQuerySchema.extend({
   status: TicketStatusSchema.optional(),
   priority: TicketPrioritySchema.optional(),
   channel: TicketChannelSchema.optional(),
-  assigneeUserId: z.string().uuid().optional(),
+  /** UUID do responsável ou `me` (usuário autenticado). */
+  assigneeUserId: z.union([z.literal("me"), z.string().uuid()]).optional(),
+  queueId: z.string().uuid().optional(),
   companyId: z.string().uuid().optional(),
   contactId: z.string().uuid().optional(),
   sortBy: z
@@ -117,6 +132,11 @@ export const TicketListQuerySchema = PaginationQuerySchema.extend({
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
+/** C5.2 — `POST /tickets/:id/assign-to-me`. */
+export const TicketAssignToMeInputSchema = z
+  .object({ version: z.number().int().min(1) })
+  .strict();
+
 export type TicketCreateInput = z.infer<typeof TicketCreateInputSchema>;
 export type TicketUpdateInput = z.infer<typeof TicketUpdateInputSchema>;
 export type TicketStatusChangeInput = z.infer<
@@ -124,6 +144,7 @@ export type TicketStatusChangeInput = z.infer<
 >;
 export type TicketCommentInput = z.infer<typeof TicketCommentInputSchema>;
 export type TicketListQuery = z.infer<typeof TicketListQuerySchema>;
+export type TicketAssignToMeInput = z.infer<typeof TicketAssignToMeInputSchema>;
 
 /** Protocolo `AAAA-NNNNNN` (sequência com no mínimo 6 dígitos). */
 export function formatTicketProtocol(year: number, sequence: number): string {

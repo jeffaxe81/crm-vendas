@@ -149,6 +149,12 @@ export type TicketEvent = $Result.DefaultSelection<Prisma.$TicketEventPayload>
  * C5.1 — contador de protocolo por organização e ano.
  */
 export type TicketProtocolCounter = $Result.DefaultSelection<Prisma.$TicketProtocolCounterPayload>
+/**
+ * Model SupportQueue
+ * C5.2 — fila de atendimento. Nome único por tenant (sem diferenciar caixa)
+ * entre filas não excluídas, via índice parcial `lower(name)` na migration.
+ */
+export type SupportQueue = $Result.DefaultSelection<Prisma.$SupportQueuePayload>
 
 /**
  * Enums
@@ -728,6 +734,16 @@ export class PrismaClient<
     * ```
     */
   get ticketProtocolCounter(): Prisma.TicketProtocolCounterDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.supportQueue`: Exposes CRUD operations for the **SupportQueue** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SupportQueues
+    * const supportQueues = await prisma.supportQueue.findMany()
+    * ```
+    */
+  get supportQueue(): Prisma.SupportQueueDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1201,7 +1217,8 @@ export namespace Prisma {
     OpportunityItem: 'OpportunityItem',
     Ticket: 'Ticket',
     TicketEvent: 'TicketEvent',
-    TicketProtocolCounter: 'TicketProtocolCounter'
+    TicketProtocolCounter: 'TicketProtocolCounter',
+    SupportQueue: 'SupportQueue'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1217,7 +1234,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "organization" | "role" | "rolePermission" | "user" | "organizationMembership" | "refreshSession" | "auditLog" | "company" | "contact" | "contactChannel" | "companyContact" | "relationshipEntry" | "tag" | "companyTag" | "contactTag" | "customFieldDefinition" | "companyCustomFieldValue" | "contactCustomFieldValue" | "pipeline" | "pipelineStage" | "activity" | "opportunity" | "product" | "opportunityItem" | "ticket" | "ticketEvent" | "ticketProtocolCounter"
+      modelProps: "organization" | "role" | "rolePermission" | "user" | "organizationMembership" | "refreshSession" | "auditLog" | "company" | "contact" | "contactChannel" | "companyContact" | "relationshipEntry" | "tag" | "companyTag" | "contactTag" | "customFieldDefinition" | "companyCustomFieldValue" | "contactCustomFieldValue" | "pipeline" | "pipelineStage" | "activity" | "opportunity" | "product" | "opportunityItem" | "ticket" | "ticketEvent" | "ticketProtocolCounter" | "supportQueue"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3219,6 +3236,80 @@ export namespace Prisma {
           }
         }
       }
+      SupportQueue: {
+        payload: Prisma.$SupportQueuePayload<ExtArgs>
+        fields: Prisma.SupportQueueFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SupportQueueFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SupportQueueFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload>
+          }
+          findFirst: {
+            args: Prisma.SupportQueueFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SupportQueueFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload>
+          }
+          findMany: {
+            args: Prisma.SupportQueueFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload>[]
+          }
+          create: {
+            args: Prisma.SupportQueueCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload>
+          }
+          createMany: {
+            args: Prisma.SupportQueueCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SupportQueueCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload>[]
+          }
+          delete: {
+            args: Prisma.SupportQueueDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload>
+          }
+          update: {
+            args: Prisma.SupportQueueUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload>
+          }
+          deleteMany: {
+            args: Prisma.SupportQueueDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SupportQueueUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SupportQueueUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload>[]
+          }
+          upsert: {
+            args: Prisma.SupportQueueUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportQueuePayload>
+          }
+          aggregate: {
+            args: Prisma.SupportQueueAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSupportQueue>
+          }
+          groupBy: {
+            args: Prisma.SupportQueueGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SupportQueueGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SupportQueueCountArgs<ExtArgs>
+            result: $Utils.Optional<SupportQueueCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3369,6 +3460,7 @@ export namespace Prisma {
     ticket?: TicketOmit
     ticketEvent?: TicketEventOmit
     ticketProtocolCounter?: TicketProtocolCounterOmit
+    supportQueue?: SupportQueueOmit
   }
 
   /* Types for Logging */
@@ -3472,6 +3564,7 @@ export namespace Prisma {
     tickets: number
     ticketEvents: number
     ticketProtocolCounters: number
+    supportQueues: number
   }
 
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3498,6 +3591,7 @@ export namespace Prisma {
     tickets?: boolean | OrganizationCountOutputTypeCountTicketsArgs
     ticketEvents?: boolean | OrganizationCountOutputTypeCountTicketEventsArgs
     ticketProtocolCounters?: boolean | OrganizationCountOutputTypeCountTicketProtocolCountersArgs
+    supportQueues?: boolean | OrganizationCountOutputTypeCountSupportQueuesArgs
   }
 
   // Custom InputTypes
@@ -3672,6 +3766,13 @@ export namespace Prisma {
     where?: TicketProtocolCounterWhereInput
   }
 
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountSupportQueuesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportQueueWhereInput
+  }
+
 
   /**
    * Count Type RoleCountOutputType
@@ -3736,6 +3837,9 @@ export namespace Prisma {
     ticketsUpdated: number
     ticketsDeleted: number
     ticketEventsAuthored: number
+    supportQueuesCreated: number
+    supportQueuesUpdated: number
+    supportQueuesDeleted: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3766,6 +3870,9 @@ export namespace Prisma {
     ticketsUpdated?: boolean | UserCountOutputTypeCountTicketsUpdatedArgs
     ticketsDeleted?: boolean | UserCountOutputTypeCountTicketsDeletedArgs
     ticketEventsAuthored?: boolean | UserCountOutputTypeCountTicketEventsAuthoredArgs
+    supportQueuesCreated?: boolean | UserCountOutputTypeCountSupportQueuesCreatedArgs
+    supportQueuesUpdated?: boolean | UserCountOutputTypeCountSupportQueuesUpdatedArgs
+    supportQueuesDeleted?: boolean | UserCountOutputTypeCountSupportQueuesDeletedArgs
   }
 
   // Custom InputTypes
@@ -3966,6 +4073,27 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountTicketEventsAuthoredArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TicketEventWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSupportQueuesCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportQueueWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSupportQueuesUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportQueueWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSupportQueuesDeletedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportQueueWhereInput
   }
 
 
@@ -4442,6 +4570,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type SupportQueueCountOutputType
+   */
+
+  export type SupportQueueCountOutputType = {
+    tickets: number
+  }
+
+  export type SupportQueueCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tickets?: boolean | SupportQueueCountOutputTypeCountTicketsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SupportQueueCountOutputType without action
+   */
+  export type SupportQueueCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueueCountOutputType
+     */
+    select?: SupportQueueCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SupportQueueCountOutputType without action
+   */
+  export type SupportQueueCountOutputTypeCountTicketsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TicketWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -4640,6 +4799,7 @@ export namespace Prisma {
     tickets?: boolean | Organization$ticketsArgs<ExtArgs>
     ticketEvents?: boolean | Organization$ticketEventsArgs<ExtArgs>
     ticketProtocolCounters?: boolean | Organization$ticketProtocolCountersArgs<ExtArgs>
+    supportQueues?: boolean | Organization$supportQueuesArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -4695,6 +4855,7 @@ export namespace Prisma {
     tickets?: boolean | Organization$ticketsArgs<ExtArgs>
     ticketEvents?: boolean | Organization$ticketEventsArgs<ExtArgs>
     ticketProtocolCounters?: boolean | Organization$ticketProtocolCountersArgs<ExtArgs>
+    supportQueues?: boolean | Organization$supportQueuesArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4726,6 +4887,7 @@ export namespace Prisma {
       tickets: Prisma.$TicketPayload<ExtArgs>[]
       ticketEvents: Prisma.$TicketEventPayload<ExtArgs>[]
       ticketProtocolCounters: Prisma.$TicketProtocolCounterPayload<ExtArgs>[]
+      supportQueues: Prisma.$SupportQueuePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5151,6 +5313,7 @@ export namespace Prisma {
     tickets<T extends Organization$ticketsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$ticketsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ticketEvents<T extends Organization$ticketEventsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$ticketEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ticketProtocolCounters<T extends Organization$ticketProtocolCountersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$ticketProtocolCountersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketProtocolCounterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    supportQueues<T extends Organization$supportQueuesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$supportQueuesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6128,6 +6291,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TicketProtocolCounterScalarFieldEnum | TicketProtocolCounterScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.supportQueues
+   */
+  export type Organization$supportQueuesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    where?: SupportQueueWhereInput
+    orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
+    cursor?: SupportQueueWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
   }
 
   /**
@@ -8546,6 +8733,9 @@ export namespace Prisma {
     ticketsUpdated?: boolean | User$ticketsUpdatedArgs<ExtArgs>
     ticketsDeleted?: boolean | User$ticketsDeletedArgs<ExtArgs>
     ticketEventsAuthored?: boolean | User$ticketEventsAuthoredArgs<ExtArgs>
+    supportQueuesCreated?: boolean | User$supportQueuesCreatedArgs<ExtArgs>
+    supportQueuesUpdated?: boolean | User$supportQueuesUpdatedArgs<ExtArgs>
+    supportQueuesDeleted?: boolean | User$supportQueuesDeletedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -8611,6 +8801,9 @@ export namespace Prisma {
     ticketsUpdated?: boolean | User$ticketsUpdatedArgs<ExtArgs>
     ticketsDeleted?: boolean | User$ticketsDeletedArgs<ExtArgs>
     ticketEventsAuthored?: boolean | User$ticketEventsAuthoredArgs<ExtArgs>
+    supportQueuesCreated?: boolean | User$supportQueuesCreatedArgs<ExtArgs>
+    supportQueuesUpdated?: boolean | User$supportQueuesUpdatedArgs<ExtArgs>
+    supportQueuesDeleted?: boolean | User$supportQueuesDeletedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -8646,6 +8839,9 @@ export namespace Prisma {
       ticketsUpdated: Prisma.$TicketPayload<ExtArgs>[]
       ticketsDeleted: Prisma.$TicketPayload<ExtArgs>[]
       ticketEventsAuthored: Prisma.$TicketEventPayload<ExtArgs>[]
+      supportQueuesCreated: Prisma.$SupportQueuePayload<ExtArgs>[]
+      supportQueuesUpdated: Prisma.$SupportQueuePayload<ExtArgs>[]
+      supportQueuesDeleted: Prisma.$SupportQueuePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9077,6 +9273,9 @@ export namespace Prisma {
     ticketsUpdated<T extends User$ticketsUpdatedArgs<ExtArgs> = {}>(args?: Subset<T, User$ticketsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ticketsDeleted<T extends User$ticketsDeletedArgs<ExtArgs> = {}>(args?: Subset<T, User$ticketsDeletedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ticketEventsAuthored<T extends User$ticketEventsAuthoredArgs<ExtArgs> = {}>(args?: Subset<T, User$ticketEventsAuthoredArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    supportQueuesCreated<T extends User$supportQueuesCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$supportQueuesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    supportQueuesUpdated<T extends User$supportQueuesUpdatedArgs<ExtArgs> = {}>(args?: Subset<T, User$supportQueuesUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    supportQueuesDeleted<T extends User$supportQueuesDeletedArgs<ExtArgs> = {}>(args?: Subset<T, User$supportQueuesDeletedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10152,6 +10351,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TicketEventScalarFieldEnum | TicketEventScalarFieldEnum[]
+  }
+
+  /**
+   * User.supportQueuesCreated
+   */
+  export type User$supportQueuesCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    where?: SupportQueueWhereInput
+    orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
+    cursor?: SupportQueueWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
+  }
+
+  /**
+   * User.supportQueuesUpdated
+   */
+  export type User$supportQueuesUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    where?: SupportQueueWhereInput
+    orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
+    cursor?: SupportQueueWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
+  }
+
+  /**
+   * User.supportQueuesDeleted
+   */
+  export type User$supportQueuesDeletedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    where?: SupportQueueWhereInput
+    orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
+    cursor?: SupportQueueWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
   }
 
   /**
@@ -34365,6 +34636,7 @@ export namespace Prisma {
     version: number | null
     deletedAt: Date | null
     deletedBy: string | null
+    queueId: string | null
   }
 
   export type TicketMaxAggregateOutputType = {
@@ -34390,6 +34662,7 @@ export namespace Prisma {
     version: number | null
     deletedAt: Date | null
     deletedBy: string | null
+    queueId: string | null
   }
 
   export type TicketCountAggregateOutputType = {
@@ -34415,6 +34688,7 @@ export namespace Prisma {
     version: number
     deletedAt: number
     deletedBy: number
+    queueId: number
     _all: number
   }
 
@@ -34450,6 +34724,7 @@ export namespace Prisma {
     version?: true
     deletedAt?: true
     deletedBy?: true
+    queueId?: true
   }
 
   export type TicketMaxAggregateInputType = {
@@ -34475,6 +34750,7 @@ export namespace Prisma {
     version?: true
     deletedAt?: true
     deletedBy?: true
+    queueId?: true
   }
 
   export type TicketCountAggregateInputType = {
@@ -34500,6 +34776,7 @@ export namespace Prisma {
     version?: true
     deletedAt?: true
     deletedBy?: true
+    queueId?: true
     _all?: true
   }
 
@@ -34612,6 +34889,7 @@ export namespace Prisma {
     version: number
     deletedAt: Date | null
     deletedBy: string | null
+    queueId: string | null
     _count: TicketCountAggregateOutputType | null
     _avg: TicketAvgAggregateOutputType | null
     _sum: TicketSumAggregateOutputType | null
@@ -34656,6 +34934,7 @@ export namespace Prisma {
     version?: boolean
     deletedAt?: boolean
     deletedBy?: boolean
+    queueId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     company?: boolean | Ticket$companyArgs<ExtArgs>
     contact?: boolean | Ticket$contactArgs<ExtArgs>
@@ -34664,6 +34943,7 @@ export namespace Prisma {
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Ticket$deleterArgs<ExtArgs>
     events?: boolean | Ticket$eventsArgs<ExtArgs>
+    queue?: boolean | Ticket$queueArgs<ExtArgs>
     _count?: boolean | TicketCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ticket"]>
 
@@ -34690,6 +34970,7 @@ export namespace Prisma {
     version?: boolean
     deletedAt?: boolean
     deletedBy?: boolean
+    queueId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     company?: boolean | Ticket$companyArgs<ExtArgs>
     contact?: boolean | Ticket$contactArgs<ExtArgs>
@@ -34697,6 +34978,7 @@ export namespace Prisma {
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Ticket$deleterArgs<ExtArgs>
+    queue?: boolean | Ticket$queueArgs<ExtArgs>
   }, ExtArgs["result"]["ticket"]>
 
   export type TicketSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -34722,6 +35004,7 @@ export namespace Prisma {
     version?: boolean
     deletedAt?: boolean
     deletedBy?: boolean
+    queueId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     company?: boolean | Ticket$companyArgs<ExtArgs>
     contact?: boolean | Ticket$contactArgs<ExtArgs>
@@ -34729,6 +35012,7 @@ export namespace Prisma {
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Ticket$deleterArgs<ExtArgs>
+    queue?: boolean | Ticket$queueArgs<ExtArgs>
   }, ExtArgs["result"]["ticket"]>
 
   export type TicketSelectScalar = {
@@ -34754,9 +35038,10 @@ export namespace Prisma {
     version?: boolean
     deletedAt?: boolean
     deletedBy?: boolean
+    queueId?: boolean
   }
 
-  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "protocol" | "subject" | "description" | "status" | "priority" | "channel" | "companyId" | "contactId" | "assigneeUserId" | "openedAt" | "firstResponseAt" | "resolvedAt" | "closedAt" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "version" | "deletedAt" | "deletedBy", ExtArgs["result"]["ticket"]>
+  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "protocol" | "subject" | "description" | "status" | "priority" | "channel" | "companyId" | "contactId" | "assigneeUserId" | "openedAt" | "firstResponseAt" | "resolvedAt" | "closedAt" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "version" | "deletedAt" | "deletedBy" | "queueId", ExtArgs["result"]["ticket"]>
   export type TicketInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     company?: boolean | Ticket$companyArgs<ExtArgs>
@@ -34766,6 +35051,7 @@ export namespace Prisma {
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Ticket$deleterArgs<ExtArgs>
     events?: boolean | Ticket$eventsArgs<ExtArgs>
+    queue?: boolean | Ticket$queueArgs<ExtArgs>
     _count?: boolean | TicketCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TicketIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -34776,6 +35062,7 @@ export namespace Prisma {
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Ticket$deleterArgs<ExtArgs>
+    queue?: boolean | Ticket$queueArgs<ExtArgs>
   }
   export type TicketIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -34785,6 +35072,7 @@ export namespace Prisma {
     creator?: boolean | UserDefaultArgs<ExtArgs>
     updater?: boolean | UserDefaultArgs<ExtArgs>
     deleter?: boolean | Ticket$deleterArgs<ExtArgs>
+    queue?: boolean | Ticket$queueArgs<ExtArgs>
   }
 
   export type $TicketPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -34798,6 +35086,7 @@ export namespace Prisma {
       updater: Prisma.$UserPayload<ExtArgs>
       deleter: Prisma.$UserPayload<ExtArgs> | null
       events: Prisma.$TicketEventPayload<ExtArgs>[]
+      queue: Prisma.$SupportQueuePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -34822,6 +35111,7 @@ export namespace Prisma {
       version: number
       deletedAt: Date | null
       deletedBy: string | null
+      queueId: string | null
     }, ExtArgs["result"]["ticket"]>
     composites: {}
   }
@@ -35224,6 +35514,7 @@ export namespace Prisma {
     updater<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     deleter<T extends Ticket$deleterArgs<ExtArgs> = {}>(args?: Subset<T, Ticket$deleterArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     events<T extends Ticket$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Ticket$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    queue<T extends Ticket$queueArgs<ExtArgs> = {}>(args?: Subset<T, Ticket$queueArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -35275,6 +35566,7 @@ export namespace Prisma {
     readonly version: FieldRef<"Ticket", 'Int'>
     readonly deletedAt: FieldRef<"Ticket", 'DateTime'>
     readonly deletedBy: FieldRef<"Ticket", 'String'>
+    readonly queueId: FieldRef<"Ticket", 'String'>
   }
     
 
@@ -35773,6 +36065,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TicketEventScalarFieldEnum | TicketEventScalarFieldEnum[]
+  }
+
+  /**
+   * Ticket.queue
+   */
+  export type Ticket$queueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    where?: SupportQueueWhereInput
   }
 
   /**
@@ -38023,6 +38334,1280 @@ export namespace Prisma {
 
 
   /**
+   * Model SupportQueue
+   */
+
+  export type AggregateSupportQueue = {
+    _count: SupportQueueCountAggregateOutputType | null
+    _avg: SupportQueueAvgAggregateOutputType | null
+    _sum: SupportQueueSumAggregateOutputType | null
+    _min: SupportQueueMinAggregateOutputType | null
+    _max: SupportQueueMaxAggregateOutputType | null
+  }
+
+  export type SupportQueueAvgAggregateOutputType = {
+    version: number | null
+  }
+
+  export type SupportQueueSumAggregateOutputType = {
+    version: number | null
+  }
+
+  export type SupportQueueMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    name: string | null
+    description: string | null
+    isActive: boolean | null
+    autoAssign: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+    version: number | null
+    deletedAt: Date | null
+    deletedBy: string | null
+  }
+
+  export type SupportQueueMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    name: string | null
+    description: string | null
+    isActive: boolean | null
+    autoAssign: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+    version: number | null
+    deletedAt: Date | null
+    deletedBy: string | null
+  }
+
+  export type SupportQueueCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    name: number
+    description: number
+    isActive: number
+    autoAssign: number
+    createdAt: number
+    updatedAt: number
+    createdBy: number
+    updatedBy: number
+    version: number
+    deletedAt: number
+    deletedBy: number
+    _all: number
+  }
+
+
+  export type SupportQueueAvgAggregateInputType = {
+    version?: true
+  }
+
+  export type SupportQueueSumAggregateInputType = {
+    version?: true
+  }
+
+  export type SupportQueueMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    name?: true
+    description?: true
+    isActive?: true
+    autoAssign?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    version?: true
+    deletedAt?: true
+    deletedBy?: true
+  }
+
+  export type SupportQueueMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    name?: true
+    description?: true
+    isActive?: true
+    autoAssign?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    version?: true
+    deletedAt?: true
+    deletedBy?: true
+  }
+
+  export type SupportQueueCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    name?: true
+    description?: true
+    isActive?: true
+    autoAssign?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    version?: true
+    deletedAt?: true
+    deletedBy?: true
+    _all?: true
+  }
+
+  export type SupportQueueAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportQueue to aggregate.
+     */
+    where?: SupportQueueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportQueues to fetch.
+     */
+    orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SupportQueueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportQueues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportQueues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SupportQueues
+    **/
+    _count?: true | SupportQueueCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SupportQueueAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SupportQueueSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SupportQueueMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SupportQueueMaxAggregateInputType
+  }
+
+  export type GetSupportQueueAggregateType<T extends SupportQueueAggregateArgs> = {
+        [P in keyof T & keyof AggregateSupportQueue]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSupportQueue[P]>
+      : GetScalarType<T[P], AggregateSupportQueue[P]>
+  }
+
+
+
+
+  export type SupportQueueGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportQueueWhereInput
+    orderBy?: SupportQueueOrderByWithAggregationInput | SupportQueueOrderByWithAggregationInput[]
+    by: SupportQueueScalarFieldEnum[] | SupportQueueScalarFieldEnum
+    having?: SupportQueueScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SupportQueueCountAggregateInputType | true
+    _avg?: SupportQueueAvgAggregateInputType
+    _sum?: SupportQueueSumAggregateInputType
+    _min?: SupportQueueMinAggregateInputType
+    _max?: SupportQueueMaxAggregateInputType
+  }
+
+  export type SupportQueueGroupByOutputType = {
+    id: string
+    organizationId: string
+    name: string
+    description: string | null
+    isActive: boolean
+    autoAssign: boolean
+    createdAt: Date
+    updatedAt: Date
+    createdBy: string
+    updatedBy: string
+    version: number
+    deletedAt: Date | null
+    deletedBy: string | null
+    _count: SupportQueueCountAggregateOutputType | null
+    _avg: SupportQueueAvgAggregateOutputType | null
+    _sum: SupportQueueSumAggregateOutputType | null
+    _min: SupportQueueMinAggregateOutputType | null
+    _max: SupportQueueMaxAggregateOutputType | null
+  }
+
+  type GetSupportQueueGroupByPayload<T extends SupportQueueGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SupportQueueGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SupportQueueGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SupportQueueGroupByOutputType[P]>
+            : GetScalarType<T[P], SupportQueueGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SupportQueueSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    deletedAt?: boolean
+    deletedBy?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | SupportQueue$deleterArgs<ExtArgs>
+    tickets?: boolean | SupportQueue$ticketsArgs<ExtArgs>
+    _count?: boolean | SupportQueueCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supportQueue"]>
+
+  export type SupportQueueSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    deletedAt?: boolean
+    deletedBy?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | SupportQueue$deleterArgs<ExtArgs>
+  }, ExtArgs["result"]["supportQueue"]>
+
+  export type SupportQueueSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    deletedAt?: boolean
+    deletedBy?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | SupportQueue$deleterArgs<ExtArgs>
+  }, ExtArgs["result"]["supportQueue"]>
+
+  export type SupportQueueSelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    deletedAt?: boolean
+    deletedBy?: boolean
+  }
+
+  export type SupportQueueOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "isActive" | "autoAssign" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "version" | "deletedAt" | "deletedBy", ExtArgs["result"]["supportQueue"]>
+  export type SupportQueueInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | SupportQueue$deleterArgs<ExtArgs>
+    tickets?: boolean | SupportQueue$ticketsArgs<ExtArgs>
+    _count?: boolean | SupportQueueCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SupportQueueIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | SupportQueue$deleterArgs<ExtArgs>
+  }
+  export type SupportQueueIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+    deleter?: boolean | SupportQueue$deleterArgs<ExtArgs>
+  }
+
+  export type $SupportQueuePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SupportQueue"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      creator: Prisma.$UserPayload<ExtArgs>
+      updater: Prisma.$UserPayload<ExtArgs>
+      deleter: Prisma.$UserPayload<ExtArgs> | null
+      tickets: Prisma.$TicketPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      name: string
+      description: string | null
+      isActive: boolean
+      autoAssign: boolean
+      createdAt: Date
+      updatedAt: Date
+      createdBy: string
+      updatedBy: string
+      version: number
+      deletedAt: Date | null
+      deletedBy: string | null
+    }, ExtArgs["result"]["supportQueue"]>
+    composites: {}
+  }
+
+  type SupportQueueGetPayload<S extends boolean | null | undefined | SupportQueueDefaultArgs> = $Result.GetResult<Prisma.$SupportQueuePayload, S>
+
+  type SupportQueueCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SupportQueueFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SupportQueueCountAggregateInputType | true
+    }
+
+  export interface SupportQueueDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SupportQueue'], meta: { name: 'SupportQueue' } }
+    /**
+     * Find zero or one SupportQueue that matches the filter.
+     * @param {SupportQueueFindUniqueArgs} args - Arguments to find a SupportQueue
+     * @example
+     * // Get one SupportQueue
+     * const supportQueue = await prisma.supportQueue.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SupportQueueFindUniqueArgs>(args: SelectSubset<T, SupportQueueFindUniqueArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SupportQueue that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SupportQueueFindUniqueOrThrowArgs} args - Arguments to find a SupportQueue
+     * @example
+     * // Get one SupportQueue
+     * const supportQueue = await prisma.supportQueue.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SupportQueueFindUniqueOrThrowArgs>(args: SelectSubset<T, SupportQueueFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportQueue that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportQueueFindFirstArgs} args - Arguments to find a SupportQueue
+     * @example
+     * // Get one SupportQueue
+     * const supportQueue = await prisma.supportQueue.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SupportQueueFindFirstArgs>(args?: SelectSubset<T, SupportQueueFindFirstArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportQueue that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportQueueFindFirstOrThrowArgs} args - Arguments to find a SupportQueue
+     * @example
+     * // Get one SupportQueue
+     * const supportQueue = await prisma.supportQueue.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SupportQueueFindFirstOrThrowArgs>(args?: SelectSubset<T, SupportQueueFindFirstOrThrowArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SupportQueues that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportQueueFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SupportQueues
+     * const supportQueues = await prisma.supportQueue.findMany()
+     * 
+     * // Get first 10 SupportQueues
+     * const supportQueues = await prisma.supportQueue.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const supportQueueWithIdOnly = await prisma.supportQueue.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SupportQueueFindManyArgs>(args?: SelectSubset<T, SupportQueueFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SupportQueue.
+     * @param {SupportQueueCreateArgs} args - Arguments to create a SupportQueue.
+     * @example
+     * // Create one SupportQueue
+     * const SupportQueue = await prisma.supportQueue.create({
+     *   data: {
+     *     // ... data to create a SupportQueue
+     *   }
+     * })
+     * 
+     */
+    create<T extends SupportQueueCreateArgs>(args: SelectSubset<T, SupportQueueCreateArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SupportQueues.
+     * @param {SupportQueueCreateManyArgs} args - Arguments to create many SupportQueues.
+     * @example
+     * // Create many SupportQueues
+     * const supportQueue = await prisma.supportQueue.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SupportQueueCreateManyArgs>(args?: SelectSubset<T, SupportQueueCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SupportQueues and returns the data saved in the database.
+     * @param {SupportQueueCreateManyAndReturnArgs} args - Arguments to create many SupportQueues.
+     * @example
+     * // Create many SupportQueues
+     * const supportQueue = await prisma.supportQueue.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SupportQueues and only return the `id`
+     * const supportQueueWithIdOnly = await prisma.supportQueue.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SupportQueueCreateManyAndReturnArgs>(args?: SelectSubset<T, SupportQueueCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SupportQueue.
+     * @param {SupportQueueDeleteArgs} args - Arguments to delete one SupportQueue.
+     * @example
+     * // Delete one SupportQueue
+     * const SupportQueue = await prisma.supportQueue.delete({
+     *   where: {
+     *     // ... filter to delete one SupportQueue
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SupportQueueDeleteArgs>(args: SelectSubset<T, SupportQueueDeleteArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SupportQueue.
+     * @param {SupportQueueUpdateArgs} args - Arguments to update one SupportQueue.
+     * @example
+     * // Update one SupportQueue
+     * const supportQueue = await prisma.supportQueue.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SupportQueueUpdateArgs>(args: SelectSubset<T, SupportQueueUpdateArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SupportQueues.
+     * @param {SupportQueueDeleteManyArgs} args - Arguments to filter SupportQueues to delete.
+     * @example
+     * // Delete a few SupportQueues
+     * const { count } = await prisma.supportQueue.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SupportQueueDeleteManyArgs>(args?: SelectSubset<T, SupportQueueDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportQueues.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportQueueUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SupportQueues
+     * const supportQueue = await prisma.supportQueue.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SupportQueueUpdateManyArgs>(args: SelectSubset<T, SupportQueueUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportQueues and returns the data updated in the database.
+     * @param {SupportQueueUpdateManyAndReturnArgs} args - Arguments to update many SupportQueues.
+     * @example
+     * // Update many SupportQueues
+     * const supportQueue = await prisma.supportQueue.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SupportQueues and only return the `id`
+     * const supportQueueWithIdOnly = await prisma.supportQueue.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SupportQueueUpdateManyAndReturnArgs>(args: SelectSubset<T, SupportQueueUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SupportQueue.
+     * @param {SupportQueueUpsertArgs} args - Arguments to update or create a SupportQueue.
+     * @example
+     * // Update or create a SupportQueue
+     * const supportQueue = await prisma.supportQueue.upsert({
+     *   create: {
+     *     // ... data to create a SupportQueue
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SupportQueue we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SupportQueueUpsertArgs>(args: SelectSubset<T, SupportQueueUpsertArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SupportQueues.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportQueueCountArgs} args - Arguments to filter SupportQueues to count.
+     * @example
+     * // Count the number of SupportQueues
+     * const count = await prisma.supportQueue.count({
+     *   where: {
+     *     // ... the filter for the SupportQueues we want to count
+     *   }
+     * })
+    **/
+    count<T extends SupportQueueCountArgs>(
+      args?: Subset<T, SupportQueueCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SupportQueueCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SupportQueue.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportQueueAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SupportQueueAggregateArgs>(args: Subset<T, SupportQueueAggregateArgs>): Prisma.PrismaPromise<GetSupportQueueAggregateType<T>>
+
+    /**
+     * Group by SupportQueue.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportQueueGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SupportQueueGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SupportQueueGroupByArgs['orderBy'] }
+        : { orderBy?: SupportQueueGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SupportQueueGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSupportQueueGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SupportQueue model
+   */
+  readonly fields: SupportQueueFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SupportQueue.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SupportQueueClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    creator<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    updater<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    deleter<T extends SupportQueue$deleterArgs<ExtArgs> = {}>(args?: Subset<T, SupportQueue$deleterArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    tickets<T extends SupportQueue$ticketsArgs<ExtArgs> = {}>(args?: Subset<T, SupportQueue$ticketsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SupportQueue model
+   */
+  interface SupportQueueFieldRefs {
+    readonly id: FieldRef<"SupportQueue", 'String'>
+    readonly organizationId: FieldRef<"SupportQueue", 'String'>
+    readonly name: FieldRef<"SupportQueue", 'String'>
+    readonly description: FieldRef<"SupportQueue", 'String'>
+    readonly isActive: FieldRef<"SupportQueue", 'Boolean'>
+    readonly autoAssign: FieldRef<"SupportQueue", 'Boolean'>
+    readonly createdAt: FieldRef<"SupportQueue", 'DateTime'>
+    readonly updatedAt: FieldRef<"SupportQueue", 'DateTime'>
+    readonly createdBy: FieldRef<"SupportQueue", 'String'>
+    readonly updatedBy: FieldRef<"SupportQueue", 'String'>
+    readonly version: FieldRef<"SupportQueue", 'Int'>
+    readonly deletedAt: FieldRef<"SupportQueue", 'DateTime'>
+    readonly deletedBy: FieldRef<"SupportQueue", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SupportQueue findUnique
+   */
+  export type SupportQueueFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportQueue to fetch.
+     */
+    where: SupportQueueWhereUniqueInput
+  }
+
+  /**
+   * SupportQueue findUniqueOrThrow
+   */
+  export type SupportQueueFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportQueue to fetch.
+     */
+    where: SupportQueueWhereUniqueInput
+  }
+
+  /**
+   * SupportQueue findFirst
+   */
+  export type SupportQueueFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportQueue to fetch.
+     */
+    where?: SupportQueueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportQueues to fetch.
+     */
+    orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportQueues.
+     */
+    cursor?: SupportQueueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportQueues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportQueues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportQueues.
+     */
+    distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
+  }
+
+  /**
+   * SupportQueue findFirstOrThrow
+   */
+  export type SupportQueueFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportQueue to fetch.
+     */
+    where?: SupportQueueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportQueues to fetch.
+     */
+    orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportQueues.
+     */
+    cursor?: SupportQueueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportQueues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportQueues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportQueues.
+     */
+    distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
+  }
+
+  /**
+   * SupportQueue findMany
+   */
+  export type SupportQueueFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportQueues to fetch.
+     */
+    where?: SupportQueueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportQueues to fetch.
+     */
+    orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SupportQueues.
+     */
+    cursor?: SupportQueueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportQueues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportQueues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportQueues.
+     */
+    distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
+  }
+
+  /**
+   * SupportQueue create
+   */
+  export type SupportQueueCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SupportQueue.
+     */
+    data: XOR<SupportQueueCreateInput, SupportQueueUncheckedCreateInput>
+  }
+
+  /**
+   * SupportQueue createMany
+   */
+  export type SupportQueueCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SupportQueues.
+     */
+    data: SupportQueueCreateManyInput | SupportQueueCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SupportQueue createManyAndReturn
+   */
+  export type SupportQueueCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * The data used to create many SupportQueues.
+     */
+    data: SupportQueueCreateManyInput | SupportQueueCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupportQueue update
+   */
+  export type SupportQueueUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SupportQueue.
+     */
+    data: XOR<SupportQueueUpdateInput, SupportQueueUncheckedUpdateInput>
+    /**
+     * Choose, which SupportQueue to update.
+     */
+    where: SupportQueueWhereUniqueInput
+  }
+
+  /**
+   * SupportQueue updateMany
+   */
+  export type SupportQueueUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SupportQueues.
+     */
+    data: XOR<SupportQueueUpdateManyMutationInput, SupportQueueUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportQueues to update
+     */
+    where?: SupportQueueWhereInput
+    /**
+     * Limit how many SupportQueues to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportQueue updateManyAndReturn
+   */
+  export type SupportQueueUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * The data used to update SupportQueues.
+     */
+    data: XOR<SupportQueueUpdateManyMutationInput, SupportQueueUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportQueues to update
+     */
+    where?: SupportQueueWhereInput
+    /**
+     * Limit how many SupportQueues to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupportQueue upsert
+   */
+  export type SupportQueueUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SupportQueue to update in case it exists.
+     */
+    where: SupportQueueWhereUniqueInput
+    /**
+     * In case the SupportQueue found by the `where` argument doesn't exist, create a new SupportQueue with this data.
+     */
+    create: XOR<SupportQueueCreateInput, SupportQueueUncheckedCreateInput>
+    /**
+     * In case the SupportQueue was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SupportQueueUpdateInput, SupportQueueUncheckedUpdateInput>
+  }
+
+  /**
+   * SupportQueue delete
+   */
+  export type SupportQueueDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+    /**
+     * Filter which SupportQueue to delete.
+     */
+    where: SupportQueueWhereUniqueInput
+  }
+
+  /**
+   * SupportQueue deleteMany
+   */
+  export type SupportQueueDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportQueues to delete
+     */
+    where?: SupportQueueWhereInput
+    /**
+     * Limit how many SupportQueues to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportQueue.deleter
+   */
+  export type SupportQueue$deleterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * SupportQueue.tickets
+   */
+  export type SupportQueue$ticketsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ticket
+     */
+    select?: TicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ticket
+     */
+    omit?: TicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketInclude<ExtArgs> | null
+    where?: TicketWhereInput
+    orderBy?: TicketOrderByWithRelationInput | TicketOrderByWithRelationInput[]
+    cursor?: TicketWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TicketScalarFieldEnum | TicketScalarFieldEnum[]
+  }
+
+  /**
+   * SupportQueue without action
+   */
+  export type SupportQueueDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportQueue
+     */
+    select?: SupportQueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportQueue
+     */
+    omit?: SupportQueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportQueueInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -38428,7 +40013,8 @@ export namespace Prisma {
     updatedBy: 'updatedBy',
     version: 'version',
     deletedAt: 'deletedAt',
-    deletedBy: 'deletedBy'
+    deletedBy: 'deletedBy',
+    queueId: 'queueId'
   };
 
   export type TicketScalarFieldEnum = (typeof TicketScalarFieldEnum)[keyof typeof TicketScalarFieldEnum]
@@ -38458,6 +40044,25 @@ export namespace Prisma {
   };
 
   export type TicketProtocolCounterScalarFieldEnum = (typeof TicketProtocolCounterScalarFieldEnum)[keyof typeof TicketProtocolCounterScalarFieldEnum]
+
+
+  export const SupportQueueScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    name: 'name',
+    description: 'description',
+    isActive: 'isActive',
+    autoAssign: 'autoAssign',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    createdBy: 'createdBy',
+    updatedBy: 'updatedBy',
+    version: 'version',
+    deletedAt: 'deletedAt',
+    deletedBy: 'deletedBy'
+  };
+
+  export type SupportQueueScalarFieldEnum = (typeof SupportQueueScalarFieldEnum)[keyof typeof SupportQueueScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -38822,6 +40427,7 @@ export namespace Prisma {
     tickets?: TicketListRelationFilter
     ticketEvents?: TicketEventListRelationFilter
     ticketProtocolCounters?: TicketProtocolCounterListRelationFilter
+    supportQueues?: SupportQueueListRelationFilter
   }
 
   export type OrganizationOrderByWithRelationInput = {
@@ -38854,6 +40460,7 @@ export namespace Prisma {
     tickets?: TicketOrderByRelationAggregateInput
     ticketEvents?: TicketEventOrderByRelationAggregateInput
     ticketProtocolCounters?: TicketProtocolCounterOrderByRelationAggregateInput
+    supportQueues?: SupportQueueOrderByRelationAggregateInput
   }
 
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -38889,6 +40496,7 @@ export namespace Prisma {
     tickets?: TicketListRelationFilter
     ticketEvents?: TicketEventListRelationFilter
     ticketProtocolCounters?: TicketProtocolCounterListRelationFilter
+    supportQueues?: SupportQueueListRelationFilter
   }, "id" | "slug">
 
   export type OrganizationOrderByWithAggregationInput = {
@@ -39079,6 +40687,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketListRelationFilter
     ticketsDeleted?: TicketListRelationFilter
     ticketEventsAuthored?: TicketEventListRelationFilter
+    supportQueuesCreated?: SupportQueueListRelationFilter
+    supportQueuesUpdated?: SupportQueueListRelationFilter
+    supportQueuesDeleted?: SupportQueueListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -39117,6 +40728,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketOrderByRelationAggregateInput
     ticketsDeleted?: TicketOrderByRelationAggregateInput
     ticketEventsAuthored?: TicketEventOrderByRelationAggregateInput
+    supportQueuesCreated?: SupportQueueOrderByRelationAggregateInput
+    supportQueuesUpdated?: SupportQueueOrderByRelationAggregateInput
+    supportQueuesDeleted?: SupportQueueOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -39158,6 +40772,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketListRelationFilter
     ticketsDeleted?: TicketListRelationFilter
     ticketEventsAuthored?: TicketEventListRelationFilter
+    supportQueuesCreated?: SupportQueueListRelationFilter
+    supportQueuesUpdated?: SupportQueueListRelationFilter
+    supportQueuesDeleted?: SupportQueueListRelationFilter
   }, "id" | "emailNormalized">
 
   export type UserOrderByWithAggregationInput = {
@@ -41061,6 +42678,7 @@ export namespace Prisma {
     version?: IntFilter<"Ticket"> | number
     deletedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     deletedBy?: UuidNullableFilter<"Ticket"> | string | null
+    queueId?: UuidNullableFilter<"Ticket"> | string | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     contact?: XOR<ContactNullableScalarRelationFilter, ContactWhereInput> | null
@@ -41069,6 +42687,7 @@ export namespace Prisma {
     updater?: XOR<UserScalarRelationFilter, UserWhereInput>
     deleter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     events?: TicketEventListRelationFilter
+    queue?: XOR<SupportQueueNullableScalarRelationFilter, SupportQueueWhereInput> | null
   }
 
   export type TicketOrderByWithRelationInput = {
@@ -41094,6 +42713,7 @@ export namespace Prisma {
     version?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
     deletedBy?: SortOrderInput | SortOrder
+    queueId?: SortOrderInput | SortOrder
     organization?: OrganizationOrderByWithRelationInput
     company?: CompanyOrderByWithRelationInput
     contact?: ContactOrderByWithRelationInput
@@ -41102,6 +42722,7 @@ export namespace Prisma {
     updater?: UserOrderByWithRelationInput
     deleter?: UserOrderByWithRelationInput
     events?: TicketEventOrderByRelationAggregateInput
+    queue?: SupportQueueOrderByWithRelationInput
   }
 
   export type TicketWhereUniqueInput = Prisma.AtLeast<{
@@ -41132,6 +42753,7 @@ export namespace Prisma {
     version?: IntFilter<"Ticket"> | number
     deletedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     deletedBy?: UuidNullableFilter<"Ticket"> | string | null
+    queueId?: UuidNullableFilter<"Ticket"> | string | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     contact?: XOR<ContactNullableScalarRelationFilter, ContactWhereInput> | null
@@ -41140,6 +42762,7 @@ export namespace Prisma {
     updater?: XOR<UserScalarRelationFilter, UserWhereInput>
     deleter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     events?: TicketEventListRelationFilter
+    queue?: XOR<SupportQueueNullableScalarRelationFilter, SupportQueueWhereInput> | null
   }, "id" | "id_organizationId" | "organizationId_protocol">
 
   export type TicketOrderByWithAggregationInput = {
@@ -41165,6 +42788,7 @@ export namespace Prisma {
     version?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
     deletedBy?: SortOrderInput | SortOrder
+    queueId?: SortOrderInput | SortOrder
     _count?: TicketCountOrderByAggregateInput
     _avg?: TicketAvgOrderByAggregateInput
     _max?: TicketMaxOrderByAggregateInput
@@ -41198,6 +42822,7 @@ export namespace Prisma {
     version?: IntWithAggregatesFilter<"Ticket"> | number
     deletedAt?: DateTimeNullableWithAggregatesFilter<"Ticket"> | Date | string | null
     deletedBy?: UuidNullableWithAggregatesFilter<"Ticket"> | string | null
+    queueId?: UuidNullableWithAggregatesFilter<"Ticket"> | string | null
   }
 
   export type TicketEventWhereInput = {
@@ -41339,6 +42964,116 @@ export namespace Prisma {
     lastValue?: IntWithAggregatesFilter<"TicketProtocolCounter"> | number
   }
 
+  export type SupportQueueWhereInput = {
+    AND?: SupportQueueWhereInput | SupportQueueWhereInput[]
+    OR?: SupportQueueWhereInput[]
+    NOT?: SupportQueueWhereInput | SupportQueueWhereInput[]
+    id?: UuidFilter<"SupportQueue"> | string
+    organizationId?: UuidFilter<"SupportQueue"> | string
+    name?: StringFilter<"SupportQueue"> | string
+    description?: StringNullableFilter<"SupportQueue"> | string | null
+    isActive?: BoolFilter<"SupportQueue"> | boolean
+    autoAssign?: BoolFilter<"SupportQueue"> | boolean
+    createdAt?: DateTimeFilter<"SupportQueue"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportQueue"> | Date | string
+    createdBy?: UuidFilter<"SupportQueue"> | string
+    updatedBy?: UuidFilter<"SupportQueue"> | string
+    version?: IntFilter<"SupportQueue"> | number
+    deletedAt?: DateTimeNullableFilter<"SupportQueue"> | Date | string | null
+    deletedBy?: UuidNullableFilter<"SupportQueue"> | string | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updater?: XOR<UserScalarRelationFilter, UserWhereInput>
+    deleter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    tickets?: TicketListRelationFilter
+  }
+
+  export type SupportQueueOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    autoAssign?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    deletedBy?: SortOrderInput | SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+    creator?: UserOrderByWithRelationInput
+    updater?: UserOrderByWithRelationInput
+    deleter?: UserOrderByWithRelationInput
+    tickets?: TicketOrderByRelationAggregateInput
+  }
+
+  export type SupportQueueWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    id_organizationId?: SupportQueueIdOrganizationIdCompoundUniqueInput
+    AND?: SupportQueueWhereInput | SupportQueueWhereInput[]
+    OR?: SupportQueueWhereInput[]
+    NOT?: SupportQueueWhereInput | SupportQueueWhereInput[]
+    organizationId?: UuidFilter<"SupportQueue"> | string
+    name?: StringFilter<"SupportQueue"> | string
+    description?: StringNullableFilter<"SupportQueue"> | string | null
+    isActive?: BoolFilter<"SupportQueue"> | boolean
+    autoAssign?: BoolFilter<"SupportQueue"> | boolean
+    createdAt?: DateTimeFilter<"SupportQueue"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportQueue"> | Date | string
+    createdBy?: UuidFilter<"SupportQueue"> | string
+    updatedBy?: UuidFilter<"SupportQueue"> | string
+    version?: IntFilter<"SupportQueue"> | number
+    deletedAt?: DateTimeNullableFilter<"SupportQueue"> | Date | string | null
+    deletedBy?: UuidNullableFilter<"SupportQueue"> | string | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updater?: XOR<UserScalarRelationFilter, UserWhereInput>
+    deleter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    tickets?: TicketListRelationFilter
+  }, "id" | "id_organizationId">
+
+  export type SupportQueueOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    autoAssign?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    deletedBy?: SortOrderInput | SortOrder
+    _count?: SupportQueueCountOrderByAggregateInput
+    _avg?: SupportQueueAvgOrderByAggregateInput
+    _max?: SupportQueueMaxOrderByAggregateInput
+    _min?: SupportQueueMinOrderByAggregateInput
+    _sum?: SupportQueueSumOrderByAggregateInput
+  }
+
+  export type SupportQueueScalarWhereWithAggregatesInput = {
+    AND?: SupportQueueScalarWhereWithAggregatesInput | SupportQueueScalarWhereWithAggregatesInput[]
+    OR?: SupportQueueScalarWhereWithAggregatesInput[]
+    NOT?: SupportQueueScalarWhereWithAggregatesInput | SupportQueueScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"SupportQueue"> | string
+    organizationId?: UuidWithAggregatesFilter<"SupportQueue"> | string
+    name?: StringWithAggregatesFilter<"SupportQueue"> | string
+    description?: StringNullableWithAggregatesFilter<"SupportQueue"> | string | null
+    isActive?: BoolWithAggregatesFilter<"SupportQueue"> | boolean
+    autoAssign?: BoolWithAggregatesFilter<"SupportQueue"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"SupportQueue"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SupportQueue"> | Date | string
+    createdBy?: UuidWithAggregatesFilter<"SupportQueue"> | string
+    updatedBy?: UuidWithAggregatesFilter<"SupportQueue"> | string
+    version?: IntWithAggregatesFilter<"SupportQueue"> | number
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"SupportQueue"> | Date | string | null
+    deletedBy?: UuidNullableWithAggregatesFilter<"SupportQueue"> | string | null
+  }
+
   export type OrganizationCreateInput = {
     id?: string
     name: string
@@ -41369,6 +43104,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateInput = {
@@ -41401,6 +43137,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUpdateInput = {
@@ -41433,6 +43170,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateInput = {
@@ -41465,6 +43203,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateManyInput = {
@@ -41658,6 +43397,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -41696,6 +43438,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUpdateInput = {
@@ -41734,6 +43479,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -41772,6 +43520,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -43693,6 +45444,7 @@ export namespace Prisma {
     updater: UserCreateNestedOneWithoutTicketsUpdatedInput
     deleter?: UserCreateNestedOneWithoutTicketsDeletedInput
     events?: TicketEventCreateNestedManyWithoutTicketInput
+    queue?: SupportQueueCreateNestedOneWithoutTicketsInput
   }
 
   export type TicketUncheckedCreateInput = {
@@ -43718,6 +45470,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -43745,6 +45498,7 @@ export namespace Prisma {
     updater?: UserUpdateOneRequiredWithoutTicketsUpdatedNestedInput
     deleter?: UserUpdateOneWithoutTicketsDeletedNestedInput
     events?: TicketEventUpdateManyWithoutTicketNestedInput
+    queue?: SupportQueueUpdateOneWithoutTicketsNestedInput
   }
 
   export type TicketUncheckedUpdateInput = {
@@ -43770,6 +45524,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -43796,6 +45551,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
   }
 
   export type TicketUpdateManyMutationInput = {
@@ -43839,6 +45595,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TicketEventCreateInput = {
@@ -43975,6 +45732,118 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
     lastValue?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type SupportQueueCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutSupportQueuesInput
+    creator: UserCreateNestedOneWithoutSupportQueuesCreatedInput
+    updater: UserCreateNestedOneWithoutSupportQueuesUpdatedInput
+    deleter?: UserCreateNestedOneWithoutSupportQueuesDeletedInput
+    tickets?: TicketCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    tickets?: TicketUncheckedCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutSupportQueuesNestedInput
+    creator?: UserUpdateOneRequiredWithoutSupportQueuesCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutSupportQueuesUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutSupportQueuesDeletedNestedInput
+    tickets?: TicketUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    tickets?: TicketUncheckedUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueCreateManyInput = {
+    id?: string
+    organizationId: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type SupportQueueUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type SupportQueueUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -44158,6 +46027,12 @@ export namespace Prisma {
     none?: TicketProtocolCounterWhereInput
   }
 
+  export type SupportQueueListRelationFilter = {
+    every?: SupportQueueWhereInput
+    some?: SupportQueueWhereInput
+    none?: SupportQueueWhereInput
+  }
+
   export type OrganizationMembershipOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -44247,6 +46122,10 @@ export namespace Prisma {
   }
 
   export type TicketProtocolCounterOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SupportQueueOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -45863,6 +47742,11 @@ export namespace Prisma {
     isNot?: OrganizationMembershipWhereInput | null
   }
 
+  export type SupportQueueNullableScalarRelationFilter = {
+    is?: SupportQueueWhereInput | null
+    isNot?: SupportQueueWhereInput | null
+  }
+
   export type TicketIdOrganizationIdCompoundUniqueInput = {
     id: string
     organizationId: string
@@ -45896,6 +47780,7 @@ export namespace Prisma {
     version?: SortOrder
     deletedAt?: SortOrder
     deletedBy?: SortOrder
+    queueId?: SortOrder
   }
 
   export type TicketAvgOrderByAggregateInput = {
@@ -45925,6 +47810,7 @@ export namespace Prisma {
     version?: SortOrder
     deletedAt?: SortOrder
     deletedBy?: SortOrder
+    queueId?: SortOrder
   }
 
   export type TicketMinOrderByAggregateInput = {
@@ -45950,6 +47836,7 @@ export namespace Prisma {
     version?: SortOrder
     deletedAt?: SortOrder
     deletedBy?: SortOrder
+    queueId?: SortOrder
   }
 
   export type TicketSumOrderByAggregateInput = {
@@ -46096,6 +47983,67 @@ export namespace Prisma {
   export type TicketProtocolCounterSumOrderByAggregateInput = {
     year?: SortOrder
     lastValue?: SortOrder
+  }
+
+  export type SupportQueueIdOrganizationIdCompoundUniqueInput = {
+    id: string
+    organizationId: string
+  }
+
+  export type SupportQueueCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    autoAssign?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrder
+    deletedBy?: SortOrder
+  }
+
+  export type SupportQueueAvgOrderByAggregateInput = {
+    version?: SortOrder
+  }
+
+  export type SupportQueueMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    autoAssign?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrder
+    deletedBy?: SortOrder
+  }
+
+  export type SupportQueueMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    autoAssign?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    deletedAt?: SortOrder
+    deletedBy?: SortOrder
+  }
+
+  export type SupportQueueSumOrderByAggregateInput = {
+    version?: SortOrder
   }
 
   export type OrganizationMembershipCreateNestedManyWithoutOrganizationInput = {
@@ -46259,6 +48207,13 @@ export namespace Prisma {
     connect?: TicketProtocolCounterWhereUniqueInput | TicketProtocolCounterWhereUniqueInput[]
   }
 
+  export type SupportQueueCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<SupportQueueCreateWithoutOrganizationInput, SupportQueueUncheckedCreateWithoutOrganizationInput> | SupportQueueCreateWithoutOrganizationInput[] | SupportQueueUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutOrganizationInput | SupportQueueCreateOrConnectWithoutOrganizationInput[]
+    createMany?: SupportQueueCreateManyOrganizationInputEnvelope
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+  }
+
   export type OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<OrganizationMembershipCreateWithoutOrganizationInput, OrganizationMembershipUncheckedCreateWithoutOrganizationInput> | OrganizationMembershipCreateWithoutOrganizationInput[] | OrganizationMembershipUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOrganizationInput | OrganizationMembershipCreateOrConnectWithoutOrganizationInput[]
@@ -46418,6 +48373,13 @@ export namespace Prisma {
     connectOrCreate?: TicketProtocolCounterCreateOrConnectWithoutOrganizationInput | TicketProtocolCounterCreateOrConnectWithoutOrganizationInput[]
     createMany?: TicketProtocolCounterCreateManyOrganizationInputEnvelope
     connect?: TicketProtocolCounterWhereUniqueInput | TicketProtocolCounterWhereUniqueInput[]
+  }
+
+  export type SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<SupportQueueCreateWithoutOrganizationInput, SupportQueueUncheckedCreateWithoutOrganizationInput> | SupportQueueCreateWithoutOrganizationInput[] | SupportQueueUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutOrganizationInput | SupportQueueCreateOrConnectWithoutOrganizationInput[]
+    createMany?: SupportQueueCreateManyOrganizationInputEnvelope
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -46754,6 +48716,20 @@ export namespace Prisma {
     deleteMany?: TicketProtocolCounterScalarWhereInput | TicketProtocolCounterScalarWhereInput[]
   }
 
+  export type SupportQueueUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<SupportQueueCreateWithoutOrganizationInput, SupportQueueUncheckedCreateWithoutOrganizationInput> | SupportQueueCreateWithoutOrganizationInput[] | SupportQueueUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutOrganizationInput | SupportQueueCreateOrConnectWithoutOrganizationInput[]
+    upsert?: SupportQueueUpsertWithWhereUniqueWithoutOrganizationInput | SupportQueueUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: SupportQueueCreateManyOrganizationInputEnvelope
+    set?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    disconnect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    delete?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    update?: SupportQueueUpdateWithWhereUniqueWithoutOrganizationInput | SupportQueueUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: SupportQueueUpdateManyWithWhereWithoutOrganizationInput | SupportQueueUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+  }
+
   export type OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<OrganizationMembershipCreateWithoutOrganizationInput, OrganizationMembershipUncheckedCreateWithoutOrganizationInput> | OrganizationMembershipCreateWithoutOrganizationInput[] | OrganizationMembershipUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOrganizationInput | OrganizationMembershipCreateOrConnectWithoutOrganizationInput[]
@@ -47076,6 +49052,20 @@ export namespace Prisma {
     deleteMany?: TicketProtocolCounterScalarWhereInput | TicketProtocolCounterScalarWhereInput[]
   }
 
+  export type SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<SupportQueueCreateWithoutOrganizationInput, SupportQueueUncheckedCreateWithoutOrganizationInput> | SupportQueueCreateWithoutOrganizationInput[] | SupportQueueUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutOrganizationInput | SupportQueueCreateOrConnectWithoutOrganizationInput[]
+    upsert?: SupportQueueUpsertWithWhereUniqueWithoutOrganizationInput | SupportQueueUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: SupportQueueCreateManyOrganizationInputEnvelope
+    set?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    disconnect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    delete?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    update?: SupportQueueUpdateWithWhereUniqueWithoutOrganizationInput | SupportQueueUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: SupportQueueUpdateManyWithWhereWithoutOrganizationInput | SupportQueueUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+  }
+
   export type OrganizationCreateNestedOneWithoutRolesInput = {
     create?: XOR<OrganizationCreateWithoutRolesInput, OrganizationUncheckedCreateWithoutRolesInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutRolesInput
@@ -47335,6 +49325,27 @@ export namespace Prisma {
     connect?: TicketEventWhereUniqueInput | TicketEventWhereUniqueInput[]
   }
 
+  export type SupportQueueCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<SupportQueueCreateWithoutCreatorInput, SupportQueueUncheckedCreateWithoutCreatorInput> | SupportQueueCreateWithoutCreatorInput[] | SupportQueueUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutCreatorInput | SupportQueueCreateOrConnectWithoutCreatorInput[]
+    createMany?: SupportQueueCreateManyCreatorInputEnvelope
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+  }
+
+  export type SupportQueueCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<SupportQueueCreateWithoutUpdaterInput, SupportQueueUncheckedCreateWithoutUpdaterInput> | SupportQueueCreateWithoutUpdaterInput[] | SupportQueueUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutUpdaterInput | SupportQueueCreateOrConnectWithoutUpdaterInput[]
+    createMany?: SupportQueueCreateManyUpdaterInputEnvelope
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+  }
+
+  export type SupportQueueCreateNestedManyWithoutDeleterInput = {
+    create?: XOR<SupportQueueCreateWithoutDeleterInput, SupportQueueUncheckedCreateWithoutDeleterInput> | SupportQueueCreateWithoutDeleterInput[] | SupportQueueUncheckedCreateWithoutDeleterInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutDeleterInput | SupportQueueCreateOrConnectWithoutDeleterInput[]
+    createMany?: SupportQueueCreateManyDeleterInputEnvelope
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+  }
+
   export type OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<OrganizationMembershipCreateWithoutUserInput, OrganizationMembershipUncheckedCreateWithoutUserInput> | OrganizationMembershipCreateWithoutUserInput[] | OrganizationMembershipUncheckedCreateWithoutUserInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutUserInput | OrganizationMembershipCreateOrConnectWithoutUserInput[]
@@ -47522,6 +49533,27 @@ export namespace Prisma {
     connectOrCreate?: TicketEventCreateOrConnectWithoutAuthorInput | TicketEventCreateOrConnectWithoutAuthorInput[]
     createMany?: TicketEventCreateManyAuthorInputEnvelope
     connect?: TicketEventWhereUniqueInput | TicketEventWhereUniqueInput[]
+  }
+
+  export type SupportQueueUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<SupportQueueCreateWithoutCreatorInput, SupportQueueUncheckedCreateWithoutCreatorInput> | SupportQueueCreateWithoutCreatorInput[] | SupportQueueUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutCreatorInput | SupportQueueCreateOrConnectWithoutCreatorInput[]
+    createMany?: SupportQueueCreateManyCreatorInputEnvelope
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+  }
+
+  export type SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<SupportQueueCreateWithoutUpdaterInput, SupportQueueUncheckedCreateWithoutUpdaterInput> | SupportQueueCreateWithoutUpdaterInput[] | SupportQueueUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutUpdaterInput | SupportQueueCreateOrConnectWithoutUpdaterInput[]
+    createMany?: SupportQueueCreateManyUpdaterInputEnvelope
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+  }
+
+  export type SupportQueueUncheckedCreateNestedManyWithoutDeleterInput = {
+    create?: XOR<SupportQueueCreateWithoutDeleterInput, SupportQueueUncheckedCreateWithoutDeleterInput> | SupportQueueCreateWithoutDeleterInput[] | SupportQueueUncheckedCreateWithoutDeleterInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutDeleterInput | SupportQueueCreateOrConnectWithoutDeleterInput[]
+    createMany?: SupportQueueCreateManyDeleterInputEnvelope
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
   }
 
   export type OrganizationMembershipUpdateManyWithoutUserNestedInput = {
@@ -47902,6 +49934,48 @@ export namespace Prisma {
     deleteMany?: TicketEventScalarWhereInput | TicketEventScalarWhereInput[]
   }
 
+  export type SupportQueueUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<SupportQueueCreateWithoutCreatorInput, SupportQueueUncheckedCreateWithoutCreatorInput> | SupportQueueCreateWithoutCreatorInput[] | SupportQueueUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutCreatorInput | SupportQueueCreateOrConnectWithoutCreatorInput[]
+    upsert?: SupportQueueUpsertWithWhereUniqueWithoutCreatorInput | SupportQueueUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: SupportQueueCreateManyCreatorInputEnvelope
+    set?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    disconnect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    delete?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    update?: SupportQueueUpdateWithWhereUniqueWithoutCreatorInput | SupportQueueUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: SupportQueueUpdateManyWithWhereWithoutCreatorInput | SupportQueueUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+  }
+
+  export type SupportQueueUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<SupportQueueCreateWithoutUpdaterInput, SupportQueueUncheckedCreateWithoutUpdaterInput> | SupportQueueCreateWithoutUpdaterInput[] | SupportQueueUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutUpdaterInput | SupportQueueCreateOrConnectWithoutUpdaterInput[]
+    upsert?: SupportQueueUpsertWithWhereUniqueWithoutUpdaterInput | SupportQueueUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: SupportQueueCreateManyUpdaterInputEnvelope
+    set?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    disconnect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    delete?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    update?: SupportQueueUpdateWithWhereUniqueWithoutUpdaterInput | SupportQueueUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: SupportQueueUpdateManyWithWhereWithoutUpdaterInput | SupportQueueUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+  }
+
+  export type SupportQueueUpdateManyWithoutDeleterNestedInput = {
+    create?: XOR<SupportQueueCreateWithoutDeleterInput, SupportQueueUncheckedCreateWithoutDeleterInput> | SupportQueueCreateWithoutDeleterInput[] | SupportQueueUncheckedCreateWithoutDeleterInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutDeleterInput | SupportQueueCreateOrConnectWithoutDeleterInput[]
+    upsert?: SupportQueueUpsertWithWhereUniqueWithoutDeleterInput | SupportQueueUpsertWithWhereUniqueWithoutDeleterInput[]
+    createMany?: SupportQueueCreateManyDeleterInputEnvelope
+    set?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    disconnect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    delete?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    update?: SupportQueueUpdateWithWhereUniqueWithoutDeleterInput | SupportQueueUpdateWithWhereUniqueWithoutDeleterInput[]
+    updateMany?: SupportQueueUpdateManyWithWhereWithoutDeleterInput | SupportQueueUpdateManyWithWhereWithoutDeleterInput[]
+    deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+  }
+
   export type OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<OrganizationMembershipCreateWithoutUserInput, OrganizationMembershipUncheckedCreateWithoutUserInput> | OrganizationMembershipCreateWithoutUserInput[] | OrganizationMembershipUncheckedCreateWithoutUserInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutUserInput | OrganizationMembershipCreateOrConnectWithoutUserInput[]
@@ -48278,6 +50352,48 @@ export namespace Prisma {
     update?: TicketEventUpdateWithWhereUniqueWithoutAuthorInput | TicketEventUpdateWithWhereUniqueWithoutAuthorInput[]
     updateMany?: TicketEventUpdateManyWithWhereWithoutAuthorInput | TicketEventUpdateManyWithWhereWithoutAuthorInput[]
     deleteMany?: TicketEventScalarWhereInput | TicketEventScalarWhereInput[]
+  }
+
+  export type SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<SupportQueueCreateWithoutCreatorInput, SupportQueueUncheckedCreateWithoutCreatorInput> | SupportQueueCreateWithoutCreatorInput[] | SupportQueueUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutCreatorInput | SupportQueueCreateOrConnectWithoutCreatorInput[]
+    upsert?: SupportQueueUpsertWithWhereUniqueWithoutCreatorInput | SupportQueueUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: SupportQueueCreateManyCreatorInputEnvelope
+    set?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    disconnect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    delete?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    update?: SupportQueueUpdateWithWhereUniqueWithoutCreatorInput | SupportQueueUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: SupportQueueUpdateManyWithWhereWithoutCreatorInput | SupportQueueUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+  }
+
+  export type SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<SupportQueueCreateWithoutUpdaterInput, SupportQueueUncheckedCreateWithoutUpdaterInput> | SupportQueueCreateWithoutUpdaterInput[] | SupportQueueUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutUpdaterInput | SupportQueueCreateOrConnectWithoutUpdaterInput[]
+    upsert?: SupportQueueUpsertWithWhereUniqueWithoutUpdaterInput | SupportQueueUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: SupportQueueCreateManyUpdaterInputEnvelope
+    set?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    disconnect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    delete?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    update?: SupportQueueUpdateWithWhereUniqueWithoutUpdaterInput | SupportQueueUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: SupportQueueUpdateManyWithWhereWithoutUpdaterInput | SupportQueueUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+  }
+
+  export type SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput = {
+    create?: XOR<SupportQueueCreateWithoutDeleterInput, SupportQueueUncheckedCreateWithoutDeleterInput> | SupportQueueCreateWithoutDeleterInput[] | SupportQueueUncheckedCreateWithoutDeleterInput[]
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutDeleterInput | SupportQueueCreateOrConnectWithoutDeleterInput[]
+    upsert?: SupportQueueUpsertWithWhereUniqueWithoutDeleterInput | SupportQueueUpsertWithWhereUniqueWithoutDeleterInput[]
+    createMany?: SupportQueueCreateManyDeleterInputEnvelope
+    set?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    disconnect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    delete?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+    update?: SupportQueueUpdateWithWhereUniqueWithoutDeleterInput | SupportQueueUpdateWithWhereUniqueWithoutDeleterInput[]
+    updateMany?: SupportQueueUpdateManyWithWhereWithoutDeleterInput | SupportQueueUpdateManyWithWhereWithoutDeleterInput[]
+    deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
   }
 
   export type OrganizationCreateNestedOneWithoutMembershipsInput = {
@@ -50473,6 +52589,12 @@ export namespace Prisma {
     connect?: TicketEventWhereUniqueInput | TicketEventWhereUniqueInput[]
   }
 
+  export type SupportQueueCreateNestedOneWithoutTicketsInput = {
+    create?: XOR<SupportQueueCreateWithoutTicketsInput, SupportQueueUncheckedCreateWithoutTicketsInput>
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutTicketsInput
+    connect?: SupportQueueWhereUniqueInput
+  }
+
   export type TicketEventUncheckedCreateNestedManyWithoutTicketInput = {
     create?: XOR<TicketEventCreateWithoutTicketInput, TicketEventUncheckedCreateWithoutTicketInput> | TicketEventCreateWithoutTicketInput[] | TicketEventUncheckedCreateWithoutTicketInput[]
     connectOrCreate?: TicketEventCreateOrConnectWithoutTicketInput | TicketEventCreateOrConnectWithoutTicketInput[]
@@ -50570,6 +52692,16 @@ export namespace Prisma {
     deleteMany?: TicketEventScalarWhereInput | TicketEventScalarWhereInput[]
   }
 
+  export type SupportQueueUpdateOneWithoutTicketsNestedInput = {
+    create?: XOR<SupportQueueCreateWithoutTicketsInput, SupportQueueUncheckedCreateWithoutTicketsInput>
+    connectOrCreate?: SupportQueueCreateOrConnectWithoutTicketsInput
+    upsert?: SupportQueueUpsertWithoutTicketsInput
+    disconnect?: SupportQueueWhereInput | boolean
+    delete?: SupportQueueWhereInput | boolean
+    connect?: SupportQueueWhereUniqueInput
+    update?: XOR<XOR<SupportQueueUpdateToOneWithWhereWithoutTicketsInput, SupportQueueUpdateWithoutTicketsInput>, SupportQueueUncheckedUpdateWithoutTicketsInput>
+  }
+
   export type TicketEventUncheckedUpdateManyWithoutTicketNestedInput = {
     create?: XOR<TicketEventCreateWithoutTicketInput, TicketEventUncheckedCreateWithoutTicketInput> | TicketEventCreateWithoutTicketInput[] | TicketEventUncheckedCreateWithoutTicketInput[]
     connectOrCreate?: TicketEventCreateOrConnectWithoutTicketInput | TicketEventCreateOrConnectWithoutTicketInput[]
@@ -50646,6 +52778,106 @@ export namespace Prisma {
     upsert?: OrganizationUpsertWithoutTicketProtocolCountersInput
     connect?: OrganizationWhereUniqueInput
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutTicketProtocolCountersInput, OrganizationUpdateWithoutTicketProtocolCountersInput>, OrganizationUncheckedUpdateWithoutTicketProtocolCountersInput>
+  }
+
+  export type OrganizationCreateNestedOneWithoutSupportQueuesInput = {
+    create?: XOR<OrganizationCreateWithoutSupportQueuesInput, OrganizationUncheckedCreateWithoutSupportQueuesInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutSupportQueuesInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSupportQueuesCreatedInput = {
+    create?: XOR<UserCreateWithoutSupportQueuesCreatedInput, UserUncheckedCreateWithoutSupportQueuesCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupportQueuesCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSupportQueuesUpdatedInput = {
+    create?: XOR<UserCreateWithoutSupportQueuesUpdatedInput, UserUncheckedCreateWithoutSupportQueuesUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupportQueuesUpdatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSupportQueuesDeletedInput = {
+    create?: XOR<UserCreateWithoutSupportQueuesDeletedInput, UserUncheckedCreateWithoutSupportQueuesDeletedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupportQueuesDeletedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TicketCreateNestedManyWithoutQueueInput = {
+    create?: XOR<TicketCreateWithoutQueueInput, TicketUncheckedCreateWithoutQueueInput> | TicketCreateWithoutQueueInput[] | TicketUncheckedCreateWithoutQueueInput[]
+    connectOrCreate?: TicketCreateOrConnectWithoutQueueInput | TicketCreateOrConnectWithoutQueueInput[]
+    createMany?: TicketCreateManyQueueInputEnvelope
+    connect?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+  }
+
+  export type TicketUncheckedCreateNestedManyWithoutQueueInput = {
+    create?: XOR<TicketCreateWithoutQueueInput, TicketUncheckedCreateWithoutQueueInput> | TicketCreateWithoutQueueInput[] | TicketUncheckedCreateWithoutQueueInput[]
+    connectOrCreate?: TicketCreateOrConnectWithoutQueueInput | TicketCreateOrConnectWithoutQueueInput[]
+    createMany?: TicketCreateManyQueueInputEnvelope
+    connect?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutSupportQueuesNestedInput = {
+    create?: XOR<OrganizationCreateWithoutSupportQueuesInput, OrganizationUncheckedCreateWithoutSupportQueuesInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutSupportQueuesInput
+    upsert?: OrganizationUpsertWithoutSupportQueuesInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutSupportQueuesInput, OrganizationUpdateWithoutSupportQueuesInput>, OrganizationUncheckedUpdateWithoutSupportQueuesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutSupportQueuesCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutSupportQueuesCreatedInput, UserUncheckedCreateWithoutSupportQueuesCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupportQueuesCreatedInput
+    upsert?: UserUpsertWithoutSupportQueuesCreatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSupportQueuesCreatedInput, UserUpdateWithoutSupportQueuesCreatedInput>, UserUncheckedUpdateWithoutSupportQueuesCreatedInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutSupportQueuesUpdatedNestedInput = {
+    create?: XOR<UserCreateWithoutSupportQueuesUpdatedInput, UserUncheckedCreateWithoutSupportQueuesUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupportQueuesUpdatedInput
+    upsert?: UserUpsertWithoutSupportQueuesUpdatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSupportQueuesUpdatedInput, UserUpdateWithoutSupportQueuesUpdatedInput>, UserUncheckedUpdateWithoutSupportQueuesUpdatedInput>
+  }
+
+  export type UserUpdateOneWithoutSupportQueuesDeletedNestedInput = {
+    create?: XOR<UserCreateWithoutSupportQueuesDeletedInput, UserUncheckedCreateWithoutSupportQueuesDeletedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupportQueuesDeletedInput
+    upsert?: UserUpsertWithoutSupportQueuesDeletedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSupportQueuesDeletedInput, UserUpdateWithoutSupportQueuesDeletedInput>, UserUncheckedUpdateWithoutSupportQueuesDeletedInput>
+  }
+
+  export type TicketUpdateManyWithoutQueueNestedInput = {
+    create?: XOR<TicketCreateWithoutQueueInput, TicketUncheckedCreateWithoutQueueInput> | TicketCreateWithoutQueueInput[] | TicketUncheckedCreateWithoutQueueInput[]
+    connectOrCreate?: TicketCreateOrConnectWithoutQueueInput | TicketCreateOrConnectWithoutQueueInput[]
+    upsert?: TicketUpsertWithWhereUniqueWithoutQueueInput | TicketUpsertWithWhereUniqueWithoutQueueInput[]
+    createMany?: TicketCreateManyQueueInputEnvelope
+    set?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+    disconnect?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+    delete?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+    connect?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+    update?: TicketUpdateWithWhereUniqueWithoutQueueInput | TicketUpdateWithWhereUniqueWithoutQueueInput[]
+    updateMany?: TicketUpdateManyWithWhereWithoutQueueInput | TicketUpdateManyWithWhereWithoutQueueInput[]
+    deleteMany?: TicketScalarWhereInput | TicketScalarWhereInput[]
+  }
+
+  export type TicketUncheckedUpdateManyWithoutQueueNestedInput = {
+    create?: XOR<TicketCreateWithoutQueueInput, TicketUncheckedCreateWithoutQueueInput> | TicketCreateWithoutQueueInput[] | TicketUncheckedCreateWithoutQueueInput[]
+    connectOrCreate?: TicketCreateOrConnectWithoutQueueInput | TicketCreateOrConnectWithoutQueueInput[]
+    upsert?: TicketUpsertWithWhereUniqueWithoutQueueInput | TicketUpsertWithWhereUniqueWithoutQueueInput[]
+    createMany?: TicketCreateManyQueueInputEnvelope
+    set?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+    disconnect?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+    delete?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+    connect?: TicketWhereUniqueInput | TicketWhereUniqueInput[]
+    update?: TicketUpdateWithWhereUniqueWithoutQueueInput | TicketUpdateWithWhereUniqueWithoutQueueInput[]
+    updateMany?: TicketUpdateManyWithWhereWithoutQueueInput | TicketUpdateManyWithWhereWithoutQueueInput[]
+    deleteMany?: TicketScalarWhereInput | TicketScalarWhereInput[]
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -51937,6 +54169,7 @@ export namespace Prisma {
     updater: UserCreateNestedOneWithoutTicketsUpdatedInput
     deleter?: UserCreateNestedOneWithoutTicketsDeletedInput
     events?: TicketEventCreateNestedManyWithoutTicketInput
+    queue?: SupportQueueCreateNestedOneWithoutTicketsInput
   }
 
   export type TicketUncheckedCreateWithoutOrganizationInput = {
@@ -51961,6 +54194,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -52027,6 +54261,48 @@ export namespace Prisma {
 
   export type TicketProtocolCounterCreateManyOrganizationInputEnvelope = {
     data: TicketProtocolCounterCreateManyOrganizationInput | TicketProtocolCounterCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SupportQueueCreateWithoutOrganizationInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    creator: UserCreateNestedOneWithoutSupportQueuesCreatedInput
+    updater: UserCreateNestedOneWithoutSupportQueuesUpdatedInput
+    deleter?: UserCreateNestedOneWithoutSupportQueuesDeletedInput
+    tickets?: TicketCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    tickets?: TicketUncheckedCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueCreateOrConnectWithoutOrganizationInput = {
+    where: SupportQueueWhereUniqueInput
+    create: XOR<SupportQueueCreateWithoutOrganizationInput, SupportQueueUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type SupportQueueCreateManyOrganizationInputEnvelope = {
+    data: SupportQueueCreateManyOrganizationInput | SupportQueueCreateManyOrganizationInput[]
     skipDuplicates?: boolean
   }
 
@@ -52710,6 +54986,7 @@ export namespace Prisma {
     version?: IntFilter<"Ticket"> | number
     deletedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     deletedBy?: UuidNullableFilter<"Ticket"> | string | null
+    queueId?: UuidNullableFilter<"Ticket"> | string | null
   }
 
   export type TicketEventUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -52770,6 +55047,41 @@ export namespace Prisma {
     lastValue?: IntFilter<"TicketProtocolCounter"> | number
   }
 
+  export type SupportQueueUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: SupportQueueWhereUniqueInput
+    update: XOR<SupportQueueUpdateWithoutOrganizationInput, SupportQueueUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<SupportQueueCreateWithoutOrganizationInput, SupportQueueUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type SupportQueueUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: SupportQueueWhereUniqueInput
+    data: XOR<SupportQueueUpdateWithoutOrganizationInput, SupportQueueUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type SupportQueueUpdateManyWithWhereWithoutOrganizationInput = {
+    where: SupportQueueScalarWhereInput
+    data: XOR<SupportQueueUpdateManyMutationInput, SupportQueueUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type SupportQueueScalarWhereInput = {
+    AND?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+    OR?: SupportQueueScalarWhereInput[]
+    NOT?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+    id?: UuidFilter<"SupportQueue"> | string
+    organizationId?: UuidFilter<"SupportQueue"> | string
+    name?: StringFilter<"SupportQueue"> | string
+    description?: StringNullableFilter<"SupportQueue"> | string | null
+    isActive?: BoolFilter<"SupportQueue"> | boolean
+    autoAssign?: BoolFilter<"SupportQueue"> | boolean
+    createdAt?: DateTimeFilter<"SupportQueue"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportQueue"> | Date | string
+    createdBy?: UuidFilter<"SupportQueue"> | string
+    updatedBy?: UuidFilter<"SupportQueue"> | string
+    version?: IntFilter<"SupportQueue"> | number
+    deletedAt?: DateTimeNullableFilter<"SupportQueue"> | Date | string | null
+    deletedBy?: UuidNullableFilter<"SupportQueue"> | string | null
+  }
+
   export type OrganizationCreateWithoutRolesInput = {
     id?: string
     name: string
@@ -52799,6 +55111,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRolesInput = {
@@ -52830,6 +55143,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRolesInput = {
@@ -52901,6 +55215,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRolesInput = {
@@ -52932,6 +55247,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type RolePermissionUpsertWithWhereUniqueWithoutRoleInput = {
@@ -54152,6 +56468,7 @@ export namespace Prisma {
     updater: UserCreateNestedOneWithoutTicketsUpdatedInput
     deleter?: UserCreateNestedOneWithoutTicketsDeletedInput
     events?: TicketEventCreateNestedManyWithoutTicketInput
+    queue?: SupportQueueCreateNestedOneWithoutTicketsInput
   }
 
   export type TicketUncheckedCreateWithoutCreatorInput = {
@@ -54176,6 +56493,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -54212,6 +56530,7 @@ export namespace Prisma {
     creator: UserCreateNestedOneWithoutTicketsCreatedInput
     deleter?: UserCreateNestedOneWithoutTicketsDeletedInput
     events?: TicketEventCreateNestedManyWithoutTicketInput
+    queue?: SupportQueueCreateNestedOneWithoutTicketsInput
   }
 
   export type TicketUncheckedCreateWithoutUpdaterInput = {
@@ -54236,6 +56555,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -54272,6 +56592,7 @@ export namespace Prisma {
     creator: UserCreateNestedOneWithoutTicketsCreatedInput
     updater: UserCreateNestedOneWithoutTicketsUpdatedInput
     events?: TicketEventCreateNestedManyWithoutTicketInput
+    queue?: SupportQueueCreateNestedOneWithoutTicketsInput
   }
 
   export type TicketUncheckedCreateWithoutDeleterInput = {
@@ -54296,6 +56617,7 @@ export namespace Prisma {
     updatedBy: string
     version?: number
     deletedAt?: Date | string | null
+    queueId?: string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -54342,6 +56664,132 @@ export namespace Prisma {
 
   export type TicketEventCreateManyAuthorInputEnvelope = {
     data: TicketEventCreateManyAuthorInput | TicketEventCreateManyAuthorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SupportQueueCreateWithoutCreatorInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutSupportQueuesInput
+    updater: UserCreateNestedOneWithoutSupportQueuesUpdatedInput
+    deleter?: UserCreateNestedOneWithoutSupportQueuesDeletedInput
+    tickets?: TicketCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    organizationId: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    tickets?: TicketUncheckedCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueCreateOrConnectWithoutCreatorInput = {
+    where: SupportQueueWhereUniqueInput
+    create: XOR<SupportQueueCreateWithoutCreatorInput, SupportQueueUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type SupportQueueCreateManyCreatorInputEnvelope = {
+    data: SupportQueueCreateManyCreatorInput | SupportQueueCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SupportQueueCreateWithoutUpdaterInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutSupportQueuesInput
+    creator: UserCreateNestedOneWithoutSupportQueuesCreatedInput
+    deleter?: UserCreateNestedOneWithoutSupportQueuesDeletedInput
+    tickets?: TicketCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueUncheckedCreateWithoutUpdaterInput = {
+    id?: string
+    organizationId: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    tickets?: TicketUncheckedCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueCreateOrConnectWithoutUpdaterInput = {
+    where: SupportQueueWhereUniqueInput
+    create: XOR<SupportQueueCreateWithoutUpdaterInput, SupportQueueUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type SupportQueueCreateManyUpdaterInputEnvelope = {
+    data: SupportQueueCreateManyUpdaterInput | SupportQueueCreateManyUpdaterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SupportQueueCreateWithoutDeleterInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutSupportQueuesInput
+    creator: UserCreateNestedOneWithoutSupportQueuesCreatedInput
+    updater: UserCreateNestedOneWithoutSupportQueuesUpdatedInput
+    tickets?: TicketCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueUncheckedCreateWithoutDeleterInput = {
+    id?: string
+    organizationId: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    tickets?: TicketUncheckedCreateNestedManyWithoutQueueInput
+  }
+
+  export type SupportQueueCreateOrConnectWithoutDeleterInput = {
+    where: SupportQueueWhereUniqueInput
+    create: XOR<SupportQueueCreateWithoutDeleterInput, SupportQueueUncheckedCreateWithoutDeleterInput>
+  }
+
+  export type SupportQueueCreateManyDeleterInputEnvelope = {
+    data: SupportQueueCreateManyDeleterInput | SupportQueueCreateManyDeleterInput[]
     skipDuplicates?: boolean
   }
 
@@ -54777,6 +57225,54 @@ export namespace Prisma {
     data: XOR<TicketEventUpdateManyMutationInput, TicketEventUncheckedUpdateManyWithoutAuthorInput>
   }
 
+  export type SupportQueueUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: SupportQueueWhereUniqueInput
+    update: XOR<SupportQueueUpdateWithoutCreatorInput, SupportQueueUncheckedUpdateWithoutCreatorInput>
+    create: XOR<SupportQueueCreateWithoutCreatorInput, SupportQueueUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type SupportQueueUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: SupportQueueWhereUniqueInput
+    data: XOR<SupportQueueUpdateWithoutCreatorInput, SupportQueueUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type SupportQueueUpdateManyWithWhereWithoutCreatorInput = {
+    where: SupportQueueScalarWhereInput
+    data: XOR<SupportQueueUpdateManyMutationInput, SupportQueueUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type SupportQueueUpsertWithWhereUniqueWithoutUpdaterInput = {
+    where: SupportQueueWhereUniqueInput
+    update: XOR<SupportQueueUpdateWithoutUpdaterInput, SupportQueueUncheckedUpdateWithoutUpdaterInput>
+    create: XOR<SupportQueueCreateWithoutUpdaterInput, SupportQueueUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type SupportQueueUpdateWithWhereUniqueWithoutUpdaterInput = {
+    where: SupportQueueWhereUniqueInput
+    data: XOR<SupportQueueUpdateWithoutUpdaterInput, SupportQueueUncheckedUpdateWithoutUpdaterInput>
+  }
+
+  export type SupportQueueUpdateManyWithWhereWithoutUpdaterInput = {
+    where: SupportQueueScalarWhereInput
+    data: XOR<SupportQueueUpdateManyMutationInput, SupportQueueUncheckedUpdateManyWithoutUpdaterInput>
+  }
+
+  export type SupportQueueUpsertWithWhereUniqueWithoutDeleterInput = {
+    where: SupportQueueWhereUniqueInput
+    update: XOR<SupportQueueUpdateWithoutDeleterInput, SupportQueueUncheckedUpdateWithoutDeleterInput>
+    create: XOR<SupportQueueCreateWithoutDeleterInput, SupportQueueUncheckedCreateWithoutDeleterInput>
+  }
+
+  export type SupportQueueUpdateWithWhereUniqueWithoutDeleterInput = {
+    where: SupportQueueWhereUniqueInput
+    data: XOR<SupportQueueUpdateWithoutDeleterInput, SupportQueueUncheckedUpdateWithoutDeleterInput>
+  }
+
+  export type SupportQueueUpdateManyWithWhereWithoutDeleterInput = {
+    where: SupportQueueScalarWhereInput
+    data: XOR<SupportQueueUpdateManyMutationInput, SupportQueueUncheckedUpdateManyWithoutDeleterInput>
+  }
+
   export type OrganizationCreateWithoutMembershipsInput = {
     id?: string
     name: string
@@ -54806,6 +57302,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutMembershipsInput = {
@@ -54837,6 +57334,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutMembershipsInput = {
@@ -54879,6 +57377,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -54916,6 +57417,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -55000,6 +57504,7 @@ export namespace Prisma {
     updater: UserCreateNestedOneWithoutTicketsUpdatedInput
     deleter?: UserCreateNestedOneWithoutTicketsDeletedInput
     events?: TicketEventCreateNestedManyWithoutTicketInput
+    queue?: SupportQueueCreateNestedOneWithoutTicketsInput
   }
 
   export type TicketUncheckedCreateWithoutAssigneeMembershipInput = {
@@ -55023,6 +57528,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -55076,6 +57582,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
@@ -55107,6 +57614,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutMembershipsInput = {
@@ -55155,6 +57663,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -55192,6 +57703,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type OpportunityUpsertWithWhereUniqueWithoutOwnerMembershipInput = {
@@ -55255,6 +57769,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRefreshSessionsInput = {
@@ -55286,6 +57801,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRefreshSessionsInput = {
@@ -55328,6 +57844,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutRefreshSessionsInput = {
@@ -55365,6 +57884,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutRefreshSessionsInput = {
@@ -55412,6 +57934,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRefreshSessionsInput = {
@@ -55443,6 +57966,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutRefreshSessionsInput = {
@@ -55491,6 +58015,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRefreshSessionsInput = {
@@ -55528,6 +58055,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type OrganizationCreateWithoutAuditLogsInput = {
@@ -55559,6 +58089,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
@@ -55590,6 +58121,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutAuditLogsInput = {
@@ -55632,6 +58164,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -55669,6 +58204,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -55716,6 +58254,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
@@ -55747,6 +58286,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutAuditLogsInput = {
@@ -55795,6 +58335,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -55832,6 +58375,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type OrganizationCreateWithoutCompaniesInput = {
@@ -55863,6 +58409,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompaniesInput = {
@@ -55894,6 +58441,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompaniesInput = {
@@ -55936,6 +58484,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutCompaniesCreatedInput = {
@@ -55973,6 +58524,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutCompaniesCreatedInput = {
@@ -56015,6 +58569,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutCompaniesUpdatedInput = {
@@ -56052,6 +58609,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutCompaniesUpdatedInput = {
@@ -56094,6 +58654,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutCompaniesDeletedInput = {
@@ -56131,6 +58694,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutCompaniesDeletedInput = {
@@ -56380,6 +58946,7 @@ export namespace Prisma {
     updater: UserCreateNestedOneWithoutTicketsUpdatedInput
     deleter?: UserCreateNestedOneWithoutTicketsDeletedInput
     events?: TicketEventCreateNestedManyWithoutTicketInput
+    queue?: SupportQueueCreateNestedOneWithoutTicketsInput
   }
 
   export type TicketUncheckedCreateWithoutCompanyInput = {
@@ -56403,6 +58970,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -56456,6 +59024,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompaniesInput = {
@@ -56487,6 +59056,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutCompaniesCreatedInput = {
@@ -56535,6 +59105,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompaniesCreatedInput = {
@@ -56572,6 +59145,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutCompaniesUpdatedInput = {
@@ -56620,6 +59196,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompaniesUpdatedInput = {
@@ -56657,6 +59236,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutCompaniesDeletedInput = {
@@ -56705,6 +59287,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompaniesDeletedInput = {
@@ -56742,6 +59327,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type CompanyContactUpsertWithWhereUniqueWithoutCompanyInput = {
@@ -56885,6 +59473,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactsInput = {
@@ -56916,6 +59505,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactsInput = {
@@ -56958,6 +59548,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutContactsCreatedInput = {
@@ -56995,6 +59588,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutContactsCreatedInput = {
@@ -57037,6 +59633,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutContactsUpdatedInput = {
@@ -57074,6 +59673,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutContactsUpdatedInput = {
@@ -57116,6 +59718,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutContactsDeletedInput = {
@@ -57153,6 +59758,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutContactsDeletedInput = {
@@ -57434,6 +60042,7 @@ export namespace Prisma {
     updater: UserCreateNestedOneWithoutTicketsUpdatedInput
     deleter?: UserCreateNestedOneWithoutTicketsDeletedInput
     events?: TicketEventCreateNestedManyWithoutTicketInput
+    queue?: SupportQueueCreateNestedOneWithoutTicketsInput
   }
 
   export type TicketUncheckedCreateWithoutContactInput = {
@@ -57457,6 +60066,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -57510,6 +60120,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactsInput = {
@@ -57541,6 +60152,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutContactsCreatedInput = {
@@ -57589,6 +60201,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContactsCreatedInput = {
@@ -57626,6 +60241,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutContactsUpdatedInput = {
@@ -57674,6 +60292,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContactsUpdatedInput = {
@@ -57711,6 +60332,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutContactsDeletedInput = {
@@ -57759,6 +60383,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContactsDeletedInput = {
@@ -57796,6 +60423,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type ContactChannelUpsertWithWhereUniqueWithoutContactInput = {
@@ -57955,6 +60585,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactChannelsInput = {
@@ -57986,6 +60617,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactChannelsInput = {
@@ -58082,6 +60714,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactChannelsInput = {
@@ -58113,6 +60746,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ContactUpsertWithoutChannelsInput = {
@@ -58199,6 +60833,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompanyContactsInput = {
@@ -58230,6 +60865,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompanyContactsInput = {
@@ -58377,6 +61013,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompanyContactsInput = {
@@ -58408,6 +61045,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutContactLinksInput = {
@@ -58551,6 +61189,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRelationshipEntriesInput = {
@@ -58582,6 +61221,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRelationshipEntriesInput = {
@@ -58724,6 +61364,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutRelationshipEntriesAuthoredInput = {
@@ -58761,6 +61404,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutRelationshipEntriesAuthoredInput = {
@@ -58808,6 +61454,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRelationshipEntriesInput = {
@@ -58839,6 +61486,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutRelationshipEntriesInput = {
@@ -58999,6 +61647,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRelationshipEntriesAuthoredInput = {
@@ -59036,6 +61687,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type OrganizationCreateWithoutTagsInput = {
@@ -59067,6 +61721,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTagsInput = {
@@ -59098,6 +61753,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTagsInput = {
@@ -59193,6 +61849,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTagsInput = {
@@ -59224,6 +61881,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyTagUpsertWithWhereUniqueWithoutTagInput = {
@@ -59287,6 +61945,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompanyTagsInput = {
@@ -59318,6 +61977,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompanyTagsInput = {
@@ -59439,6 +62099,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompanyTagsInput = {
@@ -59470,6 +62131,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutTagLinksInput = {
@@ -59587,6 +62249,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactTagsInput = {
@@ -59618,6 +62281,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactTagsInput = {
@@ -59737,6 +62401,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactTagsInput = {
@@ -59768,6 +62433,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ContactUpsertWithoutTagLinksInput = {
@@ -59883,6 +62549,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput = {
@@ -59914,6 +62581,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCustomFieldDefinitionsInput = {
@@ -60017,6 +62685,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput = {
@@ -60048,6 +62717,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyCustomFieldValueUpsertWithWhereUniqueWithoutDefinitionInput = {
@@ -60111,6 +62781,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompanyCustomFieldValuesInput = {
@@ -60142,6 +62813,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompanyCustomFieldValuesInput = {
@@ -60275,6 +62947,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompanyCustomFieldValuesInput = {
@@ -60306,6 +62979,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutCustomFieldValuesInput = {
@@ -60435,6 +63109,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactCustomFieldValuesInput = {
@@ -60466,6 +63141,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactCustomFieldValuesInput = {
@@ -60597,6 +63273,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactCustomFieldValuesInput = {
@@ -60628,6 +63305,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ContactUpsertWithoutCustomFieldValuesInput = {
@@ -60755,6 +63433,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutPipelinesInput = {
@@ -60786,6 +63465,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutPipelinesInput = {
@@ -60919,6 +63599,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutPipelinesInput = {
@@ -60950,6 +63631,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type PipelineStageUpsertWithWhereUniqueWithoutPipelineInput = {
@@ -61157,6 +63839,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutActivitiesInput = {
@@ -61188,6 +63871,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutActivitiesInput = {
@@ -61380,6 +64064,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesOwnedInput = {
@@ -61417,6 +64104,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesOwnedInput = {
@@ -61459,6 +64149,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesCreatedInput = {
@@ -61496,6 +64189,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesCreatedInput = {
@@ -61538,6 +64234,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesUpdatedInput = {
@@ -61575,6 +64274,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesUpdatedInput = {
@@ -61617,6 +64319,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesDeletedInput = {
@@ -61654,6 +64359,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesDeletedInput = {
@@ -61701,6 +64409,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutActivitiesInput = {
@@ -61732,6 +64441,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutActivitiesInput = {
@@ -61948,6 +64658,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesOwnedInput = {
@@ -61985,6 +64698,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutActivitiesCreatedInput = {
@@ -62033,6 +64749,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesCreatedInput = {
@@ -62070,6 +64789,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutActivitiesUpdatedInput = {
@@ -62118,6 +64840,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesUpdatedInput = {
@@ -62155,6 +64880,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutActivitiesDeletedInput = {
@@ -62203,6 +64931,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesDeletedInput = {
@@ -62240,6 +64971,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type OrganizationCreateWithoutOpportunitiesInput = {
@@ -62271,6 +65005,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutOpportunitiesInput = {
@@ -62302,6 +65037,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutOpportunitiesInput = {
@@ -62499,6 +65235,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesOwnedInput = {
@@ -62536,6 +65275,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesOwnedInput = {
@@ -62605,6 +65347,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesCreatedInput = {
@@ -62642,6 +65387,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesCreatedInput = {
@@ -62684,6 +65432,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesUpdatedInput = {
@@ -62721,6 +65472,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesUpdatedInput = {
@@ -62763,6 +65517,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesDeletedInput = {
@@ -62800,6 +65557,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesDeletedInput = {
@@ -62939,6 +65699,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutOpportunitiesInput = {
@@ -62970,6 +65731,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type PipelineUpsertWithoutOpportunitiesInput = {
@@ -63197,6 +65959,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesOwnedInput = {
@@ -63234,6 +65999,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type OrganizationMembershipUpsertWithoutOwnedOpportunitiesInput = {
@@ -63315,6 +66083,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesCreatedInput = {
@@ -63352,6 +66123,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutOpportunitiesUpdatedInput = {
@@ -63400,6 +66174,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesUpdatedInput = {
@@ -63437,6 +66214,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutOpportunitiesDeletedInput = {
@@ -63485,6 +66265,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesDeletedInput = {
@@ -63522,6 +66305,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type ActivityUpsertWithWhereUniqueWithoutOpportunityInput = {
@@ -63585,6 +66371,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutProductsInput = {
@@ -63616,6 +66403,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutProductsInput = {
@@ -63658,6 +66446,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutProductsCreatedInput = {
@@ -63695,6 +66486,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutProductsCreatedInput = {
@@ -63737,6 +66531,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutProductsUpdatedInput = {
@@ -63774,6 +66571,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutProductsUpdatedInput = {
@@ -63816,6 +66616,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutProductsDeletedInput = {
@@ -63853,6 +66656,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutProductsDeletedInput = {
@@ -63939,6 +66745,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutProductsInput = {
@@ -63970,6 +66777,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutProductsCreatedInput = {
@@ -64018,6 +66826,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsCreatedInput = {
@@ -64055,6 +66866,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutProductsUpdatedInput = {
@@ -64103,6 +66917,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsUpdatedInput = {
@@ -64140,6 +66957,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutProductsDeletedInput = {
@@ -64188,6 +67008,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsDeletedInput = {
@@ -64225,6 +67048,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type OpportunityItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -64272,6 +67098,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutOpportunityItemsInput = {
@@ -64303,6 +67130,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutOpportunityItemsInput = {
@@ -64434,6 +67262,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunityItemsCreatedInput = {
@@ -64471,6 +67302,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunityItemsCreatedInput = {
@@ -64513,6 +67347,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunityItemsUpdatedInput = {
@@ -64550,6 +67387,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunityItemsUpdatedInput = {
@@ -64597,6 +67437,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutOpportunityItemsInput = {
@@ -64628,6 +67469,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OpportunityUpsertWithoutItemsInput = {
@@ -64777,6 +67619,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunityItemsCreatedInput = {
@@ -64814,6 +67659,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutOpportunityItemsUpdatedInput = {
@@ -64862,6 +67710,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunityItemsUpdatedInput = {
@@ -64899,6 +67750,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type OrganizationCreateWithoutTicketsInput = {
@@ -64930,6 +67784,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTicketsInput = {
@@ -64961,6 +67816,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTicketsInput = {
@@ -65130,6 +67986,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutTicketsCreatedInput = {
@@ -65167,6 +68026,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutTicketsCreatedInput = {
@@ -65209,6 +68071,9 @@ export namespace Prisma {
     ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutTicketsUpdatedInput = {
@@ -65246,6 +68111,9 @@ export namespace Prisma {
     ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutTicketsUpdatedInput = {
@@ -65288,6 +68156,9 @@ export namespace Prisma {
     ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutTicketsDeletedInput = {
@@ -65325,6 +68196,9 @@ export namespace Prisma {
     ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutTicketsDeletedInput = {
@@ -65367,6 +68241,43 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SupportQueueCreateWithoutTicketsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutSupportQueuesInput
+    creator: UserCreateNestedOneWithoutSupportQueuesCreatedInput
+    updater: UserCreateNestedOneWithoutSupportQueuesUpdatedInput
+    deleter?: UserCreateNestedOneWithoutSupportQueuesDeletedInput
+  }
+
+  export type SupportQueueUncheckedCreateWithoutTicketsInput = {
+    id?: string
+    organizationId: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type SupportQueueCreateOrConnectWithoutTicketsInput = {
+    where: SupportQueueWhereUniqueInput
+    create: XOR<SupportQueueCreateWithoutTicketsInput, SupportQueueUncheckedCreateWithoutTicketsInput>
+  }
+
   export type OrganizationUpsertWithoutTicketsInput = {
     update: XOR<OrganizationUpdateWithoutTicketsInput, OrganizationUncheckedUpdateWithoutTicketsInput>
     create: XOR<OrganizationCreateWithoutTicketsInput, OrganizationUncheckedCreateWithoutTicketsInput>
@@ -65407,6 +68318,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTicketsInput = {
@@ -65438,6 +68350,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutTicketsInput = {
@@ -65631,6 +68544,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTicketsCreatedInput = {
@@ -65668,6 +68584,9 @@ export namespace Prisma {
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutTicketsUpdatedInput = {
@@ -65716,6 +68635,9 @@ export namespace Prisma {
     ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTicketsUpdatedInput = {
@@ -65753,6 +68675,9 @@ export namespace Prisma {
     ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUpsertWithoutTicketsDeletedInput = {
@@ -65801,6 +68726,9 @@ export namespace Prisma {
     ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTicketsDeletedInput = {
@@ -65838,6 +68766,9 @@ export namespace Prisma {
     ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type TicketEventUpsertWithWhereUniqueWithoutTicketInput = {
@@ -65854,6 +68785,49 @@ export namespace Prisma {
   export type TicketEventUpdateManyWithWhereWithoutTicketInput = {
     where: TicketEventScalarWhereInput
     data: XOR<TicketEventUpdateManyMutationInput, TicketEventUncheckedUpdateManyWithoutTicketInput>
+  }
+
+  export type SupportQueueUpsertWithoutTicketsInput = {
+    update: XOR<SupportQueueUpdateWithoutTicketsInput, SupportQueueUncheckedUpdateWithoutTicketsInput>
+    create: XOR<SupportQueueCreateWithoutTicketsInput, SupportQueueUncheckedCreateWithoutTicketsInput>
+    where?: SupportQueueWhereInput
+  }
+
+  export type SupportQueueUpdateToOneWithWhereWithoutTicketsInput = {
+    where?: SupportQueueWhereInput
+    data: XOR<SupportQueueUpdateWithoutTicketsInput, SupportQueueUncheckedUpdateWithoutTicketsInput>
+  }
+
+  export type SupportQueueUpdateWithoutTicketsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutSupportQueuesNestedInput
+    creator?: UserUpdateOneRequiredWithoutSupportQueuesCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutSupportQueuesUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutSupportQueuesDeletedNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateWithoutTicketsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrganizationCreateWithoutTicketEventsInput = {
@@ -65885,6 +68859,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTicketEventsInput = {
@@ -65916,6 +68891,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTicketEventsInput = {
@@ -65946,6 +68922,7 @@ export namespace Prisma {
     creator: UserCreateNestedOneWithoutTicketsCreatedInput
     updater: UserCreateNestedOneWithoutTicketsUpdatedInput
     deleter?: UserCreateNestedOneWithoutTicketsDeletedInput
+    queue?: SupportQueueCreateNestedOneWithoutTicketsInput
   }
 
   export type TicketUncheckedCreateWithoutEventsInput = {
@@ -65971,6 +68948,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
   }
 
   export type TicketCreateOrConnectWithoutEventsInput = {
@@ -66013,6 +68991,9 @@ export namespace Prisma {
     ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
     ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
   }
 
   export type UserUncheckedCreateWithoutTicketEventsAuthoredInput = {
@@ -66050,6 +69031,9 @@ export namespace Prisma {
     ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
     ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
     ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
   }
 
   export type UserCreateOrConnectWithoutTicketEventsAuthoredInput = {
@@ -66097,6 +69081,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTicketEventsInput = {
@@ -66128,6 +69113,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type TicketUpsertWithoutEventsInput = {
@@ -66164,6 +69150,7 @@ export namespace Prisma {
     creator?: UserUpdateOneRequiredWithoutTicketsCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutTicketsUpdatedNestedInput
     deleter?: UserUpdateOneWithoutTicketsDeletedNestedInput
+    queue?: SupportQueueUpdateOneWithoutTicketsNestedInput
   }
 
   export type TicketUncheckedUpdateWithoutEventsInput = {
@@ -66189,6 +69176,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUpsertWithoutTicketEventsAuthoredInput = {
@@ -66237,6 +69225,9 @@ export namespace Prisma {
     ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
     ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTicketEventsAuthoredInput = {
@@ -66274,6 +69265,9 @@ export namespace Prisma {
     ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
     ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
     ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
   }
 
   export type OrganizationCreateWithoutTicketProtocolCountersInput = {
@@ -66305,6 +69299,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTicketProtocolCountersInput = {
@@ -66336,6 +69331,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTicketProtocolCountersInput = {
@@ -66383,6 +69379,7 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTicketProtocolCountersInput = {
@@ -66414,6 +69411,756 @@ export namespace Prisma {
     opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationCreateWithoutSupportQueuesInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryCreateNestedManyWithoutOrganizationInput
+    tags?: TagCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutSupportQueuesInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelUncheckedCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactUncheckedCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryUncheckedCreateNestedManyWithoutOrganizationInput
+    tags?: TagUncheckedCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagUncheckedCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagUncheckedCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutSupportQueuesInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutSupportQueuesInput, OrganizationUncheckedCreateWithoutSupportQueuesInput>
+  }
+
+  export type UserCreateWithoutSupportQueuesCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+  }
+
+  export type UserUncheckedCreateWithoutSupportQueuesCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+  }
+
+  export type UserCreateOrConnectWithoutSupportQueuesCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSupportQueuesCreatedInput, UserUncheckedCreateWithoutSupportQueuesCreatedInput>
+  }
+
+  export type UserCreateWithoutSupportQueuesUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+  }
+
+  export type UserUncheckedCreateWithoutSupportQueuesUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+  }
+
+  export type UserCreateOrConnectWithoutSupportQueuesUpdatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSupportQueuesUpdatedInput, UserUncheckedCreateWithoutSupportQueuesUpdatedInput>
+  }
+
+  export type UserCreateWithoutSupportQueuesDeletedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserUncheckedCreateWithoutSupportQueuesDeletedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserCreateOrConnectWithoutSupportQueuesDeletedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSupportQueuesDeletedInput, UserUncheckedCreateWithoutSupportQueuesDeletedInput>
+  }
+
+  export type TicketCreateWithoutQueueInput = {
+    id?: string
+    protocol: string
+    subject: string
+    description?: string | null
+    status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
+    channel?: $Enums.TicketChannel
+    openedAt?: Date | string
+    firstResponseAt?: Date | string | null
+    resolvedAt?: Date | string | null
+    closedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    deletedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutTicketsInput
+    company?: CompanyCreateNestedOneWithoutTicketsInput
+    contact?: ContactCreateNestedOneWithoutTicketsInput
+    assigneeMembership?: OrganizationMembershipCreateNestedOneWithoutAssignedTicketsInput
+    creator: UserCreateNestedOneWithoutTicketsCreatedInput
+    updater: UserCreateNestedOneWithoutTicketsUpdatedInput
+    deleter?: UserCreateNestedOneWithoutTicketsDeletedInput
+    events?: TicketEventCreateNestedManyWithoutTicketInput
+  }
+
+  export type TicketUncheckedCreateWithoutQueueInput = {
+    id?: string
+    protocol: string
+    subject: string
+    description?: string | null
+    status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
+    channel?: $Enums.TicketChannel
+    companyId?: string | null
+    contactId?: string | null
+    assigneeUserId?: string | null
+    openedAt?: Date | string
+    firstResponseAt?: Date | string | null
+    resolvedAt?: Date | string | null
+    closedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+    events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
+  }
+
+  export type TicketCreateOrConnectWithoutQueueInput = {
+    where: TicketWhereUniqueInput
+    create: XOR<TicketCreateWithoutQueueInput, TicketUncheckedCreateWithoutQueueInput>
+  }
+
+  export type TicketCreateManyQueueInputEnvelope = {
+    data: TicketCreateManyQueueInput | TicketCreateManyQueueInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OrganizationUpsertWithoutSupportQueuesInput = {
+    update: XOR<OrganizationUpdateWithoutSupportQueuesInput, OrganizationUncheckedUpdateWithoutSupportQueuesInput>
+    create: XOR<OrganizationCreateWithoutSupportQueuesInput, OrganizationUncheckedCreateWithoutSupportQueuesInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutSupportQueuesInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutSupportQueuesInput, OrganizationUncheckedUpdateWithoutSupportQueuesInput>
+  }
+
+  export type OrganizationUpdateWithoutSupportQueuesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutSupportQueuesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type UserUpsertWithoutSupportQueuesCreatedInput = {
+    update: XOR<UserUpdateWithoutSupportQueuesCreatedInput, UserUncheckedUpdateWithoutSupportQueuesCreatedInput>
+    create: XOR<UserCreateWithoutSupportQueuesCreatedInput, UserUncheckedCreateWithoutSupportQueuesCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSupportQueuesCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSupportQueuesCreatedInput, UserUncheckedUpdateWithoutSupportQueuesCreatedInput>
+  }
+
+  export type UserUpdateWithoutSupportQueuesCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSupportQueuesCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+  }
+
+  export type UserUpsertWithoutSupportQueuesUpdatedInput = {
+    update: XOR<UserUpdateWithoutSupportQueuesUpdatedInput, UserUncheckedUpdateWithoutSupportQueuesUpdatedInput>
+    create: XOR<UserCreateWithoutSupportQueuesUpdatedInput, UserUncheckedCreateWithoutSupportQueuesUpdatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSupportQueuesUpdatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSupportQueuesUpdatedInput, UserUncheckedUpdateWithoutSupportQueuesUpdatedInput>
+  }
+
+  export type UserUpdateWithoutSupportQueuesUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSupportQueuesUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+  }
+
+  export type UserUpsertWithoutSupportQueuesDeletedInput = {
+    update: XOR<UserUpdateWithoutSupportQueuesDeletedInput, UserUncheckedUpdateWithoutSupportQueuesDeletedInput>
+    create: XOR<UserCreateWithoutSupportQueuesDeletedInput, UserUncheckedCreateWithoutSupportQueuesDeletedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSupportQueuesDeletedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSupportQueuesDeletedInput, UserUncheckedUpdateWithoutSupportQueuesDeletedInput>
+  }
+
+  export type UserUpdateWithoutSupportQueuesDeletedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSupportQueuesDeletedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type TicketUpsertWithWhereUniqueWithoutQueueInput = {
+    where: TicketWhereUniqueInput
+    update: XOR<TicketUpdateWithoutQueueInput, TicketUncheckedUpdateWithoutQueueInput>
+    create: XOR<TicketCreateWithoutQueueInput, TicketUncheckedCreateWithoutQueueInput>
+  }
+
+  export type TicketUpdateWithWhereUniqueWithoutQueueInput = {
+    where: TicketWhereUniqueInput
+    data: XOR<TicketUpdateWithoutQueueInput, TicketUncheckedUpdateWithoutQueueInput>
+  }
+
+  export type TicketUpdateManyWithWhereWithoutQueueInput = {
+    where: TicketScalarWhereInput
+    data: XOR<TicketUpdateManyMutationInput, TicketUncheckedUpdateManyWithoutQueueInput>
   }
 
   export type OrganizationMembershipCreateManyOrganizationInput = {
@@ -66676,6 +70423,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
   }
 
   export type TicketEventCreateManyOrganizationInput = {
@@ -66694,6 +70442,21 @@ export namespace Prisma {
   export type TicketProtocolCounterCreateManyOrganizationInput = {
     year: number
     lastValue: number
+  }
+
+  export type SupportQueueCreateManyOrganizationInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
   }
 
   export type OrganizationMembershipUpdateWithoutOrganizationInput = {
@@ -67488,6 +71251,7 @@ export namespace Prisma {
     updater?: UserUpdateOneRequiredWithoutTicketsUpdatedNestedInput
     deleter?: UserUpdateOneWithoutTicketsDeletedNestedInput
     events?: TicketEventUpdateManyWithoutTicketNestedInput
+    queue?: SupportQueueUpdateOneWithoutTicketsNestedInput
   }
 
   export type TicketUncheckedUpdateWithoutOrganizationInput = {
@@ -67512,6 +71276,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -67537,6 +71302,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TicketEventUpdateWithoutOrganizationInput = {
@@ -67591,6 +71357,53 @@ export namespace Prisma {
   export type TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationInput = {
     year?: IntFieldUpdateOperationsInput | number
     lastValue?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type SupportQueueUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    creator?: UserUpdateOneRequiredWithoutSupportQueuesCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutSupportQueuesUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutSupportQueuesDeletedNestedInput
+    tickets?: TicketUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    tickets?: TicketUncheckedUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type RolePermissionCreateManyRoleInput = {
@@ -68024,6 +71837,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
   }
 
   export type TicketCreateManyUpdaterInput = {
@@ -68048,6 +71862,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
   }
 
   export type TicketCreateManyDeleterInput = {
@@ -68072,6 +71887,7 @@ export namespace Prisma {
     updatedBy: string
     version?: number
     deletedAt?: Date | string | null
+    queueId?: string | null
   }
 
   export type TicketEventCreateManyAuthorInput = {
@@ -68085,6 +71901,51 @@ export namespace Prisma {
     toStatus?: $Enums.TicketStatus | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
+  }
+
+  export type SupportQueueCreateManyCreatorInput = {
+    id?: string
+    organizationId: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type SupportQueueCreateManyUpdaterInput = {
+    id?: string
+    organizationId: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type SupportQueueCreateManyDeleterInput = {
+    id?: string
+    organizationId: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    autoAssign?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
   }
 
   export type OrganizationMembershipUpdateWithoutUserInput = {
@@ -69373,6 +73234,7 @@ export namespace Prisma {
     updater?: UserUpdateOneRequiredWithoutTicketsUpdatedNestedInput
     deleter?: UserUpdateOneWithoutTicketsDeletedNestedInput
     events?: TicketEventUpdateManyWithoutTicketNestedInput
+    queue?: SupportQueueUpdateOneWithoutTicketsNestedInput
   }
 
   export type TicketUncheckedUpdateWithoutCreatorInput = {
@@ -69397,6 +73259,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -69422,6 +73285,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TicketUpdateWithoutUpdaterInput = {
@@ -69447,6 +73311,7 @@ export namespace Prisma {
     creator?: UserUpdateOneRequiredWithoutTicketsCreatedNestedInput
     deleter?: UserUpdateOneWithoutTicketsDeletedNestedInput
     events?: TicketEventUpdateManyWithoutTicketNestedInput
+    queue?: SupportQueueUpdateOneWithoutTicketsNestedInput
   }
 
   export type TicketUncheckedUpdateWithoutUpdaterInput = {
@@ -69471,6 +73336,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -69496,6 +73362,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TicketUpdateWithoutDeleterInput = {
@@ -69521,6 +73388,7 @@ export namespace Prisma {
     creator?: UserUpdateOneRequiredWithoutTicketsCreatedNestedInput
     updater?: UserUpdateOneRequiredWithoutTicketsUpdatedNestedInput
     events?: TicketEventUpdateManyWithoutTicketNestedInput
+    queue?: SupportQueueUpdateOneWithoutTicketsNestedInput
   }
 
   export type TicketUncheckedUpdateWithoutDeleterInput = {
@@ -69545,6 +73413,7 @@ export namespace Prisma {
     updatedBy?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -69570,6 +73439,7 @@ export namespace Prisma {
     updatedBy?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TicketEventUpdateWithoutAuthorInput = {
@@ -69609,6 +73479,147 @@ export namespace Prisma {
     toStatus?: NullableEnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportQueueUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutSupportQueuesNestedInput
+    updater?: UserUpdateOneRequiredWithoutSupportQueuesUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutSupportQueuesDeletedNestedInput
+    tickets?: TicketUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    tickets?: TicketUncheckedUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SupportQueueUpdateWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutSupportQueuesNestedInput
+    creator?: UserUpdateOneRequiredWithoutSupportQueuesCreatedNestedInput
+    deleter?: UserUpdateOneWithoutSupportQueuesDeletedNestedInput
+    tickets?: TicketUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    tickets?: TicketUncheckedUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateManyWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SupportQueueUpdateWithoutDeleterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutSupportQueuesNestedInput
+    creator?: UserUpdateOneRequiredWithoutSupportQueuesCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutSupportQueuesUpdatedNestedInput
+    tickets?: TicketUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateWithoutDeleterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tickets?: TicketUncheckedUpdateManyWithoutQueueNestedInput
+  }
+
+  export type SupportQueueUncheckedUpdateManyWithoutDeleterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    autoAssign?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type OpportunityCreateManyOwnerMembershipInput = {
@@ -69651,6 +73662,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
   }
 
   export type OpportunityUpdateWithoutOwnerMembershipInput = {
@@ -69739,6 +73751,7 @@ export namespace Prisma {
     updater?: UserUpdateOneRequiredWithoutTicketsUpdatedNestedInput
     deleter?: UserUpdateOneWithoutTicketsDeletedNestedInput
     events?: TicketEventUpdateManyWithoutTicketNestedInput
+    queue?: SupportQueueUpdateOneWithoutTicketsNestedInput
   }
 
   export type TicketUncheckedUpdateWithoutAssigneeMembershipInput = {
@@ -69762,6 +73775,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -69786,6 +73800,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CompanyContactCreateManyCompanyInput = {
@@ -69885,6 +73900,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
   }
 
   export type CompanyContactUpdateWithoutCompanyInput = {
@@ -70145,6 +74161,7 @@ export namespace Prisma {
     updater?: UserUpdateOneRequiredWithoutTicketsUpdatedNestedInput
     deleter?: UserUpdateOneWithoutTicketsDeletedNestedInput
     events?: TicketEventUpdateManyWithoutTicketNestedInput
+    queue?: SupportQueueUpdateOneWithoutTicketsNestedInput
   }
 
   export type TicketUncheckedUpdateWithoutCompanyInput = {
@@ -70168,6 +74185,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -70192,6 +74210,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContactChannelCreateManyContactInput = {
@@ -70302,6 +74321,7 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    queueId?: string | null
   }
 
   export type ContactChannelUpdateWithoutContactInput = {
@@ -70595,6 +74615,7 @@ export namespace Prisma {
     updater?: UserUpdateOneRequiredWithoutTicketsUpdatedNestedInput
     deleter?: UserUpdateOneWithoutTicketsDeletedNestedInput
     events?: TicketEventUpdateManyWithoutTicketNestedInput
+    queue?: SupportQueueUpdateOneWithoutTicketsNestedInput
   }
 
   export type TicketUncheckedUpdateWithoutContactInput = {
@@ -70618,6 +74639,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -70642,6 +74664,7 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    queueId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CompanyTagCreateManyTagInput = {
@@ -71221,6 +75244,105 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     authorUserId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketCreateManyQueueInput = {
+    id?: string
+    protocol: string
+    subject: string
+    description?: string | null
+    status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
+    channel?: $Enums.TicketChannel
+    companyId?: string | null
+    contactId?: string | null
+    assigneeUserId?: string | null
+    openedAt?: Date | string
+    firstResponseAt?: Date | string | null
+    resolvedAt?: Date | string | null
+    closedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+    deletedAt?: Date | string | null
+    deletedBy?: string | null
+  }
+
+  export type TicketUpdateWithoutQueueInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    protocol?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    channel?: EnumTicketChannelFieldUpdateOperationsInput | $Enums.TicketChannel
+    openedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    firstResponseAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
+    company?: CompanyUpdateOneWithoutTicketsNestedInput
+    contact?: ContactUpdateOneWithoutTicketsNestedInput
+    assigneeMembership?: OrganizationMembershipUpdateOneWithoutAssignedTicketsNestedInput
+    creator?: UserUpdateOneRequiredWithoutTicketsCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutTicketsUpdatedNestedInput
+    deleter?: UserUpdateOneWithoutTicketsDeletedNestedInput
+    events?: TicketEventUpdateManyWithoutTicketNestedInput
+  }
+
+  export type TicketUncheckedUpdateWithoutQueueInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    protocol?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    channel?: EnumTicketChannelFieldUpdateOperationsInput | $Enums.TicketChannel
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    assigneeUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    openedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    firstResponseAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
+  }
+
+  export type TicketUncheckedUpdateManyWithoutQueueInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    protocol?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    channel?: EnumTicketChannelFieldUpdateOperationsInput | $Enums.TicketChannel
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    assigneeUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    openedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    firstResponseAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

@@ -1,7 +1,10 @@
 import {
   TICKET_FINAL_STATUSES,
+  TICKET_OPEN_STATUSES,
   canTransitionTicket,
   formatTicketProtocol,
+  type MembershipRole,
+  type TicketAssignToMeInput,
   type TicketCommentInput,
   type TicketCreateInput,
   type TicketListQuery,
@@ -18,6 +21,7 @@ import {
 } from "@nestjs/common";
 
 import { AuditService } from "../audit/audit.service";
+import { roleHasPermission } from "../authorization/permissions";
 import { PrismaService } from "../database/prisma.service";
 import { Prisma } from "../generated/prisma/client";
 
@@ -39,6 +43,7 @@ type TicketRecord = {
   companyId: string | null;
   contactId: string | null;
   assigneeUserId: string | null;
+  queueId: string | null;
   firstResponseAt: Date | null;
   resolvedAt: Date | null;
   closedAt: Date | null;
@@ -55,6 +60,17 @@ export function protocolYear(now: Date): number {
   );
 }
 
+const MEMBERSHIP_ROLES: readonly MembershipRole[] = [
+  "ADMIN",
+  "MANAGER",
+  "SELLER",
+  "VIEWER",
+];
+
+/** Perfis elegíveis à distribuição automática (C5.2): os com `ticket.write`. */
+export const AUTO_ASSIGN_ROLES: readonly MembershipRole[] =
+  MEMBERSHIP_ROLES.filter(role => roleHasPermission(role, "ticket.write"));
+
 /**
  * C5.1 — solicitações de atendimento. Toda mutação grava um evento na
  * timeline na mesma transação, usa `version` como trava otimista e é
@@ -67,15 +83,25 @@ export class TicketsService {
     @Inject(AuditService) private readonly audit: AuditService
   ) {}
 
-  async list(query: TicketListQuery, organizationId: string) {
+  async list(
+    query: TicketListQuery,
+    organizationId: string,
+    actorUserId?: string
+  ) {
     const q = query.q?.trim();
+    const assigneeUserId =
+      query.assigneeUserId === "me" ? actorUserId : query.assigneeUserId;
+    if (query.assigneeUserId === "me" && !actorUserId) {
+      throw new Error("assigneeUserId=me requires the authenticated user.");
+    }
     const where: Prisma.TicketWhereInput = {
       organizationId,
       deletedAt: null,
       ...(query.status ? { status: query.status } : {}),
       ...(query.priority ? { priority: query.priority } : {}),
       ...(query.channel ? { channel: query.channel } : {}),
-      ...(query.assigneeUserId ? { assigneeUserId: query.assigneeUserId } : {}),
+      ...(assigneeUserId ? { assigneeUserId } : {}),
+      ...(query.queueId ? { queueId: query.queueId } : {}),
       ...(query.companyId ? { companyId: query.companyId } : {}),
       ...(query.contactId ? { contactId: query.contactId } : {}),
       ...(q
@@ -140,6 +166,24 @@ export class TicketsService {
           context.organizationId
         );
 
+        const queue = input.queueId
+          ? await this.requireActiveQueue(
+              tenant,
+              input.queueId,
+              context.organizationId
+            )
+          : null;
+        const autoAssigneeUserId =
+          queue?.autoAssign && !input.assigneeUserId
+            ? await this.pickAutoAssignee(
+                tenant,
+                queue.id,
+                context.organizationId
+              )
+            : null;
+        const assigneeUserId =
+          input.assigneeUserId ?? autoAssigneeUserId ?? null;
+
         const year = protocolYear(now);
         const [counter] = await tenant.$queryRaw<{ last_value: number }[]>`
           INSERT INTO ticket_protocol_counters (organization_id, year, last_value)
@@ -162,7 +206,8 @@ export class TicketsService {
             channel: input.channel,
             companyId: input.companyId ?? null,
             contactId: input.contactId ?? null,
-            assigneeUserId: input.assigneeUserId ?? null,
+            assigneeUserId,
+            queueId: queue?.id ?? null,
             openedAt: now,
             createdBy: context.actorUserId,
             updatedBy: context.actorUserId,
@@ -172,7 +217,19 @@ export class TicketsService {
         await this.addEvent(tenant, created.id, context, {
           type: "CREATED",
           toStatus: created.status,
+          ...(queue ? { metadata: { queueId: queue.id } } : {}),
         });
+        if (autoAssigneeUserId) {
+          await this.addEvent(tenant, created.id, context, {
+            type: "ASSIGNED",
+            metadata: {
+              fromAssigneeUserId: null,
+              toAssigneeUserId: autoAssigneeUserId,
+              autoAssigned: true,
+              queueId: queue?.id ?? null,
+            },
+          });
+        }
         return created;
       }
     );
@@ -217,6 +274,16 @@ export class TicketsService {
           context.organizationId
         );
 
+        const queueChanged =
+          input.queueId !== undefined && input.queueId !== existing.queueId;
+        if (queueChanged && input.queueId) {
+          await this.requireActiveQueue(
+            tenant,
+            input.queueId,
+            context.organizationId
+          );
+        }
+
         const { version, ...changes } = input;
         await this.bumpVersion(tenant, id, version, context, changes);
         const updated = await this.requireTicket(
@@ -241,8 +308,18 @@ export class TicketsService {
             },
           });
         }
+        if (queueChanged) {
+          await this.addEvent(tenant, id, context, {
+            type: "UPDATED",
+            metadata: {
+              fields: ["queueId"],
+              fromQueueId: existing.queueId,
+              toQueueId: updated.queueId,
+            },
+          });
+        }
         const otherFields = changedFields.filter(
-          field => field !== "assigneeUserId"
+          field => field !== "assigneeUserId" && field !== "queueId"
         );
         if (otherFields.length > 0) {
           await this.addEvent(tenant, id, context, {
@@ -260,6 +337,68 @@ export class TicketsService {
       after: this.toAudit(after),
     });
     return after;
+  }
+
+  /**
+   * C5.2 — o usuário autenticado assume a solicitação. Idempotente quando
+   * ele já é o responsável (a versão ainda é conferida).
+   */
+  async assignToMe(
+    id: string,
+    input: TicketAssignToMeInput,
+    context: TicketAdministrationContext
+  ) {
+    const result = await this.prisma.withTenant(
+      context.organizationId,
+      async tenant => {
+        const existing = await this.requireTicket(
+          tenant,
+          id,
+          context.organizationId
+        );
+        this.assertNotFinal(existing.status);
+        if (existing.version !== input.version) {
+          this.versionConflictError();
+        }
+        if (existing.assigneeUserId === context.actorUserId) {
+          return { before: existing, after: existing, changed: false };
+        }
+        await this.validateReferences(
+          tenant,
+          {
+            companyId: null,
+            contactId: null,
+            assigneeUserId: context.actorUserId,
+          },
+          context.organizationId
+        );
+        await this.bumpVersion(tenant, id, input.version, context, {
+          assigneeUserId: context.actorUserId,
+        });
+        await this.addEvent(tenant, id, context, {
+          type: "ASSIGNED",
+          metadata: {
+            fromAssigneeUserId: existing.assigneeUserId,
+            toAssigneeUserId: context.actorUserId,
+            selfAssigned: true,
+          },
+        });
+        const updated = await this.requireTicket(
+          tenant,
+          id,
+          context.organizationId
+        );
+        return { before: existing, after: updated, changed: true };
+      }
+    );
+
+    if (result.changed) {
+      await this.recordAudit("ticket.assigned_to_me", id, context, {
+        before: this.toAudit(result.before),
+        after: this.toAudit(result.after),
+      });
+    }
+    return result.after;
   }
 
   async changeStatus(
@@ -390,11 +529,90 @@ export class TicketsService {
       },
     });
     if (result.count === 0) {
-      throw new ConflictException({
-        code: "TICKET_VERSION_CONFLICT",
-        message: "A solicitação foi alterada por outra operação.",
+      this.versionConflictError();
+    }
+  }
+
+  private versionConflictError(): never {
+    throw new ConflictException({
+      code: "TICKET_VERSION_CONFLICT",
+      message: "A solicitação foi alterada por outra operação.",
+    });
+  }
+
+  /**
+   * Valida que a fila existe no tenant, não foi excluída e está ativa.
+   * `FOR SHARE` serializa com a exclusão da fila (que usa `FOR UPDATE`).
+   */
+  private async requireActiveQueue(
+    tenant: Prisma.TransactionClient,
+    queueId: string,
+    organizationId: string
+  ) {
+    const [queue] = await tenant.$queryRaw<
+      {
+        id: string;
+        is_active: boolean;
+        auto_assign: boolean;
+        deleted_at: Date | null;
+      }[]
+    >`
+      SELECT id, is_active, auto_assign, deleted_at
+      FROM support_queues
+      WHERE id = ${queueId}::uuid AND organization_id = ${organizationId}::uuid
+      FOR SHARE
+    `;
+    if (!queue || queue.deleted_at !== null) {
+      throw new NotFoundException({
+        code: "SUPPORT_QUEUE_NOT_FOUND",
+        message: "Fila de atendimento não encontrada.",
       });
     }
+    if (!queue.is_active) {
+      throw new BadRequestException({
+        code: "SUPPORT_QUEUE_INACTIVE",
+        message: "A fila de atendimento está inativa.",
+      });
+    }
+    return { id: queue.id, autoAssign: queue.auto_assign };
+  }
+
+  /**
+   * C5.2 — distribuição automática: membro ativo (membership e usuário
+   * ativos) com `ticket.write` e menos solicitações abertas na fila.
+   * Desempate: membership mais antiga na organização (`created_at`) e, por
+   * fim, menor `user_id`. Um lock consultivo por fila serializa aberturas
+   * concorrentes para que a contagem considere a atribuição anterior.
+   */
+  private async pickAutoAssignee(
+    tenant: Prisma.TransactionClient,
+    queueId: string,
+    organizationId: string
+  ): Promise<string | null> {
+    await tenant.$executeRaw`
+      SELECT pg_advisory_xact_lock(hashtextextended(${`support_queue:${queueId}`}, 0))
+    `;
+    const roles = [...AUTO_ASSIGN_ROLES];
+    const statuses = [...TICKET_OPEN_STATUSES];
+    const [candidate] = await tenant.$queryRaw<{ user_id: string }[]>`
+      SELECT m.user_id
+      FROM organization_memberships m
+      JOIN users u ON u.id = m.user_id
+      LEFT JOIN tickets t
+        ON t.organization_id = m.organization_id
+       AND t.assignee_user_id = m.user_id
+       AND t.queue_id = ${queueId}::uuid
+       AND t.deleted_at IS NULL
+       AND t.status::text = ANY(${statuses}::text[])
+      WHERE m.organization_id = ${organizationId}::uuid
+        AND m.is_active
+        AND u.is_active
+        AND m.role::text = ANY(${roles}::text[])
+      GROUP BY m.user_id, m.created_at
+      ORDER BY count(t.id) ASC, m.created_at ASC, m.user_id ASC
+      LIMIT 1
+    `;
+    return candidate?.user_id ?? null;
   }
 
   private addEvent(
@@ -529,6 +747,7 @@ export class TicketsService {
       companyId: ticket.companyId,
       contactId: ticket.contactId,
       assigneeUserId: ticket.assigneeUserId,
+      queueId: ticket.queueId,
       firstResponseAt: ticket.firstResponseAt?.toISOString() ?? null,
       resolvedAt: ticket.resolvedAt?.toISOString() ?? null,
       closedAt: ticket.closedAt?.toISOString() ?? null,

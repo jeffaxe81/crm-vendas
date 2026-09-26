@@ -1,4 +1,5 @@
 import {
+  TicketAssignToMeInputSchema,
   TicketCommentInputSchema,
   TicketCreateInputSchema,
   TicketListQuerySchema,
@@ -10,6 +11,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Inject,
   Param,
   Patch,
@@ -43,7 +45,8 @@ export class TicketsController {
   list(@Query() query: Record<string, unknown>, @Req() request: TicketRequest) {
     return this.tickets.list(
       this.parse(TicketListQuerySchema, query),
-      this.requirePrincipal(request).organizationId
+      this.requirePrincipal(request).organizationId,
+      this.requirePrincipal(request).userId
     );
   }
 
@@ -98,6 +101,21 @@ export class TicketsController {
     return this.tickets.changeStatus(
       this.parseId(id),
       this.parse(TicketStatusChangeInputSchema, body),
+      this.contextFrom(request)
+    );
+  }
+
+  @Post(":id/assign-to-me")
+  @HttpCode(200)
+  @RequirePermissions("ticket.write")
+  assignToMe(
+    @Param("id") id: string,
+    @Body() body: unknown,
+    @Req() request: TicketRequest
+  ) {
+    return this.tickets.assignToMe(
+      this.parseId(id),
+      this.parse(TicketAssignToMeInputSchema, body),
       this.contextFrom(request)
     );
   }
