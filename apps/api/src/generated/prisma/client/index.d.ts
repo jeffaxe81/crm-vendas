@@ -155,6 +155,11 @@ export type TicketProtocolCounter = $Result.DefaultSelection<Prisma.$TicketProto
  * entre filas não excluídas, via índice parcial `lower(name)` na migration.
  */
 export type SupportQueue = $Result.DefaultSelection<Prisma.$SupportQueuePayload>
+/**
+ * Model SlaPolicy
+ * C5.3 — política de SLA por prioridade (minutos corridos, 24x7).
+ */
+export type SlaPolicy = $Result.DefaultSelection<Prisma.$SlaPolicyPayload>
 
 /**
  * Enums
@@ -744,6 +749,16 @@ export class PrismaClient<
     * ```
     */
   get supportQueue(): Prisma.SupportQueueDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.slaPolicy`: Exposes CRUD operations for the **SlaPolicy** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SlaPolicies
+    * const slaPolicies = await prisma.slaPolicy.findMany()
+    * ```
+    */
+  get slaPolicy(): Prisma.SlaPolicyDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1218,7 +1233,8 @@ export namespace Prisma {
     Ticket: 'Ticket',
     TicketEvent: 'TicketEvent',
     TicketProtocolCounter: 'TicketProtocolCounter',
-    SupportQueue: 'SupportQueue'
+    SupportQueue: 'SupportQueue',
+    SlaPolicy: 'SlaPolicy'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1234,7 +1250,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "organization" | "role" | "rolePermission" | "user" | "organizationMembership" | "refreshSession" | "auditLog" | "company" | "contact" | "contactChannel" | "companyContact" | "relationshipEntry" | "tag" | "companyTag" | "contactTag" | "customFieldDefinition" | "companyCustomFieldValue" | "contactCustomFieldValue" | "pipeline" | "pipelineStage" | "activity" | "opportunity" | "product" | "opportunityItem" | "ticket" | "ticketEvent" | "ticketProtocolCounter" | "supportQueue"
+      modelProps: "organization" | "role" | "rolePermission" | "user" | "organizationMembership" | "refreshSession" | "auditLog" | "company" | "contact" | "contactChannel" | "companyContact" | "relationshipEntry" | "tag" | "companyTag" | "contactTag" | "customFieldDefinition" | "companyCustomFieldValue" | "contactCustomFieldValue" | "pipeline" | "pipelineStage" | "activity" | "opportunity" | "product" | "opportunityItem" | "ticket" | "ticketEvent" | "ticketProtocolCounter" | "supportQueue" | "slaPolicy"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3310,6 +3326,80 @@ export namespace Prisma {
           }
         }
       }
+      SlaPolicy: {
+        payload: Prisma.$SlaPolicyPayload<ExtArgs>
+        fields: Prisma.SlaPolicyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SlaPolicyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SlaPolicyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload>
+          }
+          findFirst: {
+            args: Prisma.SlaPolicyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SlaPolicyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload>
+          }
+          findMany: {
+            args: Prisma.SlaPolicyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload>[]
+          }
+          create: {
+            args: Prisma.SlaPolicyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload>
+          }
+          createMany: {
+            args: Prisma.SlaPolicyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SlaPolicyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload>[]
+          }
+          delete: {
+            args: Prisma.SlaPolicyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload>
+          }
+          update: {
+            args: Prisma.SlaPolicyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload>
+          }
+          deleteMany: {
+            args: Prisma.SlaPolicyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SlaPolicyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SlaPolicyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload>[]
+          }
+          upsert: {
+            args: Prisma.SlaPolicyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlaPolicyPayload>
+          }
+          aggregate: {
+            args: Prisma.SlaPolicyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSlaPolicy>
+          }
+          groupBy: {
+            args: Prisma.SlaPolicyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SlaPolicyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SlaPolicyCountArgs<ExtArgs>
+            result: $Utils.Optional<SlaPolicyCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3461,6 +3551,7 @@ export namespace Prisma {
     ticketEvent?: TicketEventOmit
     ticketProtocolCounter?: TicketProtocolCounterOmit
     supportQueue?: SupportQueueOmit
+    slaPolicy?: SlaPolicyOmit
   }
 
   /* Types for Logging */
@@ -3565,6 +3656,7 @@ export namespace Prisma {
     ticketEvents: number
     ticketProtocolCounters: number
     supportQueues: number
+    slaPolicies: number
   }
 
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3592,6 +3684,7 @@ export namespace Prisma {
     ticketEvents?: boolean | OrganizationCountOutputTypeCountTicketEventsArgs
     ticketProtocolCounters?: boolean | OrganizationCountOutputTypeCountTicketProtocolCountersArgs
     supportQueues?: boolean | OrganizationCountOutputTypeCountSupportQueuesArgs
+    slaPolicies?: boolean | OrganizationCountOutputTypeCountSlaPoliciesArgs
   }
 
   // Custom InputTypes
@@ -3773,6 +3866,13 @@ export namespace Prisma {
     where?: SupportQueueWhereInput
   }
 
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountSlaPoliciesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SlaPolicyWhereInput
+  }
+
 
   /**
    * Count Type RoleCountOutputType
@@ -3840,6 +3940,8 @@ export namespace Prisma {
     supportQueuesCreated: number
     supportQueuesUpdated: number
     supportQueuesDeleted: number
+    slaPoliciesCreated: number
+    slaPoliciesUpdated: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3873,6 +3975,8 @@ export namespace Prisma {
     supportQueuesCreated?: boolean | UserCountOutputTypeCountSupportQueuesCreatedArgs
     supportQueuesUpdated?: boolean | UserCountOutputTypeCountSupportQueuesUpdatedArgs
     supportQueuesDeleted?: boolean | UserCountOutputTypeCountSupportQueuesDeletedArgs
+    slaPoliciesCreated?: boolean | UserCountOutputTypeCountSlaPoliciesCreatedArgs
+    slaPoliciesUpdated?: boolean | UserCountOutputTypeCountSlaPoliciesUpdatedArgs
   }
 
   // Custom InputTypes
@@ -4094,6 +4198,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountSupportQueuesDeletedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SupportQueueWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSlaPoliciesCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SlaPolicyWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSlaPoliciesUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SlaPolicyWhereInput
   }
 
 
@@ -4800,6 +4918,7 @@ export namespace Prisma {
     ticketEvents?: boolean | Organization$ticketEventsArgs<ExtArgs>
     ticketProtocolCounters?: boolean | Organization$ticketProtocolCountersArgs<ExtArgs>
     supportQueues?: boolean | Organization$supportQueuesArgs<ExtArgs>
+    slaPolicies?: boolean | Organization$slaPoliciesArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -4856,6 +4975,7 @@ export namespace Prisma {
     ticketEvents?: boolean | Organization$ticketEventsArgs<ExtArgs>
     ticketProtocolCounters?: boolean | Organization$ticketProtocolCountersArgs<ExtArgs>
     supportQueues?: boolean | Organization$supportQueuesArgs<ExtArgs>
+    slaPolicies?: boolean | Organization$slaPoliciesArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4888,6 +5008,7 @@ export namespace Prisma {
       ticketEvents: Prisma.$TicketEventPayload<ExtArgs>[]
       ticketProtocolCounters: Prisma.$TicketProtocolCounterPayload<ExtArgs>[]
       supportQueues: Prisma.$SupportQueuePayload<ExtArgs>[]
+      slaPolicies: Prisma.$SlaPolicyPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5314,6 +5435,7 @@ export namespace Prisma {
     ticketEvents<T extends Organization$ticketEventsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$ticketEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ticketProtocolCounters<T extends Organization$ticketProtocolCountersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$ticketProtocolCountersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketProtocolCounterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     supportQueues<T extends Organization$supportQueuesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$supportQueuesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    slaPolicies<T extends Organization$slaPoliciesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$slaPoliciesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6315,6 +6437,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.slaPolicies
+   */
+  export type Organization$slaPoliciesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    where?: SlaPolicyWhereInput
+    orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
+    cursor?: SlaPolicyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SlaPolicyScalarFieldEnum | SlaPolicyScalarFieldEnum[]
   }
 
   /**
@@ -8736,6 +8882,8 @@ export namespace Prisma {
     supportQueuesCreated?: boolean | User$supportQueuesCreatedArgs<ExtArgs>
     supportQueuesUpdated?: boolean | User$supportQueuesUpdatedArgs<ExtArgs>
     supportQueuesDeleted?: boolean | User$supportQueuesDeletedArgs<ExtArgs>
+    slaPoliciesCreated?: boolean | User$slaPoliciesCreatedArgs<ExtArgs>
+    slaPoliciesUpdated?: boolean | User$slaPoliciesUpdatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -8804,6 +8952,8 @@ export namespace Prisma {
     supportQueuesCreated?: boolean | User$supportQueuesCreatedArgs<ExtArgs>
     supportQueuesUpdated?: boolean | User$supportQueuesUpdatedArgs<ExtArgs>
     supportQueuesDeleted?: boolean | User$supportQueuesDeletedArgs<ExtArgs>
+    slaPoliciesCreated?: boolean | User$slaPoliciesCreatedArgs<ExtArgs>
+    slaPoliciesUpdated?: boolean | User$slaPoliciesUpdatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -8842,6 +8992,8 @@ export namespace Prisma {
       supportQueuesCreated: Prisma.$SupportQueuePayload<ExtArgs>[]
       supportQueuesUpdated: Prisma.$SupportQueuePayload<ExtArgs>[]
       supportQueuesDeleted: Prisma.$SupportQueuePayload<ExtArgs>[]
+      slaPoliciesCreated: Prisma.$SlaPolicyPayload<ExtArgs>[]
+      slaPoliciesUpdated: Prisma.$SlaPolicyPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9276,6 +9428,8 @@ export namespace Prisma {
     supportQueuesCreated<T extends User$supportQueuesCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$supportQueuesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     supportQueuesUpdated<T extends User$supportQueuesUpdatedArgs<ExtArgs> = {}>(args?: Subset<T, User$supportQueuesUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     supportQueuesDeleted<T extends User$supportQueuesDeletedArgs<ExtArgs> = {}>(args?: Subset<T, User$supportQueuesDeletedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    slaPoliciesCreated<T extends User$slaPoliciesCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$slaPoliciesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    slaPoliciesUpdated<T extends User$slaPoliciesUpdatedArgs<ExtArgs> = {}>(args?: Subset<T, User$slaPoliciesUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10423,6 +10577,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
+  }
+
+  /**
+   * User.slaPoliciesCreated
+   */
+  export type User$slaPoliciesCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    where?: SlaPolicyWhereInput
+    orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
+    cursor?: SlaPolicyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SlaPolicyScalarFieldEnum | SlaPolicyScalarFieldEnum[]
+  }
+
+  /**
+   * User.slaPoliciesUpdated
+   */
+  export type User$slaPoliciesUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    where?: SlaPolicyWhereInput
+    orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
+    cursor?: SlaPolicyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SlaPolicyScalarFieldEnum | SlaPolicyScalarFieldEnum[]
   }
 
   /**
@@ -34637,6 +34839,8 @@ export namespace Prisma {
     deletedAt: Date | null
     deletedBy: string | null
     queueId: string | null
+    firstResponseDueAt: Date | null
+    resolutionDueAt: Date | null
   }
 
   export type TicketMaxAggregateOutputType = {
@@ -34663,6 +34867,8 @@ export namespace Prisma {
     deletedAt: Date | null
     deletedBy: string | null
     queueId: string | null
+    firstResponseDueAt: Date | null
+    resolutionDueAt: Date | null
   }
 
   export type TicketCountAggregateOutputType = {
@@ -34689,6 +34895,8 @@ export namespace Prisma {
     deletedAt: number
     deletedBy: number
     queueId: number
+    firstResponseDueAt: number
+    resolutionDueAt: number
     _all: number
   }
 
@@ -34725,6 +34933,8 @@ export namespace Prisma {
     deletedAt?: true
     deletedBy?: true
     queueId?: true
+    firstResponseDueAt?: true
+    resolutionDueAt?: true
   }
 
   export type TicketMaxAggregateInputType = {
@@ -34751,6 +34961,8 @@ export namespace Prisma {
     deletedAt?: true
     deletedBy?: true
     queueId?: true
+    firstResponseDueAt?: true
+    resolutionDueAt?: true
   }
 
   export type TicketCountAggregateInputType = {
@@ -34777,6 +34989,8 @@ export namespace Prisma {
     deletedAt?: true
     deletedBy?: true
     queueId?: true
+    firstResponseDueAt?: true
+    resolutionDueAt?: true
     _all?: true
   }
 
@@ -34890,6 +35104,8 @@ export namespace Prisma {
     deletedAt: Date | null
     deletedBy: string | null
     queueId: string | null
+    firstResponseDueAt: Date | null
+    resolutionDueAt: Date | null
     _count: TicketCountAggregateOutputType | null
     _avg: TicketAvgAggregateOutputType | null
     _sum: TicketSumAggregateOutputType | null
@@ -34935,6 +35151,8 @@ export namespace Prisma {
     deletedAt?: boolean
     deletedBy?: boolean
     queueId?: boolean
+    firstResponseDueAt?: boolean
+    resolutionDueAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     company?: boolean | Ticket$companyArgs<ExtArgs>
     contact?: boolean | Ticket$contactArgs<ExtArgs>
@@ -34971,6 +35189,8 @@ export namespace Prisma {
     deletedAt?: boolean
     deletedBy?: boolean
     queueId?: boolean
+    firstResponseDueAt?: boolean
+    resolutionDueAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     company?: boolean | Ticket$companyArgs<ExtArgs>
     contact?: boolean | Ticket$contactArgs<ExtArgs>
@@ -35005,6 +35225,8 @@ export namespace Prisma {
     deletedAt?: boolean
     deletedBy?: boolean
     queueId?: boolean
+    firstResponseDueAt?: boolean
+    resolutionDueAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     company?: boolean | Ticket$companyArgs<ExtArgs>
     contact?: boolean | Ticket$contactArgs<ExtArgs>
@@ -35039,9 +35261,11 @@ export namespace Prisma {
     deletedAt?: boolean
     deletedBy?: boolean
     queueId?: boolean
+    firstResponseDueAt?: boolean
+    resolutionDueAt?: boolean
   }
 
-  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "protocol" | "subject" | "description" | "status" | "priority" | "channel" | "companyId" | "contactId" | "assigneeUserId" | "openedAt" | "firstResponseAt" | "resolvedAt" | "closedAt" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "version" | "deletedAt" | "deletedBy" | "queueId", ExtArgs["result"]["ticket"]>
+  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "protocol" | "subject" | "description" | "status" | "priority" | "channel" | "companyId" | "contactId" | "assigneeUserId" | "openedAt" | "firstResponseAt" | "resolvedAt" | "closedAt" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "version" | "deletedAt" | "deletedBy" | "queueId" | "firstResponseDueAt" | "resolutionDueAt", ExtArgs["result"]["ticket"]>
   export type TicketInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     company?: boolean | Ticket$companyArgs<ExtArgs>
@@ -35112,6 +35336,8 @@ export namespace Prisma {
       deletedAt: Date | null
       deletedBy: string | null
       queueId: string | null
+      firstResponseDueAt: Date | null
+      resolutionDueAt: Date | null
     }, ExtArgs["result"]["ticket"]>
     composites: {}
   }
@@ -35567,6 +35793,8 @@ export namespace Prisma {
     readonly deletedAt: FieldRef<"Ticket", 'DateTime'>
     readonly deletedBy: FieldRef<"Ticket", 'String'>
     readonly queueId: FieldRef<"Ticket", 'String'>
+    readonly firstResponseDueAt: FieldRef<"Ticket", 'DateTime'>
+    readonly resolutionDueAt: FieldRef<"Ticket", 'DateTime'>
   }
     
 
@@ -39608,6 +39836,1205 @@ export namespace Prisma {
 
 
   /**
+   * Model SlaPolicy
+   */
+
+  export type AggregateSlaPolicy = {
+    _count: SlaPolicyCountAggregateOutputType | null
+    _avg: SlaPolicyAvgAggregateOutputType | null
+    _sum: SlaPolicySumAggregateOutputType | null
+    _min: SlaPolicyMinAggregateOutputType | null
+    _max: SlaPolicyMaxAggregateOutputType | null
+  }
+
+  export type SlaPolicyAvgAggregateOutputType = {
+    firstResponseMinutes: number | null
+    resolutionMinutes: number | null
+    version: number | null
+  }
+
+  export type SlaPolicySumAggregateOutputType = {
+    firstResponseMinutes: number | null
+    resolutionMinutes: number | null
+    version: number | null
+  }
+
+  export type SlaPolicyMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    priority: $Enums.TicketPriority | null
+    firstResponseMinutes: number | null
+    resolutionMinutes: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+    version: number | null
+  }
+
+  export type SlaPolicyMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    priority: $Enums.TicketPriority | null
+    firstResponseMinutes: number | null
+    resolutionMinutes: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
+    version: number | null
+  }
+
+  export type SlaPolicyCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    priority: number
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    createdBy: number
+    updatedBy: number
+    version: number
+    _all: number
+  }
+
+
+  export type SlaPolicyAvgAggregateInputType = {
+    firstResponseMinutes?: true
+    resolutionMinutes?: true
+    version?: true
+  }
+
+  export type SlaPolicySumAggregateInputType = {
+    firstResponseMinutes?: true
+    resolutionMinutes?: true
+    version?: true
+  }
+
+  export type SlaPolicyMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    priority?: true
+    firstResponseMinutes?: true
+    resolutionMinutes?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    version?: true
+  }
+
+  export type SlaPolicyMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    priority?: true
+    firstResponseMinutes?: true
+    resolutionMinutes?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    version?: true
+  }
+
+  export type SlaPolicyCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    priority?: true
+    firstResponseMinutes?: true
+    resolutionMinutes?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    createdBy?: true
+    updatedBy?: true
+    version?: true
+    _all?: true
+  }
+
+  export type SlaPolicyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SlaPolicy to aggregate.
+     */
+    where?: SlaPolicyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SlaPolicies to fetch.
+     */
+    orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SlaPolicyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SlaPolicies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SlaPolicies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SlaPolicies
+    **/
+    _count?: true | SlaPolicyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SlaPolicyAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SlaPolicySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SlaPolicyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SlaPolicyMaxAggregateInputType
+  }
+
+  export type GetSlaPolicyAggregateType<T extends SlaPolicyAggregateArgs> = {
+        [P in keyof T & keyof AggregateSlaPolicy]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSlaPolicy[P]>
+      : GetScalarType<T[P], AggregateSlaPolicy[P]>
+  }
+
+
+
+
+  export type SlaPolicyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SlaPolicyWhereInput
+    orderBy?: SlaPolicyOrderByWithAggregationInput | SlaPolicyOrderByWithAggregationInput[]
+    by: SlaPolicyScalarFieldEnum[] | SlaPolicyScalarFieldEnum
+    having?: SlaPolicyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SlaPolicyCountAggregateInputType | true
+    _avg?: SlaPolicyAvgAggregateInputType
+    _sum?: SlaPolicySumAggregateInputType
+    _min?: SlaPolicyMinAggregateInputType
+    _max?: SlaPolicyMaxAggregateInputType
+  }
+
+  export type SlaPolicyGroupByOutputType = {
+    id: string
+    organizationId: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    createdBy: string
+    updatedBy: string
+    version: number
+    _count: SlaPolicyCountAggregateOutputType | null
+    _avg: SlaPolicyAvgAggregateOutputType | null
+    _sum: SlaPolicySumAggregateOutputType | null
+    _min: SlaPolicyMinAggregateOutputType | null
+    _max: SlaPolicyMaxAggregateOutputType | null
+  }
+
+  type GetSlaPolicyGroupByPayload<T extends SlaPolicyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SlaPolicyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SlaPolicyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SlaPolicyGroupByOutputType[P]>
+            : GetScalarType<T[P], SlaPolicyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SlaPolicySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    priority?: boolean
+    firstResponseMinutes?: boolean
+    resolutionMinutes?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slaPolicy"]>
+
+  export type SlaPolicySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    priority?: boolean
+    firstResponseMinutes?: boolean
+    resolutionMinutes?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slaPolicy"]>
+
+  export type SlaPolicySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    priority?: boolean
+    firstResponseMinutes?: boolean
+    resolutionMinutes?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slaPolicy"]>
+
+  export type SlaPolicySelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    priority?: boolean
+    firstResponseMinutes?: boolean
+    resolutionMinutes?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    version?: boolean
+  }
+
+  export type SlaPolicyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "priority" | "firstResponseMinutes" | "resolutionMinutes" | "isActive" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "version", ExtArgs["result"]["slaPolicy"]>
+  export type SlaPolicyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SlaPolicyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SlaPolicyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    updater?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $SlaPolicyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SlaPolicy"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      creator: Prisma.$UserPayload<ExtArgs>
+      updater: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      priority: $Enums.TicketPriority
+      firstResponseMinutes: number
+      resolutionMinutes: number
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+      createdBy: string
+      updatedBy: string
+      version: number
+    }, ExtArgs["result"]["slaPolicy"]>
+    composites: {}
+  }
+
+  type SlaPolicyGetPayload<S extends boolean | null | undefined | SlaPolicyDefaultArgs> = $Result.GetResult<Prisma.$SlaPolicyPayload, S>
+
+  type SlaPolicyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SlaPolicyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SlaPolicyCountAggregateInputType | true
+    }
+
+  export interface SlaPolicyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SlaPolicy'], meta: { name: 'SlaPolicy' } }
+    /**
+     * Find zero or one SlaPolicy that matches the filter.
+     * @param {SlaPolicyFindUniqueArgs} args - Arguments to find a SlaPolicy
+     * @example
+     * // Get one SlaPolicy
+     * const slaPolicy = await prisma.slaPolicy.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SlaPolicyFindUniqueArgs>(args: SelectSubset<T, SlaPolicyFindUniqueArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SlaPolicy that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SlaPolicyFindUniqueOrThrowArgs} args - Arguments to find a SlaPolicy
+     * @example
+     * // Get one SlaPolicy
+     * const slaPolicy = await prisma.slaPolicy.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SlaPolicyFindUniqueOrThrowArgs>(args: SelectSubset<T, SlaPolicyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SlaPolicy that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlaPolicyFindFirstArgs} args - Arguments to find a SlaPolicy
+     * @example
+     * // Get one SlaPolicy
+     * const slaPolicy = await prisma.slaPolicy.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SlaPolicyFindFirstArgs>(args?: SelectSubset<T, SlaPolicyFindFirstArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SlaPolicy that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlaPolicyFindFirstOrThrowArgs} args - Arguments to find a SlaPolicy
+     * @example
+     * // Get one SlaPolicy
+     * const slaPolicy = await prisma.slaPolicy.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SlaPolicyFindFirstOrThrowArgs>(args?: SelectSubset<T, SlaPolicyFindFirstOrThrowArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SlaPolicies that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlaPolicyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SlaPolicies
+     * const slaPolicies = await prisma.slaPolicy.findMany()
+     * 
+     * // Get first 10 SlaPolicies
+     * const slaPolicies = await prisma.slaPolicy.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const slaPolicyWithIdOnly = await prisma.slaPolicy.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SlaPolicyFindManyArgs>(args?: SelectSubset<T, SlaPolicyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SlaPolicy.
+     * @param {SlaPolicyCreateArgs} args - Arguments to create a SlaPolicy.
+     * @example
+     * // Create one SlaPolicy
+     * const SlaPolicy = await prisma.slaPolicy.create({
+     *   data: {
+     *     // ... data to create a SlaPolicy
+     *   }
+     * })
+     * 
+     */
+    create<T extends SlaPolicyCreateArgs>(args: SelectSubset<T, SlaPolicyCreateArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SlaPolicies.
+     * @param {SlaPolicyCreateManyArgs} args - Arguments to create many SlaPolicies.
+     * @example
+     * // Create many SlaPolicies
+     * const slaPolicy = await prisma.slaPolicy.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SlaPolicyCreateManyArgs>(args?: SelectSubset<T, SlaPolicyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SlaPolicies and returns the data saved in the database.
+     * @param {SlaPolicyCreateManyAndReturnArgs} args - Arguments to create many SlaPolicies.
+     * @example
+     * // Create many SlaPolicies
+     * const slaPolicy = await prisma.slaPolicy.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SlaPolicies and only return the `id`
+     * const slaPolicyWithIdOnly = await prisma.slaPolicy.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SlaPolicyCreateManyAndReturnArgs>(args?: SelectSubset<T, SlaPolicyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SlaPolicy.
+     * @param {SlaPolicyDeleteArgs} args - Arguments to delete one SlaPolicy.
+     * @example
+     * // Delete one SlaPolicy
+     * const SlaPolicy = await prisma.slaPolicy.delete({
+     *   where: {
+     *     // ... filter to delete one SlaPolicy
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SlaPolicyDeleteArgs>(args: SelectSubset<T, SlaPolicyDeleteArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SlaPolicy.
+     * @param {SlaPolicyUpdateArgs} args - Arguments to update one SlaPolicy.
+     * @example
+     * // Update one SlaPolicy
+     * const slaPolicy = await prisma.slaPolicy.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SlaPolicyUpdateArgs>(args: SelectSubset<T, SlaPolicyUpdateArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SlaPolicies.
+     * @param {SlaPolicyDeleteManyArgs} args - Arguments to filter SlaPolicies to delete.
+     * @example
+     * // Delete a few SlaPolicies
+     * const { count } = await prisma.slaPolicy.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SlaPolicyDeleteManyArgs>(args?: SelectSubset<T, SlaPolicyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SlaPolicies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlaPolicyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SlaPolicies
+     * const slaPolicy = await prisma.slaPolicy.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SlaPolicyUpdateManyArgs>(args: SelectSubset<T, SlaPolicyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SlaPolicies and returns the data updated in the database.
+     * @param {SlaPolicyUpdateManyAndReturnArgs} args - Arguments to update many SlaPolicies.
+     * @example
+     * // Update many SlaPolicies
+     * const slaPolicy = await prisma.slaPolicy.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SlaPolicies and only return the `id`
+     * const slaPolicyWithIdOnly = await prisma.slaPolicy.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SlaPolicyUpdateManyAndReturnArgs>(args: SelectSubset<T, SlaPolicyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SlaPolicy.
+     * @param {SlaPolicyUpsertArgs} args - Arguments to update or create a SlaPolicy.
+     * @example
+     * // Update or create a SlaPolicy
+     * const slaPolicy = await prisma.slaPolicy.upsert({
+     *   create: {
+     *     // ... data to create a SlaPolicy
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SlaPolicy we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SlaPolicyUpsertArgs>(args: SelectSubset<T, SlaPolicyUpsertArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SlaPolicies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlaPolicyCountArgs} args - Arguments to filter SlaPolicies to count.
+     * @example
+     * // Count the number of SlaPolicies
+     * const count = await prisma.slaPolicy.count({
+     *   where: {
+     *     // ... the filter for the SlaPolicies we want to count
+     *   }
+     * })
+    **/
+    count<T extends SlaPolicyCountArgs>(
+      args?: Subset<T, SlaPolicyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SlaPolicyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SlaPolicy.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlaPolicyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SlaPolicyAggregateArgs>(args: Subset<T, SlaPolicyAggregateArgs>): Prisma.PrismaPromise<GetSlaPolicyAggregateType<T>>
+
+    /**
+     * Group by SlaPolicy.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlaPolicyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SlaPolicyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SlaPolicyGroupByArgs['orderBy'] }
+        : { orderBy?: SlaPolicyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SlaPolicyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSlaPolicyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SlaPolicy model
+   */
+  readonly fields: SlaPolicyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SlaPolicy.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SlaPolicyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    creator<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    updater<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SlaPolicy model
+   */
+  interface SlaPolicyFieldRefs {
+    readonly id: FieldRef<"SlaPolicy", 'String'>
+    readonly organizationId: FieldRef<"SlaPolicy", 'String'>
+    readonly priority: FieldRef<"SlaPolicy", 'TicketPriority'>
+    readonly firstResponseMinutes: FieldRef<"SlaPolicy", 'Int'>
+    readonly resolutionMinutes: FieldRef<"SlaPolicy", 'Int'>
+    readonly isActive: FieldRef<"SlaPolicy", 'Boolean'>
+    readonly createdAt: FieldRef<"SlaPolicy", 'DateTime'>
+    readonly updatedAt: FieldRef<"SlaPolicy", 'DateTime'>
+    readonly createdBy: FieldRef<"SlaPolicy", 'String'>
+    readonly updatedBy: FieldRef<"SlaPolicy", 'String'>
+    readonly version: FieldRef<"SlaPolicy", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SlaPolicy findUnique
+   */
+  export type SlaPolicyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which SlaPolicy to fetch.
+     */
+    where: SlaPolicyWhereUniqueInput
+  }
+
+  /**
+   * SlaPolicy findUniqueOrThrow
+   */
+  export type SlaPolicyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which SlaPolicy to fetch.
+     */
+    where: SlaPolicyWhereUniqueInput
+  }
+
+  /**
+   * SlaPolicy findFirst
+   */
+  export type SlaPolicyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which SlaPolicy to fetch.
+     */
+    where?: SlaPolicyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SlaPolicies to fetch.
+     */
+    orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SlaPolicies.
+     */
+    cursor?: SlaPolicyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SlaPolicies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SlaPolicies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SlaPolicies.
+     */
+    distinct?: SlaPolicyScalarFieldEnum | SlaPolicyScalarFieldEnum[]
+  }
+
+  /**
+   * SlaPolicy findFirstOrThrow
+   */
+  export type SlaPolicyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which SlaPolicy to fetch.
+     */
+    where?: SlaPolicyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SlaPolicies to fetch.
+     */
+    orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SlaPolicies.
+     */
+    cursor?: SlaPolicyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SlaPolicies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SlaPolicies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SlaPolicies.
+     */
+    distinct?: SlaPolicyScalarFieldEnum | SlaPolicyScalarFieldEnum[]
+  }
+
+  /**
+   * SlaPolicy findMany
+   */
+  export type SlaPolicyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which SlaPolicies to fetch.
+     */
+    where?: SlaPolicyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SlaPolicies to fetch.
+     */
+    orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SlaPolicies.
+     */
+    cursor?: SlaPolicyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SlaPolicies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SlaPolicies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SlaPolicies.
+     */
+    distinct?: SlaPolicyScalarFieldEnum | SlaPolicyScalarFieldEnum[]
+  }
+
+  /**
+   * SlaPolicy create
+   */
+  export type SlaPolicyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SlaPolicy.
+     */
+    data: XOR<SlaPolicyCreateInput, SlaPolicyUncheckedCreateInput>
+  }
+
+  /**
+   * SlaPolicy createMany
+   */
+  export type SlaPolicyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SlaPolicies.
+     */
+    data: SlaPolicyCreateManyInput | SlaPolicyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SlaPolicy createManyAndReturn
+   */
+  export type SlaPolicyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * The data used to create many SlaPolicies.
+     */
+    data: SlaPolicyCreateManyInput | SlaPolicyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SlaPolicy update
+   */
+  export type SlaPolicyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SlaPolicy.
+     */
+    data: XOR<SlaPolicyUpdateInput, SlaPolicyUncheckedUpdateInput>
+    /**
+     * Choose, which SlaPolicy to update.
+     */
+    where: SlaPolicyWhereUniqueInput
+  }
+
+  /**
+   * SlaPolicy updateMany
+   */
+  export type SlaPolicyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SlaPolicies.
+     */
+    data: XOR<SlaPolicyUpdateManyMutationInput, SlaPolicyUncheckedUpdateManyInput>
+    /**
+     * Filter which SlaPolicies to update
+     */
+    where?: SlaPolicyWhereInput
+    /**
+     * Limit how many SlaPolicies to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SlaPolicy updateManyAndReturn
+   */
+  export type SlaPolicyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * The data used to update SlaPolicies.
+     */
+    data: XOR<SlaPolicyUpdateManyMutationInput, SlaPolicyUncheckedUpdateManyInput>
+    /**
+     * Filter which SlaPolicies to update
+     */
+    where?: SlaPolicyWhereInput
+    /**
+     * Limit how many SlaPolicies to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SlaPolicy upsert
+   */
+  export type SlaPolicyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SlaPolicy to update in case it exists.
+     */
+    where: SlaPolicyWhereUniqueInput
+    /**
+     * In case the SlaPolicy found by the `where` argument doesn't exist, create a new SlaPolicy with this data.
+     */
+    create: XOR<SlaPolicyCreateInput, SlaPolicyUncheckedCreateInput>
+    /**
+     * In case the SlaPolicy was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SlaPolicyUpdateInput, SlaPolicyUncheckedUpdateInput>
+  }
+
+  /**
+   * SlaPolicy delete
+   */
+  export type SlaPolicyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+    /**
+     * Filter which SlaPolicy to delete.
+     */
+    where: SlaPolicyWhereUniqueInput
+  }
+
+  /**
+   * SlaPolicy deleteMany
+   */
+  export type SlaPolicyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SlaPolicies to delete
+     */
+    where?: SlaPolicyWhereInput
+    /**
+     * Limit how many SlaPolicies to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SlaPolicy without action
+   */
+  export type SlaPolicyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlaPolicy
+     */
+    select?: SlaPolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlaPolicy
+     */
+    omit?: SlaPolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlaPolicyInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -40014,7 +41441,9 @@ export namespace Prisma {
     version: 'version',
     deletedAt: 'deletedAt',
     deletedBy: 'deletedBy',
-    queueId: 'queueId'
+    queueId: 'queueId',
+    firstResponseDueAt: 'firstResponseDueAt',
+    resolutionDueAt: 'resolutionDueAt'
   };
 
   export type TicketScalarFieldEnum = (typeof TicketScalarFieldEnum)[keyof typeof TicketScalarFieldEnum]
@@ -40063,6 +41492,23 @@ export namespace Prisma {
   };
 
   export type SupportQueueScalarFieldEnum = (typeof SupportQueueScalarFieldEnum)[keyof typeof SupportQueueScalarFieldEnum]
+
+
+  export const SlaPolicyScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    priority: 'priority',
+    firstResponseMinutes: 'firstResponseMinutes',
+    resolutionMinutes: 'resolutionMinutes',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    createdBy: 'createdBy',
+    updatedBy: 'updatedBy',
+    version: 'version'
+  };
+
+  export type SlaPolicyScalarFieldEnum = (typeof SlaPolicyScalarFieldEnum)[keyof typeof SlaPolicyScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -40428,6 +41874,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventListRelationFilter
     ticketProtocolCounters?: TicketProtocolCounterListRelationFilter
     supportQueues?: SupportQueueListRelationFilter
+    slaPolicies?: SlaPolicyListRelationFilter
   }
 
   export type OrganizationOrderByWithRelationInput = {
@@ -40461,6 +41908,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventOrderByRelationAggregateInput
     ticketProtocolCounters?: TicketProtocolCounterOrderByRelationAggregateInput
     supportQueues?: SupportQueueOrderByRelationAggregateInput
+    slaPolicies?: SlaPolicyOrderByRelationAggregateInput
   }
 
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -40497,6 +41945,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventListRelationFilter
     ticketProtocolCounters?: TicketProtocolCounterListRelationFilter
     supportQueues?: SupportQueueListRelationFilter
+    slaPolicies?: SlaPolicyListRelationFilter
   }, "id" | "slug">
 
   export type OrganizationOrderByWithAggregationInput = {
@@ -40690,6 +42139,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueListRelationFilter
     supportQueuesUpdated?: SupportQueueListRelationFilter
     supportQueuesDeleted?: SupportQueueListRelationFilter
+    slaPoliciesCreated?: SlaPolicyListRelationFilter
+    slaPoliciesUpdated?: SlaPolicyListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -40731,6 +42182,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueOrderByRelationAggregateInput
     supportQueuesUpdated?: SupportQueueOrderByRelationAggregateInput
     supportQueuesDeleted?: SupportQueueOrderByRelationAggregateInput
+    slaPoliciesCreated?: SlaPolicyOrderByRelationAggregateInput
+    slaPoliciesUpdated?: SlaPolicyOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -40775,6 +42228,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueListRelationFilter
     supportQueuesUpdated?: SupportQueueListRelationFilter
     supportQueuesDeleted?: SupportQueueListRelationFilter
+    slaPoliciesCreated?: SlaPolicyListRelationFilter
+    slaPoliciesUpdated?: SlaPolicyListRelationFilter
   }, "id" | "emailNormalized">
 
   export type UserOrderByWithAggregationInput = {
@@ -42679,6 +44134,8 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     deletedBy?: UuidNullableFilter<"Ticket"> | string | null
     queueId?: UuidNullableFilter<"Ticket"> | string | null
+    firstResponseDueAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
+    resolutionDueAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     contact?: XOR<ContactNullableScalarRelationFilter, ContactWhereInput> | null
@@ -42714,6 +44171,8 @@ export namespace Prisma {
     deletedAt?: SortOrderInput | SortOrder
     deletedBy?: SortOrderInput | SortOrder
     queueId?: SortOrderInput | SortOrder
+    firstResponseDueAt?: SortOrderInput | SortOrder
+    resolutionDueAt?: SortOrderInput | SortOrder
     organization?: OrganizationOrderByWithRelationInput
     company?: CompanyOrderByWithRelationInput
     contact?: ContactOrderByWithRelationInput
@@ -42754,6 +44213,8 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     deletedBy?: UuidNullableFilter<"Ticket"> | string | null
     queueId?: UuidNullableFilter<"Ticket"> | string | null
+    firstResponseDueAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
+    resolutionDueAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     contact?: XOR<ContactNullableScalarRelationFilter, ContactWhereInput> | null
@@ -42789,6 +44250,8 @@ export namespace Prisma {
     deletedAt?: SortOrderInput | SortOrder
     deletedBy?: SortOrderInput | SortOrder
     queueId?: SortOrderInput | SortOrder
+    firstResponseDueAt?: SortOrderInput | SortOrder
+    resolutionDueAt?: SortOrderInput | SortOrder
     _count?: TicketCountOrderByAggregateInput
     _avg?: TicketAvgOrderByAggregateInput
     _max?: TicketMaxOrderByAggregateInput
@@ -42823,6 +44286,8 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableWithAggregatesFilter<"Ticket"> | Date | string | null
     deletedBy?: UuidNullableWithAggregatesFilter<"Ticket"> | string | null
     queueId?: UuidNullableWithAggregatesFilter<"Ticket"> | string | null
+    firstResponseDueAt?: DateTimeNullableWithAggregatesFilter<"Ticket"> | Date | string | null
+    resolutionDueAt?: DateTimeNullableWithAggregatesFilter<"Ticket"> | Date | string | null
   }
 
   export type TicketEventWhereInput = {
@@ -43074,6 +44539,100 @@ export namespace Prisma {
     deletedBy?: UuidNullableWithAggregatesFilter<"SupportQueue"> | string | null
   }
 
+  export type SlaPolicyWhereInput = {
+    AND?: SlaPolicyWhereInput | SlaPolicyWhereInput[]
+    OR?: SlaPolicyWhereInput[]
+    NOT?: SlaPolicyWhereInput | SlaPolicyWhereInput[]
+    id?: UuidFilter<"SlaPolicy"> | string
+    organizationId?: UuidFilter<"SlaPolicy"> | string
+    priority?: EnumTicketPriorityFilter<"SlaPolicy"> | $Enums.TicketPriority
+    firstResponseMinutes?: IntFilter<"SlaPolicy"> | number
+    resolutionMinutes?: IntFilter<"SlaPolicy"> | number
+    isActive?: BoolFilter<"SlaPolicy"> | boolean
+    createdAt?: DateTimeFilter<"SlaPolicy"> | Date | string
+    updatedAt?: DateTimeFilter<"SlaPolicy"> | Date | string
+    createdBy?: UuidFilter<"SlaPolicy"> | string
+    updatedBy?: UuidFilter<"SlaPolicy"> | string
+    version?: IntFilter<"SlaPolicy"> | number
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updater?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type SlaPolicyOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    priority?: SortOrder
+    firstResponseMinutes?: SortOrder
+    resolutionMinutes?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+    creator?: UserOrderByWithRelationInput
+    updater?: UserOrderByWithRelationInput
+  }
+
+  export type SlaPolicyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    organizationId_priority?: SlaPolicyOrganizationIdPriorityCompoundUniqueInput
+    AND?: SlaPolicyWhereInput | SlaPolicyWhereInput[]
+    OR?: SlaPolicyWhereInput[]
+    NOT?: SlaPolicyWhereInput | SlaPolicyWhereInput[]
+    organizationId?: UuidFilter<"SlaPolicy"> | string
+    priority?: EnumTicketPriorityFilter<"SlaPolicy"> | $Enums.TicketPriority
+    firstResponseMinutes?: IntFilter<"SlaPolicy"> | number
+    resolutionMinutes?: IntFilter<"SlaPolicy"> | number
+    isActive?: BoolFilter<"SlaPolicy"> | boolean
+    createdAt?: DateTimeFilter<"SlaPolicy"> | Date | string
+    updatedAt?: DateTimeFilter<"SlaPolicy"> | Date | string
+    createdBy?: UuidFilter<"SlaPolicy"> | string
+    updatedBy?: UuidFilter<"SlaPolicy"> | string
+    version?: IntFilter<"SlaPolicy"> | number
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updater?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "organizationId_priority">
+
+  export type SlaPolicyOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    priority?: SortOrder
+    firstResponseMinutes?: SortOrder
+    resolutionMinutes?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+    _count?: SlaPolicyCountOrderByAggregateInput
+    _avg?: SlaPolicyAvgOrderByAggregateInput
+    _max?: SlaPolicyMaxOrderByAggregateInput
+    _min?: SlaPolicyMinOrderByAggregateInput
+    _sum?: SlaPolicySumOrderByAggregateInput
+  }
+
+  export type SlaPolicyScalarWhereWithAggregatesInput = {
+    AND?: SlaPolicyScalarWhereWithAggregatesInput | SlaPolicyScalarWhereWithAggregatesInput[]
+    OR?: SlaPolicyScalarWhereWithAggregatesInput[]
+    NOT?: SlaPolicyScalarWhereWithAggregatesInput | SlaPolicyScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"SlaPolicy"> | string
+    organizationId?: UuidWithAggregatesFilter<"SlaPolicy"> | string
+    priority?: EnumTicketPriorityWithAggregatesFilter<"SlaPolicy"> | $Enums.TicketPriority
+    firstResponseMinutes?: IntWithAggregatesFilter<"SlaPolicy"> | number
+    resolutionMinutes?: IntWithAggregatesFilter<"SlaPolicy"> | number
+    isActive?: BoolWithAggregatesFilter<"SlaPolicy"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"SlaPolicy"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SlaPolicy"> | Date | string
+    createdBy?: UuidWithAggregatesFilter<"SlaPolicy"> | string
+    updatedBy?: UuidWithAggregatesFilter<"SlaPolicy"> | string
+    version?: IntWithAggregatesFilter<"SlaPolicy"> | number
+  }
+
   export type OrganizationCreateInput = {
     id?: string
     name: string
@@ -43105,6 +44664,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateInput = {
@@ -43138,6 +44698,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUpdateInput = {
@@ -43171,6 +44732,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateInput = {
@@ -43204,6 +44766,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateManyInput = {
@@ -43400,6 +44963,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -43441,6 +45006,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUpdateInput = {
@@ -43482,6 +45049,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -43523,6 +45092,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -45436,6 +47007,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutTicketsInput
     company?: CompanyCreateNestedOneWithoutTicketsInput
     contact?: ContactCreateNestedOneWithoutTicketsInput
@@ -45471,6 +47044,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -45490,6 +47065,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
     company?: CompanyUpdateOneWithoutTicketsNestedInput
     contact?: ContactUpdateOneWithoutTicketsNestedInput
@@ -45525,6 +47102,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -45552,6 +47131,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type TicketUpdateManyMutationInput = {
@@ -45570,6 +47151,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TicketUncheckedUpdateManyInput = {
@@ -45596,6 +47179,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TicketEventCreateInput = {
@@ -45846,6 +47431,101 @@ export namespace Prisma {
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type SlaPolicyCreateInput = {
+    id?: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    organization: OrganizationCreateNestedOneWithoutSlaPoliciesInput
+    creator: UserCreateNestedOneWithoutSlaPoliciesCreatedInput
+    updater: UserCreateNestedOneWithoutSlaPoliciesUpdatedInput
+  }
+
+  export type SlaPolicyUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+  }
+
+  export type SlaPolicyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    organization?: OrganizationUpdateOneRequiredWithoutSlaPoliciesNestedInput
+    creator?: UserUpdateOneRequiredWithoutSlaPoliciesCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutSlaPoliciesUpdatedNestedInput
+  }
+
+  export type SlaPolicyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type SlaPolicyCreateManyInput = {
+    id?: string
+    organizationId: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+  }
+
+  export type SlaPolicyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type SlaPolicyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+  }
+
   export type UuidFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -46033,6 +47713,12 @@ export namespace Prisma {
     none?: SupportQueueWhereInput
   }
 
+  export type SlaPolicyListRelationFilter = {
+    every?: SlaPolicyWhereInput
+    some?: SlaPolicyWhereInput
+    none?: SlaPolicyWhereInput
+  }
+
   export type OrganizationMembershipOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -46126,6 +47812,10 @@ export namespace Prisma {
   }
 
   export type SupportQueueOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SlaPolicyOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -47781,6 +49471,8 @@ export namespace Prisma {
     deletedAt?: SortOrder
     deletedBy?: SortOrder
     queueId?: SortOrder
+    firstResponseDueAt?: SortOrder
+    resolutionDueAt?: SortOrder
   }
 
   export type TicketAvgOrderByAggregateInput = {
@@ -47811,6 +49503,8 @@ export namespace Prisma {
     deletedAt?: SortOrder
     deletedBy?: SortOrder
     queueId?: SortOrder
+    firstResponseDueAt?: SortOrder
+    resolutionDueAt?: SortOrder
   }
 
   export type TicketMinOrderByAggregateInput = {
@@ -47837,6 +49531,8 @@ export namespace Prisma {
     deletedAt?: SortOrder
     deletedBy?: SortOrder
     queueId?: SortOrder
+    firstResponseDueAt?: SortOrder
+    resolutionDueAt?: SortOrder
   }
 
   export type TicketSumOrderByAggregateInput = {
@@ -48046,6 +49742,65 @@ export namespace Prisma {
     version?: SortOrder
   }
 
+  export type SlaPolicyOrganizationIdPriorityCompoundUniqueInput = {
+    organizationId: string
+    priority: $Enums.TicketPriority
+  }
+
+  export type SlaPolicyCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    priority?: SortOrder
+    firstResponseMinutes?: SortOrder
+    resolutionMinutes?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+  }
+
+  export type SlaPolicyAvgOrderByAggregateInput = {
+    firstResponseMinutes?: SortOrder
+    resolutionMinutes?: SortOrder
+    version?: SortOrder
+  }
+
+  export type SlaPolicyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    priority?: SortOrder
+    firstResponseMinutes?: SortOrder
+    resolutionMinutes?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+  }
+
+  export type SlaPolicyMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    priority?: SortOrder
+    firstResponseMinutes?: SortOrder
+    resolutionMinutes?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
+    version?: SortOrder
+  }
+
+  export type SlaPolicySumOrderByAggregateInput = {
+    firstResponseMinutes?: SortOrder
+    resolutionMinutes?: SortOrder
+    version?: SortOrder
+  }
+
   export type OrganizationMembershipCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<OrganizationMembershipCreateWithoutOrganizationInput, OrganizationMembershipUncheckedCreateWithoutOrganizationInput> | OrganizationMembershipCreateWithoutOrganizationInput[] | OrganizationMembershipUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOrganizationInput | OrganizationMembershipCreateOrConnectWithoutOrganizationInput[]
@@ -48214,6 +49969,13 @@ export namespace Prisma {
     connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
   }
 
+  export type SlaPolicyCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<SlaPolicyCreateWithoutOrganizationInput, SlaPolicyUncheckedCreateWithoutOrganizationInput> | SlaPolicyCreateWithoutOrganizationInput[] | SlaPolicyUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutOrganizationInput | SlaPolicyCreateOrConnectWithoutOrganizationInput[]
+    createMany?: SlaPolicyCreateManyOrganizationInputEnvelope
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+  }
+
   export type OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<OrganizationMembershipCreateWithoutOrganizationInput, OrganizationMembershipUncheckedCreateWithoutOrganizationInput> | OrganizationMembershipCreateWithoutOrganizationInput[] | OrganizationMembershipUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOrganizationInput | OrganizationMembershipCreateOrConnectWithoutOrganizationInput[]
@@ -48380,6 +50142,13 @@ export namespace Prisma {
     connectOrCreate?: SupportQueueCreateOrConnectWithoutOrganizationInput | SupportQueueCreateOrConnectWithoutOrganizationInput[]
     createMany?: SupportQueueCreateManyOrganizationInputEnvelope
     connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+  }
+
+  export type SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<SlaPolicyCreateWithoutOrganizationInput, SlaPolicyUncheckedCreateWithoutOrganizationInput> | SlaPolicyCreateWithoutOrganizationInput[] | SlaPolicyUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutOrganizationInput | SlaPolicyCreateOrConnectWithoutOrganizationInput[]
+    createMany?: SlaPolicyCreateManyOrganizationInputEnvelope
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -48730,6 +50499,20 @@ export namespace Prisma {
     deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
   }
 
+  export type SlaPolicyUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<SlaPolicyCreateWithoutOrganizationInput, SlaPolicyUncheckedCreateWithoutOrganizationInput> | SlaPolicyCreateWithoutOrganizationInput[] | SlaPolicyUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutOrganizationInput | SlaPolicyCreateOrConnectWithoutOrganizationInput[]
+    upsert?: SlaPolicyUpsertWithWhereUniqueWithoutOrganizationInput | SlaPolicyUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: SlaPolicyCreateManyOrganizationInputEnvelope
+    set?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    disconnect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    delete?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    update?: SlaPolicyUpdateWithWhereUniqueWithoutOrganizationInput | SlaPolicyUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: SlaPolicyUpdateManyWithWhereWithoutOrganizationInput | SlaPolicyUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: SlaPolicyScalarWhereInput | SlaPolicyScalarWhereInput[]
+  }
+
   export type OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<OrganizationMembershipCreateWithoutOrganizationInput, OrganizationMembershipUncheckedCreateWithoutOrganizationInput> | OrganizationMembershipCreateWithoutOrganizationInput[] | OrganizationMembershipUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOrganizationInput | OrganizationMembershipCreateOrConnectWithoutOrganizationInput[]
@@ -49066,6 +50849,20 @@ export namespace Prisma {
     deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
   }
 
+  export type SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<SlaPolicyCreateWithoutOrganizationInput, SlaPolicyUncheckedCreateWithoutOrganizationInput> | SlaPolicyCreateWithoutOrganizationInput[] | SlaPolicyUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutOrganizationInput | SlaPolicyCreateOrConnectWithoutOrganizationInput[]
+    upsert?: SlaPolicyUpsertWithWhereUniqueWithoutOrganizationInput | SlaPolicyUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: SlaPolicyCreateManyOrganizationInputEnvelope
+    set?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    disconnect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    delete?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    update?: SlaPolicyUpdateWithWhereUniqueWithoutOrganizationInput | SlaPolicyUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: SlaPolicyUpdateManyWithWhereWithoutOrganizationInput | SlaPolicyUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: SlaPolicyScalarWhereInput | SlaPolicyScalarWhereInput[]
+  }
+
   export type OrganizationCreateNestedOneWithoutRolesInput = {
     create?: XOR<OrganizationCreateWithoutRolesInput, OrganizationUncheckedCreateWithoutRolesInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutRolesInput
@@ -49346,6 +51143,20 @@ export namespace Prisma {
     connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
   }
 
+  export type SlaPolicyCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<SlaPolicyCreateWithoutCreatorInput, SlaPolicyUncheckedCreateWithoutCreatorInput> | SlaPolicyCreateWithoutCreatorInput[] | SlaPolicyUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutCreatorInput | SlaPolicyCreateOrConnectWithoutCreatorInput[]
+    createMany?: SlaPolicyCreateManyCreatorInputEnvelope
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+  }
+
+  export type SlaPolicyCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<SlaPolicyCreateWithoutUpdaterInput, SlaPolicyUncheckedCreateWithoutUpdaterInput> | SlaPolicyCreateWithoutUpdaterInput[] | SlaPolicyUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutUpdaterInput | SlaPolicyCreateOrConnectWithoutUpdaterInput[]
+    createMany?: SlaPolicyCreateManyUpdaterInputEnvelope
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+  }
+
   export type OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<OrganizationMembershipCreateWithoutUserInput, OrganizationMembershipUncheckedCreateWithoutUserInput> | OrganizationMembershipCreateWithoutUserInput[] | OrganizationMembershipUncheckedCreateWithoutUserInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutUserInput | OrganizationMembershipCreateOrConnectWithoutUserInput[]
@@ -49554,6 +51365,20 @@ export namespace Prisma {
     connectOrCreate?: SupportQueueCreateOrConnectWithoutDeleterInput | SupportQueueCreateOrConnectWithoutDeleterInput[]
     createMany?: SupportQueueCreateManyDeleterInputEnvelope
     connect?: SupportQueueWhereUniqueInput | SupportQueueWhereUniqueInput[]
+  }
+
+  export type SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<SlaPolicyCreateWithoutCreatorInput, SlaPolicyUncheckedCreateWithoutCreatorInput> | SlaPolicyCreateWithoutCreatorInput[] | SlaPolicyUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutCreatorInput | SlaPolicyCreateOrConnectWithoutCreatorInput[]
+    createMany?: SlaPolicyCreateManyCreatorInputEnvelope
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+  }
+
+  export type SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<SlaPolicyCreateWithoutUpdaterInput, SlaPolicyUncheckedCreateWithoutUpdaterInput> | SlaPolicyCreateWithoutUpdaterInput[] | SlaPolicyUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutUpdaterInput | SlaPolicyCreateOrConnectWithoutUpdaterInput[]
+    createMany?: SlaPolicyCreateManyUpdaterInputEnvelope
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
   }
 
   export type OrganizationMembershipUpdateManyWithoutUserNestedInput = {
@@ -49976,6 +51801,34 @@ export namespace Prisma {
     deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
   }
 
+  export type SlaPolicyUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<SlaPolicyCreateWithoutCreatorInput, SlaPolicyUncheckedCreateWithoutCreatorInput> | SlaPolicyCreateWithoutCreatorInput[] | SlaPolicyUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutCreatorInput | SlaPolicyCreateOrConnectWithoutCreatorInput[]
+    upsert?: SlaPolicyUpsertWithWhereUniqueWithoutCreatorInput | SlaPolicyUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: SlaPolicyCreateManyCreatorInputEnvelope
+    set?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    disconnect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    delete?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    update?: SlaPolicyUpdateWithWhereUniqueWithoutCreatorInput | SlaPolicyUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: SlaPolicyUpdateManyWithWhereWithoutCreatorInput | SlaPolicyUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: SlaPolicyScalarWhereInput | SlaPolicyScalarWhereInput[]
+  }
+
+  export type SlaPolicyUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<SlaPolicyCreateWithoutUpdaterInput, SlaPolicyUncheckedCreateWithoutUpdaterInput> | SlaPolicyCreateWithoutUpdaterInput[] | SlaPolicyUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutUpdaterInput | SlaPolicyCreateOrConnectWithoutUpdaterInput[]
+    upsert?: SlaPolicyUpsertWithWhereUniqueWithoutUpdaterInput | SlaPolicyUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: SlaPolicyCreateManyUpdaterInputEnvelope
+    set?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    disconnect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    delete?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    update?: SlaPolicyUpdateWithWhereUniqueWithoutUpdaterInput | SlaPolicyUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: SlaPolicyUpdateManyWithWhereWithoutUpdaterInput | SlaPolicyUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: SlaPolicyScalarWhereInput | SlaPolicyScalarWhereInput[]
+  }
+
   export type OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<OrganizationMembershipCreateWithoutUserInput, OrganizationMembershipUncheckedCreateWithoutUserInput> | OrganizationMembershipCreateWithoutUserInput[] | OrganizationMembershipUncheckedCreateWithoutUserInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutUserInput | OrganizationMembershipCreateOrConnectWithoutUserInput[]
@@ -50394,6 +52247,34 @@ export namespace Prisma {
     update?: SupportQueueUpdateWithWhereUniqueWithoutDeleterInput | SupportQueueUpdateWithWhereUniqueWithoutDeleterInput[]
     updateMany?: SupportQueueUpdateManyWithWhereWithoutDeleterInput | SupportQueueUpdateManyWithWhereWithoutDeleterInput[]
     deleteMany?: SupportQueueScalarWhereInput | SupportQueueScalarWhereInput[]
+  }
+
+  export type SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<SlaPolicyCreateWithoutCreatorInput, SlaPolicyUncheckedCreateWithoutCreatorInput> | SlaPolicyCreateWithoutCreatorInput[] | SlaPolicyUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutCreatorInput | SlaPolicyCreateOrConnectWithoutCreatorInput[]
+    upsert?: SlaPolicyUpsertWithWhereUniqueWithoutCreatorInput | SlaPolicyUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: SlaPolicyCreateManyCreatorInputEnvelope
+    set?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    disconnect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    delete?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    update?: SlaPolicyUpdateWithWhereUniqueWithoutCreatorInput | SlaPolicyUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: SlaPolicyUpdateManyWithWhereWithoutCreatorInput | SlaPolicyUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: SlaPolicyScalarWhereInput | SlaPolicyScalarWhereInput[]
+  }
+
+  export type SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<SlaPolicyCreateWithoutUpdaterInput, SlaPolicyUncheckedCreateWithoutUpdaterInput> | SlaPolicyCreateWithoutUpdaterInput[] | SlaPolicyUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: SlaPolicyCreateOrConnectWithoutUpdaterInput | SlaPolicyCreateOrConnectWithoutUpdaterInput[]
+    upsert?: SlaPolicyUpsertWithWhereUniqueWithoutUpdaterInput | SlaPolicyUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: SlaPolicyCreateManyUpdaterInputEnvelope
+    set?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    disconnect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    delete?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    connect?: SlaPolicyWhereUniqueInput | SlaPolicyWhereUniqueInput[]
+    update?: SlaPolicyUpdateWithWhereUniqueWithoutUpdaterInput | SlaPolicyUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: SlaPolicyUpdateManyWithWhereWithoutUpdaterInput | SlaPolicyUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: SlaPolicyScalarWhereInput | SlaPolicyScalarWhereInput[]
   }
 
   export type OrganizationCreateNestedOneWithoutMembershipsInput = {
@@ -52880,6 +54761,48 @@ export namespace Prisma {
     deleteMany?: TicketScalarWhereInput | TicketScalarWhereInput[]
   }
 
+  export type OrganizationCreateNestedOneWithoutSlaPoliciesInput = {
+    create?: XOR<OrganizationCreateWithoutSlaPoliciesInput, OrganizationUncheckedCreateWithoutSlaPoliciesInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutSlaPoliciesInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSlaPoliciesCreatedInput = {
+    create?: XOR<UserCreateWithoutSlaPoliciesCreatedInput, UserUncheckedCreateWithoutSlaPoliciesCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSlaPoliciesCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSlaPoliciesUpdatedInput = {
+    create?: XOR<UserCreateWithoutSlaPoliciesUpdatedInput, UserUncheckedCreateWithoutSlaPoliciesUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSlaPoliciesUpdatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutSlaPoliciesNestedInput = {
+    create?: XOR<OrganizationCreateWithoutSlaPoliciesInput, OrganizationUncheckedCreateWithoutSlaPoliciesInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutSlaPoliciesInput
+    upsert?: OrganizationUpsertWithoutSlaPoliciesInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutSlaPoliciesInput, OrganizationUpdateWithoutSlaPoliciesInput>, OrganizationUncheckedUpdateWithoutSlaPoliciesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutSlaPoliciesCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutSlaPoliciesCreatedInput, UserUncheckedCreateWithoutSlaPoliciesCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSlaPoliciesCreatedInput
+    upsert?: UserUpsertWithoutSlaPoliciesCreatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSlaPoliciesCreatedInput, UserUpdateWithoutSlaPoliciesCreatedInput>, UserUncheckedUpdateWithoutSlaPoliciesCreatedInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutSlaPoliciesUpdatedNestedInput = {
+    create?: XOR<UserCreateWithoutSlaPoliciesUpdatedInput, UserUncheckedCreateWithoutSlaPoliciesUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSlaPoliciesUpdatedInput
+    upsert?: UserUpsertWithoutSlaPoliciesUpdatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSlaPoliciesUpdatedInput, UserUpdateWithoutSlaPoliciesUpdatedInput>, UserUncheckedUpdateWithoutSlaPoliciesUpdatedInput>
+  }
+
   export type NestedUuidFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -54162,6 +56085,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     company?: CompanyCreateNestedOneWithoutTicketsInput
     contact?: ContactCreateNestedOneWithoutTicketsInput
     assigneeMembership?: OrganizationMembershipCreateNestedOneWithoutAssignedTicketsInput
@@ -54195,6 +56120,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -54303,6 +56230,42 @@ export namespace Prisma {
 
   export type SupportQueueCreateManyOrganizationInputEnvelope = {
     data: SupportQueueCreateManyOrganizationInput | SupportQueueCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SlaPolicyCreateWithoutOrganizationInput = {
+    id?: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    creator: UserCreateNestedOneWithoutSlaPoliciesCreatedInput
+    updater: UserCreateNestedOneWithoutSlaPoliciesUpdatedInput
+  }
+
+  export type SlaPolicyUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
+  }
+
+  export type SlaPolicyCreateOrConnectWithoutOrganizationInput = {
+    where: SlaPolicyWhereUniqueInput
+    create: XOR<SlaPolicyCreateWithoutOrganizationInput, SlaPolicyUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type SlaPolicyCreateManyOrganizationInputEnvelope = {
+    data: SlaPolicyCreateManyOrganizationInput | SlaPolicyCreateManyOrganizationInput[]
     skipDuplicates?: boolean
   }
 
@@ -54987,6 +56950,8 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     deletedBy?: UuidNullableFilter<"Ticket"> | string | null
     queueId?: UuidNullableFilter<"Ticket"> | string | null
+    firstResponseDueAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
+    resolutionDueAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
   }
 
   export type TicketEventUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -55082,6 +57047,39 @@ export namespace Prisma {
     deletedBy?: UuidNullableFilter<"SupportQueue"> | string | null
   }
 
+  export type SlaPolicyUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: SlaPolicyWhereUniqueInput
+    update: XOR<SlaPolicyUpdateWithoutOrganizationInput, SlaPolicyUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<SlaPolicyCreateWithoutOrganizationInput, SlaPolicyUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type SlaPolicyUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: SlaPolicyWhereUniqueInput
+    data: XOR<SlaPolicyUpdateWithoutOrganizationInput, SlaPolicyUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type SlaPolicyUpdateManyWithWhereWithoutOrganizationInput = {
+    where: SlaPolicyScalarWhereInput
+    data: XOR<SlaPolicyUpdateManyMutationInput, SlaPolicyUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type SlaPolicyScalarWhereInput = {
+    AND?: SlaPolicyScalarWhereInput | SlaPolicyScalarWhereInput[]
+    OR?: SlaPolicyScalarWhereInput[]
+    NOT?: SlaPolicyScalarWhereInput | SlaPolicyScalarWhereInput[]
+    id?: UuidFilter<"SlaPolicy"> | string
+    organizationId?: UuidFilter<"SlaPolicy"> | string
+    priority?: EnumTicketPriorityFilter<"SlaPolicy"> | $Enums.TicketPriority
+    firstResponseMinutes?: IntFilter<"SlaPolicy"> | number
+    resolutionMinutes?: IntFilter<"SlaPolicy"> | number
+    isActive?: BoolFilter<"SlaPolicy"> | boolean
+    createdAt?: DateTimeFilter<"SlaPolicy"> | Date | string
+    updatedAt?: DateTimeFilter<"SlaPolicy"> | Date | string
+    createdBy?: UuidFilter<"SlaPolicy"> | string
+    updatedBy?: UuidFilter<"SlaPolicy"> | string
+    version?: IntFilter<"SlaPolicy"> | number
+  }
+
   export type OrganizationCreateWithoutRolesInput = {
     id?: string
     name: string
@@ -55112,6 +57110,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRolesInput = {
@@ -55144,6 +57143,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRolesInput = {
@@ -55216,6 +57216,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRolesInput = {
@@ -55248,6 +57249,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type RolePermissionUpsertWithWhereUniqueWithoutRoleInput = {
@@ -56461,6 +58463,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutTicketsInput
     company?: CompanyCreateNestedOneWithoutTicketsInput
     contact?: ContactCreateNestedOneWithoutTicketsInput
@@ -56494,6 +58498,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -56523,6 +58529,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutTicketsInput
     company?: CompanyCreateNestedOneWithoutTicketsInput
     contact?: ContactCreateNestedOneWithoutTicketsInput
@@ -56556,6 +58564,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -56585,6 +58595,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutTicketsInput
     company?: CompanyCreateNestedOneWithoutTicketsInput
     contact?: ContactCreateNestedOneWithoutTicketsInput
@@ -56618,6 +58630,8 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -56790,6 +58804,78 @@ export namespace Prisma {
 
   export type SupportQueueCreateManyDeleterInputEnvelope = {
     data: SupportQueueCreateManyDeleterInput | SupportQueueCreateManyDeleterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SlaPolicyCreateWithoutCreatorInput = {
+    id?: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    organization: OrganizationCreateNestedOneWithoutSlaPoliciesInput
+    updater: UserCreateNestedOneWithoutSlaPoliciesUpdatedInput
+  }
+
+  export type SlaPolicyUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    organizationId: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy: string
+    version?: number
+  }
+
+  export type SlaPolicyCreateOrConnectWithoutCreatorInput = {
+    where: SlaPolicyWhereUniqueInput
+    create: XOR<SlaPolicyCreateWithoutCreatorInput, SlaPolicyUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type SlaPolicyCreateManyCreatorInputEnvelope = {
+    data: SlaPolicyCreateManyCreatorInput | SlaPolicyCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SlaPolicyCreateWithoutUpdaterInput = {
+    id?: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    version?: number
+    organization: OrganizationCreateNestedOneWithoutSlaPoliciesInput
+    creator: UserCreateNestedOneWithoutSlaPoliciesCreatedInput
+  }
+
+  export type SlaPolicyUncheckedCreateWithoutUpdaterInput = {
+    id?: string
+    organizationId: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    version?: number
+  }
+
+  export type SlaPolicyCreateOrConnectWithoutUpdaterInput = {
+    where: SlaPolicyWhereUniqueInput
+    create: XOR<SlaPolicyCreateWithoutUpdaterInput, SlaPolicyUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type SlaPolicyCreateManyUpdaterInputEnvelope = {
+    data: SlaPolicyCreateManyUpdaterInput | SlaPolicyCreateManyUpdaterInput[]
     skipDuplicates?: boolean
   }
 
@@ -57273,6 +59359,38 @@ export namespace Prisma {
     data: XOR<SupportQueueUpdateManyMutationInput, SupportQueueUncheckedUpdateManyWithoutDeleterInput>
   }
 
+  export type SlaPolicyUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: SlaPolicyWhereUniqueInput
+    update: XOR<SlaPolicyUpdateWithoutCreatorInput, SlaPolicyUncheckedUpdateWithoutCreatorInput>
+    create: XOR<SlaPolicyCreateWithoutCreatorInput, SlaPolicyUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type SlaPolicyUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: SlaPolicyWhereUniqueInput
+    data: XOR<SlaPolicyUpdateWithoutCreatorInput, SlaPolicyUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type SlaPolicyUpdateManyWithWhereWithoutCreatorInput = {
+    where: SlaPolicyScalarWhereInput
+    data: XOR<SlaPolicyUpdateManyMutationInput, SlaPolicyUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type SlaPolicyUpsertWithWhereUniqueWithoutUpdaterInput = {
+    where: SlaPolicyWhereUniqueInput
+    update: XOR<SlaPolicyUpdateWithoutUpdaterInput, SlaPolicyUncheckedUpdateWithoutUpdaterInput>
+    create: XOR<SlaPolicyCreateWithoutUpdaterInput, SlaPolicyUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type SlaPolicyUpdateWithWhereUniqueWithoutUpdaterInput = {
+    where: SlaPolicyWhereUniqueInput
+    data: XOR<SlaPolicyUpdateWithoutUpdaterInput, SlaPolicyUncheckedUpdateWithoutUpdaterInput>
+  }
+
+  export type SlaPolicyUpdateManyWithWhereWithoutUpdaterInput = {
+    where: SlaPolicyScalarWhereInput
+    data: XOR<SlaPolicyUpdateManyMutationInput, SlaPolicyUncheckedUpdateManyWithoutUpdaterInput>
+  }
+
   export type OrganizationCreateWithoutMembershipsInput = {
     id?: string
     name: string
@@ -57303,6 +59421,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutMembershipsInput = {
@@ -57335,6 +59454,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutMembershipsInput = {
@@ -57380,6 +59500,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -57420,6 +59542,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -57497,6 +59621,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutTicketsInput
     company?: CompanyCreateNestedOneWithoutTicketsInput
     contact?: ContactCreateNestedOneWithoutTicketsInput
@@ -57529,6 +59655,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -57583,6 +59711,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
@@ -57615,6 +59744,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutMembershipsInput = {
@@ -57666,6 +59796,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -57706,6 +59838,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OpportunityUpsertWithWhereUniqueWithoutOwnerMembershipInput = {
@@ -57770,6 +59904,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRefreshSessionsInput = {
@@ -57802,6 +59937,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRefreshSessionsInput = {
@@ -57847,6 +59983,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutRefreshSessionsInput = {
@@ -57887,6 +60025,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutRefreshSessionsInput = {
@@ -57935,6 +60075,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRefreshSessionsInput = {
@@ -57967,6 +60108,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutRefreshSessionsInput = {
@@ -58018,6 +60160,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRefreshSessionsInput = {
@@ -58058,6 +60202,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutAuditLogsInput = {
@@ -58090,6 +60236,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
@@ -58122,6 +60269,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutAuditLogsInput = {
@@ -58167,6 +60315,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -58207,6 +60357,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -58255,6 +60407,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
@@ -58287,6 +60440,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutAuditLogsInput = {
@@ -58338,6 +60492,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -58378,6 +60534,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutCompaniesInput = {
@@ -58410,6 +60568,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompaniesInput = {
@@ -58442,6 +60601,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompaniesInput = {
@@ -58487,6 +60647,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutCompaniesCreatedInput = {
@@ -58527,6 +60689,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutCompaniesCreatedInput = {
@@ -58572,6 +60736,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutCompaniesUpdatedInput = {
@@ -58612,6 +60778,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutCompaniesUpdatedInput = {
@@ -58657,6 +60825,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutCompaniesDeletedInput = {
@@ -58697,6 +60867,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutCompaniesDeletedInput = {
@@ -58939,6 +61111,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutTicketsInput
     contact?: ContactCreateNestedOneWithoutTicketsInput
     assigneeMembership?: OrganizationMembershipCreateNestedOneWithoutAssignedTicketsInput
@@ -58971,6 +61145,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -59025,6 +61201,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompaniesInput = {
@@ -59057,6 +61234,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutCompaniesCreatedInput = {
@@ -59108,6 +61286,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompaniesCreatedInput = {
@@ -59148,6 +61328,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutCompaniesUpdatedInput = {
@@ -59199,6 +61381,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompaniesUpdatedInput = {
@@ -59239,6 +61423,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutCompaniesDeletedInput = {
@@ -59290,6 +61476,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompaniesDeletedInput = {
@@ -59330,6 +61518,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type CompanyContactUpsertWithWhereUniqueWithoutCompanyInput = {
@@ -59474,6 +61664,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactsInput = {
@@ -59506,6 +61697,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactsInput = {
@@ -59551,6 +61743,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutContactsCreatedInput = {
@@ -59591,6 +61785,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutContactsCreatedInput = {
@@ -59636,6 +61832,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutContactsUpdatedInput = {
@@ -59676,6 +61874,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutContactsUpdatedInput = {
@@ -59721,6 +61921,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutContactsDeletedInput = {
@@ -59761,6 +61963,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutContactsDeletedInput = {
@@ -60035,6 +62239,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutTicketsInput
     company?: CompanyCreateNestedOneWithoutTicketsInput
     assigneeMembership?: OrganizationMembershipCreateNestedOneWithoutAssignedTicketsInput
@@ -60067,6 +62273,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -60121,6 +62329,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactsInput = {
@@ -60153,6 +62362,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutContactsCreatedInput = {
@@ -60204,6 +62414,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContactsCreatedInput = {
@@ -60244,6 +62456,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutContactsUpdatedInput = {
@@ -60295,6 +62509,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContactsUpdatedInput = {
@@ -60335,6 +62551,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutContactsDeletedInput = {
@@ -60386,6 +62604,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContactsDeletedInput = {
@@ -60426,6 +62646,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type ContactChannelUpsertWithWhereUniqueWithoutContactInput = {
@@ -60586,6 +62808,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactChannelsInput = {
@@ -60618,6 +62841,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactChannelsInput = {
@@ -60715,6 +62939,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactChannelsInput = {
@@ -60747,6 +62972,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ContactUpsertWithoutChannelsInput = {
@@ -60834,6 +63060,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompanyContactsInput = {
@@ -60866,6 +63093,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompanyContactsInput = {
@@ -61014,6 +63242,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompanyContactsInput = {
@@ -61046,6 +63275,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutContactLinksInput = {
@@ -61190,6 +63420,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRelationshipEntriesInput = {
@@ -61222,6 +63453,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRelationshipEntriesInput = {
@@ -61367,6 +63599,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutRelationshipEntriesAuthoredInput = {
@@ -61407,6 +63641,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutRelationshipEntriesAuthoredInput = {
@@ -61455,6 +63691,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRelationshipEntriesInput = {
@@ -61487,6 +63724,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutRelationshipEntriesInput = {
@@ -61650,6 +63888,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRelationshipEntriesAuthoredInput = {
@@ -61690,6 +63930,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutTagsInput = {
@@ -61722,6 +63964,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTagsInput = {
@@ -61754,6 +63997,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTagsInput = {
@@ -61850,6 +64094,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTagsInput = {
@@ -61882,6 +64127,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyTagUpsertWithWhereUniqueWithoutTagInput = {
@@ -61946,6 +64192,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompanyTagsInput = {
@@ -61978,6 +64225,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompanyTagsInput = {
@@ -62100,6 +64348,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompanyTagsInput = {
@@ -62132,6 +64381,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutTagLinksInput = {
@@ -62250,6 +64500,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactTagsInput = {
@@ -62282,6 +64533,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactTagsInput = {
@@ -62402,6 +64654,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactTagsInput = {
@@ -62434,6 +64687,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ContactUpsertWithoutTagLinksInput = {
@@ -62550,6 +64804,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput = {
@@ -62582,6 +64837,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCustomFieldDefinitionsInput = {
@@ -62686,6 +64942,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput = {
@@ -62718,6 +64975,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyCustomFieldValueUpsertWithWhereUniqueWithoutDefinitionInput = {
@@ -62782,6 +65040,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCompanyCustomFieldValuesInput = {
@@ -62814,6 +65073,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCompanyCustomFieldValuesInput = {
@@ -62948,6 +65208,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCompanyCustomFieldValuesInput = {
@@ -62980,6 +65241,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutCustomFieldValuesInput = {
@@ -63110,6 +65372,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutContactCustomFieldValuesInput = {
@@ -63142,6 +65405,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutContactCustomFieldValuesInput = {
@@ -63274,6 +65538,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutContactCustomFieldValuesInput = {
@@ -63306,6 +65571,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ContactUpsertWithoutCustomFieldValuesInput = {
@@ -63434,6 +65700,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutPipelinesInput = {
@@ -63466,6 +65733,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutPipelinesInput = {
@@ -63600,6 +65868,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutPipelinesInput = {
@@ -63632,6 +65901,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type PipelineStageUpsertWithWhereUniqueWithoutPipelineInput = {
@@ -63840,6 +66110,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutActivitiesInput = {
@@ -63872,6 +66143,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutActivitiesInput = {
@@ -64067,6 +66339,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesOwnedInput = {
@@ -64107,6 +66381,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesOwnedInput = {
@@ -64152,6 +66428,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesCreatedInput = {
@@ -64192,6 +66470,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesCreatedInput = {
@@ -64237,6 +66517,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesUpdatedInput = {
@@ -64277,6 +66559,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesUpdatedInput = {
@@ -64322,6 +66606,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesDeletedInput = {
@@ -64362,6 +66648,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesDeletedInput = {
@@ -64410,6 +66698,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutActivitiesInput = {
@@ -64442,6 +66731,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutActivitiesInput = {
@@ -64661,6 +66951,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesOwnedInput = {
@@ -64701,6 +66993,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutActivitiesCreatedInput = {
@@ -64752,6 +67046,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesCreatedInput = {
@@ -64792,6 +67088,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutActivitiesUpdatedInput = {
@@ -64843,6 +67141,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesUpdatedInput = {
@@ -64883,6 +67183,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutActivitiesDeletedInput = {
@@ -64934,6 +67236,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesDeletedInput = {
@@ -64974,6 +67278,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutOpportunitiesInput = {
@@ -65006,6 +67312,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutOpportunitiesInput = {
@@ -65038,6 +67345,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutOpportunitiesInput = {
@@ -65238,6 +67546,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesOwnedInput = {
@@ -65278,6 +67588,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesOwnedInput = {
@@ -65350,6 +67662,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesCreatedInput = {
@@ -65390,6 +67704,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesCreatedInput = {
@@ -65435,6 +67751,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesUpdatedInput = {
@@ -65475,6 +67793,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesUpdatedInput = {
@@ -65520,6 +67840,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunitiesDeletedInput = {
@@ -65560,6 +67882,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunitiesDeletedInput = {
@@ -65700,6 +68024,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutOpportunitiesInput = {
@@ -65732,6 +68057,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type PipelineUpsertWithoutOpportunitiesInput = {
@@ -65962,6 +68288,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesOwnedInput = {
@@ -66002,6 +68330,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationMembershipUpsertWithoutOwnedOpportunitiesInput = {
@@ -66086,6 +68416,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesCreatedInput = {
@@ -66126,6 +68458,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutOpportunitiesUpdatedInput = {
@@ -66177,6 +68511,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesUpdatedInput = {
@@ -66217,6 +68553,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutOpportunitiesDeletedInput = {
@@ -66268,6 +68606,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunitiesDeletedInput = {
@@ -66308,6 +68648,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type ActivityUpsertWithWhereUniqueWithoutOpportunityInput = {
@@ -66372,6 +68714,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutProductsInput = {
@@ -66404,6 +68747,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutProductsInput = {
@@ -66449,6 +68793,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutProductsCreatedInput = {
@@ -66489,6 +68835,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutProductsCreatedInput = {
@@ -66534,6 +68882,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutProductsUpdatedInput = {
@@ -66574,6 +68924,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutProductsUpdatedInput = {
@@ -66619,6 +68971,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutProductsDeletedInput = {
@@ -66659,6 +69013,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutProductsDeletedInput = {
@@ -66746,6 +69102,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutProductsInput = {
@@ -66778,6 +69135,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutProductsCreatedInput = {
@@ -66829,6 +69187,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsCreatedInput = {
@@ -66869,6 +69229,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutProductsUpdatedInput = {
@@ -66920,6 +69282,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsUpdatedInput = {
@@ -66960,6 +69324,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutProductsDeletedInput = {
@@ -67011,6 +69377,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsDeletedInput = {
@@ -67051,6 +69419,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OpportunityItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -67099,6 +69469,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutOpportunityItemsInput = {
@@ -67131,6 +69502,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutOpportunityItemsInput = {
@@ -67265,6 +69637,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunityItemsCreatedInput = {
@@ -67305,6 +69679,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunityItemsCreatedInput = {
@@ -67350,6 +69726,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutOpportunityItemsUpdatedInput = {
@@ -67390,6 +69768,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutOpportunityItemsUpdatedInput = {
@@ -67438,6 +69818,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutOpportunityItemsInput = {
@@ -67470,6 +69851,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OpportunityUpsertWithoutItemsInput = {
@@ -67622,6 +70004,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunityItemsCreatedInput = {
@@ -67662,6 +70046,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutOpportunityItemsUpdatedInput = {
@@ -67713,6 +70099,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOpportunityItemsUpdatedInput = {
@@ -67753,6 +70141,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutTicketsInput = {
@@ -67785,6 +70175,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTicketsInput = {
@@ -67817,6 +70208,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTicketsInput = {
@@ -67989,6 +70381,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutTicketsCreatedInput = {
@@ -68029,6 +70423,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutTicketsCreatedInput = {
@@ -68074,6 +70470,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutTicketsUpdatedInput = {
@@ -68114,6 +70512,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutTicketsUpdatedInput = {
@@ -68159,6 +70559,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutTicketsDeletedInput = {
@@ -68199,6 +70601,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutTicketsDeletedInput = {
@@ -68319,6 +70723,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTicketsInput = {
@@ -68351,6 +70756,7 @@ export namespace Prisma {
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CompanyUpsertWithoutTicketsInput = {
@@ -68547,6 +70953,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTicketsCreatedInput = {
@@ -68587,6 +70995,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutTicketsUpdatedInput = {
@@ -68638,6 +71048,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTicketsUpdatedInput = {
@@ -68678,6 +71090,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutTicketsDeletedInput = {
@@ -68729,6 +71143,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTicketsDeletedInput = {
@@ -68769,6 +71185,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type TicketEventUpsertWithWhereUniqueWithoutTicketInput = {
@@ -68860,6 +71278,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTicketEventsInput = {
@@ -68892,6 +71311,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTicketEventsInput = {
@@ -68915,6 +71335,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutTicketsInput
     company?: CompanyCreateNestedOneWithoutTicketsInput
     contact?: ContactCreateNestedOneWithoutTicketsInput
@@ -68949,6 +71371,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type TicketCreateOrConnectWithoutEventsInput = {
@@ -68994,6 +71418,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutTicketEventsAuthoredInput = {
@@ -69034,6 +71460,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutTicketEventsAuthoredInput = {
@@ -69082,6 +71510,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTicketEventsInput = {
@@ -69114,6 +71543,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type TicketUpsertWithoutEventsInput = {
@@ -69143,6 +71573,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
     company?: CompanyUpdateOneWithoutTicketsNestedInput
     contact?: ContactUpdateOneWithoutTicketsNestedInput
@@ -69177,6 +71609,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserUpsertWithoutTicketEventsAuthoredInput = {
@@ -69228,6 +71662,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTicketEventsAuthoredInput = {
@@ -69268,6 +71704,8 @@ export namespace Prisma {
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type OrganizationCreateWithoutTicketProtocolCountersInput = {
@@ -69300,6 +71738,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutTicketProtocolCountersInput = {
@@ -69332,6 +71771,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutTicketProtocolCountersInput = {
@@ -69380,6 +71820,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutTicketProtocolCountersInput = {
@@ -69412,6 +71853,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateWithoutSupportQueuesInput = {
@@ -69444,6 +71886,7 @@ export namespace Prisma {
     tickets?: TicketCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutSupportQueuesInput = {
@@ -69476,6 +71919,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
     ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutSupportQueuesInput = {
@@ -69521,6 +71965,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutSupportQueuesCreatedInput = {
@@ -69561,6 +72007,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutSupportQueuesCreatedInput = {
@@ -69606,6 +72054,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutSupportQueuesUpdatedInput = {
@@ -69646,6 +72096,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutSupportQueuesUpdatedInput = {
@@ -69691,6 +72143,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
     supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserUncheckedCreateWithoutSupportQueuesDeletedInput = {
@@ -69731,6 +72185,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
     supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
     supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
   }
 
   export type UserCreateOrConnectWithoutSupportQueuesDeletedInput = {
@@ -69754,6 +72210,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     version?: number
     deletedAt?: Date | string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutTicketsInput
     company?: CompanyCreateNestedOneWithoutTicketsInput
     contact?: ContactCreateNestedOneWithoutTicketsInput
@@ -69786,6 +72244,8 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
     events?: TicketEventUncheckedCreateNestedManyWithoutTicketInput
   }
 
@@ -69840,6 +72300,7 @@ export namespace Prisma {
     tickets?: TicketUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutSupportQueuesInput = {
@@ -69872,6 +72333,7 @@ export namespace Prisma {
     tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
     ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutSupportQueuesCreatedInput = {
@@ -69923,6 +72385,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSupportQueuesCreatedInput = {
@@ -69963,6 +72427,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutSupportQueuesUpdatedInput = {
@@ -70014,6 +72480,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSupportQueuesUpdatedInput = {
@@ -70054,6 +72522,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUpsertWithoutSupportQueuesDeletedInput = {
@@ -70105,6 +72575,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
     supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSupportQueuesDeletedInput = {
@@ -70145,6 +72617,8 @@ export namespace Prisma {
     ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
     supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
     supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
   }
 
   export type TicketUpsertWithWhereUniqueWithoutQueueInput = {
@@ -70161,6 +72635,522 @@ export namespace Prisma {
   export type TicketUpdateManyWithWhereWithoutQueueInput = {
     where: TicketScalarWhereInput
     data: XOR<TicketUpdateManyMutationInput, TicketUncheckedUpdateManyWithoutQueueInput>
+  }
+
+  export type OrganizationCreateWithoutSlaPoliciesInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryCreateNestedManyWithoutOrganizationInput
+    tags?: TagCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutSlaPoliciesInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelUncheckedCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactUncheckedCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryUncheckedCreateNestedManyWithoutOrganizationInput
+    tags?: TagUncheckedCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagUncheckedCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagUncheckedCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutSlaPoliciesInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutSlaPoliciesInput, OrganizationUncheckedCreateWithoutSlaPoliciesInput>
+  }
+
+  export type UserCreateWithoutSlaPoliciesCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserUncheckedCreateWithoutSlaPoliciesCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
+  }
+
+  export type UserCreateOrConnectWithoutSlaPoliciesCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSlaPoliciesCreatedInput, UserUncheckedCreateWithoutSlaPoliciesCreatedInput>
+  }
+
+  export type UserCreateWithoutSlaPoliciesUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+  }
+
+  export type UserUncheckedCreateWithoutSlaPoliciesUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+  }
+
+  export type UserCreateOrConnectWithoutSlaPoliciesUpdatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSlaPoliciesUpdatedInput, UserUncheckedCreateWithoutSlaPoliciesUpdatedInput>
+  }
+
+  export type OrganizationUpsertWithoutSlaPoliciesInput = {
+    update: XOR<OrganizationUpdateWithoutSlaPoliciesInput, OrganizationUncheckedUpdateWithoutSlaPoliciesInput>
+    create: XOR<OrganizationCreateWithoutSlaPoliciesInput, OrganizationUncheckedCreateWithoutSlaPoliciesInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutSlaPoliciesInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutSlaPoliciesInput, OrganizationUncheckedUpdateWithoutSlaPoliciesInput>
+  }
+
+  export type OrganizationUpdateWithoutSlaPoliciesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutSlaPoliciesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type UserUpsertWithoutSlaPoliciesCreatedInput = {
+    update: XOR<UserUpdateWithoutSlaPoliciesCreatedInput, UserUncheckedUpdateWithoutSlaPoliciesCreatedInput>
+    create: XOR<UserCreateWithoutSlaPoliciesCreatedInput, UserUncheckedCreateWithoutSlaPoliciesCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSlaPoliciesCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSlaPoliciesCreatedInput, UserUncheckedUpdateWithoutSlaPoliciesCreatedInput>
+  }
+
+  export type UserUpdateWithoutSlaPoliciesCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSlaPoliciesCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
+  }
+
+  export type UserUpsertWithoutSlaPoliciesUpdatedInput = {
+    update: XOR<UserUpdateWithoutSlaPoliciesUpdatedInput, UserUncheckedUpdateWithoutSlaPoliciesUpdatedInput>
+    create: XOR<UserCreateWithoutSlaPoliciesUpdatedInput, UserUncheckedCreateWithoutSlaPoliciesUpdatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSlaPoliciesUpdatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSlaPoliciesUpdatedInput, UserUncheckedUpdateWithoutSlaPoliciesUpdatedInput>
+  }
+
+  export type UserUpdateWithoutSlaPoliciesUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSlaPoliciesUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type OrganizationMembershipCreateManyOrganizationInput = {
@@ -70424,6 +73414,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type TicketEventCreateManyOrganizationInput = {
@@ -70457,6 +73449,19 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+  }
+
+  export type SlaPolicyCreateManyOrganizationInput = {
+    id?: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    updatedBy: string
+    version?: number
   }
 
   export type OrganizationMembershipUpdateWithoutOrganizationInput = {
@@ -71244,6 +74249,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     company?: CompanyUpdateOneWithoutTicketsNestedInput
     contact?: ContactUpdateOneWithoutTicketsNestedInput
     assigneeMembership?: OrganizationMembershipUpdateOneWithoutAssignedTicketsNestedInput
@@ -71277,6 +74284,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -71303,6 +74312,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TicketEventUpdateWithoutOrganizationInput = {
@@ -71404,6 +74415,45 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SlaPolicyUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    creator?: UserUpdateOneRequiredWithoutSlaPoliciesCreatedNestedInput
+    updater?: UserUpdateOneRequiredWithoutSlaPoliciesUpdatedNestedInput
+  }
+
+  export type SlaPolicyUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type SlaPolicyUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
   }
 
   export type RolePermissionCreateManyRoleInput = {
@@ -71838,6 +74888,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type TicketCreateManyUpdaterInput = {
@@ -71863,6 +74915,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type TicketCreateManyDeleterInput = {
@@ -71888,6 +74942,8 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type TicketEventCreateManyAuthorInput = {
@@ -71946,6 +75002,32 @@ export namespace Prisma {
     updatedBy: string
     version?: number
     deletedAt?: Date | string | null
+  }
+
+  export type SlaPolicyCreateManyCreatorInput = {
+    id?: string
+    organizationId: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy: string
+    version?: number
+  }
+
+  export type SlaPolicyCreateManyUpdaterInput = {
+    id?: string
+    organizationId: string
+    priority: $Enums.TicketPriority
+    firstResponseMinutes: number
+    resolutionMinutes: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: string
+    version?: number
   }
 
   export type OrganizationMembershipUpdateWithoutUserInput = {
@@ -73227,6 +76309,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
     company?: CompanyUpdateOneWithoutTicketsNestedInput
     contact?: ContactUpdateOneWithoutTicketsNestedInput
@@ -73260,6 +76344,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -73286,6 +76372,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TicketUpdateWithoutUpdaterInput = {
@@ -73304,6 +76392,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
     company?: CompanyUpdateOneWithoutTicketsNestedInput
     contact?: ContactUpdateOneWithoutTicketsNestedInput
@@ -73337,6 +76427,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -73363,6 +76455,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TicketUpdateWithoutDeleterInput = {
@@ -73381,6 +76475,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
     company?: CompanyUpdateOneWithoutTicketsNestedInput
     contact?: ContactUpdateOneWithoutTicketsNestedInput
@@ -73414,6 +76510,8 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -73440,6 +76538,8 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TicketEventUpdateWithoutAuthorInput = {
@@ -73622,6 +76722,84 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type SlaPolicyUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    organization?: OrganizationUpdateOneRequiredWithoutSlaPoliciesNestedInput
+    updater?: UserUpdateOneRequiredWithoutSlaPoliciesUpdatedNestedInput
+  }
+
+  export type SlaPolicyUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type SlaPolicyUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type SlaPolicyUpdateWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    version?: IntFieldUpdateOperationsInput | number
+    organization?: OrganizationUpdateOneRequiredWithoutSlaPoliciesNestedInput
+    creator?: UserUpdateOneRequiredWithoutSlaPoliciesCreatedNestedInput
+  }
+
+  export type SlaPolicyUncheckedUpdateWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type SlaPolicyUncheckedUpdateManyWithoutUpdaterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    firstResponseMinutes?: IntFieldUpdateOperationsInput | number
+    resolutionMinutes?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+  }
+
   export type OpportunityCreateManyOwnerMembershipInput = {
     id?: string
     pipelineId: string
@@ -73663,6 +76841,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type OpportunityUpdateWithoutOwnerMembershipInput = {
@@ -73744,6 +76924,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
     company?: CompanyUpdateOneWithoutTicketsNestedInput
     contact?: ContactUpdateOneWithoutTicketsNestedInput
@@ -73776,6 +76958,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -73801,6 +76985,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CompanyContactCreateManyCompanyInput = {
@@ -73901,6 +77087,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type CompanyContactUpdateWithoutCompanyInput = {
@@ -74154,6 +77342,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
     contact?: ContactUpdateOneWithoutTicketsNestedInput
     assigneeMembership?: OrganizationMembershipUpdateOneWithoutAssignedTicketsNestedInput
@@ -74186,6 +77376,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -74211,6 +77403,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ContactChannelCreateManyContactInput = {
@@ -74322,6 +77516,8 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     deletedBy?: string | null
     queueId?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type ContactChannelUpdateWithoutContactInput = {
@@ -74608,6 +77804,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
     company?: CompanyUpdateOneWithoutTicketsNestedInput
     assigneeMembership?: OrganizationMembershipUpdateOneWithoutAssignedTicketsNestedInput
@@ -74640,6 +77838,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -74665,6 +77865,8 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     queueId?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CompanyTagCreateManyTagInput = {
@@ -75268,6 +78470,8 @@ export namespace Prisma {
     version?: number
     deletedAt?: Date | string | null
     deletedBy?: string | null
+    firstResponseDueAt?: Date | string | null
+    resolutionDueAt?: Date | string | null
   }
 
   export type TicketUpdateWithoutQueueInput = {
@@ -75286,6 +78490,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutTicketsNestedInput
     company?: CompanyUpdateOneWithoutTicketsNestedInput
     contact?: ContactUpdateOneWithoutTicketsNestedInput
@@ -75318,6 +78524,8 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: TicketEventUncheckedUpdateManyWithoutTicketNestedInput
   }
 
@@ -75343,6 +78551,8 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
 

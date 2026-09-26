@@ -10,15 +10,17 @@ import { apiRequest } from "../../lib/api-client";
 import { SalesByProductView } from "./sales-by-product-view";
 import { ActivitiesByOwnerView } from "./activities-by-owner-view";
 import { FunnelView } from "./funnel-view";
+import { SlaReportView } from "./sla-report-view";
 
 type ReportTab =
-  "summary" | "sales-by-product" | "funnel" | "activities-by-owner";
+  "summary" | "sales-by-product" | "funnel" | "activities-by-owner" | "sla";
 
 const reportTabs: Array<{ id: ReportTab; label: string }> = [
   { id: "summary", label: "Indicadores" },
   { id: "sales-by-product", label: "Vendas por produto" },
   { id: "funnel", label: "Funil" },
   { id: "activities-by-owner", label: "Atividades" },
+  { id: "sla", label: "SLA" },
 ];
 
 type ManagementSummaryViewProps = {
@@ -146,6 +148,14 @@ export function ManagementSummaryView({
           aria-labelledby="report-tab-activities-by-owner"
         >
           <ActivitiesByOwnerView accessToken={accessToken} />
+        </div>
+      ) : tab === "sla" ? (
+        <div
+          role="tabpanel"
+          id="report-panel-sla"
+          aria-labelledby="report-tab-sla"
+        >
+          <SlaReportView accessToken={accessToken} />
         </div>
       ) : loading ? (
         <p className="activities-view__status">

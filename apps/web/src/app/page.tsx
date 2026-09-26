@@ -157,6 +157,7 @@ export default function Home() {
             canWrite={session.permissions.includes("ticket.write")}
             currentUserId={session.user.id}
             canManageQueues={session.permissions.includes("support.manage")}
+            canManageSla={session.permissions.includes("support.manage")}
           />
         ) : activeSection === "products" ? (
           <ProductsView

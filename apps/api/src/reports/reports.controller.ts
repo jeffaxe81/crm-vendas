@@ -32,6 +32,7 @@ import {
 } from "./sales-by-product-csv";
 import { SalesByProductOwnersService } from "./sales-by-product-owners.service";
 import { FunnelService } from "./funnel.service";
+import { SlaReportService, parseSlaReportQuery } from "./sla.service";
 
 @Controller("reports")
 @UseGuards(AuthenticationGuard, PermissionsGuard)
@@ -167,6 +168,19 @@ export class ReportsController {
       this.requireOrganizationId(request),
       parsed
     );
+  }
+
+  @Inject(SlaReportService)
+  private readonly slaReport!: SlaReportService;
+
+  @Get("sla")
+  @RequirePermissions("reports.read")
+  readSla(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = parseSlaReportQuery(query);
+    return this.slaReport.read(this.requireOrganizationId(request), parsed);
   }
 
   private requireOrganizationId(request: AuthenticatedRequest): string {

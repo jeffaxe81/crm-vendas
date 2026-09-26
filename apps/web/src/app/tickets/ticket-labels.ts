@@ -1,4 +1,5 @@
 import type {
+  TicketSla,
   TicketChannel,
   TicketPriority,
   TicketStatus,
@@ -46,6 +47,10 @@ export type TicketRecord = {
   resolvedAt: string | null;
   closedAt: string | null;
   version: number;
+  /** C5.3 — prazos e estado derivado do SLA. */
+  firstResponseDueAt?: string | null;
+  resolutionDueAt?: string | null;
+  sla?: TicketSla;
 };
 
 export type TicketEventRecord = {

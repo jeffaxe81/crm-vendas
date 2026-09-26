@@ -12,6 +12,8 @@ import {
   ActivitiesByOwnerService,
   systemReportClock,
 } from "./activities-by-owner.service";
+import { SLA_CLOCK, systemSlaClock } from "../sla/sla-clock";
+import { SlaReportService } from "./sla.service";
 
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
@@ -23,6 +25,8 @@ import {
     FunnelService,
     ActivitiesByOwnerService,
     { provide: ACTIVITIES_BY_OWNER_CLOCK, useValue: systemReportClock },
+    SlaReportService,
+    { provide: SLA_CLOCK, useValue: systemSlaClock },
   ],
   exports: [
     ManagementSummaryService,
@@ -30,6 +34,7 @@ import {
     SalesByProductOwnersService,
     FunnelService,
     ActivitiesByOwnerService,
+    SlaReportService,
   ],
 })
 export class ReportsModule {}

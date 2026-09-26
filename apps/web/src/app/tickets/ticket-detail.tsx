@@ -8,6 +8,7 @@ import {
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { SlaBadge } from "./sla-labels";
 import {
   channelLabels,
   dateTime,
@@ -260,6 +261,24 @@ export function TicketDetail({
         <div>
           <dt>Aberta em</dt>
           <dd>{dateTime.format(new Date(ticket.openedAt))}</dd>
+        </div>
+        <div>
+          <dt>1ª resposta até</dt>
+          <dd>
+            {ticket.firstResponseDueAt
+              ? dateTime.format(new Date(ticket.firstResponseDueAt))
+              : "—"}{" "}
+            <SlaBadge state={ticket.sla?.firstResponse ?? null} />
+          </dd>
+        </div>
+        <div>
+          <dt>Resolução até</dt>
+          <dd>
+            {ticket.resolutionDueAt
+              ? dateTime.format(new Date(ticket.resolutionDueAt))
+              : "—"}{" "}
+            <SlaBadge state={ticket.sla?.resolution ?? null} />
+          </dd>
         </div>
       </dl>
       {ticket.description ? <p>{ticket.description}</p> : null}

@@ -441,7 +441,9 @@ exports.Prisma.TicketScalarFieldEnum = {
   version: 'version',
   deletedAt: 'deletedAt',
   deletedBy: 'deletedBy',
-  queueId: 'queueId'
+  queueId: 'queueId',
+  firstResponseDueAt: 'firstResponseDueAt',
+  resolutionDueAt: 'resolutionDueAt'
 };
 
 exports.Prisma.TicketEventScalarFieldEnum = {
@@ -478,6 +480,20 @@ exports.Prisma.SupportQueueScalarFieldEnum = {
   version: 'version',
   deletedAt: 'deletedAt',
   deletedBy: 'deletedBy'
+};
+
+exports.Prisma.SlaPolicyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  priority: 'priority',
+  firstResponseMinutes: 'firstResponseMinutes',
+  resolutionMinutes: 'resolutionMinutes',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  version: 'version'
 };
 
 exports.Prisma.SortOrder = {
@@ -629,7 +645,8 @@ exports.Prisma.ModelName = {
   Ticket: 'Ticket',
   TicketEvent: 'TicketEvent',
   TicketProtocolCounter: 'TicketProtocolCounter',
-  SupportQueue: 'SupportQueue'
+  SupportQueue: 'SupportQueue',
+  SlaPolicy: 'SlaPolicy'
 };
 
 /**

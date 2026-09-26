@@ -55,7 +55,7 @@ describe("C5.1 ticket permissions", () => {
   });
 });
 
-describe("C5.2 support queue permissions", () => {
+describe("C5.2/C5.3 support permissions", () => {
   it("grants support.manage only to ADMIN and MANAGER", () => {
     expect(roleHasPermission("ADMIN", "support.manage")).toBe(true);
     expect(roleHasPermission("MANAGER", "support.manage")).toBe(true);

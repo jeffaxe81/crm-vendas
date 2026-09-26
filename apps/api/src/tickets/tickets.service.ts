@@ -2,6 +2,7 @@ import {
   TICKET_FINAL_STATUSES,
   TICKET_OPEN_STATUSES,
   canTransitionTicket,
+  computeTicketSla,
   formatTicketProtocol,
   type MembershipRole,
   type TicketAssignToMeInput,
@@ -24,6 +25,8 @@ import { AuditService } from "../audit/audit.service";
 import { roleHasPermission } from "../authorization/permissions";
 import { PrismaService } from "../database/prisma.service";
 import { Prisma } from "../generated/prisma/client";
+import { SLA_CLOCK, type SlaClock } from "../sla/sla-clock";
+import { resolveSlaDeadlines } from "../sla/sla-deadlines";
 
 export type TicketAdministrationContext = {
   organizationId: string;
@@ -48,6 +51,9 @@ type TicketRecord = {
   resolvedAt: Date | null;
   closedAt: Date | null;
   version: number;
+  openedAt: Date;
+  firstResponseDueAt: Date | null;
+  resolutionDueAt: Date | null;
 };
 
 /** Ano do protocolo no fuso de Brasília (produto brasileiro). */
@@ -80,7 +86,8 @@ export const AUTO_ASSIGN_ROLES: readonly MembershipRole[] =
 export class TicketsService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
-    @Inject(AuditService) private readonly audit: AuditService
+    @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(SLA_CLOCK) private readonly clock: SlaClock
   ) {}
 
   async list(
@@ -128,13 +135,20 @@ export class TicketsService {
         ])
     );
 
-    return { items, page: query.page, limit: query.limit, total };
+    const now = this.clock();
+    return {
+      items: items.map(item => this.withSla(item, now)),
+      page: query.page,
+      limit: query.limit,
+      total,
+    };
   }
 
   async read(id: string, organizationId: string) {
-    return this.prisma.withTenant(organizationId, tenant =>
+    const ticket = await this.prisma.withTenant(organizationId, tenant =>
       this.requireTicket(tenant, id, organizationId)
     );
+    return this.withSla(ticket);
   }
 
   async listEvents(id: string, organizationId: string) {
@@ -196,6 +210,12 @@ export class TicketsService {
           throw new Error("Ticket protocol counter unavailable.");
         }
 
+        const deadlines = await resolveSlaDeadlines(
+          tenant,
+          context.organizationId,
+          input.priority,
+          now
+        );
         const created = await tenant.ticket.create({
           data: {
             organizationId: context.organizationId,
@@ -209,6 +229,7 @@ export class TicketsService {
             assigneeUserId,
             queueId: queue?.id ?? null,
             openedAt: now,
+            ...deadlines,
             createdBy: context.actorUserId,
             updatedBy: context.actorUserId,
           },
@@ -237,7 +258,7 @@ export class TicketsService {
     await this.recordAudit("ticket.created", ticket.id, context, {
       after: this.toAudit(ticket),
     });
-    return ticket;
+    return this.withSla(ticket);
   }
 
   async update(
@@ -285,7 +306,21 @@ export class TicketsService {
         }
 
         const { version, ...changes } = input;
-        await this.bumpVersion(tenant, id, version, context, changes);
+        // C5.3: prazos sempre relativos a openedAt; recalculados só quando a
+        // prioridade muda.
+        const deadlines =
+          input.priority !== undefined && input.priority !== existing.priority
+            ? await resolveSlaDeadlines(
+                tenant,
+                context.organizationId,
+                input.priority,
+                existing.openedAt
+              )
+            : {};
+        await this.bumpVersion(tenant, id, version, context, {
+          ...changes,
+          ...deadlines,
+        });
         const updated = await this.requireTicket(
           tenant,
           id,
@@ -336,7 +371,7 @@ export class TicketsService {
       before: this.toAudit(before),
       after: this.toAudit(after),
     });
-    return after;
+    return this.withSla(after);
   }
 
   /**
@@ -455,7 +490,7 @@ export class TicketsService {
       before: this.toAudit(before),
       after: this.toAudit(after),
     });
-    return after;
+    return this.withSla(after);
   }
 
   async comment(
@@ -505,7 +540,12 @@ export class TicketsService {
     await this.recordAudit("ticket.commented", id, context, {
       after: { eventId: event.id, isInternal: event.isInternal },
     });
-    return { ticket, event };
+    return { ticket: this.withSla(ticket), event };
+  }
+
+  /** C5.3 — estado derivado (não persistido) do SLA no instante `now`. */
+  private withSla<T extends TicketRecord>(ticket: T, now = this.clock()) {
+    return { ...ticket, sla: computeTicketSla(ticket, now) };
   }
 
   private async bumpVersion(
@@ -752,6 +792,8 @@ export class TicketsService {
       resolvedAt: ticket.resolvedAt?.toISOString() ?? null,
       closedAt: ticket.closedAt?.toISOString() ?? null,
       version: ticket.version,
+      firstResponseDueAt: ticket.firstResponseDueAt?.toISOString() ?? null,
+      resolutionDueAt: ticket.resolutionDueAt?.toISOString() ?? null,
     };
   }
 }

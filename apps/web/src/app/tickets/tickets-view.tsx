@@ -12,6 +12,8 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { SupportQueuesPanel } from "./support-queues-panel";
+import { SlaBadge, worstSlaState } from "./sla-labels";
+import { SlaPoliciesPanel } from "./sla-policies-panel";
 import { TicketDetail } from "./ticket-detail";
 import {
   channelLabels,
@@ -29,6 +31,8 @@ type TicketsViewProps = {
   currentUserId?: string;
   /** C5.2 — `support.manage`: exibe a gestão de filas. */
   canManageQueues?: boolean;
+  /** C5.3 — `support.manage`: configura as políticas de SLA. */
+  canManageSla?: boolean;
 };
 
 type NewTicketForm = {
@@ -51,12 +55,14 @@ const emptyForm: NewTicketForm = {
  * C5.1 — Atendimento: lista, abertura e detalhe de solicitações.
  * C5.2 — filas: filtro, "Minhas solicitações", fila na abertura, "Assumir"
  * e gestão de filas (com `support.manage`).
+ * C5.3 — indicadores e políticas de SLA (com `support.manage`).
  */
 export function TicketsView({
   accessToken,
   canWrite,
   currentUserId,
   canManageQueues = false,
+  canManageSla = false,
 }: TicketsViewProps) {
   const [tickets, setTickets] = useState<TicketRecord[]>([]);
   const [status, setStatus] = useState<TicketStatus | "">("");
@@ -91,6 +97,7 @@ export function TicketsView({
       active = false;
     };
   }, [accessToken, queuesRefresh]);
+  const [slaOpen, setSlaOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -176,11 +183,16 @@ export function TicketsView({
           <h1 id="tickets-title">Solicitações</h1>
           <p>Protocolos, andamento e histórico do atendimento aos clientes.</p>
         </div>
-        {canWrite || canManageQueues ? (
+        {canWrite || canManageQueues || canManageSla ? (
           <div className="companies-view__header-actions">
             {canManageQueues ? (
               <button type="button" onClick={() => setQueuesOpen(true)}>
                 Gerenciar filas
+              </button>
+            ) : null}
+            {canManageSla ? (
+              <button type="button" onClick={() => setSlaOpen(true)}>
+                Políticas de SLA
               </button>
             ) : null}
             {canWrite ? (
@@ -269,6 +281,16 @@ export function TicketsView({
         <p className="companies-view__error" role="alert">
           {error}
         </p>
+      ) : null}
+
+      {canManageSla && slaOpen ? (
+        <SlaPoliciesPanel
+          accessToken={accessToken}
+          onClose={() => {
+            setSlaOpen(false);
+            setRefresh(current => current + 1);
+          }}
+        />
       ) : null}
 
       {formOpen ? (
@@ -411,6 +433,7 @@ export function TicketsView({
                 <th>Prioridade</th>
                 <th>Fila</th>
                 <th>Aberta em</th>
+                <th>SLA</th>
               </tr>
             </thead>
             <tbody>
@@ -434,6 +457,9 @@ export function TicketsView({
                       : "—"}
                   </td>
                   <td>{dateTime.format(new Date(ticket.openedAt))}</td>
+                  <td>
+                    <SlaBadge state={worstSlaState(ticket.sla)} />
+                  </td>
                 </tr>
               ))}
             </tbody>
