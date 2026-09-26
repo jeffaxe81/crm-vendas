@@ -253,9 +253,16 @@ describe("C4.6 sales by month report API", () => {
     const fixture = await createFixture("auth");
     const viewer = await addMember(fixture, "VIEWER", "auth");
 
+    // VIEWER não tem reports.read neste sistema — só ADMIN/MANAGER.
     await request(app.getHttpServer())
       .get(URL)
       .set("Authorization", `Bearer ${viewer.token}`)
+      .query({ year: 2026 })
+      .expect(403);
+
+    await request(app.getHttpServer())
+      .get(URL)
+      .set("Authorization", `Bearer ${fixture.token}`)
       .query({ year: 2026 })
       .expect(200);
 
