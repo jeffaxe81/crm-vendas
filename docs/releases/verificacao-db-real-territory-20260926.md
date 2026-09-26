@@ -29,6 +29,15 @@ Na primeira tentativa, testei manualmente `ON CONFLICT ON CONSTRAINT territory_q
 - A suíte de testes de integração real (`territories.integration.spec.ts`, `sales-by-owner.integration.spec.ts`, `sales-by-month.integration.spec.ts`) continua **não executada** — ela testa a API HTTP completa (auth, guards, serialização, auditoria), não só o schema SQL. Precisa do Prisma Client gerado, que segue bloqueado aqui.
 - `prisma migrate dev`/`deploy` de verdade (o que valida se o Prisma reconhece a migration como aplicada corretamente no seu histórico `_prisma_migrations`) não foi testado — apliquei via `psql` bruto.
 
+## Bônus: queries brutas do C4.5 e C4.6 também validadas
+
+Aproveitando o mesmo Postgres, rodei manualmente as queries `$queryRaw` exatas de `sales-by-owner.service.ts` e `sales-by-month.service.ts` (copiadas do código, não reescritas) contra uma oportunidade real (R$ 2.500,50, fechamento previsto em março/2026, etapa `WON`):
+
+- **sales-by-month**: retornou `month=3, kind=WON, opportunities=1, value=2500.50` — exatamente o formato que o service espera.
+- **sales-by-owner**: retornou o vendedor correto, `owner_active=true`, mesmo agrupamento — confirma os `JOIN`s com `organization_memberships`/`users` e o filtro de tenant.
+
+Isso não substitui os testes de integração completos (que também verificam a camada HTTP, agregação de múltiplos meses/vendedores e os totais), mas prova que o SQL gerado à mão nos dois services é sintaticamente válido e produz o resultado correto contra um schema real.
+
 ## Conclusão
 
 O schema e as regras de segurança (RLS + FKs compostas) da Territory Management estão **funcionalmente corretas em um banco Postgres real**, não apenas plausíveis no papel. O que falta para fechar 100% é rodar a suíte Jest de integração com o Prisma Client de verdade, em um ambiente com acesso a `binaries.prisma.sh` — isso ainda depende de você.
