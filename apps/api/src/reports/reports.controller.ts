@@ -33,6 +33,7 @@ import {
 import { SalesByProductOwnersService } from "./sales-by-product-owners.service";
 import { FunnelService } from "./funnel.service";
 import { SlaReportService, parseSlaReportQuery } from "./sla.service";
+import { CsatReportService, parseCsatReportQuery } from "./csat.service";
 
 @Controller("reports")
 @UseGuards(AuthenticationGuard, PermissionsGuard)
@@ -181,6 +182,19 @@ export class ReportsController {
   ) {
     const parsed = parseSlaReportQuery(query);
     return this.slaReport.read(this.requireOrganizationId(request), parsed);
+  }
+
+  @Inject(CsatReportService)
+  private readonly csatReport!: CsatReportService;
+
+  @Get("csat")
+  @RequirePermissions("reports.read")
+  readCsat(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = parseCsatReportQuery(query);
+    return this.csatReport.read(this.requireOrganizationId(request), parsed);
   }
 
   private requireOrganizationId(request: AuthenticatedRequest): string {

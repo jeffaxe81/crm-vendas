@@ -14,6 +14,7 @@ import {
 } from "./activities-by-owner.service";
 import { SLA_CLOCK, systemSlaClock } from "../sla/sla-clock";
 import { SlaReportService } from "./sla.service";
+import { CsatReportService } from "./csat.service";
 
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
@@ -27,6 +28,7 @@ import { SlaReportService } from "./sla.service";
     { provide: ACTIVITIES_BY_OWNER_CLOCK, useValue: systemReportClock },
     SlaReportService,
     { provide: SLA_CLOCK, useValue: systemSlaClock },
+    CsatReportService,
   ],
   exports: [
     ManagementSummaryService,
@@ -35,6 +37,7 @@ import { SlaReportService } from "./sla.service";
     FunnelService,
     ActivitiesByOwnerService,
     SlaReportService,
+    CsatReportService,
   ],
 })
 export class ReportsModule {}

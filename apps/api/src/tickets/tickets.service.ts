@@ -27,6 +27,7 @@ import { PrismaService } from "../database/prisma.service";
 import { Prisma } from "../generated/prisma/client";
 import { SLA_CLOCK, type SlaClock } from "../sla/sla-clock";
 import { resolveSlaDeadlines } from "../sla/sla-deadlines";
+import { TicketSatisfactionService } from "./ticket-satisfaction.service";
 
 export type TicketAdministrationContext = {
   organizationId: string;
@@ -87,7 +88,9 @@ export class TicketsService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
     @Inject(AuditService) private readonly audit: AuditService,
-    @Inject(SLA_CLOCK) private readonly clock: SlaClock
+    @Inject(SLA_CLOCK) private readonly clock: SlaClock,
+    @Inject(TicketSatisfactionService)
+    private readonly satisfaction: TicketSatisfactionService
   ) {}
 
   async list(
@@ -442,7 +445,7 @@ export class TicketsService {
     context: TicketAdministrationContext,
     now: Date = new Date()
   ) {
-    const { before, after } = await this.prisma.withTenant(
+    const { before, after, satisfaction } = await this.prisma.withTenant(
       context.organizationId,
       async tenant => {
         const existing = await this.requireTicket(
@@ -477,12 +480,23 @@ export class TicketsService {
           body: input.note ?? null,
         });
 
+        // C5.4: a primeira resolução cria a pesquisa de satisfação.
+        const satisfaction =
+          input.status === "RESOLVED"
+            ? await this.satisfaction.createOnResolution(
+                tenant,
+                id,
+                context,
+                now
+              )
+            : null;
+
         const updated = await this.requireTicket(
           tenant,
           id,
           context.organizationId
         );
-        return { before: existing, after: updated };
+        return { before: existing, after: updated, satisfaction };
       }
     );
 
@@ -490,6 +504,11 @@ export class TicketsService {
       before: this.toAudit(before),
       after: this.toAudit(after),
     });
+    if (satisfaction) {
+      await this.satisfaction.recordCreated(satisfaction, context);
+      // O link só é devolvido nesta resposta; o banco guarda apenas o hash.
+      return { ...this.withSla(after), satisfactionLink: satisfaction.link };
+    }
     return this.withSla(after);
   }
 

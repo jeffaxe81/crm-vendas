@@ -18,6 +18,14 @@ function response(body: unknown, status = 200): Response {
   } as Response;
 }
 
+/** C5.4: o bloco Satisfação consulta a pesquisa; o resto segue a fila do mock. */
+function withSatisfaction(fetchMock: (...args: unknown[]) => unknown) {
+  return (url: string, init?: RequestInit) =>
+    String(url).includes("/satisfaction")
+      ? Promise.resolve(response({ survey: null }))
+      : fetchMock(url, init);
+}
+
 const ticket = {
   id: "t-1",
   protocol: "2026-000001",
@@ -79,6 +87,10 @@ function routeFetch(routes: Record<string, Response[]>, fallback?: Handler) {
     }
     const handled = fallback?.(url, init ?? {});
     if (handled) return handled;
+    // C5.4: o detalhe consulta a pesquisa de satisfação.
+    if (method === "GET" && path?.endsWith("/satisfaction")) {
+      return response({ survey: null });
+    }
     throw new Error(`Unexpected request: ${key}`);
   });
   vi.stubGlobal("fetch", fetchMock);
@@ -203,6 +215,48 @@ describe("C5.1 tickets view", () => {
       status: "IN_PROGRESS",
       version: 1,
     });
+  });
+
+  it("shows the satisfaction link returned by the resolution once (C5.4)", async () => {
+    const url = `http://127.0.0.1:3000/avaliacao/${"Z".repeat(43)}`;
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ items: [ticket], total: 1 }))
+      .mockResolvedValueOnce(response({ items: [] }))
+      .mockResolvedValueOnce(
+        response(
+          {
+            ...ticket,
+            status: "RESOLVED",
+            version: 2,
+            satisfactionLink: { url, expiresAt: "2026-10-03T12:00:00.000Z" },
+          },
+          201
+        )
+      )
+      .mockResolvedValueOnce(response({ items: [] }));
+    vi.stubGlobal("fetch", withSatisfaction(fetchMock));
+
+    render(<TicketsView accessToken="token" canWrite />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Abrir 2026-000001" })
+    );
+    const statusForm = await screen.findByRole("form", {
+      name: "Alterar status",
+    });
+    fireEvent.change(within(statusForm).getByLabelText("Novo status"), {
+      target: { value: "RESOLVED" },
+    });
+    fireEvent.click(
+      within(statusForm).getByRole("button", { name: "Aplicar status" })
+    );
+
+    expect(await screen.findByLabelText("Link para o cliente")).toHaveValue(
+      url
+    );
+    expect(
+      screen.getByRole("region", { name: "Satisfação" })
+    ).toBeInTheDocument();
   });
 
   it("is read-only without ticket.write", async () => {

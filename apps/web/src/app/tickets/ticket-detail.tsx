@@ -3,6 +3,7 @@
 import {
   TICKET_FINAL_STATUSES,
   TICKET_STATUS_TRANSITIONS,
+  type TicketSatisfactionLink,
   type TicketStatus,
 } from "@axes/contracts";
 import { FormEvent, useEffect, useState } from "react";
@@ -17,6 +18,7 @@ import {
   type TicketEventRecord,
   type TicketRecord,
 } from "./ticket-labels";
+import { TicketSatisfactionPanel } from "./ticket-satisfaction-panel";
 
 type TicketDetailProps = {
   accessToken: string;
@@ -82,6 +84,12 @@ export function TicketDetail({
   const [comment, setComment] = useState("");
   const [internal, setInternal] = useState(false);
   const [reload, setReload] = useState(0);
+  const [satisfactionLink, setSatisfactionLink] =
+    useState<TicketSatisfactionLink | null>(null);
+
+  useEffect(() => {
+    setSatisfactionLink(null);
+  }, [ticket.id]);
 
   useEffect(() => {
     let active = true;
@@ -146,19 +154,19 @@ export function TicketDetail({
     setBusy(true);
     setError("");
     try {
-      const updated = await apiRequest<TicketRecord>(
-        `/tickets/${ticket.id}/status`,
-        {
-          accessToken,
-          method: "POST",
-          body: {
-            status: nextStatus,
-            ...(note.trim() ? { note: note.trim() } : {}),
-            version: ticket.version,
-          },
-        }
-      );
+      const { satisfactionLink: link, ...updated } = await apiRequest<
+        TicketRecord & { satisfactionLink?: TicketSatisfactionLink }
+      >(`/tickets/${ticket.id}/status`, {
+        accessToken,
+        method: "POST",
+        body: {
+          status: nextStatus,
+          ...(note.trim() ? { note: note.trim() } : {}),
+          version: ticket.version,
+        },
+      });
       onChange(updated);
+      if (link) setSatisfactionLink(link);
       setNextStatus("");
       setNote("");
       setReload(current => current + 1);
@@ -301,6 +309,14 @@ export function TicketDetail({
           </li>
         ))}
       </ol>
+
+      <TicketSatisfactionPanel
+        accessToken={accessToken}
+        ticketId={ticket.id}
+        ticketStatus={ticket.status}
+        canWrite={canWrite}
+        freshLink={satisfactionLink}
+      />
 
       {canWrite && transitions.length > 0 ? (
         <form aria-label="Alterar status" onSubmit={submitStatus}>
