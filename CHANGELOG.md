@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased] - Relatórios da Fase 2 (C4.4.1, C4.4.2, C4.4.3) e release candidata
+
+- C4.4.1: filtros de funil e responsável na aba Vendas por produto; `GET /api/v1/reports/sales-by-product/export` (CSV `;`, BOM, proteção contra fórmula) e `/owners`;
+- C4.4.2: `GET /api/v1/reports/funnel` com etapas, totais, taxa de ganho, valores ganho/perdido/aberto e ticket médio; aba Funil;
+- C4.4.3: `GET /api/v1/reports/activities-by-owner` com concluídas, pendentes, canceladas, atrasadas, no prazo e taxa de conclusão; aba Atividades;
+- release candidata da Fase 2 em `docs/releases/produtividade-phase-2-2026-09-25.md`;
+- gate integrado (banco limpo): API 211/211 (2 execuções), web 81, contratos 44, build e E2E 5/5.
+
 ## [Unreleased] - C4.4, C4.3.2 e C4.3.3 (entregas em paralelo)
 
 - C4.4: `GET /api/v1/reports/sales-by-product` (reports.read) com quantidade, oportunidades e valor por produto separados em aberto/ganho/perdido, filtros de período, funil e responsável; aba "Vendas por produto" no Resumo gerencial (`docs/checkpoints/c4-4-sales-by-product-report.md`);

@@ -18,8 +18,8 @@ A evidência canônica do fechamento está registrada em `docs/releases/mvp-comm
 
 ## Marco atual
 
-A Fase 2 — Produtividade segue em microentregas. Já estão integradas à `develop`: C4.1 — Agenda Comercial, C4.1.1 — Resumo gerencial, C4.2.1 — Importação CSV de empresas, C4.2.2 — Importação CSV de contatos (com canais e deduplicação por e-mail) C4.2.3 — vínculo dos contatos importados a empresas existentes, C4.3 — catálogo de produtos, C4.3.1 — itens de oportunidade com valor calculado, C4.3.2 — importação CSV de produtos, C4.3.3 — edição de itens na UI com E2E e C4.4 — relatório de vendas por produto.
+A Fase 2 — Produtividade segue em microentregas. Já estão integradas à `develop`: C4.1 — Agenda Comercial, C4.1.1 — Resumo gerencial, C4.2.1 — Importação CSV de empresas, C4.2.2 — Importação CSV de contatos (com canais e deduplicação por e-mail) C4.2.3 — vínculo dos contatos importados a empresas existentes, C4.3 — catálogo de produtos, C4.3.1 — itens de oportunidade com valor calculado, C4.3.2 — importação CSV de produtos, C4.3.3 — edição de itens na UI com E2E, C4.4 — vendas por produto, C4.4.1 — filtros e exportação CSV, C4.4.2 — funil e conversão e C4.4.3 — atividades por responsável.
 
 Campos personalizados e tags já existem na base atual e não serão reimplementados.
 
-> **Próximo passo:** completar Relatórios (filtros de funil/responsável na tela, exportação) e avaliar o fechamento da Fase 2.
+> **Próximo passo:** fechamento oficial da Fase 2 (PR `develop → main` com gate do CI e aprovação humana; ver `docs/releases/produtividade-phase-2-2026-09-25.md`). A Fase 3 — Atendimento só começa após esse fechamento.

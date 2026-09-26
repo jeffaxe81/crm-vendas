@@ -21,6 +21,9 @@
 | F2-08  | Importação          | Importação CSV de produtos (C4.3.2)           | P2         | 2    | Concluído             | F2-06                       | Médio   |
 | F2-09  | Produtos            | Edição de itens na UI + E2E (C4.3.3)          | P1         | 2    | Concluído             | F2-07                       | Baixo   |
 | F2-10  | Relatórios          | Vendas por produto (C4.4)                     | P1         | 2    | Concluído             | F2-07, reports.read         | Médio   |
+| F2-11  | Relatórios          | Filtros e exportação CSV (C4.4.1)             | P2         | 2    | Concluído             | F2-10                       | Baixo   |
+| F2-12  | Relatórios          | Funil e conversão (C4.4.2)                    | P1         | 2    | Concluído             | MVP-07, reports.read        | Médio   |
+| F2-13  | Relatórios          | Atividades por responsável (C4.4.3)           | P1         | 2    | Concluído             | MVP-06, reports.read        | Médio   |
 
 ## Histórias de usuário prioritárias
 
@@ -35,6 +38,6 @@
 
 ## Delimitação do incremento
 
-A **Fase 1 — MVP Comercial** está encerrada. Na **Fase 2 — Produtividade** já foram entregues a Agenda Comercial (C4.1), o Resumo gerencial (C4.1.1) e as importações CSV de empresas (C4.2.1) e de contatos (C4.2.2). O vínculo de contatos importados a empresas (C4.2.3) também foi entregue, encerrando o bloco de Importação. Produtos (C4.3) e itens de oportunidade com valor calculado (C4.3.1) também foram entregues. Também foram entregues a importação CSV de produtos (C4.3.2), a edição de itens na UI com jornada E2E (C4.3.3) e o relatório de vendas por produto (C4.4), que abre o bloco de Relatórios.
+A **Fase 1 — MVP Comercial** está encerrada. Na **Fase 2 — Produtividade** já foram entregues a Agenda Comercial (C4.1), o Resumo gerencial (C4.1.1) e as importações CSV de empresas (C4.2.1) e de contatos (C4.2.2). O vínculo de contatos importados a empresas (C4.2.3) também foi entregue, encerrando o bloco de Importação. Produtos (C4.3) e itens de oportunidade com valor calculado (C4.3.1) também foram entregues. Também foram entregues a importação CSV de produtos (C4.3.2), a edição de itens na UI com jornada E2E (C4.3.3) e os relatórios de vendas por produto (C4.4, com filtros e exportação CSV na C4.4.1), funil e conversão (C4.4.2) e atividades por responsável (C4.4.3). A Fase 2 está candidata a fechamento (`docs/releases/produtividade-phase-2-2026-09-25.md`).
 
 Campos personalizados e tags já estão presentes na base atual e não serão duplicados. Importação, produtos, relatórios e demais evoluções continuam planejados para incrementos posteriores.
