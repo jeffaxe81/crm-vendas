@@ -19,11 +19,14 @@ function response(body: unknown, status = 200): Response {
 }
 
 /** C5.4: o bloco Satisfação consulta a pesquisa; o resto segue a fila do mock. */
+/** Responde às consultas auxiliares (filas C5.2 e satisfação C5.4). */
 function withSatisfaction(fetchMock: (...args: unknown[]) => unknown) {
   return (url: string, init?: RequestInit) =>
     String(url).includes("/satisfaction")
       ? Promise.resolve(response({ survey: null }))
-      : fetchMock(url, init);
+      : String(url).includes("/support-queues")
+        ? Promise.resolve(response({ items: [] }))
+        : fetchMock(url, init);
 }
 
 const ticket = {

@@ -5,7 +5,7 @@
 | Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual |
 | Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026      |
 | Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Em andamento — C4.2 Importação    |
-| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Planejada                         |
+| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Em desenvolvimento (branch)       |
 | Fase 4 — Integrações   | API REST, webhooks, e-mail, WhatsApp, telefonia e ERP                   | Planejada                         |
 | Fase 5 — Automação     | Regras, distribuição, jornadas e alertas                                | Planejada                         |
 | Fase 6 — IA assistida  | Resumos, recomendações, classificação e previsões com supervisão humana | Banco de Ideias                   |
@@ -22,4 +22,4 @@ A Fase 2 — Produtividade segue em microentregas. Já estão integradas à `dev
 
 Campos personalizados e tags já existem na base atual e não serão reimplementados.
 
-> **Próximo passo:** fechamento oficial da Fase 2 (PR `develop → main` com gate do CI e aprovação humana; ver `docs/releases/produtividade-phase-2-2026-09-25.md`). A Fase 3 — Atendimento só começa após esse fechamento.
+> **Próximo passo:** fechamento oficial da Fase 2 (PR `develop → main` com gate do CI e aprovação humana; ver `docs/releases/produtividade-phase-2-2026-09-25.md`). A Fase 3 — Atendimento está em desenvolvimento na branch `phase-3-atendimento` (C5.1 a C5.4 integradas, ver `docs/checkpoints/fase-3-integracao.md`) e só entra na `develop` após esse fechamento.

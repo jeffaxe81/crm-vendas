@@ -2,7 +2,7 @@
 
 Data: 26/09/2026
 Branch: `feat/c5-4-csat` (a partir de `phase-3-atendimento`)
-Design: `docs/superpowers/specs/2026-09-23-c5-4-csat-design.md`
+Design: `docs/superpowers/specs/2026-09-26-c5-4-csat-design.md`
 Status: implementada e validada localmente pelo gate completo.
 
 ## Construído

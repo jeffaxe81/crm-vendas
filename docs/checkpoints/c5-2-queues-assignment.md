@@ -2,7 +2,7 @@
 
 Data: 26/09/2026
 Branch: `feat/c5-2-queues-assignment` (a partir de `phase-3-atendimento`)
-Design: `docs/superpowers/specs/2026-09-23-c5-2-queues-assignment-design.md`
+Design: `docs/superpowers/specs/2026-09-26-c5-2-queues-assignment-design.md`
 Status: implementada e validada localmente pelo gate completo (banco limpo `axes_crm_a`).
 
 ## Construído

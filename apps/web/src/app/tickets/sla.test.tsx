@@ -87,16 +87,28 @@ describe("C5.3 SLA helpers", () => {
   });
 });
 
+/** Responde às consultas auxiliares (filas C5.2 e satisfação C5.4). */
+function withAuxRoutes(fetchMock: (...args: unknown[]) => unknown) {
+  return (url: string, init?: RequestInit) =>
+    String(url).includes("/satisfaction")
+      ? Promise.resolve(response({ survey: null }))
+      : String(url).includes("/support-queues")
+        ? Promise.resolve(response({ items: [] }))
+        : fetchMock(url, init);
+}
+
 describe("C5.3 SLA in tickets view", () => {
   it("shows SLA indicators in the list and deadlines in the detail", async () => {
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValueOnce(
-          response({ items: [breached, atRisk, withoutSla], total: 3 })
-        )
-        .mockResolvedValueOnce(response({ items: [] }))
+      withAuxRoutes(
+        vi
+          .fn()
+          .mockResolvedValueOnce(
+            response({ items: [breached, atRisk, withoutSla], total: 3 })
+          )
+          .mockResolvedValueOnce(response({ items: [] }))
+      )
     );
 
     render(<TicketsView accessToken="token" canWrite={false} />);
@@ -152,7 +164,7 @@ describe("C5.3 SLA in tickets view", () => {
           201
         )
       );
-    vi.stubGlobal("fetch", fetchMock);
+    vi.stubGlobal("fetch", withAuxRoutes(fetchMock));
 
     render(<TicketsView accessToken="token" canWrite canManageSla />);
     fireEvent.click(

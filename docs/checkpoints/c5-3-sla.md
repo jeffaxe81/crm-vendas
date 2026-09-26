@@ -2,7 +2,7 @@
 
 Data: 26/09/2026
 Branch: `feat/c5-3-sla` (a partir de `phase-3-atendimento`)
-Design: `docs/superpowers/specs/2026-09-23-c5-3-sla-design.md`
+Design: `docs/superpowers/specs/2026-09-26-c5-3-sla-design.md`
 Status: implementada e validada localmente pelo gate completo; aguardando integração à `phase-3-atendimento`.
 
 ## Construído
