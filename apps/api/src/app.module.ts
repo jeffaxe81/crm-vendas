@@ -10,6 +10,7 @@ import { CompanyImportModule } from "./company-imports/company-import.module";
 import { ContactImportModule } from "./contact-imports/contact-import.module";
 import { ProductImportModule } from "./product-imports/product-import.module";
 import { ProductsModule } from "./products/products.module";
+import { TicketsModule } from "./tickets/tickets.module";
 import { CompaniesModule } from "./companies/companies.module";
 import { parseApiEnvironment } from "./config/environment";
 import { ContactsModule } from "./contacts/contacts.module";
@@ -43,6 +44,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     CompanyImportModule,
     ContactImportModule,
     ProductsModule,
+    TicketsModule,
     ProductImportModule,
     ContactsModule,
     RelationshipsModule,

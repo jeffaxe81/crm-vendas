@@ -19,11 +19,14 @@ export const PERMISSIONS = [
   "knowledge.write",
   "product.read",
   "product.write",
+  "ticket.read",
+  "ticket.write",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
 
 const READ_ONLY: Permission[] = [
+  "ticket.read",
   "product.read",
   "company.read",
   "contact.read",
@@ -40,6 +43,7 @@ const COMMERCIAL_WRITE: Permission[] = [
   "opportunity.move",
   "activity.write",
   "knowledge.write",
+  "ticket.write",
 ];
 
 const ROLE_PERMISSIONS: Record<MembershipRole, readonly Permission[]> = {

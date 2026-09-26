@@ -183,3 +183,28 @@ export {
   type ActivitiesByOwnerReport,
   type ActivitiesByOwnerRow,
 } from "./activities-by-owner";
+
+export {
+  TICKET_FINAL_STATUSES,
+  TICKET_STATUS_TRANSITIONS,
+  TicketChannelSchema,
+  TicketCommentInputSchema,
+  TicketCreateInputSchema,
+  TicketEventTypeSchema,
+  TicketListQuerySchema,
+  TicketPrioritySchema,
+  TicketStatusChangeInputSchema,
+  TicketStatusSchema,
+  TicketUpdateInputSchema,
+  canTransitionTicket,
+  formatTicketProtocol,
+  type TicketChannel,
+  type TicketCommentInput,
+  type TicketCreateInput,
+  type TicketEventType,
+  type TicketListQuery,
+  type TicketPriority,
+  type TicketStatus,
+  type TicketStatusChangeInput,
+  type TicketUpdateInput,
+} from "./tickets";
