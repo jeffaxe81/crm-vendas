@@ -34,6 +34,27 @@ export {
 } from "./companies";
 
 export {
+  TerritoryCoverageStatusSchema,
+  TerritoryCoverageTargetInputSchema,
+  TerritoryCreateInputSchema,
+  TerritoryListQuerySchema,
+  TerritoryQuotaInputSchema,
+  TerritoryQuotaPeriodSchema,
+  TerritoryQuotaQuerySchema,
+  TerritoryReassignInputSchema,
+  TerritoryUpdateInputSchema,
+  type TerritoryCoverageStatus,
+  type TerritoryCoverageTargetInput,
+  type TerritoryCreateInput,
+  type TerritoryListQuery,
+  type TerritoryQuotaInput,
+  type TerritoryQuotaPeriod,
+  type TerritoryQuotaQuery,
+  type TerritoryReassignInput,
+  type TerritoryUpdateInput,
+} from "./territories";
+
+export {
   type CompanyImportPreview,
   type CompanyImportPreviewRow,
   type CompanyImportResult,

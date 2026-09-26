@@ -84,6 +84,22 @@ enum ActivityPriority {
   @@map("activity_priority")
 }
 
+enum TerritoryQuotaPeriod {
+  MONTH
+  QUARTER
+  YEAR
+
+  @@map("territory_quota_period")
+}
+
+enum TerritoryCoverageStatus {
+  UNCOVERED
+  PARTIAL
+  COVERED
+
+  @@map("territory_coverage_status")
+}
+
 model Organization {
   id                       String                    @id @default(uuid()) @db.Uuid
   name                     String                    @db.VarChar(160)
@@ -111,6 +127,10 @@ model Organization {
   roles                    Role[]
   products                 Product[]
   opportunityItems         OpportunityItem[]
+  territories              Territory[]
+  territoryQuotas          TerritoryQuota[]
+  territoryTargets         TerritoryTarget[]
+  territoryMetrics         TerritoryMetrics[]
 
   @@map("organizations")
 }
@@ -176,6 +196,10 @@ model User {
   productsDeleted             Product[]                @relation("ProductDeletedBy")
   opportunityItemsCreated     OpportunityItem[]        @relation("OpportunityItemCreatedBy")
   opportunityItemsUpdated     OpportunityItem[]        @relation("OpportunityItemUpdatedBy")
+  territoriesAssigned         Territory[]              @relation("TerritorySalesRep")
+  territoriesCreated          Territory[]              @relation("TerritoryCreatedBy")
+  territoriesUpdated          Territory[]              @relation("TerritoryUpdatedBy")
+  territoriesDeleted          Territory[]              @relation("TerritoryDeletedBy")
 
   @@map("users")
 }
@@ -264,11 +288,92 @@ model Company {
   customFieldValues   CompanyCustomFieldValue[]
   activities          Activity[]
   opportunities       Opportunity[]
+  territoryTargets    TerritoryTarget[]
 
   @@unique([id, organizationId], map: "companies_id_organization_key")
   @@index([organizationId, deletedAt, legalName], map: "companies_org_deleted_legal_name_idx")
   @@index([organizationId, tradeName], map: "companies_org_trade_name_idx")
   @@map("companies")
+}
+
+model Territory {
+  id             String                  @id @default(uuid()) @db.Uuid
+  organizationId String                  @map("organization_id") @db.Uuid
+  name           String                  @db.VarChar(160)
+  region         String                  @db.VarChar(120)
+  description    String?
+  salesRepId     String?                 @map("sales_rep_id") @db.Uuid
+  createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy      String                  @map("created_by") @db.Uuid
+  updatedBy      String                  @map("updated_by") @db.Uuid
+  version        Int                     @default(1)
+  deletedAt      DateTime?               @map("deleted_at") @db.Timestamptz(6)
+  deletedBy      String?                 @map("deleted_by") @db.Uuid
+  organization   Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  salesRep       User?                   @relation("TerritorySalesRep", fields: [salesRepId], references: [id], onDelete: Restrict)
+  creator        User                    @relation("TerritoryCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater        User                    @relation("TerritoryUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter        User?                   @relation("TerritoryDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+  quotas         TerritoryQuota[]
+  targets        TerritoryTarget[]
+  metrics        TerritoryMetrics?
+
+  @@unique([id, organizationId], map: "territories_id_organization_key")
+  @@index([organizationId, deletedAt, name], map: "territories_org_deleted_name_idx")
+  @@index([organizationId, region], map: "territories_org_region_idx")
+  @@map("territories")
+}
+
+model TerritoryQuota {
+  id             String               @id @default(uuid()) @db.Uuid
+  organizationId String               @map("organization_id") @db.Uuid
+  territoryId    String               @map("territory_id") @db.Uuid
+  period         TerritoryQuotaPeriod
+  year           Int
+  amount         Decimal              @db.Decimal(19, 2)
+  actual         Decimal              @default(0) @db.Decimal(19, 2)
+  createdAt      DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  territory      Territory            @relation(fields: [territoryId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@unique([territoryId, period, year], map: "territory_quotas_territory_period_year_key")
+  @@index([organizationId, territoryId], map: "territory_quotas_org_territory_idx")
+  @@map("territory_quotas")
+}
+
+model TerritoryTarget {
+  id             String                  @id @default(uuid()) @db.Uuid
+  organizationId String                  @map("organization_id") @db.Uuid
+  territoryId    String                  @map("territory_id") @db.Uuid
+  companyId      String                  @map("company_id") @db.Uuid
+  coverageStatus TerritoryCoverageStatus @default(UNCOVERED) @map("coverage_status")
+  createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  territory      Territory               @relation(fields: [territoryId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  company        Company                 @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@unique([territoryId, companyId], map: "territory_targets_territory_company_key")
+  @@index([organizationId, territoryId, coverageStatus], map: "territory_targets_org_territory_status_idx")
+  @@map("territory_targets")
+}
+
+model TerritoryMetrics {
+  id                 String       @id @default(uuid()) @db.Uuid
+  organizationId     String       @map("organization_id") @db.Uuid
+  territoryId        String       @unique @map("territory_id") @db.Uuid
+  coveragePercentage Decimal      @default(0) @map("coverage_percentage") @db.Decimal(5, 2)
+  quotaPercentage    Decimal      @default(0) @map("quota_percentage") @db.Decimal(5, 2)
+  actualRevenue      Decimal      @default(0) @map("actual_revenue") @db.Decimal(19, 2)
+  targetCount        Int          @default(0) @map("target_count")
+  coveredCount       Int          @default(0) @map("covered_count")
+  lastUpdatedAt      DateTime     @default(now()) @map("last_updated_at") @db.Timestamptz(6)
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  territory          Territory    @relation(fields: [territoryId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@map("territory_metrics")
 }
 
 model Contact {
