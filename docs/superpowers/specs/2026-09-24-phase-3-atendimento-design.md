@@ -249,6 +249,7 @@ Kanban de atendimento, automações visuais e omnichannel não são requisitos i
 ## Microentregas
 
 ### F3.1 — Fundação Solicitação/Protocolo
+
 - contratos;
 - enums;
 - schema Prisma;
@@ -258,6 +259,7 @@ Kanban de atendimento, automações visuais e omnichannel não são requisitos i
 - testes RED/GREEN de isolamento e protocolo.
 
 ### F3.2 — API de Solicitações
+
 - criar;
 - listar;
 - consultar;
@@ -268,18 +270,21 @@ Kanban de atendimento, automações visuais e omnichannel não são requisitos i
 - auditoria.
 
 ### F3.3 — Interações e Histórico
+
 - interações vinculadas à solicitação;
 - notas internas;
 - registros de contato;
 - timeline imutável para eventos relevantes.
 
 ### F3.4 — Filas de Atendimento
+
 - CRUD administrativo de filas;
 - encaminhamento;
 - atribuição;
 - filtros e auditoria.
 
 ### F3.5 — SLA
+
 - políticas;
 - aplicação;
 - snapshot;
@@ -288,6 +293,7 @@ Kanban de atendimento, automações visuais e omnichannel não são requisitos i
 - acompanhamento de cumprimento/violação.
 
 ### F3.6 — Web de Atendimento
+
 - lista;
 - criação;
 - detalhe;
@@ -297,12 +303,14 @@ Kanban de atendimento, automações visuais e omnichannel não são requisitos i
 - responsável/fila conforme permissão.
 
 ### F3.7 — Satisfação
+
 - nota 1–5;
 - comentário;
 - proteção contra duplicidade;
 - indicadores.
 
 ### F3.8 — Relatórios, E2E e Release
+
 - backlog consolidado;
 - métricas operacionais;
 - cobertura E2E;

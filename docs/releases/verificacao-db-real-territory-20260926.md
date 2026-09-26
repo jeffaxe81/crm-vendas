@@ -12,13 +12,13 @@ Contexto: complementa `produtividade-phase-2-2026-09-26-ampliada.md`. O `prisma 
 
 ## Resultados
 
-| Verificação | Resultado |
-| --- | --- |
-| As 17 migrations aplicam em sequência sem erro | ✅ |
-| Isolamento RLS por tenant (`SELECT` só retorna linhas da organização no `app.current_organization_id`) | ✅ confirmado com 2 organizações e 2 territórios |
-| RLS bloqueia `INSERT` cruzado (tentar inserir território de uma org estando no contexto de outra) | ✅ rejeitado com `new row violates row-level security policy` |
-| FK composta impede vincular cobertura a uma empresa de outra organização | ✅ rejeitado com `violates foreign key constraint "territory_targets_company_org_fkey"` |
-| Upsert de cota por `(territory_id, period, year)` — o padrão real que o Prisma gera (`ON CONFLICT` por lista de colunas, não por nome de constraint) | ✅ funciona corretamente contra o índice único |
+| Verificação                                                                                                                                          | Resultado                                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| As 17 migrations aplicam em sequência sem erro                                                                                                       | ✅                                                                                      |
+| Isolamento RLS por tenant (`SELECT` só retorna linhas da organização no `app.current_organization_id`)                                               | ✅ confirmado com 2 organizações e 2 territórios                                        |
+| RLS bloqueia `INSERT` cruzado (tentar inserir território de uma org estando no contexto de outra)                                                    | ✅ rejeitado com `new row violates row-level security policy`                           |
+| FK composta impede vincular cobertura a uma empresa de outra organização                                                                             | ✅ rejeitado com `violates foreign key constraint "territory_targets_company_org_fkey"` |
+| Upsert de cota por `(territory_id, period, year)` — o padrão real que o Prisma gera (`ON CONFLICT` por lista de colunas, não por nome de constraint) | ✅ funciona corretamente contra o índice único                                          |
 
 ### Nota sobre o teste de upsert
 

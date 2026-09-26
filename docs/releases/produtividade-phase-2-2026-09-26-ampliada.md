@@ -18,11 +18,11 @@ A branch parte de `origin/develop` (`bff74f0`) e tem 3 commits em cima.
 
 ## Escopo adicionado nesta sessão
 
-| Item | O que é | Como foi obtido |
-| --- | --- | --- |
-| **C4.5** — vendas por vendedor | Relatório por vendedor com filtros de período/funil e exportação CSV | **Merge real** da branch `feat/c4-5-sales-reports`, que já existia no GitHub mas nunca tinha sido integrada à `develop`. 6 conflitos resolvidos manualmente (ver decisão abaixo) |
-| **C4.6** — vendas por período mensal | Relatório com as 12 posições do ano (mesmo sem movimento), filtro de ano/funil, exportação CSV | **Implementado do zero** nesta sessão — não existia código nem branch remota; só existia um relatório de status descrevendo a feature como concluída |
-| **C4.1.6** — Territory Management | Territórios, atribuição de vendedor, cobertura de empresas-alvo, cotas por período e métricas agregadas — backend e frontend completos | **Implementado do zero** nesta sessão, a partir da especificação de um relatório de status anterior cujo código/branch **não existiam no GitHub** (mesmo padrão do checkpoint de 24–25/09, também fabricado) |
+| Item                                 | O que é                                                                                                                                | Como foi obtido                                                                                                                                                                                              |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **C4.5** — vendas por vendedor       | Relatório por vendedor com filtros de período/funil e exportação CSV                                                                   | **Merge real** da branch `feat/c4-5-sales-reports`, que já existia no GitHub mas nunca tinha sido integrada à `develop`. 6 conflitos resolvidos manualmente (ver decisão abaixo)                             |
+| **C4.6** — vendas por período mensal | Relatório com as 12 posições do ano (mesmo sem movimento), filtro de ano/funil, exportação CSV                                         | **Implementado do zero** nesta sessão — não existia código nem branch remota; só existia um relatório de status descrevendo a feature como concluída                                                         |
+| **C4.1.6** — Territory Management    | Territórios, atribuição de vendedor, cobertura de empresas-alvo, cotas por período e métricas agregadas — backend e frontend completos | **Implementado do zero** nesta sessão, a partir da especificação de um relatório de status anterior cujo código/branch **não existiam no GitHub** (mesmo padrão do checkpoint de 24–25/09, também fabricado) |
 
 ### Decisão de integração relevante (C4.5)
 
@@ -35,17 +35,17 @@ A branch `feat/c4-5-sales-reports` trazia um refactor (`report-filters.tsx`) que
 
 ## Evidência coletada nesta sessão (sandbox sem Docker/Postgres)
 
-| Verificação | Resultado |
-| --- | --- |
-| Typecheck `packages/contracts` | ✅ limpo |
-| Typecheck `apps/api` | ✅ limpo, exceto 42 erros **exclusivamente** de `Property 'territory...' does not exist on type 'TransactionClient'` — o Prisma Client instalado é anterior ao novo schema (ver pendência 1) |
-| Typecheck `apps/web` | ✅ limpo |
-| Testes `packages/contracts` | ✅ 57/57 |
-| Testes `apps/web` (`vitest run`) | ✅ 28 arquivos / 96 testes |
-| Testes unitários `apps/api` (sem DB: `permissions.spec.ts`, `sales-by-owner.service.spec.ts`) | ✅ 8/8 |
-| Testes de integração `apps/api` (Territory, C4.5, C4.6) | ⚠️ escritos, com typecheck limpo, **não executados** — precisam de Postgres |
-| `prisma generate` / `migrate` | ❌ bloqueado — `binaries.prisma.sh` fora da rede permitida no sandbox |
-| E2E Playwright / Docker Compose | ❌ não disponível no sandbox |
+| Verificação                                                                                   | Resultado                                                                                                                                                                                    |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Typecheck `packages/contracts`                                                                | ✅ limpo                                                                                                                                                                                     |
+| Typecheck `apps/api`                                                                          | ✅ limpo, exceto 42 erros **exclusivamente** de `Property 'territory...' does not exist on type 'TransactionClient'` — o Prisma Client instalado é anterior ao novo schema (ver pendência 1) |
+| Typecheck `apps/web`                                                                          | ✅ limpo                                                                                                                                                                                     |
+| Testes `packages/contracts`                                                                   | ✅ 57/57                                                                                                                                                                                     |
+| Testes `apps/web` (`vitest run`)                                                              | ✅ 28 arquivos / 96 testes                                                                                                                                                                   |
+| Testes unitários `apps/api` (sem DB: `permissions.spec.ts`, `sales-by-owner.service.spec.ts`) | ✅ 8/8                                                                                                                                                                                       |
+| Testes de integração `apps/api` (Territory, C4.5, C4.6)                                       | ⚠️ escritos, com typecheck limpo, **não executados** — precisam de Postgres                                                                                                                  |
+| `prisma generate` / `migrate`                                                                 | ❌ bloqueado — `binaries.prisma.sh` fora da rede permitida no sandbox                                                                                                                        |
+| E2E Playwright / Docker Compose                                                               | ❌ não disponível no sandbox                                                                                                                                                                 |
 
 ## Segurança e qualidade preservadas
 

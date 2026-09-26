@@ -1,7 +1,7 @@
 # Roadmap do Produto
 
 | Fase                   | Direção                                                                 | Situação                                      |
-| ---------------------- | ------------------------------------------------------------------------ | ---------------------------------------------- |
+| ---------------------- | ----------------------------------------------------------------------- | --------------------------------------------- |
 | Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual             |
 | Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026                  |
 | Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Fechamento em andamento (PR `develop → main`) |
