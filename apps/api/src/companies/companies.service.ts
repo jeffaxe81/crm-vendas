@@ -115,6 +115,51 @@ export class CompaniesService {
     );
   }
 
+  /**
+   * Resolve documentos (normalizados: trim + minúsculas) para empresas ativas
+   * do tenant. Um documento pode apontar para mais de uma empresa legada.
+   */
+  async findByDocuments(
+    documents: string[],
+    organizationId: string
+  ): Promise<Map<string, Array<{ id: string; legalName: string }>>> {
+    const normalized = Array.from(
+      new Set(
+        documents.map(document => document.trim().toLocaleLowerCase("pt-BR"))
+      )
+    ).filter(document => document.length > 0);
+    const result = new Map<string, Array<{ id: string; legalName: string }>>();
+
+    if (normalized.length === 0) {
+      return result;
+    }
+
+    const companies = await this.prisma.withTenant(organizationId, tenant =>
+      tenant.company.findMany({
+        where: {
+          organizationId,
+          deletedAt: null,
+          OR: normalized.map(document => ({
+            document: { contains: document, mode: "insensitive" as const },
+          })),
+        },
+        select: { id: true, legalName: true, document: true },
+        orderBy: { createdAt: "asc" },
+      })
+    );
+
+    const requested = new Set(normalized);
+    for (const company of companies) {
+      const key = company.document?.trim().toLocaleLowerCase("pt-BR");
+      if (!key || !requested.has(key)) continue;
+      const matches = result.get(key) ?? [];
+      matches.push({ id: company.id, legalName: company.legalName });
+      result.set(key, matches);
+    }
+
+    return result;
+  }
+
   async read(id: string, organizationId: string) {
     return this.prisma.withTenant(organizationId, tenant =>
       this.requireCompany(tenant, id, organizationId)

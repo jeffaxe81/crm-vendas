@@ -1,5 +1,82 @@
 # Changelog
 
+## [Unreleased] - Relatórios da Fase 2 (C4.4.1, C4.4.2, C4.4.3) e release candidata
+
+- C4.4.1: filtros de funil e responsável na aba Vendas por produto; `GET /api/v1/reports/sales-by-product/export` (CSV `;`, BOM, proteção contra fórmula) e `/owners`;
+- C4.4.2: `GET /api/v1/reports/funnel` com etapas, totais, taxa de ganho, valores ganho/perdido/aberto e ticket médio; aba Funil;
+- C4.4.3: `GET /api/v1/reports/activities-by-owner` com concluídas, pendentes, canceladas, atrasadas, no prazo e taxa de conclusão; aba Atividades;
+- release candidata da Fase 2 em `docs/releases/produtividade-phase-2-2026-09-25.md`;
+- gate integrado (banco limpo): API 211/211 (2 execuções), web 81, contratos 44, build e E2E 5/5.
+
+## [Unreleased] - C4.4, C4.3.2 e C4.3.3 (entregas em paralelo)
+
+- C4.4: `GET /api/v1/reports/sales-by-product` (reports.read) com quantidade, oportunidades e valor por produto separados em aberto/ganho/perdido, filtros de período, funil e responsável; aba "Vendas por produto" no Resumo gerencial (`docs/checkpoints/c4-4-sales-by-product-report.md`);
+- C4.3.2: importação CSV de produtos (`/api/v1/product-imports/preview|confirm`, product.write) com preview, erros por linha e código único por tenant (`docs/checkpoints/c4-3-2-product-import.md`);
+- C4.3.3: edição de quantidade, preço e desconto dos itens na UI com tratamento de conflito 409, normalização de decimais pt-BR, teste de navegação de Produtos e jornada E2E de produtos/itens (`docs/checkpoints/c4-3-3-item-editing-e2e.md`);
+- testes: IDs fixos do `tenant-snapshot.integration.spec` separados dos de `opportunity-rls` (colidiam conforme a ordem das suítes);
+- gate integrado (banco limpo, 3 execuções): API 189/189, web 65/65, contratos 34/34, build e E2E 5/5.
+
+## [Unreleased] - C4.3 Produtos e C4.3.1 Itens de oportunidade
+
+- catálogo `/api/v1/products` com código único por tenant (sem caixa), preço, ativo/inativo, versão e exclusão lógica; permissões `product.read`/`product.write`;
+- itens em `/api/v1/opportunities/:id/items` com quantidade, preço (snapshot) e desconto; `estimatedValue` recalculado na mesma transação, com trava otimista por `version` e auditoria;
+- valor manual bloqueado enquanto houver itens (`OPPORTUNITY_VALUE_DERIVED`);
+- migration com RLS forçada, FKs compostas por tenant e `CHECK`s;
+- web: seção Produtos e painel de Itens nas oportunidades;
+- gate local: API 158/158, web 50/50, contratos 30/30, build e E2E 4/4.
+
+## [Unreleased] - C4.2.3 Vínculo de contatos importados a empresas
+
+- coluna opcional `companyDocument` no CSV de contatos, resolvida para uma empresa ativa do mesmo tenant;
+- erros por linha para documento inexistente, documento ambíguo e falta de `company.write`;
+- vínculo `company_contacts` criado na mesma transação do contato, com auditoria `company.contact_linked`;
+- coluna **Empresa** no preview da tela de Contatos;
+- gate local: API 147/147, web 44/44, contratos 25/25, build e E2E 4/4.
+
+## [Unreleased] - C4.2.2 Importação CSV de contatos
+
+- `POST /api/v1/contact-imports/preview` e `/confirm` (permissão `contact.write`), com fluxo Preview → Confirmar e fingerprint SHA-256;
+- colunas `fullName`, `jobTitle`, `email`, `phone`, `mobile`, `whatsapp`, `notes`; canais criados como principais;
+- deduplicação por e-mail no arquivo e no tenant; contato e canais gravados na mesma transação, com auditoria;
+- parser CSV genérico (`CsvTableParser`) compartilhado com a importação de empresas, sem mudança de comportamento na C4.2.1;
+- tela de Contatos: ação **Importar CSV** com preview, erros por linha e resumo, visível só com `contact.write`;
+- testes: 20 novos na API e 3 na web; gate local completo verde (lint, typecheck, 143 testes de API, 44 web, 25 contratos, build e E2E 4/4).
+
+## [Unreleased] - Decisão de stack (ADR-0002)
+
+- ADR-0002: monorepositório TypeScript (NestJS + Next.js) é a stack principal do CRM; `backend/` FastAPI congelado e reservado ao serviço de ML do Ciclo 6;
+- avisos no `README.md`, `SETUP.md` e novo `backend/README.md`.
+
+## [Unreleased] - Backend FastAPI — Sprint 1 (correções S1-04/S1-05)
+
+### Corrigido
+
+- backend não iniciava: `requirements.txt` com Pydantic 1.9 (incompatível com Python 3.11) e sem `python-jose`, `bcrypt`, `psycopg2` e `email-validator`; dependências atualizadas (FastAPI 0.115, Pydantic 2, SQLAlchemy 2) e JWT migrado para PyJWT;
+- models apontavam para o schema `public`, mas as migrations criam as tabelas em `crm_core`; enum `user_role` mapeado pelos valores (`admin`…) no schema correto;
+- hash da senha do usuário demo não correspondia a `demo1234`;
+- `alembic.ini` ausente (as migrations não podiam ser executadas); `init-db.sql` duplicava as tabelas das migrations e agora só cria extensões, schema e o banco de testes;
+- `TrustedHostMiddleware` recebia uma lista aninhada; `/api/v1/ready` usava SQL cru incompatível com SQLAlchemy 2 e agora responde 503 quando o banco está indisponível;
+- healthcheck do docker-compose apontava para `/health` (inexistente); migrations passam a rodar na subida do backend; serviço `frontend` movido para o profile `frontend` até o app React existir.
+
+### Segurança
+
+- token de redefinição de senha era um _access token_ comum devolvido na resposta a qualquer pessoa — permitia assumir qualquer conta. Agora tem tipo próprio (`password_reset`), é de uso único e só é exibido em `development`/`test`;
+- refresh token valida que o usuário pertence à organização do token;
+- backend recusa iniciar fora de `development`/`test` com o `JWT_SECRET` padrão;
+- rotas públicas por correspondência exata (antes, por prefixo); documentação da API liberada em `/api/v1/docs`;
+- e-mail único no banco (índice único) e normalizado para minúsculas.
+
+### Adicionado
+
+- `GET /api/v1/auth/me` e dependência `require_roles(...)` para RBAC nas rotas;
+- suíte pytest (60 testes, cobertura 94%) em banco PostgreSQL real, com proteção contra rodar fora de um banco `*_test`;
+- workflow `backend-ci.yml` (ruff, migrations up/down/up, cobertura mínima de 90% e build da imagem Docker) — adicionado em commit separado, pois exige permissão `workflow`.
+
+### Organização
+
+- removidos `1.cfg`, `2.cfg`, `777.cfg` e `nome-do-arquivo.txt`; patches FASE 1–3 movidos para `docs/archive/patches/`;
+- `.env.example` com as variáveis da stack FastAPI e `backend/.env.example` para rodar fora do Docker; `SETUP.md` atualizado.
+
 ## [Unreleased] - Cycle 3.6.6
 
 ### Web de oportunidades — movimentação de etapa

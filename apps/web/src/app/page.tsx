@@ -13,7 +13,9 @@ import { CompaniesView } from "./companies/companies-view";
 import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
 import { OpportunitiesView } from "./opportunities/opportunities-view";
+import { ProductsView } from "./products/products-view";
 import { ManagementSummaryView } from "./reports/management-summary-view";
+import { TerritoriesView } from "./territories/territories-view";
 
 export default function Home() {
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
@@ -134,7 +136,10 @@ export default function Home() {
             canWrite={session.permissions.includes("company.write")}
           />
         ) : activeSection === "contacts" ? (
-          <ContactsView accessToken={session.accessToken} />
+          <ContactsView
+            accessToken={session.accessToken}
+            canWrite={session.permissions.includes("contact.write")}
+          />
         ) : activeSection === "activities" ? (
           <ActivitiesView
             accessToken={session.accessToken}
@@ -145,6 +150,16 @@ export default function Home() {
           <AgendaView
             accessToken={session.accessToken}
             ownerUserId={session.user.id}
+          />
+        ) : activeSection === "products" ? (
+          <ProductsView
+            accessToken={session.accessToken}
+            canWrite={session.permissions.includes("product.write")}
+          />
+        ) : activeSection === "territories" ? (
+          <TerritoriesView
+            accessToken={session.accessToken}
+            canWrite={session.permissions.includes("territory.write")}
           />
         ) : activeSection === "management-summary" ? (
           <ManagementSummaryView accessToken={session.accessToken} />

@@ -34,11 +34,41 @@ export {
 } from "./companies";
 
 export {
+  TerritoryCoverageStatusSchema,
+  TerritoryCoverageTargetInputSchema,
+  TerritoryCreateInputSchema,
+  TerritoryListQuerySchema,
+  TerritoryQuotaInputSchema,
+  TerritoryQuotaPeriodSchema,
+  TerritoryQuotaQuerySchema,
+  TerritoryReassignInputSchema,
+  TerritoryUpdateInputSchema,
+  type TerritoryCoverageStatus,
+  type TerritoryCoverageTargetInput,
+  type TerritoryCreateInput,
+  type TerritoryListQuery,
+  type TerritoryQuotaInput,
+  type TerritoryQuotaPeriod,
+  type TerritoryQuotaQuery,
+  type TerritoryReassignInput,
+  type TerritoryUpdateInput,
+} from "./territories";
+
+export {
   type CompanyImportPreview,
   type CompanyImportPreviewRow,
   type CompanyImportResult,
   type CompanyImportResultRow,
 } from "./company-imports";
+
+export {
+  type ContactImportCompanyMatch,
+  type ContactImportPreview,
+  type ContactImportPreviewRow,
+  type ContactImportResult,
+  type ContactImportResultRow,
+  type ContactImportRowData,
+} from "./contact-imports";
 
 export {
   ContactChannelInputSchema,
@@ -86,11 +116,82 @@ export {
 } from "./opportunities";
 
 export {
+  type ProductImportPreview,
+  type ProductImportPreviewRow,
+  type ProductImportResult,
+  type ProductImportResultRow,
+  type ProductImportRowData,
+} from "./product-imports";
+
+export {
   RelationshipEntryCreateInputSchema,
   RelationshipEntryKindSchema,
   type RelationshipEntryCreateInput,
   type RelationshipEntryKind,
 } from "./relationship";
+
+export {
+  OpportunityItemCreateInputSchema,
+  OpportunityItemDiscountSchema,
+  OpportunityItemQuantitySchema,
+  OpportunityItemUpdateInputSchema,
+  ProductCreateInputSchema,
+  ProductListQuerySchema,
+  ProductUpdateInputSchema,
+  MAX_MONEY_CENTS,
+  calculateLineTotalCents,
+  formatCents,
+  type OpportunityItemCreateInput,
+  type OpportunityItemUpdateInput,
+  type ProductCreateInput,
+  type ProductListQuery,
+  type ProductUpdateInput,
+} from "./products";
+
+export {
+  ReportMoneySchema,
+  ReportQuantitySchema,
+  SalesByProductBucketSchema,
+  SalesByProductQuerySchema,
+  SalesByProductReportSchema,
+  SalesByProductRowSchema,
+  type SalesByProductBucket,
+  type SalesByProductQuery,
+  type SalesByProductReport,
+  type SalesByProductRow,
+} from "./sales-by-product";
+
+export {
+  ReportPercentSchema,
+  SalesByOwnerBucketSchema,
+  SalesByOwnerQuerySchema,
+  SalesByOwnerReportSchema,
+  SalesByOwnerRowSchema,
+  type SalesByOwnerBucket,
+  type SalesByOwnerQuery,
+  type SalesByOwnerReport,
+  type SalesByOwnerRow,
+} from "./sales-by-owner";
+
+export {
+  SalesByMonthBucketSchema,
+  SalesByMonthQuerySchema,
+  SalesByMonthReportSchema,
+  SalesByMonthRowSchema,
+  type SalesByMonthBucket,
+  type SalesByMonthQuery,
+  type SalesByMonthReport,
+  type SalesByMonthRow,
+} from "./sales-by-month";
+
+export {
+  REPORT_CSV_BOM,
+  csvCell,
+  csvDecimal,
+  salesByMonthToCsv,
+  salesByOwnerToCsv,
+  salesByProductToCsv,
+} from "./report-csv";
 
 export { TagInputSchema, type TagInput } from "./tags";
 
@@ -102,3 +203,36 @@ export {
   type OrganizationUserResponse,
   type UpdateOrganizationMembershipInput,
 } from "./users";
+
+export {
+  SalesByProductOwnerSchema,
+  SalesByProductOwnersSchema,
+  type SalesByProductOwner,
+} from "./sales-by-product-filters";
+
+export {
+  FunnelBucketSchema,
+  FunnelIndicatorsSchema,
+  FunnelPercentSchema,
+  FunnelQuerySchema,
+  FunnelReportSchema,
+  FunnelStageKindSchema,
+  FunnelStageRowSchema,
+  type FunnelBucket,
+  type FunnelIndicators,
+  type FunnelQuery,
+  type FunnelReport,
+  type FunnelStageKind,
+  type FunnelStageRow,
+} from "./funnel";
+
+export {
+  ActivitiesByOwnerCountsSchema,
+  ActivitiesByOwnerQuerySchema,
+  ActivitiesByOwnerReportSchema,
+  ActivitiesByOwnerRowSchema,
+  type ActivitiesByOwnerCounts,
+  type ActivitiesByOwnerQuery,
+  type ActivitiesByOwnerReport,
+  type ActivitiesByOwnerRow,
+} from "./activities-by-owner";

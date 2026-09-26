@@ -1,4 +1,5 @@
 # Cycle 6 - Arquitetura Técnica Detalhada
+
 **Versão**: 1.0 | **Data**: Setembro 2026 | **Status**: Ready for Development
 
 ---
@@ -89,91 +90,92 @@ Cache Layer (Redis)
 ```typescript
 // analyticsStore
 interface AnalyticsState {
-  velocityData: PipelineVelocity
-  dateRange: [Date, Date]
-  selectedPipeline: string
+  velocityData: PipelineVelocity;
+  dateRange: [Date, Date];
+  selectedPipeline: string;
   metrics: {
-    totalOpps: number
-    avgDays: number
-    pipelineValue: number
-    winRate: number
-  }
-  loading: boolean
-  error: string | null
+    totalOpps: number;
+    avgDays: number;
+    pipelineValue: number;
+    winRate: number;
+  };
+  loading: boolean;
+  error: string | null;
   actions: {
-    fetchVelocity(pipelineId): Promise<void>
-    setDateRange(range): void
-    selectPipeline(id): void
-  }
+    fetchVelocity(pipelineId): Promise<void>;
+    setDateRange(range): void;
+    selectPipeline(id): void;
+  };
 }
 
 // scoringStore
 interface ScoringState {
-  scores: Opportunity[] // com score data
-  filteredScores: Opportunity[]
-  sortBy: 'score' | 'confidence' | 'name'
+  scores: Opportunity[]; // com score data
+  filteredScores: Opportunity[];
+  sortBy: "score" | "confidence" | "name";
   filters: {
-    pipeline: string
-    scoreRange: [number, number]
-    confidence: number
-  }
-  distribution: Map<string, number> // score bucket -> count
-  topFactors: Map<string, number> // factor name -> importance %
+    pipeline: string;
+    scoreRange: [number, number];
+    confidence: number;
+  };
+  distribution: Map<string, number>; // score bucket -> count
+  topFactors: Map<string, number>; // factor name -> importance %
   actions: {
-    fetchScores(): Promise<void>
-    updateFilters(filters): void
-    exportScores(format): Promise<Blob>
-  }
+    fetchScores(): Promise<void>;
+    updateFilters(filters): void;
+    exportScores(format): Promise<Blob>;
+  };
 }
 
 // forecastStore
 interface ForecastState {
   forecast: {
-    likely: number // P50
-    upside: number // P90
-    conservative: number // P10
-    weeklyBreakdown: number[]
-    confidence: number
-  }
-  scenarios: CustomScenario[]
-  selectedScenario: CustomScenario | null
+    likely: number; // P50
+    upside: number; // P90
+    conservative: number; // P10
+    weeklyBreakdown: number[];
+    confidence: number;
+  };
+  scenarios: CustomScenario[];
+  selectedScenario: CustomScenario | null;
   scenarioInputs: {
-    conversionRate: number
-    cycleDays: number
-    closesPerWeek: number
-  }
+    conversionRate: number;
+    cycleDays: number;
+    closesPerWeek: number;
+  };
   actions: {
-    fetchForecast(): Promise<void>
-    buildScenario(inputs): Promise<void>
-    saveScenario(scenario): Promise<void>
-    deleteScenario(id): Promise<void>
-  }
+    fetchForecast(): Promise<void>;
+    buildScenario(inputs): Promise<void>;
+    saveScenario(scenario): Promise<void>;
+    deleteScenario(id): Promise<void>;
+  };
 }
 
 // alertsStore
 interface AlertsState {
-  alerts: Alert[]
-  activeCount: number // críticos
-  warningCount: number // avisos
+  alerts: Alert[];
+  activeCount: number; // críticos
+  warningCount: number; // avisos
   filters: {
-    type: AlertType
-    severity: 'critical' | 'warning' | 'info'
-    resolved: boolean
-  }
-  history: Alert[]
+    type: AlertType;
+    severity: "critical" | "warning" | "info";
+    resolved: boolean;
+  };
+  history: Alert[];
   actions: {
-    fetchAlerts(): Promise<void>
-    snoozeAlert(id, duration): Promise<void>
-    dismissAlert(id, reason): Promise<void>
-    resolveAlert(id): Promise<void>
-    fetchHistory(days): Promise<void>
-  }
+    fetchAlerts(): Promise<void>;
+    snoozeAlert(id, duration): Promise<void>;
+    dismissAlert(id, reason): Promise<void>;
+    resolveAlert(id): Promise<void>;
+    fetchHistory(days): Promise<void>;
+  };
 }
 ```
 
 ### Component Hierarchy
 
 #### PipelineVelocityView
+
 ```
 PipelineVelocityView (page)
 ├── Header (title, date range, pipeline selector, export)
@@ -188,6 +190,7 @@ PipelineVelocityView (page)
 ```
 
 #### ScoringView
+
 ```
 ScoringView (page)
 ├── Header + Controls
@@ -199,6 +202,7 @@ ScoringView (page)
 ```
 
 #### ForecastingDashboard
+
 ```
 ForecastingDashboard (page)
 ├── Header + Controls (save, new scenario)
@@ -216,6 +220,7 @@ ForecastingDashboard (page)
 ```
 
 #### HealthAlertsView
+
 ```
 HealthAlertsView (page)
 ├── Header + Controls
@@ -227,6 +232,7 @@ HealthAlertsView (page)
 ```
 
 #### ComparativeAnalyticsView
+
 ```
 ComparativeAnalyticsView (page)
 ├── Header + Controls
@@ -239,6 +245,7 @@ ComparativeAnalyticsView (page)
 ```
 
 #### AdminConfigView
+
 ```
 AdminConfigView (page)
 ├── Tabs: Model, Alert Rules, Features
@@ -263,6 +270,7 @@ AdminConfigView (page)
 ### Analytics Endpoints
 
 **GET /api/v1/analytics/velocity**
+
 ```
 Query params:
   - pipeline_id: string (required)
@@ -291,6 +299,7 @@ Performance: <100ms (cached), <500ms (on-demand)
 ```
 
 **GET /api/v1/analytics/rep-metrics**
+
 ```
 Query params:
   - week: YYYY-W##
@@ -320,6 +329,7 @@ Performance: <200ms
 ### Scoring Endpoints
 
 **GET /api/v1/scoring/opportunities**
+
 ```
 Query params:
   - pipeline_id: string
@@ -359,6 +369,7 @@ Performance: <200ms (cached), <500ms (on-demand)
 ```
 
 **POST /api/v1/scoring/score-now**
+
 ```
 Request body:
 {
@@ -380,6 +391,7 @@ Performance: <200ms
 ### Forecast Endpoints
 
 **GET /api/v1/forecast/baseline**
+
 ```
 Query params:
   - pipeline_id: string
@@ -410,6 +422,7 @@ Performance: <1s (Monte Carlo simulation)
 ```
 
 **POST /api/v1/forecast/custom-scenario**
+
 ```
 Request body:
 {
@@ -437,6 +450,7 @@ Performance: <200ms
 ### Alert Endpoints
 
 **GET /api/v1/alerts/active**
+
 ```
 Query params:
   - severity: 'critical' | 'warning' | 'info' (optional)
@@ -468,6 +482,7 @@ Performance: <100ms
 ```
 
 **POST /api/v1/alerts/{alert_id}/snooze**
+
 ```
 Request body:
 {
@@ -482,6 +497,7 @@ Performance: <50ms
 ### Admin Endpoints
 
 **GET /api/v1/admin/model-status**
+
 ```
 Response:
 {
@@ -503,6 +519,7 @@ Performance: <50ms
 ```
 
 **PUT /api/v1/admin/alert-rules/{rule_type}**
+
 ```
 Request body:
 {
@@ -521,10 +538,11 @@ Performance: <100ms (invalidates cache)
 ## 💾 Data Models
 
 ### Opportunity Score
+
 ```python
 class OpportunityScore(Base):
     __tablename__ = "opportunity_score"
-    
+
     id = Column(UUID, primary_key=True)
     org_id = Column(UUID, ForeignKey("organizations.id"))
     opportunity_id = Column(UUID, ForeignKey("opportunities.id"))
@@ -533,7 +551,7 @@ class OpportunityScore(Base):
     factors = Column(JSONB)  # {factor_name: contribution_pct, ...} top 3
     model_version = Column(String)  # v2.3
     computed_at = Column(DateTime, default=utcnow)
-    
+
     __table_args__ = (
         Index("idx_opp_score_org_computed", org_id, computed_at.desc()),
         Index("idx_opp_score_opportunity", opportunity_id),
@@ -541,10 +559,11 @@ class OpportunityScore(Base):
 ```
 
 ### Scoring Model
+
 ```python
 class ScoringModel(Base):
     __tablename__ = "scoring_model"
-    
+
     id = Column(UUID, primary_key=True)
     org_id = Column(UUID, ForeignKey("organizations.id"))
     version = Column(String, unique=True)  # v2.3
@@ -557,10 +576,11 @@ class ScoringModel(Base):
 ```
 
 ### Forecast Baseline
+
 ```python
 class ForecastBaseline(Base):
     __tablename__ = "forecast_baseline"
-    
+
     id = Column(UUID, primary_key=True)
     org_id = Column(UUID, ForeignKey("organizations.id"))
     pipeline_id = Column(UUID, ForeignKey("pipelines.id"))
@@ -572,10 +592,11 @@ class ForecastBaseline(Base):
 ```
 
 ### Pipeline Health Alert
+
 ```python
 class PipelineHealthAlert(Base):
     __tablename__ = "pipeline_health_alert"
-    
+
     id = Column(UUID, primary_key=True)
     org_id = Column(UUID, ForeignKey("organizations.id"))
     alert_type = Column(String)  # stage_imbalance, velocity_slowdown, etc
@@ -589,7 +610,7 @@ class PipelineHealthAlert(Base):
     dismissed_at = Column(DateTime, nullable=True)
     snooze_until = Column(DateTime, nullable=True)
     resolved_at = Column(DateTime, nullable=True)
-    
+
     __table_args__ = (
         Index("idx_alert_org_created", org_id, created_at.desc()),
         Index("idx_alert_severity", severity),
@@ -601,6 +622,7 @@ class PipelineHealthAlert(Base):
 ## 🔄 Data Flows
 
 ### Scoring Flow
+
 ```
 Daily Job (03:00 UTC)
 ├─ 1. Fetch all active opportunities for org
@@ -620,6 +642,7 @@ Error Handling:
 ```
 
 ### Forecasting Flow
+
 ```
 Daily Job (02:00 UTC)
 ├─ 1. Get pipeline config (stages, historical win rates, cycle times)
@@ -638,6 +661,7 @@ Daily Job (02:00 UTC)
 ```
 
 ### Alert Evaluation Flow
+
 ```
 Daily Job (04:00 UTC)
 ├─ 1. For each enabled alert rule:
@@ -656,21 +680,25 @@ Daily Job (04:00 UTC)
 ## 🧪 Testing Strategy
 
 ### Unit Tests (50% coverage target)
+
 - ScoringService: feature engineering, model prediction, fallback logic
 - ForecastingService: Monte Carlo simulation, percentile calculation
 - HealthMonitorService: alert rule evaluation, deduplication
 
 ### Integration Tests (30% coverage)
+
 - API endpoints: request/response validation, auth, caching
 - Database operations: transactions, constraint checks
 - Background jobs: scheduling, error handling, retries
 
 ### E2E Tests (20% coverage)
+
 - Full scoring pipeline: fetch data → predict → store → query
 - Forecast generation: data fetch → simulation → storage → retrieval
 - Alert lifecycle: creation → snooze/dismiss → resolution
 
 ### Performance Tests
+
 - Load test: 1000 req/s to cached endpoints
 - Scoring: 10K deals/day in <2 minutes
 - Forecast: 1000 scenarios in <1 second
@@ -690,6 +718,7 @@ Daily Job (04:00 UTC)
 ## 📈 Performance Optimization
 
 ### Caching Strategy
+
 ```
 Redis Keys:
 - analytics:velocity:{org_id} → TTL 1h
@@ -699,25 +728,27 @@ Redis Keys:
 ```
 
 ### Database Indexes
+
 ```sql
 -- opportunity_score
-CREATE INDEX idx_opp_score_org_computed 
+CREATE INDEX idx_opp_score_org_computed
   ON opportunity_score(org_id, computed_at DESC);
-CREATE INDEX idx_opp_score_opportunity 
+CREATE INDEX idx_opp_score_opportunity
   ON opportunity_score(opportunity_id);
 
 -- pipeline_health_alert
-CREATE INDEX idx_alert_org_created 
+CREATE INDEX idx_alert_org_created
   ON pipeline_health_alert(org_id, created_at DESC);
-CREATE INDEX idx_alert_severity 
+CREATE INDEX idx_alert_severity
   ON pipeline_health_alert(severity);
 
 -- analytics_pipeline_metric
-CREATE INDEX idx_analytics_pipeline_date 
+CREATE INDEX idx_analytics_pipeline_date
   ON analytics_pipeline_metric(org_id, pipeline_id, metric_date DESC);
 ```
 
 ### Query Optimization
+
 - Use materialized views for time-series data (update hourly/daily)
 - Partition forecast_scenario table by org_id for archival
 - Batch operations: 1000-record inserts at once
@@ -728,6 +759,7 @@ CREATE INDEX idx_analytics_pipeline_date
 ## 🚀 Deployment Strategy
 
 ### Blue-Green Deployment
+
 1. Deploy v0.6.0 to green environment
 2. Run smoke tests (model scoring, forecast generation)
 3. Validate alert rules on sample data
@@ -735,11 +767,13 @@ CREATE INDEX idx_analytics_pipeline_date
 5. Keep blue running for 1h for quick rollback
 
 ### Rollback Plan
+
 - If scoring fails: keep using v2.2 model
 - If forecast fails: disable custom scenarios, serve pre-calculated baseline
 - If alerts fail: disable new alerts, keep existing ones
 
 ### Monitoring & Alerting
+
 - Dashboard load time (SLO: <500ms)
 - Scoring latency (SLO: <200ms)
 - Model accuracy drift (alert if AUC drops >5%)

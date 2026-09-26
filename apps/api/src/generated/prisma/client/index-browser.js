@@ -129,6 +129,24 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.RoleScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  code: 'code',
+  name: 'name',
+  isSystem: 'isSystem',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RolePermissionScalarFieldEnum = {
+  id: 'id',
+  roleId: 'roleId',
+  organizationId: 'organizationId',
+  permission: 'permission',
+  scope: 'scope'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -367,6 +385,39 @@ exports.Prisma.OpportunityScalarFieldEnum = {
   deletedBy: 'deletedBy'
 };
 
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  unitPrice: 'unitPrice',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  version: 'version',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.OpportunityItemScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  opportunityId: 'opportunityId',
+  productId: 'productId',
+  description: 'description',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  discountPercent: 'discountPercent',
+  lineTotal: 'lineTotal',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -457,6 +508,8 @@ exports.ActivityPriority = exports.$Enums.ActivityPriority = {
 
 exports.Prisma.ModelName = {
   Organization: 'Organization',
+  Role: 'Role',
+  RolePermission: 'RolePermission',
   User: 'User',
   OrganizationMembership: 'OrganizationMembership',
   RefreshSession: 'RefreshSession',
@@ -475,7 +528,9 @@ exports.Prisma.ModelName = {
   Pipeline: 'Pipeline',
   PipelineStage: 'PipelineStage',
   Activity: 'Activity',
-  Opportunity: 'Opportunity'
+  Opportunity: 'Opportunity',
+  Product: 'Product',
+  OpportunityItem: 'OpportunityItem'
 };
 
 /**

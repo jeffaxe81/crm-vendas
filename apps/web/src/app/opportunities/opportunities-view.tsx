@@ -7,6 +7,7 @@ import type {
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { OpportunityItemsPanel, formatMoney } from "./opportunity-items-panel";
 
 type OpportunityRecord = {
   id: string;
@@ -116,6 +117,9 @@ export function OpportunitiesView({
     Record<string, string>
   >({});
   const [refreshVersion, setRefreshVersion] = useState(0);
+  const [itemsOpportunityId, setItemsOpportunityId] = useState<string | null>(
+    null
+  );
 
   const selectedPipeline = pipelines.find(
     pipeline => pipeline.id === form.pipelineId
@@ -568,7 +572,7 @@ export function OpportunitiesView({
                   <dl>
                     <div>
                       <dt>Valor estimado</dt>
-                      <dd>{opportunity.estimatedValue}</dd>
+                      <dd>{formatMoney(opportunity.estimatedValue)}</dd>
                     </div>
                     <div>
                       <dt>Previsão de fechamento</dt>
@@ -613,6 +617,33 @@ export function OpportunitiesView({
                         {isMoving ? "Movendo..." : "Mover etapa"}
                       </button>
                     </div>
+                  ) : null}
+                  <button
+                    type="button"
+                    aria-expanded={itemsOpportunityId === opportunity.id}
+                    onClick={() =>
+                      setItemsOpportunityId(current =>
+                        current === opportunity.id ? null : opportunity.id
+                      )
+                    }
+                  >
+                    {itemsOpportunityId === opportunity.id
+                      ? "Ocultar itens"
+                      : "Itens"}
+                  </button>
+                  {itemsOpportunityId === opportunity.id ? (
+                    <OpportunityItemsPanel
+                      accessToken={accessToken}
+                      opportunity={opportunity}
+                      canWrite={canWrite}
+                      onOpportunityChange={updated =>
+                        setOpportunities(current =>
+                          current.map(entry =>
+                            entry.id === updated.id ? updated : entry
+                          )
+                        )
+                      }
+                    />
                   ) : null}
                 </article>
               </li>

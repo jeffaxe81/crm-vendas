@@ -1,4 +1,5 @@
 # Cycle 7 - Roadmap e Plano de Execução
+
 **Período**: Fevereiro 1 - Março 31, 2027 (8 semanas) | **Release**: v0.7.0  
 **Story Points**: 175 | **Epics**: 5 | **Tema**: Advanced ML & Workflow Automation
 
@@ -20,6 +21,7 @@
 ### Epic 1: Ensemble ML Models & Feature Expansion (42 pontos)
 
 **1.1 Feature Engineering v2.0** (10 pts)
+
 - Expand features from 15 → 25: customer health signals, engagement trajectory, competitive signals, time-based features
 - Implement feature scaling (StandardScaler) + normalization
 - Build feature importance tracking across models
@@ -27,6 +29,7 @@
 - AC: <100ms feature extraction for 10K deals, feature importance ranked
 
 **1.2 Random Forest Scoring** (12 pts)
+
 - Implement Random Forest classifier (scikit-learn)
 - Build out-of-bag (OOB) error estimation
 - Implement feature interaction detection
@@ -34,6 +37,7 @@
 - AC: AUC 0.88+, training <5min for 100K deals, <100ms inference
 
 **1.3 XGBoost Gradient Boosting** (12 pts)
+
 - Implement XGBoost classifier with early stopping
 - Hyperparameter tuning (grid search, cross-validation)
 - Build performance monitoring dashboards
@@ -41,6 +45,7 @@
 - AC: AUC 0.90+, ranked top 10% industry benchmarks
 
 **1.4 Meta-Learner Fusion** (8 pts)
+
 - Build voting classifier (averaging 3 models: Logistic, RF, XGBoost)
 - Implement weighted voting (RF 40%, XGBoost 40%, Logistic 20%)
 - Create model confidence scoring (ensemble agreement %)
@@ -52,6 +57,7 @@
 ### Epic 2: Predictive Analytics & Account Intelligence (40 pontos)
 
 **2.1 Customer Churn Prediction** (15 pts)
+
 - Build churn prediction model (binary classifier)
 - Implement churn risk segmentation (high/medium/low)
 - Create churn intervention playbooks
@@ -59,6 +65,7 @@
 - AC: Churn prediction accuracy 85%+, early warning 30+ days ahead
 
 **2.2 Win Probability by Account** (12 pts)
+
 - Aggregate deal-level scores to account level
 - Implement account health scoring (pipeline diversity, rep engagement)
 - Build win trajectory analysis (trending up/down)
@@ -66,6 +73,7 @@
 - AC: Account score updated daily, <500ms calculation
 
 **2.3 Pipeline Quality Scoring** (8 pts)
+
 - Build deal quality matrix (size vs. probability vs. velocity)
 - Implement pipeline health index (0-100 scale)
 - Create actionable quality metrics (staged properly, moving at expected pace)
@@ -73,6 +81,7 @@
 - AC: Quality score <100ms, pipeline quality dashboard
 
 **2.4 UI - Predictive Analytics Dashboard** (5 pts)
+
 - Churn risk view: accounts at risk, interventions, success rate
 - Win probability view: by account, by segment, historical accuracy
 - Pipeline quality heatmap: quality vs. stage vs. time
@@ -84,6 +93,7 @@
 ### Epic 3: Workflow Automation Engine (45 pontos)
 
 **3.1 Rules Engine & Trigger System** (15 pts)
+
 - Build condition builder (AND/OR/NOT logic)
 - Implement trigger types: time-based (interval, specific time), event-based (deal moved, email opened, contact added)
 - Create rule scheduler (immediate, delayed, scheduled)
@@ -91,6 +101,7 @@
 - AC: 99.95% rule execution success rate, <100ms trigger evaluation
 
 **3.2 Automated Actions** (15 pts)
+
 - Action types: create task, send email, update field, move deal, assign rep, notify user, call webhook
 - Implement action sequencing (parallel, sequential, conditional)
 - Create action history & audit trail
@@ -98,6 +109,7 @@
 - AC: <1s action execution, 99.9% delivery rate
 
 **3.3 Playbook Engine** (12 pts)
+
 - Build playbook template system (series of rules + actions)
 - Implement playbook versioning & activation
 - Create playbook performance tracking (completion rate, time-to-completion)
@@ -105,6 +117,7 @@
 - AC: <200ms playbook recommendation, accuracy 80%+
 
 **3.4 UI - Workflow Builder** (3 pts)
+
 - Visual workflow builder (drag-drop rules, actions)
 - Playbook template gallery
 - Workflow testing & simulation mode
@@ -116,6 +129,7 @@
 ### Epic 4: AI-Powered Recommendations & Guidance (32 pontos)
 
 **4.1 Next-Step Recommendations** (12 pts)
+
 - Implement recommendation engine: "based on deal stage, probability, velocity, suggest next action"
 - Actions: schedule meeting, send proposal, follow-up email, escalate to manager, close deal
 - Build recommendation ranking (confidence, success rate)
@@ -123,6 +137,7 @@
 - AC: <200ms recommendation generation, adoption rate target 50%+
 
 **4.2 Best Practice Playbooks** (10 pts)
+
 - Curate playbooks from top performers (top 20% reps)
 - Extract patterns: "high-win deals follow this sequence of actions"
 - Implement playbook suggestions (contextual, per deal stage)
@@ -130,6 +145,7 @@
 - AC: 10+ playbooks, adoption 40%+ of reps
 
 **4.3 Rep Guidance System** (8 pts)
+
 - Real-time coaching notifications ("Your pipeline is 60% in proposal stage - consider moving stalled deals")
 - Comparative guidance ("Your velocity is 20% below team average - try this approach")
 - Win/loss analysis guidance ("Similar deals to this one are winning 70% of the time - focus on X, Y, Z")
@@ -137,6 +153,7 @@
 - AC: Guidance delivery <100ms, dismissal rate tracking for refinement
 
 **4.4 UI - Recommendations Dashboard** (2 pts)
+
 - Recommendation cards: next-step suggestions per deal
 - Guidance hub: daily coaching, playbook suggestions
 - Best practice library: win/loss patterns, top performer replays
@@ -148,6 +165,7 @@
 ### Epic 5: Territory Intelligence & Optimization (16 pontos)
 
 **5.1 Territory Balance Analysis** (8 pts)
+
 - Calculate territory potential (pipeline by segment, historical close rates)
 - Assess current territory allocation (deals per rep, quota vs. actual)
 - Identify imbalances (reps over/under-allocated)
@@ -155,6 +173,7 @@
 - AC: <300ms calculation for 1000+ reps, optimization suggestions
 
 **5.2 Quota Distribution Optimization** (8 pts)
+
 - Implement quota allocation algorithm (based on territory potential, historical performance)
 - Create what-if scenarios (if we add rep X to territory Y)
 - Build territory sizing recommendations (too many reps, too few)
@@ -166,6 +185,7 @@
 ### Epic 6: Model Lifecycle & Governance (Advanced Reporting) (10 pontos)
 
 **6.1 Model Monitoring & Alerting** (5 pts)
+
 - Implement model performance monitoring (AUC, precision, recall, F1 trending)
 - Build data drift detection (feature distribution changes)
 - Create prediction drift detection (model outputs drifting away from expected)
@@ -173,6 +193,7 @@
 - AC: Monitoring <1s per model, drift detection daily
 
 **6.2 Model Governance & Compliance** (5 pts)
+
 - Build model registry (all models, versions, metrics, status)
 - Implement bias detection & fairness metrics
 - Create model explainability reports (SHAP, feature importance)
@@ -196,17 +217,17 @@ Cycle 7 (Advanced ML & Automation)
 
 ## 📊 Métricas de Sucesso
 
-| Métrica | Target | Baseline (C6) |
-|---------|--------|---------------|
-| Ensemble AUC | 0.91+ | 0.85 |
-| Churn Prediction Accuracy | 85%+ | N/A (novo) |
-| Workflow Automation Success Rate | 99.95% | N/A (novo) |
-| Recommendation Adoption Rate | 50%+ | N/A (novo) |
-| Playbook Completion Rate | 70%+ | N/A (novo) |
-| Territory Balance Fairness (Gini) | <0.25 | N/A (novo) |
-| Model Monitoring Latency | <1s per check | N/A (novo) |
-| Test Coverage | 90%+ | 90% |
-| Uptime | 99.95% | 99.9% |
+| Métrica                           | Target        | Baseline (C6) |
+| --------------------------------- | ------------- | ------------- |
+| Ensemble AUC                      | 0.91+         | 0.85          |
+| Churn Prediction Accuracy         | 85%+          | N/A (novo)    |
+| Workflow Automation Success Rate  | 99.95%        | N/A (novo)    |
+| Recommendation Adoption Rate      | 50%+          | N/A (novo)    |
+| Playbook Completion Rate          | 70%+          | N/A (novo)    |
+| Territory Balance Fairness (Gini) | <0.25         | N/A (novo)    |
+| Model Monitoring Latency          | <1s per check | N/A (novo)    |
+| Test Coverage                     | 90%+          | 90%           |
+| Uptime                            | 99.95%        | 99.9%         |
 
 ---
 
@@ -253,15 +274,15 @@ Cycle 7 (Advanced ML & Automation)
 
 ## 📋 Timeline Detalhado
 
-| Semana | Foco | Deliverables |
-|--------|------|--------------|
-| Sem 1 (Feb 1-5) | ML Expansion | Feature v2.0, Random Forest model, unit tests |
-| Sem 2 (Feb 8-12) | Ensemble Models | XGBoost, meta-learner, model comparison tests |
-| Sem 3 (Feb 15-19) | Predictive Analytics | Churn prediction, win probability, account scoring |
-| Sem 4 (Feb 22-26) | Workflow Basics | Rules engine, triggers, action system |
-| Sem 5 (Mar 1-5) | Automation Complete | Playbooks, automation UI, integration tests |
-| Sem 6-7 (Mar 8-19) | Recommendations | Next-step recs, playbook engine, guidance system |
-| Sem 8 (Mar 22-31) | Territory & Polish | Territory optimization, model governance, E2E tests, load testing |
+| Semana             | Foco                 | Deliverables                                                      |
+| ------------------ | -------------------- | ----------------------------------------------------------------- |
+| Sem 1 (Feb 1-5)    | ML Expansion         | Feature v2.0, Random Forest model, unit tests                     |
+| Sem 2 (Feb 8-12)   | Ensemble Models      | XGBoost, meta-learner, model comparison tests                     |
+| Sem 3 (Feb 15-19)  | Predictive Analytics | Churn prediction, win probability, account scoring                |
+| Sem 4 (Feb 22-26)  | Workflow Basics      | Rules engine, triggers, action system                             |
+| Sem 5 (Mar 1-5)    | Automation Complete  | Playbooks, automation UI, integration tests                       |
+| Sem 6-7 (Mar 8-19) | Recommendations      | Next-step recs, playbook engine, guidance system                  |
+| Sem 8 (Mar 22-31)  | Territory & Polish   | Territory optimization, model governance, E2E tests, load testing |
 
 ---
 
@@ -297,12 +318,14 @@ Cycle 7 (Advanced ML & Automation)
 ## 🚀 Integration Points with Existing Systems
 
 ### **From Cycle 6**
+
 - Scoring service v1.0 (use as one of ensemble models)
 - Historical opportunity data + features
 - Alert system (can trigger workflows)
 - Forecasting engine (feed into risk models)
 
 ### **To Future Cycles**
+
 - Churn prediction → Retention campaigns (Cycle 8)
 - Territory optimization → Hiring/territory expansion planning (Cycle 8)
 - Playbook recommendations → Mobile app guidance (Cycle 8)

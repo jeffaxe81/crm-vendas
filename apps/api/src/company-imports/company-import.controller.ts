@@ -17,7 +17,7 @@ import type { AuthenticatedRequest } from "../authorization/authenticated-reques
 import { PermissionsGuard } from "../authorization/permissions.guard";
 import { RequirePermissions } from "../authorization/require-permissions.decorator";
 import type { RequestWithId } from "../observability/request-id.middleware";
-import { CompanyCsvValidationError } from "./company-csv-parser";
+import { CsvValidationError } from "../csv/csv-table-parser";
 import { CompanyImportService } from "./company-import.service";
 
 type CompanyImportRequest = AuthenticatedRequest & RequestWithId;
@@ -114,7 +114,7 @@ export class CompanyImportController {
   }
 
   private rethrowExpectedValidation(error: unknown): never {
-    if (error instanceof CompanyCsvValidationError) {
+    if (error instanceof CsvValidationError) {
       throw new BadRequestException({
         code: "VALIDATION_ERROR",
         message: error.message,

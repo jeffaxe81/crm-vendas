@@ -30,3 +30,30 @@ describe("role permissions", () => {
     expect(roleHasPermission("VIEWER", "pipeline.manage")).toBe(false);
   });
 });
+
+describe("C4.3 product permissions", () => {
+  it("grants product.read to every role and product.write to ADMIN/MANAGER", () => {
+    for (const role of ["ADMIN", "MANAGER", "SELLER", "VIEWER"] as const) {
+      expect(roleHasPermission(role, "product.read")).toBe(true);
+    }
+    expect(roleHasPermission("ADMIN", "product.write")).toBe(true);
+    expect(roleHasPermission("MANAGER", "product.write")).toBe(true);
+    expect(roleHasPermission("SELLER", "product.write")).toBe(false);
+    expect(roleHasPermission("VIEWER", "product.write")).toBe(false);
+  });
+});
+
+describe("C4.1.6 territory permissions", () => {
+  it("grants territory.read to every role", () => {
+    for (const role of ["ADMIN", "MANAGER", "SELLER", "VIEWER"] as const) {
+      expect(roleHasPermission(role, "territory.read")).toBe(true);
+    }
+  });
+
+  it("grants territory.write to ADMIN, MANAGER and SELLER but not VIEWER", () => {
+    expect(roleHasPermission("ADMIN", "territory.write")).toBe(true);
+    expect(roleHasPermission("MANAGER", "territory.write")).toBe(true);
+    expect(roleHasPermission("SELLER", "territory.write")).toBe(true);
+    expect(roleHasPermission("VIEWER", "territory.write")).toBe(false);
+  });
+});

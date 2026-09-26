@@ -9,6 +9,8 @@ export type CrmSection =
   | "activities"
   | "agenda"
   | "opportunities"
+  | "products"
+  | "territories"
   | "management-summary";
 
 type CrmShellProps = {
@@ -29,6 +31,10 @@ export function CrmShell({
   const canReadActivities = session.permissions.includes("activity.read");
   const canReadOpportunities = session.permissions.includes("opportunity.read");
   const canReadReports = session.permissions.includes("reports.read");
+  const canReadProducts = session.permissions.includes("product.read");
+  const canReadTerritories = session.permissions.includes("territory.read");
+  const isProductsActive = activeSection === "products";
+  const isTerritoriesActive = activeSection === "territories";
   const isActivitiesActive = activeSection === "activities";
   const isAgendaActive = activeSection === "agenda";
   const isOpportunitiesActive = activeSection === "opportunities";
@@ -97,6 +103,26 @@ export function CrmShell({
               onClick={() => onNavigate("opportunities")}
             >
               Oportunidades
+            </button>
+          ) : null}
+          {canReadProducts ? (
+            <button
+              type="button"
+              className={isProductsActive ? "is-active" : undefined}
+              aria-current={isProductsActive ? "page" : undefined}
+              onClick={() => onNavigate("products")}
+            >
+              Produtos
+            </button>
+          ) : null}
+          {canReadTerritories ? (
+            <button
+              type="button"
+              className={isTerritoriesActive ? "is-active" : undefined}
+              aria-current={isTerritoriesActive ? "page" : undefined}
+              onClick={() => onNavigate("territories")}
+            >
+              Territórios
             </button>
           ) : null}
           {canReadReports ? (

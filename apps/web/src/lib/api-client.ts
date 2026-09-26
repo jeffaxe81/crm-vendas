@@ -5,6 +5,17 @@ type ApiErrorPayload = {
   message?: string | string[];
 };
 
+/** Erro de API com o status HTTP, para telas que tratam códigos específicos (ex.: 409). */
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
 export type ApiRequestOptions = {
   accessToken?: string;
   method?: string;
@@ -74,7 +85,7 @@ export async function apiRequest<T>(
       : await response.json().catch(() => undefined);
 
   if (!response.ok) {
-    throw new Error(errorMessage(payload, response.status));
+    throw new ApiError(errorMessage(payload, response.status), response.status);
   }
 
   return payload as T;

@@ -7,6 +7,9 @@ import { AuditAdminModule } from "./audit/audit-admin.module";
 import { AuthModule } from "./auth/auth.module";
 import { AuthorizationModule } from "./authorization/authorization.module";
 import { CompanyImportModule } from "./company-imports/company-import.module";
+import { ContactImportModule } from "./contact-imports/contact-import.module";
+import { ProductImportModule } from "./product-imports/product-import.module";
+import { ProductsModule } from "./products/products.module";
 import { CompaniesModule } from "./companies/companies.module";
 import { parseApiEnvironment } from "./config/environment";
 import { ContactsModule } from "./contacts/contacts.module";
@@ -20,6 +23,7 @@ import { PipelinesModule } from "./pipelines/pipelines.module";
 import { RelationshipsModule } from "./relationships/relationships.module";
 import { ReportsModule } from "./reports/reports.module";
 import { TagsModule } from "./tags/tags.module";
+import { TerritoriesModule } from "./territories/territories.module";
 import { OrganizationUsersModule } from "./users/organization-users.module";
 
 @Module({
@@ -38,6 +42,9 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     OrganizationUsersModule,
     CompaniesModule,
     CompanyImportModule,
+    ContactImportModule,
+    ProductsModule,
+    ProductImportModule,
     ContactsModule,
     RelationshipsModule,
     TagsModule,
@@ -46,6 +53,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     ActivitiesModule,
     OpportunitiesModule,
     ReportsModule,
+    TerritoriesModule,
   ],
 })
 export class AppModule implements NestModule {

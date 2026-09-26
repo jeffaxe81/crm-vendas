@@ -185,6 +185,22 @@ export class OpportunitiesService {
           context.organizationId
         );
 
+        if (input.estimatedValue !== undefined) {
+          const itemCount = await tenant.opportunityItem.count({
+            where: {
+              organizationId: context.organizationId,
+              opportunityId: id,
+            },
+          });
+          if (itemCount > 0) {
+            throw new BadRequestException({
+              code: "OPPORTUNITY_VALUE_DERIVED",
+              message:
+                "O valor desta oportunidade é calculado pelos itens. Altere os itens em vez do valor.",
+            });
+          }
+        }
+
         const finalCompanyId =
           input.companyId !== undefined ? input.companyId : existing.companyId;
         const finalContactId =

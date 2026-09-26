@@ -20,7 +20,7 @@ async function bootstrap() {
     origin: environment.WEB_ORIGIN,
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "x-request-id"],
-    exposedHeaders: ["x-request-id"],
+    exposedHeaders: ["x-request-id", "Content-Disposition"],
   });
 
   await app.listen(environment.PORT, "0.0.0.0");
