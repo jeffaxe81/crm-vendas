@@ -4,6 +4,8 @@ import {
   type SalesByOwnerQuery,
   type SalesByProductQuery,
   FunnelQuerySchema,
+  SalesByMonthQuerySchema,
+  type SalesByMonthQuery,
 } from "@axes/contracts";
 import {
   BadRequestException,
@@ -28,6 +30,7 @@ import {
   parseActivitiesByOwnerQuery,
 } from "./activities-by-owner.service";
 import { SalesByOwnerService } from "./sales-by-owner.service";
+import { SalesByMonthService } from "./sales-by-month.service";
 import { SalesByProductService } from "./sales-by-product.service";
 import {
   formatSalesByProductCsv,
@@ -49,7 +52,9 @@ export class ReportsController {
     @Inject(FunnelService)
     private readonly funnel: FunnelService,
     @Inject(SalesByOwnerService)
-    private readonly salesByOwner: SalesByOwnerService
+    private readonly salesByOwner: SalesByOwnerService,
+    @Inject(SalesByMonthService)
+    private readonly salesByMonth: SalesByMonthService
   ) {}
 
   @Get("management-summary")
@@ -203,6 +208,29 @@ export class ReportsController {
       this.requireOrganizationId(request),
       parsed
     );
+  }
+
+  @Get("sales-by-month")
+  @RequirePermissions("reports.read")
+  readSalesByMonth(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = this.parseSalesByMonthQuery(query);
+    return this.salesByMonth.read(this.requireOrganizationId(request), parsed);
+  }
+
+  private parseSalesByMonthQuery(
+    query: Record<string, unknown>
+  ): SalesByMonthQuery {
+    const parsed = SalesByMonthQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+    return parsed.data;
   }
 
   private requireOrganizationId(request: AuthenticatedRequest): string {

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   REPORT_CSV_BOM,
   csvCell,
+  salesByMonthToCsv,
   salesByOwnerToCsv,
   salesByProductToCsv,
 } from "./report-csv";
@@ -110,6 +111,45 @@ describe("salesByOwnerToCsv", () => {
     expect(lines[2]).toBe("'=Bruno;Inativo;999,90;1;0,00;0;0,00;0;999,90;1;");
     expect(lines[3]).toBe(
       "Total geral;;999,90;1;3000,00;2;0,00;0;3999,90;3;100,0"
+    );
+  });
+});
+
+describe("salesByMonthToCsv", () => {
+  it("writes one line per month with a Portuguese label and the year total", () => {
+    const won = { opportunities: 1, value: "1200.00" };
+    const empty = { opportunities: 0, value: "0.00" };
+    const csv = salesByMonthToCsv({
+      asOf: "2026-09-25T12:00:00.000Z",
+      filters: { year: 2026, pipelineId: null },
+      items: [
+        {
+          month: 3,
+          open: empty,
+          won,
+          lost: empty,
+          total: won,
+          winRate: "100.0",
+        },
+      ],
+      totals: {
+        open: empty,
+        won,
+        lost: empty,
+        total: won,
+        winRate: "100.0",
+      },
+    });
+
+    const lines = csv.slice(1).split("\r\n");
+    expect(lines[0]).toBe(
+      "Mês;Em aberto - valor;Em aberto - oportunidades;Ganho - valor;Ganho - oportunidades;Perdido - valor;Perdido - oportunidades;Total - valor;Total - oportunidades;Taxa de conversão (%)"
+    );
+    expect(lines[1]).toBe(
+      "Março de 2026;0,00;0;1200,00;1;0,00;0;1200,00;1;100,0"
+    );
+    expect(lines[2]).toBe(
+      "Total do ano;0,00;0;1200,00;1;0,00;0;1200,00;1;100,0"
     );
   });
 });

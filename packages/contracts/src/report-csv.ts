@@ -1,3 +1,4 @@
+import type { SalesByMonthReport } from "./sales-by-month";
 import type { SalesByOwnerReport } from "./sales-by-owner";
 import type {
   SalesByProductBucket,
@@ -104,5 +105,44 @@ export function salesByOwnerToCsv(report: SalesByOwnerReport): string {
     ...cells(item),
   ]);
   rows.push(["Total geral", "", ...cells(report.totals)]);
+  return toCsv(header, rows);
+}
+
+const MONTH_LABELS = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+] as const;
+
+export function salesByMonthToCsv(report: SalesByMonthReport): string {
+  const header = [
+    "Mês",
+    ...PRODUCT_BUCKETS.flatMap(([, label]) => [
+      `${label} - valor`,
+      `${label} - oportunidades`,
+    ]),
+    "Taxa de conversão (%)",
+  ];
+  const cells = (row: SalesByMonthReport["totals"]) => [
+    ...PRODUCT_BUCKETS.flatMap(([key]) => [
+      csvDecimal(row[key].value),
+      row[key].opportunities,
+    ]),
+    row.winRate === null ? null : csvDecimal(row.winRate),
+  ];
+  const rows = report.items.map(item => [
+    `${MONTH_LABELS[item.month - 1]} de ${report.filters.year}`,
+    ...cells(item),
+  ]);
+  rows.push(["Total do ano", ...cells(report.totals)]);
   return toCsv(header, rows);
 }

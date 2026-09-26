@@ -153,9 +153,21 @@ export {
 } from "./sales-by-owner";
 
 export {
+  SalesByMonthBucketSchema,
+  SalesByMonthQuerySchema,
+  SalesByMonthReportSchema,
+  SalesByMonthRowSchema,
+  type SalesByMonthBucket,
+  type SalesByMonthQuery,
+  type SalesByMonthReport,
+  type SalesByMonthRow,
+} from "./sales-by-month";
+
+export {
   REPORT_CSV_BOM,
   csvCell,
   csvDecimal,
+  salesByMonthToCsv,
   salesByOwnerToCsv,
   salesByProductToCsv,
 } from "./report-csv";
