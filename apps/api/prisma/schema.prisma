@@ -373,6 +373,7 @@ model TerritoryMetrics {
   organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   territory          Territory    @relation(fields: [territoryId, organizationId], references: [id, organizationId], onDelete: Restrict)
 
+  @@unique([territoryId, organizationId], map: "territory_metrics_territory_organization_key")
   @@map("territory_metrics")
 }
 

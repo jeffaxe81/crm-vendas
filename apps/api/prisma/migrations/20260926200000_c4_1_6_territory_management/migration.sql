@@ -164,6 +164,9 @@ CREATE TABLE "territory_metrics" (
   CONSTRAINT "territory_metrics_territory_id_key" UNIQUE ("territory_id")
 );
 
+CREATE UNIQUE INDEX "territory_metrics_territory_organization_key"
+  ON "territory_metrics"("territory_id", "organization_id");
+
 ALTER TABLE "territory_metrics"
   ADD CONSTRAINT "territory_metrics_organization_id_fkey"
   FOREIGN KEY ("organization_id") REFERENCES "organizations"("id")
