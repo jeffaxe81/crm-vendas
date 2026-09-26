@@ -155,6 +155,7 @@ model Organization {
   tickets                  Ticket[]
   ticketEvents             TicketEvent[]
   ticketProtocolCounters   TicketProtocolCounter[]
+  supportQueues            SupportQueue[]
 
   @@map("organizations")
 }
@@ -224,6 +225,9 @@ model User {
   ticketsUpdated              Ticket[]                 @relation("TicketUpdatedBy")
   ticketsDeleted              Ticket[]                 @relation("TicketDeletedBy")
   ticketEventsAuthored        TicketEvent[]            @relation("TicketEventAuthor")
+  supportQueuesCreated        SupportQueue[]           @relation("SupportQueueCreatedBy")
+  supportQueuesUpdated        SupportQueue[]           @relation("SupportQueueUpdatedBy")
+  supportQueuesDeleted        SupportQueue[]           @relation("SupportQueueDeletedBy")
 
   @@map("users")
 }
@@ -710,6 +714,8 @@ model Ticket {
   updater            User                    @relation("TicketUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
   deleter            User?                   @relation("TicketDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
   events             TicketEvent[]
+  queueId            String?                 @map("queue_id") @db.Uuid
+  queue              SupportQueue?           @relation(fields: [queueId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "tickets_queue_org_fkey")
 
   @@unique([id, organizationId], map: "tickets_id_organization_key")
   @@unique([organizationId, protocol], map: "tickets_org_protocol_key")
@@ -717,6 +723,7 @@ model Ticket {
   @@index([organizationId, assigneeUserId, deletedAt, status], map: "tickets_org_assignee_status_idx")
   @@index([organizationId, companyId, deletedAt], map: "tickets_org_company_deleted_idx")
   @@index([organizationId, contactId, deletedAt], map: "tickets_org_contact_deleted_idx")
+  @@index([organizationId, queueId, deletedAt, status], map: "tickets_org_queue_status_idx")
   @@map("tickets")
 }
 
@@ -750,4 +757,31 @@ model TicketProtocolCounter {
 
   @@id([organizationId, year])
   @@map("ticket_protocol_counters")
+}
+
+/// C5.2 — fila de atendimento. Nome único por tenant (sem diferenciar caixa)
+/// entre filas não excluídas, via índice parcial `lower(name)` na migration.
+model SupportQueue {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  name           String       @db.VarChar(120)
+  description    String?
+  isActive       Boolean      @default(true) @map("is_active")
+  autoAssign     Boolean      @default(false) @map("auto_assign")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy      String       @map("created_by") @db.Uuid
+  updatedBy      String       @map("updated_by") @db.Uuid
+  version        Int          @default(1)
+  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz(6)
+  deletedBy      String?      @map("deleted_by") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  creator        User         @relation("SupportQueueCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater        User         @relation("SupportQueueUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter        User?        @relation("SupportQueueDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+  tickets        Ticket[]
+
+  @@unique([id, organizationId], map: "support_queues_id_organization_key")
+  @@index([organizationId, deletedAt, isActive], map: "support_queues_org_deleted_active_idx")
+  @@map("support_queues")
 }

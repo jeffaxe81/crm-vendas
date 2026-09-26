@@ -1156,3 +1156,11 @@ textarea {
 .ticket-detail__timeline .is-internal {
   color: #6b4e16;
 }
+
+/* C5.2 — filas de atendimento */
+.support-queues__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}

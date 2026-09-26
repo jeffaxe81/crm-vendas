@@ -1,6 +1,10 @@
 "use client";
 
-import { TICKET_STATUS_TRANSITIONS, type TicketStatus } from "@axes/contracts";
+import {
+  TICKET_FINAL_STATUSES,
+  TICKET_STATUS_TRANSITIONS,
+  type TicketStatus,
+} from "@axes/contracts";
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
@@ -17,11 +21,20 @@ type TicketDetailProps = {
   accessToken: string;
   ticket: TicketRecord;
   canWrite: boolean;
+  currentUserId?: string;
+  queueName?: string | null;
+  queueNames?: ReadonlyMap<string, string>;
   onChange: (ticket: TicketRecord) => void;
   onClose: () => void;
 };
 
-function describeEvent(event: TicketEventRecord): string {
+function describeEvent(
+  event: TicketEventRecord,
+  queueNames: ReadonlyMap<string, string>
+): string {
+  const metadata = event.metadata ?? {};
+  const queueLabel = (value: unknown) =>
+    typeof value === "string" ? (queueNames.get(value) ?? "Fila") : "Sem fila";
   switch (event.type) {
     case "CREATED":
       return "Solicitação aberta";
@@ -30,8 +43,19 @@ function describeEvent(event: TicketEventRecord): string {
         event.toStatus ? statusLabels[event.toStatus] : "—"
       }`;
     case "ASSIGNED":
+      if (metadata.autoAssigned === true) {
+        return "Atribuída automaticamente pela fila";
+      }
+      if (metadata.selfAssigned === true) {
+        return "Solicitação assumida";
+      }
       return "Responsável alterado";
     case "UPDATED":
+      if ("fromQueueId" in metadata || "toQueueId" in metadata) {
+        return `Fila: ${queueLabel(metadata.fromQueueId)} → ${queueLabel(
+          metadata.toQueueId
+        )}`;
+      }
       return "Dados atualizados";
     default:
       return event.isInternal ? "Comentário interno" : "Comentário";
@@ -43,6 +67,9 @@ export function TicketDetail({
   accessToken,
   ticket,
   canWrite,
+  currentUserId,
+  queueName = null,
+  queueNames = new Map<string, string>(),
   onChange,
   onClose,
 }: TicketDetailProps) {
@@ -78,6 +105,39 @@ export function TicketDetail({
   }, [accessToken, ticket.id, reload]);
 
   const transitions = TICKET_STATUS_TRANSITIONS[ticket.status];
+  const isMine = Boolean(
+    currentUserId && ticket.assigneeUserId === currentUserId
+  );
+  const canTakeOver =
+    canWrite &&
+    Boolean(currentUserId) &&
+    !isMine &&
+    !TICKET_FINAL_STATUSES.includes(ticket.status);
+
+  async function assignToMe() {
+    setBusy(true);
+    setError("");
+    try {
+      const updated = await apiRequest<TicketRecord>(
+        `/tickets/${ticket.id}/assign-to-me`,
+        {
+          accessToken,
+          method: "POST",
+          body: { version: ticket.version },
+        }
+      );
+      onChange(updated);
+      setReload(current => current + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível assumir a solicitação."
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function submitStatus(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -153,9 +213,21 @@ export function TicketDetail({
           <p>Protocolo {ticket.protocol}</p>
           <h2>{ticket.subject}</h2>
         </div>
-        <button type="button" onClick={onClose}>
-          Fechar
-        </button>
+        <div className="support-queues__actions">
+          {canTakeOver ? (
+            <button
+              type="button"
+              className="button"
+              disabled={busy}
+              onClick={() => void assignToMe()}
+            >
+              Assumir
+            </button>
+          ) : null}
+          <button type="button" onClick={onClose}>
+            Fechar
+          </button>
+        </div>
       </div>
 
       <dl className="ticket-detail__facts">
@@ -170,6 +242,20 @@ export function TicketDetail({
         <div>
           <dt>Canal</dt>
           <dd>{channelLabels[ticket.channel]}</dd>
+        </div>
+        <div>
+          <dt>Fila</dt>
+          <dd>{queueName ?? "Sem fila"}</dd>
+        </div>
+        <div>
+          <dt>Responsável</dt>
+          <dd>
+            {isMine
+              ? "Você"
+              : ticket.assigneeUserId
+                ? "Outro membro"
+                : "Sem responsável"}
+          </dd>
         </div>
         <div>
           <dt>Aberta em</dt>
@@ -190,7 +276,7 @@ export function TicketDetail({
             key={event.id}
             className={event.isInternal ? "is-internal" : undefined}
           >
-            <strong>{describeEvent(event)}</strong>
+            <strong>{describeEvent(event, queueNames)}</strong>
             <span> · {dateTime.format(new Date(event.createdAt))}</span>
             {event.body ? <p>{event.body}</p> : null}
           </li>

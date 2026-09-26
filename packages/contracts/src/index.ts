@@ -186,6 +186,9 @@ export {
 
 export {
   TICKET_FINAL_STATUSES,
+  TICKET_OPEN_STATUSES,
+  TicketAssignToMeInputSchema,
+  type TicketAssignToMeInput,
   TICKET_STATUS_TRANSITIONS,
   TicketChannelSchema,
   TicketCommentInputSchema,
@@ -208,3 +211,13 @@ export {
   type TicketStatusChangeInput,
   type TicketUpdateInput,
 } from "./tickets";
+
+export {
+  SupportQueueCreateInputSchema,
+  SupportQueueListQuerySchema,
+  SupportQueueUpdateInputSchema,
+  type SupportQueue,
+  type SupportQueueCreateInput,
+  type SupportQueueListQuery,
+  type SupportQueueUpdateInput,
+} from "./support-queues";

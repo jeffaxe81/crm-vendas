@@ -40,6 +40,7 @@ export type TicketRecord = {
   companyId: string | null;
   contactId: string | null;
   assigneeUserId: string | null;
+  queueId: string | null;
   openedAt: string;
   firstResponseAt: string | null;
   resolvedAt: string | null;
@@ -54,8 +55,20 @@ export type TicketEventRecord = {
   isInternal: boolean;
   fromStatus: TicketStatus | null;
   toStatus: TicketStatus | null;
+  metadata?: Record<string, unknown> | null;
   authorUserId: string;
   createdAt: string;
+};
+
+/** C5.2 — fila de atendimento como devolvida por `/support-queues`. */
+export type SupportQueueRecord = {
+  id: string;
+  name: string;
+  description: string | null;
+  isActive: boolean;
+  autoAssign: boolean;
+  version: number;
+  openTicketCount: number;
 };
 
 export const dateTime = new Intl.DateTimeFormat("pt-BR", {

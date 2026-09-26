@@ -66,6 +66,9 @@ function authenticate(permissions: string[]) {
     if (url.includes("/companies?")) {
       return response({ items: [], page: 1, limit: 20, total: 0 });
     }
+    if (url.endsWith("/support-queues")) {
+      return response({ items: [] });
+    }
     if (url.includes("/tickets?")) {
       return response({ items: [product], page: 1, limit: 100, total: 1 });
     }
@@ -120,5 +123,24 @@ describe("C4.3.3 tickets navigation", () => {
     expect(
       fetchMock.mock.calls.some(([input]) => String(input).includes("/tickets"))
     ).toBe(false);
+  });
+
+  it("shows queue management only with support.manage", async () => {
+    authenticate(["company.read", "ticket.read", "ticket.write"]);
+    await screen.findByText(baseSession.organization.name);
+    fireEvent.click(await screen.findByRole("button", { name: "Atendimento" }));
+    await screen.findByRole("heading", { name: "Solicitações" });
+    expect(
+      screen.queryByRole("button", { name: "Gerenciar filas" })
+    ).not.toBeInTheDocument();
+  });
+
+  it("offers queue management to support.manage sessions", async () => {
+    authenticate(["company.read", "ticket.read", "support.manage"]);
+    await screen.findByText(baseSession.organization.name);
+    fireEvent.click(await screen.findByRole("button", { name: "Atendimento" }));
+    expect(
+      await screen.findByRole("button", { name: "Gerenciar filas" })
+    ).toBeInTheDocument();
   });
 });
