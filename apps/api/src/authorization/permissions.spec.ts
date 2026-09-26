@@ -42,3 +42,18 @@ describe("C4.3 product permissions", () => {
     expect(roleHasPermission("VIEWER", "product.write")).toBe(false);
   });
 });
+
+describe("C4.1.6 territory permissions", () => {
+  it("grants territory.read to every role", () => {
+    for (const role of ["ADMIN", "MANAGER", "SELLER", "VIEWER"] as const) {
+      expect(roleHasPermission(role, "territory.read")).toBe(true);
+    }
+  });
+
+  it("grants territory.write to ADMIN, MANAGER and SELLER but not VIEWER", () => {
+    expect(roleHasPermission("ADMIN", "territory.write")).toBe(true);
+    expect(roleHasPermission("MANAGER", "territory.write")).toBe(true);
+    expect(roleHasPermission("SELLER", "territory.write")).toBe(true);
+    expect(roleHasPermission("VIEWER", "territory.write")).toBe(false);
+  });
+});

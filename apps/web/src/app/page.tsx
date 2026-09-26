@@ -15,6 +15,7 @@ import { CrmShell, type CrmSection } from "./crm-shell";
 import { OpportunitiesView } from "./opportunities/opportunities-view";
 import { ProductsView } from "./products/products-view";
 import { ManagementSummaryView } from "./reports/management-summary-view";
+import { TerritoriesView } from "./territories/territories-view";
 
 export default function Home() {
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
@@ -154,6 +155,11 @@ export default function Home() {
           <ProductsView
             accessToken={session.accessToken}
             canWrite={session.permissions.includes("product.write")}
+          />
+        ) : activeSection === "territories" ? (
+          <TerritoriesView
+            accessToken={session.accessToken}
+            canWrite={session.permissions.includes("territory.write")}
           />
         ) : activeSection === "management-summary" ? (
           <ManagementSummaryView accessToken={session.accessToken} />

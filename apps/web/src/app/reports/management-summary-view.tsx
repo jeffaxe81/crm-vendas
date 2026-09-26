@@ -7,16 +7,25 @@ import {
 import { useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { SalesByOwnerView } from "./sales-by-owner-view";
 import { SalesByProductView } from "./sales-by-product-view";
 import { ActivitiesByOwnerView } from "./activities-by-owner-view";
 import { FunnelView } from "./funnel-view";
+import { SalesByMonthView } from "./sales-by-month-view";
 
 type ReportTab =
-  "summary" | "sales-by-product" | "funnel" | "activities-by-owner";
+  | "summary"
+  | "sales-by-product"
+  | "sales-by-owner"
+  | "sales-by-month"
+  | "funnel"
+  | "activities-by-owner";
 
 const reportTabs: Array<{ id: ReportTab; label: string }> = [
   { id: "summary", label: "Indicadores" },
   { id: "sales-by-product", label: "Vendas por produto" },
+  { id: "sales-by-owner", label: "Vendas por vendedor" },
+  { id: "sales-by-month", label: "Vendas por período" },
   { id: "funnel", label: "Funil" },
   { id: "activities-by-owner", label: "Atividades" },
 ];
@@ -130,6 +139,22 @@ export function ManagementSummaryView({
           aria-labelledby="report-tab-sales-by-product"
         >
           <SalesByProductView accessToken={accessToken} />
+        </div>
+      ) : tab === "sales-by-owner" ? (
+        <div
+          role="tabpanel"
+          id="report-panel-sales-by-owner"
+          aria-labelledby="report-tab-sales-by-owner"
+        >
+          <SalesByOwnerView accessToken={accessToken} />
+        </div>
+      ) : tab === "sales-by-month" ? (
+        <div
+          role="tabpanel"
+          id="report-panel-sales-by-month"
+          aria-labelledby="report-tab-sales-by-month"
+        >
+          <SalesByMonthView accessToken={accessToken} />
         </div>
       ) : tab === "funnel" ? (
         <div

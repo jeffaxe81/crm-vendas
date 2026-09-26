@@ -1,7 +1,11 @@
 import {
+  SalesByOwnerQuerySchema,
   SalesByProductQuerySchema,
+  type SalesByOwnerQuery,
   type SalesByProductQuery,
   FunnelQuerySchema,
+  SalesByMonthQuerySchema,
+  type SalesByMonthQuery,
 } from "@axes/contracts";
 import {
   BadRequestException,
@@ -25,6 +29,8 @@ import {
   ActivitiesByOwnerService,
   parseActivitiesByOwnerQuery,
 } from "./activities-by-owner.service";
+import { SalesByOwnerService } from "./sales-by-owner.service";
+import { SalesByMonthService } from "./sales-by-month.service";
 import { SalesByProductService } from "./sales-by-product.service";
 import {
   formatSalesByProductCsv,
@@ -44,7 +50,11 @@ export class ReportsController {
     @Inject(SalesByProductOwnersService)
     private readonly salesByProductOwners: SalesByProductOwnersService,
     @Inject(FunnelService)
-    private readonly funnel: FunnelService
+    private readonly funnel: FunnelService,
+    @Inject(SalesByOwnerService)
+    private readonly salesByOwner: SalesByOwnerService,
+    @Inject(SalesByMonthService)
+    private readonly salesByMonth: SalesByMonthService
   ) {}
 
   @Get("management-summary")
@@ -86,6 +96,37 @@ export class ReportsController {
     }
 
     return this.salesByProduct.read(request.auth.organizationId, parsed);
+  }
+
+  @Get("sales-by-owner")
+  @RequirePermissions("reports.read")
+  readSalesByOwner(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = this.parseSalesByOwnerQuery(query);
+
+    if (!request.auth) {
+      throw new UnauthorizedException({
+        code: "AUTHENTICATION_REQUIRED",
+        message: "Sessão autenticada obrigatória.",
+      });
+    }
+
+    return this.salesByOwner.read(request.auth.organizationId, parsed);
+  }
+
+  private parseSalesByOwnerQuery(
+    query: Record<string, unknown>
+  ): SalesByOwnerQuery {
+    const parsed = SalesByOwnerQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+    return parsed.data;
   }
 
   private parseSalesByProductQuery(
@@ -167,6 +208,29 @@ export class ReportsController {
       this.requireOrganizationId(request),
       parsed
     );
+  }
+
+  @Get("sales-by-month")
+  @RequirePermissions("reports.read")
+  readSalesByMonth(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = this.parseSalesByMonthQuery(query);
+    return this.salesByMonth.read(this.requireOrganizationId(request), parsed);
+  }
+
+  private parseSalesByMonthQuery(
+    query: Record<string, unknown>
+  ): SalesByMonthQuery {
+    const parsed = SalesByMonthQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+    return parsed.data;
   }
 
   private requireOrganizationId(request: AuthenticatedRequest): string {

@@ -34,6 +34,27 @@ export {
 } from "./companies";
 
 export {
+  TerritoryCoverageStatusSchema,
+  TerritoryCoverageTargetInputSchema,
+  TerritoryCreateInputSchema,
+  TerritoryListQuerySchema,
+  TerritoryQuotaInputSchema,
+  TerritoryQuotaPeriodSchema,
+  TerritoryQuotaQuerySchema,
+  TerritoryReassignInputSchema,
+  TerritoryUpdateInputSchema,
+  type TerritoryCoverageStatus,
+  type TerritoryCoverageTargetInput,
+  type TerritoryCreateInput,
+  type TerritoryListQuery,
+  type TerritoryQuotaInput,
+  type TerritoryQuotaPeriod,
+  type TerritoryQuotaQuery,
+  type TerritoryReassignInput,
+  type TerritoryUpdateInput,
+} from "./territories";
+
+export {
   type CompanyImportPreview,
   type CompanyImportPreviewRow,
   type CompanyImportResult,
@@ -139,6 +160,38 @@ export {
   type SalesByProductReport,
   type SalesByProductRow,
 } from "./sales-by-product";
+
+export {
+  ReportPercentSchema,
+  SalesByOwnerBucketSchema,
+  SalesByOwnerQuerySchema,
+  SalesByOwnerReportSchema,
+  SalesByOwnerRowSchema,
+  type SalesByOwnerBucket,
+  type SalesByOwnerQuery,
+  type SalesByOwnerReport,
+  type SalesByOwnerRow,
+} from "./sales-by-owner";
+
+export {
+  SalesByMonthBucketSchema,
+  SalesByMonthQuerySchema,
+  SalesByMonthReportSchema,
+  SalesByMonthRowSchema,
+  type SalesByMonthBucket,
+  type SalesByMonthQuery,
+  type SalesByMonthReport,
+  type SalesByMonthRow,
+} from "./sales-by-month";
+
+export {
+  REPORT_CSV_BOM,
+  csvCell,
+  csvDecimal,
+  salesByMonthToCsv,
+  salesByOwnerToCsv,
+  salesByProductToCsv,
+} from "./report-csv";
 
 export { TagInputSchema, type TagInput } from "./tags";
 

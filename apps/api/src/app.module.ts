@@ -23,6 +23,7 @@ import { PipelinesModule } from "./pipelines/pipelines.module";
 import { RelationshipsModule } from "./relationships/relationships.module";
 import { ReportsModule } from "./reports/reports.module";
 import { TagsModule } from "./tags/tags.module";
+import { TerritoriesModule } from "./territories/territories.module";
 import { OrganizationUsersModule } from "./users/organization-users.module";
 
 @Module({
@@ -52,6 +53,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     ActivitiesModule,
     OpportunitiesModule,
     ReportsModule,
+    TerritoriesModule,
   ],
 })
 export class AppModule implements NestModule {
