@@ -14,6 +14,7 @@ import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
 import { OpportunitiesView } from "./opportunities/opportunities-view";
 import { ProductsView } from "./products/products-view";
+import { TicketsView } from "./tickets/tickets-view";
 import { ManagementSummaryView } from "./reports/management-summary-view";
 
 export default function Home() {
@@ -149,6 +150,11 @@ export default function Home() {
           <AgendaView
             accessToken={session.accessToken}
             ownerUserId={session.user.id}
+          />
+        ) : activeSection === "tickets" ? (
+          <TicketsView
+            accessToken={session.accessToken}
+            canWrite={session.permissions.includes("ticket.write")}
           />
         ) : activeSection === "products" ? (
           <ProductsView

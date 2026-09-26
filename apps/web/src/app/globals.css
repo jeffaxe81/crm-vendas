@@ -1139,3 +1139,20 @@ textarea {
   font-size: 0.72rem;
   font-weight: 800;
 }
+
+/* C5.1 — Atendimento */
+.ticket-detail__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ticket-detail__timeline {
+  display: grid;
+  gap: 8px;
+  padding-left: 18px;
+}
+
+.ticket-detail__timeline .is-internal {
+  color: #6b4e16;
+}

@@ -84,6 +84,47 @@ enum ActivityPriority {
   @@map("activity_priority")
 }
 
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_CUSTOMER
+  RESOLVED
+  CLOSED
+  CANCELLED
+
+  @@map("ticket_status")
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+
+  @@map("ticket_priority")
+}
+
+enum TicketChannel {
+  PHONE
+  EMAIL
+  WHATSAPP
+  WEB
+  IN_PERSON
+  OTHER
+
+  @@map("ticket_channel")
+}
+
+enum TicketEventType {
+  CREATED
+  COMMENT
+  STATUS_CHANGED
+  ASSIGNED
+  UPDATED
+
+  @@map("ticket_event_type")
+}
+
 model Organization {
   id                       String                    @id @default(uuid()) @db.Uuid
   name                     String                    @db.VarChar(160)
@@ -111,6 +152,9 @@ model Organization {
   roles                    Role[]
   products                 Product[]
   opportunityItems         OpportunityItem[]
+  tickets                  Ticket[]
+  ticketEvents             TicketEvent[]
+  ticketProtocolCounters   TicketProtocolCounter[]
 
   @@map("organizations")
 }
@@ -176,6 +220,10 @@ model User {
   productsDeleted             Product[]                @relation("ProductDeletedBy")
   opportunityItemsCreated     OpportunityItem[]        @relation("OpportunityItemCreatedBy")
   opportunityItemsUpdated     OpportunityItem[]        @relation("OpportunityItemUpdatedBy")
+  ticketsCreated              Ticket[]                 @relation("TicketCreatedBy")
+  ticketsUpdated              Ticket[]                 @relation("TicketUpdatedBy")
+  ticketsDeleted              Ticket[]                 @relation("TicketDeletedBy")
+  ticketEventsAuthored        TicketEvent[]            @relation("TicketEventAuthor")
 
   @@map("users")
 }
@@ -191,6 +239,7 @@ model OrganizationMembership {
   organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   user               User           @relation(fields: [userId], references: [id], onDelete: Restrict)
   ownedOpportunities Opportunity[]  @relation("OpportunityOwnerMembership")
+  assignedTickets    Ticket[]       @relation("TicketAssigneeMembership")
 
   @@unique([organizationId, userId], map: "organization_memberships_org_user_key")
   @@index([userId, isActive], map: "organization_memberships_user_active_idx")
@@ -264,6 +313,7 @@ model Company {
   customFieldValues   CompanyCustomFieldValue[]
   activities          Activity[]
   opportunities       Opportunity[]
+  tickets             Ticket[]
 
   @@unique([id, organizationId], map: "companies_id_organization_key")
   @@index([organizationId, deletedAt, legalName], map: "companies_org_deleted_legal_name_idx")
@@ -295,6 +345,7 @@ model Contact {
   customFieldValues   ContactCustomFieldValue[]
   activities          Activity[]
   opportunities       Opportunity[]
+  tickets             Ticket[]
 
   @@unique([id, organizationId], map: "contacts_id_organization_key")
   @@index([organizationId, deletedAt, fullName], map: "contacts_org_deleted_full_name_idx")
@@ -625,4 +676,78 @@ model OpportunityItem {
   @@index([organizationId, opportunityId], map: "opportunity_items_org_opportunity_idx")
   @@index([organizationId, productId], map: "opportunity_items_org_product_idx")
   @@map("opportunity_items")
+}
+
+/// C5.1 — solicitações de atendimento com protocolo por organização/ano.
+model Ticket {
+  id                 String                  @id @default(uuid()) @db.Uuid
+  organizationId     String                  @map("organization_id") @db.Uuid
+  protocol           String                  @db.VarChar(20)
+  subject            String                  @db.VarChar(200)
+  description        String?
+  status             TicketStatus            @default(OPEN)
+  priority           TicketPriority          @default(MEDIUM)
+  channel            TicketChannel           @default(OTHER)
+  companyId          String?                 @map("company_id") @db.Uuid
+  contactId          String?                 @map("contact_id") @db.Uuid
+  assigneeUserId     String?                 @map("assignee_user_id") @db.Uuid
+  openedAt           DateTime                @default(now()) @map("opened_at") @db.Timestamptz(6)
+  firstResponseAt    DateTime?               @map("first_response_at") @db.Timestamptz(6)
+  resolvedAt         DateTime?               @map("resolved_at") @db.Timestamptz(6)
+  closedAt           DateTime?               @map("closed_at") @db.Timestamptz(6)
+  createdAt          DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy          String                  @map("created_by") @db.Uuid
+  updatedBy          String                  @map("updated_by") @db.Uuid
+  version            Int                     @default(1)
+  deletedAt          DateTime?               @map("deleted_at") @db.Timestamptz(6)
+  deletedBy          String?                 @map("deleted_by") @db.Uuid
+  organization       Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  company            Company?                @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "tickets_company_org_fkey")
+  contact            Contact?                @relation(fields: [contactId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "tickets_contact_org_fkey")
+  assigneeMembership OrganizationMembership? @relation("TicketAssigneeMembership", fields: [organizationId, assigneeUserId], references: [organizationId, userId], onDelete: Restrict, map: "tickets_assignee_membership_fkey")
+  creator            User                    @relation("TicketCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater            User                    @relation("TicketUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter            User?                   @relation("TicketDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+  events             TicketEvent[]
+
+  @@unique([id, organizationId], map: "tickets_id_organization_key")
+  @@unique([organizationId, protocol], map: "tickets_org_protocol_key")
+  @@index([organizationId, deletedAt, status, priority], map: "tickets_org_deleted_status_priority_idx")
+  @@index([organizationId, assigneeUserId, deletedAt, status], map: "tickets_org_assignee_status_idx")
+  @@index([organizationId, companyId, deletedAt], map: "tickets_org_company_deleted_idx")
+  @@index([organizationId, contactId, deletedAt], map: "tickets_org_contact_deleted_idx")
+  @@map("tickets")
+}
+
+/// C5.1 — linha do tempo (append-only) da solicitação.
+model TicketEvent {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizationId String          @map("organization_id") @db.Uuid
+  ticketId       String          @map("ticket_id") @db.Uuid
+  type           TicketEventType
+  body           String?
+  isInternal     Boolean         @default(false) @map("is_internal")
+  fromStatus     TicketStatus?   @map("from_status")
+  toStatus       TicketStatus?   @map("to_status")
+  metadata       Json?
+  authorUserId   String          @map("author_user_id") @db.Uuid
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  ticket         Ticket          @relation(fields: [ticketId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "ticket_events_ticket_org_fkey")
+  author         User            @relation("TicketEventAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, ticketId, createdAt], map: "ticket_events_org_ticket_created_idx")
+  @@map("ticket_events")
+}
+
+/// C5.1 — contador de protocolo por organização e ano.
+model TicketProtocolCounter {
+  organizationId String       @map("organization_id") @db.Uuid
+  year           Int
+  lastValue      Int          @map("last_value")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@id([organizationId, year])
+  @@map("ticket_protocol_counters")
 }

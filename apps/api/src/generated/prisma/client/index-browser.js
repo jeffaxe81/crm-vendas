@@ -418,6 +418,51 @@ exports.Prisma.OpportunityItemScalarFieldEnum = {
   updatedBy: 'updatedBy'
 };
 
+exports.Prisma.TicketScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  protocol: 'protocol',
+  subject: 'subject',
+  description: 'description',
+  status: 'status',
+  priority: 'priority',
+  channel: 'channel',
+  companyId: 'companyId',
+  contactId: 'contactId',
+  assigneeUserId: 'assigneeUserId',
+  openedAt: 'openedAt',
+  firstResponseAt: 'firstResponseAt',
+  resolvedAt: 'resolvedAt',
+  closedAt: 'closedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  version: 'version',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.TicketEventScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  ticketId: 'ticketId',
+  type: 'type',
+  body: 'body',
+  isInternal: 'isInternal',
+  fromStatus: 'fromStatus',
+  toStatus: 'toStatus',
+  metadata: 'metadata',
+  authorUserId: 'authorUserId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TicketProtocolCounterScalarFieldEnum = {
+  organizationId: 'organizationId',
+  year: 'year',
+  lastValue: 'lastValue'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -506,6 +551,39 @@ exports.ActivityPriority = exports.$Enums.ActivityPriority = {
   HIGH: 'HIGH'
 };
 
+exports.TicketStatus = exports.$Enums.TicketStatus = {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  WAITING_CUSTOMER: 'WAITING_CUSTOMER',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.TicketPriority = exports.$Enums.TicketPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+};
+
+exports.TicketChannel = exports.$Enums.TicketChannel = {
+  PHONE: 'PHONE',
+  EMAIL: 'EMAIL',
+  WHATSAPP: 'WHATSAPP',
+  WEB: 'WEB',
+  IN_PERSON: 'IN_PERSON',
+  OTHER: 'OTHER'
+};
+
+exports.TicketEventType = exports.$Enums.TicketEventType = {
+  CREATED: 'CREATED',
+  COMMENT: 'COMMENT',
+  STATUS_CHANGED: 'STATUS_CHANGED',
+  ASSIGNED: 'ASSIGNED',
+  UPDATED: 'UPDATED'
+};
+
 exports.Prisma.ModelName = {
   Organization: 'Organization',
   Role: 'Role',
@@ -530,7 +608,10 @@ exports.Prisma.ModelName = {
   Activity: 'Activity',
   Opportunity: 'Opportunity',
   Product: 'Product',
-  OpportunityItem: 'OpportunityItem'
+  OpportunityItem: 'OpportunityItem',
+  Ticket: 'Ticket',
+  TicketEvent: 'TicketEvent',
+  TicketProtocolCounter: 'TicketProtocolCounter'
 };
 
 /**

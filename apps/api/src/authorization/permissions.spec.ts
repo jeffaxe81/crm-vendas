@@ -42,3 +42,15 @@ describe("C4.3 product permissions", () => {
     expect(roleHasPermission("VIEWER", "product.write")).toBe(false);
   });
 });
+
+describe("C5.1 ticket permissions", () => {
+  it("grants ticket.read to every role and ticket.write to commercial roles", () => {
+    for (const role of ["ADMIN", "MANAGER", "SELLER", "VIEWER"] as const) {
+      expect(roleHasPermission(role, "ticket.read")).toBe(true);
+    }
+    expect(roleHasPermission("ADMIN", "ticket.write")).toBe(true);
+    expect(roleHasPermission("MANAGER", "ticket.write")).toBe(true);
+    expect(roleHasPermission("SELLER", "ticket.write")).toBe(true);
+    expect(roleHasPermission("VIEWER", "ticket.write")).toBe(false);
+  });
+});
