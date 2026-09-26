@@ -12,6 +12,7 @@ import {
   ActivitiesByOwnerService,
   systemReportClock,
 } from "./activities-by-owner.service";
+import { CsatReportService } from "./csat.service";
 
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
@@ -23,6 +24,7 @@ import {
     FunnelService,
     ActivitiesByOwnerService,
     { provide: ACTIVITIES_BY_OWNER_CLOCK, useValue: systemReportClock },
+    CsatReportService,
   ],
   exports: [
     ManagementSummaryService,
@@ -30,6 +32,7 @@ import {
     SalesByProductOwnersService,
     FunnelService,
     ActivitiesByOwnerService,
+    CsatReportService,
   ],
 })
 export class ReportsModule {}

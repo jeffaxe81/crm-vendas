@@ -155,6 +155,7 @@ model Organization {
   tickets                  Ticket[]
   ticketEvents             TicketEvent[]
   ticketProtocolCounters   TicketProtocolCounter[]
+  ticketSatisfactions      TicketSatisfactionSurvey[]
 
   @@map("organizations")
 }
@@ -224,6 +225,8 @@ model User {
   ticketsUpdated              Ticket[]                 @relation("TicketUpdatedBy")
   ticketsDeleted              Ticket[]                 @relation("TicketDeletedBy")
   ticketEventsAuthored        TicketEvent[]            @relation("TicketEventAuthor")
+  ticketSatisfactionsCreated  TicketSatisfactionSurvey[] @relation("TicketSatisfactionCreatedBy")
+  ticketSatisfactionsUpdated  TicketSatisfactionSurvey[] @relation("TicketSatisfactionUpdatedBy")
 
   @@map("users")
 }
@@ -710,6 +713,7 @@ model Ticket {
   updater            User                    @relation("TicketUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
   deleter            User?                   @relation("TicketDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
   events             TicketEvent[]
+  satisfactionSurvey TicketSatisfactionSurvey?
 
   @@unique([id, organizationId], map: "tickets_id_organization_key")
   @@unique([organizationId, protocol], map: "tickets_org_protocol_key")
@@ -750,4 +754,31 @@ model TicketProtocolCounter {
 
   @@id([organizationId, year])
   @@map("ticket_protocol_counters")
+}
+
+/// C5.4 — pesquisa de satisfação (CSAT), uma por solicitação. Só o hash
+/// SHA-256 do token do cliente é gravado.
+model TicketSatisfactionSurvey {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  ticketId       String       @map("ticket_id") @db.Uuid
+  tokenHash      String       @unique(map: "ticket_satisfaction_surveys_token_hash_key") @map("token_hash") @db.VarChar(64)
+  expiresAt      DateTime     @map("expires_at") @db.Timestamptz(6)
+  rating         Int?         @db.SmallInt
+  comment        String?
+  respondedAt    DateTime?    @map("responded_at") @db.Timestamptz(6)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy      String       @map("created_by") @db.Uuid
+  updatedBy      String       @map("updated_by") @db.Uuid
+  version        Int          @default(1)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  ticket         Ticket       @relation(fields: [ticketId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "ticket_satisfaction_surveys_ticket_org_fkey")
+  creator        User         @relation("TicketSatisfactionCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater        User         @relation("TicketSatisfactionUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+
+  @@unique([id, organizationId], map: "ticket_satisfaction_surveys_id_organization_key")
+  @@unique([ticketId, organizationId], map: "ticket_satisfaction_surveys_ticket_org_key")
+  @@index([organizationId, createdAt], map: "ticket_satisfaction_surveys_org_created_idx")
+  @@map("ticket_satisfaction_surveys")
 }

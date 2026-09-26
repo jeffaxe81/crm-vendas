@@ -1156,3 +1156,55 @@ textarea {
 .ticket-detail__timeline .is-internal {
   color: #6b4e16;
 }
+
+/* C5.4 — Satisfação */
+.ticket-satisfaction {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d7e1ec;
+  border-radius: 10px;
+}
+
+.ticket-satisfaction h3 {
+  margin: 0;
+}
+
+.ticket-satisfaction__link {
+  display: grid;
+  gap: 8px;
+}
+
+.ticket-satisfaction__link input {
+  width: 100%;
+  font-family: monospace;
+}
+
+.login-form fieldset {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #bfcddd;
+  border-radius: 10px;
+}
+
+.login-form fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.login-form fieldset input {
+  width: auto;
+  min-height: 0;
+}
+
+.login-form textarea {
+  min-height: 96px;
+  padding: 10px 14px;
+  border: 1px solid #bfcddd;
+  border-radius: 10px;
+  font: inherit;
+}

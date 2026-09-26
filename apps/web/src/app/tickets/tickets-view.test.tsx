@@ -18,6 +18,14 @@ function response(body: unknown, status = 200): Response {
   } as Response;
 }
 
+/** C5.4: o bloco Satisfação consulta a pesquisa; o resto segue a fila do mock. */
+function withSatisfaction(fetchMock: (...args: unknown[]) => unknown) {
+  return (url: string, init?: RequestInit) =>
+    String(url).includes("/satisfaction")
+      ? Promise.resolve(response({ survey: null }))
+      : fetchMock(url, init);
+}
+
 const ticket = {
   id: "t-1",
   protocol: "2026-000001",
@@ -64,7 +72,7 @@ describe("C5.1 tickets view", () => {
           ],
         })
       );
-    vi.stubGlobal("fetch", fetchMock);
+    vi.stubGlobal("fetch", withSatisfaction(fetchMock));
 
     render(<TicketsView accessToken="token" canWrite />);
     expect(
@@ -106,7 +114,7 @@ describe("C5.1 tickets view", () => {
         response({ ...ticket, status: "IN_PROGRESS", version: 2 }, 201)
       )
       .mockResolvedValueOnce(response({ items: [] }));
-    vi.stubGlobal("fetch", fetchMock);
+    vi.stubGlobal("fetch", withSatisfaction(fetchMock));
 
     render(<TicketsView accessToken="token" canWrite />);
     fireEvent.click(
@@ -146,13 +154,57 @@ describe("C5.1 tickets view", () => {
     });
   });
 
+  it("shows the satisfaction link returned by the resolution once (C5.4)", async () => {
+    const url = `http://127.0.0.1:3000/avaliacao/${"Z".repeat(43)}`;
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ items: [ticket], total: 1 }))
+      .mockResolvedValueOnce(response({ items: [] }))
+      .mockResolvedValueOnce(
+        response(
+          {
+            ...ticket,
+            status: "RESOLVED",
+            version: 2,
+            satisfactionLink: { url, expiresAt: "2026-10-03T12:00:00.000Z" },
+          },
+          201
+        )
+      )
+      .mockResolvedValueOnce(response({ items: [] }));
+    vi.stubGlobal("fetch", withSatisfaction(fetchMock));
+
+    render(<TicketsView accessToken="token" canWrite />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Abrir 2026-000001" })
+    );
+    const statusForm = await screen.findByRole("form", {
+      name: "Alterar status",
+    });
+    fireEvent.change(within(statusForm).getByLabelText("Novo status"), {
+      target: { value: "RESOLVED" },
+    });
+    fireEvent.click(
+      within(statusForm).getByRole("button", { name: "Aplicar status" })
+    );
+
+    expect(await screen.findByLabelText("Link para o cliente")).toHaveValue(
+      url
+    );
+    expect(
+      screen.getByRole("region", { name: "Satisfação" })
+    ).toBeInTheDocument();
+  });
+
   it("is read-only without ticket.write", async () => {
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValueOnce(response({ items: [ticket], total: 1 }))
-        .mockResolvedValueOnce(response({ items: [] }))
+      withSatisfaction(
+        vi
+          .fn()
+          .mockResolvedValueOnce(response({ items: [ticket], total: 1 }))
+          .mockResolvedValueOnce(response({ items: [] }))
+      )
     );
 
     render(<TicketsView accessToken="token" canWrite={false} />);

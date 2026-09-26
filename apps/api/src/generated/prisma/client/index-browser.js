@@ -463,6 +463,22 @@ exports.Prisma.TicketProtocolCounterScalarFieldEnum = {
   lastValue: 'lastValue'
 };
 
+exports.Prisma.TicketSatisfactionSurveyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  ticketId: 'ticketId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  rating: 'rating',
+  comment: 'comment',
+  respondedAt: 'respondedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  version: 'version'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -611,7 +627,8 @@ exports.Prisma.ModelName = {
   OpportunityItem: 'OpportunityItem',
   Ticket: 'Ticket',
   TicketEvent: 'TicketEvent',
-  TicketProtocolCounter: 'TicketProtocolCounter'
+  TicketProtocolCounter: 'TicketProtocolCounter',
+  TicketSatisfactionSurvey: 'TicketSatisfactionSurvey'
 };
 
 /**
