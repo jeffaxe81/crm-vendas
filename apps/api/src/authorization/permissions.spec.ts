@@ -57,3 +57,24 @@ describe("C4.1.6 territory permissions", () => {
     expect(roleHasPermission("VIEWER", "territory.write")).toBe(false);
   });
 });
+
+describe("C5.1 ticket permissions", () => {
+  it("grants ticket.read to every role and ticket.write to commercial roles", () => {
+    for (const role of ["ADMIN", "MANAGER", "SELLER", "VIEWER"] as const) {
+      expect(roleHasPermission(role, "ticket.read")).toBe(true);
+    }
+    expect(roleHasPermission("ADMIN", "ticket.write")).toBe(true);
+    expect(roleHasPermission("MANAGER", "ticket.write")).toBe(true);
+    expect(roleHasPermission("SELLER", "ticket.write")).toBe(true);
+    expect(roleHasPermission("VIEWER", "ticket.write")).toBe(false);
+  });
+});
+
+describe("C5.2/C5.3 support permissions", () => {
+  it("grants support.manage only to ADMIN and MANAGER", () => {
+    expect(roleHasPermission("ADMIN", "support.manage")).toBe(true);
+    expect(roleHasPermission("MANAGER", "support.manage")).toBe(true);
+    expect(roleHasPermission("SELLER", "support.manage")).toBe(false);
+    expect(roleHasPermission("VIEWER", "support.manage")).toBe(false);
+  });
+});

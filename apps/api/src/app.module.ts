@@ -10,6 +10,8 @@ import { CompanyImportModule } from "./company-imports/company-import.module";
 import { ContactImportModule } from "./contact-imports/contact-import.module";
 import { ProductImportModule } from "./product-imports/product-import.module";
 import { ProductsModule } from "./products/products.module";
+import { TicketsModule } from "./tickets/tickets.module";
+import { SupportQueuesModule } from "./support-queues/support-queues.module";
 import { CompaniesModule } from "./companies/companies.module";
 import { parseApiEnvironment } from "./config/environment";
 import { ContactsModule } from "./contacts/contacts.module";
@@ -25,6 +27,7 @@ import { ReportsModule } from "./reports/reports.module";
 import { TagsModule } from "./tags/tags.module";
 import { TerritoriesModule } from "./territories/territories.module";
 import { OrganizationUsersModule } from "./users/organization-users.module";
+import { SlaModule } from "./sla/sla.module";
 
 @Module({
   imports: [
@@ -44,6 +47,8 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     CompanyImportModule,
     ContactImportModule,
     ProductsModule,
+    TicketsModule,
+    SupportQueuesModule,
     ProductImportModule,
     ContactsModule,
     RelationshipsModule,
@@ -54,6 +59,7 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
     OpportunitiesModule,
     ReportsModule,
     TerritoriesModule,
+    SlaModule,
   ],
 })
 export class AppModule implements NestModule {
