@@ -19,7 +19,7 @@ type DeliveryAttempt = {
 
 export function nextWebhookDeliveryState(
   current: WebhookDeliveryState,
-  attempt: DeliveryAttempt
+  attempt: DeliveryAttempt,
 ): WebhookDeliveryState {
   if (current.status === "DELIVERED") {
     throw new Error("Delivered webhooks cannot be reprocessed.");
