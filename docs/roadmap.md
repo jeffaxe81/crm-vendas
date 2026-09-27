@@ -1,14 +1,14 @@
 # Roadmap do Produto
 
-| Fase                   | Direção                                                                 | Situação                                                 |
-| ---------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------- |
-| Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual                        |
-| Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026                             |
-| Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Concluída — mesclada em `main` (26/09/2026)              |
-| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Em integração (branch `phase-3-atendimento` → `develop`) |
-| Fase 4 — Integrações   | API REST, webhooks, e-mail, WhatsApp, telefonia e ERP                   | Planejada                                                |
-| Fase 5 — Automação     | Regras, distribuição, jornadas e alertas                                | Planejada                                                |
-| Fase 6 — IA assistida  | Resumos, recomendações, classificação e previsões com supervisão humana | Banco de Ideias                                          |
+| Fase                   | Direção                                                                 | Situação                                                   |
+| ---------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual                          |
+| Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026                               |
+| Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Concluída — mesclada em `main` (26/09/2026)                |
+| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Concluída — mesclada em `main` (27/09/2026)                |
+| Fase 4 — Integrações   | API pública, webhooks, e-mail, WhatsApp, telefonia e ERP                | Autorizada — design e plano criados, execução não iniciada |
+| Fase 5 — Automação     | Regras, distribuição, jornadas e alertas                                | Planejada                                                  |
+| Fase 6 — IA assistida  | Resumos, recomendações, classificação e previsões com supervisão humana | Banco de Ideias                                            |
 
 ## Marco concluído
 
@@ -22,13 +22,13 @@ A Fase 2 — Produtividade segue em microentregas. Já estão integradas à `dev
 
 Campos personalizados e tags já existem na base atual e não serão reimplementados.
 
-> **Próximo passo:** integrar a Fase 3 — Atendimento (branch `phase-3-atendimento`, C5.1 a C5.4) na `develop`, com o mesmo rigor de verificação usado no fechamento da Fase 2 (typecheck, migrations reais e suíte de integração via quality gate) antes de qualquer novo fechamento para `main`.
+> **Próximo passo:** iniciar F4.1 — Fundação de Credenciais e API Pública (ver `docs/superpowers/plans/2026-09-27-phase-4-integracoes.md`), com o mesmo rigor de verificação usado no fechamento das Fases 2 e 3 antes de qualquer merge na `main`.
 
 ## Fase 3 — Atendimento
 
-Em 24/09/2026 foi autorizada a preparação e execução autônoma da Fase 3 — Atendimento.
+A Fase 3 — Atendimento foi concluída e mesclada em `main` em 27/09/2026, com quality gate completo (lint, typecheck, testes de integração reais, E2E e build de imagens) verde.
 
-A fase será executada de forma incremental:
+Foi executada de forma incremental:
 
 1. F3.1 — Fundação Solicitação/Protocolo;
 2. F3.2 — API de Solicitações;
@@ -41,7 +41,23 @@ A fase será executada de forma incremental:
 
 A arquitetura detalhada está registrada em `docs/superpowers/specs/2026-09-24-phase-3-atendimento-design.md`.
 
-A continuidade da Fase 2 deve preservar as microentregas já validadas e não bloquear a preparação arquitetural independente da Fase 3.
+## Fase 4 — Integrações
+
+Em 27/09/2026 foi criado o design e o plano de execução da Fase 4 — Integrações. A execução ainda não começou.
+
+A fase será executada de forma incremental:
+
+1. F4.1 — Fundação de Credenciais e API Pública;
+2. F4.2 — Webhooks de Saída;
+3. F4.3 — E-mail Transacional;
+4. F4.4 — WhatsApp Business;
+5. F4.5 — Telefonia/CTI;
+6. F4.6 — Sincronização com ERP;
+7. F4.7 — Observabilidade, E2E e Release.
+
+A arquitetura detalhada está registrada em `docs/superpowers/specs/2026-09-27-phase-4-integracoes-design.md` e o plano de execução em `docs/superpowers/plans/2026-09-27-phase-4-integracoes.md`.
+
+Diferente das Fases 1–3, a Fase 4 expõe endpoints públicos e credenciais de máquina-a-máquina, exigindo revisão adicional de SSRF, verificação de assinatura de provedor e idempotência em todo canal de entrada.
 
 ## Limites entre fases
 
