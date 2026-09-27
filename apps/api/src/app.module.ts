@@ -28,6 +28,7 @@ import { TagsModule } from "./tags/tags.module";
 import { TerritoriesModule } from "./territories/territories.module";
 import { OrganizationUsersModule } from "./users/organization-users.module";
 import { SlaModule } from "./sla/sla.module";
+import { IntegrationsModule } from "./integrations/integrations.module";
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { SlaModule } from "./sla/sla.module";
     ReportsModule,
     TerritoriesModule,
     SlaModule,
+    IntegrationsModule,
   ],
 })
 export class AppModule implements NestModule {

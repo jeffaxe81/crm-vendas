@@ -2,7 +2,6 @@ import { Get, Controller, Req, UseGuards } from "@nestjs/common";
 
 import { AuthenticationGuard } from "./authentication.guard";
 import type { AuthenticatedRequest } from "./authenticated-request";
-import { permissionsForRole } from "./permissions";
 
 @Controller("auth")
 export class SessionController {
@@ -19,7 +18,7 @@ export class SessionController {
       organizationId: principal.organizationId,
       membershipId: principal.membershipId,
       role: principal.role,
-      permissions: [...permissionsForRole(principal.role)],
+      permissions: [...principal.permissions],
     };
   }
 }

@@ -24,6 +24,8 @@ export const PERMISSIONS = [
   "ticket.read",
   "ticket.write",
   "support.manage",
+  "integration.manage",
+  "integration.read",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
@@ -60,6 +62,8 @@ const ROLE_PERMISSIONS: Record<MembershipRole, readonly Permission[]> = {
     "pipeline.manage",
     "product.write",
     "support.manage",
+    "integration.manage",
+    "integration.read",
     ...COMMERCIAL_WRITE,
   ],
   MANAGER: [
