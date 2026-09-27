@@ -38,7 +38,10 @@ describe("F4.2 webhook security", () => {
       expect(verifyWebhookSignature(payload, secret, signature)).toBe(true);
       expect(
         verifyWebhookSignature(
-          JSON.stringify({ event: "company.created", data: { id: "tampered" } }),
+          JSON.stringify({
+            event: "company.created",
+            data: { id: "tampered" },
+          }),
           secret,
           signature
         )
