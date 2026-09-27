@@ -238,11 +238,18 @@ describe("F4.1 integration credentials (API Key)", () => {
     const created = await request(app.getHttpServer())
       .post(CREDENTIALS_URL)
       .set("Authorization", `Bearer ${admin.token}`)
-      .send({ name: "Depende do papel do criador", scopes: ["user.manage"] })
+      .send({
+        name: "Depende do papel do criador",
+        scopes: ["user.manage", "company.read"],
+      })
       .expect(201);
 
     await request(app.getHttpServer())
       .get("/api/v1/companies")
+      .set("Authorization", `Bearer ${created.body.plainKey}`)
+      .expect(200);
+    await request(app.getHttpServer())
+      .get("/api/v1/admin/users")
       .set("Authorization", `Bearer ${created.body.plainKey}`)
       .expect(200);
 
@@ -257,6 +264,10 @@ describe("F4.1 integration credentials (API Key)", () => {
       .get("/api/v1/companies")
       .set("Authorization", `Bearer ${created.body.plainKey}`)
       .expect(200);
+    await request(app.getHttpServer())
+      .get("/api/v1/admin/users")
+      .set("Authorization", `Bearer ${created.body.plainKey}`)
+      .expect(403);
   });
 
   it("rejects a garbage bearer token with the axk_ prefix", async () => {
