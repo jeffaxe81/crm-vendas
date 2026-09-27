@@ -23,15 +23,15 @@ Abrir o CRM para sistemas externos, preservando o isolamento multi-tenant homolo
 
 ## Microentregas planejadas
 
-| Item | Escopo                                | Status       |
-| ---- | ------------------------------------- | ------------ |
-| F4.1 | Fundação de credenciais e API pública | Não iniciada |
-| F4.2 | Webhooks de saída                     | Não iniciada |
-| F4.3 | E-mail transacional                   | Não iniciada |
-| F4.4 | WhatsApp Business                     | Não iniciada |
-| F4.5 | Telefonia/CTI                         | Não iniciada |
-| F4.6 | Sincronização com ERP                 | Não iniciada |
-| F4.7 | Observabilidade, E2E e Release        | Não iniciada |
+| Item | Escopo                                | Status                                    |
+| ---- | ------------------------------------- | ----------------------------------------- |
+| F4.1 | Fundação de credenciais e API pública | ✅ Concluída — PR #76, gate verde (21/21) |
+| F4.2 | Webhooks de saída                     | Não iniciada                              |
+| F4.3 | E-mail transacional                   | Não iniciada                              |
+| F4.4 | WhatsApp Business                     | Não iniciada                              |
+| F4.5 | Telefonia/CTI                         | Não iniciada                              |
+| F4.6 | Sincronização com ERP                 | Não iniciada                              |
+| F4.7 | Observabilidade, E2E e Release        | Não iniciada                              |
 
 ## Riscos específicos desta fase
 
@@ -44,4 +44,4 @@ Diferente das Fases 1–3, a Fase 4 expõe endpoints públicos e credenciais de 
 
 ## Próximo passo
 
-Iniciar F4.1 — Fundação de Credenciais e API Pública, seguindo a regra de execução do plano (branch a partir da `main`, TDD, gate completo antes de qualquer merge).
+Iniciar F4.2 — Webhooks de Saída, seguindo a regra de execução do plano (branch a partir da `main`, TDD, gate completo antes de qualquer merge).
