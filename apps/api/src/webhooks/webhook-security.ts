@@ -7,11 +7,13 @@ function normalizeHostname(hostname: string): string {
 
 function isBlockedIpv4(address: string): boolean {
   const octets = address.split(".").map(Number);
-  const [a, b] = octets;
 
   if (octets.length !== 4 || octets.some(value => !Number.isInteger(value))) {
     return true;
   }
+
+  const a = octets[0]!;
+  const b = octets[1]!;
 
   return (
     a === 0 ||
@@ -37,7 +39,7 @@ function isBlockedIpv6(address: string): boolean {
     return true;
   }
 
-  const firstGroup = normalized.split(":")[0];
+  const firstGroup = normalized.split(":")[0] ?? "";
   if (/^fe[89ab]/.test(firstGroup)) {
     return true;
   }
