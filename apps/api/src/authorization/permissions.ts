@@ -21,11 +21,15 @@ export const PERMISSIONS = [
   "product.write",
   "territory.read",
   "territory.write",
+  "ticket.read",
+  "ticket.write",
+  "support.manage",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
 
 const READ_ONLY: Permission[] = [
+  "ticket.read",
   "product.read",
   "company.read",
   "contact.read",
@@ -44,6 +48,7 @@ const COMMERCIAL_WRITE: Permission[] = [
   "activity.write",
   "knowledge.write",
   "territory.write",
+  "ticket.write",
 ];
 
 const ROLE_PERMISSIONS: Record<MembershipRole, readonly Permission[]> = {
@@ -54,6 +59,7 @@ const ROLE_PERMISSIONS: Record<MembershipRole, readonly Permission[]> = {
     "reports.read",
     "pipeline.manage",
     "product.write",
+    "support.manage",
     ...COMMERCIAL_WRITE,
   ],
   MANAGER: [
@@ -61,6 +67,7 @@ const ROLE_PERMISSIONS: Record<MembershipRole, readonly Permission[]> = {
     "pipeline.manage",
     "reports.read",
     "product.write",
+    "support.manage",
   ],
   SELLER: COMMERCIAL_WRITE,
   VIEWER: READ_ONLY,

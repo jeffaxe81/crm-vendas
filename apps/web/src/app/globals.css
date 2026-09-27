@@ -1161,3 +1161,109 @@ textarea {
   font-size: 0.72rem;
   font-weight: 800;
 }
+
+/* C5.1 — Atendimento */
+.ticket-detail__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ticket-detail__timeline {
+  display: grid;
+  gap: 8px;
+  padding-left: 18px;
+}
+
+.ticket-detail__timeline .is-internal {
+  color: #6b4e16;
+}
+
+/* C5.2 — filas de atendimento */
+.support-queues__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+/* C5.3 — indicadores de SLA */
+.sla-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+  background: #eef2f6;
+  color: #475467;
+}
+
+.sla-badge--ok,
+.sla-badge--met {
+  background: #e7f6ec;
+  color: #067647;
+}
+
+.sla-badge--at_risk {
+  background: #fef4e6;
+  color: #b54708;
+}
+
+.sla-badge--breached,
+.sla-badge--missed {
+  background: #fde8e6;
+  color: #b42318;
+}
+
+/* C5.4 — Satisfação */
+.ticket-satisfaction {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d7e1ec;
+  border-radius: 10px;
+}
+
+.ticket-satisfaction h3 {
+  margin: 0;
+}
+
+.ticket-satisfaction__link {
+  display: grid;
+  gap: 8px;
+}
+
+.ticket-satisfaction__link input {
+  width: 100%;
+  font-family: monospace;
+}
+
+.login-form fieldset {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #bfcddd;
+  border-radius: 10px;
+}
+
+.login-form fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.login-form fieldset input {
+  width: auto;
+  min-height: 0;
+}
+
+.login-form textarea {
+  min-height: 96px;
+  padding: 10px 14px;
+  border: 1px solid #bfcddd;
+  border-radius: 10px;
+  font: inherit;
+}

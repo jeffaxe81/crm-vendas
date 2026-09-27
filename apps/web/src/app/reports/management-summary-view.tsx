@@ -12,6 +12,8 @@ import { SalesByProductView } from "./sales-by-product-view";
 import { ActivitiesByOwnerView } from "./activities-by-owner-view";
 import { FunnelView } from "./funnel-view";
 import { SalesByMonthView } from "./sales-by-month-view";
+import { CsatView } from "./csat-view";
+import { SlaReportView } from "./sla-report-view";
 
 type ReportTab =
   | "summary"
@@ -19,7 +21,9 @@ type ReportTab =
   | "sales-by-owner"
   | "sales-by-month"
   | "funnel"
-  | "activities-by-owner";
+  | "activities-by-owner"
+  | "sla"
+  | "csat";
 
 const reportTabs: Array<{ id: ReportTab; label: string }> = [
   { id: "summary", label: "Indicadores" },
@@ -28,6 +32,8 @@ const reportTabs: Array<{ id: ReportTab; label: string }> = [
   { id: "sales-by-month", label: "Vendas por período" },
   { id: "funnel", label: "Funil" },
   { id: "activities-by-owner", label: "Atividades" },
+  { id: "sla", label: "SLA" },
+  { id: "csat", label: "Satisfação" },
 ];
 
 type ManagementSummaryViewProps = {
@@ -171,6 +177,22 @@ export function ManagementSummaryView({
           aria-labelledby="report-tab-activities-by-owner"
         >
           <ActivitiesByOwnerView accessToken={accessToken} />
+        </div>
+      ) : tab === "sla" ? (
+        <div
+          role="tabpanel"
+          id="report-panel-sla"
+          aria-labelledby="report-tab-sla"
+        >
+          <SlaReportView accessToken={accessToken} />
+        </div>
+      ) : tab === "csat" ? (
+        <div
+          role="tabpanel"
+          id="report-panel-csat"
+          aria-labelledby="report-tab-csat"
+        >
+          <CsatView accessToken={accessToken} />
         </div>
       ) : loading ? (
         <p className="activities-view__status">

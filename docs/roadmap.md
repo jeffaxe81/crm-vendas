@@ -1,14 +1,14 @@
 # Roadmap do Produto
 
-| Fase                   | Direção                                                                 | Situação                                      |
-| ---------------------- | ----------------------------------------------------------------------- | --------------------------------------------- |
-| Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual             |
-| Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026                  |
-| Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Fechamento em andamento (PR `develop → main`) |
-| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Autorizada — preparação F3.1                  |
-| Fase 4 — Integrações   | API REST, webhooks, e-mail, WhatsApp, telefonia e ERP                   | Planejada                                     |
-| Fase 5 — Automação     | Regras, distribuição, jornadas e alertas                                | Planejada                                     |
-| Fase 6 — IA assistida  | Resumos, recomendações, classificação e previsões com supervisão humana | Banco de Ideias                               |
+| Fase                   | Direção                                                                 | Situação                                                 |
+| ---------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------- |
+| Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual                        |
+| Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026                             |
+| Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Concluída — mesclada em `main` (26/09/2026)              |
+| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Em integração (branch `phase-3-atendimento` → `develop`) |
+| Fase 4 — Integrações   | API REST, webhooks, e-mail, WhatsApp, telefonia e ERP                   | Planejada                                                |
+| Fase 5 — Automação     | Regras, distribuição, jornadas e alertas                                | Planejada                                                |
+| Fase 6 — IA assistida  | Resumos, recomendações, classificação e previsões com supervisão humana | Banco de Ideias                                          |
 
 ## Marco concluído
 
@@ -22,7 +22,7 @@ A Fase 2 — Produtividade segue em microentregas. Já estão integradas à `dev
 
 Campos personalizados e tags já existem na base atual e não serão reimplementados.
 
-> **Próximo passo:** fechamento oficial da Fase 2 (PR `develop → main` com gate do CI e aprovação humana; ver `docs/releases/produtividade-phase-2-2026-09-26-ampliada.md`).
+> **Próximo passo:** integrar a Fase 3 — Atendimento (branch `phase-3-atendimento`, C5.1 a C5.4) na `develop`, com o mesmo rigor de verificação usado no fechamento da Fase 2 (typecheck, migrations reais e suíte de integração via quality gate) antes de qualquer novo fechamento para `main`.
 
 ## Fase 3 — Atendimento
 
