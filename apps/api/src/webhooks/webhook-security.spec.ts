@@ -7,14 +7,20 @@ import {
 describe("F4.2 webhook security", () => {
   describe("assertSafeWebhookTargetUrl", () => {
     test.each([
-      "http://127.0.0.1/hook",
-      "http://10.0.0.8/hook",
-      "http://172.16.20.4/hook",
-      "http://192.168.1.10/hook",
-      "http://169.254.169.254/latest/meta-data/",
-      "http://[::1]/hook",
+      "https://127.0.0.1/hook",
+      "https://10.0.0.8/hook",
+      "https://172.16.20.4/hook",
+      "https://192.168.1.10/hook",
+      "https://169.254.169.254/latest/meta-data/",
+      "https://[::1]/hook",
     ])("rejects SSRF target %s", targetUrl => {
       expect(() => assertSafeWebhookTargetUrl(targetUrl)).toThrow();
+    });
+
+    it("requires HTTPS for outbound webhook targets", () => {
+      expect(() =>
+        assertSafeWebhookTargetUrl("http://hooks.example.com/crm")
+      ).toThrow();
     });
 
     it("accepts a public HTTPS target", () => {
