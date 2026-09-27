@@ -78,3 +78,14 @@ describe("C5.2/C5.3 support permissions", () => {
     expect(roleHasPermission("VIEWER", "support.manage")).toBe(false);
   });
 });
+
+describe("F4.1 integration permissions", () => {
+  it("grants integration.manage and integration.read only to ADMIN", () => {
+    expect(roleHasPermission("ADMIN", "integration.manage")).toBe(true);
+    expect(roleHasPermission("ADMIN", "integration.read")).toBe(true);
+    for (const role of ["MANAGER", "SELLER", "VIEWER"] as const) {
+      expect(roleHasPermission(role, "integration.manage")).toBe(false);
+      expect(roleHasPermission(role, "integration.read")).toBe(false);
+    }
+  });
+});

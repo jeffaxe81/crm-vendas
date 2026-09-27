@@ -10,7 +10,7 @@ import { Reflector } from "@nestjs/core";
 import { DeniedAccessLogger } from "../audit/denied-access.logger";
 import type { AuthenticatedRequest } from "./authenticated-request";
 import { REQUIRED_PERMISSIONS_KEY } from "./require-permissions.decorator";
-import { roleHasPermission, type Permission } from "./permissions";
+import type { Permission } from "./permissions";
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -36,9 +36,7 @@ export class PermissionsGuard implements CanActivate {
 
     if (
       !principal ||
-      !required.every(permission =>
-        roleHasPermission(principal.role, permission)
-      )
+      !required.every(permission => principal.permissions.includes(permission))
     ) {
       const error = new ForbiddenException({
         code: "ACCESS_DENIED",

@@ -178,6 +178,7 @@ model Organization {
   supportQueues            SupportQueue[]
   slaPolicies              SlaPolicy[]
   ticketSatisfactions      TicketSatisfactionSurvey[]
+  integrationCredentials   IntegrationCredential[]
 
   @@map("organizations")
 }
@@ -258,6 +259,8 @@ model User {
   slaPoliciesUpdated          SlaPolicy[]                @relation("SlaPolicyUpdatedBy")
   ticketSatisfactionsCreated  TicketSatisfactionSurvey[] @relation("TicketSatisfactionCreatedBy")
   ticketSatisfactionsUpdated  TicketSatisfactionSurvey[] @relation("TicketSatisfactionUpdatedBy")
+  integrationCredentialsCreated IntegrationCredential[]  @relation("IntegrationCredentialCreatedBy")
+  integrationCredentialsRevoked IntegrationCredential[]  @relation("IntegrationCredentialRevokedBy")
 
   @@map("users")
 }
@@ -947,4 +950,29 @@ model TicketSatisfactionSurvey {
   @@unique([ticketId, organizationId], map: "ticket_satisfaction_surveys_ticket_org_key")
   @@index([organizationId, createdAt], map: "ticket_satisfaction_surveys_org_created_idx")
   @@map("ticket_satisfaction_surveys")
+}
+
+/// F4.1 -- credencial de API para consumo maquina-a-maquina, com escopo
+/// nunca superior ao das permissoes de quem a criou no momento do uso.
+model IntegrationCredential {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  name           String       @db.VarChar(160)
+  keyHash        String       @unique(map: "integration_credentials_key_hash_key") @map("key_hash") @db.VarChar(64)
+  keyPrefix      String       @map("key_prefix") @db.VarChar(12)
+  scopes         String[]     @db.VarChar(64)
+  isActive       Boolean      @default(true) @map("is_active")
+  lastUsedAt     DateTime?    @map("last_used_at") @db.Timestamptz(6)
+  expiresAt      DateTime?    @map("expires_at") @db.Timestamptz(6)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy      String       @map("created_by") @db.Uuid
+  revokedAt      DateTime?    @map("revoked_at") @db.Timestamptz(6)
+  revokedBy      String?      @map("revoked_by") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  creator        User         @relation("IntegrationCredentialCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  revoker        User?        @relation("IntegrationCredentialRevokedBy", fields: [revokedBy], references: [id], onDelete: Restrict)
+
+  @@unique([id, organizationId], map: "integration_credentials_id_organization_key")
+  @@index([organizationId, isActive], map: "integration_credentials_org_active_idx")
+  @@map("integration_credentials")
 }

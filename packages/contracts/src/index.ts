@@ -329,3 +329,12 @@ export {
   type TicketSatisfactionStatus,
   type TicketSatisfactionSurvey,
 } from "./ticket-satisfaction";
+
+export {
+  IntegrationCredentialCreateInputSchema,
+  IntegrationCredentialCreatedSchema,
+  IntegrationCredentialSummarySchema,
+  type IntegrationCredentialCreateInput,
+  type IntegrationCredentialCreated,
+  type IntegrationCredentialSummary,
+} from "./integration-credentials";
