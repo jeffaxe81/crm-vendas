@@ -14,7 +14,9 @@ import {
   useState,
 } from "react";
 
+import { Button } from "../../components/ui/button";
 import { apiRequest } from "../../lib/api-client";
+import { FileUp, Pencil, Plus, X } from "lucide-react";
 
 type CompanyRecord = {
   id: string;
@@ -318,16 +320,15 @@ export function CompaniesView({
         </div>
         <div className="companies-view__header-actions">
           {canWrite ? (
-            <button type="button" onClick={openImport}>
+            <Button variant="outline" onClick={openImport}>
+              <FileUp aria-hidden="true" />
               Importar CSV
-            </button>
+            </Button>
           ) : null}
-          <button
-            className="button companies-view__primary"
-            onClick={openCreate}
-          >
+          <Button className="companies-view__primary" onClick={openCreate}>
+            <Plus aria-hidden="true" />
             Nova empresa
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -361,9 +362,10 @@ export function CompaniesView({
               <p>Importação</p>
               <h2>Importar empresas por CSV</h2>
             </div>
-            <button type="button" onClick={closeImport}>
+            <Button variant="outline" size="sm" onClick={closeImport}>
+              <X aria-hidden="true" />
               Fechar
-            </button>
+            </Button>
           </div>
 
           <label>
@@ -409,14 +411,13 @@ export function CompaniesView({
                   </tbody>
                 </table>
               </div>
-              <button
-                type="button"
-                className="button"
+              <Button
+                className="company-import__confirm"
                 disabled={importing || importPreview.valid === 0}
                 onClick={() => void confirmImport()}
               >
                 {importing ? "Importando..." : "Confirmar importação"}
-              </button>
+              </Button>
             </>
           ) : null}
 
@@ -442,9 +443,10 @@ export function CompaniesView({
                 {formMode === "create" ? "Nova empresa" : "Editar empresa"}
               </h2>
             </div>
-            <button type="button" onClick={closeForm}>
+            <Button variant="outline" size="sm" onClick={closeForm}>
+              <X aria-hidden="true" />
               Cancelar
-            </button>
+            </Button>
           </div>
 
           <div className="company-form__fields">
@@ -475,13 +477,17 @@ export function CompaniesView({
             </label>
           </div>
 
-          <button className="button company-form__submit" disabled={submitting}>
+          <Button
+            className="company-form__submit"
+            type="submit"
+            disabled={submitting}
+          >
             {submitting
               ? "Salvando..."
               : formMode === "create"
                 ? "Salvar empresa"
                 : "Salvar alterações"}
-          </button>
+          </Button>
         </form>
       ) : null}
 
@@ -504,9 +510,14 @@ export function CompaniesView({
               <h2>{company.legalName}</h2>
               {company.tradeName ? <p>{company.tradeName}</p> : null}
             </div>
-            <button type="button" onClick={() => openEdit(company)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => openEdit(company)}
+            >
+              <Pencil aria-hidden="true" />
               Editar
-            </button>
+            </Button>
           </article>
         ))}
       </div>
