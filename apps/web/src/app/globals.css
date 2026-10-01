@@ -181,6 +181,82 @@ textarea {
   background: #eaf0f7;
 }
 
+.crm-button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.crm-button svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.crm-button:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgb(16 36 62 / 10%);
+}
+
+.crm-button:focus-visible {
+  outline: 3px solid rgb(39 105 173 / 24%);
+  outline-offset: 2px;
+}
+
+.crm-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.crm-button--default {
+  background: #185b9e;
+}
+
+.crm-button--default:hover:not(:disabled) {
+  background: #124c87;
+}
+
+.crm-button--outline {
+  border-color: #bdcce0;
+  background: #ffffff;
+  color: #24425f;
+}
+
+.crm-button--outline:hover:not(:disabled) {
+  border-color: #8da8c4;
+  background: #f1f6fb;
+}
+
+.crm-button--ghost {
+  background: transparent;
+  color: #24425f;
+}
+
+.crm-button--ghost:hover:not(:disabled) {
+  background: #eef4fb;
+  box-shadow: none;
+}
+
+.crm-button--sm {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 0.84rem;
+}
+
 .login-card__security {
   margin: 22px 0 0;
   color: #718197;
@@ -421,6 +497,14 @@ textarea {
   gap: 24px;
 }
 
+.companies-view__header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .companies-view__header h1,
 .companies-view__header p {
   margin: 0;
@@ -451,6 +535,11 @@ textarea {
 .companies-view__primary {
   padding: 0 20px;
   white-space: nowrap;
+}
+
+.company-import__confirm {
+  width: fit-content;
+  margin-top: 4px;
 }
 
 .companies-view__toolbar {
