@@ -132,7 +132,12 @@ export function ProductImportPanel({
           <p>
             {preview.valid} válida(s) · {preview.invalid} inválida(s)
           </p>
-          <div className="company-import__table-wrapper">
+          <div
+            className="company-import__table-wrapper"
+            role="region"
+            aria-label="Tabela: Prévia de produtos"
+            tabIndex={0}
+          >
             <table>
               <thead>
                 <tr>
