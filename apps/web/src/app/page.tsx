@@ -17,10 +17,12 @@ import { ProductsView } from "./products/products-view";
 import { TicketsView } from "./tickets/tickets-view";
 import { ManagementSummaryView } from "./reports/management-summary-view";
 import { TerritoriesView } from "./territories/territories-view";
+import { CommunicationView } from "./communication/communication-view";
 
 export default function Home() {
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
   const [activeSection, setActiveSection] = useState<CrmSection>("companies");
+  const [communicationOpened, setCommunicationOpened] = useState(false);
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -119,6 +121,7 @@ export default function Home() {
       await authApiRequest<void>("/auth/logout", { method: "POST" });
     } finally {
       setSession(null);
+      setCommunicationOpened(false);
       setPassword("");
     }
   }
@@ -128,7 +131,13 @@ export default function Home() {
       <CrmShell
         session={session}
         activeSection={activeSection}
-        onNavigate={setActiveSection}
+        onNavigate={section => {
+          if (section === "communication") {
+            if (!session.permissions.includes("ticket.read")) return;
+            setCommunicationOpened(true);
+          }
+          setActiveSection(section);
+        }}
         onLogout={() => void logout()}
       >
         {activeSection === "companies" ? (
@@ -172,14 +181,19 @@ export default function Home() {
           />
         ) : activeSection === "management-summary" ? (
           <ManagementSummaryView accessToken={session.accessToken} />
-        ) : (
+        ) : activeSection === "opportunities" ? (
           <OpportunitiesView
             accessToken={session.accessToken}
             ownerUserId={session.user.id}
             canWrite={session.permissions.includes("opportunity.write")}
             canMove={session.permissions.includes("opportunity.move")}
           />
-        )}
+        ) : null}
+        {communicationOpened && session.permissions.includes("ticket.read") ? (
+          <div hidden={activeSection !== "communication"}>
+            <CommunicationView />
+          </div>
+        ) : null}
       </CrmShell>
     );
   }

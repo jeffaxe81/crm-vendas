@@ -28,6 +28,7 @@ export type CrmSection =
   | "products"
   | "territories"
   | "tickets"
+  | "communication"
   | "management-summary";
 
 type CrmShellProps = {
@@ -62,6 +63,12 @@ const navigation = [
   {
     section: "tickets",
     label: "Atendimento",
+    icon: Headset,
+    permission: "ticket.read",
+  },
+  {
+    section: "communication",
+    label: "Comunicação integrada",
     icon: Headset,
     permission: "ticket.read",
   },
