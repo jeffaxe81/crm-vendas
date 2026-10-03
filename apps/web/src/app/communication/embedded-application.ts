@@ -40,8 +40,14 @@ export function readCommunicationApplication(
   const result = neoUrlSchema.safeParse(value);
   if (!result.success) return { status: "invalid" };
   const url = new URL(result.data);
-  if (env.WEB_ORIGIN && url.origin === env.WEB_ORIGIN)
-    return { status: "invalid" };
+  if (env.WEB_ORIGIN) {
+    try {
+      if (url.origin === new URL(env.WEB_ORIGIN.trim()).origin)
+        return { status: "invalid" };
+    } catch {
+      return { status: "invalid" };
+    }
+  }
   return {
     status: "ready",
     application: {
