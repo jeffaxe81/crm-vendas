@@ -144,7 +144,12 @@ export function SupportQueuesPanel({
       {queues.length === 0 ? (
         <p>Nenhuma fila cadastrada.</p>
       ) : (
-        <div className="company-import__table-wrapper">
+        <div
+          className="company-import__table-wrapper"
+          role="region"
+          aria-label="Tabela: Filas de atendimento"
+          tabIndex={0}
+        >
           <table>
             <thead>
               <tr>

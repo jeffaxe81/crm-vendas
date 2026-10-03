@@ -244,57 +244,64 @@ export function TerritoryDetailPanel({
         {coverage.length === 0 ? (
           <p>Nenhuma empresa-alvo cadastrada.</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Empresa</th>
-                <th>Situação</th>
-                {canWrite ? <th aria-label="Ações" /> : null}
-              </tr>
-            </thead>
-            <tbody>
-              {coverage.map(target => (
-                <tr key={target.id}>
-                  <td>{target.company.legalName}</td>
-                  <td>
-                    {canWrite ? (
-                      <select
-                        aria-label={`Situação de cobertura de ${target.company.legalName}`}
-                        value={target.coverageStatus}
-                        onChange={event =>
-                          void updateCoverageStatus(
-                            target,
-                            event.target.value as CoverageStatus
-                          )
-                        }
-                      >
-                        {(Object.keys(COVERAGE_LABELS) as CoverageStatus[]).map(
-                          status => (
+          <div
+            className="crm-table-scroll"
+            role="region"
+            aria-label="Dados do território"
+            tabIndex={0}
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Situação</th>
+                  {canWrite ? <th aria-label="Ações" /> : null}
+                </tr>
+              </thead>
+              <tbody>
+                {coverage.map(target => (
+                  <tr key={target.id}>
+                    <td>{target.company.legalName}</td>
+                    <td>
+                      {canWrite ? (
+                        <select
+                          aria-label={`Situação de cobertura de ${target.company.legalName}`}
+                          value={target.coverageStatus}
+                          onChange={event =>
+                            void updateCoverageStatus(
+                              target,
+                              event.target.value as CoverageStatus
+                            )
+                          }
+                        >
+                          {(
+                            Object.keys(COVERAGE_LABELS) as CoverageStatus[]
+                          ).map(status => (
                             <option key={status} value={status}>
                               {COVERAGE_LABELS[status]}
                             </option>
-                          )
-                        )}
-                      </select>
-                    ) : (
-                      COVERAGE_LABELS[target.coverageStatus]
-                    )}
-                  </td>
-                  {canWrite ? (
-                    <td>
-                      <button
-                        type="button"
-                        onClick={() => void removeCoverage(target)}
-                        aria-label={`Remover ${target.company.legalName}`}
-                      >
-                        Remover
-                      </button>
+                          ))}
+                        </select>
+                      ) : (
+                        COVERAGE_LABELS[target.coverageStatus]
+                      )}
                     </td>
-                  ) : null}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    {canWrite ? (
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => void removeCoverage(target)}
+                          aria-label={`Remover ${target.company.legalName}`}
+                        >
+                          Remover
+                        </button>
+                      </td>
+                    ) : null}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
         {canWrite ? (
           <form
@@ -324,26 +331,33 @@ export function TerritoryDetailPanel({
         {quotas.length === 0 ? (
           <p>Nenhuma cota cadastrada.</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Período</th>
-                <th>Ano</th>
-                <th>Meta</th>
-                <th>Realizado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {quotas.map(quota => (
-                <tr key={quota.id}>
-                  <td>{quota.period}</td>
-                  <td>{quota.year}</td>
-                  <td>{formatCurrency(quota.amount)}</td>
-                  <td>{formatCurrency(quota.actual)}</td>
+          <div
+            className="crm-table-scroll"
+            role="region"
+            aria-label="Dados do território"
+            tabIndex={0}
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th>Período</th>
+                  <th>Ano</th>
+                  <th>Meta</th>
+                  <th>Realizado</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {quotas.map(quota => (
+                  <tr key={quota.id}>
+                    <td>{quota.period}</td>
+                    <td>{quota.year}</td>
+                    <td>{formatCurrency(quota.amount)}</td>
+                    <td>{formatCurrency(quota.actual)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
         {canWrite ? (
           <form

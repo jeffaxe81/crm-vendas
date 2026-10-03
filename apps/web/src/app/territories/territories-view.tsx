@@ -351,7 +351,12 @@ export function TerritoriesView({
       ) : null}
 
       {!loading && territories.length > 0 ? (
-        <div className="company-import__table-wrapper">
+        <div
+          className="company-import__table-wrapper"
+          role="region"
+          aria-label="Tabela: Territórios"
+          tabIndex={0}
+        >
           <table>
             <thead>
               <tr>

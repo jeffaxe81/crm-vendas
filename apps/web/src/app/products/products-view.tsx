@@ -336,7 +336,12 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
       ) : null}
 
       {!loading && products.length > 0 ? (
-        <div className="company-import__table-wrapper">
+        <div
+          className="company-import__table-wrapper"
+          role="region"
+          aria-label="Tabela: Produtos"
+          tabIndex={0}
+        >
           <table>
             <thead>
               <tr>

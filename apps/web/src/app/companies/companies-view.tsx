@@ -387,7 +387,12 @@ export function CompaniesView({
                 {importPreview.valid} válida(s) · {importPreview.invalid}{" "}
                 inválida(s)
               </p>
-              <div className="company-import__table-wrapper">
+              <div
+                className="company-import__table-wrapper"
+                role="region"
+                aria-label="Tabela: Prévia de empresas"
+                tabIndex={0}
+              >
                 <table>
                   <thead>
                     <tr>
