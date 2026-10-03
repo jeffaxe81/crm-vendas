@@ -266,125 +266,132 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
       ) : null}
 
       {items.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>Produto</th>
-              <th>Qtd.</th>
-              <th>Preço unit.</th>
-              <th>Desc. %</th>
-              <th>Total</th>
-              {canWrite ? <th aria-label="Ações" /> : null}
-            </tr>
-          </thead>
-          <tbody>
-            {items.map(item =>
-              canWrite && editingItemId === item.id ? (
-                <tr key={item.id}>
-                  <td>{item.description}</td>
-                  <td>
-                    <input
-                      inputMode="decimal"
-                      aria-label={`Quantidade de ${item.description}`}
-                      value={draft.quantity}
-                      disabled={busy}
-                      onChange={event =>
-                        setDraft(current => ({
-                          ...current,
-                          quantity: event.target.value,
-                        }))
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      inputMode="decimal"
-                      aria-label={`Preço unitário de ${item.description}`}
-                      value={draft.unitPrice}
-                      disabled={busy}
-                      onChange={event =>
-                        setDraft(current => ({
-                          ...current,
-                          unitPrice: event.target.value,
-                        }))
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      inputMode="decimal"
-                      aria-label={`Desconto (%) de ${item.description}`}
-                      value={draft.discountPercent}
-                      disabled={busy}
-                      onChange={event =>
-                        setDraft(current => ({
-                          ...current,
-                          discountPercent: event.target.value,
-                        }))
-                      }
-                    />
-                  </td>
-                  <td>{formatMoney(item.lineTotal)}</td>
-                  <td>
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() => void saveItem(item)}
-                      aria-label={`Salvar ${item.description}`}
-                    >
-                      {busy ? "Salvando..." : "Salvar"}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={cancelEdit}
-                      aria-label={`Cancelar edição de ${item.description}`}
-                    >
-                      Cancelar
-                    </button>
-                  </td>
-                </tr>
-              ) : (
-                <tr key={item.id}>
-                  <td>{item.description}</td>
-                  <td>{Number(item.quantity).toLocaleString("pt-BR")}</td>
-                  <td>{formatMoney(item.unitPrice)}</td>
-                  <td>
-                    {Number(item.discountPercent).toLocaleString("pt-BR")}
-                  </td>
-                  <td>{formatMoney(item.lineTotal)}</td>
-                  {canWrite ? (
+        <div
+          className="crm-table-scroll"
+          role="region"
+          aria-label="Itens da oportunidade"
+          tabIndex={0}
+        >
+          <table>
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Qtd.</th>
+                <th>Preço unit.</th>
+                <th>Desc. %</th>
+                <th>Total</th>
+                {canWrite ? <th aria-label="Ações" /> : null}
+              </tr>
+            </thead>
+            <tbody>
+              {items.map(item =>
+                canWrite && editingItemId === item.id ? (
+                  <tr key={item.id}>
+                    <td>{item.description}</td>
+                    <td>
+                      <input
+                        inputMode="decimal"
+                        aria-label={`Quantidade de ${item.description}`}
+                        value={draft.quantity}
+                        disabled={busy}
+                        onChange={event =>
+                          setDraft(current => ({
+                            ...current,
+                            quantity: event.target.value,
+                          }))
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
+                        inputMode="decimal"
+                        aria-label={`Preço unitário de ${item.description}`}
+                        value={draft.unitPrice}
+                        disabled={busy}
+                        onChange={event =>
+                          setDraft(current => ({
+                            ...current,
+                            unitPrice: event.target.value,
+                          }))
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
+                        inputMode="decimal"
+                        aria-label={`Desconto (%) de ${item.description}`}
+                        value={draft.discountPercent}
+                        disabled={busy}
+                        onChange={event =>
+                          setDraft(current => ({
+                            ...current,
+                            discountPercent: event.target.value,
+                          }))
+                        }
+                      />
+                    </td>
+                    <td>{formatMoney(item.lineTotal)}</td>
                     <td>
                       <button
                         type="button"
-                        disabled={busy || editingItemId !== null}
-                        onClick={() => startEdit(item)}
-                        aria-label={`Editar ${item.description}`}
+                        disabled={busy}
+                        onClick={() => void saveItem(item)}
+                        aria-label={`Salvar ${item.description}`}
                       >
-                        Editar
+                        {busy ? "Salvando..." : "Salvar"}
                       </button>
                       <button
                         type="button"
-                        disabled={busy || editingItemId !== null}
-                        onClick={() => void removeItem(item)}
-                        aria-label={`Remover ${item.description}`}
+                        disabled={busy}
+                        onClick={cancelEdit}
+                        aria-label={`Cancelar edição de ${item.description}`}
                       >
-                        Remover
+                        Cancelar
                       </button>
                     </td>
-                  ) : null}
-                </tr>
-              )
-            )}
-          </tbody>
-          <tfoot>
-            <tr>
-              <th colSpan={4}>Total da oportunidade</th>
-              <td>{formatMoney(opportunity.estimatedValue)}</td>
-              {canWrite ? <td /> : null}
-            </tr>
-          </tfoot>
-        </table>
+                  </tr>
+                ) : (
+                  <tr key={item.id}>
+                    <td>{item.description}</td>
+                    <td>{Number(item.quantity).toLocaleString("pt-BR")}</td>
+                    <td>{formatMoney(item.unitPrice)}</td>
+                    <td>
+                      {Number(item.discountPercent).toLocaleString("pt-BR")}
+                    </td>
+                    <td>{formatMoney(item.lineTotal)}</td>
+                    {canWrite ? (
+                      <td>
+                        <button
+                          type="button"
+                          disabled={busy || editingItemId !== null}
+                          onClick={() => startEdit(item)}
+                          aria-label={`Editar ${item.description}`}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy || editingItemId !== null}
+                          onClick={() => void removeItem(item)}
+                          aria-label={`Remover ${item.description}`}
+                        >
+                          Remover
+                        </button>
+                      </td>
+                    ) : null}
+                  </tr>
+                )
+              )}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colSpan={4}>Total da oportunidade</th>
+                <td>{formatMoney(opportunity.estimatedValue)}</td>
+                {canWrite ? <td /> : null}
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       ) : null}
 
       {canWrite ? (

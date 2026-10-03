@@ -171,7 +171,12 @@ export function SlaPoliciesPanel({
       {loading ? (
         <p>Carregando políticas...</p>
       ) : (
-        <div className="company-import__table-wrapper">
+        <div
+          className="company-import__table-wrapper"
+          role="region"
+          aria-label="Tabela: Políticas de SLA"
+          tabIndex={0}
+        >
           <table>
             <thead>
               <tr>

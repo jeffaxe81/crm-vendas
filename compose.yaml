@@ -66,6 +66,8 @@ services:
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_BASE_URL: http://localhost:3001/api/v1
+      NEO_INTERACT_URL: ${NEO_INTERACT_URL:-}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
     ports:
       - "3000:3000"
     depends_on:

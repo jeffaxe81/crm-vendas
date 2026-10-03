@@ -239,24 +239,31 @@ export function ManagementSummaryView({
                 Nenhuma oportunidade ativa encontrada.
               </p>
             ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th scope="col">Funil</th>
-                    <th scope="col">Etapa</th>
-                    <th scope="col">Oportunidades</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {summary.opportunitiesByStage.map(item => (
-                    <tr key={`${item.pipelineId}:${item.stageId}`}>
-                      <td>{item.pipelineName}</td>
-                      <td>{item.stageName}</td>
-                      <td>{item.count}</td>
+              <div
+                className="crm-table-scroll"
+                role="region"
+                aria-label="Oportunidades por etapa"
+                tabIndex={0}
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Funil</th>
+                      <th scope="col">Etapa</th>
+                      <th scope="col">Oportunidades</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {summary.opportunitiesByStage.map(item => (
+                      <tr key={`${item.pipelineId}:${item.stageId}`}>
+                        <td>{item.pipelineName}</td>
+                        <td>{item.stageName}</td>
+                        <td>{item.count}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </section>
         </>
