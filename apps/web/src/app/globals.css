@@ -2107,3 +2107,62 @@ textarea {
   align-self: flex-start;
   min-height: 44px;
 }
+
+/* CRM-F004 — Workspace personalizável */
+.workspace-nav-group {
+  display: grid;
+  gap: 0.25rem;
+}
+.workspace-nav-group__items {
+  display: grid;
+  gap: 0.25rem;
+  padding-left: 0.6rem;
+}
+.workspace-home-widgets {
+  display: grid;
+  gap: 1.5rem;
+}
+.workspace-home-widgets > div {
+  min-width: 0;
+  border: 1px solid var(--crm-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.workspace-favorites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.workspace-editor {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+.workspace-editor fieldset {
+  min-width: 0;
+}
+.workspace-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.workspace-checkbox input {
+  width: auto;
+}
+.workspace-order-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.workspace-order-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.workspace-order-list button {
+  min-width: 44px;
+  min-height: 44px;
+}

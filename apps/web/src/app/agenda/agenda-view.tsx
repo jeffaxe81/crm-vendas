@@ -27,6 +27,7 @@ type ActivityListResponse = {
 type AgendaViewProps = {
   accessToken: string;
   ownerUserId: string;
+  initialFocus?: "WEEK" | "TODAY" | "OVERDUE";
 };
 
 type AgendaFilter<T extends string> = T | "ALL";
@@ -95,9 +96,15 @@ function localDateKey(value: string): string {
   return `${year}-${month}-${day}`;
 }
 
-export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
+export function AgendaView({
+  accessToken,
+  ownerUserId,
+  initialFocus = "WEEK",
+}: AgendaViewProps) {
   const [refreshVersion, setRefreshVersion] = useState(0);
-  const [focus, setFocus] = useState<"WEEK" | "TODAY" | "OVERDUE">("WEEK");
+  const [focus, setFocus] = useState<"WEEK" | "TODAY" | "OVERDUE">(
+    initialFocus
+  );
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [weekOffset, setWeekOffset] = useState(0);

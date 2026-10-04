@@ -2,6 +2,7 @@
 
 import {
   AuthSessionResponseSchema,
+  availableWorkspaceDestinations,
   type AuthSessionResponse,
 } from "@axes/contracts";
 import { FormEvent, useEffect, useRef, useState } from "react";
@@ -15,13 +16,24 @@ import { CrmShell, type CrmSection } from "./crm-shell";
 import { OpportunitiesView } from "./opportunities/opportunities-view";
 import { ProductsView } from "./products/products-view";
 import { TicketsView } from "./tickets/tickets-view";
-import { ManagementSummaryView } from "./reports/management-summary-view";
+import {
+  ManagementSummaryView,
+  type ReportTab,
+} from "./reports/management-summary-view";
 import { TerritoriesView } from "./territories/territories-view";
 import { CommunicationView } from "./communication/communication-view";
 
+import { WorkspaceProvider } from "./workspace/workspace-provider";
+import { WorkspaceHome } from "./workspace/workspace-home";
+import { WorkspaceEditor } from "./workspace/workspace-editor";
+import { UsersView } from "./admin/users-view";
+import { SupportSettingsView } from "./admin/support-settings-view";
+
 export default function Home() {
+  const manualNavigation = useRef(false);
+  const [reportTab, setReportTab] = useState<ReportTab>("summary");
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
-  const [activeSection, setActiveSection] = useState<CrmSection>("companies");
+  const [activeSection, setActiveSection] = useState<CrmSection>("home");
   const [communicationOpened, setCommunicationOpened] = useState(false);
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -49,8 +61,9 @@ export default function Home() {
 
     void restoreSessionRequest.current.then(restoredSession => {
       if (active && restoredSession) {
+        manualNavigation.current = false;
         setSession(restoredSession);
-        setActiveSection("companies");
+        setActiveSection("home");
       }
     });
 
@@ -69,8 +82,9 @@ export default function Home() {
         method: "POST",
         body: { email, password },
       });
+      manualNavigation.current = false;
       setSession(AuthSessionResponseSchema.parse(payload));
-      setActiveSection("companies");
+      setActiveSection("home");
       setPassword("");
     } catch (cause) {
       setError(
@@ -97,8 +111,9 @@ export default function Home() {
         method: "POST",
         body: { organizationName, adminDisplayName, adminEmail, adminPassword },
       });
+      manualNavigation.current = false;
       setSession(AuthSessionResponseSchema.parse(payload));
-      setActiveSection("companies");
+      setActiveSection("home");
       setAdminPassword("");
       setAdminPasswordConfirm("");
     } catch (cause) {
@@ -120,84 +135,125 @@ export default function Home() {
     try {
       await authApiRequest<void>("/auth/logout", { method: "POST" });
     } finally {
+      manualNavigation.current = false;
       setSession(null);
       setCommunicationOpened(false);
       setPassword("");
     }
   }
 
+  function navigate(section: CrmSection) {
+    if (
+      !session ||
+      !availableWorkspaceDestinations(session.permissions).some(
+        item => item.id === section
+      )
+    )
+      return;
+    manualNavigation.current = true;
+    if (section === "management-summary") setReportTab("summary");
+    if (section === "communication") setCommunicationOpened(true);
+    setActiveSection(section);
+  }
+
   if (session) {
     return (
-      <CrmShell
+      <WorkspaceProvider
+        key={`${session.organization.id}:${session.user.id}`}
         session={session}
-        activeSection={activeSection}
-        onNavigate={section => {
-          if (section === "communication") {
-            if (!session.permissions.includes("ticket.read")) return;
-            setCommunicationOpened(true);
+        onInitialPreferences={preferences => {
+          if (!manualNavigation.current) {
+            setActiveSection(preferences.defaultSection);
+            if (preferences.defaultSection === "communication")
+              setCommunicationOpened(true);
           }
-          setActiveSection(section);
         }}
-        onLogout={() => void logout()}
       >
-        {activeSection === "companies" ? (
-          <CompaniesView
-            accessToken={session.accessToken}
-            canWrite={session.permissions.includes("company.write")}
-          />
-        ) : activeSection === "contacts" ? (
-          <ContactsView
-            accessToken={session.accessToken}
-            canWrite={session.permissions.includes("contact.write")}
-          />
-        ) : activeSection === "activities" ? (
-          <ActivitiesView
-            accessToken={session.accessToken}
-            ownerUserId={session.user.id}
-            canWrite={session.permissions.includes("activity.write")}
-          />
-        ) : activeSection === "agenda" ? (
-          <AgendaView
-            accessToken={session.accessToken}
-            ownerUserId={session.user.id}
-          />
-        ) : activeSection === "tickets" ? (
-          <TicketsView
-            accessToken={session.accessToken}
-            canWrite={session.permissions.includes("ticket.write")}
-            currentUserId={session.user.id}
-            canManageQueues={session.permissions.includes("support.manage")}
-            canManageSla={session.permissions.includes("support.manage")}
-          />
-        ) : activeSection === "products" ? (
-          <ProductsView
-            accessToken={session.accessToken}
-            canWrite={session.permissions.includes("product.write")}
-          />
-        ) : activeSection === "territories" ? (
-          <TerritoriesView
-            accessToken={session.accessToken}
-            canWrite={session.permissions.includes("territory.write")}
-          />
-        ) : activeSection === "management-summary" ? (
-          <ManagementSummaryView
-            accessToken={session.accessToken}
-            preferenceScope={`${session.organization.id}:${session.user.id}`}
-          />
-        ) : activeSection === "opportunities" ? (
-          <OpportunitiesView
-            accessToken={session.accessToken}
-            ownerUserId={session.user.id}
-            canWrite={session.permissions.includes("opportunity.write")}
-            canMove={session.permissions.includes("opportunity.move")}
-          />
-        ) : null}
-        {communicationOpened && session.permissions.includes("ticket.read") ? (
-          <div hidden={activeSection !== "communication"}>
-            <CommunicationView />
-          </div>
-        ) : null}
-      </CrmShell>
+        <CrmShell
+          session={session}
+          activeSection={activeSection}
+          onNavigate={navigate}
+          onLogout={() => void logout()}
+        >
+          {activeSection === "home" ? (
+            <WorkspaceHome
+              session={session}
+              onNavigate={navigate}
+              onOpenReport={target => {
+                navigate("management-summary");
+                setReportTab(target);
+              }}
+            />
+          ) : activeSection === "workspace-settings" ? (
+            <WorkspaceEditor session={session} />
+          ) : activeSection === "admin-users" &&
+            session.permissions.includes("user.manage") ? (
+            <UsersView accessToken={session.accessToken} />
+          ) : activeSection === "support-settings" &&
+            session.permissions.includes("support.manage") ? (
+            <SupportSettingsView accessToken={session.accessToken} />
+          ) : activeSection === "companies" ? (
+            <CompaniesView
+              accessToken={session.accessToken}
+              canWrite={session.permissions.includes("company.write")}
+            />
+          ) : activeSection === "contacts" ? (
+            <ContactsView
+              accessToken={session.accessToken}
+              canWrite={session.permissions.includes("contact.write")}
+            />
+          ) : activeSection === "activities" ? (
+            <ActivitiesView
+              accessToken={session.accessToken}
+              ownerUserId={session.user.id}
+              canWrite={session.permissions.includes("activity.write")}
+            />
+          ) : activeSection === "agenda" ? (
+            <AgendaView
+              accessToken={session.accessToken}
+              ownerUserId={session.user.id}
+            />
+          ) : activeSection === "tickets" ? (
+            <TicketsView
+              accessToken={session.accessToken}
+              canWrite={session.permissions.includes("ticket.write")}
+              currentUserId={session.user.id}
+              canManageQueues={session.permissions.includes("support.manage")}
+              canManageSla={session.permissions.includes("support.manage")}
+            />
+          ) : activeSection === "products" ? (
+            <ProductsView
+              accessToken={session.accessToken}
+              canWrite={session.permissions.includes("product.write")}
+            />
+          ) : activeSection === "territories" ? (
+            <TerritoriesView
+              accessToken={session.accessToken}
+              canWrite={session.permissions.includes("territory.write")}
+            />
+          ) : activeSection === "management-summary" ? (
+            <ManagementSummaryView
+              key={reportTab}
+              initialTab={reportTab}
+              accessToken={session.accessToken}
+              preferenceScope={`${session.organization.id}:${session.user.id}`}
+            />
+          ) : activeSection === "opportunities" ? (
+            <OpportunitiesView
+              accessToken={session.accessToken}
+              ownerUserId={session.user.id}
+              canWrite={session.permissions.includes("opportunity.write")}
+              canMove={session.permissions.includes("opportunity.move")}
+            />
+          ) : null}
+          {communicationOpened &&
+          session.permissions.includes("ticket.read") ? (
+            <div hidden={activeSection !== "communication"}>
+              <CommunicationView />
+            </div>
+          ) : null}
+        </CrmShell>
+      </WorkspaceProvider>
     );
   }
 

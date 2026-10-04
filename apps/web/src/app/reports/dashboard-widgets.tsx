@@ -60,21 +60,30 @@ export function DashboardWidgets({
   preferenceScope,
   refreshVersion,
   onOpenReport,
+  controlledLayout,
+  onLayoutChange,
+  allowCustomization = true,
+  customizationDisabled = false,
 }: {
+  controlledLayout?: Layout;
+  onLayoutChange?: (next: Layout) => void;
+  allowCustomization?: boolean;
+  customizationDisabled?: boolean;
   summary: ManagementSummary;
   accessToken: string;
   preferenceScope?: string;
   refreshVersion: number;
   onOpenReport: (target: ReportTarget) => void;
 }) {
-  const [layout, setLayout] = useState<Layout>(defaults);
+  const [localLayout, setLayout] = useState<Layout>(defaults);
+  const layout = controlledLayout ?? localLayout;
   const [editing, setEditing] = useState(false);
   const [notice, setNotice] = useState("");
   const storageKey = preferenceScope
     ? `crm:dashboard:v1:${preferenceScope}`
     : null;
   useEffect(() => {
-    if (!storageKey) return;
+    if (!storageKey || controlledLayout) return;
     try {
       const value: unknown = JSON.parse(
         localStorage.getItem(storageKey) ?? "null"
@@ -83,9 +92,14 @@ export function DashboardWidgets({
     } catch {
       /* A missing or invalid preference keeps the default layout. */
     }
-  }, [storageKey]);
+  }, [storageKey, controlledLayout]);
 
   function update(next: Layout) {
+    if (controlledLayout) {
+      onLayoutChange?.(next);
+      setNotice("Layout alterado no rascunho; salve suas preferências.");
+      return;
+    }
     setLayout(next);
     if (!storageKey) return;
     try {
@@ -117,23 +131,29 @@ export function DashboardWidgets({
   );
   return (
     <>
-      <button
-        type="button"
-        aria-expanded={editing}
-        aria-controls="dashboard-settings"
-        onClick={() => setEditing(value => !value)}
-      >
-        Personalizar painel
-      </button>
+      {allowCustomization ? (
+        <button
+          type="button"
+          disabled={customizationDisabled}
+          aria-expanded={editing}
+          aria-controls="dashboard-settings"
+          onClick={() => setEditing(value => !value)}
+        >
+          Personalizar painel
+        </button>
+      ) : null}
       {editing ? (
-        <section
+        <fieldset
+          disabled={customizationDisabled}
           id="dashboard-settings"
           aria-label="Personalização do painel"
           className="dashboard-settings"
         >
           <p>
-            Escolha os componentes e sua ordem. Preferências por usuário e
-            organização neste navegador.
+            Escolha os componentes e sua ordem.{" "}
+            {controlledLayout
+              ? "Clique Salvar preferências para aplicar ao seu usuário e organização."
+              : "Preferências por usuário e organização neste navegador."}
           </p>
           <ul>
             {layout.order.map((id, index) => {
@@ -180,7 +200,7 @@ export function DashboardWidgets({
           <button type="button" onClick={() => update(defaults())}>
             Restaurar padrão
           </button>
-        </section>
+        </fieldset>
       ) : null}
       {notice ? <p role="status">{notice}</p> : null}
       <div className="dashboard-widgets" aria-label="Componentes do dashboard">
@@ -249,8 +269,9 @@ export function DashboardWidgets({
       </div>
       {layout.hidden.length === widgets.length ? (
         <p>
-          Nenhum componente selecionado. Use Personalizar painel para exibir
-          indicadores.
+          Nenhum componente selecionado. Use{" "}
+          {allowCustomization ? "Personalizar painel" : "Personalizar início"}{" "}
+          para exibir indicadores.
         </p>
       ) : null}
     </>

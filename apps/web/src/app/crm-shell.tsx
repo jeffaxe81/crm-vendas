@@ -1,6 +1,11 @@
 "use client";
 
-import type { AuthSessionResponse } from "@axes/contracts";
+import {
+  workspaceDestinations,
+  type AuthSessionResponse,
+  type WorkspaceSection,
+} from "@axes/contracts";
+import { useWorkspace } from "./workspace/workspace-provider";
 import {
   BarChart3,
   Building2,
@@ -19,17 +24,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-export type CrmSection =
-  | "companies"
-  | "contacts"
-  | "activities"
-  | "agenda"
-  | "opportunities"
-  | "products"
-  | "territories"
-  | "tickets"
-  | "communication"
-  | "management-summary";
+export type CrmSection = WorkspaceSection;
 
 type CrmShellProps = {
   session: AuthSessionResponse;
@@ -39,63 +34,26 @@ type CrmShellProps = {
   children: ReactNode;
 };
 
-const navigation = [
-  { section: "companies", label: "Empresas", icon: Building2 },
-  { section: "contacts", label: "Contatos", icon: UsersRound },
-  {
-    section: "activities",
-    label: "Atividades",
-    icon: ClipboardList,
-    permission: "activity.read",
-  },
-  {
-    section: "agenda",
-    label: "Agenda",
-    icon: CalendarDays,
-    permission: "activity.read",
-  },
-  {
-    section: "opportunities",
-    label: "Oportunidades",
-    icon: TrendingUp,
-    permission: "opportunity.read",
-  },
-  {
-    section: "tickets",
-    label: "Atendimento",
-    icon: Headset,
-    permission: "ticket.read",
-  },
-  {
-    section: "communication",
-    label: "Comunicação integrada",
-    icon: Headset,
-    permission: "ticket.read",
-  },
-  {
-    section: "products",
-    label: "Produtos",
-    icon: Package,
-    permission: "product.read",
-  },
-  {
-    section: "territories",
-    label: "Territórios",
-    icon: MapPin,
-    permission: "territory.read",
-  },
-  {
-    section: "management-summary",
-    label: "Resumo gerencial",
-    icon: BarChart3,
-    permission: "reports.read",
-  },
-] satisfies Array<{
-  section: CrmSection;
-  label: string;
-  icon: typeof Building2;
-  permission?: string;
-}>;
+const icons: Partial<Record<CrmSection, typeof Building2>> = {
+  companies: Building2,
+  contacts: UsersRound,
+  activities: ClipboardList,
+  agenda: CalendarDays,
+  opportunities: TrendingUp,
+  products: Package,
+  territories: MapPin,
+  tickets: Headset,
+  communication: Headset,
+  "management-summary": BarChart3,
+  "admin-users": UsersRound,
+  "support-settings": ShieldCheck,
+  "workspace-settings": PanelLeft,
+};
+const navigation = workspaceDestinations.map(item => ({
+  ...item,
+  section: item.id,
+  icon: icons[item.id] ?? Menu,
+}));
 
 const sidebarPreferenceKey = "axes-crm-sidebar-collapsed";
 
@@ -106,6 +64,8 @@ export function CrmShell({
   onLogout,
   children,
 }: CrmShellProps) {
+  const workspace = useWorkspace();
+  const [openGroups, setOpenGroups] = useState<string[]>([]);
   const [collapsed, setCollapsed] = useState(false);
   const [mobile, setMobile] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -116,6 +76,36 @@ export function CrmShell({
   const items = navigation.filter(
     item => !item.permission || session.permissions.includes(item.permission)
   );
+  const favorites = (workspace?.saved.favorites ?? []).filter(id =>
+    items.some(item => item.section === id)
+  );
+  const activeGroup = items.find(item => item.section === activeSection)?.group;
+  useEffect(() => {
+    if (activeGroup)
+      setOpenGroups(groups =>
+        groups.includes(activeGroup) ? groups : [...groups, activeGroup]
+      );
+  }, [activeGroup]);
+  function renderItem(item: (typeof navigation)[number]) {
+    const Icon = item.icon;
+    return (
+      <button
+        key={item.section}
+        type="button"
+        aria-label={item.label}
+        title={collapsed && !mobile ? item.label : undefined}
+        className={activeSection === item.section ? "is-active" : undefined}
+        aria-current={activeSection === item.section ? "page" : undefined}
+        onClick={() => {
+          onNavigate(item.section);
+          setDrawerOpen(false);
+        }}
+      >
+        <Icon aria-hidden="true" />
+        <span>{item.label}</span>
+      </button>
+    );
+  }
   const currentLabel =
     items.find(item => item.section === activeSection)?.label ?? "CRM";
   const initials = session.user.displayName
@@ -242,24 +232,55 @@ export function CrmShell({
         </div>
 
         <nav className="crm-shell__nav" aria-label="Navegação principal">
-          <p className="crm-shell__nav-caption">Operação comercial</p>
-          {items.map(({ section, label, icon: Icon }) => (
-            <button
-              key={section}
-              type="button"
-              aria-label={label}
-              title={collapsed && !mobile ? label : undefined}
-              className={activeSection === section ? "is-active" : undefined}
-              aria-current={activeSection === section ? "page" : undefined}
-              onClick={() => {
-                onNavigate(section);
-                setDrawerOpen(false);
-              }}
-            >
-              <Icon aria-hidden="true" />
-              <span>{label}</span>
-            </button>
-          ))}
+          {renderItem(items.find(item => item.section === "home")!)}
+          {favorites.length ? (
+            <div aria-label="Favoritos">
+              <p className="crm-shell__nav-caption">Favoritos</p>
+              {favorites.map(id =>
+                renderItem(items.find(item => item.section === id)!)
+              )}
+            </div>
+          ) : null}
+          {(
+            [
+              "Comercial",
+              "Produtividade",
+              "Atendimento",
+              "Gestão",
+              "Administração",
+            ] as const
+          ).map(group => {
+            const entries = items.filter(
+              item => item.group === group && !favorites.includes(item.section)
+            );
+            if (!entries.length) return null;
+            const open = openGroups.includes(group);
+            return (
+              <div key={group} className="workspace-nav-group">
+                <button
+                  type="button"
+                  aria-label={`Grupo ${group}`}
+                  aria-expanded={open}
+                  title={group}
+                  onClick={() =>
+                    setOpenGroups(current =>
+                      current.includes(group)
+                        ? current.filter(value => value !== group)
+                        : [...current, group]
+                    )
+                  }
+                >
+                  <Menu aria-hidden="true" />
+                  <span>{group}</span>
+                </button>
+                {open ? (
+                  <div className="workspace-nav-group__items">
+                    {entries.map(renderItem)}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
         </nav>
 
         <section className="crm-shell__session" aria-label="Sessão ativa">

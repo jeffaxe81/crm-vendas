@@ -1,3 +1,4 @@
+import { openWorkspaceSection } from "./helpers/workspace-navigation";
 import { expect, test } from "@playwright/test";
 
 const adminEmail = process.env.BOOTSTRAP_ADMIN_EMAIL ?? "admin@axes.test";
@@ -23,6 +24,7 @@ test("CRM core journey persists company contact channel link and history", async
   await page.getByLabel("E-mail").fill(adminEmail);
   await page.getByLabel("Senha").fill(adminPassword ?? "");
   await page.getByRole("button", { name: "Entrar no CRM" }).click();
+  await openWorkspaceSection(page, "Empresas");
 
   await expect(
     page.getByRole("button", { name: "Nova empresa" })
@@ -36,7 +38,7 @@ test("CRM core journey persists company contact channel link and history", async
     page.getByText(companyName, { exact: true }).first()
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "Contatos" }).click();
+  await openWorkspaceSection(page, "Contatos");
   await expect(
     page.getByRole("button", { name: "Novo contato" })
   ).toBeVisible();
@@ -82,7 +84,7 @@ test("CRM core journey persists company contact channel link and history", async
   await expect(
     page.getByText(companyName, { exact: true }).first()
   ).toBeVisible();
-  await page.getByRole("button", { name: "Contatos" }).click();
+  await openWorkspaceSection(page, "Contatos");
 
   const persistedCard = page
     .locator("article")
@@ -104,8 +106,9 @@ test("CRM activities journey creates completes and persists an activity", async 
   await page.getByLabel("E-mail").fill(adminEmail);
   await page.getByLabel("Senha").fill(adminPassword ?? "");
   await page.getByRole("button", { name: "Entrar no CRM" }).click();
+  await openWorkspaceSection(page, "Empresas");
 
-  await page.getByRole("button", { name: "Atividades" }).click();
+  await openWorkspaceSection(page, "Atividades");
   await expect(
     page.getByRole("heading", { name: "Atividades e compromissos" })
   ).toBeVisible();
@@ -170,6 +173,7 @@ test("CRM opportunity journey creates moves and persists a stage change", async 
   await page.getByLabel("E-mail").fill(adminEmail);
   await page.getByLabel("Senha").fill(adminPassword ?? "");
   await page.getByRole("button", { name: "Entrar no CRM" }).click();
+  await openWorkspaceSection(page, "Empresas");
 
   await expect(
     page.getByRole("button", { name: "Nova empresa" })
@@ -183,7 +187,7 @@ test("CRM opportunity journey creates moves and persists a stage change", async 
     page.getByText(opportunityCompanyName, { exact: true }).first()
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "Oportunidades" }).click();
+  await openWorkspaceSection(page, "Oportunidades");
   await expect(
     page.getByRole("heading", { name: "Oportunidades" })
   ).toBeVisible();
@@ -224,7 +228,7 @@ test("CRM opportunity journey creates moves and persists a stage change", async 
   await expect(
     page.getByRole("button", { name: "Oportunidades" })
   ).toBeVisible();
-  await page.getByRole("button", { name: "Oportunidades" }).click();
+  await openWorkspaceSection(page, "Oportunidades");
 
   const persistedOpportunityCard = page
     .getByRole("listitem")

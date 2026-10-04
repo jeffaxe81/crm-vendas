@@ -1,3 +1,4 @@
+import { openNavigationGroup } from "./test-utils/workspace-navigation";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -154,6 +155,7 @@ describe("C4.1.1 management summary navigation", () => {
   it("opens the management summary for a session with reports.read", async () => {
     renderWithSession(sessionWithReports);
 
+    await openNavigationGroup("Gestão");
     fireEvent.click(
       await screen.findByRole("button", { name: "Resumo gerencial" })
     );
@@ -169,6 +171,7 @@ describe("C4.1.1 management summary navigation", () => {
   it("opens the sales by product tab inside the reports section", async () => {
     renderWithSession(sessionWithReports);
 
+    await openNavigationGroup("Gestão");
     fireEvent.click(
       await screen.findByRole("button", { name: "Resumo gerencial" })
     );
@@ -192,6 +195,7 @@ describe("C4.1.1 management summary navigation", () => {
   it("opens the sales by owner tab inside the reports section", async () => {
     renderWithSession(sessionWithReports);
 
+    await openNavigationGroup("Gestão");
     fireEvent.click(
       await screen.findByRole("button", { name: "Resumo gerencial" })
     );

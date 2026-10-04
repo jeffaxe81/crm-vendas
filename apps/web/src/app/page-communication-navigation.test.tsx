@@ -1,3 +1,4 @@
+import { openNavigationGroup } from "./test-utils/workspace-navigation";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Home from "./page";
@@ -57,15 +58,18 @@ afterEach(() => {
 describe("NEO communication in CRM navigation", () => {
   it("starts the iframe only on opening and preserves it across navigation", async () => {
     mount();
+    await openNavigationGroup("Atendimento");
     const communication = await screen.findByRole("button", {
       name: "Comunicação integrada",
     });
     expect(screen.queryByTitle("NEO Interact")).not.toBeInTheDocument();
     fireEvent.click(communication);
     const frame = await screen.findByTitle("NEO Interact");
+    await openNavigationGroup("Comercial");
     fireEvent.click(screen.getByRole("button", { name: "Empresas" }));
     expect(frame).toBeInTheDocument();
     expect(frame.closest("[hidden]")).not.toBeNull();
+    await openNavigationGroup("Atendimento");
     fireEvent.click(
       screen.getByRole("button", { name: "Comunicação integrada" })
     );
@@ -87,6 +91,7 @@ describe("NEO communication in CRM navigation", () => {
   });
   it("explains missing configuration without rendering any external iframe", async () => {
     mount(undefined, false);
+    await openNavigationGroup("Atendimento");
     fireEvent.click(
       await screen.findByRole("button", { name: "Comunicação integrada" })
     );

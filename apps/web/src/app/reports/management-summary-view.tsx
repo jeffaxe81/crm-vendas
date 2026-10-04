@@ -6,6 +6,7 @@ import {
 } from "@axes/contracts";
 import { useEffect, useState } from "react";
 
+import { useWorkspace } from "../workspace/workspace-provider";
 import { DashboardWidgets } from "./dashboard-widgets";
 import { apiRequest } from "../../lib/api-client";
 import { SalesByOwnerView } from "./sales-by-owner-view";
@@ -16,7 +17,7 @@ import { SalesByMonthView } from "./sales-by-month-view";
 import { CsatView } from "./csat-view";
 import { SlaReportView } from "./sla-report-view";
 
-type ReportTab =
+export type ReportTab =
   | "summary"
   | "sales-by-product"
   | "sales-by-owner"
@@ -40,6 +41,7 @@ const reportTabs: Array<{ id: ReportTab; label: string }> = [
 type ManagementSummaryViewProps = {
   accessToken: string;
   preferenceScope?: string;
+  initialTab?: ReportTab;
 };
 
 const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
@@ -50,12 +52,14 @@ const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
 export function ManagementSummaryView({
   accessToken,
   preferenceScope,
+  initialTab = "summary",
 }: ManagementSummaryViewProps) {
+  const workspace = useWorkspace();
   const [refreshVersion, setRefreshVersion] = useState(0);
   const [summary, setSummary] = useState<ManagementSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [tab, setTab] = useState<ReportTab>("summary");
+  const [tab, setTab] = useState<ReportTab>(initialTab);
 
   useEffect(() => {
     let active = true;
@@ -216,6 +220,21 @@ export function ManagementSummaryView({
             Atualizado em {dateTimeFormatter.format(new Date(summary.asOf))}
           </p>
 
+          {workspace ? (
+            <div>
+              {workspace.error ? <p role="alert">{workspace.error}</p> : null}
+              {workspace.message ? (
+                <p role="status">{workspace.message}</p>
+              ) : null}
+              <button
+                type="button"
+                disabled={workspace.loading || workspace.saving}
+                onClick={() => void workspace.save()}
+              >
+                Salvar preferências
+              </button>
+            </div>
+          ) : null}
           <DashboardWidgets
             key={preferenceScope ?? "session"}
             summary={summary}
@@ -223,6 +242,27 @@ export function ManagementSummaryView({
             preferenceScope={preferenceScope}
             refreshVersion={refreshVersion}
             onOpenReport={setTab}
+            customizationDisabled={
+              workspace ? workspace.loading || workspace.saving : false
+            }
+            controlledLayout={
+              workspace
+                ? {
+                    order: workspace.draft.dashboardOrder,
+                    hidden: workspace.draft.dashboardHidden,
+                  }
+                : undefined
+            }
+            onLayoutChange={
+              workspace
+                ? next =>
+                    workspace.setDraft({
+                      ...workspace.draft,
+                      dashboardOrder: next.order,
+                      dashboardHidden: next.hidden,
+                    })
+                : undefined
+            }
           />
         </>
       ) : null}

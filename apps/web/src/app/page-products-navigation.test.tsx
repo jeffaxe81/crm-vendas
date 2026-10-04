@@ -1,3 +1,4 @@
+import { openNavigationGroup } from "./test-utils/workspace-navigation";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -89,6 +90,7 @@ describe("C4.3.3 products navigation", () => {
 
     await screen.findByText(baseSession.organization.name);
 
+    await openNavigationGroup("Comercial");
     fireEvent.click(await screen.findByRole("button", { name: "Produtos" }));
 
     expect(
