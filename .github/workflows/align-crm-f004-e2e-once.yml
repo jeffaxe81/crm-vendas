@@ -1,0 +1,62 @@
+name: Align CRM-F004 E2E expectations once
+on:
+  push:
+    branches:
+      - fix/workspace-login-status
+    paths:
+      - .github/workflows/align-crm-f004-e2e-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/workspace-login-status
+      - name: Align stale E2E assumptions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          crm = Path("tests/e2e/crm-core.spec.ts")
+          text = crm.read_text()
+          old = '''  await expect(page.getByLabel("Acesso ao CRM")).toBeVisible();
+  await expect(
+    page.getByText(companyName, { exact: true }).first()
+  ).toBeVisible();
+  await openWorkspaceSection(page, "Contatos");'''
+          new = '''  await expect(page.getByLabel("Acesso ao CRM")).toBeVisible();
+  await openWorkspaceSection(page, "Empresas");
+  await expect(
+    page.getByText(companyName, { exact: true }).first()
+  ).toBeVisible();
+  await openWorkspaceSection(page, "Contatos");'''
+          if old not in text:
+              raise SystemExit("crm-core reload assertion pattern not found")
+          crm.write_text(text.replace(old, new, 1))
+
+          foundation = Path("tests/e2e/foundation.spec.ts")
+          text = foundation.read_text()
+          old = '''  await expect(
+    accessPanel.getByText("Axesistemas", { exact: true })
+  ).toBeVisible();
+  await expect(accessPanel.getByText("ADMIN", { exact: true })).toBeVisible();'''
+          new = '''  await expect(
+    page.getByText("Axesistemas", { exact: true }).first()
+  ).toBeVisible();
+  await expect(accessPanel.getByText("ADMIN", { exact: true })).toBeVisible();'''
+          if old not in text:
+              raise SystemExit("foundation organization assertion pattern not found")
+          foundation.write_text(text.replace(old, new, 1))
+          PY
+      - name: Commit focused E2E alignment and remove workflow
+        run: |
+          rm .github/workflows/align-crm-f004-e2e-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/crm-core.spec.ts tests/e2e/foundation.spec.ts .github/workflows/align-crm-f004-e2e-once.yml
+          git commit -m "fix(e2e): align navigation assertions with CRM-F004 workspace"
+          git push origin HEAD:fix/workspace-login-status
