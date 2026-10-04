@@ -584,10 +584,7 @@ export function OpportunitiesView({
         </div>
       ) : null}
 
-      {!loading &&
-      !error &&
-      opportunities.length > 0 &&
-      viewMode === "list" ? (
+      {!loading && !error && opportunities.length > 0 && viewMode === "list" ? (
         <ul className="opportunities-view__list">
           {opportunities.map(opportunity => {
             const opportunityPipeline = pipelines.find(
