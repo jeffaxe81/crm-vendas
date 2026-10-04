@@ -1,8 +1,5 @@
 export type WebhookDeliveryStatus =
-  | "PENDING"
-  | "RETRY_SCHEDULED"
-  | "DELIVERED"
-  | "EXHAUSTED";
+  "PENDING" | "RETRY_SCHEDULED" | "DELIVERED" | "EXHAUSTED";
 
 export type WebhookDeliveryState = {
   status: WebhookDeliveryStatus;
