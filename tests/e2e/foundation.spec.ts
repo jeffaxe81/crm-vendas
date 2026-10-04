@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const adminEmail = "admin@axes.test";
-const adminPassword = "Strong-CI-Password-2026!";
+const adminPassword = process.env.BOOTSTRAP_ADMIN_PASSWORD ?? "";
 
 test("user authenticates in the active organization and logs out", async ({
   page,
@@ -30,7 +30,7 @@ test("user authenticates in the active organization and logs out", async ({
   const accessPanel = page.getByLabel("Sessão ativa");
   await expect(accessPanel).toBeVisible();
   await expect(
-    accessPanel.getByText("Axesistemas", { exact: true })
+    page.getByText("Axesistemas", { exact: true }).first()
   ).toBeVisible();
   await expect(accessPanel.getByText("ADMIN", { exact: true })).toBeVisible();
   await expect(
