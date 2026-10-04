@@ -1,8 +1,5 @@
 export type WebhookDeliveryStatus =
-  | "PENDING"
-  | "RETRY_SCHEDULED"
-  | "DELIVERED"
-  | "EXHAUSTED";
+  "PENDING" | "RETRY_SCHEDULED" | "DELIVERED" | "EXHAUSTED";
 
 export type WebhookDeliveryState = {
   status: WebhookDeliveryStatus;
@@ -19,7 +16,7 @@ type DeliveryAttempt = {
 
 export function nextWebhookDeliveryState(
   current: WebhookDeliveryState,
-  attempt: DeliveryAttempt,
+  attempt: DeliveryAttempt
 ): WebhookDeliveryState {
   if (current.status === "DELIVERED") {
     throw new Error("Delivered webhooks cannot be reprocessed.");
