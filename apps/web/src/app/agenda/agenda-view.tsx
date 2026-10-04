@@ -96,6 +96,10 @@ function localDateKey(value: string): string {
 }
 
 export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
+  const [refreshVersion, setRefreshVersion] = useState(0);
+  const [focus, setFocus] = useState<"WEEK" | "TODAY" | "OVERDUE">("WEEK");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [weekOffset, setWeekOffset] = useState(0);
   const [type, setType] = useState<AgendaFilter<ActivityType>>("ALL");
   const [status, setStatus] = useState<AgendaFilter<ActivityStatus>>("ALL");
@@ -106,12 +110,22 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
   const [error, setError] = useState("");
 
   const period = useMemo(() => {
-    const anchor = addWeeks(new Date(), weekOffset);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (focus === "OVERDUE") {
+      return { from: null, to: new Date(today.getTime() - 1) };
+    }
+    if (focus === "TODAY") {
+      const end = new Date(today);
+      end.setHours(23, 59, 59, 999);
+      return { from: today, to: end };
+    }
+    const anchor = addWeeks(today, weekOffset);
     return {
       from: startOfWeek(anchor),
       to: endOfWeek(anchor),
     };
-  }, [weekOffset]);
+  }, [weekOffset, focus, refreshVersion]);
 
   useEffect(() => {
     let active = true;
@@ -121,19 +135,22 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
       setError("");
 
       const params = new URLSearchParams({
-        page: "1",
+        page: String(page),
         limit: "100",
         ownerUserId,
-        dueFrom: period.from.toISOString(),
         dueTo: period.to.toISOString(),
         sortBy: "dueAt",
         sortOrder: "asc",
       });
 
+      if (period.from) params.set("dueFrom", period.from.toISOString());
+
       if (type !== "ALL") {
         params.set("type", type);
       }
-      if (status !== "ALL") {
+      if (focus !== "WEEK") {
+        params.set("status", "PENDING");
+      } else if (status !== "ALL") {
         params.set("status", status);
       }
       if (priority !== "ALL") {
@@ -146,6 +163,7 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
           { accessToken }
         );
         if (active) {
+          setTotal(result.total);
           setActivities(
             result.items.filter(activity => activity.dueAt !== null)
           );
@@ -170,7 +188,7 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
     return () => {
       active = false;
     };
-  }, [accessToken, ownerUserId, period, priority, status, type]);
+  }, [accessToken, ownerUserId, period, priority, status, type, page, focus]);
 
   const grouped = useMemo(() => {
     const groups = new Map<string, ActivityRecord[]>();
@@ -201,24 +219,80 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
         </div>
       </header>
 
-      <nav
-        className="activities-view__status-tabs"
-        aria-label="Período da agenda"
-      >
-        <button type="button" onClick={() => setWeekOffset(value => value - 1)}>
-          Anterior
-        </button>
-        <button type="button" onClick={() => setWeekOffset(0)}>
-          Hoje
-        </button>
-        <button type="button" onClick={() => setWeekOffset(value => value + 1)}>
-          Próximo
+      <nav className="activities-view__status-tabs" aria-label="Foco da agenda">
+        {(
+          [
+            ["WEEK", "Semana"],
+            ["TODAY", "Pendentes de hoje"],
+            ["OVERDUE", "Atrasadas"],
+          ] as const
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            className={focus === value ? "is-active" : undefined}
+            aria-pressed={focus === value}
+            onClick={() => {
+              setFocus(value);
+              setPage(1);
+            }}
+          >
+            {label}
+          </button>
+        ))}
+        <button
+          type="button"
+          disabled={loading}
+          onClick={() => {
+            setPage(1);
+            setRefreshVersion(value => value + 1);
+          }}
+        >
+          Atualizar agenda
         </button>
       </nav>
 
+      {focus === "WEEK" ? (
+        <nav
+          className="activities-view__status-tabs"
+          aria-label="Período da agenda"
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setWeekOffset(value => value - 1);
+              setPage(1);
+            }}
+          >
+            Anterior
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setWeekOffset(0);
+              setPage(1);
+            }}
+          >
+            Hoje
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setWeekOffset(value => value + 1);
+              setPage(1);
+            }}
+          >
+            Próximo
+          </button>
+        </nav>
+      ) : null}
+
       <p className="activities-view__status">
-        {periodFormatter.format(period.from)} a{" "}
-        {periodFormatter.format(period.to)}
+        {focus === "OVERDUE"
+          ? "Pendências com prazo anterior a hoje."
+          : focus === "TODAY"
+            ? `Pendências de ${periodFormatter.format(period.from!)}`
+            : `${periodFormatter.format(period.from!)} a ${periodFormatter.format(period.to)}`}
       </p>
 
       <div className="activity-form__fields" aria-label="Filtros da agenda">
@@ -227,9 +301,10 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
           <select
             id="agenda-type"
             value={type}
-            onChange={event =>
-              setType(event.target.value as AgendaFilter<ActivityType>)
-            }
+            onChange={event => {
+              setType(event.target.value as AgendaFilter<ActivityType>);
+              setPage(1);
+            }}
           >
             <option value="ALL">Todos</option>
             <option value="TASK">Tarefa</option>
@@ -241,10 +316,12 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
           <span>Status</span>
           <select
             id="agenda-status"
-            value={status}
-            onChange={event =>
-              setStatus(event.target.value as AgendaFilter<ActivityStatus>)
-            }
+            disabled={focus !== "WEEK"}
+            value={focus === "WEEK" ? status : "PENDING"}
+            onChange={event => {
+              setStatus(event.target.value as AgendaFilter<ActivityStatus>);
+              setPage(1);
+            }}
           >
             <option value="ALL">Todos</option>
             <option value="PENDING">Pendente</option>
@@ -258,9 +335,10 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
           <select
             id="agenda-priority"
             value={priority}
-            onChange={event =>
-              setPriority(event.target.value as AgendaFilter<ActivityPriority>)
-            }
+            onChange={event => {
+              setPriority(event.target.value as AgendaFilter<ActivityPriority>);
+              setPage(1);
+            }}
           >
             <option value="ALL">Todas</option>
             <option value="LOW">Baixa</option>
@@ -282,7 +360,11 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
 
       {!loading && !error && grouped.length === 0 ? (
         <p className="activities-view__status">
-          Nenhuma atividade com prazo nesta semana.
+          {focus === "OVERDUE"
+            ? "Nenhuma atividade pendente atrasada."
+            : focus === "TODAY"
+              ? "Nenhuma atividade pendente para hoje."
+              : "Nenhuma atividade com prazo nesta semana."}
         </p>
       ) : null}
 
@@ -322,6 +404,30 @@ export function AgendaView({ accessToken, ownerUserId }: AgendaViewProps) {
             );
           })}
         </div>
+      ) : null}
+      {!loading && !error && total > 100 ? (
+        <nav
+          className="activities-view__status-tabs"
+          aria-label="Páginas da agenda"
+        >
+          <button
+            type="button"
+            disabled={page === 1}
+            onClick={() => setPage(value => value - 1)}
+          >
+            Página anterior
+          </button>
+          <span role="status">
+            Página {page} de {Math.ceil(total / 100)} · {total} atividades
+          </span>
+          <button
+            type="button"
+            disabled={page * 100 >= total}
+            onClick={() => setPage(value => value + 1)}
+          >
+            Próxima página
+          </button>
+        </nav>
       ) : null}
     </section>
   );
