@@ -180,7 +180,10 @@ export default function Home() {
             canWrite={session.permissions.includes("territory.write")}
           />
         ) : activeSection === "management-summary" ? (
-          <ManagementSummaryView accessToken={session.accessToken} />
+          <ManagementSummaryView
+            accessToken={session.accessToken}
+            preferenceScope={`${session.organization.id}:${session.user.id}`}
+          />
         ) : activeSection === "opportunities" ? (
           <OpportunitiesView
             accessToken={session.accessToken}
