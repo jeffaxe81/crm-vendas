@@ -128,17 +128,24 @@ describe("C3.6.7 opportunities sales funnel", () => {
       name: "Funil de vendas",
     });
     const columns = within(board).getAllByRole("region");
+    const [prospectingColumn, proposalColumn] = columns;
 
     expect(columns).toHaveLength(2);
+    if (!prospectingColumn || !proposalColumn) {
+      throw new Error("Expected two pipeline stage columns.");
+    }
+
     expect(
-      within(columns[0]).getByRole("heading", { name: "Prospecção" })
+      within(prospectingColumn).getByRole("heading", { name: "Prospecção" })
     ).toBeInTheDocument();
-    expect(within(columns[0]).getByText("Renovação anual")).toBeInTheDocument();
     expect(
-      within(columns[1]).getByRole("heading", { name: "Proposta" })
+      within(prospectingColumn).getByText("Renovação anual")
     ).toBeInTheDocument();
     expect(
-      within(columns[1]).getByText("Expansão de contrato")
+      within(proposalColumn).getByRole("heading", { name: "Proposta" })
+    ).toBeInTheDocument();
+    expect(
+      within(proposalColumn).getByText("Expansão de contrato")
     ).toBeInTheDocument();
   });
 });
