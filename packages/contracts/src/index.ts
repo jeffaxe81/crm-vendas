@@ -338,3 +338,15 @@ export {
   type IntegrationCredentialCreated,
   type IntegrationCredentialSummary,
 } from "./integration-credentials";
+
+export {
+  WorkspacePreferencesSchema,
+  createDefaultWorkspacePreferences,
+  workspaceDestinations,
+  homeWidgetIds,
+  dashboardWidgetIds,
+  availableWorkspaceDestinations,
+  sanitizeWorkspacePreferences,
+  type WorkspacePreferences,
+  type WorkspaceSection,
+} from "./workspace-preferences";

@@ -1,3 +1,4 @@
+import { openNavigationGroup } from "./test-utils/workspace-navigation";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -107,6 +108,7 @@ describe("C3.6.4 opportunities navigation and list", () => {
 
     await screen.findByText(sessionWithOpportunities.organization.name);
 
+    await openNavigationGroup("Comercial");
     const opportunitiesNavigation = await screen.findByRole("button", {
       name: "Oportunidades",
     });

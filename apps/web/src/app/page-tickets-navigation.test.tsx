@@ -1,3 +1,4 @@
+import { openNavigationGroup } from "./test-utils/workspace-navigation";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -101,6 +102,7 @@ describe("C4.3.3 tickets navigation", () => {
 
     await screen.findByText(baseSession.organization.name);
 
+    await openNavigationGroup("Atendimento");
     fireEvent.click(await screen.findByRole("button", { name: "Atendimento" }));
 
     expect(
@@ -128,6 +130,7 @@ describe("C4.3.3 tickets navigation", () => {
   it("shows queue management only with support.manage", async () => {
     authenticate(["company.read", "ticket.read", "ticket.write"]);
     await screen.findByText(baseSession.organization.name);
+    await openNavigationGroup("Atendimento");
     fireEvent.click(await screen.findByRole("button", { name: "Atendimento" }));
     await screen.findByRole("heading", { name: "Solicitações" });
     expect(
@@ -138,6 +141,7 @@ describe("C4.3.3 tickets navigation", () => {
   it("offers queue management to support.manage sessions", async () => {
     authenticate(["company.read", "ticket.read", "support.manage"]);
     await screen.findByText(baseSession.organization.name);
+    await openNavigationGroup("Atendimento");
     fireEvent.click(await screen.findByRole("button", { name: "Atendimento" }));
     expect(
       await screen.findByRole("button", { name: "Gerenciar filas" })

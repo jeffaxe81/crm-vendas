@@ -1,3 +1,4 @@
+import { openNavigationGroup } from "./test-utils/workspace-navigation";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { StrictMode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -77,6 +78,7 @@ describe("Cycle 2 contacts navigation", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Entrar no CRM" }));
 
+    await openNavigationGroup("Comercial");
     const contactsNavigation = await screen.findByRole("button", {
       name: "Contatos",
     });
@@ -109,6 +111,7 @@ describe("Cycle 2 contacts navigation", () => {
 
     render(<Home />);
 
+    await openNavigationGroup("Comercial");
     expect(
       await screen.findByRole("button", { name: "Contatos" })
     ).toBeInTheDocument();
@@ -138,6 +141,7 @@ describe("Cycle 2 contacts navigation", () => {
       </StrictMode>
     );
 
+    await openNavigationGroup("Comercial");
     expect(
       await screen.findByRole("button", { name: "Contatos" })
     ).toBeInTheDocument();

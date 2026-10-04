@@ -59,6 +59,19 @@ services:
       retries: 10
       start_period: 10s
 
+  migrate:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: build
+    environment:
+      DATABASE_URL: postgresql://axes:axes@postgres:5432/axes_crm
+    command: ["pnpm", "--filter", "@axes/api", "prisma:migrate:deploy"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   web:
     build:
       context: .

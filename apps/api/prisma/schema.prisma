@@ -275,6 +275,7 @@ model OrganizationMembership {
   updatedAt          DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
   organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   user               User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  workspacePreference UserWorkspacePreference?
   ownedOpportunities Opportunity[]  @relation("OpportunityOwnerMembership")
   assignedTickets    Ticket[]       @relation("TicketAssigneeMembership")
 
@@ -975,4 +976,16 @@ model IntegrationCredential {
   @@unique([id, organizationId], map: "integration_credentials_id_organization_key")
   @@index([organizationId, isActive], map: "integration_credentials_org_active_idx")
   @@map("integration_credentials")
+}
+
+model UserWorkspacePreference {
+  organizationId String @map("organization_id") @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  preferences Json @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  membership OrganizationMembership @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade)
+
+  @@id([organizationId, userId])
+  @@map("user_workspace_preferences")
 }

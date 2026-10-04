@@ -1,3 +1,4 @@
+import { openNavigationGroup } from "./test-utils/workspace-navigation";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -92,6 +93,7 @@ describe("C3.5.4 activities navigation", () => {
   it("opens activities when the session has activity.read", async () => {
     await authenticate(sessionWithActivities);
 
+    await openNavigationGroup("Produtividade");
     const activitiesNavigation = await screen.findByRole("button", {
       name: "Atividades",
     });

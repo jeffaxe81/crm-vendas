@@ -75,9 +75,10 @@ export class ActivitiesService {
       ...(dueAt ? { dueAt } : {}),
     };
 
-    const orderBy = {
-      [query.sortBy]: query.sortOrder,
-    } as Prisma.ActivityOrderByWithRelationInput;
+    const orderBy: Prisma.ActivityOrderByWithRelationInput[] = [
+      { [query.sortBy]: query.sortOrder },
+      { id: "asc" },
+    ];
 
     const [items, total] = await this.prisma.withTenant(
       organizationId,

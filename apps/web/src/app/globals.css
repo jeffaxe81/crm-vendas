@@ -2034,3 +2034,135 @@ textarea {
     align-items: stretch;
   }
 }
+
+/* CRM-F003 — Dashboard gerencial em teste */
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 1rem;
+  margin-block: 1rem;
+}
+.dashboard-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+.dashboard-widget--wide {
+  grid-column: 1 / -1;
+}
+.dashboard-metric {
+  font-size: 1.75rem;
+}
+.dashboard-settings {
+  padding: 1rem;
+  border: 1px solid var(--crm-border);
+  border-radius: 0.75rem;
+  margin-block: 1rem;
+}
+.dashboard-settings ul,
+.dashboard-bars {
+  list-style: none;
+  padding: 0;
+}
+.dashboard-settings li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-block: 0.75rem;
+}
+.dashboard-settings label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.dashboard-settings input {
+  width: auto;
+}
+.dashboard-settings button {
+  min-height: 44px;
+  min-width: 44px;
+}
+.dashboard-bars {
+  display: grid;
+  gap: 0.75rem;
+}
+.dashboard-bars li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.35rem 1rem;
+}
+.dashboard-bars span {
+  overflow-wrap: anywhere;
+}
+.dashboard-bars meter {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 1rem;
+  accent-color: #0891b2;
+}
+.dashboard-widget button {
+  align-self: flex-start;
+  min-height: 44px;
+}
+
+/* CRM-F004 — Workspace personalizável */
+.workspace-nav-group {
+  display: grid;
+  gap: 0.25rem;
+}
+.workspace-nav-group__items {
+  display: grid;
+  gap: 0.25rem;
+  padding-left: 0.6rem;
+}
+.workspace-home-widgets {
+  display: grid;
+  gap: 1.5rem;
+}
+.workspace-home-widgets > div {
+  min-width: 0;
+  border: 1px solid var(--crm-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.workspace-favorites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.workspace-editor {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+.workspace-editor fieldset {
+  min-width: 0;
+}
+.workspace-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.workspace-checkbox input {
+  width: auto;
+}
+.workspace-order-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.workspace-order-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.workspace-order-list button {
+  min-width: 44px;
+  min-height: 44px;
+}

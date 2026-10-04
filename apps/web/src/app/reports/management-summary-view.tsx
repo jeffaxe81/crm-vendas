@@ -6,6 +6,8 @@ import {
 } from "@axes/contracts";
 import { useEffect, useState } from "react";
 
+import { useWorkspace } from "../workspace/workspace-provider";
+import { DashboardWidgets } from "./dashboard-widgets";
 import { apiRequest } from "../../lib/api-client";
 import { SalesByOwnerView } from "./sales-by-owner-view";
 import { SalesByProductView } from "./sales-by-product-view";
@@ -15,7 +17,7 @@ import { SalesByMonthView } from "./sales-by-month-view";
 import { CsatView } from "./csat-view";
 import { SlaReportView } from "./sla-report-view";
 
-type ReportTab =
+export type ReportTab =
   | "summary"
   | "sales-by-product"
   | "sales-by-owner"
@@ -38,31 +40,26 @@ const reportTabs: Array<{ id: ReportTab; label: string }> = [
 
 type ManagementSummaryViewProps = {
   accessToken: string;
+  preferenceScope?: string;
+  initialTab?: ReportTab;
 };
-
-const currencyFormatter = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
 
 const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
   dateStyle: "short",
   timeStyle: "short",
 });
 
-function formatCurrency(value: string): string {
-  return currencyFormatter
-    .format(Number(value))
-    .replace(/[\u00a0\u202f]/g, " ");
-}
-
 export function ManagementSummaryView({
   accessToken,
+  preferenceScope,
+  initialTab = "summary",
 }: ManagementSummaryViewProps) {
+  const workspace = useWorkspace();
+  const [refreshVersion, setRefreshVersion] = useState(0);
   const [summary, setSummary] = useState<ManagementSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [tab, setTab] = useState<ReportTab>("summary");
+  const [tab, setTab] = useState<ReportTab>(initialTab);
 
   useEffect(() => {
     let active = true;
@@ -100,7 +97,7 @@ export function ManagementSummaryView({
     return () => {
       active = false;
     };
-  }, [accessToken]);
+  }, [accessToken, refreshVersion]);
 
   return (
     <section
@@ -117,6 +114,14 @@ export function ManagementSummaryView({
           </p>
         </div>
       </header>
+
+      <button
+        type="button"
+        disabled={loading}
+        onClick={() => setRefreshVersion(value => value + 1)}
+      >
+        Atualizar painel
+      </button>
 
       <div
         className="activities-view__status-tabs"
@@ -194,78 +199,71 @@ export function ManagementSummaryView({
         >
           <CsatView accessToken={accessToken} />
         </div>
-      ) : loading ? (
+      ) : loading && !summary ? (
         <p className="activities-view__status">
           Carregando resumo gerencial...
         </p>
-      ) : error ? (
+      ) : error && !summary ? (
         <p className="login-form__error" role="alert">
           {error}
         </p>
       ) : summary ? (
         <>
+          {loading ? <p role="status">Atualizando painel...</p> : null}
+          {error ? (
+            <p role="alert">
+              {error}. Exibindo o último resumo carregado; tente Atualizar
+              painel novamente.
+            </p>
+          ) : null}
           <p className="activities-view__status">
             Atualizado em {dateTimeFormatter.format(new Date(summary.asOf))}
           </p>
 
-          <div
-            className="companies-view__grid"
-            aria-label="Indicadores gerenciais"
-          >
-            <article className="companies-view__card">
-              <span>Valor em aberto</span>
-              <strong>{formatCurrency(summary.openEstimatedValue)}</strong>
-            </article>
-            <article className="companies-view__card">
-              <span>Atividades pendentes</span>
-              <strong>{summary.pendingActivities}</strong>
-            </article>
-            <article className="companies-view__card">
-              <span>Atividades atrasadas</span>
-              <strong>{summary.overdueActivities}</strong>
-            </article>
-            <article className="companies-view__card">
-              <span>Atividades sem data</span>
-              <strong>{summary.undatedActivities}</strong>
-            </article>
-          </div>
-
-          <section aria-labelledby="management-summary-pipeline-title">
-            <h2 id="management-summary-pipeline-title">
-              Oportunidades por etapa
-            </h2>
-            {summary.opportunitiesByStage.length === 0 ? (
-              <p className="activities-view__status">
-                Nenhuma oportunidade ativa encontrada.
-              </p>
-            ) : (
-              <div
-                className="crm-table-scroll"
-                role="region"
-                aria-label="Oportunidades por etapa"
-                tabIndex={0}
+          {workspace ? (
+            <div>
+              {workspace.error ? <p role="alert">{workspace.error}</p> : null}
+              {workspace.message ? (
+                <p role="status">{workspace.message}</p>
+              ) : null}
+              <button
+                type="button"
+                disabled={workspace.loading || workspace.saving}
+                onClick={() => void workspace.save()}
               >
-                <table>
-                  <thead>
-                    <tr>
-                      <th scope="col">Funil</th>
-                      <th scope="col">Etapa</th>
-                      <th scope="col">Oportunidades</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {summary.opportunitiesByStage.map(item => (
-                      <tr key={`${item.pipelineId}:${item.stageId}`}>
-                        <td>{item.pipelineName}</td>
-                        <td>{item.stageName}</td>
-                        <td>{item.count}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
+                Salvar preferências
+              </button>
+            </div>
+          ) : null}
+          <DashboardWidgets
+            key={preferenceScope ?? "session"}
+            summary={summary}
+            accessToken={accessToken}
+            preferenceScope={preferenceScope}
+            refreshVersion={refreshVersion}
+            onOpenReport={setTab}
+            customizationDisabled={
+              workspace ? workspace.loading || workspace.saving : false
+            }
+            controlledLayout={
+              workspace
+                ? {
+                    order: workspace.draft.dashboardOrder,
+                    hidden: workspace.draft.dashboardHidden,
+                  }
+                : undefined
+            }
+            onLayoutChange={
+              workspace
+                ? next =>
+                    workspace.setDraft({
+                      ...workspace.draft,
+                      dashboardOrder: next.order,
+                      dashboardHidden: next.hidden,
+                    })
+                : undefined
+            }
+          />
         </>
       ) : null}
     </section>

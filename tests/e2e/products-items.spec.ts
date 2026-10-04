@@ -1,3 +1,4 @@
+import { openWorkspaceSection } from "./helpers/workspace-navigation";
 import { expect, test } from "@playwright/test";
 
 const adminEmail = process.env.BOOTSTRAP_ADMIN_EMAIL ?? "admin@axes.test";
@@ -35,9 +36,10 @@ test("CRM products journey adds edits and removes an opportunity item", async ({
   await page.getByLabel("E-mail").fill(adminEmail);
   await page.getByLabel("Senha").fill(adminPassword ?? "");
   await page.getByRole("button", { name: "Entrar no CRM" }).click();
+  await openWorkspaceSection(page, "Empresas");
 
   // Catálogo: cria o produto com preço em formato brasileiro.
-  await page.getByRole("button", { name: "Produtos" }).click();
+  await openWorkspaceSection(page, "Produtos");
   await expect(page.getByRole("heading", { name: "Produtos" })).toBeVisible();
   await page.getByRole("button", { name: "Novo produto" }).click();
   const productForm = page.getByRole("form", { name: "Novo produto" });
@@ -50,7 +52,7 @@ test("CRM products journey adds edits and removes an opportunity item", async ({
   await expect(productRow).toContainText(/1\.500,00/);
 
   // Cliente e oportunidade.
-  await page.getByRole("button", { name: "Empresas" }).click();
+  await openWorkspaceSection(page, "Empresas");
   await page.getByRole("button", { name: "Nova empresa" }).click();
   const companyForm = page.getByRole("form", { name: "Nova empresa" });
   await companyForm.getByLabel("Razão social").fill(companyName);
@@ -60,7 +62,7 @@ test("CRM products journey adds edits and removes an opportunity item", async ({
     page.getByText(companyName, { exact: true }).first()
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "Oportunidades" }).click();
+  await openWorkspaceSection(page, "Oportunidades");
   await expect(
     page.getByRole("heading", { name: "Oportunidades" })
   ).toBeVisible();
