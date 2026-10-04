@@ -120,9 +120,19 @@ export function OpportunitiesView({
   const [itemsOpportunityId, setItemsOpportunityId] = useState<string | null>(
     null
   );
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
+  const [boardPipelineId, setBoardPipelineId] = useState("");
 
   const selectedPipeline = pipelines.find(
     pipeline => pipeline.id === form.pipelineId
+  );
+  const resolvedBoardPipelineId =
+    boardPipelineId || opportunities[0]?.pipelineId || pipelines[0]?.id || "";
+  const boardPipeline = pipelines.find(
+    pipeline => pipeline.id === resolvedBoardPipelineId
+  );
+  const boardStages = [...(boardPipeline?.stages ?? [])].sort(
+    (left, right) => left.position - right.position
   );
 
   useEffect(() => {
@@ -175,7 +185,7 @@ export function OpportunitiesView({
   useEffect(() => {
     let active = true;
 
-    if (!canMove) {
+    if (!canMove && viewMode !== "kanban") {
       return () => {
         active = false;
       };
@@ -205,7 +215,7 @@ export function OpportunitiesView({
     return () => {
       active = false;
     };
-  }, [accessToken, canMove]);
+  }, [accessToken, canMove, viewMode]);
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -535,6 +545,26 @@ export function OpportunitiesView({
         </div>
       </form>
 
+      <div
+        className="opportunities-view__mode"
+        aria-label="Visualização de oportunidades"
+      >
+        <button
+          type="button"
+          aria-pressed={viewMode === "list"}
+          onClick={() => setViewMode("list")}
+        >
+          Lista
+        </button>
+        <button
+          type="button"
+          aria-pressed={viewMode === "kanban"}
+          onClick={() => setViewMode("kanban")}
+        >
+          Funil
+        </button>
+      </div>
+
       {error ? (
         <p className="opportunities-view__error" role="alert">
           {error}
@@ -554,7 +584,10 @@ export function OpportunitiesView({
         </div>
       ) : null}
 
-      {!loading && !error && opportunities.length > 0 ? (
+      {!loading &&
+      !error &&
+      opportunities.length > 0 &&
+      viewMode === "list" ? (
         <ul className="opportunities-view__list">
           {opportunities.map(opportunity => {
             const opportunityPipeline = pipelines.find(
@@ -650,6 +683,131 @@ export function OpportunitiesView({
             );
           })}
         </ul>
+      ) : null}
+
+      {!loading && !error && viewMode === "kanban" ? (
+        <section
+          className="opportunities-view__kanban"
+          aria-label="Funil de vendas"
+        >
+          {pipelines.length > 1 ? (
+            <label className="opportunities-view__pipeline-selector">
+              <span>Funil</span>
+              <select
+                value={resolvedBoardPipelineId}
+                onChange={event => setBoardPipelineId(event.target.value)}
+              >
+                {pipelines.map(pipeline => (
+                  <option key={pipeline.id} value={pipeline.id}>
+                    {pipeline.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+
+          {boardPipeline ? (
+            <div className="opportunities-view__kanban-columns">
+              {boardStages.map(stage => {
+                const stageOpportunities = opportunities.filter(
+                  opportunity =>
+                    opportunity.pipelineId === boardPipeline.id &&
+                    opportunity.stageId === stage.id
+                );
+
+                return (
+                  <section
+                    key={stage.id}
+                    className="opportunities-view__kanban-column"
+                    aria-labelledby={`pipeline-stage-${stage.id}`}
+                  >
+                    <header>
+                      <h2 id={`pipeline-stage-${stage.id}`}>{stage.name}</h2>
+                      <span>{stageOpportunities.length}</span>
+                    </header>
+
+                    {stageOpportunities.length === 0 ? (
+                      <p>Nenhuma oportunidade nesta etapa.</p>
+                    ) : (
+                      <ul>
+                        {stageOpportunities.map(opportunity => {
+                          const selectedStageId =
+                            stageSelections[opportunity.id] ??
+                            opportunity.stageId;
+                          const isMoving =
+                            movingOpportunityId === opportunity.id;
+
+                          return (
+                            <li key={opportunity.id}>
+                              <article className="opportunity-kanban-card">
+                                <h3>{opportunity.title}</h3>
+                                <strong>
+                                  {formatMoney(opportunity.estimatedValue)}
+                                </strong>
+                                <span>
+                                  {opportunity.expectedCloseAt
+                                    ? dateFormatter.format(
+                                        new Date(opportunity.expectedCloseAt)
+                                      )
+                                    : "Sem previsão"}
+                                </span>
+
+                                {canMove ? (
+                                  <div className="opportunity-card__stage">
+                                    <label>
+                                      <span>Etapa</span>
+                                      <select
+                                        aria-label={`Etapa de ${opportunity.title}`}
+                                        value={selectedStageId}
+                                        disabled={isMoving}
+                                        onChange={event =>
+                                          setStageSelections(current => ({
+                                            ...current,
+                                            [opportunity.id]:
+                                              event.target.value,
+                                          }))
+                                        }
+                                      >
+                                        {boardStages.map(targetStage => (
+                                          <option
+                                            key={targetStage.id}
+                                            value={targetStage.id}
+                                          >
+                                            {targetStage.name}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </label>
+                                    <button
+                                      type="button"
+                                      disabled={
+                                        isMoving ||
+                                        selectedStageId === opportunity.stageId
+                                      }
+                                      onClick={() =>
+                                        void moveOpportunity(opportunity)
+                                      }
+                                    >
+                                      {isMoving ? "Movendo..." : "Mover etapa"}
+                                    </button>
+                                  </div>
+                                ) : null}
+                              </article>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </section>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="opportunities-view__status">
+              Carregando etapas do funil...
+            </p>
+          )}
+        </section>
       ) : null}
     </section>
   );
