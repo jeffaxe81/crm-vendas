@@ -53,7 +53,11 @@ describe("durable backup execution and retention", () => {
       key: randomBytes(32),
       maxBytes: options.maxBytes,
     });
-    service = new BackupService(runtime, store, options) as IdempotentBackupService;
+    service = new BackupService(
+      runtime,
+      store,
+      options
+    ) as IdempotentBackupService;
 
     const Worker = DataOperationWorker as unknown as new (
       prisma: PrismaService,
@@ -169,9 +173,7 @@ describe("durable backup execution and retention", () => {
             id_organizationId: { id: record.id, organizationId },
           },
           data: {
-            completedAt: new Date(
-              Date.UTC(2026, 9, 1, 0, index, 0)
-            ),
+            completedAt: new Date(Date.UTC(2026, 9, 1, 0, index, 0)),
           },
         })
       );
