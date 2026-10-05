@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import {
+  chmod,
   mkdtemp,
   readFile,
   readdir,
@@ -111,5 +112,13 @@ describe("private encrypted backup storage", () => {
       unavailable.put(randomUUID(), Buffer.from("snapshot"))
     ).rejects.toThrow();
     expect(await readdir(root)).toEqual(["file"]);
+  });
+  it("rejects an existing shared directory without changing its permissions", async () => {
+    await chmod(root, 0o755);
+    await expect(
+      store.put(randomUUID(), Buffer.from("private snapshot"))
+    ).rejects.toThrow("Backup directory must be a private directory");
+    expect((await stat(root)).mode & 0o777).toBe(0o755);
+    expect(await readdir(root)).toEqual([]);
   });
 });

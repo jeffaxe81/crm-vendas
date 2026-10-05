@@ -5,7 +5,7 @@ import {
   randomUUID,
 } from "node:crypto";
 import { constants } from "node:fs";
-import { chmod, link, lstat, mkdir, open, unlink } from "node:fs/promises";
+import { link, lstat, mkdir, open, unlink } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 
 const MAGIC = Buffer.from("AXESBK01");
@@ -49,7 +49,6 @@ export class BackupStore {
       throw new Error("Backup exceeds configured size limit");
     await mkdir(this.directory, { recursive: true, mode: 0o700 });
     await this.requireDirectory();
-    await chmod(this.directory, 0o700);
     const iv = randomBytes(IV_BYTES);
     const cipher = createCipheriv("aes-256-gcm", this.key, iv);
     cipher.setAAD(this.aad(objectId));
@@ -154,7 +153,11 @@ export class BackupStore {
   }
   private async requireDirectory(): Promise<void> {
     const info = await lstat(this.directory);
-    if (!info.isDirectory() || info.isSymbolicLink())
+    if (
+      !info.isDirectory() ||
+      info.isSymbolicLink() ||
+      (info.mode & 0o077) !== 0
+    )
       throw new Error("Backup directory must be a private directory");
   }
   private async unlinkIfPresent(path: string): Promise<void> {
