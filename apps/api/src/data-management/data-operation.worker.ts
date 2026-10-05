@@ -125,10 +125,7 @@ export class DataOperationWorker {
         select: { retentionCount: true },
       })
     );
-    if (
-      schedule &&
-      [7, 15, 30, 90].includes(schedule.retentionCount)
-    ) {
+    if (schedule && [7, 15, 30, 90].includes(schedule.retentionCount)) {
       await this.backupService.pruneRetention(
         job.organizationId,
         schedule.retentionCount as 7 | 15 | 30 | 90
