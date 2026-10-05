@@ -16,6 +16,8 @@ export type AuthenticatedPrincipal = {
   authMethod: AuthMethod;
   /** Presente apenas quando authMethod === "api_key". */
   apiKeyId?: string;
+  /** Protected membership attribute, never inferred from role permissions. */
+  isSuperuser?: boolean;
 };
 
 export type AuthenticatedRequest = Request & {
