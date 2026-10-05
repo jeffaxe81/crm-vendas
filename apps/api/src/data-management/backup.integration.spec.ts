@@ -310,4 +310,41 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
       );
     }
   });
+  it("rolls back catalog completion when mandatory audit fails", async () => {
+    const { organization, user } = await fixture();
+    await owner.$executeRawUnsafe(
+      "CREATE FUNCTION public.reject_backup_completion_fixture() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.action = 'backup.completed' THEN RAISE EXCEPTION 'synthetic audit failure'; END IF; RETURN NEW; END $$"
+    );
+    await owner.$executeRawUnsafe(
+      "CREATE TRIGGER reject_backup_completion_fixture BEFORE INSERT ON public.audit_logs FOR EACH ROW EXECUTE FUNCTION public.reject_backup_completion_fixture()"
+    );
+    try {
+      await expect(
+        service.create(organization.id, user.id, "MANUAL")
+      ).rejects.toThrow();
+      const rows = await runtime.withTenant(organization.id, tx =>
+        tx.$queryRawUnsafe<{ id: string; state: string }[]>(
+          "SELECT id,state FROM public.backups"
+        )
+      );
+      expect(rows).toHaveLength(1);
+      expect(rows[0]!.state).toBe("FAILED");
+      expect(
+        await owner.auditLog.count({
+          where: {
+            organizationId: organization.id,
+            action: "backup.completed",
+          },
+        })
+      ).toBe(0);
+      await expect(store.read(rows[0]!.id)).rejects.toThrow();
+    } finally {
+      await owner.$executeRawUnsafe(
+        "DROP TRIGGER reject_backup_completion_fixture ON public.audit_logs"
+      );
+      await owner.$executeRawUnsafe(
+        "DROP FUNCTION public.reject_backup_completion_fixture()"
+      );
+    }
+  });
 });

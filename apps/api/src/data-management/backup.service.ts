@@ -6,6 +6,7 @@ import type {
 import type { PrismaService } from "../database/prisma.service";
 import type { BackupStore } from "./backup-store";
 import type { SnapshotData } from "./backup-manifest";
+import { BackupError } from "./backup-error";
 export type BackupOptions = { maxBytes: number; snapshotTimeoutMs: number };
 export type VerifiedBackup = {
   bytes: Buffer;
@@ -15,15 +16,16 @@ export type VerifiedBackup = {
 };
 export class BackupService {
   constructor(
-    _prisma: PrismaService,
-    _store: BackupStore | null,
-    _options: BackupOptions
+    private readonly prisma: PrismaService,
+    private readonly store: BackupStore | null,
+    private readonly options: BackupOptions
   ) {}
   async create(
     _organizationId: string,
     _actorId: string | null,
     _reason: BackupReason
   ): Promise<BackupRecord> {
+    if (!this.store) throw new BackupError("BACKUP_NOT_CONFIGURED");
     throw Error("NOT_IMPLEMENTED");
   }
   async verify(
