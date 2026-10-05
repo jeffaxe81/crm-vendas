@@ -353,7 +353,7 @@ export class AuthService {
   private async createSessionResponse(input: {
     user: { id: string; email: string; displayName: string };
     organization: { id: string; name: string; slug: string };
-    membership: { id: string };
+    membership: { id: string; isSuperuser?: boolean };
     role: MembershipRole;
     sessionId: string;
   }): Promise<AuthSessionResponse> {
@@ -381,6 +381,7 @@ export class AuthService {
       membership: {
         id: input.membership.id,
         role: input.role,
+        isSuperuser: input.membership.isSuperuser === true,
       },
       permissions: [...permissionsForRole(input.role)],
     });

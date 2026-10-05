@@ -18,6 +18,7 @@ export class SessionController {
       organizationId: principal.organizationId,
       membershipId: principal.membershipId,
       role: principal.role,
+      isSuperuser: principal.isSuperuser === true,
       permissions: [...principal.permissions],
     };
   }
