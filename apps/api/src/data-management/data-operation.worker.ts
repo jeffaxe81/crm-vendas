@@ -1,10 +1,17 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Optional } from "@nestjs/common";
+import { BackupReasonSchema } from "@axes/contracts";
 import { PrismaService } from "../database/prisma.service";
 import type { DataOperation } from "../generated/prisma/client";
+import { BackupService } from "./backup.service";
 
 @Injectable()
 export class DataOperationWorker {
-  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Optional()
+    @Inject(BackupService)
+    private readonly backupService?: BackupService
+  ) {}
   async claimNext(workerId: string): Promise<DataOperation | null> {
     if (!/^[A-Za-z0-9_.:-]{1,160}$/.test(workerId))
       throw Error("INVALID_WORKER_ID");
@@ -50,6 +57,87 @@ export class DataOperationWorker {
     }
     return null;
   }
+  async processNext(workerId: string): Promise<boolean> {
+    const job = await this.claimNext(workerId);
+    if (!job) return false;
+    if (job.kind !== "BACKUP" || !this.backupService) {
+      throw Error("UNSUPPORTED_DATA_OPERATION");
+    }
+
+    const checkpoint =
+      typeof job.checkpoint === "object" &&
+      job.checkpoint !== null &&
+      !Array.isArray(job.checkpoint)
+        ? job.checkpoint
+        : {};
+    let backupId =
+      checkpoint.businessCommitted === true &&
+      typeof checkpoint.backupId === "string"
+        ? checkpoint.backupId
+        : null;
+
+    if (backupId) {
+      await this.backupService.verify(job.organizationId, backupId);
+    } else {
+      const payload =
+        typeof job.payload === "object" &&
+        job.payload !== null &&
+        !Array.isArray(job.payload)
+          ? job.payload
+          : {};
+      const reason = BackupReasonSchema.safeParse(payload.reason);
+      if (!reason.success) throw Error("INVALID_BACKUP_OPERATION");
+
+      const backup = await this.backupService.create(
+        job.organizationId,
+        job.actorUserId,
+        reason.data,
+        job.id
+      );
+      backupId = backup.id;
+
+      const checkpointed = await this.prisma.withTenant(
+        job.organizationId,
+        tx =>
+          tx.$executeRawUnsafe(
+            `
+            UPDATE public.data_operations
+            SET checkpoint=checkpoint || jsonb_build_object(
+                  'businessCommitted',true,'backupId',$5::text
+                ),
+                stage='BACKUP_COMMITTED',updated_at=clock_timestamp()
+            WHERE id=$1::uuid AND organization_id=$2::uuid AND state='RUNNING'
+              AND worker_id=$3 AND attempts=$4 AND lease_until > clock_timestamp()
+            `,
+            job.id,
+            job.organizationId,
+            job.workerId,
+            job.attempts,
+            backupId
+          )
+      );
+      if (checkpointed !== 1) return false;
+    }
+
+    const schedule = await this.prisma.withTenant(job.organizationId, tx =>
+      tx.backupSchedule.findUnique({
+        where: { organizationId: job.organizationId },
+        select: { retentionCount: true },
+      })
+    );
+    if (
+      schedule &&
+      [7, 15, 30, 90].includes(schedule.retentionCount)
+    ) {
+      await this.backupService.pruneRetention(
+        job.organizationId,
+        schedule.retentionCount as 7 | 15 | 30 | 90
+      );
+    }
+
+    return this.finish(job);
+  }
+
   async heartbeat(job: DataOperation): Promise<boolean> {
     return this.prisma.withTenant(job.organizationId, async tx => {
       const count = await tx.$executeRawUnsafe(
