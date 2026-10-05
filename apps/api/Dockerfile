@@ -20,6 +20,7 @@ RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile
 
 FROM dependencies AS build
 COPY tsconfig.base.json ./
+COPY scripts/generate-backup-metadata.mjs scripts/generate-backup-metadata.mjs
 COPY apps/api apps/api
 COPY packages/contracts packages/contracts
 

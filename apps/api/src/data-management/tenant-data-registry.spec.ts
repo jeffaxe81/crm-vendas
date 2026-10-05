@@ -1,8 +1,35 @@
 import { readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { Prisma } from "../generated/prisma/client";
+import { BACKUP_SCHEMA } from "./backup-models";
 import { join } from "node:path";
 import { TENANT_DATA_REGISTRY } from "./tenant-data-registry";
 
 describe("backup inventory coverage", () => {
+  it("keeps complete backup metadata synchronized with the source and generated client", async () => {
+    const source = await readFile(
+      join(process.cwd(), "prisma/schema.prisma"),
+      "utf8"
+    );
+    expect(BACKUP_SCHEMA.schemaSha256).toBe(
+      createHash("sha256").update(source).digest("hex")
+    );
+    expect(BACKUP_SCHEMA.models.map(m => m.name).sort()).toEqual(
+      Prisma.dmmf.datamodel.models.map(m => m.name).sort()
+    );
+    for (const model of BACKUP_SCHEMA.models) {
+      const client = Prisma.dmmf.datamodel.models.find(
+        m => m.name === model.name
+      )!;
+      expect(model.dbName).toBe(client.dbName);
+      expect(model.primaryKey.length).toBeGreaterThan(0);
+      expect(
+        model.fields.map(f => ({ name: f.name, type: f.type, kind: f.kind }))
+      ).toEqual(
+        client.fields.map(f => ({ name: f.name, type: f.type, kind: f.kind }))
+      );
+    }
+  });
   it("requires an explicit policy for every persistent Prisma model", async () => {
     const schema = await readFile(
       join(process.cwd(), "prisma/schema.prisma"),
