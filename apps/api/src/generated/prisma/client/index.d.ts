@@ -15,132 +15,132 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 /**
  * Model Organization
- *
+ * 
  */
 export type Organization = $Result.DefaultSelection<Prisma.$OrganizationPayload>
 /**
  * Model Role
- *
+ * 
  */
 export type Role = $Result.DefaultSelection<Prisma.$RolePayload>
 /**
  * Model RolePermission
- *
+ * 
  */
 export type RolePermission = $Result.DefaultSelection<Prisma.$RolePermissionPayload>
 /**
  * Model User
- *
+ * 
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
  * Model OrganizationMembership
- *
+ * 
  */
 export type OrganizationMembership = $Result.DefaultSelection<Prisma.$OrganizationMembershipPayload>
 /**
  * Model RefreshSession
- *
+ * 
  */
 export type RefreshSession = $Result.DefaultSelection<Prisma.$RefreshSessionPayload>
 /**
  * Model AuditLog
- *
+ * 
  */
 export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
 /**
  * Model Company
- *
+ * 
  */
 export type Company = $Result.DefaultSelection<Prisma.$CompanyPayload>
 /**
  * Model Territory
- *
+ * 
  */
 export type Territory = $Result.DefaultSelection<Prisma.$TerritoryPayload>
 /**
  * Model TerritoryQuota
- *
+ * 
  */
 export type TerritoryQuota = $Result.DefaultSelection<Prisma.$TerritoryQuotaPayload>
 /**
  * Model TerritoryTarget
- *
+ * 
  */
 export type TerritoryTarget = $Result.DefaultSelection<Prisma.$TerritoryTargetPayload>
 /**
  * Model TerritoryMetrics
- *
+ * 
  */
 export type TerritoryMetrics = $Result.DefaultSelection<Prisma.$TerritoryMetricsPayload>
 /**
  * Model Contact
- *
+ * 
  */
 export type Contact = $Result.DefaultSelection<Prisma.$ContactPayload>
 /**
  * Model ContactChannel
- *
+ * 
  */
 export type ContactChannel = $Result.DefaultSelection<Prisma.$ContactChannelPayload>
 /**
  * Model CompanyContact
- *
+ * 
  */
 export type CompanyContact = $Result.DefaultSelection<Prisma.$CompanyContactPayload>
 /**
  * Model RelationshipEntry
- *
+ * 
  */
 export type RelationshipEntry = $Result.DefaultSelection<Prisma.$RelationshipEntryPayload>
 /**
  * Model Tag
- *
+ * 
  */
 export type Tag = $Result.DefaultSelection<Prisma.$TagPayload>
 /**
  * Model CompanyTag
- *
+ * 
  */
 export type CompanyTag = $Result.DefaultSelection<Prisma.$CompanyTagPayload>
 /**
  * Model ContactTag
- *
+ * 
  */
 export type ContactTag = $Result.DefaultSelection<Prisma.$ContactTagPayload>
 /**
  * Model CustomFieldDefinition
- *
+ * 
  */
 export type CustomFieldDefinition = $Result.DefaultSelection<Prisma.$CustomFieldDefinitionPayload>
 /**
  * Model CompanyCustomFieldValue
- *
+ * 
  */
 export type CompanyCustomFieldValue = $Result.DefaultSelection<Prisma.$CompanyCustomFieldValuePayload>
 /**
  * Model ContactCustomFieldValue
- *
+ * 
  */
 export type ContactCustomFieldValue = $Result.DefaultSelection<Prisma.$ContactCustomFieldValuePayload>
 /**
  * Model Pipeline
- *
+ * 
  */
 export type Pipeline = $Result.DefaultSelection<Prisma.$PipelinePayload>
 /**
  * Model PipelineStage
- *
+ * 
  */
 export type PipelineStage = $Result.DefaultSelection<Prisma.$PipelineStagePayload>
 /**
  * Model Activity
- *
+ * 
  */
 export type Activity = $Result.DefaultSelection<Prisma.$ActivityPayload>
 /**
  * Model Opportunity
- *
+ * 
  */
 export type Opportunity = $Result.DefaultSelection<Prisma.$OpportunityPayload>
 /**
@@ -194,9 +194,24 @@ export type TicketSatisfactionSurvey = $Result.DefaultSelection<Prisma.$TicketSa
 export type IntegrationCredential = $Result.DefaultSelection<Prisma.$IntegrationCredentialPayload>
 /**
  * Model UserWorkspacePreference
- *
+ * 
  */
 export type UserWorkspacePreference = $Result.DefaultSelection<Prisma.$UserWorkspacePreferencePayload>
+/**
+ * Model BackupRecord
+ * 
+ */
+export type BackupRecord = $Result.DefaultSelection<Prisma.$BackupRecordPayload>
+/**
+ * Model DataOperation
+ * 
+ */
+export type DataOperation = $Result.DefaultSelection<Prisma.$DataOperationPayload>
+/**
+ * Model BackupSchedule
+ * 
+ */
+export type BackupSchedule = $Result.DefaultSelection<Prisma.$BackupSchedulePayload>
 
 /**
  * Enums
@@ -522,7 +537,7 @@ export class PrismaClient<
    *   prisma.user.create({ data: { name: 'Alice' } }),
    * ])
    * ```
-   *
+   * 
    * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
   $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
@@ -892,6 +907,36 @@ export class PrismaClient<
     * ```
     */
   get userWorkspacePreference(): Prisma.UserWorkspacePreferenceDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.backupRecord`: Exposes CRUD operations for the **BackupRecord** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BackupRecords
+    * const backupRecords = await prisma.backupRecord.findMany()
+    * ```
+    */
+  get backupRecord(): Prisma.BackupRecordDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.dataOperation`: Exposes CRUD operations for the **DataOperation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DataOperations
+    * const dataOperations = await prisma.dataOperation.findMany()
+    * ```
+    */
+  get dataOperation(): Prisma.DataOperationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.backupSchedule`: Exposes CRUD operations for the **BackupSchedule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BackupSchedules
+    * const backupSchedules = await prisma.backupSchedule.findMany()
+    * ```
+    */
+  get backupSchedule(): Prisma.BackupScheduleDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1374,7 +1419,10 @@ export namespace Prisma {
     SlaPolicy: 'SlaPolicy',
     TicketSatisfactionSurvey: 'TicketSatisfactionSurvey',
     IntegrationCredential: 'IntegrationCredential',
-    UserWorkspacePreference: 'UserWorkspacePreference'
+    UserWorkspacePreference: 'UserWorkspacePreference',
+    BackupRecord: 'BackupRecord',
+    DataOperation: 'DataOperation',
+    BackupSchedule: 'BackupSchedule'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1390,7 +1438,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "organization" | "role" | "rolePermission" | "user" | "organizationMembership" | "refreshSession" | "auditLog" | "company" | "territory" | "territoryQuota" | "territoryTarget" | "territoryMetrics" | "contact" | "contactChannel" | "companyContact" | "relationshipEntry" | "tag" | "companyTag" | "contactTag" | "customFieldDefinition" | "companyCustomFieldValue" | "contactCustomFieldValue" | "pipeline" | "pipelineStage" | "activity" | "opportunity" | "product" | "opportunityItem" | "ticket" | "ticketEvent" | "ticketProtocolCounter" | "supportQueue" | "slaPolicy" | "ticketSatisfactionSurvey" | "integrationCredential" | "userWorkspacePreference"
+      modelProps: "organization" | "role" | "rolePermission" | "user" | "organizationMembership" | "refreshSession" | "auditLog" | "company" | "territory" | "territoryQuota" | "territoryTarget" | "territoryMetrics" | "contact" | "contactChannel" | "companyContact" | "relationshipEntry" | "tag" | "companyTag" | "contactTag" | "customFieldDefinition" | "companyCustomFieldValue" | "contactCustomFieldValue" | "pipeline" | "pipelineStage" | "activity" | "opportunity" | "product" | "opportunityItem" | "ticket" | "ticketEvent" | "ticketProtocolCounter" | "supportQueue" | "slaPolicy" | "ticketSatisfactionSurvey" | "integrationCredential" | "userWorkspacePreference" | "backupRecord" | "dataOperation" | "backupSchedule"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -4058,6 +4106,228 @@ export namespace Prisma {
           }
         }
       }
+      BackupRecord: {
+        payload: Prisma.$BackupRecordPayload<ExtArgs>
+        fields: Prisma.BackupRecordFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BackupRecordFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BackupRecordFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload>
+          }
+          findFirst: {
+            args: Prisma.BackupRecordFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BackupRecordFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload>
+          }
+          findMany: {
+            args: Prisma.BackupRecordFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload>[]
+          }
+          create: {
+            args: Prisma.BackupRecordCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload>
+          }
+          createMany: {
+            args: Prisma.BackupRecordCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BackupRecordCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload>[]
+          }
+          delete: {
+            args: Prisma.BackupRecordDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload>
+          }
+          update: {
+            args: Prisma.BackupRecordUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload>
+          }
+          deleteMany: {
+            args: Prisma.BackupRecordDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BackupRecordUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BackupRecordUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload>[]
+          }
+          upsert: {
+            args: Prisma.BackupRecordUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupRecordPayload>
+          }
+          aggregate: {
+            args: Prisma.BackupRecordAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBackupRecord>
+          }
+          groupBy: {
+            args: Prisma.BackupRecordGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BackupRecordGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BackupRecordCountArgs<ExtArgs>
+            result: $Utils.Optional<BackupRecordCountAggregateOutputType> | number
+          }
+        }
+      }
+      DataOperation: {
+        payload: Prisma.$DataOperationPayload<ExtArgs>
+        fields: Prisma.DataOperationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DataOperationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DataOperationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload>
+          }
+          findFirst: {
+            args: Prisma.DataOperationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DataOperationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload>
+          }
+          findMany: {
+            args: Prisma.DataOperationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload>[]
+          }
+          create: {
+            args: Prisma.DataOperationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload>
+          }
+          createMany: {
+            args: Prisma.DataOperationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DataOperationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload>[]
+          }
+          delete: {
+            args: Prisma.DataOperationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload>
+          }
+          update: {
+            args: Prisma.DataOperationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload>
+          }
+          deleteMany: {
+            args: Prisma.DataOperationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DataOperationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DataOperationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload>[]
+          }
+          upsert: {
+            args: Prisma.DataOperationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DataOperationPayload>
+          }
+          aggregate: {
+            args: Prisma.DataOperationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDataOperation>
+          }
+          groupBy: {
+            args: Prisma.DataOperationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DataOperationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DataOperationCountArgs<ExtArgs>
+            result: $Utils.Optional<DataOperationCountAggregateOutputType> | number
+          }
+        }
+      }
+      BackupSchedule: {
+        payload: Prisma.$BackupSchedulePayload<ExtArgs>
+        fields: Prisma.BackupScheduleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BackupScheduleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BackupScheduleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload>
+          }
+          findFirst: {
+            args: Prisma.BackupScheduleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BackupScheduleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload>
+          }
+          findMany: {
+            args: Prisma.BackupScheduleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload>[]
+          }
+          create: {
+            args: Prisma.BackupScheduleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload>
+          }
+          createMany: {
+            args: Prisma.BackupScheduleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BackupScheduleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload>[]
+          }
+          delete: {
+            args: Prisma.BackupScheduleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload>
+          }
+          update: {
+            args: Prisma.BackupScheduleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload>
+          }
+          deleteMany: {
+            args: Prisma.BackupScheduleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BackupScheduleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BackupScheduleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload>[]
+          }
+          upsert: {
+            args: Prisma.BackupScheduleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupSchedulePayload>
+          }
+          aggregate: {
+            args: Prisma.BackupScheduleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBackupSchedule>
+          }
+          groupBy: {
+            args: Prisma.BackupScheduleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BackupScheduleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BackupScheduleCountArgs<ExtArgs>
+            result: $Utils.Optional<BackupScheduleCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -4095,7 +4365,7 @@ export namespace Prisma {
      * ```
      * // Shorthand for `emit: 'stdout'`
      * log: ['query', 'info', 'warn', 'error']
-     *
+     * 
      * // Emit as events only
      * log: [
      *   { emit: 'event', level: 'query' },
@@ -4103,14 +4373,14 @@ export namespace Prisma {
      *   { emit: 'event', level: 'warn' }
      *   { emit: 'event', level: 'error' }
      * ]
-     *
+     * 
      * / Emit as events and log to stdout
      * og: [
      *  { emit: 'stdout', level: 'query' },
      *  { emit: 'stdout', level: 'info' },
      *  { emit: 'stdout', level: 'warn' }
      *  { emit: 'stdout', level: 'error' }
-     *
+     * 
      * ```
      * Read more in our [docs](https://pris.ly/d/logging).
      */
@@ -4127,16 +4397,16 @@ export namespace Prisma {
     }
     /**
      * A driver adapter that PrismaClient uses to connect to your database, such as the ones provided by `@prisma/adapter-pg`, `@prisma/adapter-libsql`, `@prisma/adapter-planetscale`, etc.
-     *
+     * 
      * A driver adapter is **required** unless you connect to your database through Prisma Accelerate (in which case use `accelerateUrl` instead).
-     *
+     * 
      * Learn more: https://pris.ly/d/driver-adapters
-     *
+     * 
      * @example
      * ```ts
      * import { PrismaPg } from '@prisma/adapter-pg'
      * import { PrismaClient } from './generated/prisma/client'
-     *
+     * 
      * const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
      * const prisma = new PrismaClient({ adapter })
      * ```
@@ -4144,13 +4414,13 @@ export namespace Prisma {
     adapter?: runtime.SqlDriverAdapterFactory
     /**
      * The Prisma Accelerate connection URL. Use this option to connect to your database through Prisma Accelerate instead of using a driver adapter to connect directly.
-     *
+     * 
      * Learn more: https://pris.ly/d/accelerate
      */
     accelerateUrl?: string
     /**
      * Global configuration for omitting model fields by default.
-     *
+     * 
      * @example
      * ```
      * const prisma = new PrismaClient({
@@ -4166,7 +4436,7 @@ export namespace Prisma {
     /**
      * SQL commenter plugins that add metadata to SQL queries as comments.
      * Comments follow the sqlcommenter format: https://google.github.io/sqlcommenter/
-     *
+     * 
      * @example
      * ```
      * const prisma = new PrismaClient({
@@ -4217,6 +4487,9 @@ export namespace Prisma {
     ticketSatisfactionSurvey?: TicketSatisfactionSurveyOmit
     integrationCredential?: IntegrationCredentialOmit
     userWorkspacePreference?: UserWorkspacePreferenceOmit
+    backupRecord?: BackupRecordOmit
+    dataOperation?: DataOperationOmit
+    backupSchedule?: BackupScheduleOmit
   }
 
   /* Types for Logging */
@@ -4297,6 +4570,8 @@ export namespace Prisma {
    */
 
   export type OrganizationCountOutputType = {
+    backups: number
+    dataOperations: number
     memberships: number
     refreshSessions: number
     auditLogs: number
@@ -4331,6 +4606,8 @@ export namespace Prisma {
   }
 
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    backups?: boolean | OrganizationCountOutputTypeCountBackupsArgs
+    dataOperations?: boolean | OrganizationCountOutputTypeCountDataOperationsArgs
     memberships?: boolean | OrganizationCountOutputTypeCountMembershipsArgs
     refreshSessions?: boolean | OrganizationCountOutputTypeCountRefreshSessionsArgs
     auditLogs?: boolean | OrganizationCountOutputTypeCountAuditLogsArgs
@@ -4373,6 +4650,20 @@ export namespace Prisma {
      * Select specific fields to fetch from the OrganizationCountOutputType
      */
     select?: OrganizationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountBackupsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BackupRecordWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountDataOperationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DataOperationWhereInput
   }
 
   /**
@@ -4629,6 +4920,9 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    backupsCreated: number
+    dataOperationsCreated: number
+    backupSchedulesUpdated: number
     memberships: number
     refreshSessions: number
     auditLogs: number
@@ -4672,6 +4966,9 @@ export namespace Prisma {
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    backupsCreated?: boolean | UserCountOutputTypeCountBackupsCreatedArgs
+    dataOperationsCreated?: boolean | UserCountOutputTypeCountDataOperationsCreatedArgs
+    backupSchedulesUpdated?: boolean | UserCountOutputTypeCountBackupSchedulesUpdatedArgs
     memberships?: boolean | UserCountOutputTypeCountMembershipsArgs
     refreshSessions?: boolean | UserCountOutputTypeCountRefreshSessionsArgs
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
@@ -4723,6 +5020,27 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountBackupsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BackupRecordWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountDataOperationsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DataOperationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountBackupSchedulesUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BackupScheduleWhereInput
   }
 
   /**
@@ -5559,6 +5877,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type BackupRecordCountOutputType
+   */
+
+  export type BackupRecordCountOutputType = {
+    protectedByOperations: number
+  }
+
+  export type BackupRecordCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    protectedByOperations?: boolean | BackupRecordCountOutputTypeCountProtectedByOperationsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * BackupRecordCountOutputType without action
+   */
+  export type BackupRecordCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecordCountOutputType
+     */
+    select?: BackupRecordCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * BackupRecordCountOutputType without action
+   */
+  export type BackupRecordCountOutputTypeCountProtectedByOperationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DataOperationWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -5636,43 +5985,43 @@ export namespace Prisma {
     where?: OrganizationWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Organizations to fetch.
      */
     orderBy?: OrganizationOrderByWithRelationInput | OrganizationOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: OrganizationWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Organizations from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Organizations.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Organizations
     **/
     _count?: true | OrganizationCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: OrganizationMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: OrganizationMaxAggregateInputType
@@ -5734,6 +6083,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    backups?: boolean | Organization$backupsArgs<ExtArgs>
+    dataOperations?: boolean | Organization$dataOperationsArgs<ExtArgs>
+    backupSchedule?: boolean | Organization$backupScheduleArgs<ExtArgs>
     memberships?: boolean | Organization$membershipsArgs<ExtArgs>
     refreshSessions?: boolean | Organization$refreshSessionsArgs<ExtArgs>
     auditLogs?: boolean | Organization$auditLogsArgs<ExtArgs>
@@ -5797,6 +6149,9 @@ export namespace Prisma {
 
   export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    backups?: boolean | Organization$backupsArgs<ExtArgs>
+    dataOperations?: boolean | Organization$dataOperationsArgs<ExtArgs>
+    backupSchedule?: boolean | Organization$backupScheduleArgs<ExtArgs>
     memberships?: boolean | Organization$membershipsArgs<ExtArgs>
     refreshSessions?: boolean | Organization$refreshSessionsArgs<ExtArgs>
     auditLogs?: boolean | Organization$auditLogsArgs<ExtArgs>
@@ -5836,6 +6191,9 @@ export namespace Prisma {
   export type $OrganizationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Organization"
     objects: {
+      backups: Prisma.$BackupRecordPayload<ExtArgs>[]
+      dataOperations: Prisma.$DataOperationPayload<ExtArgs>[]
+      backupSchedule: Prisma.$BackupSchedulePayload<ExtArgs> | null
       memberships: Prisma.$OrganizationMembershipPayload<ExtArgs>[]
       refreshSessions: Prisma.$RefreshSessionPayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
@@ -5954,13 +6312,13 @@ export namespace Prisma {
      * @example
      * // Get all Organizations
      * const organizations = await prisma.organization.findMany()
-     *
+     * 
      * // Get first 10 Organizations
      * const organizations = await prisma.organization.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const organizationWithIdOnly = await prisma.organization.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends OrganizationFindManyArgs>(args?: SelectSubset<T, OrganizationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -5974,7 +6332,7 @@ export namespace Prisma {
      *     // ... data to create a Organization
      *   }
      * })
-     *
+     * 
      */
     create<T extends OrganizationCreateArgs>(args: SelectSubset<T, OrganizationCreateArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -5988,7 +6346,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends OrganizationCreateManyArgs>(args?: SelectSubset<T, OrganizationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -6002,7 +6360,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Organizations and only return the `id`
      * const organizationWithIdOnly = await prisma.organization.createManyAndReturn({
      *   select: { id: true },
@@ -6012,7 +6370,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends OrganizationCreateManyAndReturnArgs>(args?: SelectSubset<T, OrganizationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -6026,7 +6384,7 @@ export namespace Prisma {
      *     // ... filter to delete one Organization
      *   }
      * })
-     *
+     * 
      */
     delete<T extends OrganizationDeleteArgs>(args: SelectSubset<T, OrganizationDeleteArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -6043,7 +6401,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends OrganizationUpdateArgs>(args: SelectSubset<T, OrganizationUpdateArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -6057,7 +6415,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends OrganizationDeleteManyArgs>(args?: SelectSubset<T, OrganizationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -6076,7 +6434,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends OrganizationUpdateManyArgs>(args: SelectSubset<T, OrganizationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -6093,7 +6451,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Organizations and only return the `id`
      * const organizationWithIdOnly = await prisma.organization.updateManyAndReturn({
      *   select: { id: true },
@@ -6106,7 +6464,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends OrganizationUpdateManyAndReturnArgs>(args: SelectSubset<T, OrganizationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -6195,7 +6553,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends OrganizationGroupByArgs,
@@ -6269,6 +6627,9 @@ export namespace Prisma {
    */
   export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    backups<T extends Organization$backupsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$backupsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    dataOperations<T extends Organization$dataOperationsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$dataOperationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    backupSchedule<T extends Organization$backupScheduleArgs<ExtArgs> = {}>(args?: Subset<T, Organization$backupScheduleArgs<ExtArgs>>): Prisma__BackupScheduleClient<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     memberships<T extends Organization$membershipsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refreshSessions<T extends Organization$refreshSessionsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$refreshSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends Organization$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6336,7 +6697,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Organization", 'DateTime'>
     readonly updatedAt: FieldRef<"Organization", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -6405,31 +6766,31 @@ export namespace Prisma {
     where?: OrganizationWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Organizations to fetch.
      */
     orderBy?: OrganizationOrderByWithRelationInput | OrganizationOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Organizations.
      */
     cursor?: OrganizationWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Organizations from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Organizations.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Organizations.
      */
     distinct?: OrganizationScalarFieldEnum | OrganizationScalarFieldEnum[]
@@ -6457,31 +6818,31 @@ export namespace Prisma {
     where?: OrganizationWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Organizations to fetch.
      */
     orderBy?: OrganizationOrderByWithRelationInput | OrganizationOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Organizations.
      */
     cursor?: OrganizationWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Organizations from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Organizations.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Organizations.
      */
     distinct?: OrganizationScalarFieldEnum | OrganizationScalarFieldEnum[]
@@ -6509,31 +6870,31 @@ export namespace Prisma {
     where?: OrganizationWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Organizations to fetch.
      */
     orderBy?: OrganizationOrderByWithRelationInput | OrganizationOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Organizations.
      */
     cursor?: OrganizationWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Organizations from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Organizations.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Organizations.
      */
     distinct?: OrganizationScalarFieldEnum | OrganizationScalarFieldEnum[]
@@ -6725,6 +7086,73 @@ export namespace Prisma {
      * Limit how many Organizations to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Organization.backups
+   */
+  export type Organization$backupsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    where?: BackupRecordWhereInput
+    orderBy?: BackupRecordOrderByWithRelationInput | BackupRecordOrderByWithRelationInput[]
+    cursor?: BackupRecordWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BackupRecordScalarFieldEnum | BackupRecordScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.dataOperations
+   */
+  export type Organization$dataOperationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    where?: DataOperationWhereInput
+    orderBy?: DataOperationOrderByWithRelationInput | DataOperationOrderByWithRelationInput[]
+    cursor?: DataOperationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DataOperationScalarFieldEnum | DataOperationScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.backupSchedule
+   */
+  export type Organization$backupScheduleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    where?: BackupScheduleWhereInput
   }
 
   /**
@@ -7570,43 +7998,43 @@ export namespace Prisma {
     where?: RoleWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Roles to fetch.
      */
     orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: RoleWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Roles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Roles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Roles
     **/
     _count?: true | RoleCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: RoleMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: RoleMaxAggregateInputType
@@ -7813,13 +8241,13 @@ export namespace Prisma {
      * @example
      * // Get all Roles
      * const roles = await prisma.role.findMany()
-     *
+     * 
      * // Get first 10 Roles
      * const roles = await prisma.role.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const roleWithIdOnly = await prisma.role.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends RoleFindManyArgs>(args?: SelectSubset<T, RoleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -7833,7 +8261,7 @@ export namespace Prisma {
      *     // ... data to create a Role
      *   }
      * })
-     *
+     * 
      */
     create<T extends RoleCreateArgs>(args: SelectSubset<T, RoleCreateArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -7847,7 +8275,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends RoleCreateManyArgs>(args?: SelectSubset<T, RoleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -7861,7 +8289,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Roles and only return the `id`
      * const roleWithIdOnly = await prisma.role.createManyAndReturn({
      *   select: { id: true },
@@ -7871,7 +8299,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends RoleCreateManyAndReturnArgs>(args?: SelectSubset<T, RoleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -7885,7 +8313,7 @@ export namespace Prisma {
      *     // ... filter to delete one Role
      *   }
      * })
-     *
+     * 
      */
     delete<T extends RoleDeleteArgs>(args: SelectSubset<T, RoleDeleteArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -7902,7 +8330,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends RoleUpdateArgs>(args: SelectSubset<T, RoleUpdateArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -7916,7 +8344,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends RoleDeleteManyArgs>(args?: SelectSubset<T, RoleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -7935,7 +8363,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends RoleUpdateManyArgs>(args: SelectSubset<T, RoleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -7952,7 +8380,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Roles and only return the `id`
      * const roleWithIdOnly = await prisma.role.updateManyAndReturn({
      *   select: { id: true },
@@ -7965,7 +8393,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends RoleUpdateManyAndReturnArgs>(args: SelectSubset<T, RoleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -8054,7 +8482,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends RoleGroupByArgs,
@@ -8167,7 +8595,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Role", 'DateTime'>
     readonly updatedAt: FieldRef<"Role", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -8236,31 +8664,31 @@ export namespace Prisma {
     where?: RoleWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Roles to fetch.
      */
     orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Roles.
      */
     cursor?: RoleWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Roles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Roles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Roles.
      */
     distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
@@ -8288,31 +8716,31 @@ export namespace Prisma {
     where?: RoleWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Roles to fetch.
      */
     orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Roles.
      */
     cursor?: RoleWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Roles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Roles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Roles.
      */
     distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
@@ -8340,31 +8768,31 @@ export namespace Prisma {
     where?: RoleWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Roles to fetch.
      */
     orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Roles.
      */
     cursor?: RoleWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Roles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Roles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Roles.
      */
     distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
@@ -8677,43 +9105,43 @@ export namespace Prisma {
     where?: RolePermissionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RolePermissions to fetch.
      */
     orderBy?: RolePermissionOrderByWithRelationInput | RolePermissionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: RolePermissionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RolePermissions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RolePermissions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned RolePermissions
     **/
     _count?: true | RolePermissionCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: RolePermissionMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: RolePermissionMaxAggregateInputType
@@ -8903,13 +9331,13 @@ export namespace Prisma {
      * @example
      * // Get all RolePermissions
      * const rolePermissions = await prisma.rolePermission.findMany()
-     *
+     * 
      * // Get first 10 RolePermissions
      * const rolePermissions = await prisma.rolePermission.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const rolePermissionWithIdOnly = await prisma.rolePermission.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends RolePermissionFindManyArgs>(args?: SelectSubset<T, RolePermissionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -8923,7 +9351,7 @@ export namespace Prisma {
      *     // ... data to create a RolePermission
      *   }
      * })
-     *
+     * 
      */
     create<T extends RolePermissionCreateArgs>(args: SelectSubset<T, RolePermissionCreateArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -8937,7 +9365,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends RolePermissionCreateManyArgs>(args?: SelectSubset<T, RolePermissionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -8951,7 +9379,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many RolePermissions and only return the `id`
      * const rolePermissionWithIdOnly = await prisma.rolePermission.createManyAndReturn({
      *   select: { id: true },
@@ -8961,7 +9389,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends RolePermissionCreateManyAndReturnArgs>(args?: SelectSubset<T, RolePermissionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -8975,7 +9403,7 @@ export namespace Prisma {
      *     // ... filter to delete one RolePermission
      *   }
      * })
-     *
+     * 
      */
     delete<T extends RolePermissionDeleteArgs>(args: SelectSubset<T, RolePermissionDeleteArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -8992,7 +9420,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends RolePermissionUpdateArgs>(args: SelectSubset<T, RolePermissionUpdateArgs<ExtArgs>>): Prisma__RolePermissionClient<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -9006,7 +9434,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends RolePermissionDeleteManyArgs>(args?: SelectSubset<T, RolePermissionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -9025,7 +9453,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends RolePermissionUpdateManyArgs>(args: SelectSubset<T, RolePermissionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -9042,7 +9470,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more RolePermissions and only return the `id`
      * const rolePermissionWithIdOnly = await prisma.rolePermission.updateManyAndReturn({
      *   select: { id: true },
@@ -9055,7 +9483,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends RolePermissionUpdateManyAndReturnArgs>(args: SelectSubset<T, RolePermissionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -9144,7 +9572,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends RolePermissionGroupByArgs,
@@ -9254,7 +9682,7 @@ export namespace Prisma {
     readonly permission: FieldRef<"RolePermission", 'String'>
     readonly scope: FieldRef<"RolePermission", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -9323,31 +9751,31 @@ export namespace Prisma {
     where?: RolePermissionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RolePermissions to fetch.
      */
     orderBy?: RolePermissionOrderByWithRelationInput | RolePermissionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for RolePermissions.
      */
     cursor?: RolePermissionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RolePermissions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RolePermissions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of RolePermissions.
      */
     distinct?: RolePermissionScalarFieldEnum | RolePermissionScalarFieldEnum[]
@@ -9375,31 +9803,31 @@ export namespace Prisma {
     where?: RolePermissionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RolePermissions to fetch.
      */
     orderBy?: RolePermissionOrderByWithRelationInput | RolePermissionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for RolePermissions.
      */
     cursor?: RolePermissionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RolePermissions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RolePermissions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of RolePermissions.
      */
     distinct?: RolePermissionScalarFieldEnum | RolePermissionScalarFieldEnum[]
@@ -9427,31 +9855,31 @@ export namespace Prisma {
     where?: RolePermissionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RolePermissions to fetch.
      */
     orderBy?: RolePermissionOrderByWithRelationInput | RolePermissionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing RolePermissions.
      */
     cursor?: RolePermissionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RolePermissions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RolePermissions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of RolePermissions.
      */
     distinct?: RolePermissionScalarFieldEnum | RolePermissionScalarFieldEnum[]
@@ -9758,43 +10186,43 @@ export namespace Prisma {
     where?: UserWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Users to fetch.
      */
     orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: UserWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Users from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Users.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Users
     **/
     _count?: true | UserCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: UserMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: UserMaxAggregateInputType
@@ -9860,6 +10288,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    backupsCreated?: boolean | User$backupsCreatedArgs<ExtArgs>
+    dataOperationsCreated?: boolean | User$dataOperationsCreatedArgs<ExtArgs>
+    backupSchedulesUpdated?: boolean | User$backupSchedulesUpdatedArgs<ExtArgs>
     memberships?: boolean | User$membershipsArgs<ExtArgs>
     refreshSessions?: boolean | User$refreshSessionsArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
@@ -9938,6 +10369,9 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "emailNormalized" | "displayName" | "passwordHash" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    backupsCreated?: boolean | User$backupsCreatedArgs<ExtArgs>
+    dataOperationsCreated?: boolean | User$dataOperationsCreatedArgs<ExtArgs>
+    backupSchedulesUpdated?: boolean | User$backupSchedulesUpdatedArgs<ExtArgs>
     memberships?: boolean | User$membershipsArgs<ExtArgs>
     refreshSessions?: boolean | User$refreshSessionsArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
@@ -9986,6 +10420,9 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      backupsCreated: Prisma.$BackupRecordPayload<ExtArgs>[]
+      dataOperationsCreated: Prisma.$DataOperationPayload<ExtArgs>[]
+      backupSchedulesUpdated: Prisma.$BackupSchedulePayload<ExtArgs>[]
       memberships: Prisma.$OrganizationMembershipPayload<ExtArgs>[]
       refreshSessions: Prisma.$RefreshSessionPayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
@@ -10115,13 +10552,13 @@ export namespace Prisma {
      * @example
      * // Get all Users
      * const users = await prisma.user.findMany()
-     *
+     * 
      * // Get first 10 Users
      * const users = await prisma.user.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const userWithIdOnly = await prisma.user.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -10135,7 +10572,7 @@ export namespace Prisma {
      *     // ... data to create a User
      *   }
      * })
-     *
+     * 
      */
     create<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -10149,7 +10586,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends UserCreateManyArgs>(args?: SelectSubset<T, UserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -10163,7 +10600,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Users and only return the `id`
      * const userWithIdOnly = await prisma.user.createManyAndReturn({
      *   select: { id: true },
@@ -10173,7 +10610,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends UserCreateManyAndReturnArgs>(args?: SelectSubset<T, UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -10187,7 +10624,7 @@ export namespace Prisma {
      *     // ... filter to delete one User
      *   }
      * })
-     *
+     * 
      */
     delete<T extends UserDeleteArgs>(args: SelectSubset<T, UserDeleteArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -10204,7 +10641,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends UserUpdateArgs>(args: SelectSubset<T, UserUpdateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -10218,7 +10655,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends UserDeleteManyArgs>(args?: SelectSubset<T, UserDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -10237,7 +10674,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends UserUpdateManyArgs>(args: SelectSubset<T, UserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -10254,7 +10691,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Users and only return the `id`
      * const userWithIdOnly = await prisma.user.updateManyAndReturn({
      *   select: { id: true },
@@ -10267,7 +10704,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends UserUpdateManyAndReturnArgs>(args: SelectSubset<T, UserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -10356,7 +10793,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends UserGroupByArgs,
@@ -10430,6 +10867,9 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    backupsCreated<T extends User$backupsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$backupsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    dataOperationsCreated<T extends User$dataOperationsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$dataOperationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    backupSchedulesUpdated<T extends User$backupSchedulesUpdatedArgs<ExtArgs> = {}>(args?: Subset<T, User$backupSchedulesUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     memberships<T extends User$membershipsArgs<ExtArgs> = {}>(args?: Subset<T, User$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refreshSessions<T extends User$refreshSessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$refreshSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -10508,7 +10948,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -10577,31 +11017,31 @@ export namespace Prisma {
     where?: UserWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Users to fetch.
      */
     orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Users.
      */
     cursor?: UserWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Users from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Users.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Users.
      */
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
@@ -10629,31 +11069,31 @@ export namespace Prisma {
     where?: UserWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Users to fetch.
      */
     orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Users.
      */
     cursor?: UserWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Users from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Users.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Users.
      */
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
@@ -10681,31 +11121,31 @@ export namespace Prisma {
     where?: UserWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Users to fetch.
      */
     orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Users.
      */
     cursor?: UserWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Users from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Users.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Users.
      */
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
@@ -10897,6 +11337,78 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
+  }
+
+  /**
+   * User.backupsCreated
+   */
+  export type User$backupsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    where?: BackupRecordWhereInput
+    orderBy?: BackupRecordOrderByWithRelationInput | BackupRecordOrderByWithRelationInput[]
+    cursor?: BackupRecordWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BackupRecordScalarFieldEnum | BackupRecordScalarFieldEnum[]
+  }
+
+  /**
+   * User.dataOperationsCreated
+   */
+  export type User$dataOperationsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    where?: DataOperationWhereInput
+    orderBy?: DataOperationOrderByWithRelationInput | DataOperationOrderByWithRelationInput[]
+    cursor?: DataOperationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DataOperationScalarFieldEnum | DataOperationScalarFieldEnum[]
+  }
+
+  /**
+   * User.backupSchedulesUpdated
+   */
+  export type User$backupSchedulesUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    where?: BackupScheduleWhereInput
+    orderBy?: BackupScheduleOrderByWithRelationInput | BackupScheduleOrderByWithRelationInput[]
+    cursor?: BackupScheduleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BackupScheduleScalarFieldEnum | BackupScheduleScalarFieldEnum[]
   }
 
   /**
@@ -11964,43 +12476,43 @@ export namespace Prisma {
     where?: OrganizationMembershipWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of OrganizationMemberships to fetch.
      */
     orderBy?: OrganizationMembershipOrderByWithRelationInput | OrganizationMembershipOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: OrganizationMembershipWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` OrganizationMemberships from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` OrganizationMemberships.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned OrganizationMemberships
     **/
     _count?: true | OrganizationMembershipCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: OrganizationMembershipMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: OrganizationMembershipMaxAggregateInputType
@@ -12226,13 +12738,13 @@ export namespace Prisma {
      * @example
      * // Get all OrganizationMemberships
      * const organizationMemberships = await prisma.organizationMembership.findMany()
-     *
+     * 
      * // Get first 10 OrganizationMemberships
      * const organizationMemberships = await prisma.organizationMembership.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `isSuperuser`
      * const organizationMembershipWithIsSuperuserOnly = await prisma.organizationMembership.findMany({ select: { isSuperuser: true } })
-     *
+     * 
      */
     findMany<T extends OrganizationMembershipFindManyArgs>(args?: SelectSubset<T, OrganizationMembershipFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -12246,7 +12758,7 @@ export namespace Prisma {
      *     // ... data to create a OrganizationMembership
      *   }
      * })
-     *
+     * 
      */
     create<T extends OrganizationMembershipCreateArgs>(args: SelectSubset<T, OrganizationMembershipCreateArgs<ExtArgs>>): Prisma__OrganizationMembershipClient<$Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -12260,7 +12772,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends OrganizationMembershipCreateManyArgs>(args?: SelectSubset<T, OrganizationMembershipCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -12274,7 +12786,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many OrganizationMemberships and only return the `isSuperuser`
      * const organizationMembershipWithIsSuperuserOnly = await prisma.organizationMembership.createManyAndReturn({
      *   select: { isSuperuser: true },
@@ -12284,7 +12796,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends OrganizationMembershipCreateManyAndReturnArgs>(args?: SelectSubset<T, OrganizationMembershipCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -12298,7 +12810,7 @@ export namespace Prisma {
      *     // ... filter to delete one OrganizationMembership
      *   }
      * })
-     *
+     * 
      */
     delete<T extends OrganizationMembershipDeleteArgs>(args: SelectSubset<T, OrganizationMembershipDeleteArgs<ExtArgs>>): Prisma__OrganizationMembershipClient<$Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -12315,7 +12827,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends OrganizationMembershipUpdateArgs>(args: SelectSubset<T, OrganizationMembershipUpdateArgs<ExtArgs>>): Prisma__OrganizationMembershipClient<$Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -12329,7 +12841,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends OrganizationMembershipDeleteManyArgs>(args?: SelectSubset<T, OrganizationMembershipDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -12348,7 +12860,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends OrganizationMembershipUpdateManyArgs>(args: SelectSubset<T, OrganizationMembershipUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -12365,7 +12877,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more OrganizationMemberships and only return the `isSuperuser`
      * const organizationMembershipWithIsSuperuserOnly = await prisma.organizationMembership.updateManyAndReturn({
      *   select: { isSuperuser: true },
@@ -12378,7 +12890,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends OrganizationMembershipUpdateManyAndReturnArgs>(args: SelectSubset<T, OrganizationMembershipUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -12467,7 +12979,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends OrganizationMembershipGroupByArgs,
@@ -12584,7 +13096,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"OrganizationMembership", 'DateTime'>
     readonly updatedAt: FieldRef<"OrganizationMembership", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -12653,31 +13165,31 @@ export namespace Prisma {
     where?: OrganizationMembershipWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of OrganizationMemberships to fetch.
      */
     orderBy?: OrganizationMembershipOrderByWithRelationInput | OrganizationMembershipOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for OrganizationMemberships.
      */
     cursor?: OrganizationMembershipWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` OrganizationMemberships from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` OrganizationMemberships.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of OrganizationMemberships.
      */
     distinct?: OrganizationMembershipScalarFieldEnum | OrganizationMembershipScalarFieldEnum[]
@@ -12705,31 +13217,31 @@ export namespace Prisma {
     where?: OrganizationMembershipWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of OrganizationMemberships to fetch.
      */
     orderBy?: OrganizationMembershipOrderByWithRelationInput | OrganizationMembershipOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for OrganizationMemberships.
      */
     cursor?: OrganizationMembershipWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` OrganizationMemberships from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` OrganizationMemberships.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of OrganizationMemberships.
      */
     distinct?: OrganizationMembershipScalarFieldEnum | OrganizationMembershipScalarFieldEnum[]
@@ -12757,31 +13269,31 @@ export namespace Prisma {
     where?: OrganizationMembershipWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of OrganizationMemberships to fetch.
      */
     orderBy?: OrganizationMembershipOrderByWithRelationInput | OrganizationMembershipOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing OrganizationMemberships.
      */
     cursor?: OrganizationMembershipWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` OrganizationMemberships from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` OrganizationMemberships.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of OrganizationMemberships.
      */
     distinct?: OrganizationMembershipScalarFieldEnum | OrganizationMembershipScalarFieldEnum[]
@@ -13161,43 +13673,43 @@ export namespace Prisma {
     where?: RefreshSessionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RefreshSessions to fetch.
      */
     orderBy?: RefreshSessionOrderByWithRelationInput | RefreshSessionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: RefreshSessionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RefreshSessions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RefreshSessions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned RefreshSessions
     **/
     _count?: true | RefreshSessionCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: RefreshSessionMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: RefreshSessionMaxAggregateInputType
@@ -13418,13 +13930,13 @@ export namespace Prisma {
      * @example
      * // Get all RefreshSessions
      * const refreshSessions = await prisma.refreshSession.findMany()
-     *
+     * 
      * // Get first 10 RefreshSessions
      * const refreshSessions = await prisma.refreshSession.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const refreshSessionWithIdOnly = await prisma.refreshSession.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends RefreshSessionFindManyArgs>(args?: SelectSubset<T, RefreshSessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -13438,7 +13950,7 @@ export namespace Prisma {
      *     // ... data to create a RefreshSession
      *   }
      * })
-     *
+     * 
      */
     create<T extends RefreshSessionCreateArgs>(args: SelectSubset<T, RefreshSessionCreateArgs<ExtArgs>>): Prisma__RefreshSessionClient<$Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -13452,7 +13964,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends RefreshSessionCreateManyArgs>(args?: SelectSubset<T, RefreshSessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -13466,7 +13978,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many RefreshSessions and only return the `id`
      * const refreshSessionWithIdOnly = await prisma.refreshSession.createManyAndReturn({
      *   select: { id: true },
@@ -13476,7 +13988,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends RefreshSessionCreateManyAndReturnArgs>(args?: SelectSubset<T, RefreshSessionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -13490,7 +14002,7 @@ export namespace Prisma {
      *     // ... filter to delete one RefreshSession
      *   }
      * })
-     *
+     * 
      */
     delete<T extends RefreshSessionDeleteArgs>(args: SelectSubset<T, RefreshSessionDeleteArgs<ExtArgs>>): Prisma__RefreshSessionClient<$Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -13507,7 +14019,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends RefreshSessionUpdateArgs>(args: SelectSubset<T, RefreshSessionUpdateArgs<ExtArgs>>): Prisma__RefreshSessionClient<$Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -13521,7 +14033,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends RefreshSessionDeleteManyArgs>(args?: SelectSubset<T, RefreshSessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -13540,7 +14052,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends RefreshSessionUpdateManyArgs>(args: SelectSubset<T, RefreshSessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -13557,7 +14069,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more RefreshSessions and only return the `id`
      * const refreshSessionWithIdOnly = await prisma.refreshSession.updateManyAndReturn({
      *   select: { id: true },
@@ -13570,7 +14082,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends RefreshSessionUpdateManyAndReturnArgs>(args: SelectSubset<T, RefreshSessionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -13659,7 +14171,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends RefreshSessionGroupByArgs,
@@ -13774,7 +14286,7 @@ export namespace Prisma {
     readonly revokedAt: FieldRef<"RefreshSession", 'DateTime'>
     readonly createdAt: FieldRef<"RefreshSession", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -13843,31 +14355,31 @@ export namespace Prisma {
     where?: RefreshSessionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RefreshSessions to fetch.
      */
     orderBy?: RefreshSessionOrderByWithRelationInput | RefreshSessionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for RefreshSessions.
      */
     cursor?: RefreshSessionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RefreshSessions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RefreshSessions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of RefreshSessions.
      */
     distinct?: RefreshSessionScalarFieldEnum | RefreshSessionScalarFieldEnum[]
@@ -13895,31 +14407,31 @@ export namespace Prisma {
     where?: RefreshSessionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RefreshSessions to fetch.
      */
     orderBy?: RefreshSessionOrderByWithRelationInput | RefreshSessionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for RefreshSessions.
      */
     cursor?: RefreshSessionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RefreshSessions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RefreshSessions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of RefreshSessions.
      */
     distinct?: RefreshSessionScalarFieldEnum | RefreshSessionScalarFieldEnum[]
@@ -13947,31 +14459,31 @@ export namespace Prisma {
     where?: RefreshSessionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RefreshSessions to fetch.
      */
     orderBy?: RefreshSessionOrderByWithRelationInput | RefreshSessionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing RefreshSessions.
      */
     cursor?: RefreshSessionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RefreshSessions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RefreshSessions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of RefreshSessions.
      */
     distinct?: RefreshSessionScalarFieldEnum | RefreshSessionScalarFieldEnum[]
@@ -14290,43 +14802,43 @@ export namespace Prisma {
     where?: AuditLogWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of AuditLogs to fetch.
      */
     orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: AuditLogWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` AuditLogs from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` AuditLogs.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned AuditLogs
     **/
     _count?: true | AuditLogCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: AuditLogMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: AuditLogMaxAggregateInputType
@@ -14565,13 +15077,13 @@ export namespace Prisma {
      * @example
      * // Get all AuditLogs
      * const auditLogs = await prisma.auditLog.findMany()
-     *
+     * 
      * // Get first 10 AuditLogs
      * const auditLogs = await prisma.auditLog.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const auditLogWithIdOnly = await prisma.auditLog.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends AuditLogFindManyArgs>(args?: SelectSubset<T, AuditLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -14585,7 +15097,7 @@ export namespace Prisma {
      *     // ... data to create a AuditLog
      *   }
      * })
-     *
+     * 
      */
     create<T extends AuditLogCreateArgs>(args: SelectSubset<T, AuditLogCreateArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -14599,7 +15111,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends AuditLogCreateManyArgs>(args?: SelectSubset<T, AuditLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -14613,7 +15125,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many AuditLogs and only return the `id`
      * const auditLogWithIdOnly = await prisma.auditLog.createManyAndReturn({
      *   select: { id: true },
@@ -14623,7 +15135,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends AuditLogCreateManyAndReturnArgs>(args?: SelectSubset<T, AuditLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -14637,7 +15149,7 @@ export namespace Prisma {
      *     // ... filter to delete one AuditLog
      *   }
      * })
-     *
+     * 
      */
     delete<T extends AuditLogDeleteArgs>(args: SelectSubset<T, AuditLogDeleteArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -14654,7 +15166,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends AuditLogUpdateArgs>(args: SelectSubset<T, AuditLogUpdateArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -14668,7 +15180,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends AuditLogDeleteManyArgs>(args?: SelectSubset<T, AuditLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -14687,7 +15199,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends AuditLogUpdateManyArgs>(args: SelectSubset<T, AuditLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -14704,7 +15216,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more AuditLogs and only return the `id`
      * const auditLogWithIdOnly = await prisma.auditLog.updateManyAndReturn({
      *   select: { id: true },
@@ -14717,7 +15229,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends AuditLogUpdateManyAndReturnArgs>(args: SelectSubset<T, AuditLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -14806,7 +15318,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends AuditLogGroupByArgs,
@@ -14924,7 +15436,7 @@ export namespace Prisma {
     readonly ipAddress: FieldRef<"AuditLog", 'String'>
     readonly createdAt: FieldRef<"AuditLog", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -14993,31 +15505,31 @@ export namespace Prisma {
     where?: AuditLogWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of AuditLogs to fetch.
      */
     orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for AuditLogs.
      */
     cursor?: AuditLogWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` AuditLogs from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` AuditLogs.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of AuditLogs.
      */
     distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
@@ -15045,31 +15557,31 @@ export namespace Prisma {
     where?: AuditLogWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of AuditLogs to fetch.
      */
     orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for AuditLogs.
      */
     cursor?: AuditLogWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` AuditLogs from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` AuditLogs.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of AuditLogs.
      */
     distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
@@ -15097,31 +15609,31 @@ export namespace Prisma {
     where?: AuditLogWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of AuditLogs to fetch.
      */
     orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing AuditLogs.
      */
     cursor?: AuditLogWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` AuditLogs from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` AuditLogs.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of AuditLogs.
      */
     distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
@@ -15501,55 +16013,55 @@ export namespace Prisma {
     where?: CompanyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Companies to fetch.
      */
     orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: CompanyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Companies from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Companies.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Companies
     **/
     _count?: true | CompanyCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: CompanyAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: CompanySumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CompanyMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: CompanyMaxAggregateInputType
@@ -15844,13 +16356,13 @@ export namespace Prisma {
      * @example
      * // Get all Companies
      * const companies = await prisma.company.findMany()
-     *
+     * 
      * // Get first 10 Companies
      * const companies = await prisma.company.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const companyWithIdOnly = await prisma.company.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends CompanyFindManyArgs>(args?: SelectSubset<T, CompanyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -15864,7 +16376,7 @@ export namespace Prisma {
      *     // ... data to create a Company
      *   }
      * })
-     *
+     * 
      */
     create<T extends CompanyCreateArgs>(args: SelectSubset<T, CompanyCreateArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -15878,7 +16390,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends CompanyCreateManyArgs>(args?: SelectSubset<T, CompanyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -15892,7 +16404,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Companies and only return the `id`
      * const companyWithIdOnly = await prisma.company.createManyAndReturn({
      *   select: { id: true },
@@ -15902,7 +16414,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends CompanyCreateManyAndReturnArgs>(args?: SelectSubset<T, CompanyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -15916,7 +16428,7 @@ export namespace Prisma {
      *     // ... filter to delete one Company
      *   }
      * })
-     *
+     * 
      */
     delete<T extends CompanyDeleteArgs>(args: SelectSubset<T, CompanyDeleteArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -15933,7 +16445,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends CompanyUpdateArgs>(args: SelectSubset<T, CompanyUpdateArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -15947,7 +16459,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends CompanyDeleteManyArgs>(args?: SelectSubset<T, CompanyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -15966,7 +16478,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends CompanyUpdateManyArgs>(args: SelectSubset<T, CompanyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -15983,7 +16495,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Companies and only return the `id`
      * const companyWithIdOnly = await prisma.company.updateManyAndReturn({
      *   select: { id: true },
@@ -15996,7 +16508,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends CompanyUpdateManyAndReturnArgs>(args: SelectSubset<T, CompanyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -16085,7 +16597,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends CompanyGroupByArgs,
@@ -16215,7 +16727,7 @@ export namespace Prisma {
     readonly deletedAt: FieldRef<"Company", 'DateTime'>
     readonly deletedBy: FieldRef<"Company", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -16284,31 +16796,31 @@ export namespace Prisma {
     where?: CompanyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Companies to fetch.
      */
     orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Companies.
      */
     cursor?: CompanyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Companies from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Companies.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Companies.
      */
     distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
@@ -16336,31 +16848,31 @@ export namespace Prisma {
     where?: CompanyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Companies to fetch.
      */
     orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Companies.
      */
     cursor?: CompanyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Companies from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Companies.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Companies.
      */
     distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
@@ -16388,31 +16900,31 @@ export namespace Prisma {
     where?: CompanyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Companies to fetch.
      */
     orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Companies.
      */
     cursor?: CompanyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Companies from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Companies.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Companies.
      */
     distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
@@ -16978,55 +17490,55 @@ export namespace Prisma {
     where?: TerritoryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Territories to fetch.
      */
     orderBy?: TerritoryOrderByWithRelationInput | TerritoryOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: TerritoryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Territories from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Territories.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Territories
     **/
     _count?: true | TerritoryCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: TerritoryAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: TerritorySumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TerritoryMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: TerritoryMaxAggregateInputType
@@ -17307,13 +17819,13 @@ export namespace Prisma {
      * @example
      * // Get all Territories
      * const territories = await prisma.territory.findMany()
-     *
+     * 
      * // Get first 10 Territories
      * const territories = await prisma.territory.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const territoryWithIdOnly = await prisma.territory.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends TerritoryFindManyArgs>(args?: SelectSubset<T, TerritoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -17327,7 +17839,7 @@ export namespace Prisma {
      *     // ... data to create a Territory
      *   }
      * })
-     *
+     * 
      */
     create<T extends TerritoryCreateArgs>(args: SelectSubset<T, TerritoryCreateArgs<ExtArgs>>): Prisma__TerritoryClient<$Result.GetResult<Prisma.$TerritoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -17341,7 +17853,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends TerritoryCreateManyArgs>(args?: SelectSubset<T, TerritoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -17355,7 +17867,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Territories and only return the `id`
      * const territoryWithIdOnly = await prisma.territory.createManyAndReturn({
      *   select: { id: true },
@@ -17365,7 +17877,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends TerritoryCreateManyAndReturnArgs>(args?: SelectSubset<T, TerritoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -17379,7 +17891,7 @@ export namespace Prisma {
      *     // ... filter to delete one Territory
      *   }
      * })
-     *
+     * 
      */
     delete<T extends TerritoryDeleteArgs>(args: SelectSubset<T, TerritoryDeleteArgs<ExtArgs>>): Prisma__TerritoryClient<$Result.GetResult<Prisma.$TerritoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -17396,7 +17908,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends TerritoryUpdateArgs>(args: SelectSubset<T, TerritoryUpdateArgs<ExtArgs>>): Prisma__TerritoryClient<$Result.GetResult<Prisma.$TerritoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -17410,7 +17922,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends TerritoryDeleteManyArgs>(args?: SelectSubset<T, TerritoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -17429,7 +17941,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends TerritoryUpdateManyArgs>(args: SelectSubset<T, TerritoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -17446,7 +17958,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Territories and only return the `id`
      * const territoryWithIdOnly = await prisma.territory.updateManyAndReturn({
      *   select: { id: true },
@@ -17459,7 +17971,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends TerritoryUpdateManyAndReturnArgs>(args: SelectSubset<T, TerritoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -17548,7 +18060,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends TerritoryGroupByArgs,
@@ -17673,7 +18185,7 @@ export namespace Prisma {
     readonly deletedAt: FieldRef<"Territory", 'DateTime'>
     readonly deletedBy: FieldRef<"Territory", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -17742,31 +18254,31 @@ export namespace Prisma {
     where?: TerritoryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Territories to fetch.
      */
     orderBy?: TerritoryOrderByWithRelationInput | TerritoryOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Territories.
      */
     cursor?: TerritoryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Territories from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Territories.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Territories.
      */
     distinct?: TerritoryScalarFieldEnum | TerritoryScalarFieldEnum[]
@@ -17794,31 +18306,31 @@ export namespace Prisma {
     where?: TerritoryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Territories to fetch.
      */
     orderBy?: TerritoryOrderByWithRelationInput | TerritoryOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Territories.
      */
     cursor?: TerritoryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Territories from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Territories.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Territories.
      */
     distinct?: TerritoryScalarFieldEnum | TerritoryScalarFieldEnum[]
@@ -17846,31 +18358,31 @@ export namespace Prisma {
     where?: TerritoryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Territories to fetch.
      */
     orderBy?: TerritoryOrderByWithRelationInput | TerritoryOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Territories.
      */
     cursor?: TerritoryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Territories from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Territories.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Territories.
      */
     distinct?: TerritoryScalarFieldEnum | TerritoryScalarFieldEnum[]
@@ -18314,55 +18826,55 @@ export namespace Prisma {
     where?: TerritoryQuotaWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryQuotas to fetch.
      */
     orderBy?: TerritoryQuotaOrderByWithRelationInput | TerritoryQuotaOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: TerritoryQuotaWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryQuotas from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryQuotas.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned TerritoryQuotas
     **/
     _count?: true | TerritoryQuotaCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: TerritoryQuotaAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: TerritoryQuotaSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TerritoryQuotaMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: TerritoryQuotaMaxAggregateInputType
@@ -18587,13 +19099,13 @@ export namespace Prisma {
      * @example
      * // Get all TerritoryQuotas
      * const territoryQuotas = await prisma.territoryQuota.findMany()
-     *
+     * 
      * // Get first 10 TerritoryQuotas
      * const territoryQuotas = await prisma.territoryQuota.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const territoryQuotaWithIdOnly = await prisma.territoryQuota.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends TerritoryQuotaFindManyArgs>(args?: SelectSubset<T, TerritoryQuotaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryQuotaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -18607,7 +19119,7 @@ export namespace Prisma {
      *     // ... data to create a TerritoryQuota
      *   }
      * })
-     *
+     * 
      */
     create<T extends TerritoryQuotaCreateArgs>(args: SelectSubset<T, TerritoryQuotaCreateArgs<ExtArgs>>): Prisma__TerritoryQuotaClient<$Result.GetResult<Prisma.$TerritoryQuotaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -18621,7 +19133,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends TerritoryQuotaCreateManyArgs>(args?: SelectSubset<T, TerritoryQuotaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -18635,7 +19147,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many TerritoryQuotas and only return the `id`
      * const territoryQuotaWithIdOnly = await prisma.territoryQuota.createManyAndReturn({
      *   select: { id: true },
@@ -18645,7 +19157,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends TerritoryQuotaCreateManyAndReturnArgs>(args?: SelectSubset<T, TerritoryQuotaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryQuotaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -18659,7 +19171,7 @@ export namespace Prisma {
      *     // ... filter to delete one TerritoryQuota
      *   }
      * })
-     *
+     * 
      */
     delete<T extends TerritoryQuotaDeleteArgs>(args: SelectSubset<T, TerritoryQuotaDeleteArgs<ExtArgs>>): Prisma__TerritoryQuotaClient<$Result.GetResult<Prisma.$TerritoryQuotaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -18676,7 +19188,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends TerritoryQuotaUpdateArgs>(args: SelectSubset<T, TerritoryQuotaUpdateArgs<ExtArgs>>): Prisma__TerritoryQuotaClient<$Result.GetResult<Prisma.$TerritoryQuotaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -18690,7 +19202,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends TerritoryQuotaDeleteManyArgs>(args?: SelectSubset<T, TerritoryQuotaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -18709,7 +19221,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends TerritoryQuotaUpdateManyArgs>(args: SelectSubset<T, TerritoryQuotaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -18726,7 +19238,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more TerritoryQuotas and only return the `id`
      * const territoryQuotaWithIdOnly = await prisma.territoryQuota.updateManyAndReturn({
      *   select: { id: true },
@@ -18739,7 +19251,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends TerritoryQuotaUpdateManyAndReturnArgs>(args: SelectSubset<T, TerritoryQuotaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryQuotaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -18828,7 +19340,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends TerritoryQuotaGroupByArgs,
@@ -18943,7 +19455,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"TerritoryQuota", 'DateTime'>
     readonly updatedAt: FieldRef<"TerritoryQuota", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -19012,31 +19524,31 @@ export namespace Prisma {
     where?: TerritoryQuotaWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryQuotas to fetch.
      */
     orderBy?: TerritoryQuotaOrderByWithRelationInput | TerritoryQuotaOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TerritoryQuotas.
      */
     cursor?: TerritoryQuotaWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryQuotas from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryQuotas.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TerritoryQuotas.
      */
     distinct?: TerritoryQuotaScalarFieldEnum | TerritoryQuotaScalarFieldEnum[]
@@ -19064,31 +19576,31 @@ export namespace Prisma {
     where?: TerritoryQuotaWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryQuotas to fetch.
      */
     orderBy?: TerritoryQuotaOrderByWithRelationInput | TerritoryQuotaOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TerritoryQuotas.
      */
     cursor?: TerritoryQuotaWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryQuotas from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryQuotas.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TerritoryQuotas.
      */
     distinct?: TerritoryQuotaScalarFieldEnum | TerritoryQuotaScalarFieldEnum[]
@@ -19116,31 +19628,31 @@ export namespace Prisma {
     where?: TerritoryQuotaWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryQuotas to fetch.
      */
     orderBy?: TerritoryQuotaOrderByWithRelationInput | TerritoryQuotaOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing TerritoryQuotas.
      */
     cursor?: TerritoryQuotaWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryQuotas from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryQuotas.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TerritoryQuotas.
      */
     distinct?: TerritoryQuotaScalarFieldEnum | TerritoryQuotaScalarFieldEnum[]
@@ -19441,43 +19953,43 @@ export namespace Prisma {
     where?: TerritoryTargetWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryTargets to fetch.
      */
     orderBy?: TerritoryTargetOrderByWithRelationInput | TerritoryTargetOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: TerritoryTargetWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryTargets from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryTargets.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned TerritoryTargets
     **/
     _count?: true | TerritoryTargetCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TerritoryTargetMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: TerritoryTargetMaxAggregateInputType
@@ -19693,13 +20205,13 @@ export namespace Prisma {
      * @example
      * // Get all TerritoryTargets
      * const territoryTargets = await prisma.territoryTarget.findMany()
-     *
+     * 
      * // Get first 10 TerritoryTargets
      * const territoryTargets = await prisma.territoryTarget.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const territoryTargetWithIdOnly = await prisma.territoryTarget.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends TerritoryTargetFindManyArgs>(args?: SelectSubset<T, TerritoryTargetFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryTargetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -19713,7 +20225,7 @@ export namespace Prisma {
      *     // ... data to create a TerritoryTarget
      *   }
      * })
-     *
+     * 
      */
     create<T extends TerritoryTargetCreateArgs>(args: SelectSubset<T, TerritoryTargetCreateArgs<ExtArgs>>): Prisma__TerritoryTargetClient<$Result.GetResult<Prisma.$TerritoryTargetPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -19727,7 +20239,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends TerritoryTargetCreateManyArgs>(args?: SelectSubset<T, TerritoryTargetCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -19741,7 +20253,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many TerritoryTargets and only return the `id`
      * const territoryTargetWithIdOnly = await prisma.territoryTarget.createManyAndReturn({
      *   select: { id: true },
@@ -19751,7 +20263,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends TerritoryTargetCreateManyAndReturnArgs>(args?: SelectSubset<T, TerritoryTargetCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryTargetPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -19765,7 +20277,7 @@ export namespace Prisma {
      *     // ... filter to delete one TerritoryTarget
      *   }
      * })
-     *
+     * 
      */
     delete<T extends TerritoryTargetDeleteArgs>(args: SelectSubset<T, TerritoryTargetDeleteArgs<ExtArgs>>): Prisma__TerritoryTargetClient<$Result.GetResult<Prisma.$TerritoryTargetPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -19782,7 +20294,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends TerritoryTargetUpdateArgs>(args: SelectSubset<T, TerritoryTargetUpdateArgs<ExtArgs>>): Prisma__TerritoryTargetClient<$Result.GetResult<Prisma.$TerritoryTargetPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -19796,7 +20308,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends TerritoryTargetDeleteManyArgs>(args?: SelectSubset<T, TerritoryTargetDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -19815,7 +20327,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends TerritoryTargetUpdateManyArgs>(args: SelectSubset<T, TerritoryTargetUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -19832,7 +20344,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more TerritoryTargets and only return the `id`
      * const territoryTargetWithIdOnly = await prisma.territoryTarget.updateManyAndReturn({
      *   select: { id: true },
@@ -19845,7 +20357,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends TerritoryTargetUpdateManyAndReturnArgs>(args: SelectSubset<T, TerritoryTargetUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryTargetPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -19934,7 +20446,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends TerritoryTargetGroupByArgs,
@@ -20048,7 +20560,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"TerritoryTarget", 'DateTime'>
     readonly updatedAt: FieldRef<"TerritoryTarget", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -20117,31 +20629,31 @@ export namespace Prisma {
     where?: TerritoryTargetWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryTargets to fetch.
      */
     orderBy?: TerritoryTargetOrderByWithRelationInput | TerritoryTargetOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TerritoryTargets.
      */
     cursor?: TerritoryTargetWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryTargets from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryTargets.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TerritoryTargets.
      */
     distinct?: TerritoryTargetScalarFieldEnum | TerritoryTargetScalarFieldEnum[]
@@ -20169,31 +20681,31 @@ export namespace Prisma {
     where?: TerritoryTargetWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryTargets to fetch.
      */
     orderBy?: TerritoryTargetOrderByWithRelationInput | TerritoryTargetOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TerritoryTargets.
      */
     cursor?: TerritoryTargetWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryTargets from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryTargets.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TerritoryTargets.
      */
     distinct?: TerritoryTargetScalarFieldEnum | TerritoryTargetScalarFieldEnum[]
@@ -20221,31 +20733,31 @@ export namespace Prisma {
     where?: TerritoryTargetWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryTargets to fetch.
      */
     orderBy?: TerritoryTargetOrderByWithRelationInput | TerritoryTargetOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing TerritoryTargets.
      */
     cursor?: TerritoryTargetWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryTargets from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryTargets.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TerritoryTargets.
      */
     distinct?: TerritoryTargetScalarFieldEnum | TerritoryTargetScalarFieldEnum[]
@@ -20592,55 +21104,55 @@ export namespace Prisma {
     where?: TerritoryMetricsWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryMetrics to fetch.
      */
     orderBy?: TerritoryMetricsOrderByWithRelationInput | TerritoryMetricsOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: TerritoryMetricsWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryMetrics from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryMetrics.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned TerritoryMetrics
     **/
     _count?: true | TerritoryMetricsCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: TerritoryMetricsAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: TerritoryMetricsSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TerritoryMetricsMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: TerritoryMetricsMaxAggregateInputType
@@ -20865,13 +21377,13 @@ export namespace Prisma {
      * @example
      * // Get all TerritoryMetrics
      * const territoryMetrics = await prisma.territoryMetrics.findMany()
-     *
+     * 
      * // Get first 10 TerritoryMetrics
      * const territoryMetrics = await prisma.territoryMetrics.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const territoryMetricsWithIdOnly = await prisma.territoryMetrics.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends TerritoryMetricsFindManyArgs>(args?: SelectSubset<T, TerritoryMetricsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryMetricsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -20885,7 +21397,7 @@ export namespace Prisma {
      *     // ... data to create a TerritoryMetrics
      *   }
      * })
-     *
+     * 
      */
     create<T extends TerritoryMetricsCreateArgs>(args: SelectSubset<T, TerritoryMetricsCreateArgs<ExtArgs>>): Prisma__TerritoryMetricsClient<$Result.GetResult<Prisma.$TerritoryMetricsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -20899,7 +21411,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends TerritoryMetricsCreateManyArgs>(args?: SelectSubset<T, TerritoryMetricsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -20913,7 +21425,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many TerritoryMetrics and only return the `id`
      * const territoryMetricsWithIdOnly = await prisma.territoryMetrics.createManyAndReturn({
      *   select: { id: true },
@@ -20923,7 +21435,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends TerritoryMetricsCreateManyAndReturnArgs>(args?: SelectSubset<T, TerritoryMetricsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryMetricsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -20937,7 +21449,7 @@ export namespace Prisma {
      *     // ... filter to delete one TerritoryMetrics
      *   }
      * })
-     *
+     * 
      */
     delete<T extends TerritoryMetricsDeleteArgs>(args: SelectSubset<T, TerritoryMetricsDeleteArgs<ExtArgs>>): Prisma__TerritoryMetricsClient<$Result.GetResult<Prisma.$TerritoryMetricsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -20954,7 +21466,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends TerritoryMetricsUpdateArgs>(args: SelectSubset<T, TerritoryMetricsUpdateArgs<ExtArgs>>): Prisma__TerritoryMetricsClient<$Result.GetResult<Prisma.$TerritoryMetricsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -20968,7 +21480,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends TerritoryMetricsDeleteManyArgs>(args?: SelectSubset<T, TerritoryMetricsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -20987,7 +21499,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends TerritoryMetricsUpdateManyArgs>(args: SelectSubset<T, TerritoryMetricsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -21004,7 +21516,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more TerritoryMetrics and only return the `id`
      * const territoryMetricsWithIdOnly = await prisma.territoryMetrics.updateManyAndReturn({
      *   select: { id: true },
@@ -21017,7 +21529,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends TerritoryMetricsUpdateManyAndReturnArgs>(args: SelectSubset<T, TerritoryMetricsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerritoryMetricsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -21106,7 +21618,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends TerritoryMetricsGroupByArgs,
@@ -21221,7 +21733,7 @@ export namespace Prisma {
     readonly coveredCount: FieldRef<"TerritoryMetrics", 'Int'>
     readonly lastUpdatedAt: FieldRef<"TerritoryMetrics", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -21290,31 +21802,31 @@ export namespace Prisma {
     where?: TerritoryMetricsWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryMetrics to fetch.
      */
     orderBy?: TerritoryMetricsOrderByWithRelationInput | TerritoryMetricsOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TerritoryMetrics.
      */
     cursor?: TerritoryMetricsWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryMetrics from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryMetrics.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TerritoryMetrics.
      */
     distinct?: TerritoryMetricsScalarFieldEnum | TerritoryMetricsScalarFieldEnum[]
@@ -21342,31 +21854,31 @@ export namespace Prisma {
     where?: TerritoryMetricsWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryMetrics to fetch.
      */
     orderBy?: TerritoryMetricsOrderByWithRelationInput | TerritoryMetricsOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TerritoryMetrics.
      */
     cursor?: TerritoryMetricsWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryMetrics from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryMetrics.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TerritoryMetrics.
      */
     distinct?: TerritoryMetricsScalarFieldEnum | TerritoryMetricsScalarFieldEnum[]
@@ -21394,31 +21906,31 @@ export namespace Prisma {
     where?: TerritoryMetricsWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TerritoryMetrics to fetch.
      */
     orderBy?: TerritoryMetricsOrderByWithRelationInput | TerritoryMetricsOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing TerritoryMetrics.
      */
     cursor?: TerritoryMetricsWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TerritoryMetrics from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TerritoryMetrics.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TerritoryMetrics.
      */
     distinct?: TerritoryMetricsScalarFieldEnum | TerritoryMetricsScalarFieldEnum[]
@@ -21767,55 +22279,55 @@ export namespace Prisma {
     where?: ContactWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Contacts to fetch.
      */
     orderBy?: ContactOrderByWithRelationInput | ContactOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: ContactWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Contacts from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Contacts.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Contacts
     **/
     _count?: true | ContactCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: ContactAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: ContactSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ContactMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: ContactMaxAggregateInputType
@@ -22098,13 +22610,13 @@ export namespace Prisma {
      * @example
      * // Get all Contacts
      * const contacts = await prisma.contact.findMany()
-     *
+     * 
      * // Get first 10 Contacts
      * const contacts = await prisma.contact.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const contactWithIdOnly = await prisma.contact.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends ContactFindManyArgs>(args?: SelectSubset<T, ContactFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -22118,7 +22630,7 @@ export namespace Prisma {
      *     // ... data to create a Contact
      *   }
      * })
-     *
+     * 
      */
     create<T extends ContactCreateArgs>(args: SelectSubset<T, ContactCreateArgs<ExtArgs>>): Prisma__ContactClient<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -22132,7 +22644,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends ContactCreateManyArgs>(args?: SelectSubset<T, ContactCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -22146,7 +22658,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Contacts and only return the `id`
      * const contactWithIdOnly = await prisma.contact.createManyAndReturn({
      *   select: { id: true },
@@ -22156,7 +22668,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends ContactCreateManyAndReturnArgs>(args?: SelectSubset<T, ContactCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -22170,7 +22682,7 @@ export namespace Prisma {
      *     // ... filter to delete one Contact
      *   }
      * })
-     *
+     * 
      */
     delete<T extends ContactDeleteArgs>(args: SelectSubset<T, ContactDeleteArgs<ExtArgs>>): Prisma__ContactClient<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -22187,7 +22699,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends ContactUpdateArgs>(args: SelectSubset<T, ContactUpdateArgs<ExtArgs>>): Prisma__ContactClient<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -22201,7 +22713,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends ContactDeleteManyArgs>(args?: SelectSubset<T, ContactDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -22220,7 +22732,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends ContactUpdateManyArgs>(args: SelectSubset<T, ContactUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -22237,7 +22749,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Contacts and only return the `id`
      * const contactWithIdOnly = await prisma.contact.updateManyAndReturn({
      *   select: { id: true },
@@ -22250,7 +22762,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends ContactUpdateManyAndReturnArgs>(args: SelectSubset<T, ContactUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -22339,7 +22851,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends ContactGroupByArgs,
@@ -22467,7 +22979,7 @@ export namespace Prisma {
     readonly deletedAt: FieldRef<"Contact", 'DateTime'>
     readonly deletedBy: FieldRef<"Contact", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -22536,31 +23048,31 @@ export namespace Prisma {
     where?: ContactWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Contacts to fetch.
      */
     orderBy?: ContactOrderByWithRelationInput | ContactOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Contacts.
      */
     cursor?: ContactWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Contacts from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Contacts.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Contacts.
      */
     distinct?: ContactScalarFieldEnum | ContactScalarFieldEnum[]
@@ -22588,31 +23100,31 @@ export namespace Prisma {
     where?: ContactWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Contacts to fetch.
      */
     orderBy?: ContactOrderByWithRelationInput | ContactOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Contacts.
      */
     cursor?: ContactWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Contacts from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Contacts.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Contacts.
      */
     distinct?: ContactScalarFieldEnum | ContactScalarFieldEnum[]
@@ -22640,31 +23152,31 @@ export namespace Prisma {
     where?: ContactWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Contacts to fetch.
      */
     orderBy?: ContactOrderByWithRelationInput | ContactOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Contacts.
      */
     cursor?: ContactWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Contacts from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Contacts.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Contacts.
      */
     distinct?: ContactScalarFieldEnum | ContactScalarFieldEnum[]
@@ -23188,43 +23700,43 @@ export namespace Prisma {
     where?: ContactChannelWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactChannels to fetch.
      */
     orderBy?: ContactChannelOrderByWithRelationInput | ContactChannelOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: ContactChannelWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactChannels from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactChannels.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned ContactChannels
     **/
     _count?: true | ContactChannelCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ContactChannelMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: ContactChannelMaxAggregateInputType
@@ -23445,13 +23957,13 @@ export namespace Prisma {
      * @example
      * // Get all ContactChannels
      * const contactChannels = await prisma.contactChannel.findMany()
-     *
+     * 
      * // Get first 10 ContactChannels
      * const contactChannels = await prisma.contactChannel.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const contactChannelWithIdOnly = await prisma.contactChannel.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends ContactChannelFindManyArgs>(args?: SelectSubset<T, ContactChannelFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactChannelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -23465,7 +23977,7 @@ export namespace Prisma {
      *     // ... data to create a ContactChannel
      *   }
      * })
-     *
+     * 
      */
     create<T extends ContactChannelCreateArgs>(args: SelectSubset<T, ContactChannelCreateArgs<ExtArgs>>): Prisma__ContactChannelClient<$Result.GetResult<Prisma.$ContactChannelPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -23479,7 +23991,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends ContactChannelCreateManyArgs>(args?: SelectSubset<T, ContactChannelCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -23493,7 +24005,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many ContactChannels and only return the `id`
      * const contactChannelWithIdOnly = await prisma.contactChannel.createManyAndReturn({
      *   select: { id: true },
@@ -23503,7 +24015,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends ContactChannelCreateManyAndReturnArgs>(args?: SelectSubset<T, ContactChannelCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactChannelPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -23517,7 +24029,7 @@ export namespace Prisma {
      *     // ... filter to delete one ContactChannel
      *   }
      * })
-     *
+     * 
      */
     delete<T extends ContactChannelDeleteArgs>(args: SelectSubset<T, ContactChannelDeleteArgs<ExtArgs>>): Prisma__ContactChannelClient<$Result.GetResult<Prisma.$ContactChannelPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -23534,7 +24046,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends ContactChannelUpdateArgs>(args: SelectSubset<T, ContactChannelUpdateArgs<ExtArgs>>): Prisma__ContactChannelClient<$Result.GetResult<Prisma.$ContactChannelPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -23548,7 +24060,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends ContactChannelDeleteManyArgs>(args?: SelectSubset<T, ContactChannelDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -23567,7 +24079,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends ContactChannelUpdateManyArgs>(args: SelectSubset<T, ContactChannelUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -23584,7 +24096,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more ContactChannels and only return the `id`
      * const contactChannelWithIdOnly = await prisma.contactChannel.updateManyAndReturn({
      *   select: { id: true },
@@ -23597,7 +24109,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends ContactChannelUpdateManyAndReturnArgs>(args: SelectSubset<T, ContactChannelUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactChannelPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -23686,7 +24198,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends ContactChannelGroupByArgs,
@@ -23801,7 +24313,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"ContactChannel", 'DateTime'>
     readonly updatedAt: FieldRef<"ContactChannel", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -23870,31 +24382,31 @@ export namespace Prisma {
     where?: ContactChannelWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactChannels to fetch.
      */
     orderBy?: ContactChannelOrderByWithRelationInput | ContactChannelOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for ContactChannels.
      */
     cursor?: ContactChannelWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactChannels from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactChannels.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of ContactChannels.
      */
     distinct?: ContactChannelScalarFieldEnum | ContactChannelScalarFieldEnum[]
@@ -23922,31 +24434,31 @@ export namespace Prisma {
     where?: ContactChannelWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactChannels to fetch.
      */
     orderBy?: ContactChannelOrderByWithRelationInput | ContactChannelOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for ContactChannels.
      */
     cursor?: ContactChannelWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactChannels from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactChannels.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of ContactChannels.
      */
     distinct?: ContactChannelScalarFieldEnum | ContactChannelScalarFieldEnum[]
@@ -23974,31 +24486,31 @@ export namespace Prisma {
     where?: ContactChannelWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactChannels to fetch.
      */
     orderBy?: ContactChannelOrderByWithRelationInput | ContactChannelOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing ContactChannels.
      */
     cursor?: ContactChannelWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactChannels from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactChannels.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of ContactChannels.
      */
     distinct?: ContactChannelScalarFieldEnum | ContactChannelScalarFieldEnum[]
@@ -24299,43 +24811,43 @@ export namespace Prisma {
     where?: CompanyContactWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyContacts to fetch.
      */
     orderBy?: CompanyContactOrderByWithRelationInput | CompanyContactOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: CompanyContactWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyContacts from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyContacts.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned CompanyContacts
     **/
     _count?: true | CompanyContactCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CompanyContactMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: CompanyContactMaxAggregateInputType
@@ -24551,13 +25063,13 @@ export namespace Prisma {
      * @example
      * // Get all CompanyContacts
      * const companyContacts = await prisma.companyContact.findMany()
-     *
+     * 
      * // Get first 10 CompanyContacts
      * const companyContacts = await prisma.companyContact.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const companyContactWithIdOnly = await prisma.companyContact.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends CompanyContactFindManyArgs>(args?: SelectSubset<T, CompanyContactFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -24571,7 +25083,7 @@ export namespace Prisma {
      *     // ... data to create a CompanyContact
      *   }
      * })
-     *
+     * 
      */
     create<T extends CompanyContactCreateArgs>(args: SelectSubset<T, CompanyContactCreateArgs<ExtArgs>>): Prisma__CompanyContactClient<$Result.GetResult<Prisma.$CompanyContactPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -24585,7 +25097,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends CompanyContactCreateManyArgs>(args?: SelectSubset<T, CompanyContactCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -24599,7 +25111,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many CompanyContacts and only return the `id`
      * const companyContactWithIdOnly = await prisma.companyContact.createManyAndReturn({
      *   select: { id: true },
@@ -24609,7 +25121,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends CompanyContactCreateManyAndReturnArgs>(args?: SelectSubset<T, CompanyContactCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyContactPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -24623,7 +25135,7 @@ export namespace Prisma {
      *     // ... filter to delete one CompanyContact
      *   }
      * })
-     *
+     * 
      */
     delete<T extends CompanyContactDeleteArgs>(args: SelectSubset<T, CompanyContactDeleteArgs<ExtArgs>>): Prisma__CompanyContactClient<$Result.GetResult<Prisma.$CompanyContactPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -24640,7 +25152,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends CompanyContactUpdateArgs>(args: SelectSubset<T, CompanyContactUpdateArgs<ExtArgs>>): Prisma__CompanyContactClient<$Result.GetResult<Prisma.$CompanyContactPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -24654,7 +25166,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends CompanyContactDeleteManyArgs>(args?: SelectSubset<T, CompanyContactDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -24673,7 +25185,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends CompanyContactUpdateManyArgs>(args: SelectSubset<T, CompanyContactUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -24690,7 +25202,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more CompanyContacts and only return the `id`
      * const companyContactWithIdOnly = await prisma.companyContact.updateManyAndReturn({
      *   select: { id: true },
@@ -24703,7 +25215,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends CompanyContactUpdateManyAndReturnArgs>(args: SelectSubset<T, CompanyContactUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyContactPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -24792,7 +25304,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends CompanyContactGroupByArgs,
@@ -24906,7 +25418,7 @@ export namespace Prisma {
     readonly isPrimary: FieldRef<"CompanyContact", 'Boolean'>
     readonly createdAt: FieldRef<"CompanyContact", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -24975,31 +25487,31 @@ export namespace Prisma {
     where?: CompanyContactWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyContacts to fetch.
      */
     orderBy?: CompanyContactOrderByWithRelationInput | CompanyContactOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for CompanyContacts.
      */
     cursor?: CompanyContactWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyContacts from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyContacts.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CompanyContacts.
      */
     distinct?: CompanyContactScalarFieldEnum | CompanyContactScalarFieldEnum[]
@@ -25027,31 +25539,31 @@ export namespace Prisma {
     where?: CompanyContactWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyContacts to fetch.
      */
     orderBy?: CompanyContactOrderByWithRelationInput | CompanyContactOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for CompanyContacts.
      */
     cursor?: CompanyContactWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyContacts from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyContacts.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CompanyContacts.
      */
     distinct?: CompanyContactScalarFieldEnum | CompanyContactScalarFieldEnum[]
@@ -25079,31 +25591,31 @@ export namespace Prisma {
     where?: CompanyContactWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyContacts to fetch.
      */
     orderBy?: CompanyContactOrderByWithRelationInput | CompanyContactOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing CompanyContacts.
      */
     cursor?: CompanyContactWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyContacts from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyContacts.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CompanyContacts.
      */
     distinct?: CompanyContactScalarFieldEnum | CompanyContactScalarFieldEnum[]
@@ -25416,43 +25928,43 @@ export namespace Prisma {
     where?: RelationshipEntryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RelationshipEntries to fetch.
      */
     orderBy?: RelationshipEntryOrderByWithRelationInput | RelationshipEntryOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: RelationshipEntryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RelationshipEntries from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RelationshipEntries.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned RelationshipEntries
     **/
     _count?: true | RelationshipEntryCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: RelationshipEntryMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: RelationshipEntryMaxAggregateInputType
@@ -25687,13 +26199,13 @@ export namespace Prisma {
      * @example
      * // Get all RelationshipEntries
      * const relationshipEntries = await prisma.relationshipEntry.findMany()
-     *
+     * 
      * // Get first 10 RelationshipEntries
      * const relationshipEntries = await prisma.relationshipEntry.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const relationshipEntryWithIdOnly = await prisma.relationshipEntry.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends RelationshipEntryFindManyArgs>(args?: SelectSubset<T, RelationshipEntryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RelationshipEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -25707,7 +26219,7 @@ export namespace Prisma {
      *     // ... data to create a RelationshipEntry
      *   }
      * })
-     *
+     * 
      */
     create<T extends RelationshipEntryCreateArgs>(args: SelectSubset<T, RelationshipEntryCreateArgs<ExtArgs>>): Prisma__RelationshipEntryClient<$Result.GetResult<Prisma.$RelationshipEntryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -25721,7 +26233,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends RelationshipEntryCreateManyArgs>(args?: SelectSubset<T, RelationshipEntryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -25735,7 +26247,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many RelationshipEntries and only return the `id`
      * const relationshipEntryWithIdOnly = await prisma.relationshipEntry.createManyAndReturn({
      *   select: { id: true },
@@ -25745,7 +26257,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends RelationshipEntryCreateManyAndReturnArgs>(args?: SelectSubset<T, RelationshipEntryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RelationshipEntryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -25759,7 +26271,7 @@ export namespace Prisma {
      *     // ... filter to delete one RelationshipEntry
      *   }
      * })
-     *
+     * 
      */
     delete<T extends RelationshipEntryDeleteArgs>(args: SelectSubset<T, RelationshipEntryDeleteArgs<ExtArgs>>): Prisma__RelationshipEntryClient<$Result.GetResult<Prisma.$RelationshipEntryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -25776,7 +26288,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends RelationshipEntryUpdateArgs>(args: SelectSubset<T, RelationshipEntryUpdateArgs<ExtArgs>>): Prisma__RelationshipEntryClient<$Result.GetResult<Prisma.$RelationshipEntryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -25790,7 +26302,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends RelationshipEntryDeleteManyArgs>(args?: SelectSubset<T, RelationshipEntryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -25809,7 +26321,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends RelationshipEntryUpdateManyArgs>(args: SelectSubset<T, RelationshipEntryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -25826,7 +26338,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more RelationshipEntries and only return the `id`
      * const relationshipEntryWithIdOnly = await prisma.relationshipEntry.updateManyAndReturn({
      *   select: { id: true },
@@ -25839,7 +26351,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends RelationshipEntryUpdateManyAndReturnArgs>(args: SelectSubset<T, RelationshipEntryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RelationshipEntryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -25928,7 +26440,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends RelationshipEntryGroupByArgs,
@@ -26045,7 +26557,7 @@ export namespace Prisma {
     readonly occurredAt: FieldRef<"RelationshipEntry", 'DateTime'>
     readonly createdAt: FieldRef<"RelationshipEntry", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -26114,31 +26626,31 @@ export namespace Prisma {
     where?: RelationshipEntryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RelationshipEntries to fetch.
      */
     orderBy?: RelationshipEntryOrderByWithRelationInput | RelationshipEntryOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for RelationshipEntries.
      */
     cursor?: RelationshipEntryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RelationshipEntries from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RelationshipEntries.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of RelationshipEntries.
      */
     distinct?: RelationshipEntryScalarFieldEnum | RelationshipEntryScalarFieldEnum[]
@@ -26166,31 +26678,31 @@ export namespace Prisma {
     where?: RelationshipEntryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RelationshipEntries to fetch.
      */
     orderBy?: RelationshipEntryOrderByWithRelationInput | RelationshipEntryOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for RelationshipEntries.
      */
     cursor?: RelationshipEntryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RelationshipEntries from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RelationshipEntries.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of RelationshipEntries.
      */
     distinct?: RelationshipEntryScalarFieldEnum | RelationshipEntryScalarFieldEnum[]
@@ -26218,31 +26730,31 @@ export namespace Prisma {
     where?: RelationshipEntryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of RelationshipEntries to fetch.
      */
     orderBy?: RelationshipEntryOrderByWithRelationInput | RelationshipEntryOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing RelationshipEntries.
      */
     cursor?: RelationshipEntryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` RelationshipEntries from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` RelationshipEntries.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of RelationshipEntries.
      */
     distinct?: RelationshipEntryScalarFieldEnum | RelationshipEntryScalarFieldEnum[]
@@ -26569,43 +27081,43 @@ export namespace Prisma {
     where?: TagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Tags to fetch.
      */
     orderBy?: TagOrderByWithRelationInput | TagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: TagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Tags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Tags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Tags
     **/
     _count?: true | TagCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TagMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: TagMaxAggregateInputType
@@ -26803,13 +27315,13 @@ export namespace Prisma {
      * @example
      * // Get all Tags
      * const tags = await prisma.tag.findMany()
-     *
+     * 
      * // Get first 10 Tags
      * const tags = await prisma.tag.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const tagWithIdOnly = await prisma.tag.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends TagFindManyArgs>(args?: SelectSubset<T, TagFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -26823,7 +27335,7 @@ export namespace Prisma {
      *     // ... data to create a Tag
      *   }
      * })
-     *
+     * 
      */
     create<T extends TagCreateArgs>(args: SelectSubset<T, TagCreateArgs<ExtArgs>>): Prisma__TagClient<$Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -26837,7 +27349,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends TagCreateManyArgs>(args?: SelectSubset<T, TagCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -26851,7 +27363,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Tags and only return the `id`
      * const tagWithIdOnly = await prisma.tag.createManyAndReturn({
      *   select: { id: true },
@@ -26861,7 +27373,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends TagCreateManyAndReturnArgs>(args?: SelectSubset<T, TagCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -26875,7 +27387,7 @@ export namespace Prisma {
      *     // ... filter to delete one Tag
      *   }
      * })
-     *
+     * 
      */
     delete<T extends TagDeleteArgs>(args: SelectSubset<T, TagDeleteArgs<ExtArgs>>): Prisma__TagClient<$Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -26892,7 +27404,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends TagUpdateArgs>(args: SelectSubset<T, TagUpdateArgs<ExtArgs>>): Prisma__TagClient<$Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -26906,7 +27418,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends TagDeleteManyArgs>(args?: SelectSubset<T, TagDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -26925,7 +27437,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends TagUpdateManyArgs>(args: SelectSubset<T, TagUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -26942,7 +27454,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Tags and only return the `id`
      * const tagWithIdOnly = await prisma.tag.updateManyAndReturn({
      *   select: { id: true },
@@ -26955,7 +27467,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends TagUpdateManyAndReturnArgs>(args: SelectSubset<T, TagUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -27044,7 +27556,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends TagGroupByArgs,
@@ -27156,7 +27668,7 @@ export namespace Prisma {
     readonly normalizedName: FieldRef<"Tag", 'String'>
     readonly createdAt: FieldRef<"Tag", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -27225,31 +27737,31 @@ export namespace Prisma {
     where?: TagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Tags to fetch.
      */
     orderBy?: TagOrderByWithRelationInput | TagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Tags.
      */
     cursor?: TagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Tags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Tags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Tags.
      */
     distinct?: TagScalarFieldEnum | TagScalarFieldEnum[]
@@ -27277,31 +27789,31 @@ export namespace Prisma {
     where?: TagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Tags to fetch.
      */
     orderBy?: TagOrderByWithRelationInput | TagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Tags.
      */
     cursor?: TagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Tags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Tags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Tags.
      */
     distinct?: TagScalarFieldEnum | TagScalarFieldEnum[]
@@ -27329,31 +27841,31 @@ export namespace Prisma {
     where?: TagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Tags to fetch.
      */
     orderBy?: TagOrderByWithRelationInput | TagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Tags.
      */
     cursor?: TagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Tags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Tags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Tags.
      */
     distinct?: TagScalarFieldEnum | TagScalarFieldEnum[]
@@ -27690,43 +28202,43 @@ export namespace Prisma {
     where?: CompanyTagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyTags to fetch.
      */
     orderBy?: CompanyTagOrderByWithRelationInput | CompanyTagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: CompanyTagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyTags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyTags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned CompanyTags
     **/
     _count?: true | CompanyTagCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CompanyTagMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: CompanyTagMaxAggregateInputType
@@ -27930,13 +28442,13 @@ export namespace Prisma {
      * @example
      * // Get all CompanyTags
      * const companyTags = await prisma.companyTag.findMany()
-     *
+     * 
      * // Get first 10 CompanyTags
      * const companyTags = await prisma.companyTag.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const companyTagWithIdOnly = await prisma.companyTag.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends CompanyTagFindManyArgs>(args?: SelectSubset<T, CompanyTagFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -27950,7 +28462,7 @@ export namespace Prisma {
      *     // ... data to create a CompanyTag
      *   }
      * })
-     *
+     * 
      */
     create<T extends CompanyTagCreateArgs>(args: SelectSubset<T, CompanyTagCreateArgs<ExtArgs>>): Prisma__CompanyTagClient<$Result.GetResult<Prisma.$CompanyTagPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -27964,7 +28476,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends CompanyTagCreateManyArgs>(args?: SelectSubset<T, CompanyTagCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -27978,7 +28490,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many CompanyTags and only return the `id`
      * const companyTagWithIdOnly = await prisma.companyTag.createManyAndReturn({
      *   select: { id: true },
@@ -27988,7 +28500,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends CompanyTagCreateManyAndReturnArgs>(args?: SelectSubset<T, CompanyTagCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyTagPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -28002,7 +28514,7 @@ export namespace Prisma {
      *     // ... filter to delete one CompanyTag
      *   }
      * })
-     *
+     * 
      */
     delete<T extends CompanyTagDeleteArgs>(args: SelectSubset<T, CompanyTagDeleteArgs<ExtArgs>>): Prisma__CompanyTagClient<$Result.GetResult<Prisma.$CompanyTagPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -28019,7 +28531,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends CompanyTagUpdateArgs>(args: SelectSubset<T, CompanyTagUpdateArgs<ExtArgs>>): Prisma__CompanyTagClient<$Result.GetResult<Prisma.$CompanyTagPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -28033,7 +28545,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends CompanyTagDeleteManyArgs>(args?: SelectSubset<T, CompanyTagDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -28052,7 +28564,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends CompanyTagUpdateManyArgs>(args: SelectSubset<T, CompanyTagUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -28069,7 +28581,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more CompanyTags and only return the `id`
      * const companyTagWithIdOnly = await prisma.companyTag.updateManyAndReturn({
      *   select: { id: true },
@@ -28082,7 +28594,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends CompanyTagUpdateManyAndReturnArgs>(args: SelectSubset<T, CompanyTagUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyTagPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -28171,7 +28683,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends CompanyTagGroupByArgs,
@@ -28283,7 +28795,7 @@ export namespace Prisma {
     readonly tagId: FieldRef<"CompanyTag", 'String'>
     readonly createdAt: FieldRef<"CompanyTag", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -28352,31 +28864,31 @@ export namespace Prisma {
     where?: CompanyTagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyTags to fetch.
      */
     orderBy?: CompanyTagOrderByWithRelationInput | CompanyTagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for CompanyTags.
      */
     cursor?: CompanyTagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyTags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyTags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CompanyTags.
      */
     distinct?: CompanyTagScalarFieldEnum | CompanyTagScalarFieldEnum[]
@@ -28404,31 +28916,31 @@ export namespace Prisma {
     where?: CompanyTagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyTags to fetch.
      */
     orderBy?: CompanyTagOrderByWithRelationInput | CompanyTagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for CompanyTags.
      */
     cursor?: CompanyTagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyTags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyTags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CompanyTags.
      */
     distinct?: CompanyTagScalarFieldEnum | CompanyTagScalarFieldEnum[]
@@ -28456,31 +28968,31 @@ export namespace Prisma {
     where?: CompanyTagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyTags to fetch.
      */
     orderBy?: CompanyTagOrderByWithRelationInput | CompanyTagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing CompanyTags.
      */
     cursor?: CompanyTagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyTags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyTags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CompanyTags.
      */
     distinct?: CompanyTagScalarFieldEnum | CompanyTagScalarFieldEnum[]
@@ -28769,43 +29281,43 @@ export namespace Prisma {
     where?: ContactTagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactTags to fetch.
      */
     orderBy?: ContactTagOrderByWithRelationInput | ContactTagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: ContactTagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactTags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactTags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned ContactTags
     **/
     _count?: true | ContactTagCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ContactTagMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: ContactTagMaxAggregateInputType
@@ -29009,13 +29521,13 @@ export namespace Prisma {
      * @example
      * // Get all ContactTags
      * const contactTags = await prisma.contactTag.findMany()
-     *
+     * 
      * // Get first 10 ContactTags
      * const contactTags = await prisma.contactTag.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const contactTagWithIdOnly = await prisma.contactTag.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends ContactTagFindManyArgs>(args?: SelectSubset<T, ContactTagFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -29029,7 +29541,7 @@ export namespace Prisma {
      *     // ... data to create a ContactTag
      *   }
      * })
-     *
+     * 
      */
     create<T extends ContactTagCreateArgs>(args: SelectSubset<T, ContactTagCreateArgs<ExtArgs>>): Prisma__ContactTagClient<$Result.GetResult<Prisma.$ContactTagPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -29043,7 +29555,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends ContactTagCreateManyArgs>(args?: SelectSubset<T, ContactTagCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -29057,7 +29569,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many ContactTags and only return the `id`
      * const contactTagWithIdOnly = await prisma.contactTag.createManyAndReturn({
      *   select: { id: true },
@@ -29067,7 +29579,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends ContactTagCreateManyAndReturnArgs>(args?: SelectSubset<T, ContactTagCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactTagPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -29081,7 +29593,7 @@ export namespace Prisma {
      *     // ... filter to delete one ContactTag
      *   }
      * })
-     *
+     * 
      */
     delete<T extends ContactTagDeleteArgs>(args: SelectSubset<T, ContactTagDeleteArgs<ExtArgs>>): Prisma__ContactTagClient<$Result.GetResult<Prisma.$ContactTagPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -29098,7 +29610,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends ContactTagUpdateArgs>(args: SelectSubset<T, ContactTagUpdateArgs<ExtArgs>>): Prisma__ContactTagClient<$Result.GetResult<Prisma.$ContactTagPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -29112,7 +29624,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends ContactTagDeleteManyArgs>(args?: SelectSubset<T, ContactTagDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -29131,7 +29643,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends ContactTagUpdateManyArgs>(args: SelectSubset<T, ContactTagUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -29148,7 +29660,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more ContactTags and only return the `id`
      * const contactTagWithIdOnly = await prisma.contactTag.updateManyAndReturn({
      *   select: { id: true },
@@ -29161,7 +29673,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends ContactTagUpdateManyAndReturnArgs>(args: SelectSubset<T, ContactTagUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactTagPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -29250,7 +29762,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends ContactTagGroupByArgs,
@@ -29362,7 +29874,7 @@ export namespace Prisma {
     readonly tagId: FieldRef<"ContactTag", 'String'>
     readonly createdAt: FieldRef<"ContactTag", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -29431,31 +29943,31 @@ export namespace Prisma {
     where?: ContactTagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactTags to fetch.
      */
     orderBy?: ContactTagOrderByWithRelationInput | ContactTagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for ContactTags.
      */
     cursor?: ContactTagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactTags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactTags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of ContactTags.
      */
     distinct?: ContactTagScalarFieldEnum | ContactTagScalarFieldEnum[]
@@ -29483,31 +29995,31 @@ export namespace Prisma {
     where?: ContactTagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactTags to fetch.
      */
     orderBy?: ContactTagOrderByWithRelationInput | ContactTagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for ContactTags.
      */
     cursor?: ContactTagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactTags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactTags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of ContactTags.
      */
     distinct?: ContactTagScalarFieldEnum | ContactTagScalarFieldEnum[]
@@ -29535,31 +30047,31 @@ export namespace Prisma {
     where?: ContactTagWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactTags to fetch.
      */
     orderBy?: ContactTagOrderByWithRelationInput | ContactTagOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing ContactTags.
      */
     cursor?: ContactTagWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactTags from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactTags.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of ContactTags.
      */
     distinct?: ContactTagScalarFieldEnum | ContactTagScalarFieldEnum[]
@@ -29880,43 +30392,43 @@ export namespace Prisma {
     where?: CustomFieldDefinitionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CustomFieldDefinitions to fetch.
      */
     orderBy?: CustomFieldDefinitionOrderByWithRelationInput | CustomFieldDefinitionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: CustomFieldDefinitionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CustomFieldDefinitions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CustomFieldDefinitions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned CustomFieldDefinitions
     **/
     _count?: true | CustomFieldDefinitionCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CustomFieldDefinitionMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: CustomFieldDefinitionMaxAggregateInputType
@@ -30150,13 +30662,13 @@ export namespace Prisma {
      * @example
      * // Get all CustomFieldDefinitions
      * const customFieldDefinitions = await prisma.customFieldDefinition.findMany()
-     *
+     * 
      * // Get first 10 CustomFieldDefinitions
      * const customFieldDefinitions = await prisma.customFieldDefinition.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const customFieldDefinitionWithIdOnly = await prisma.customFieldDefinition.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends CustomFieldDefinitionFindManyArgs>(args?: SelectSubset<T, CustomFieldDefinitionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomFieldDefinitionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -30170,7 +30682,7 @@ export namespace Prisma {
      *     // ... data to create a CustomFieldDefinition
      *   }
      * })
-     *
+     * 
      */
     create<T extends CustomFieldDefinitionCreateArgs>(args: SelectSubset<T, CustomFieldDefinitionCreateArgs<ExtArgs>>): Prisma__CustomFieldDefinitionClient<$Result.GetResult<Prisma.$CustomFieldDefinitionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -30184,7 +30696,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends CustomFieldDefinitionCreateManyArgs>(args?: SelectSubset<T, CustomFieldDefinitionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -30198,7 +30710,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many CustomFieldDefinitions and only return the `id`
      * const customFieldDefinitionWithIdOnly = await prisma.customFieldDefinition.createManyAndReturn({
      *   select: { id: true },
@@ -30208,7 +30720,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends CustomFieldDefinitionCreateManyAndReturnArgs>(args?: SelectSubset<T, CustomFieldDefinitionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomFieldDefinitionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -30222,7 +30734,7 @@ export namespace Prisma {
      *     // ... filter to delete one CustomFieldDefinition
      *   }
      * })
-     *
+     * 
      */
     delete<T extends CustomFieldDefinitionDeleteArgs>(args: SelectSubset<T, CustomFieldDefinitionDeleteArgs<ExtArgs>>): Prisma__CustomFieldDefinitionClient<$Result.GetResult<Prisma.$CustomFieldDefinitionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -30239,7 +30751,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends CustomFieldDefinitionUpdateArgs>(args: SelectSubset<T, CustomFieldDefinitionUpdateArgs<ExtArgs>>): Prisma__CustomFieldDefinitionClient<$Result.GetResult<Prisma.$CustomFieldDefinitionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -30253,7 +30765,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends CustomFieldDefinitionDeleteManyArgs>(args?: SelectSubset<T, CustomFieldDefinitionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -30272,7 +30784,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends CustomFieldDefinitionUpdateManyArgs>(args: SelectSubset<T, CustomFieldDefinitionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -30289,7 +30801,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more CustomFieldDefinitions and only return the `id`
      * const customFieldDefinitionWithIdOnly = await prisma.customFieldDefinition.updateManyAndReturn({
      *   select: { id: true },
@@ -30302,7 +30814,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends CustomFieldDefinitionUpdateManyAndReturnArgs>(args: SelectSubset<T, CustomFieldDefinitionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomFieldDefinitionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -30391,7 +30903,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends CustomFieldDefinitionGroupByArgs,
@@ -30509,7 +31021,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"CustomFieldDefinition", 'DateTime'>
     readonly updatedAt: FieldRef<"CustomFieldDefinition", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -30578,31 +31090,31 @@ export namespace Prisma {
     where?: CustomFieldDefinitionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CustomFieldDefinitions to fetch.
      */
     orderBy?: CustomFieldDefinitionOrderByWithRelationInput | CustomFieldDefinitionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for CustomFieldDefinitions.
      */
     cursor?: CustomFieldDefinitionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CustomFieldDefinitions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CustomFieldDefinitions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CustomFieldDefinitions.
      */
     distinct?: CustomFieldDefinitionScalarFieldEnum | CustomFieldDefinitionScalarFieldEnum[]
@@ -30630,31 +31142,31 @@ export namespace Prisma {
     where?: CustomFieldDefinitionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CustomFieldDefinitions to fetch.
      */
     orderBy?: CustomFieldDefinitionOrderByWithRelationInput | CustomFieldDefinitionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for CustomFieldDefinitions.
      */
     cursor?: CustomFieldDefinitionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CustomFieldDefinitions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CustomFieldDefinitions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CustomFieldDefinitions.
      */
     distinct?: CustomFieldDefinitionScalarFieldEnum | CustomFieldDefinitionScalarFieldEnum[]
@@ -30682,31 +31194,31 @@ export namespace Prisma {
     where?: CustomFieldDefinitionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CustomFieldDefinitions to fetch.
      */
     orderBy?: CustomFieldDefinitionOrderByWithRelationInput | CustomFieldDefinitionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing CustomFieldDefinitions.
      */
     cursor?: CustomFieldDefinitionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CustomFieldDefinitions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CustomFieldDefinitions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CustomFieldDefinitions.
      */
     distinct?: CustomFieldDefinitionScalarFieldEnum | CustomFieldDefinitionScalarFieldEnum[]
@@ -31051,43 +31563,43 @@ export namespace Prisma {
     where?: CompanyCustomFieldValueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyCustomFieldValues to fetch.
      */
     orderBy?: CompanyCustomFieldValueOrderByWithRelationInput | CompanyCustomFieldValueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: CompanyCustomFieldValueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyCustomFieldValues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyCustomFieldValues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned CompanyCustomFieldValues
     **/
     _count?: true | CompanyCustomFieldValueCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CompanyCustomFieldValueMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: CompanyCustomFieldValueMaxAggregateInputType
@@ -31303,13 +31815,13 @@ export namespace Prisma {
      * @example
      * // Get all CompanyCustomFieldValues
      * const companyCustomFieldValues = await prisma.companyCustomFieldValue.findMany()
-     *
+     * 
      * // Get first 10 CompanyCustomFieldValues
      * const companyCustomFieldValues = await prisma.companyCustomFieldValue.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const companyCustomFieldValueWithIdOnly = await prisma.companyCustomFieldValue.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends CompanyCustomFieldValueFindManyArgs>(args?: SelectSubset<T, CompanyCustomFieldValueFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyCustomFieldValuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -31323,7 +31835,7 @@ export namespace Prisma {
      *     // ... data to create a CompanyCustomFieldValue
      *   }
      * })
-     *
+     * 
      */
     create<T extends CompanyCustomFieldValueCreateArgs>(args: SelectSubset<T, CompanyCustomFieldValueCreateArgs<ExtArgs>>): Prisma__CompanyCustomFieldValueClient<$Result.GetResult<Prisma.$CompanyCustomFieldValuePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -31337,7 +31849,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends CompanyCustomFieldValueCreateManyArgs>(args?: SelectSubset<T, CompanyCustomFieldValueCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -31351,7 +31863,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many CompanyCustomFieldValues and only return the `id`
      * const companyCustomFieldValueWithIdOnly = await prisma.companyCustomFieldValue.createManyAndReturn({
      *   select: { id: true },
@@ -31361,7 +31873,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends CompanyCustomFieldValueCreateManyAndReturnArgs>(args?: SelectSubset<T, CompanyCustomFieldValueCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyCustomFieldValuePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -31375,7 +31887,7 @@ export namespace Prisma {
      *     // ... filter to delete one CompanyCustomFieldValue
      *   }
      * })
-     *
+     * 
      */
     delete<T extends CompanyCustomFieldValueDeleteArgs>(args: SelectSubset<T, CompanyCustomFieldValueDeleteArgs<ExtArgs>>): Prisma__CompanyCustomFieldValueClient<$Result.GetResult<Prisma.$CompanyCustomFieldValuePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -31392,7 +31904,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends CompanyCustomFieldValueUpdateArgs>(args: SelectSubset<T, CompanyCustomFieldValueUpdateArgs<ExtArgs>>): Prisma__CompanyCustomFieldValueClient<$Result.GetResult<Prisma.$CompanyCustomFieldValuePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -31406,7 +31918,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends CompanyCustomFieldValueDeleteManyArgs>(args?: SelectSubset<T, CompanyCustomFieldValueDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -31425,7 +31937,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends CompanyCustomFieldValueUpdateManyArgs>(args: SelectSubset<T, CompanyCustomFieldValueUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -31442,7 +31954,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more CompanyCustomFieldValues and only return the `id`
      * const companyCustomFieldValueWithIdOnly = await prisma.companyCustomFieldValue.updateManyAndReturn({
      *   select: { id: true },
@@ -31455,7 +31967,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends CompanyCustomFieldValueUpdateManyAndReturnArgs>(args: SelectSubset<T, CompanyCustomFieldValueUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyCustomFieldValuePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -31544,7 +32056,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends CompanyCustomFieldValueGroupByArgs,
@@ -31658,7 +32170,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"CompanyCustomFieldValue", 'DateTime'>
     readonly updatedAt: FieldRef<"CompanyCustomFieldValue", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -31727,31 +32239,31 @@ export namespace Prisma {
     where?: CompanyCustomFieldValueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyCustomFieldValues to fetch.
      */
     orderBy?: CompanyCustomFieldValueOrderByWithRelationInput | CompanyCustomFieldValueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for CompanyCustomFieldValues.
      */
     cursor?: CompanyCustomFieldValueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyCustomFieldValues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyCustomFieldValues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CompanyCustomFieldValues.
      */
     distinct?: CompanyCustomFieldValueScalarFieldEnum | CompanyCustomFieldValueScalarFieldEnum[]
@@ -31779,31 +32291,31 @@ export namespace Prisma {
     where?: CompanyCustomFieldValueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyCustomFieldValues to fetch.
      */
     orderBy?: CompanyCustomFieldValueOrderByWithRelationInput | CompanyCustomFieldValueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for CompanyCustomFieldValues.
      */
     cursor?: CompanyCustomFieldValueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyCustomFieldValues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyCustomFieldValues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CompanyCustomFieldValues.
      */
     distinct?: CompanyCustomFieldValueScalarFieldEnum | CompanyCustomFieldValueScalarFieldEnum[]
@@ -31831,31 +32343,31 @@ export namespace Prisma {
     where?: CompanyCustomFieldValueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of CompanyCustomFieldValues to fetch.
      */
     orderBy?: CompanyCustomFieldValueOrderByWithRelationInput | CompanyCustomFieldValueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing CompanyCustomFieldValues.
      */
     cursor?: CompanyCustomFieldValueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` CompanyCustomFieldValues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` CompanyCustomFieldValues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of CompanyCustomFieldValues.
      */
     distinct?: CompanyCustomFieldValueScalarFieldEnum | CompanyCustomFieldValueScalarFieldEnum[]
@@ -32152,43 +32664,43 @@ export namespace Prisma {
     where?: ContactCustomFieldValueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactCustomFieldValues to fetch.
      */
     orderBy?: ContactCustomFieldValueOrderByWithRelationInput | ContactCustomFieldValueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: ContactCustomFieldValueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactCustomFieldValues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactCustomFieldValues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned ContactCustomFieldValues
     **/
     _count?: true | ContactCustomFieldValueCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ContactCustomFieldValueMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: ContactCustomFieldValueMaxAggregateInputType
@@ -32404,13 +32916,13 @@ export namespace Prisma {
      * @example
      * // Get all ContactCustomFieldValues
      * const contactCustomFieldValues = await prisma.contactCustomFieldValue.findMany()
-     *
+     * 
      * // Get first 10 ContactCustomFieldValues
      * const contactCustomFieldValues = await prisma.contactCustomFieldValue.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const contactCustomFieldValueWithIdOnly = await prisma.contactCustomFieldValue.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends ContactCustomFieldValueFindManyArgs>(args?: SelectSubset<T, ContactCustomFieldValueFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactCustomFieldValuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -32424,7 +32936,7 @@ export namespace Prisma {
      *     // ... data to create a ContactCustomFieldValue
      *   }
      * })
-     *
+     * 
      */
     create<T extends ContactCustomFieldValueCreateArgs>(args: SelectSubset<T, ContactCustomFieldValueCreateArgs<ExtArgs>>): Prisma__ContactCustomFieldValueClient<$Result.GetResult<Prisma.$ContactCustomFieldValuePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -32438,7 +32950,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends ContactCustomFieldValueCreateManyArgs>(args?: SelectSubset<T, ContactCustomFieldValueCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -32452,7 +32964,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many ContactCustomFieldValues and only return the `id`
      * const contactCustomFieldValueWithIdOnly = await prisma.contactCustomFieldValue.createManyAndReturn({
      *   select: { id: true },
@@ -32462,7 +32974,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends ContactCustomFieldValueCreateManyAndReturnArgs>(args?: SelectSubset<T, ContactCustomFieldValueCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactCustomFieldValuePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -32476,7 +32988,7 @@ export namespace Prisma {
      *     // ... filter to delete one ContactCustomFieldValue
      *   }
      * })
-     *
+     * 
      */
     delete<T extends ContactCustomFieldValueDeleteArgs>(args: SelectSubset<T, ContactCustomFieldValueDeleteArgs<ExtArgs>>): Prisma__ContactCustomFieldValueClient<$Result.GetResult<Prisma.$ContactCustomFieldValuePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -32493,7 +33005,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends ContactCustomFieldValueUpdateArgs>(args: SelectSubset<T, ContactCustomFieldValueUpdateArgs<ExtArgs>>): Prisma__ContactCustomFieldValueClient<$Result.GetResult<Prisma.$ContactCustomFieldValuePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -32507,7 +33019,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends ContactCustomFieldValueDeleteManyArgs>(args?: SelectSubset<T, ContactCustomFieldValueDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -32526,7 +33038,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends ContactCustomFieldValueUpdateManyArgs>(args: SelectSubset<T, ContactCustomFieldValueUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -32543,7 +33055,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more ContactCustomFieldValues and only return the `id`
      * const contactCustomFieldValueWithIdOnly = await prisma.contactCustomFieldValue.updateManyAndReturn({
      *   select: { id: true },
@@ -32556,7 +33068,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends ContactCustomFieldValueUpdateManyAndReturnArgs>(args: SelectSubset<T, ContactCustomFieldValueUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactCustomFieldValuePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -32645,7 +33157,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends ContactCustomFieldValueGroupByArgs,
@@ -32759,7 +33271,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"ContactCustomFieldValue", 'DateTime'>
     readonly updatedAt: FieldRef<"ContactCustomFieldValue", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -32828,31 +33340,31 @@ export namespace Prisma {
     where?: ContactCustomFieldValueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactCustomFieldValues to fetch.
      */
     orderBy?: ContactCustomFieldValueOrderByWithRelationInput | ContactCustomFieldValueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for ContactCustomFieldValues.
      */
     cursor?: ContactCustomFieldValueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactCustomFieldValues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactCustomFieldValues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of ContactCustomFieldValues.
      */
     distinct?: ContactCustomFieldValueScalarFieldEnum | ContactCustomFieldValueScalarFieldEnum[]
@@ -32880,31 +33392,31 @@ export namespace Prisma {
     where?: ContactCustomFieldValueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactCustomFieldValues to fetch.
      */
     orderBy?: ContactCustomFieldValueOrderByWithRelationInput | ContactCustomFieldValueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for ContactCustomFieldValues.
      */
     cursor?: ContactCustomFieldValueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactCustomFieldValues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactCustomFieldValues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of ContactCustomFieldValues.
      */
     distinct?: ContactCustomFieldValueScalarFieldEnum | ContactCustomFieldValueScalarFieldEnum[]
@@ -32932,31 +33444,31 @@ export namespace Prisma {
     where?: ContactCustomFieldValueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of ContactCustomFieldValues to fetch.
      */
     orderBy?: ContactCustomFieldValueOrderByWithRelationInput | ContactCustomFieldValueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing ContactCustomFieldValues.
      */
     cursor?: ContactCustomFieldValueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` ContactCustomFieldValues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` ContactCustomFieldValues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of ContactCustomFieldValues.
      */
     distinct?: ContactCustomFieldValueScalarFieldEnum | ContactCustomFieldValueScalarFieldEnum[]
@@ -33257,43 +33769,43 @@ export namespace Prisma {
     where?: PipelineWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Pipelines to fetch.
      */
     orderBy?: PipelineOrderByWithRelationInput | PipelineOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: PipelineWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Pipelines from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Pipelines.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Pipelines
     **/
     _count?: true | PipelineCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: PipelineMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: PipelineMaxAggregateInputType
@@ -33503,13 +34015,13 @@ export namespace Prisma {
      * @example
      * // Get all Pipelines
      * const pipelines = await prisma.pipeline.findMany()
-     *
+     * 
      * // Get first 10 Pipelines
      * const pipelines = await prisma.pipeline.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const pipelineWithIdOnly = await prisma.pipeline.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends PipelineFindManyArgs>(args?: SelectSubset<T, PipelineFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PipelinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -33523,7 +34035,7 @@ export namespace Prisma {
      *     // ... data to create a Pipeline
      *   }
      * })
-     *
+     * 
      */
     create<T extends PipelineCreateArgs>(args: SelectSubset<T, PipelineCreateArgs<ExtArgs>>): Prisma__PipelineClient<$Result.GetResult<Prisma.$PipelinePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -33537,7 +34049,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends PipelineCreateManyArgs>(args?: SelectSubset<T, PipelineCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -33551,7 +34063,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Pipelines and only return the `id`
      * const pipelineWithIdOnly = await prisma.pipeline.createManyAndReturn({
      *   select: { id: true },
@@ -33561,7 +34073,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends PipelineCreateManyAndReturnArgs>(args?: SelectSubset<T, PipelineCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PipelinePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -33575,7 +34087,7 @@ export namespace Prisma {
      *     // ... filter to delete one Pipeline
      *   }
      * })
-     *
+     * 
      */
     delete<T extends PipelineDeleteArgs>(args: SelectSubset<T, PipelineDeleteArgs<ExtArgs>>): Prisma__PipelineClient<$Result.GetResult<Prisma.$PipelinePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -33592,7 +34104,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends PipelineUpdateArgs>(args: SelectSubset<T, PipelineUpdateArgs<ExtArgs>>): Prisma__PipelineClient<$Result.GetResult<Prisma.$PipelinePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -33606,7 +34118,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends PipelineDeleteManyArgs>(args?: SelectSubset<T, PipelineDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -33625,7 +34137,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends PipelineUpdateManyArgs>(args: SelectSubset<T, PipelineUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -33642,7 +34154,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Pipelines and only return the `id`
      * const pipelineWithIdOnly = await prisma.pipeline.updateManyAndReturn({
      *   select: { id: true },
@@ -33655,7 +34167,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends PipelineUpdateManyAndReturnArgs>(args: SelectSubset<T, PipelineUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PipelinePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -33744,7 +34256,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends PipelineGroupByArgs,
@@ -33858,7 +34370,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Pipeline", 'DateTime'>
     readonly updatedAt: FieldRef<"Pipeline", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -33927,31 +34439,31 @@ export namespace Prisma {
     where?: PipelineWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Pipelines to fetch.
      */
     orderBy?: PipelineOrderByWithRelationInput | PipelineOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Pipelines.
      */
     cursor?: PipelineWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Pipelines from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Pipelines.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Pipelines.
      */
     distinct?: PipelineScalarFieldEnum | PipelineScalarFieldEnum[]
@@ -33979,31 +34491,31 @@ export namespace Prisma {
     where?: PipelineWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Pipelines to fetch.
      */
     orderBy?: PipelineOrderByWithRelationInput | PipelineOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Pipelines.
      */
     cursor?: PipelineWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Pipelines from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Pipelines.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Pipelines.
      */
     distinct?: PipelineScalarFieldEnum | PipelineScalarFieldEnum[]
@@ -34031,31 +34543,31 @@ export namespace Prisma {
     where?: PipelineWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Pipelines to fetch.
      */
     orderBy?: PipelineOrderByWithRelationInput | PipelineOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Pipelines.
      */
     cursor?: PipelineWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Pipelines from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Pipelines.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Pipelines.
      */
     distinct?: PipelineScalarFieldEnum | PipelineScalarFieldEnum[]
@@ -34434,55 +34946,55 @@ export namespace Prisma {
     where?: PipelineStageWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of PipelineStages to fetch.
      */
     orderBy?: PipelineStageOrderByWithRelationInput | PipelineStageOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: PipelineStageWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` PipelineStages from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` PipelineStages.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned PipelineStages
     **/
     _count?: true | PipelineStageCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: PipelineStageAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: PipelineStageSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: PipelineStageMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: PipelineStageMaxAggregateInputType
@@ -34705,13 +35217,13 @@ export namespace Prisma {
      * @example
      * // Get all PipelineStages
      * const pipelineStages = await prisma.pipelineStage.findMany()
-     *
+     * 
      * // Get first 10 PipelineStages
      * const pipelineStages = await prisma.pipelineStage.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const pipelineStageWithIdOnly = await prisma.pipelineStage.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends PipelineStageFindManyArgs>(args?: SelectSubset<T, PipelineStageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PipelineStagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -34725,7 +35237,7 @@ export namespace Prisma {
      *     // ... data to create a PipelineStage
      *   }
      * })
-     *
+     * 
      */
     create<T extends PipelineStageCreateArgs>(args: SelectSubset<T, PipelineStageCreateArgs<ExtArgs>>): Prisma__PipelineStageClient<$Result.GetResult<Prisma.$PipelineStagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -34739,7 +35251,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends PipelineStageCreateManyArgs>(args?: SelectSubset<T, PipelineStageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -34753,7 +35265,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many PipelineStages and only return the `id`
      * const pipelineStageWithIdOnly = await prisma.pipelineStage.createManyAndReturn({
      *   select: { id: true },
@@ -34763,7 +35275,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends PipelineStageCreateManyAndReturnArgs>(args?: SelectSubset<T, PipelineStageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PipelineStagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -34777,7 +35289,7 @@ export namespace Prisma {
      *     // ... filter to delete one PipelineStage
      *   }
      * })
-     *
+     * 
      */
     delete<T extends PipelineStageDeleteArgs>(args: SelectSubset<T, PipelineStageDeleteArgs<ExtArgs>>): Prisma__PipelineStageClient<$Result.GetResult<Prisma.$PipelineStagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -34794,7 +35306,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends PipelineStageUpdateArgs>(args: SelectSubset<T, PipelineStageUpdateArgs<ExtArgs>>): Prisma__PipelineStageClient<$Result.GetResult<Prisma.$PipelineStagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -34808,7 +35320,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends PipelineStageDeleteManyArgs>(args?: SelectSubset<T, PipelineStageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -34827,7 +35339,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends PipelineStageUpdateManyArgs>(args: SelectSubset<T, PipelineStageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -34844,7 +35356,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more PipelineStages and only return the `id`
      * const pipelineStageWithIdOnly = await prisma.pipelineStage.updateManyAndReturn({
      *   select: { id: true },
@@ -34857,7 +35369,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends PipelineStageUpdateManyAndReturnArgs>(args: SelectSubset<T, PipelineStageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PipelineStagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -34946,7 +35458,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends PipelineStageGroupByArgs,
@@ -35061,7 +35573,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"PipelineStage", 'DateTime'>
     readonly updatedAt: FieldRef<"PipelineStage", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -35130,31 +35642,31 @@ export namespace Prisma {
     where?: PipelineStageWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of PipelineStages to fetch.
      */
     orderBy?: PipelineStageOrderByWithRelationInput | PipelineStageOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for PipelineStages.
      */
     cursor?: PipelineStageWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` PipelineStages from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` PipelineStages.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of PipelineStages.
      */
     distinct?: PipelineStageScalarFieldEnum | PipelineStageScalarFieldEnum[]
@@ -35182,31 +35694,31 @@ export namespace Prisma {
     where?: PipelineStageWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of PipelineStages to fetch.
      */
     orderBy?: PipelineStageOrderByWithRelationInput | PipelineStageOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for PipelineStages.
      */
     cursor?: PipelineStageWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` PipelineStages from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` PipelineStages.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of PipelineStages.
      */
     distinct?: PipelineStageScalarFieldEnum | PipelineStageScalarFieldEnum[]
@@ -35234,31 +35746,31 @@ export namespace Prisma {
     where?: PipelineStageWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of PipelineStages to fetch.
      */
     orderBy?: PipelineStageOrderByWithRelationInput | PipelineStageOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing PipelineStages.
      */
     cursor?: PipelineStageWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` PipelineStages from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` PipelineStages.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of PipelineStages.
      */
     distinct?: PipelineStageScalarFieldEnum | PipelineStageScalarFieldEnum[]
@@ -35661,43 +36173,43 @@ export namespace Prisma {
     where?: ActivityWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Activities to fetch.
      */
     orderBy?: ActivityOrderByWithRelationInput | ActivityOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: ActivityWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Activities from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Activities.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Activities
     **/
     _count?: true | ActivityCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ActivityMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: ActivityMaxAggregateInputType
@@ -36026,13 +36538,13 @@ export namespace Prisma {
      * @example
      * // Get all Activities
      * const activities = await prisma.activity.findMany()
-     *
+     * 
      * // Get first 10 Activities
      * const activities = await prisma.activity.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const activityWithIdOnly = await prisma.activity.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends ActivityFindManyArgs>(args?: SelectSubset<T, ActivityFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -36046,7 +36558,7 @@ export namespace Prisma {
      *     // ... data to create a Activity
      *   }
      * })
-     *
+     * 
      */
     create<T extends ActivityCreateArgs>(args: SelectSubset<T, ActivityCreateArgs<ExtArgs>>): Prisma__ActivityClient<$Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -36060,7 +36572,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends ActivityCreateManyArgs>(args?: SelectSubset<T, ActivityCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -36074,7 +36586,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Activities and only return the `id`
      * const activityWithIdOnly = await prisma.activity.createManyAndReturn({
      *   select: { id: true },
@@ -36084,7 +36596,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends ActivityCreateManyAndReturnArgs>(args?: SelectSubset<T, ActivityCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -36098,7 +36610,7 @@ export namespace Prisma {
      *     // ... filter to delete one Activity
      *   }
      * })
-     *
+     * 
      */
     delete<T extends ActivityDeleteArgs>(args: SelectSubset<T, ActivityDeleteArgs<ExtArgs>>): Prisma__ActivityClient<$Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -36115,7 +36627,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends ActivityUpdateArgs>(args: SelectSubset<T, ActivityUpdateArgs<ExtArgs>>): Prisma__ActivityClient<$Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -36129,7 +36641,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends ActivityDeleteManyArgs>(args?: SelectSubset<T, ActivityDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -36148,7 +36660,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends ActivityUpdateManyArgs>(args: SelectSubset<T, ActivityUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -36165,7 +36677,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Activities and only return the `id`
      * const activityWithIdOnly = await prisma.activity.updateManyAndReturn({
      *   select: { id: true },
@@ -36178,7 +36690,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends ActivityUpdateManyAndReturnArgs>(args: SelectSubset<T, ActivityUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -36267,7 +36779,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends ActivityGroupByArgs,
@@ -36399,7 +36911,7 @@ export namespace Prisma {
     readonly deletedAt: FieldRef<"Activity", 'DateTime'>
     readonly deletedBy: FieldRef<"Activity", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -36468,31 +36980,31 @@ export namespace Prisma {
     where?: ActivityWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Activities to fetch.
      */
     orderBy?: ActivityOrderByWithRelationInput | ActivityOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Activities.
      */
     cursor?: ActivityWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Activities from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Activities.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Activities.
      */
     distinct?: ActivityScalarFieldEnum | ActivityScalarFieldEnum[]
@@ -36520,31 +37032,31 @@ export namespace Prisma {
     where?: ActivityWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Activities to fetch.
      */
     orderBy?: ActivityOrderByWithRelationInput | ActivityOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Activities.
      */
     cursor?: ActivityWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Activities from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Activities.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Activities.
      */
     distinct?: ActivityScalarFieldEnum | ActivityScalarFieldEnum[]
@@ -36572,31 +37084,31 @@ export namespace Prisma {
     where?: ActivityWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Activities to fetch.
      */
     orderBy?: ActivityOrderByWithRelationInput | ActivityOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Activities.
      */
     cursor?: ActivityWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Activities from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Activities.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Activities.
      */
     distinct?: ActivityScalarFieldEnum | ActivityScalarFieldEnum[]
@@ -37061,55 +37573,55 @@ export namespace Prisma {
     where?: OpportunityWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Opportunities to fetch.
      */
     orderBy?: OpportunityOrderByWithRelationInput | OpportunityOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: OpportunityWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Opportunities from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Opportunities.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Opportunities
     **/
     _count?: true | OpportunityCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: OpportunityAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: OpportunitySumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: OpportunityMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: OpportunityMaxAggregateInputType
@@ -37452,13 +37964,13 @@ export namespace Prisma {
      * @example
      * // Get all Opportunities
      * const opportunities = await prisma.opportunity.findMany()
-     *
+     * 
      * // Get first 10 Opportunities
      * const opportunities = await prisma.opportunity.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const opportunityWithIdOnly = await prisma.opportunity.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends OpportunityFindManyArgs>(args?: SelectSubset<T, OpportunityFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -37472,7 +37984,7 @@ export namespace Prisma {
      *     // ... data to create a Opportunity
      *   }
      * })
-     *
+     * 
      */
     create<T extends OpportunityCreateArgs>(args: SelectSubset<T, OpportunityCreateArgs<ExtArgs>>): Prisma__OpportunityClient<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -37486,7 +37998,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends OpportunityCreateManyArgs>(args?: SelectSubset<T, OpportunityCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -37500,7 +38012,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Opportunities and only return the `id`
      * const opportunityWithIdOnly = await prisma.opportunity.createManyAndReturn({
      *   select: { id: true },
@@ -37510,7 +38022,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends OpportunityCreateManyAndReturnArgs>(args?: SelectSubset<T, OpportunityCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -37524,7 +38036,7 @@ export namespace Prisma {
      *     // ... filter to delete one Opportunity
      *   }
      * })
-     *
+     * 
      */
     delete<T extends OpportunityDeleteArgs>(args: SelectSubset<T, OpportunityDeleteArgs<ExtArgs>>): Prisma__OpportunityClient<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -37541,7 +38053,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends OpportunityUpdateArgs>(args: SelectSubset<T, OpportunityUpdateArgs<ExtArgs>>): Prisma__OpportunityClient<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -37555,7 +38067,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends OpportunityDeleteManyArgs>(args?: SelectSubset<T, OpportunityDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -37574,7 +38086,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends OpportunityUpdateManyArgs>(args: SelectSubset<T, OpportunityUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -37591,7 +38103,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Opportunities and only return the `id`
      * const opportunityWithIdOnly = await prisma.opportunity.updateManyAndReturn({
      *   select: { id: true },
@@ -37604,7 +38116,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends OpportunityUpdateManyAndReturnArgs>(args: SelectSubset<T, OpportunityUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -37693,7 +38205,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends OpportunityGroupByArgs,
@@ -37827,7 +38339,7 @@ export namespace Prisma {
     readonly deletedAt: FieldRef<"Opportunity", 'DateTime'>
     readonly deletedBy: FieldRef<"Opportunity", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -37896,31 +38408,31 @@ export namespace Prisma {
     where?: OpportunityWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Opportunities to fetch.
      */
     orderBy?: OpportunityOrderByWithRelationInput | OpportunityOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Opportunities.
      */
     cursor?: OpportunityWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Opportunities from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Opportunities.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Opportunities.
      */
     distinct?: OpportunityScalarFieldEnum | OpportunityScalarFieldEnum[]
@@ -37948,31 +38460,31 @@ export namespace Prisma {
     where?: OpportunityWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Opportunities to fetch.
      */
     orderBy?: OpportunityOrderByWithRelationInput | OpportunityOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Opportunities.
      */
     cursor?: OpportunityWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Opportunities from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Opportunities.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Opportunities.
      */
     distinct?: OpportunityScalarFieldEnum | OpportunityScalarFieldEnum[]
@@ -38000,31 +38512,31 @@ export namespace Prisma {
     where?: OpportunityWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Opportunities to fetch.
      */
     orderBy?: OpportunityOrderByWithRelationInput | OpportunityOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Opportunities.
      */
     cursor?: OpportunityWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Opportunities from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Opportunities.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Opportunities.
      */
     distinct?: OpportunityScalarFieldEnum | OpportunityScalarFieldEnum[]
@@ -38494,55 +39006,55 @@ export namespace Prisma {
     where?: ProductWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Products to fetch.
      */
     orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: ProductWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Products from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Products.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Products
     **/
     _count?: true | ProductCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: ProductAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: ProductSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ProductMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: ProductMaxAggregateInputType
@@ -38816,13 +39328,13 @@ export namespace Prisma {
      * @example
      * // Get all Products
      * const products = await prisma.product.findMany()
-     *
+     * 
      * // Get first 10 Products
      * const products = await prisma.product.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const productWithIdOnly = await prisma.product.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends ProductFindManyArgs>(args?: SelectSubset<T, ProductFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -38836,7 +39348,7 @@ export namespace Prisma {
      *     // ... data to create a Product
      *   }
      * })
-     *
+     * 
      */
     create<T extends ProductCreateArgs>(args: SelectSubset<T, ProductCreateArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -38850,7 +39362,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends ProductCreateManyArgs>(args?: SelectSubset<T, ProductCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -38864,7 +39376,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Products and only return the `id`
      * const productWithIdOnly = await prisma.product.createManyAndReturn({
      *   select: { id: true },
@@ -38874,7 +39386,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends ProductCreateManyAndReturnArgs>(args?: SelectSubset<T, ProductCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -38888,7 +39400,7 @@ export namespace Prisma {
      *     // ... filter to delete one Product
      *   }
      * })
-     *
+     * 
      */
     delete<T extends ProductDeleteArgs>(args: SelectSubset<T, ProductDeleteArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -38905,7 +39417,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends ProductUpdateArgs>(args: SelectSubset<T, ProductUpdateArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -38919,7 +39431,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends ProductDeleteManyArgs>(args?: SelectSubset<T, ProductDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -38938,7 +39450,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends ProductUpdateManyArgs>(args: SelectSubset<T, ProductUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -38955,7 +39467,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Products and only return the `id`
      * const productWithIdOnly = await prisma.product.updateManyAndReturn({
      *   select: { id: true },
@@ -38968,7 +39480,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends ProductUpdateManyAndReturnArgs>(args: SelectSubset<T, ProductUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -39057,7 +39569,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends ProductGroupByArgs,
@@ -39180,7 +39692,7 @@ export namespace Prisma {
     readonly deletedAt: FieldRef<"Product", 'DateTime'>
     readonly deletedBy: FieldRef<"Product", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -39249,31 +39761,31 @@ export namespace Prisma {
     where?: ProductWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Products to fetch.
      */
     orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Products.
      */
     cursor?: ProductWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Products from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Products.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Products.
      */
     distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
@@ -39301,31 +39813,31 @@ export namespace Prisma {
     where?: ProductWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Products to fetch.
      */
     orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Products.
      */
     cursor?: ProductWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Products from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Products.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Products.
      */
     distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
@@ -39353,31 +39865,31 @@ export namespace Prisma {
     where?: ProductWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Products to fetch.
      */
     orderBy?: ProductOrderByWithRelationInput | ProductOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Products.
      */
     cursor?: ProductWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Products from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Products.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Products.
      */
     distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
@@ -39787,55 +40299,55 @@ export namespace Prisma {
     where?: OpportunityItemWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of OpportunityItems to fetch.
      */
     orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: OpportunityItemWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` OpportunityItems from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` OpportunityItems.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned OpportunityItems
     **/
     _count?: true | OpportunityItemCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: OpportunityItemAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: OpportunityItemSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: OpportunityItemMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: OpportunityItemMaxAggregateInputType
@@ -40105,13 +40617,13 @@ export namespace Prisma {
      * @example
      * // Get all OpportunityItems
      * const opportunityItems = await prisma.opportunityItem.findMany()
-     *
+     * 
      * // Get first 10 OpportunityItems
      * const opportunityItems = await prisma.opportunityItem.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const opportunityItemWithIdOnly = await prisma.opportunityItem.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends OpportunityItemFindManyArgs>(args?: SelectSubset<T, OpportunityItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -40125,7 +40637,7 @@ export namespace Prisma {
      *     // ... data to create a OpportunityItem
      *   }
      * })
-     *
+     * 
      */
     create<T extends OpportunityItemCreateArgs>(args: SelectSubset<T, OpportunityItemCreateArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -40139,7 +40651,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends OpportunityItemCreateManyArgs>(args?: SelectSubset<T, OpportunityItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -40153,7 +40665,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many OpportunityItems and only return the `id`
      * const opportunityItemWithIdOnly = await prisma.opportunityItem.createManyAndReturn({
      *   select: { id: true },
@@ -40163,7 +40675,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends OpportunityItemCreateManyAndReturnArgs>(args?: SelectSubset<T, OpportunityItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -40177,7 +40689,7 @@ export namespace Prisma {
      *     // ... filter to delete one OpportunityItem
      *   }
      * })
-     *
+     * 
      */
     delete<T extends OpportunityItemDeleteArgs>(args: SelectSubset<T, OpportunityItemDeleteArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -40194,7 +40706,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends OpportunityItemUpdateArgs>(args: SelectSubset<T, OpportunityItemUpdateArgs<ExtArgs>>): Prisma__OpportunityItemClient<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -40208,7 +40720,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends OpportunityItemDeleteManyArgs>(args?: SelectSubset<T, OpportunityItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -40227,7 +40739,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends OpportunityItemUpdateManyArgs>(args: SelectSubset<T, OpportunityItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -40244,7 +40756,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more OpportunityItems and only return the `id`
      * const opportunityItemWithIdOnly = await prisma.opportunityItem.updateManyAndReturn({
      *   select: { id: true },
@@ -40257,7 +40769,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends OpportunityItemUpdateManyAndReturnArgs>(args: SelectSubset<T, OpportunityItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OpportunityItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -40346,7 +40858,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends OpportunityItemGroupByArgs,
@@ -40468,7 +40980,7 @@ export namespace Prisma {
     readonly createdBy: FieldRef<"OpportunityItem", 'String'>
     readonly updatedBy: FieldRef<"OpportunityItem", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -40537,31 +41049,31 @@ export namespace Prisma {
     where?: OpportunityItemWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of OpportunityItems to fetch.
      */
     orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for OpportunityItems.
      */
     cursor?: OpportunityItemWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` OpportunityItems from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` OpportunityItems.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of OpportunityItems.
      */
     distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
@@ -40589,31 +41101,31 @@ export namespace Prisma {
     where?: OpportunityItemWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of OpportunityItems to fetch.
      */
     orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for OpportunityItems.
      */
     cursor?: OpportunityItemWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` OpportunityItems from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` OpportunityItems.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of OpportunityItems.
      */
     distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
@@ -40641,31 +41153,31 @@ export namespace Prisma {
     where?: OpportunityItemWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of OpportunityItems to fetch.
      */
     orderBy?: OpportunityItemOrderByWithRelationInput | OpportunityItemOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing OpportunityItems.
      */
     cursor?: OpportunityItemWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` OpportunityItems from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` OpportunityItems.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of OpportunityItems.
      */
     distinct?: OpportunityItemScalarFieldEnum | OpportunityItemScalarFieldEnum[]
@@ -41092,55 +41604,55 @@ export namespace Prisma {
     where?: TicketWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Tickets to fetch.
      */
     orderBy?: TicketOrderByWithRelationInput | TicketOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: TicketWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Tickets from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Tickets.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned Tickets
     **/
     _count?: true | TicketCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: TicketAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: TicketSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TicketMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: TicketMaxAggregateInputType
@@ -41511,13 +42023,13 @@ export namespace Prisma {
      * @example
      * // Get all Tickets
      * const tickets = await prisma.ticket.findMany()
-     *
+     * 
      * // Get first 10 Tickets
      * const tickets = await prisma.ticket.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const ticketWithIdOnly = await prisma.ticket.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends TicketFindManyArgs>(args?: SelectSubset<T, TicketFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -41531,7 +42043,7 @@ export namespace Prisma {
      *     // ... data to create a Ticket
      *   }
      * })
-     *
+     * 
      */
     create<T extends TicketCreateArgs>(args: SelectSubset<T, TicketCreateArgs<ExtArgs>>): Prisma__TicketClient<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -41545,7 +42057,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends TicketCreateManyArgs>(args?: SelectSubset<T, TicketCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -41559,7 +42071,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many Tickets and only return the `id`
      * const ticketWithIdOnly = await prisma.ticket.createManyAndReturn({
      *   select: { id: true },
@@ -41569,7 +42081,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends TicketCreateManyAndReturnArgs>(args?: SelectSubset<T, TicketCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -41583,7 +42095,7 @@ export namespace Prisma {
      *     // ... filter to delete one Ticket
      *   }
      * })
-     *
+     * 
      */
     delete<T extends TicketDeleteArgs>(args: SelectSubset<T, TicketDeleteArgs<ExtArgs>>): Prisma__TicketClient<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -41600,7 +42112,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends TicketUpdateArgs>(args: SelectSubset<T, TicketUpdateArgs<ExtArgs>>): Prisma__TicketClient<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -41614,7 +42126,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends TicketDeleteManyArgs>(args?: SelectSubset<T, TicketDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -41633,7 +42145,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends TicketUpdateManyArgs>(args: SelectSubset<T, TicketUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -41650,7 +42162,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more Tickets and only return the `id`
      * const ticketWithIdOnly = await prisma.ticket.updateManyAndReturn({
      *   select: { id: true },
@@ -41663,7 +42175,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends TicketUpdateManyAndReturnArgs>(args: SelectSubset<T, TicketUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -41752,7 +42264,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends TicketGroupByArgs,
@@ -41891,7 +42403,7 @@ export namespace Prisma {
     readonly firstResponseDueAt: FieldRef<"Ticket", 'DateTime'>
     readonly resolutionDueAt: FieldRef<"Ticket", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -41960,31 +42472,31 @@ export namespace Prisma {
     where?: TicketWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Tickets to fetch.
      */
     orderBy?: TicketOrderByWithRelationInput | TicketOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Tickets.
      */
     cursor?: TicketWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Tickets from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Tickets.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Tickets.
      */
     distinct?: TicketScalarFieldEnum | TicketScalarFieldEnum[]
@@ -42012,31 +42524,31 @@ export namespace Prisma {
     where?: TicketWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Tickets to fetch.
      */
     orderBy?: TicketOrderByWithRelationInput | TicketOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for Tickets.
      */
     cursor?: TicketWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Tickets from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Tickets.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Tickets.
      */
     distinct?: TicketScalarFieldEnum | TicketScalarFieldEnum[]
@@ -42064,31 +42576,31 @@ export namespace Prisma {
     where?: TicketWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of Tickets to fetch.
      */
     orderBy?: TicketOrderByWithRelationInput | TicketOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing Tickets.
      */
     cursor?: TicketWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` Tickets from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` Tickets.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of Tickets.
      */
     distinct?: TicketScalarFieldEnum | TicketScalarFieldEnum[]
@@ -42547,43 +43059,43 @@ export namespace Prisma {
     where?: TicketEventWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketEvents to fetch.
      */
     orderBy?: TicketEventOrderByWithRelationInput | TicketEventOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: TicketEventWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketEvents from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketEvents.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned TicketEvents
     **/
     _count?: true | TicketEventCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TicketEventMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: TicketEventMaxAggregateInputType
@@ -42823,13 +43335,13 @@ export namespace Prisma {
      * @example
      * // Get all TicketEvents
      * const ticketEvents = await prisma.ticketEvent.findMany()
-     *
+     * 
      * // Get first 10 TicketEvents
      * const ticketEvents = await prisma.ticketEvent.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const ticketEventWithIdOnly = await prisma.ticketEvent.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends TicketEventFindManyArgs>(args?: SelectSubset<T, TicketEventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -42843,7 +43355,7 @@ export namespace Prisma {
      *     // ... data to create a TicketEvent
      *   }
      * })
-     *
+     * 
      */
     create<T extends TicketEventCreateArgs>(args: SelectSubset<T, TicketEventCreateArgs<ExtArgs>>): Prisma__TicketEventClient<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -42857,7 +43369,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends TicketEventCreateManyArgs>(args?: SelectSubset<T, TicketEventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -42871,7 +43383,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many TicketEvents and only return the `id`
      * const ticketEventWithIdOnly = await prisma.ticketEvent.createManyAndReturn({
      *   select: { id: true },
@@ -42881,7 +43393,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends TicketEventCreateManyAndReturnArgs>(args?: SelectSubset<T, TicketEventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -42895,7 +43407,7 @@ export namespace Prisma {
      *     // ... filter to delete one TicketEvent
      *   }
      * })
-     *
+     * 
      */
     delete<T extends TicketEventDeleteArgs>(args: SelectSubset<T, TicketEventDeleteArgs<ExtArgs>>): Prisma__TicketEventClient<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -42912,7 +43424,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends TicketEventUpdateArgs>(args: SelectSubset<T, TicketEventUpdateArgs<ExtArgs>>): Prisma__TicketEventClient<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -42926,7 +43438,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends TicketEventDeleteManyArgs>(args?: SelectSubset<T, TicketEventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -42945,7 +43457,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends TicketEventUpdateManyArgs>(args: SelectSubset<T, TicketEventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -42962,7 +43474,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more TicketEvents and only return the `id`
      * const ticketEventWithIdOnly = await prisma.ticketEvent.updateManyAndReturn({
      *   select: { id: true },
@@ -42975,7 +43487,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends TicketEventUpdateManyAndReturnArgs>(args: SelectSubset<T, TicketEventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketEventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -43064,7 +43576,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends TicketEventGroupByArgs,
@@ -43182,7 +43694,7 @@ export namespace Prisma {
     readonly authorUserId: FieldRef<"TicketEvent", 'String'>
     readonly createdAt: FieldRef<"TicketEvent", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -43251,31 +43763,31 @@ export namespace Prisma {
     where?: TicketEventWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketEvents to fetch.
      */
     orderBy?: TicketEventOrderByWithRelationInput | TicketEventOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TicketEvents.
      */
     cursor?: TicketEventWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketEvents from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketEvents.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TicketEvents.
      */
     distinct?: TicketEventScalarFieldEnum | TicketEventScalarFieldEnum[]
@@ -43303,31 +43815,31 @@ export namespace Prisma {
     where?: TicketEventWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketEvents to fetch.
      */
     orderBy?: TicketEventOrderByWithRelationInput | TicketEventOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TicketEvents.
      */
     cursor?: TicketEventWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketEvents from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketEvents.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TicketEvents.
      */
     distinct?: TicketEventScalarFieldEnum | TicketEventScalarFieldEnum[]
@@ -43355,31 +43867,31 @@ export namespace Prisma {
     where?: TicketEventWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketEvents to fetch.
      */
     orderBy?: TicketEventOrderByWithRelationInput | TicketEventOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing TicketEvents.
      */
     cursor?: TicketEventWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketEvents from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketEvents.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TicketEvents.
      */
     distinct?: TicketEventScalarFieldEnum | TicketEventScalarFieldEnum[]
@@ -43678,55 +44190,55 @@ export namespace Prisma {
     where?: TicketProtocolCounterWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketProtocolCounters to fetch.
      */
     orderBy?: TicketProtocolCounterOrderByWithRelationInput | TicketProtocolCounterOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: TicketProtocolCounterWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketProtocolCounters from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketProtocolCounters.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned TicketProtocolCounters
     **/
     _count?: true | TicketProtocolCounterCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: TicketProtocolCounterAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: TicketProtocolCounterSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TicketProtocolCounterMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: TicketProtocolCounterMaxAggregateInputType
@@ -43908,13 +44420,13 @@ export namespace Prisma {
      * @example
      * // Get all TicketProtocolCounters
      * const ticketProtocolCounters = await prisma.ticketProtocolCounter.findMany()
-     *
+     * 
      * // Get first 10 TicketProtocolCounters
      * const ticketProtocolCounters = await prisma.ticketProtocolCounter.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `organizationId`
      * const ticketProtocolCounterWithOrganizationIdOnly = await prisma.ticketProtocolCounter.findMany({ select: { organizationId: true } })
-     *
+     * 
      */
     findMany<T extends TicketProtocolCounterFindManyArgs>(args?: SelectSubset<T, TicketProtocolCounterFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketProtocolCounterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -43928,7 +44440,7 @@ export namespace Prisma {
      *     // ... data to create a TicketProtocolCounter
      *   }
      * })
-     *
+     * 
      */
     create<T extends TicketProtocolCounterCreateArgs>(args: SelectSubset<T, TicketProtocolCounterCreateArgs<ExtArgs>>): Prisma__TicketProtocolCounterClient<$Result.GetResult<Prisma.$TicketProtocolCounterPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -43942,7 +44454,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends TicketProtocolCounterCreateManyArgs>(args?: SelectSubset<T, TicketProtocolCounterCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -43956,7 +44468,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many TicketProtocolCounters and only return the `organizationId`
      * const ticketProtocolCounterWithOrganizationIdOnly = await prisma.ticketProtocolCounter.createManyAndReturn({
      *   select: { organizationId: true },
@@ -43966,7 +44478,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends TicketProtocolCounterCreateManyAndReturnArgs>(args?: SelectSubset<T, TicketProtocolCounterCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketProtocolCounterPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -43980,7 +44492,7 @@ export namespace Prisma {
      *     // ... filter to delete one TicketProtocolCounter
      *   }
      * })
-     *
+     * 
      */
     delete<T extends TicketProtocolCounterDeleteArgs>(args: SelectSubset<T, TicketProtocolCounterDeleteArgs<ExtArgs>>): Prisma__TicketProtocolCounterClient<$Result.GetResult<Prisma.$TicketProtocolCounterPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -43997,7 +44509,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends TicketProtocolCounterUpdateArgs>(args: SelectSubset<T, TicketProtocolCounterUpdateArgs<ExtArgs>>): Prisma__TicketProtocolCounterClient<$Result.GetResult<Prisma.$TicketProtocolCounterPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -44011,7 +44523,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends TicketProtocolCounterDeleteManyArgs>(args?: SelectSubset<T, TicketProtocolCounterDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -44030,7 +44542,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends TicketProtocolCounterUpdateManyArgs>(args: SelectSubset<T, TicketProtocolCounterUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -44047,7 +44559,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more TicketProtocolCounters and only return the `organizationId`
      * const ticketProtocolCounterWithOrganizationIdOnly = await prisma.ticketProtocolCounter.updateManyAndReturn({
      *   select: { organizationId: true },
@@ -44060,7 +44572,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends TicketProtocolCounterUpdateManyAndReturnArgs>(args: SelectSubset<T, TicketProtocolCounterUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketProtocolCounterPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -44149,7 +44661,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends TicketProtocolCounterGroupByArgs,
@@ -44257,7 +44769,7 @@ export namespace Prisma {
     readonly year: FieldRef<"TicketProtocolCounter", 'Int'>
     readonly lastValue: FieldRef<"TicketProtocolCounter", 'Int'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -44326,31 +44838,31 @@ export namespace Prisma {
     where?: TicketProtocolCounterWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketProtocolCounters to fetch.
      */
     orderBy?: TicketProtocolCounterOrderByWithRelationInput | TicketProtocolCounterOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TicketProtocolCounters.
      */
     cursor?: TicketProtocolCounterWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketProtocolCounters from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketProtocolCounters.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TicketProtocolCounters.
      */
     distinct?: TicketProtocolCounterScalarFieldEnum | TicketProtocolCounterScalarFieldEnum[]
@@ -44378,31 +44890,31 @@ export namespace Prisma {
     where?: TicketProtocolCounterWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketProtocolCounters to fetch.
      */
     orderBy?: TicketProtocolCounterOrderByWithRelationInput | TicketProtocolCounterOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TicketProtocolCounters.
      */
     cursor?: TicketProtocolCounterWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketProtocolCounters from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketProtocolCounters.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TicketProtocolCounters.
      */
     distinct?: TicketProtocolCounterScalarFieldEnum | TicketProtocolCounterScalarFieldEnum[]
@@ -44430,31 +44942,31 @@ export namespace Prisma {
     where?: TicketProtocolCounterWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketProtocolCounters to fetch.
      */
     orderBy?: TicketProtocolCounterOrderByWithRelationInput | TicketProtocolCounterOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing TicketProtocolCounters.
      */
     cursor?: TicketProtocolCounterWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketProtocolCounters from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketProtocolCounters.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TicketProtocolCounters.
      */
     distinct?: TicketProtocolCounterScalarFieldEnum | TicketProtocolCounterScalarFieldEnum[]
@@ -44809,55 +45321,55 @@ export namespace Prisma {
     where?: SupportQueueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of SupportQueues to fetch.
      */
     orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: SupportQueueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` SupportQueues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` SupportQueues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned SupportQueues
     **/
     _count?: true | SupportQueueCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: SupportQueueAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: SupportQueueSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: SupportQueueMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: SupportQueueMaxAggregateInputType
@@ -45125,13 +45637,13 @@ export namespace Prisma {
      * @example
      * // Get all SupportQueues
      * const supportQueues = await prisma.supportQueue.findMany()
-     *
+     * 
      * // Get first 10 SupportQueues
      * const supportQueues = await prisma.supportQueue.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const supportQueueWithIdOnly = await prisma.supportQueue.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends SupportQueueFindManyArgs>(args?: SelectSubset<T, SupportQueueFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -45145,7 +45657,7 @@ export namespace Prisma {
      *     // ... data to create a SupportQueue
      *   }
      * })
-     *
+     * 
      */
     create<T extends SupportQueueCreateArgs>(args: SelectSubset<T, SupportQueueCreateArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -45159,7 +45671,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends SupportQueueCreateManyArgs>(args?: SelectSubset<T, SupportQueueCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -45173,7 +45685,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many SupportQueues and only return the `id`
      * const supportQueueWithIdOnly = await prisma.supportQueue.createManyAndReturn({
      *   select: { id: true },
@@ -45183,7 +45695,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends SupportQueueCreateManyAndReturnArgs>(args?: SelectSubset<T, SupportQueueCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -45197,7 +45709,7 @@ export namespace Prisma {
      *     // ... filter to delete one SupportQueue
      *   }
      * })
-     *
+     * 
      */
     delete<T extends SupportQueueDeleteArgs>(args: SelectSubset<T, SupportQueueDeleteArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -45214,7 +45726,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends SupportQueueUpdateArgs>(args: SelectSubset<T, SupportQueueUpdateArgs<ExtArgs>>): Prisma__SupportQueueClient<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -45228,7 +45740,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends SupportQueueDeleteManyArgs>(args?: SelectSubset<T, SupportQueueDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -45247,7 +45759,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends SupportQueueUpdateManyArgs>(args: SelectSubset<T, SupportQueueUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -45264,7 +45776,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more SupportQueues and only return the `id`
      * const supportQueueWithIdOnly = await prisma.supportQueue.updateManyAndReturn({
      *   select: { id: true },
@@ -45277,7 +45789,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends SupportQueueUpdateManyAndReturnArgs>(args: SelectSubset<T, SupportQueueUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportQueuePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -45366,7 +45878,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends SupportQueueGroupByArgs,
@@ -45488,7 +46000,7 @@ export namespace Prisma {
     readonly deletedAt: FieldRef<"SupportQueue", 'DateTime'>
     readonly deletedBy: FieldRef<"SupportQueue", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -45557,31 +46069,31 @@ export namespace Prisma {
     where?: SupportQueueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of SupportQueues to fetch.
      */
     orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for SupportQueues.
      */
     cursor?: SupportQueueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` SupportQueues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` SupportQueues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of SupportQueues.
      */
     distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
@@ -45609,31 +46121,31 @@ export namespace Prisma {
     where?: SupportQueueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of SupportQueues to fetch.
      */
     orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for SupportQueues.
      */
     cursor?: SupportQueueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` SupportQueues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` SupportQueues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of SupportQueues.
      */
     distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
@@ -45661,31 +46173,31 @@ export namespace Prisma {
     where?: SupportQueueWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of SupportQueues to fetch.
      */
     orderBy?: SupportQueueOrderByWithRelationInput | SupportQueueOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing SupportQueues.
      */
     cursor?: SupportQueueWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` SupportQueues from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` SupportQueues.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of SupportQueues.
      */
     distinct?: SupportQueueScalarFieldEnum | SupportQueueScalarFieldEnum[]
@@ -46079,55 +46591,55 @@ export namespace Prisma {
     where?: SlaPolicyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of SlaPolicies to fetch.
      */
     orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: SlaPolicyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` SlaPolicies from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` SlaPolicies.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned SlaPolicies
     **/
     _count?: true | SlaPolicyCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: SlaPolicyAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: SlaPolicySumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: SlaPolicyMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: SlaPolicyMaxAggregateInputType
@@ -46371,13 +46883,13 @@ export namespace Prisma {
      * @example
      * // Get all SlaPolicies
      * const slaPolicies = await prisma.slaPolicy.findMany()
-     *
+     * 
      * // Get first 10 SlaPolicies
      * const slaPolicies = await prisma.slaPolicy.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const slaPolicyWithIdOnly = await prisma.slaPolicy.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends SlaPolicyFindManyArgs>(args?: SelectSubset<T, SlaPolicyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -46391,7 +46903,7 @@ export namespace Prisma {
      *     // ... data to create a SlaPolicy
      *   }
      * })
-     *
+     * 
      */
     create<T extends SlaPolicyCreateArgs>(args: SelectSubset<T, SlaPolicyCreateArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -46405,7 +46917,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends SlaPolicyCreateManyArgs>(args?: SelectSubset<T, SlaPolicyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -46419,7 +46931,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many SlaPolicies and only return the `id`
      * const slaPolicyWithIdOnly = await prisma.slaPolicy.createManyAndReturn({
      *   select: { id: true },
@@ -46429,7 +46941,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends SlaPolicyCreateManyAndReturnArgs>(args?: SelectSubset<T, SlaPolicyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -46443,7 +46955,7 @@ export namespace Prisma {
      *     // ... filter to delete one SlaPolicy
      *   }
      * })
-     *
+     * 
      */
     delete<T extends SlaPolicyDeleteArgs>(args: SelectSubset<T, SlaPolicyDeleteArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -46460,7 +46972,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends SlaPolicyUpdateArgs>(args: SelectSubset<T, SlaPolicyUpdateArgs<ExtArgs>>): Prisma__SlaPolicyClient<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -46474,7 +46986,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends SlaPolicyDeleteManyArgs>(args?: SelectSubset<T, SlaPolicyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -46493,7 +47005,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends SlaPolicyUpdateManyArgs>(args: SelectSubset<T, SlaPolicyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -46510,7 +47022,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more SlaPolicies and only return the `id`
      * const slaPolicyWithIdOnly = await prisma.slaPolicy.updateManyAndReturn({
      *   select: { id: true },
@@ -46523,7 +47035,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends SlaPolicyUpdateManyAndReturnArgs>(args: SelectSubset<T, SlaPolicyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlaPolicyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -46612,7 +47124,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends SlaPolicyGroupByArgs,
@@ -46730,7 +47242,7 @@ export namespace Prisma {
     readonly updatedBy: FieldRef<"SlaPolicy", 'String'>
     readonly version: FieldRef<"SlaPolicy", 'Int'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -46799,31 +47311,31 @@ export namespace Prisma {
     where?: SlaPolicyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of SlaPolicies to fetch.
      */
     orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for SlaPolicies.
      */
     cursor?: SlaPolicyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` SlaPolicies from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` SlaPolicies.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of SlaPolicies.
      */
     distinct?: SlaPolicyScalarFieldEnum | SlaPolicyScalarFieldEnum[]
@@ -46851,31 +47363,31 @@ export namespace Prisma {
     where?: SlaPolicyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of SlaPolicies to fetch.
      */
     orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for SlaPolicies.
      */
     cursor?: SlaPolicyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` SlaPolicies from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` SlaPolicies.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of SlaPolicies.
      */
     distinct?: SlaPolicyScalarFieldEnum | SlaPolicyScalarFieldEnum[]
@@ -46903,31 +47415,31 @@ export namespace Prisma {
     where?: SlaPolicyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of SlaPolicies to fetch.
      */
     orderBy?: SlaPolicyOrderByWithRelationInput | SlaPolicyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing SlaPolicies.
      */
     cursor?: SlaPolicyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` SlaPolicies from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` SlaPolicies.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of SlaPolicies.
      */
     distinct?: SlaPolicyScalarFieldEnum | SlaPolicyScalarFieldEnum[]
@@ -47286,55 +47798,55 @@ export namespace Prisma {
     where?: TicketSatisfactionSurveyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketSatisfactionSurveys to fetch.
      */
     orderBy?: TicketSatisfactionSurveyOrderByWithRelationInput | TicketSatisfactionSurveyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: TicketSatisfactionSurveyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketSatisfactionSurveys from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketSatisfactionSurveys.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned TicketSatisfactionSurveys
     **/
     _count?: true | TicketSatisfactionSurveyCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to average
     **/
     _avg?: TicketSatisfactionSurveyAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to sum
     **/
     _sum?: TicketSatisfactionSurveySumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TicketSatisfactionSurveyMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: TicketSatisfactionSurveyMaxAggregateInputType
@@ -47597,13 +48109,13 @@ export namespace Prisma {
      * @example
      * // Get all TicketSatisfactionSurveys
      * const ticketSatisfactionSurveys = await prisma.ticketSatisfactionSurvey.findMany()
-     *
+     * 
      * // Get first 10 TicketSatisfactionSurveys
      * const ticketSatisfactionSurveys = await prisma.ticketSatisfactionSurvey.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const ticketSatisfactionSurveyWithIdOnly = await prisma.ticketSatisfactionSurvey.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends TicketSatisfactionSurveyFindManyArgs>(args?: SelectSubset<T, TicketSatisfactionSurveyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketSatisfactionSurveyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -47617,7 +48129,7 @@ export namespace Prisma {
      *     // ... data to create a TicketSatisfactionSurvey
      *   }
      * })
-     *
+     * 
      */
     create<T extends TicketSatisfactionSurveyCreateArgs>(args: SelectSubset<T, TicketSatisfactionSurveyCreateArgs<ExtArgs>>): Prisma__TicketSatisfactionSurveyClient<$Result.GetResult<Prisma.$TicketSatisfactionSurveyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -47631,7 +48143,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends TicketSatisfactionSurveyCreateManyArgs>(args?: SelectSubset<T, TicketSatisfactionSurveyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -47645,7 +48157,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many TicketSatisfactionSurveys and only return the `id`
      * const ticketSatisfactionSurveyWithIdOnly = await prisma.ticketSatisfactionSurvey.createManyAndReturn({
      *   select: { id: true },
@@ -47655,7 +48167,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends TicketSatisfactionSurveyCreateManyAndReturnArgs>(args?: SelectSubset<T, TicketSatisfactionSurveyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketSatisfactionSurveyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -47669,7 +48181,7 @@ export namespace Prisma {
      *     // ... filter to delete one TicketSatisfactionSurvey
      *   }
      * })
-     *
+     * 
      */
     delete<T extends TicketSatisfactionSurveyDeleteArgs>(args: SelectSubset<T, TicketSatisfactionSurveyDeleteArgs<ExtArgs>>): Prisma__TicketSatisfactionSurveyClient<$Result.GetResult<Prisma.$TicketSatisfactionSurveyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -47686,7 +48198,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends TicketSatisfactionSurveyUpdateArgs>(args: SelectSubset<T, TicketSatisfactionSurveyUpdateArgs<ExtArgs>>): Prisma__TicketSatisfactionSurveyClient<$Result.GetResult<Prisma.$TicketSatisfactionSurveyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -47700,7 +48212,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends TicketSatisfactionSurveyDeleteManyArgs>(args?: SelectSubset<T, TicketSatisfactionSurveyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -47719,7 +48231,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends TicketSatisfactionSurveyUpdateManyArgs>(args: SelectSubset<T, TicketSatisfactionSurveyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -47736,7 +48248,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more TicketSatisfactionSurveys and only return the `id`
      * const ticketSatisfactionSurveyWithIdOnly = await prisma.ticketSatisfactionSurvey.updateManyAndReturn({
      *   select: { id: true },
@@ -47749,7 +48261,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends TicketSatisfactionSurveyUpdateManyAndReturnArgs>(args: SelectSubset<T, TicketSatisfactionSurveyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketSatisfactionSurveyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -47838,7 +48350,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends TicketSatisfactionSurveyGroupByArgs,
@@ -47959,7 +48471,7 @@ export namespace Prisma {
     readonly updatedBy: FieldRef<"TicketSatisfactionSurvey", 'String'>
     readonly version: FieldRef<"TicketSatisfactionSurvey", 'Int'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -48028,31 +48540,31 @@ export namespace Prisma {
     where?: TicketSatisfactionSurveyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketSatisfactionSurveys to fetch.
      */
     orderBy?: TicketSatisfactionSurveyOrderByWithRelationInput | TicketSatisfactionSurveyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TicketSatisfactionSurveys.
      */
     cursor?: TicketSatisfactionSurveyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketSatisfactionSurveys from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketSatisfactionSurveys.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TicketSatisfactionSurveys.
      */
     distinct?: TicketSatisfactionSurveyScalarFieldEnum | TicketSatisfactionSurveyScalarFieldEnum[]
@@ -48080,31 +48592,31 @@ export namespace Prisma {
     where?: TicketSatisfactionSurveyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketSatisfactionSurveys to fetch.
      */
     orderBy?: TicketSatisfactionSurveyOrderByWithRelationInput | TicketSatisfactionSurveyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for TicketSatisfactionSurveys.
      */
     cursor?: TicketSatisfactionSurveyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketSatisfactionSurveys from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketSatisfactionSurveys.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TicketSatisfactionSurveys.
      */
     distinct?: TicketSatisfactionSurveyScalarFieldEnum | TicketSatisfactionSurveyScalarFieldEnum[]
@@ -48132,31 +48644,31 @@ export namespace Prisma {
     where?: TicketSatisfactionSurveyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of TicketSatisfactionSurveys to fetch.
      */
     orderBy?: TicketSatisfactionSurveyOrderByWithRelationInput | TicketSatisfactionSurveyOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing TicketSatisfactionSurveys.
      */
     cursor?: TicketSatisfactionSurveyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` TicketSatisfactionSurveys from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` TicketSatisfactionSurveys.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of TicketSatisfactionSurveys.
      */
     distinct?: TicketSatisfactionSurveyScalarFieldEnum | TicketSatisfactionSurveyScalarFieldEnum[]
@@ -48489,43 +49001,43 @@ export namespace Prisma {
     where?: IntegrationCredentialWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of IntegrationCredentials to fetch.
      */
     orderBy?: IntegrationCredentialOrderByWithRelationInput | IntegrationCredentialOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: IntegrationCredentialWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` IntegrationCredentials from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` IntegrationCredentials.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned IntegrationCredentials
     **/
     _count?: true | IntegrationCredentialCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: IntegrationCredentialMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: IntegrationCredentialMaxAggregateInputType
@@ -48777,13 +49289,13 @@ export namespace Prisma {
      * @example
      * // Get all IntegrationCredentials
      * const integrationCredentials = await prisma.integrationCredential.findMany()
-     *
+     * 
      * // Get first 10 IntegrationCredentials
      * const integrationCredentials = await prisma.integrationCredential.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `id`
      * const integrationCredentialWithIdOnly = await prisma.integrationCredential.findMany({ select: { id: true } })
-     *
+     * 
      */
     findMany<T extends IntegrationCredentialFindManyArgs>(args?: SelectSubset<T, IntegrationCredentialFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntegrationCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -48797,7 +49309,7 @@ export namespace Prisma {
      *     // ... data to create a IntegrationCredential
      *   }
      * })
-     *
+     * 
      */
     create<T extends IntegrationCredentialCreateArgs>(args: SelectSubset<T, IntegrationCredentialCreateArgs<ExtArgs>>): Prisma__IntegrationCredentialClient<$Result.GetResult<Prisma.$IntegrationCredentialPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -48811,7 +49323,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends IntegrationCredentialCreateManyArgs>(args?: SelectSubset<T, IntegrationCredentialCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -48825,7 +49337,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many IntegrationCredentials and only return the `id`
      * const integrationCredentialWithIdOnly = await prisma.integrationCredential.createManyAndReturn({
      *   select: { id: true },
@@ -48835,7 +49347,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends IntegrationCredentialCreateManyAndReturnArgs>(args?: SelectSubset<T, IntegrationCredentialCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntegrationCredentialPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -48849,7 +49361,7 @@ export namespace Prisma {
      *     // ... filter to delete one IntegrationCredential
      *   }
      * })
-     *
+     * 
      */
     delete<T extends IntegrationCredentialDeleteArgs>(args: SelectSubset<T, IntegrationCredentialDeleteArgs<ExtArgs>>): Prisma__IntegrationCredentialClient<$Result.GetResult<Prisma.$IntegrationCredentialPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -48866,7 +49378,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends IntegrationCredentialUpdateArgs>(args: SelectSubset<T, IntegrationCredentialUpdateArgs<ExtArgs>>): Prisma__IntegrationCredentialClient<$Result.GetResult<Prisma.$IntegrationCredentialPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -48880,7 +49392,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends IntegrationCredentialDeleteManyArgs>(args?: SelectSubset<T, IntegrationCredentialDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -48899,7 +49411,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends IntegrationCredentialUpdateManyArgs>(args: SelectSubset<T, IntegrationCredentialUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -48916,7 +49428,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more IntegrationCredentials and only return the `id`
      * const integrationCredentialWithIdOnly = await prisma.integrationCredential.updateManyAndReturn({
      *   select: { id: true },
@@ -48929,7 +49441,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends IntegrationCredentialUpdateManyAndReturnArgs>(args: SelectSubset<T, IntegrationCredentialUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntegrationCredentialPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -49018,7 +49530,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends IntegrationCredentialGroupByArgs,
@@ -49138,7 +49650,7 @@ export namespace Prisma {
     readonly revokedAt: FieldRef<"IntegrationCredential", 'DateTime'>
     readonly revokedBy: FieldRef<"IntegrationCredential", 'String'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -49207,31 +49719,31 @@ export namespace Prisma {
     where?: IntegrationCredentialWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of IntegrationCredentials to fetch.
      */
     orderBy?: IntegrationCredentialOrderByWithRelationInput | IntegrationCredentialOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for IntegrationCredentials.
      */
     cursor?: IntegrationCredentialWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` IntegrationCredentials from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` IntegrationCredentials.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of IntegrationCredentials.
      */
     distinct?: IntegrationCredentialScalarFieldEnum | IntegrationCredentialScalarFieldEnum[]
@@ -49259,31 +49771,31 @@ export namespace Prisma {
     where?: IntegrationCredentialWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of IntegrationCredentials to fetch.
      */
     orderBy?: IntegrationCredentialOrderByWithRelationInput | IntegrationCredentialOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for IntegrationCredentials.
      */
     cursor?: IntegrationCredentialWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` IntegrationCredentials from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` IntegrationCredentials.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of IntegrationCredentials.
      */
     distinct?: IntegrationCredentialScalarFieldEnum | IntegrationCredentialScalarFieldEnum[]
@@ -49311,31 +49823,31 @@ export namespace Prisma {
     where?: IntegrationCredentialWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of IntegrationCredentials to fetch.
      */
     orderBy?: IntegrationCredentialOrderByWithRelationInput | IntegrationCredentialOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing IntegrationCredentials.
      */
     cursor?: IntegrationCredentialWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` IntegrationCredentials from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` IntegrationCredentials.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of IntegrationCredentials.
      */
     distinct?: IntegrationCredentialScalarFieldEnum | IntegrationCredentialScalarFieldEnum[]
@@ -49639,43 +50151,43 @@ export namespace Prisma {
     where?: UserWorkspacePreferenceWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of UserWorkspacePreferences to fetch.
      */
     orderBy?: UserWorkspacePreferenceOrderByWithRelationInput | UserWorkspacePreferenceOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the start position
      */
     cursor?: UserWorkspacePreferenceWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` UserWorkspacePreferences from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` UserWorkspacePreferences.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Count returned UserWorkspacePreferences
     **/
     _count?: true | UserWorkspacePreferenceCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: UserWorkspacePreferenceMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     *
+     * 
      * Select which fields to find the maximum value
     **/
     _max?: UserWorkspacePreferenceMaxAggregateInputType
@@ -49865,13 +50377,13 @@ export namespace Prisma {
      * @example
      * // Get all UserWorkspacePreferences
      * const userWorkspacePreferences = await prisma.userWorkspacePreference.findMany()
-     *
+     * 
      * // Get first 10 UserWorkspacePreferences
      * const userWorkspacePreferences = await prisma.userWorkspacePreference.findMany({ take: 10 })
-     *
+     * 
      * // Only select the `organizationId`
      * const userWorkspacePreferenceWithOrganizationIdOnly = await prisma.userWorkspacePreference.findMany({ select: { organizationId: true } })
-     *
+     * 
      */
     findMany<T extends UserWorkspacePreferenceFindManyArgs>(args?: SelectSubset<T, UserWorkspacePreferenceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserWorkspacePreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -49885,7 +50397,7 @@ export namespace Prisma {
      *     // ... data to create a UserWorkspacePreference
      *   }
      * })
-     *
+     * 
      */
     create<T extends UserWorkspacePreferenceCreateArgs>(args: SelectSubset<T, UserWorkspacePreferenceCreateArgs<ExtArgs>>): Prisma__UserWorkspacePreferenceClient<$Result.GetResult<Prisma.$UserWorkspacePreferencePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -49899,7 +50411,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     *     
      */
     createMany<T extends UserWorkspacePreferenceCreateManyArgs>(args?: SelectSubset<T, UserWorkspacePreferenceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -49913,7 +50425,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Create many UserWorkspacePreferences and only return the `organizationId`
      * const userWorkspacePreferenceWithOrganizationIdOnly = await prisma.userWorkspacePreference.createManyAndReturn({
      *   select: { organizationId: true },
@@ -49923,7 +50435,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     createManyAndReturn<T extends UserWorkspacePreferenceCreateManyAndReturnArgs>(args?: SelectSubset<T, UserWorkspacePreferenceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserWorkspacePreferencePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -49937,7 +50449,7 @@ export namespace Prisma {
      *     // ... filter to delete one UserWorkspacePreference
      *   }
      * })
-     *
+     * 
      */
     delete<T extends UserWorkspacePreferenceDeleteArgs>(args: SelectSubset<T, UserWorkspacePreferenceDeleteArgs<ExtArgs>>): Prisma__UserWorkspacePreferenceClient<$Result.GetResult<Prisma.$UserWorkspacePreferencePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -49954,7 +50466,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     update<T extends UserWorkspacePreferenceUpdateArgs>(args: SelectSubset<T, UserWorkspacePreferenceUpdateArgs<ExtArgs>>): Prisma__UserWorkspacePreferenceClient<$Result.GetResult<Prisma.$UserWorkspacePreferencePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -49968,7 +50480,7 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-     *
+     * 
      */
     deleteMany<T extends UserWorkspacePreferenceDeleteManyArgs>(args?: SelectSubset<T, UserWorkspacePreferenceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -49987,7 +50499,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   }
      * })
-     *
+     * 
      */
     updateMany<T extends UserWorkspacePreferenceUpdateManyArgs>(args: SelectSubset<T, UserWorkspacePreferenceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
@@ -50004,7 +50516,7 @@ export namespace Prisma {
      *     // ... provide data here
      *   ]
      * })
-     *
+     * 
      * // Update zero or more UserWorkspacePreferences and only return the `organizationId`
      * const userWorkspacePreferenceWithOrganizationIdOnly = await prisma.userWorkspacePreference.updateManyAndReturn({
      *   select: { organizationId: true },
@@ -50017,7 +50529,7 @@ export namespace Prisma {
      * })
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     *
+     * 
      */
     updateManyAndReturn<T extends UserWorkspacePreferenceUpdateManyAndReturnArgs>(args: SelectSubset<T, UserWorkspacePreferenceUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserWorkspacePreferencePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -50106,7 +50618,7 @@ export namespace Prisma {
      *     _all: true
      *   },
      * })
-     *
+     * 
     **/
     groupBy<
       T extends UserWorkspacePreferenceGroupByArgs,
@@ -50216,7 +50728,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"UserWorkspacePreference", 'DateTime'>
     readonly updatedAt: FieldRef<"UserWorkspacePreference", 'DateTime'>
   }
-
+    
 
   // Custom InputTypes
   /**
@@ -50285,31 +50797,31 @@ export namespace Prisma {
     where?: UserWorkspacePreferenceWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of UserWorkspacePreferences to fetch.
      */
     orderBy?: UserWorkspacePreferenceOrderByWithRelationInput | UserWorkspacePreferenceOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for UserWorkspacePreferences.
      */
     cursor?: UserWorkspacePreferenceWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` UserWorkspacePreferences from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` UserWorkspacePreferences.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of UserWorkspacePreferences.
      */
     distinct?: UserWorkspacePreferenceScalarFieldEnum | UserWorkspacePreferenceScalarFieldEnum[]
@@ -50337,31 +50849,31 @@ export namespace Prisma {
     where?: UserWorkspacePreferenceWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of UserWorkspacePreferences to fetch.
      */
     orderBy?: UserWorkspacePreferenceOrderByWithRelationInput | UserWorkspacePreferenceOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for searching for UserWorkspacePreferences.
      */
     cursor?: UserWorkspacePreferenceWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` UserWorkspacePreferences from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` UserWorkspacePreferences.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of UserWorkspacePreferences.
      */
     distinct?: UserWorkspacePreferenceScalarFieldEnum | UserWorkspacePreferenceScalarFieldEnum[]
@@ -50389,31 +50901,31 @@ export namespace Prisma {
     where?: UserWorkspacePreferenceWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     *
+     * 
      * Determine the order of UserWorkspacePreferences to fetch.
      */
     orderBy?: UserWorkspacePreferenceOrderByWithRelationInput | UserWorkspacePreferenceOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     *
+     * 
      * Sets the position for listing UserWorkspacePreferences.
      */
     cursor?: UserWorkspacePreferenceWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Take `±n` UserWorkspacePreferences from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     *
+     * 
      * Skip the first `n` UserWorkspacePreferences.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     *
+     * 
      * Filter by unique combinations of UserWorkspacePreferences.
      */
     distinct?: UserWorkspacePreferenceScalarFieldEnum | UserWorkspacePreferenceScalarFieldEnum[]
@@ -50631,6 +51143,3807 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserWorkspacePreferenceInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model BackupRecord
+   */
+
+  export type AggregateBackupRecord = {
+    _count: BackupRecordCountAggregateOutputType | null
+    _avg: BackupRecordAvgAggregateOutputType | null
+    _sum: BackupRecordSumAggregateOutputType | null
+    _min: BackupRecordMinAggregateOutputType | null
+    _max: BackupRecordMaxAggregateOutputType | null
+  }
+
+  export type BackupRecordAvgAggregateOutputType = {
+    schemaVersion: number | null
+    byteCount: number | null
+  }
+
+  export type BackupRecordSumAggregateOutputType = {
+    schemaVersion: number | null
+    byteCount: bigint | null
+  }
+
+  export type BackupRecordMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    actorUserId: string | null
+    reason: string | null
+    state: string | null
+    schemaVersion: number | null
+    checksum: string | null
+    byteCount: bigint | null
+    errorCode: string | null
+    createdAt: Date | null
+    completedAt: Date | null
+  }
+
+  export type BackupRecordMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    actorUserId: string | null
+    reason: string | null
+    state: string | null
+    schemaVersion: number | null
+    checksum: string | null
+    byteCount: bigint | null
+    errorCode: string | null
+    createdAt: Date | null
+    completedAt: Date | null
+  }
+
+  export type BackupRecordCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    actorUserId: number
+    reason: number
+    state: number
+    schemaVersion: number
+    checksum: number
+    byteCount: number
+    counts: number
+    errorCode: number
+    createdAt: number
+    completedAt: number
+    _all: number
+  }
+
+
+  export type BackupRecordAvgAggregateInputType = {
+    schemaVersion?: true
+    byteCount?: true
+  }
+
+  export type BackupRecordSumAggregateInputType = {
+    schemaVersion?: true
+    byteCount?: true
+  }
+
+  export type BackupRecordMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    actorUserId?: true
+    reason?: true
+    state?: true
+    schemaVersion?: true
+    checksum?: true
+    byteCount?: true
+    errorCode?: true
+    createdAt?: true
+    completedAt?: true
+  }
+
+  export type BackupRecordMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    actorUserId?: true
+    reason?: true
+    state?: true
+    schemaVersion?: true
+    checksum?: true
+    byteCount?: true
+    errorCode?: true
+    createdAt?: true
+    completedAt?: true
+  }
+
+  export type BackupRecordCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    actorUserId?: true
+    reason?: true
+    state?: true
+    schemaVersion?: true
+    checksum?: true
+    byteCount?: true
+    counts?: true
+    errorCode?: true
+    createdAt?: true
+    completedAt?: true
+    _all?: true
+  }
+
+  export type BackupRecordAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BackupRecord to aggregate.
+     */
+    where?: BackupRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupRecords to fetch.
+     */
+    orderBy?: BackupRecordOrderByWithRelationInput | BackupRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BackupRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BackupRecords
+    **/
+    _count?: true | BackupRecordCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BackupRecordAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BackupRecordSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BackupRecordMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BackupRecordMaxAggregateInputType
+  }
+
+  export type GetBackupRecordAggregateType<T extends BackupRecordAggregateArgs> = {
+        [P in keyof T & keyof AggregateBackupRecord]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBackupRecord[P]>
+      : GetScalarType<T[P], AggregateBackupRecord[P]>
+  }
+
+
+
+
+  export type BackupRecordGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BackupRecordWhereInput
+    orderBy?: BackupRecordOrderByWithAggregationInput | BackupRecordOrderByWithAggregationInput[]
+    by: BackupRecordScalarFieldEnum[] | BackupRecordScalarFieldEnum
+    having?: BackupRecordScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BackupRecordCountAggregateInputType | true
+    _avg?: BackupRecordAvgAggregateInputType
+    _sum?: BackupRecordSumAggregateInputType
+    _min?: BackupRecordMinAggregateInputType
+    _max?: BackupRecordMaxAggregateInputType
+  }
+
+  export type BackupRecordGroupByOutputType = {
+    id: string
+    organizationId: string
+    actorUserId: string | null
+    reason: string
+    state: string
+    schemaVersion: number | null
+    checksum: string | null
+    byteCount: bigint | null
+    counts: JsonValue | null
+    errorCode: string | null
+    createdAt: Date
+    completedAt: Date | null
+    _count: BackupRecordCountAggregateOutputType | null
+    _avg: BackupRecordAvgAggregateOutputType | null
+    _sum: BackupRecordSumAggregateOutputType | null
+    _min: BackupRecordMinAggregateOutputType | null
+    _max: BackupRecordMaxAggregateOutputType | null
+  }
+
+  type GetBackupRecordGroupByPayload<T extends BackupRecordGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BackupRecordGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BackupRecordGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BackupRecordGroupByOutputType[P]>
+            : GetScalarType<T[P], BackupRecordGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BackupRecordSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    actorUserId?: boolean
+    reason?: boolean
+    state?: boolean
+    schemaVersion?: boolean
+    checksum?: boolean
+    byteCount?: boolean
+    counts?: boolean
+    errorCode?: boolean
+    createdAt?: boolean
+    completedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | BackupRecord$actorArgs<ExtArgs>
+    protectedByOperations?: boolean | BackupRecord$protectedByOperationsArgs<ExtArgs>
+    _count?: boolean | BackupRecordCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["backupRecord"]>
+
+  export type BackupRecordSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    actorUserId?: boolean
+    reason?: boolean
+    state?: boolean
+    schemaVersion?: boolean
+    checksum?: boolean
+    byteCount?: boolean
+    counts?: boolean
+    errorCode?: boolean
+    createdAt?: boolean
+    completedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | BackupRecord$actorArgs<ExtArgs>
+  }, ExtArgs["result"]["backupRecord"]>
+
+  export type BackupRecordSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    actorUserId?: boolean
+    reason?: boolean
+    state?: boolean
+    schemaVersion?: boolean
+    checksum?: boolean
+    byteCount?: boolean
+    counts?: boolean
+    errorCode?: boolean
+    createdAt?: boolean
+    completedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | BackupRecord$actorArgs<ExtArgs>
+  }, ExtArgs["result"]["backupRecord"]>
+
+  export type BackupRecordSelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    actorUserId?: boolean
+    reason?: boolean
+    state?: boolean
+    schemaVersion?: boolean
+    checksum?: boolean
+    byteCount?: boolean
+    counts?: boolean
+    errorCode?: boolean
+    createdAt?: boolean
+    completedAt?: boolean
+  }
+
+  export type BackupRecordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "actorUserId" | "reason" | "state" | "schemaVersion" | "checksum" | "byteCount" | "counts" | "errorCode" | "createdAt" | "completedAt", ExtArgs["result"]["backupRecord"]>
+  export type BackupRecordInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | BackupRecord$actorArgs<ExtArgs>
+    protectedByOperations?: boolean | BackupRecord$protectedByOperationsArgs<ExtArgs>
+    _count?: boolean | BackupRecordCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type BackupRecordIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | BackupRecord$actorArgs<ExtArgs>
+  }
+  export type BackupRecordIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | BackupRecord$actorArgs<ExtArgs>
+  }
+
+  export type $BackupRecordPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BackupRecord"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      actor: Prisma.$UserPayload<ExtArgs> | null
+      protectedByOperations: Prisma.$DataOperationPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      actorUserId: string | null
+      reason: string
+      state: string
+      schemaVersion: number | null
+      checksum: string | null
+      byteCount: bigint | null
+      counts: Prisma.JsonValue | null
+      errorCode: string | null
+      createdAt: Date
+      completedAt: Date | null
+    }, ExtArgs["result"]["backupRecord"]>
+    composites: {}
+  }
+
+  type BackupRecordGetPayload<S extends boolean | null | undefined | BackupRecordDefaultArgs> = $Result.GetResult<Prisma.$BackupRecordPayload, S>
+
+  type BackupRecordCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BackupRecordFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BackupRecordCountAggregateInputType | true
+    }
+
+  export interface BackupRecordDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BackupRecord'], meta: { name: 'BackupRecord' } }
+    /**
+     * Find zero or one BackupRecord that matches the filter.
+     * @param {BackupRecordFindUniqueArgs} args - Arguments to find a BackupRecord
+     * @example
+     * // Get one BackupRecord
+     * const backupRecord = await prisma.backupRecord.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BackupRecordFindUniqueArgs>(args: SelectSubset<T, BackupRecordFindUniqueArgs<ExtArgs>>): Prisma__BackupRecordClient<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BackupRecord that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BackupRecordFindUniqueOrThrowArgs} args - Arguments to find a BackupRecord
+     * @example
+     * // Get one BackupRecord
+     * const backupRecord = await prisma.backupRecord.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BackupRecordFindUniqueOrThrowArgs>(args: SelectSubset<T, BackupRecordFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BackupRecordClient<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BackupRecord that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupRecordFindFirstArgs} args - Arguments to find a BackupRecord
+     * @example
+     * // Get one BackupRecord
+     * const backupRecord = await prisma.backupRecord.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BackupRecordFindFirstArgs>(args?: SelectSubset<T, BackupRecordFindFirstArgs<ExtArgs>>): Prisma__BackupRecordClient<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BackupRecord that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupRecordFindFirstOrThrowArgs} args - Arguments to find a BackupRecord
+     * @example
+     * // Get one BackupRecord
+     * const backupRecord = await prisma.backupRecord.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BackupRecordFindFirstOrThrowArgs>(args?: SelectSubset<T, BackupRecordFindFirstOrThrowArgs<ExtArgs>>): Prisma__BackupRecordClient<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BackupRecords that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupRecordFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BackupRecords
+     * const backupRecords = await prisma.backupRecord.findMany()
+     * 
+     * // Get first 10 BackupRecords
+     * const backupRecords = await prisma.backupRecord.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const backupRecordWithIdOnly = await prisma.backupRecord.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BackupRecordFindManyArgs>(args?: SelectSubset<T, BackupRecordFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BackupRecord.
+     * @param {BackupRecordCreateArgs} args - Arguments to create a BackupRecord.
+     * @example
+     * // Create one BackupRecord
+     * const BackupRecord = await prisma.backupRecord.create({
+     *   data: {
+     *     // ... data to create a BackupRecord
+     *   }
+     * })
+     * 
+     */
+    create<T extends BackupRecordCreateArgs>(args: SelectSubset<T, BackupRecordCreateArgs<ExtArgs>>): Prisma__BackupRecordClient<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BackupRecords.
+     * @param {BackupRecordCreateManyArgs} args - Arguments to create many BackupRecords.
+     * @example
+     * // Create many BackupRecords
+     * const backupRecord = await prisma.backupRecord.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BackupRecordCreateManyArgs>(args?: SelectSubset<T, BackupRecordCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BackupRecords and returns the data saved in the database.
+     * @param {BackupRecordCreateManyAndReturnArgs} args - Arguments to create many BackupRecords.
+     * @example
+     * // Create many BackupRecords
+     * const backupRecord = await prisma.backupRecord.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BackupRecords and only return the `id`
+     * const backupRecordWithIdOnly = await prisma.backupRecord.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BackupRecordCreateManyAndReturnArgs>(args?: SelectSubset<T, BackupRecordCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BackupRecord.
+     * @param {BackupRecordDeleteArgs} args - Arguments to delete one BackupRecord.
+     * @example
+     * // Delete one BackupRecord
+     * const BackupRecord = await prisma.backupRecord.delete({
+     *   where: {
+     *     // ... filter to delete one BackupRecord
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BackupRecordDeleteArgs>(args: SelectSubset<T, BackupRecordDeleteArgs<ExtArgs>>): Prisma__BackupRecordClient<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BackupRecord.
+     * @param {BackupRecordUpdateArgs} args - Arguments to update one BackupRecord.
+     * @example
+     * // Update one BackupRecord
+     * const backupRecord = await prisma.backupRecord.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BackupRecordUpdateArgs>(args: SelectSubset<T, BackupRecordUpdateArgs<ExtArgs>>): Prisma__BackupRecordClient<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BackupRecords.
+     * @param {BackupRecordDeleteManyArgs} args - Arguments to filter BackupRecords to delete.
+     * @example
+     * // Delete a few BackupRecords
+     * const { count } = await prisma.backupRecord.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BackupRecordDeleteManyArgs>(args?: SelectSubset<T, BackupRecordDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BackupRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupRecordUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BackupRecords
+     * const backupRecord = await prisma.backupRecord.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BackupRecordUpdateManyArgs>(args: SelectSubset<T, BackupRecordUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BackupRecords and returns the data updated in the database.
+     * @param {BackupRecordUpdateManyAndReturnArgs} args - Arguments to update many BackupRecords.
+     * @example
+     * // Update many BackupRecords
+     * const backupRecord = await prisma.backupRecord.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BackupRecords and only return the `id`
+     * const backupRecordWithIdOnly = await prisma.backupRecord.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BackupRecordUpdateManyAndReturnArgs>(args: SelectSubset<T, BackupRecordUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BackupRecord.
+     * @param {BackupRecordUpsertArgs} args - Arguments to update or create a BackupRecord.
+     * @example
+     * // Update or create a BackupRecord
+     * const backupRecord = await prisma.backupRecord.upsert({
+     *   create: {
+     *     // ... data to create a BackupRecord
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BackupRecord we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BackupRecordUpsertArgs>(args: SelectSubset<T, BackupRecordUpsertArgs<ExtArgs>>): Prisma__BackupRecordClient<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BackupRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupRecordCountArgs} args - Arguments to filter BackupRecords to count.
+     * @example
+     * // Count the number of BackupRecords
+     * const count = await prisma.backupRecord.count({
+     *   where: {
+     *     // ... the filter for the BackupRecords we want to count
+     *   }
+     * })
+    **/
+    count<T extends BackupRecordCountArgs>(
+      args?: Subset<T, BackupRecordCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BackupRecordCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BackupRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupRecordAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BackupRecordAggregateArgs>(args: Subset<T, BackupRecordAggregateArgs>): Prisma.PrismaPromise<GetBackupRecordAggregateType<T>>
+
+    /**
+     * Group by BackupRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupRecordGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BackupRecordGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BackupRecordGroupByArgs['orderBy'] }
+        : { orderBy?: BackupRecordGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BackupRecordGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBackupRecordGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BackupRecord model
+   */
+  readonly fields: BackupRecordFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BackupRecord.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BackupRecordClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    actor<T extends BackupRecord$actorArgs<ExtArgs> = {}>(args?: Subset<T, BackupRecord$actorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    protectedByOperations<T extends BackupRecord$protectedByOperationsArgs<ExtArgs> = {}>(args?: Subset<T, BackupRecord$protectedByOperationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BackupRecord model
+   */
+  interface BackupRecordFieldRefs {
+    readonly id: FieldRef<"BackupRecord", 'String'>
+    readonly organizationId: FieldRef<"BackupRecord", 'String'>
+    readonly actorUserId: FieldRef<"BackupRecord", 'String'>
+    readonly reason: FieldRef<"BackupRecord", 'String'>
+    readonly state: FieldRef<"BackupRecord", 'String'>
+    readonly schemaVersion: FieldRef<"BackupRecord", 'Int'>
+    readonly checksum: FieldRef<"BackupRecord", 'String'>
+    readonly byteCount: FieldRef<"BackupRecord", 'BigInt'>
+    readonly counts: FieldRef<"BackupRecord", 'Json'>
+    readonly errorCode: FieldRef<"BackupRecord", 'String'>
+    readonly createdAt: FieldRef<"BackupRecord", 'DateTime'>
+    readonly completedAt: FieldRef<"BackupRecord", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BackupRecord findUnique
+   */
+  export type BackupRecordFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupRecord to fetch.
+     */
+    where: BackupRecordWhereUniqueInput
+  }
+
+  /**
+   * BackupRecord findUniqueOrThrow
+   */
+  export type BackupRecordFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupRecord to fetch.
+     */
+    where: BackupRecordWhereUniqueInput
+  }
+
+  /**
+   * BackupRecord findFirst
+   */
+  export type BackupRecordFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupRecord to fetch.
+     */
+    where?: BackupRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupRecords to fetch.
+     */
+    orderBy?: BackupRecordOrderByWithRelationInput | BackupRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BackupRecords.
+     */
+    cursor?: BackupRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BackupRecords.
+     */
+    distinct?: BackupRecordScalarFieldEnum | BackupRecordScalarFieldEnum[]
+  }
+
+  /**
+   * BackupRecord findFirstOrThrow
+   */
+  export type BackupRecordFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupRecord to fetch.
+     */
+    where?: BackupRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupRecords to fetch.
+     */
+    orderBy?: BackupRecordOrderByWithRelationInput | BackupRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BackupRecords.
+     */
+    cursor?: BackupRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BackupRecords.
+     */
+    distinct?: BackupRecordScalarFieldEnum | BackupRecordScalarFieldEnum[]
+  }
+
+  /**
+   * BackupRecord findMany
+   */
+  export type BackupRecordFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupRecords to fetch.
+     */
+    where?: BackupRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupRecords to fetch.
+     */
+    orderBy?: BackupRecordOrderByWithRelationInput | BackupRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BackupRecords.
+     */
+    cursor?: BackupRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BackupRecords.
+     */
+    distinct?: BackupRecordScalarFieldEnum | BackupRecordScalarFieldEnum[]
+  }
+
+  /**
+   * BackupRecord create
+   */
+  export type BackupRecordCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BackupRecord.
+     */
+    data: XOR<BackupRecordCreateInput, BackupRecordUncheckedCreateInput>
+  }
+
+  /**
+   * BackupRecord createMany
+   */
+  export type BackupRecordCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BackupRecords.
+     */
+    data: BackupRecordCreateManyInput | BackupRecordCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BackupRecord createManyAndReturn
+   */
+  export type BackupRecordCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * The data used to create many BackupRecords.
+     */
+    data: BackupRecordCreateManyInput | BackupRecordCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BackupRecord update
+   */
+  export type BackupRecordUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BackupRecord.
+     */
+    data: XOR<BackupRecordUpdateInput, BackupRecordUncheckedUpdateInput>
+    /**
+     * Choose, which BackupRecord to update.
+     */
+    where: BackupRecordWhereUniqueInput
+  }
+
+  /**
+   * BackupRecord updateMany
+   */
+  export type BackupRecordUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BackupRecords.
+     */
+    data: XOR<BackupRecordUpdateManyMutationInput, BackupRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which BackupRecords to update
+     */
+    where?: BackupRecordWhereInput
+    /**
+     * Limit how many BackupRecords to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BackupRecord updateManyAndReturn
+   */
+  export type BackupRecordUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * The data used to update BackupRecords.
+     */
+    data: XOR<BackupRecordUpdateManyMutationInput, BackupRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which BackupRecords to update
+     */
+    where?: BackupRecordWhereInput
+    /**
+     * Limit how many BackupRecords to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BackupRecord upsert
+   */
+  export type BackupRecordUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BackupRecord to update in case it exists.
+     */
+    where: BackupRecordWhereUniqueInput
+    /**
+     * In case the BackupRecord found by the `where` argument doesn't exist, create a new BackupRecord with this data.
+     */
+    create: XOR<BackupRecordCreateInput, BackupRecordUncheckedCreateInput>
+    /**
+     * In case the BackupRecord was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BackupRecordUpdateInput, BackupRecordUncheckedUpdateInput>
+  }
+
+  /**
+   * BackupRecord delete
+   */
+  export type BackupRecordDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    /**
+     * Filter which BackupRecord to delete.
+     */
+    where: BackupRecordWhereUniqueInput
+  }
+
+  /**
+   * BackupRecord deleteMany
+   */
+  export type BackupRecordDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BackupRecords to delete
+     */
+    where?: BackupRecordWhereInput
+    /**
+     * Limit how many BackupRecords to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BackupRecord.actor
+   */
+  export type BackupRecord$actorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * BackupRecord.protectedByOperations
+   */
+  export type BackupRecord$protectedByOperationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    where?: DataOperationWhereInput
+    orderBy?: DataOperationOrderByWithRelationInput | DataOperationOrderByWithRelationInput[]
+    cursor?: DataOperationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DataOperationScalarFieldEnum | DataOperationScalarFieldEnum[]
+  }
+
+  /**
+   * BackupRecord without action
+   */
+  export type BackupRecordDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DataOperation
+   */
+
+  export type AggregateDataOperation = {
+    _count: DataOperationCountAggregateOutputType | null
+    _avg: DataOperationAvgAggregateOutputType | null
+    _sum: DataOperationSumAggregateOutputType | null
+    _min: DataOperationMinAggregateOutputType | null
+    _max: DataOperationMaxAggregateOutputType | null
+  }
+
+  export type DataOperationAvgAggregateOutputType = {
+    processed: number | null
+    total: number | null
+    attempts: number | null
+  }
+
+  export type DataOperationSumAggregateOutputType = {
+    processed: number | null
+    total: number | null
+    attempts: number | null
+  }
+
+  export type DataOperationMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    actorUserId: string | null
+    kind: string | null
+    state: string | null
+    stage: string | null
+    processed: number | null
+    total: number | null
+    attempts: number | null
+    workerId: string | null
+    leaseUntil: Date | null
+    heartbeatAt: Date | null
+    errorCode: string | null
+    preventiveBackupId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    completedAt: Date | null
+  }
+
+  export type DataOperationMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    actorUserId: string | null
+    kind: string | null
+    state: string | null
+    stage: string | null
+    processed: number | null
+    total: number | null
+    attempts: number | null
+    workerId: string | null
+    leaseUntil: Date | null
+    heartbeatAt: Date | null
+    errorCode: string | null
+    preventiveBackupId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    completedAt: Date | null
+  }
+
+  export type DataOperationCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    actorUserId: number
+    kind: number
+    state: number
+    payload: number
+    checkpoint: number
+    stage: number
+    processed: number
+    total: number
+    attempts: number
+    workerId: number
+    leaseUntil: number
+    heartbeatAt: number
+    errorCode: number
+    preventiveBackupId: number
+    createdAt: number
+    updatedAt: number
+    completedAt: number
+    _all: number
+  }
+
+
+  export type DataOperationAvgAggregateInputType = {
+    processed?: true
+    total?: true
+    attempts?: true
+  }
+
+  export type DataOperationSumAggregateInputType = {
+    processed?: true
+    total?: true
+    attempts?: true
+  }
+
+  export type DataOperationMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    actorUserId?: true
+    kind?: true
+    state?: true
+    stage?: true
+    processed?: true
+    total?: true
+    attempts?: true
+    workerId?: true
+    leaseUntil?: true
+    heartbeatAt?: true
+    errorCode?: true
+    preventiveBackupId?: true
+    createdAt?: true
+    updatedAt?: true
+    completedAt?: true
+  }
+
+  export type DataOperationMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    actorUserId?: true
+    kind?: true
+    state?: true
+    stage?: true
+    processed?: true
+    total?: true
+    attempts?: true
+    workerId?: true
+    leaseUntil?: true
+    heartbeatAt?: true
+    errorCode?: true
+    preventiveBackupId?: true
+    createdAt?: true
+    updatedAt?: true
+    completedAt?: true
+  }
+
+  export type DataOperationCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    actorUserId?: true
+    kind?: true
+    state?: true
+    payload?: true
+    checkpoint?: true
+    stage?: true
+    processed?: true
+    total?: true
+    attempts?: true
+    workerId?: true
+    leaseUntil?: true
+    heartbeatAt?: true
+    errorCode?: true
+    preventiveBackupId?: true
+    createdAt?: true
+    updatedAt?: true
+    completedAt?: true
+    _all?: true
+  }
+
+  export type DataOperationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DataOperation to aggregate.
+     */
+    where?: DataOperationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DataOperations to fetch.
+     */
+    orderBy?: DataOperationOrderByWithRelationInput | DataOperationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DataOperationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DataOperations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DataOperations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DataOperations
+    **/
+    _count?: true | DataOperationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DataOperationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DataOperationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DataOperationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DataOperationMaxAggregateInputType
+  }
+
+  export type GetDataOperationAggregateType<T extends DataOperationAggregateArgs> = {
+        [P in keyof T & keyof AggregateDataOperation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDataOperation[P]>
+      : GetScalarType<T[P], AggregateDataOperation[P]>
+  }
+
+
+
+
+  export type DataOperationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DataOperationWhereInput
+    orderBy?: DataOperationOrderByWithAggregationInput | DataOperationOrderByWithAggregationInput[]
+    by: DataOperationScalarFieldEnum[] | DataOperationScalarFieldEnum
+    having?: DataOperationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DataOperationCountAggregateInputType | true
+    _avg?: DataOperationAvgAggregateInputType
+    _sum?: DataOperationSumAggregateInputType
+    _min?: DataOperationMinAggregateInputType
+    _max?: DataOperationMaxAggregateInputType
+  }
+
+  export type DataOperationGroupByOutputType = {
+    id: string
+    organizationId: string
+    actorUserId: string | null
+    kind: string
+    state: string
+    payload: JsonValue
+    checkpoint: JsonValue
+    stage: string
+    processed: number
+    total: number | null
+    attempts: number
+    workerId: string | null
+    leaseUntil: Date | null
+    heartbeatAt: Date | null
+    errorCode: string | null
+    preventiveBackupId: string | null
+    createdAt: Date
+    updatedAt: Date
+    completedAt: Date | null
+    _count: DataOperationCountAggregateOutputType | null
+    _avg: DataOperationAvgAggregateOutputType | null
+    _sum: DataOperationSumAggregateOutputType | null
+    _min: DataOperationMinAggregateOutputType | null
+    _max: DataOperationMaxAggregateOutputType | null
+  }
+
+  type GetDataOperationGroupByPayload<T extends DataOperationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DataOperationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DataOperationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DataOperationGroupByOutputType[P]>
+            : GetScalarType<T[P], DataOperationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DataOperationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    actorUserId?: boolean
+    kind?: boolean
+    state?: boolean
+    payload?: boolean
+    checkpoint?: boolean
+    stage?: boolean
+    processed?: boolean
+    total?: boolean
+    attempts?: boolean
+    workerId?: boolean
+    leaseUntil?: boolean
+    heartbeatAt?: boolean
+    errorCode?: boolean
+    preventiveBackupId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    completedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | DataOperation$actorArgs<ExtArgs>
+    preventiveBackup?: boolean | DataOperation$preventiveBackupArgs<ExtArgs>
+  }, ExtArgs["result"]["dataOperation"]>
+
+  export type DataOperationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    actorUserId?: boolean
+    kind?: boolean
+    state?: boolean
+    payload?: boolean
+    checkpoint?: boolean
+    stage?: boolean
+    processed?: boolean
+    total?: boolean
+    attempts?: boolean
+    workerId?: boolean
+    leaseUntil?: boolean
+    heartbeatAt?: boolean
+    errorCode?: boolean
+    preventiveBackupId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    completedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | DataOperation$actorArgs<ExtArgs>
+    preventiveBackup?: boolean | DataOperation$preventiveBackupArgs<ExtArgs>
+  }, ExtArgs["result"]["dataOperation"]>
+
+  export type DataOperationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    actorUserId?: boolean
+    kind?: boolean
+    state?: boolean
+    payload?: boolean
+    checkpoint?: boolean
+    stage?: boolean
+    processed?: boolean
+    total?: boolean
+    attempts?: boolean
+    workerId?: boolean
+    leaseUntil?: boolean
+    heartbeatAt?: boolean
+    errorCode?: boolean
+    preventiveBackupId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    completedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | DataOperation$actorArgs<ExtArgs>
+    preventiveBackup?: boolean | DataOperation$preventiveBackupArgs<ExtArgs>
+  }, ExtArgs["result"]["dataOperation"]>
+
+  export type DataOperationSelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    actorUserId?: boolean
+    kind?: boolean
+    state?: boolean
+    payload?: boolean
+    checkpoint?: boolean
+    stage?: boolean
+    processed?: boolean
+    total?: boolean
+    attempts?: boolean
+    workerId?: boolean
+    leaseUntil?: boolean
+    heartbeatAt?: boolean
+    errorCode?: boolean
+    preventiveBackupId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    completedAt?: boolean
+  }
+
+  export type DataOperationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "actorUserId" | "kind" | "state" | "payload" | "checkpoint" | "stage" | "processed" | "total" | "attempts" | "workerId" | "leaseUntil" | "heartbeatAt" | "errorCode" | "preventiveBackupId" | "createdAt" | "updatedAt" | "completedAt", ExtArgs["result"]["dataOperation"]>
+  export type DataOperationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | DataOperation$actorArgs<ExtArgs>
+    preventiveBackup?: boolean | DataOperation$preventiveBackupArgs<ExtArgs>
+  }
+  export type DataOperationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | DataOperation$actorArgs<ExtArgs>
+    preventiveBackup?: boolean | DataOperation$preventiveBackupArgs<ExtArgs>
+  }
+  export type DataOperationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    actor?: boolean | DataOperation$actorArgs<ExtArgs>
+    preventiveBackup?: boolean | DataOperation$preventiveBackupArgs<ExtArgs>
+  }
+
+  export type $DataOperationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DataOperation"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      actor: Prisma.$UserPayload<ExtArgs> | null
+      preventiveBackup: Prisma.$BackupRecordPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      actorUserId: string | null
+      kind: string
+      state: string
+      payload: Prisma.JsonValue
+      checkpoint: Prisma.JsonValue
+      stage: string
+      processed: number
+      total: number | null
+      attempts: number
+      workerId: string | null
+      leaseUntil: Date | null
+      heartbeatAt: Date | null
+      errorCode: string | null
+      preventiveBackupId: string | null
+      createdAt: Date
+      updatedAt: Date
+      completedAt: Date | null
+    }, ExtArgs["result"]["dataOperation"]>
+    composites: {}
+  }
+
+  type DataOperationGetPayload<S extends boolean | null | undefined | DataOperationDefaultArgs> = $Result.GetResult<Prisma.$DataOperationPayload, S>
+
+  type DataOperationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DataOperationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DataOperationCountAggregateInputType | true
+    }
+
+  export interface DataOperationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DataOperation'], meta: { name: 'DataOperation' } }
+    /**
+     * Find zero or one DataOperation that matches the filter.
+     * @param {DataOperationFindUniqueArgs} args - Arguments to find a DataOperation
+     * @example
+     * // Get one DataOperation
+     * const dataOperation = await prisma.dataOperation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DataOperationFindUniqueArgs>(args: SelectSubset<T, DataOperationFindUniqueArgs<ExtArgs>>): Prisma__DataOperationClient<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DataOperation that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DataOperationFindUniqueOrThrowArgs} args - Arguments to find a DataOperation
+     * @example
+     * // Get one DataOperation
+     * const dataOperation = await prisma.dataOperation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DataOperationFindUniqueOrThrowArgs>(args: SelectSubset<T, DataOperationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DataOperationClient<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DataOperation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DataOperationFindFirstArgs} args - Arguments to find a DataOperation
+     * @example
+     * // Get one DataOperation
+     * const dataOperation = await prisma.dataOperation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DataOperationFindFirstArgs>(args?: SelectSubset<T, DataOperationFindFirstArgs<ExtArgs>>): Prisma__DataOperationClient<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DataOperation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DataOperationFindFirstOrThrowArgs} args - Arguments to find a DataOperation
+     * @example
+     * // Get one DataOperation
+     * const dataOperation = await prisma.dataOperation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DataOperationFindFirstOrThrowArgs>(args?: SelectSubset<T, DataOperationFindFirstOrThrowArgs<ExtArgs>>): Prisma__DataOperationClient<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DataOperations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DataOperationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DataOperations
+     * const dataOperations = await prisma.dataOperation.findMany()
+     * 
+     * // Get first 10 DataOperations
+     * const dataOperations = await prisma.dataOperation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const dataOperationWithIdOnly = await prisma.dataOperation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DataOperationFindManyArgs>(args?: SelectSubset<T, DataOperationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DataOperation.
+     * @param {DataOperationCreateArgs} args - Arguments to create a DataOperation.
+     * @example
+     * // Create one DataOperation
+     * const DataOperation = await prisma.dataOperation.create({
+     *   data: {
+     *     // ... data to create a DataOperation
+     *   }
+     * })
+     * 
+     */
+    create<T extends DataOperationCreateArgs>(args: SelectSubset<T, DataOperationCreateArgs<ExtArgs>>): Prisma__DataOperationClient<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DataOperations.
+     * @param {DataOperationCreateManyArgs} args - Arguments to create many DataOperations.
+     * @example
+     * // Create many DataOperations
+     * const dataOperation = await prisma.dataOperation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DataOperationCreateManyArgs>(args?: SelectSubset<T, DataOperationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DataOperations and returns the data saved in the database.
+     * @param {DataOperationCreateManyAndReturnArgs} args - Arguments to create many DataOperations.
+     * @example
+     * // Create many DataOperations
+     * const dataOperation = await prisma.dataOperation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DataOperations and only return the `id`
+     * const dataOperationWithIdOnly = await prisma.dataOperation.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DataOperationCreateManyAndReturnArgs>(args?: SelectSubset<T, DataOperationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DataOperation.
+     * @param {DataOperationDeleteArgs} args - Arguments to delete one DataOperation.
+     * @example
+     * // Delete one DataOperation
+     * const DataOperation = await prisma.dataOperation.delete({
+     *   where: {
+     *     // ... filter to delete one DataOperation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DataOperationDeleteArgs>(args: SelectSubset<T, DataOperationDeleteArgs<ExtArgs>>): Prisma__DataOperationClient<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DataOperation.
+     * @param {DataOperationUpdateArgs} args - Arguments to update one DataOperation.
+     * @example
+     * // Update one DataOperation
+     * const dataOperation = await prisma.dataOperation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DataOperationUpdateArgs>(args: SelectSubset<T, DataOperationUpdateArgs<ExtArgs>>): Prisma__DataOperationClient<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DataOperations.
+     * @param {DataOperationDeleteManyArgs} args - Arguments to filter DataOperations to delete.
+     * @example
+     * // Delete a few DataOperations
+     * const { count } = await prisma.dataOperation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DataOperationDeleteManyArgs>(args?: SelectSubset<T, DataOperationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DataOperations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DataOperationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DataOperations
+     * const dataOperation = await prisma.dataOperation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DataOperationUpdateManyArgs>(args: SelectSubset<T, DataOperationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DataOperations and returns the data updated in the database.
+     * @param {DataOperationUpdateManyAndReturnArgs} args - Arguments to update many DataOperations.
+     * @example
+     * // Update many DataOperations
+     * const dataOperation = await prisma.dataOperation.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DataOperations and only return the `id`
+     * const dataOperationWithIdOnly = await prisma.dataOperation.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DataOperationUpdateManyAndReturnArgs>(args: SelectSubset<T, DataOperationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DataOperation.
+     * @param {DataOperationUpsertArgs} args - Arguments to update or create a DataOperation.
+     * @example
+     * // Update or create a DataOperation
+     * const dataOperation = await prisma.dataOperation.upsert({
+     *   create: {
+     *     // ... data to create a DataOperation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DataOperation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DataOperationUpsertArgs>(args: SelectSubset<T, DataOperationUpsertArgs<ExtArgs>>): Prisma__DataOperationClient<$Result.GetResult<Prisma.$DataOperationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DataOperations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DataOperationCountArgs} args - Arguments to filter DataOperations to count.
+     * @example
+     * // Count the number of DataOperations
+     * const count = await prisma.dataOperation.count({
+     *   where: {
+     *     // ... the filter for the DataOperations we want to count
+     *   }
+     * })
+    **/
+    count<T extends DataOperationCountArgs>(
+      args?: Subset<T, DataOperationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DataOperationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DataOperation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DataOperationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DataOperationAggregateArgs>(args: Subset<T, DataOperationAggregateArgs>): Prisma.PrismaPromise<GetDataOperationAggregateType<T>>
+
+    /**
+     * Group by DataOperation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DataOperationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DataOperationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DataOperationGroupByArgs['orderBy'] }
+        : { orderBy?: DataOperationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DataOperationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDataOperationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DataOperation model
+   */
+  readonly fields: DataOperationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DataOperation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DataOperationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    actor<T extends DataOperation$actorArgs<ExtArgs> = {}>(args?: Subset<T, DataOperation$actorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    preventiveBackup<T extends DataOperation$preventiveBackupArgs<ExtArgs> = {}>(args?: Subset<T, DataOperation$preventiveBackupArgs<ExtArgs>>): Prisma__BackupRecordClient<$Result.GetResult<Prisma.$BackupRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DataOperation model
+   */
+  interface DataOperationFieldRefs {
+    readonly id: FieldRef<"DataOperation", 'String'>
+    readonly organizationId: FieldRef<"DataOperation", 'String'>
+    readonly actorUserId: FieldRef<"DataOperation", 'String'>
+    readonly kind: FieldRef<"DataOperation", 'String'>
+    readonly state: FieldRef<"DataOperation", 'String'>
+    readonly payload: FieldRef<"DataOperation", 'Json'>
+    readonly checkpoint: FieldRef<"DataOperation", 'Json'>
+    readonly stage: FieldRef<"DataOperation", 'String'>
+    readonly processed: FieldRef<"DataOperation", 'Int'>
+    readonly total: FieldRef<"DataOperation", 'Int'>
+    readonly attempts: FieldRef<"DataOperation", 'Int'>
+    readonly workerId: FieldRef<"DataOperation", 'String'>
+    readonly leaseUntil: FieldRef<"DataOperation", 'DateTime'>
+    readonly heartbeatAt: FieldRef<"DataOperation", 'DateTime'>
+    readonly errorCode: FieldRef<"DataOperation", 'String'>
+    readonly preventiveBackupId: FieldRef<"DataOperation", 'String'>
+    readonly createdAt: FieldRef<"DataOperation", 'DateTime'>
+    readonly updatedAt: FieldRef<"DataOperation", 'DateTime'>
+    readonly completedAt: FieldRef<"DataOperation", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DataOperation findUnique
+   */
+  export type DataOperationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    /**
+     * Filter, which DataOperation to fetch.
+     */
+    where: DataOperationWhereUniqueInput
+  }
+
+  /**
+   * DataOperation findUniqueOrThrow
+   */
+  export type DataOperationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    /**
+     * Filter, which DataOperation to fetch.
+     */
+    where: DataOperationWhereUniqueInput
+  }
+
+  /**
+   * DataOperation findFirst
+   */
+  export type DataOperationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    /**
+     * Filter, which DataOperation to fetch.
+     */
+    where?: DataOperationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DataOperations to fetch.
+     */
+    orderBy?: DataOperationOrderByWithRelationInput | DataOperationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DataOperations.
+     */
+    cursor?: DataOperationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DataOperations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DataOperations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DataOperations.
+     */
+    distinct?: DataOperationScalarFieldEnum | DataOperationScalarFieldEnum[]
+  }
+
+  /**
+   * DataOperation findFirstOrThrow
+   */
+  export type DataOperationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    /**
+     * Filter, which DataOperation to fetch.
+     */
+    where?: DataOperationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DataOperations to fetch.
+     */
+    orderBy?: DataOperationOrderByWithRelationInput | DataOperationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DataOperations.
+     */
+    cursor?: DataOperationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DataOperations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DataOperations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DataOperations.
+     */
+    distinct?: DataOperationScalarFieldEnum | DataOperationScalarFieldEnum[]
+  }
+
+  /**
+   * DataOperation findMany
+   */
+  export type DataOperationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    /**
+     * Filter, which DataOperations to fetch.
+     */
+    where?: DataOperationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DataOperations to fetch.
+     */
+    orderBy?: DataOperationOrderByWithRelationInput | DataOperationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DataOperations.
+     */
+    cursor?: DataOperationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DataOperations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DataOperations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DataOperations.
+     */
+    distinct?: DataOperationScalarFieldEnum | DataOperationScalarFieldEnum[]
+  }
+
+  /**
+   * DataOperation create
+   */
+  export type DataOperationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DataOperation.
+     */
+    data: XOR<DataOperationCreateInput, DataOperationUncheckedCreateInput>
+  }
+
+  /**
+   * DataOperation createMany
+   */
+  export type DataOperationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DataOperations.
+     */
+    data: DataOperationCreateManyInput | DataOperationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DataOperation createManyAndReturn
+   */
+  export type DataOperationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * The data used to create many DataOperations.
+     */
+    data: DataOperationCreateManyInput | DataOperationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DataOperation update
+   */
+  export type DataOperationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DataOperation.
+     */
+    data: XOR<DataOperationUpdateInput, DataOperationUncheckedUpdateInput>
+    /**
+     * Choose, which DataOperation to update.
+     */
+    where: DataOperationWhereUniqueInput
+  }
+
+  /**
+   * DataOperation updateMany
+   */
+  export type DataOperationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DataOperations.
+     */
+    data: XOR<DataOperationUpdateManyMutationInput, DataOperationUncheckedUpdateManyInput>
+    /**
+     * Filter which DataOperations to update
+     */
+    where?: DataOperationWhereInput
+    /**
+     * Limit how many DataOperations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DataOperation updateManyAndReturn
+   */
+  export type DataOperationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * The data used to update DataOperations.
+     */
+    data: XOR<DataOperationUpdateManyMutationInput, DataOperationUncheckedUpdateManyInput>
+    /**
+     * Filter which DataOperations to update
+     */
+    where?: DataOperationWhereInput
+    /**
+     * Limit how many DataOperations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DataOperation upsert
+   */
+  export type DataOperationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DataOperation to update in case it exists.
+     */
+    where: DataOperationWhereUniqueInput
+    /**
+     * In case the DataOperation found by the `where` argument doesn't exist, create a new DataOperation with this data.
+     */
+    create: XOR<DataOperationCreateInput, DataOperationUncheckedCreateInput>
+    /**
+     * In case the DataOperation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DataOperationUpdateInput, DataOperationUncheckedUpdateInput>
+  }
+
+  /**
+   * DataOperation delete
+   */
+  export type DataOperationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+    /**
+     * Filter which DataOperation to delete.
+     */
+    where: DataOperationWhereUniqueInput
+  }
+
+  /**
+   * DataOperation deleteMany
+   */
+  export type DataOperationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DataOperations to delete
+     */
+    where?: DataOperationWhereInput
+    /**
+     * Limit how many DataOperations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DataOperation.actor
+   */
+  export type DataOperation$actorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * DataOperation.preventiveBackup
+   */
+  export type DataOperation$preventiveBackupArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupRecord
+     */
+    select?: BackupRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupRecord
+     */
+    omit?: BackupRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupRecordInclude<ExtArgs> | null
+    where?: BackupRecordWhereInput
+  }
+
+  /**
+   * DataOperation without action
+   */
+  export type DataOperationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DataOperation
+     */
+    select?: DataOperationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DataOperation
+     */
+    omit?: DataOperationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DataOperationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model BackupSchedule
+   */
+
+  export type AggregateBackupSchedule = {
+    _count: BackupScheduleCountAggregateOutputType | null
+    _avg: BackupScheduleAvgAggregateOutputType | null
+    _sum: BackupScheduleSumAggregateOutputType | null
+    _min: BackupScheduleMinAggregateOutputType | null
+    _max: BackupScheduleMaxAggregateOutputType | null
+  }
+
+  export type BackupScheduleAvgAggregateOutputType = {
+    weekday: number | null
+    intervalMinutes: number | null
+    retentionCount: number | null
+  }
+
+  export type BackupScheduleSumAggregateOutputType = {
+    weekday: number | null
+    intervalMinutes: number | null
+    retentionCount: number | null
+  }
+
+  export type BackupScheduleMinAggregateOutputType = {
+    organizationId: string | null
+    enabled: boolean | null
+    frequency: string | null
+    localTime: string | null
+    weekday: number | null
+    intervalMinutes: number | null
+    retentionCount: number | null
+    timezone: string | null
+    nextRunAt: Date | null
+    lastScheduledAt: Date | null
+    updatedBy: string | null
+    updatedAt: Date | null
+  }
+
+  export type BackupScheduleMaxAggregateOutputType = {
+    organizationId: string | null
+    enabled: boolean | null
+    frequency: string | null
+    localTime: string | null
+    weekday: number | null
+    intervalMinutes: number | null
+    retentionCount: number | null
+    timezone: string | null
+    nextRunAt: Date | null
+    lastScheduledAt: Date | null
+    updatedBy: string | null
+    updatedAt: Date | null
+  }
+
+  export type BackupScheduleCountAggregateOutputType = {
+    organizationId: number
+    enabled: number
+    frequency: number
+    localTime: number
+    weekday: number
+    intervalMinutes: number
+    retentionCount: number
+    timezone: number
+    nextRunAt: number
+    lastScheduledAt: number
+    updatedBy: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type BackupScheduleAvgAggregateInputType = {
+    weekday?: true
+    intervalMinutes?: true
+    retentionCount?: true
+  }
+
+  export type BackupScheduleSumAggregateInputType = {
+    weekday?: true
+    intervalMinutes?: true
+    retentionCount?: true
+  }
+
+  export type BackupScheduleMinAggregateInputType = {
+    organizationId?: true
+    enabled?: true
+    frequency?: true
+    localTime?: true
+    weekday?: true
+    intervalMinutes?: true
+    retentionCount?: true
+    timezone?: true
+    nextRunAt?: true
+    lastScheduledAt?: true
+    updatedBy?: true
+    updatedAt?: true
+  }
+
+  export type BackupScheduleMaxAggregateInputType = {
+    organizationId?: true
+    enabled?: true
+    frequency?: true
+    localTime?: true
+    weekday?: true
+    intervalMinutes?: true
+    retentionCount?: true
+    timezone?: true
+    nextRunAt?: true
+    lastScheduledAt?: true
+    updatedBy?: true
+    updatedAt?: true
+  }
+
+  export type BackupScheduleCountAggregateInputType = {
+    organizationId?: true
+    enabled?: true
+    frequency?: true
+    localTime?: true
+    weekday?: true
+    intervalMinutes?: true
+    retentionCount?: true
+    timezone?: true
+    nextRunAt?: true
+    lastScheduledAt?: true
+    updatedBy?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type BackupScheduleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BackupSchedule to aggregate.
+     */
+    where?: BackupScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupSchedules to fetch.
+     */
+    orderBy?: BackupScheduleOrderByWithRelationInput | BackupScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BackupScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BackupSchedules
+    **/
+    _count?: true | BackupScheduleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BackupScheduleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BackupScheduleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BackupScheduleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BackupScheduleMaxAggregateInputType
+  }
+
+  export type GetBackupScheduleAggregateType<T extends BackupScheduleAggregateArgs> = {
+        [P in keyof T & keyof AggregateBackupSchedule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBackupSchedule[P]>
+      : GetScalarType<T[P], AggregateBackupSchedule[P]>
+  }
+
+
+
+
+  export type BackupScheduleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BackupScheduleWhereInput
+    orderBy?: BackupScheduleOrderByWithAggregationInput | BackupScheduleOrderByWithAggregationInput[]
+    by: BackupScheduleScalarFieldEnum[] | BackupScheduleScalarFieldEnum
+    having?: BackupScheduleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BackupScheduleCountAggregateInputType | true
+    _avg?: BackupScheduleAvgAggregateInputType
+    _sum?: BackupScheduleSumAggregateInputType
+    _min?: BackupScheduleMinAggregateInputType
+    _max?: BackupScheduleMaxAggregateInputType
+  }
+
+  export type BackupScheduleGroupByOutputType = {
+    organizationId: string
+    enabled: boolean
+    frequency: string
+    localTime: string
+    weekday: number
+    intervalMinutes: number | null
+    retentionCount: number
+    timezone: string
+    nextRunAt: Date | null
+    lastScheduledAt: Date | null
+    updatedBy: string | null
+    updatedAt: Date
+    _count: BackupScheduleCountAggregateOutputType | null
+    _avg: BackupScheduleAvgAggregateOutputType | null
+    _sum: BackupScheduleSumAggregateOutputType | null
+    _min: BackupScheduleMinAggregateOutputType | null
+    _max: BackupScheduleMaxAggregateOutputType | null
+  }
+
+  type GetBackupScheduleGroupByPayload<T extends BackupScheduleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BackupScheduleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BackupScheduleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BackupScheduleGroupByOutputType[P]>
+            : GetScalarType<T[P], BackupScheduleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BackupScheduleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    organizationId?: boolean
+    enabled?: boolean
+    frequency?: boolean
+    localTime?: boolean
+    weekday?: boolean
+    intervalMinutes?: boolean
+    retentionCount?: boolean
+    timezone?: boolean
+    nextRunAt?: boolean
+    lastScheduledAt?: boolean
+    updatedBy?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    updater?: boolean | BackupSchedule$updaterArgs<ExtArgs>
+  }, ExtArgs["result"]["backupSchedule"]>
+
+  export type BackupScheduleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    organizationId?: boolean
+    enabled?: boolean
+    frequency?: boolean
+    localTime?: boolean
+    weekday?: boolean
+    intervalMinutes?: boolean
+    retentionCount?: boolean
+    timezone?: boolean
+    nextRunAt?: boolean
+    lastScheduledAt?: boolean
+    updatedBy?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    updater?: boolean | BackupSchedule$updaterArgs<ExtArgs>
+  }, ExtArgs["result"]["backupSchedule"]>
+
+  export type BackupScheduleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    organizationId?: boolean
+    enabled?: boolean
+    frequency?: boolean
+    localTime?: boolean
+    weekday?: boolean
+    intervalMinutes?: boolean
+    retentionCount?: boolean
+    timezone?: boolean
+    nextRunAt?: boolean
+    lastScheduledAt?: boolean
+    updatedBy?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    updater?: boolean | BackupSchedule$updaterArgs<ExtArgs>
+  }, ExtArgs["result"]["backupSchedule"]>
+
+  export type BackupScheduleSelectScalar = {
+    organizationId?: boolean
+    enabled?: boolean
+    frequency?: boolean
+    localTime?: boolean
+    weekday?: boolean
+    intervalMinutes?: boolean
+    retentionCount?: boolean
+    timezone?: boolean
+    nextRunAt?: boolean
+    lastScheduledAt?: boolean
+    updatedBy?: boolean
+    updatedAt?: boolean
+  }
+
+  export type BackupScheduleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"organizationId" | "enabled" | "frequency" | "localTime" | "weekday" | "intervalMinutes" | "retentionCount" | "timezone" | "nextRunAt" | "lastScheduledAt" | "updatedBy" | "updatedAt", ExtArgs["result"]["backupSchedule"]>
+  export type BackupScheduleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    updater?: boolean | BackupSchedule$updaterArgs<ExtArgs>
+  }
+  export type BackupScheduleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    updater?: boolean | BackupSchedule$updaterArgs<ExtArgs>
+  }
+  export type BackupScheduleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    updater?: boolean | BackupSchedule$updaterArgs<ExtArgs>
+  }
+
+  export type $BackupSchedulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BackupSchedule"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      updater: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      organizationId: string
+      enabled: boolean
+      frequency: string
+      localTime: string
+      weekday: number
+      intervalMinutes: number | null
+      retentionCount: number
+      timezone: string
+      nextRunAt: Date | null
+      lastScheduledAt: Date | null
+      updatedBy: string | null
+      updatedAt: Date
+    }, ExtArgs["result"]["backupSchedule"]>
+    composites: {}
+  }
+
+  type BackupScheduleGetPayload<S extends boolean | null | undefined | BackupScheduleDefaultArgs> = $Result.GetResult<Prisma.$BackupSchedulePayload, S>
+
+  type BackupScheduleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BackupScheduleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BackupScheduleCountAggregateInputType | true
+    }
+
+  export interface BackupScheduleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BackupSchedule'], meta: { name: 'BackupSchedule' } }
+    /**
+     * Find zero or one BackupSchedule that matches the filter.
+     * @param {BackupScheduleFindUniqueArgs} args - Arguments to find a BackupSchedule
+     * @example
+     * // Get one BackupSchedule
+     * const backupSchedule = await prisma.backupSchedule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BackupScheduleFindUniqueArgs>(args: SelectSubset<T, BackupScheduleFindUniqueArgs<ExtArgs>>): Prisma__BackupScheduleClient<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BackupSchedule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BackupScheduleFindUniqueOrThrowArgs} args - Arguments to find a BackupSchedule
+     * @example
+     * // Get one BackupSchedule
+     * const backupSchedule = await prisma.backupSchedule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BackupScheduleFindUniqueOrThrowArgs>(args: SelectSubset<T, BackupScheduleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BackupScheduleClient<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BackupSchedule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupScheduleFindFirstArgs} args - Arguments to find a BackupSchedule
+     * @example
+     * // Get one BackupSchedule
+     * const backupSchedule = await prisma.backupSchedule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BackupScheduleFindFirstArgs>(args?: SelectSubset<T, BackupScheduleFindFirstArgs<ExtArgs>>): Prisma__BackupScheduleClient<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BackupSchedule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupScheduleFindFirstOrThrowArgs} args - Arguments to find a BackupSchedule
+     * @example
+     * // Get one BackupSchedule
+     * const backupSchedule = await prisma.backupSchedule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BackupScheduleFindFirstOrThrowArgs>(args?: SelectSubset<T, BackupScheduleFindFirstOrThrowArgs<ExtArgs>>): Prisma__BackupScheduleClient<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BackupSchedules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupScheduleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BackupSchedules
+     * const backupSchedules = await prisma.backupSchedule.findMany()
+     * 
+     * // Get first 10 BackupSchedules
+     * const backupSchedules = await prisma.backupSchedule.findMany({ take: 10 })
+     * 
+     * // Only select the `organizationId`
+     * const backupScheduleWithOrganizationIdOnly = await prisma.backupSchedule.findMany({ select: { organizationId: true } })
+     * 
+     */
+    findMany<T extends BackupScheduleFindManyArgs>(args?: SelectSubset<T, BackupScheduleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BackupSchedule.
+     * @param {BackupScheduleCreateArgs} args - Arguments to create a BackupSchedule.
+     * @example
+     * // Create one BackupSchedule
+     * const BackupSchedule = await prisma.backupSchedule.create({
+     *   data: {
+     *     // ... data to create a BackupSchedule
+     *   }
+     * })
+     * 
+     */
+    create<T extends BackupScheduleCreateArgs>(args: SelectSubset<T, BackupScheduleCreateArgs<ExtArgs>>): Prisma__BackupScheduleClient<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BackupSchedules.
+     * @param {BackupScheduleCreateManyArgs} args - Arguments to create many BackupSchedules.
+     * @example
+     * // Create many BackupSchedules
+     * const backupSchedule = await prisma.backupSchedule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BackupScheduleCreateManyArgs>(args?: SelectSubset<T, BackupScheduleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BackupSchedules and returns the data saved in the database.
+     * @param {BackupScheduleCreateManyAndReturnArgs} args - Arguments to create many BackupSchedules.
+     * @example
+     * // Create many BackupSchedules
+     * const backupSchedule = await prisma.backupSchedule.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BackupSchedules and only return the `organizationId`
+     * const backupScheduleWithOrganizationIdOnly = await prisma.backupSchedule.createManyAndReturn({
+     *   select: { organizationId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BackupScheduleCreateManyAndReturnArgs>(args?: SelectSubset<T, BackupScheduleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BackupSchedule.
+     * @param {BackupScheduleDeleteArgs} args - Arguments to delete one BackupSchedule.
+     * @example
+     * // Delete one BackupSchedule
+     * const BackupSchedule = await prisma.backupSchedule.delete({
+     *   where: {
+     *     // ... filter to delete one BackupSchedule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BackupScheduleDeleteArgs>(args: SelectSubset<T, BackupScheduleDeleteArgs<ExtArgs>>): Prisma__BackupScheduleClient<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BackupSchedule.
+     * @param {BackupScheduleUpdateArgs} args - Arguments to update one BackupSchedule.
+     * @example
+     * // Update one BackupSchedule
+     * const backupSchedule = await prisma.backupSchedule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BackupScheduleUpdateArgs>(args: SelectSubset<T, BackupScheduleUpdateArgs<ExtArgs>>): Prisma__BackupScheduleClient<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BackupSchedules.
+     * @param {BackupScheduleDeleteManyArgs} args - Arguments to filter BackupSchedules to delete.
+     * @example
+     * // Delete a few BackupSchedules
+     * const { count } = await prisma.backupSchedule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BackupScheduleDeleteManyArgs>(args?: SelectSubset<T, BackupScheduleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BackupSchedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupScheduleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BackupSchedules
+     * const backupSchedule = await prisma.backupSchedule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BackupScheduleUpdateManyArgs>(args: SelectSubset<T, BackupScheduleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BackupSchedules and returns the data updated in the database.
+     * @param {BackupScheduleUpdateManyAndReturnArgs} args - Arguments to update many BackupSchedules.
+     * @example
+     * // Update many BackupSchedules
+     * const backupSchedule = await prisma.backupSchedule.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BackupSchedules and only return the `organizationId`
+     * const backupScheduleWithOrganizationIdOnly = await prisma.backupSchedule.updateManyAndReturn({
+     *   select: { organizationId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BackupScheduleUpdateManyAndReturnArgs>(args: SelectSubset<T, BackupScheduleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BackupSchedule.
+     * @param {BackupScheduleUpsertArgs} args - Arguments to update or create a BackupSchedule.
+     * @example
+     * // Update or create a BackupSchedule
+     * const backupSchedule = await prisma.backupSchedule.upsert({
+     *   create: {
+     *     // ... data to create a BackupSchedule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BackupSchedule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BackupScheduleUpsertArgs>(args: SelectSubset<T, BackupScheduleUpsertArgs<ExtArgs>>): Prisma__BackupScheduleClient<$Result.GetResult<Prisma.$BackupSchedulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BackupSchedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupScheduleCountArgs} args - Arguments to filter BackupSchedules to count.
+     * @example
+     * // Count the number of BackupSchedules
+     * const count = await prisma.backupSchedule.count({
+     *   where: {
+     *     // ... the filter for the BackupSchedules we want to count
+     *   }
+     * })
+    **/
+    count<T extends BackupScheduleCountArgs>(
+      args?: Subset<T, BackupScheduleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BackupScheduleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BackupSchedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupScheduleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BackupScheduleAggregateArgs>(args: Subset<T, BackupScheduleAggregateArgs>): Prisma.PrismaPromise<GetBackupScheduleAggregateType<T>>
+
+    /**
+     * Group by BackupSchedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupScheduleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BackupScheduleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BackupScheduleGroupByArgs['orderBy'] }
+        : { orderBy?: BackupScheduleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BackupScheduleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBackupScheduleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BackupSchedule model
+   */
+  readonly fields: BackupScheduleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BackupSchedule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BackupScheduleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    updater<T extends BackupSchedule$updaterArgs<ExtArgs> = {}>(args?: Subset<T, BackupSchedule$updaterArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BackupSchedule model
+   */
+  interface BackupScheduleFieldRefs {
+    readonly organizationId: FieldRef<"BackupSchedule", 'String'>
+    readonly enabled: FieldRef<"BackupSchedule", 'Boolean'>
+    readonly frequency: FieldRef<"BackupSchedule", 'String'>
+    readonly localTime: FieldRef<"BackupSchedule", 'String'>
+    readonly weekday: FieldRef<"BackupSchedule", 'Int'>
+    readonly intervalMinutes: FieldRef<"BackupSchedule", 'Int'>
+    readonly retentionCount: FieldRef<"BackupSchedule", 'Int'>
+    readonly timezone: FieldRef<"BackupSchedule", 'String'>
+    readonly nextRunAt: FieldRef<"BackupSchedule", 'DateTime'>
+    readonly lastScheduledAt: FieldRef<"BackupSchedule", 'DateTime'>
+    readonly updatedBy: FieldRef<"BackupSchedule", 'String'>
+    readonly updatedAt: FieldRef<"BackupSchedule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BackupSchedule findUnique
+   */
+  export type BackupScheduleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupSchedule to fetch.
+     */
+    where: BackupScheduleWhereUniqueInput
+  }
+
+  /**
+   * BackupSchedule findUniqueOrThrow
+   */
+  export type BackupScheduleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupSchedule to fetch.
+     */
+    where: BackupScheduleWhereUniqueInput
+  }
+
+  /**
+   * BackupSchedule findFirst
+   */
+  export type BackupScheduleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupSchedule to fetch.
+     */
+    where?: BackupScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupSchedules to fetch.
+     */
+    orderBy?: BackupScheduleOrderByWithRelationInput | BackupScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BackupSchedules.
+     */
+    cursor?: BackupScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BackupSchedules.
+     */
+    distinct?: BackupScheduleScalarFieldEnum | BackupScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * BackupSchedule findFirstOrThrow
+   */
+  export type BackupScheduleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupSchedule to fetch.
+     */
+    where?: BackupScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupSchedules to fetch.
+     */
+    orderBy?: BackupScheduleOrderByWithRelationInput | BackupScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BackupSchedules.
+     */
+    cursor?: BackupScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BackupSchedules.
+     */
+    distinct?: BackupScheduleScalarFieldEnum | BackupScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * BackupSchedule findMany
+   */
+  export type BackupScheduleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupSchedules to fetch.
+     */
+    where?: BackupScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupSchedules to fetch.
+     */
+    orderBy?: BackupScheduleOrderByWithRelationInput | BackupScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BackupSchedules.
+     */
+    cursor?: BackupScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BackupSchedules.
+     */
+    distinct?: BackupScheduleScalarFieldEnum | BackupScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * BackupSchedule create
+   */
+  export type BackupScheduleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BackupSchedule.
+     */
+    data: XOR<BackupScheduleCreateInput, BackupScheduleUncheckedCreateInput>
+  }
+
+  /**
+   * BackupSchedule createMany
+   */
+  export type BackupScheduleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BackupSchedules.
+     */
+    data: BackupScheduleCreateManyInput | BackupScheduleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BackupSchedule createManyAndReturn
+   */
+  export type BackupScheduleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * The data used to create many BackupSchedules.
+     */
+    data: BackupScheduleCreateManyInput | BackupScheduleCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BackupSchedule update
+   */
+  export type BackupScheduleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BackupSchedule.
+     */
+    data: XOR<BackupScheduleUpdateInput, BackupScheduleUncheckedUpdateInput>
+    /**
+     * Choose, which BackupSchedule to update.
+     */
+    where: BackupScheduleWhereUniqueInput
+  }
+
+  /**
+   * BackupSchedule updateMany
+   */
+  export type BackupScheduleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BackupSchedules.
+     */
+    data: XOR<BackupScheduleUpdateManyMutationInput, BackupScheduleUncheckedUpdateManyInput>
+    /**
+     * Filter which BackupSchedules to update
+     */
+    where?: BackupScheduleWhereInput
+    /**
+     * Limit how many BackupSchedules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BackupSchedule updateManyAndReturn
+   */
+  export type BackupScheduleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * The data used to update BackupSchedules.
+     */
+    data: XOR<BackupScheduleUpdateManyMutationInput, BackupScheduleUncheckedUpdateManyInput>
+    /**
+     * Filter which BackupSchedules to update
+     */
+    where?: BackupScheduleWhereInput
+    /**
+     * Limit how many BackupSchedules to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BackupSchedule upsert
+   */
+  export type BackupScheduleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BackupSchedule to update in case it exists.
+     */
+    where: BackupScheduleWhereUniqueInput
+    /**
+     * In case the BackupSchedule found by the `where` argument doesn't exist, create a new BackupSchedule with this data.
+     */
+    create: XOR<BackupScheduleCreateInput, BackupScheduleUncheckedCreateInput>
+    /**
+     * In case the BackupSchedule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BackupScheduleUpdateInput, BackupScheduleUncheckedUpdateInput>
+  }
+
+  /**
+   * BackupSchedule delete
+   */
+  export type BackupScheduleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
+    /**
+     * Filter which BackupSchedule to delete.
+     */
+    where: BackupScheduleWhereUniqueInput
+  }
+
+  /**
+   * BackupSchedule deleteMany
+   */
+  export type BackupScheduleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BackupSchedules to delete
+     */
+    where?: BackupScheduleWhereInput
+    /**
+     * Limit how many BackupSchedules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BackupSchedule.updater
+   */
+  export type BackupSchedule$updaterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * BackupSchedule without action
+   */
+  export type BackupScheduleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupSchedule
+     */
+    select?: BackupScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupSchedule
+     */
+    omit?: BackupScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupScheduleInclude<ExtArgs> | null
   }
 
 
@@ -51223,6 +55536,67 @@ export namespace Prisma {
   export type UserWorkspacePreferenceScalarFieldEnum = (typeof UserWorkspacePreferenceScalarFieldEnum)[keyof typeof UserWorkspacePreferenceScalarFieldEnum]
 
 
+  export const BackupRecordScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    actorUserId: 'actorUserId',
+    reason: 'reason',
+    state: 'state',
+    schemaVersion: 'schemaVersion',
+    checksum: 'checksum',
+    byteCount: 'byteCount',
+    counts: 'counts',
+    errorCode: 'errorCode',
+    createdAt: 'createdAt',
+    completedAt: 'completedAt'
+  };
+
+  export type BackupRecordScalarFieldEnum = (typeof BackupRecordScalarFieldEnum)[keyof typeof BackupRecordScalarFieldEnum]
+
+
+  export const DataOperationScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    actorUserId: 'actorUserId',
+    kind: 'kind',
+    state: 'state',
+    payload: 'payload',
+    checkpoint: 'checkpoint',
+    stage: 'stage',
+    processed: 'processed',
+    total: 'total',
+    attempts: 'attempts',
+    workerId: 'workerId',
+    leaseUntil: 'leaseUntil',
+    heartbeatAt: 'heartbeatAt',
+    errorCode: 'errorCode',
+    preventiveBackupId: 'preventiveBackupId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    completedAt: 'completedAt'
+  };
+
+  export type DataOperationScalarFieldEnum = (typeof DataOperationScalarFieldEnum)[keyof typeof DataOperationScalarFieldEnum]
+
+
+  export const BackupScheduleScalarFieldEnum: {
+    organizationId: 'organizationId',
+    enabled: 'enabled',
+    frequency: 'frequency',
+    localTime: 'localTime',
+    weekday: 'weekday',
+    intervalMinutes: 'intervalMinutes',
+    retentionCount: 'retentionCount',
+    timezone: 'timezone',
+    nextRunAt: 'nextRunAt',
+    lastScheduledAt: 'lastScheduledAt',
+    updatedBy: 'updatedBy',
+    updatedAt: 'updatedAt'
+  };
+
+  export type BackupScheduleScalarFieldEnum = (typeof BackupScheduleScalarFieldEnum)[keyof typeof BackupScheduleScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -51280,301 +55654,315 @@ export namespace Prisma {
    * Reference to a field of type 'String'
    */
   export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
-
+    
 
 
   /**
    * Reference to a field of type 'String[]'
    */
   export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-
+    
 
 
   /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-
+    
 
 
   /**
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'MembershipRole'
    */
   export type EnumMembershipRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MembershipRole'>
-
+    
 
 
   /**
    * Reference to a field of type 'MembershipRole[]'
    */
   export type ListEnumMembershipRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MembershipRole[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'Json'
    */
   export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-
+    
 
 
   /**
    * Reference to a field of type 'QueryMode'
    */
   export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
-
+    
 
 
   /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-
+    
 
 
   /**
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'TerritoryQuotaPeriod'
    */
   export type EnumTerritoryQuotaPeriodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TerritoryQuotaPeriod'>
-
+    
 
 
   /**
    * Reference to a field of type 'TerritoryQuotaPeriod[]'
    */
   export type ListEnumTerritoryQuotaPeriodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TerritoryQuotaPeriod[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'Decimal'
    */
   export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-
+    
 
 
   /**
    * Reference to a field of type 'Decimal[]'
    */
   export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'TerritoryCoverageStatus'
    */
   export type EnumTerritoryCoverageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TerritoryCoverageStatus'>
-
+    
 
 
   /**
    * Reference to a field of type 'TerritoryCoverageStatus[]'
    */
   export type ListEnumTerritoryCoverageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TerritoryCoverageStatus[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'ContactChannelType'
    */
   export type EnumContactChannelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContactChannelType'>
-
+    
 
 
   /**
    * Reference to a field of type 'ContactChannelType[]'
    */
   export type ListEnumContactChannelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContactChannelType[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'RelationshipEntryKind'
    */
   export type EnumRelationshipEntryKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RelationshipEntryKind'>
-
+    
 
 
   /**
    * Reference to a field of type 'RelationshipEntryKind[]'
    */
   export type ListEnumRelationshipEntryKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RelationshipEntryKind[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'CustomFieldScope'
    */
   export type EnumCustomFieldScopeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomFieldScope'>
-
+    
 
 
   /**
    * Reference to a field of type 'CustomFieldScope[]'
    */
   export type ListEnumCustomFieldScopeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomFieldScope[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'CustomFieldType'
    */
   export type EnumCustomFieldTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomFieldType'>
-
+    
 
 
   /**
    * Reference to a field of type 'CustomFieldType[]'
    */
   export type ListEnumCustomFieldTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomFieldType[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'PipelineStageKind'
    */
   export type EnumPipelineStageKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PipelineStageKind'>
-
+    
 
 
   /**
    * Reference to a field of type 'PipelineStageKind[]'
    */
   export type ListEnumPipelineStageKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PipelineStageKind[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'ActivityType'
    */
   export type EnumActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActivityType'>
-
+    
 
 
   /**
    * Reference to a field of type 'ActivityType[]'
    */
   export type ListEnumActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActivityType[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'ActivityStatus'
    */
   export type EnumActivityStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActivityStatus'>
-
+    
 
 
   /**
    * Reference to a field of type 'ActivityStatus[]'
    */
   export type ListEnumActivityStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActivityStatus[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'ActivityPriority'
    */
   export type EnumActivityPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActivityPriority'>
-
+    
 
 
   /**
    * Reference to a field of type 'ActivityPriority[]'
    */
   export type ListEnumActivityPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActivityPriority[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'TicketStatus'
    */
   export type EnumTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketStatus'>
-
+    
 
 
   /**
    * Reference to a field of type 'TicketStatus[]'
    */
   export type ListEnumTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketStatus[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'TicketPriority'
    */
   export type EnumTicketPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketPriority'>
-
+    
 
 
   /**
    * Reference to a field of type 'TicketPriority[]'
    */
   export type ListEnumTicketPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketPriority[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'TicketChannel'
    */
   export type EnumTicketChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketChannel'>
-
+    
 
 
   /**
    * Reference to a field of type 'TicketChannel[]'
    */
   export type ListEnumTicketChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketChannel[]'>
-
+    
 
 
   /**
    * Reference to a field of type 'TicketEventType'
    */
   export type EnumTicketEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketEventType'>
-
+    
 
 
   /**
    * Reference to a field of type 'TicketEventType[]'
    */
   export type ListEnumTicketEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketEventType[]'>
+    
 
+
+  /**
+   * Reference to a field of type 'BigInt'
+   */
+  export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+  /**
+   * Reference to a field of type 'BigInt[]'
+   */
+  export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
 
 
   /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-
+    
 
 
   /**
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-
+    
   /**
    * Deep Input Types
    */
@@ -51590,6 +55978,9 @@ export namespace Prisma {
     isActive?: BoolFilter<"Organization"> | boolean
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
+    backups?: BackupRecordListRelationFilter
+    dataOperations?: DataOperationListRelationFilter
+    backupSchedule?: XOR<BackupScheduleNullableScalarRelationFilter, BackupScheduleWhereInput> | null
     memberships?: OrganizationMembershipListRelationFilter
     refreshSessions?: RefreshSessionListRelationFilter
     auditLogs?: AuditLogListRelationFilter
@@ -51630,6 +56021,9 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    backups?: BackupRecordOrderByRelationAggregateInput
+    dataOperations?: DataOperationOrderByRelationAggregateInput
+    backupSchedule?: BackupScheduleOrderByWithRelationInput
     memberships?: OrganizationMembershipOrderByRelationAggregateInput
     refreshSessions?: RefreshSessionOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
@@ -51673,6 +56067,9 @@ export namespace Prisma {
     isActive?: BoolFilter<"Organization"> | boolean
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
+    backups?: BackupRecordListRelationFilter
+    dataOperations?: DataOperationListRelationFilter
+    backupSchedule?: XOR<BackupScheduleNullableScalarRelationFilter, BackupScheduleWhereInput> | null
     memberships?: OrganizationMembershipListRelationFilter
     refreshSessions?: RefreshSessionListRelationFilter
     auditLogs?: AuditLogListRelationFilter
@@ -51867,6 +56264,9 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    backupsCreated?: BackupRecordListRelationFilter
+    dataOperationsCreated?: DataOperationListRelationFilter
+    backupSchedulesUpdated?: BackupScheduleListRelationFilter
     memberships?: OrganizationMembershipListRelationFilter
     refreshSessions?: RefreshSessionListRelationFilter
     auditLogs?: AuditLogListRelationFilter
@@ -51918,6 +56318,9 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    backupsCreated?: BackupRecordOrderByRelationAggregateInput
+    dataOperationsCreated?: DataOperationOrderByRelationAggregateInput
+    backupSchedulesUpdated?: BackupScheduleOrderByRelationAggregateInput
     memberships?: OrganizationMembershipOrderByRelationAggregateInput
     refreshSessions?: RefreshSessionOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
@@ -51972,6 +56375,9 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    backupsCreated?: BackupRecordListRelationFilter
+    dataOperationsCreated?: DataOperationListRelationFilter
+    backupSchedulesUpdated?: BackupScheduleListRelationFilter
     memberships?: OrganizationMembershipListRelationFilter
     refreshSessions?: RefreshSessionListRelationFilter
     auditLogs?: AuditLogListRelationFilter
@@ -55048,6 +59454,333 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"UserWorkspacePreference"> | Date | string
   }
 
+  export type BackupRecordWhereInput = {
+    AND?: BackupRecordWhereInput | BackupRecordWhereInput[]
+    OR?: BackupRecordWhereInput[]
+    NOT?: BackupRecordWhereInput | BackupRecordWhereInput[]
+    id?: UuidFilter<"BackupRecord"> | string
+    organizationId?: UuidFilter<"BackupRecord"> | string
+    actorUserId?: UuidNullableFilter<"BackupRecord"> | string | null
+    reason?: StringFilter<"BackupRecord"> | string
+    state?: StringFilter<"BackupRecord"> | string
+    schemaVersion?: IntNullableFilter<"BackupRecord"> | number | null
+    checksum?: StringNullableFilter<"BackupRecord"> | string | null
+    byteCount?: BigIntNullableFilter<"BackupRecord"> | bigint | number | null
+    counts?: JsonNullableFilter<"BackupRecord">
+    errorCode?: StringNullableFilter<"BackupRecord"> | string | null
+    createdAt?: DateTimeFilter<"BackupRecord"> | Date | string
+    completedAt?: DateTimeNullableFilter<"BackupRecord"> | Date | string | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    actor?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    protectedByOperations?: DataOperationListRelationFilter
+  }
+
+  export type BackupRecordOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrderInput | SortOrder
+    reason?: SortOrder
+    state?: SortOrder
+    schemaVersion?: SortOrderInput | SortOrder
+    checksum?: SortOrderInput | SortOrder
+    byteCount?: SortOrderInput | SortOrder
+    counts?: SortOrderInput | SortOrder
+    errorCode?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+    actor?: UserOrderByWithRelationInput
+    protectedByOperations?: DataOperationOrderByRelationAggregateInput
+  }
+
+  export type BackupRecordWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    id_organizationId?: BackupRecordIdOrganizationIdCompoundUniqueInput
+    AND?: BackupRecordWhereInput | BackupRecordWhereInput[]
+    OR?: BackupRecordWhereInput[]
+    NOT?: BackupRecordWhereInput | BackupRecordWhereInput[]
+    organizationId?: UuidFilter<"BackupRecord"> | string
+    actorUserId?: UuidNullableFilter<"BackupRecord"> | string | null
+    reason?: StringFilter<"BackupRecord"> | string
+    state?: StringFilter<"BackupRecord"> | string
+    schemaVersion?: IntNullableFilter<"BackupRecord"> | number | null
+    checksum?: StringNullableFilter<"BackupRecord"> | string | null
+    byteCount?: BigIntNullableFilter<"BackupRecord"> | bigint | number | null
+    counts?: JsonNullableFilter<"BackupRecord">
+    errorCode?: StringNullableFilter<"BackupRecord"> | string | null
+    createdAt?: DateTimeFilter<"BackupRecord"> | Date | string
+    completedAt?: DateTimeNullableFilter<"BackupRecord"> | Date | string | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    actor?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    protectedByOperations?: DataOperationListRelationFilter
+  }, "id" | "id_organizationId">
+
+  export type BackupRecordOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrderInput | SortOrder
+    reason?: SortOrder
+    state?: SortOrder
+    schemaVersion?: SortOrderInput | SortOrder
+    checksum?: SortOrderInput | SortOrder
+    byteCount?: SortOrderInput | SortOrder
+    counts?: SortOrderInput | SortOrder
+    errorCode?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    _count?: BackupRecordCountOrderByAggregateInput
+    _avg?: BackupRecordAvgOrderByAggregateInput
+    _max?: BackupRecordMaxOrderByAggregateInput
+    _min?: BackupRecordMinOrderByAggregateInput
+    _sum?: BackupRecordSumOrderByAggregateInput
+  }
+
+  export type BackupRecordScalarWhereWithAggregatesInput = {
+    AND?: BackupRecordScalarWhereWithAggregatesInput | BackupRecordScalarWhereWithAggregatesInput[]
+    OR?: BackupRecordScalarWhereWithAggregatesInput[]
+    NOT?: BackupRecordScalarWhereWithAggregatesInput | BackupRecordScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"BackupRecord"> | string
+    organizationId?: UuidWithAggregatesFilter<"BackupRecord"> | string
+    actorUserId?: UuidNullableWithAggregatesFilter<"BackupRecord"> | string | null
+    reason?: StringWithAggregatesFilter<"BackupRecord"> | string
+    state?: StringWithAggregatesFilter<"BackupRecord"> | string
+    schemaVersion?: IntNullableWithAggregatesFilter<"BackupRecord"> | number | null
+    checksum?: StringNullableWithAggregatesFilter<"BackupRecord"> | string | null
+    byteCount?: BigIntNullableWithAggregatesFilter<"BackupRecord"> | bigint | number | null
+    counts?: JsonNullableWithAggregatesFilter<"BackupRecord">
+    errorCode?: StringNullableWithAggregatesFilter<"BackupRecord"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"BackupRecord"> | Date | string
+    completedAt?: DateTimeNullableWithAggregatesFilter<"BackupRecord"> | Date | string | null
+  }
+
+  export type DataOperationWhereInput = {
+    AND?: DataOperationWhereInput | DataOperationWhereInput[]
+    OR?: DataOperationWhereInput[]
+    NOT?: DataOperationWhereInput | DataOperationWhereInput[]
+    id?: UuidFilter<"DataOperation"> | string
+    organizationId?: UuidFilter<"DataOperation"> | string
+    actorUserId?: UuidNullableFilter<"DataOperation"> | string | null
+    kind?: StringFilter<"DataOperation"> | string
+    state?: StringFilter<"DataOperation"> | string
+    payload?: JsonFilter<"DataOperation">
+    checkpoint?: JsonFilter<"DataOperation">
+    stage?: StringFilter<"DataOperation"> | string
+    processed?: IntFilter<"DataOperation"> | number
+    total?: IntNullableFilter<"DataOperation"> | number | null
+    attempts?: IntFilter<"DataOperation"> | number
+    workerId?: StringNullableFilter<"DataOperation"> | string | null
+    leaseUntil?: DateTimeNullableFilter<"DataOperation"> | Date | string | null
+    heartbeatAt?: DateTimeNullableFilter<"DataOperation"> | Date | string | null
+    errorCode?: StringNullableFilter<"DataOperation"> | string | null
+    preventiveBackupId?: UuidNullableFilter<"DataOperation"> | string | null
+    createdAt?: DateTimeFilter<"DataOperation"> | Date | string
+    updatedAt?: DateTimeFilter<"DataOperation"> | Date | string
+    completedAt?: DateTimeNullableFilter<"DataOperation"> | Date | string | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    actor?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    preventiveBackup?: XOR<BackupRecordNullableScalarRelationFilter, BackupRecordWhereInput> | null
+  }
+
+  export type DataOperationOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrderInput | SortOrder
+    kind?: SortOrder
+    state?: SortOrder
+    payload?: SortOrder
+    checkpoint?: SortOrder
+    stage?: SortOrder
+    processed?: SortOrder
+    total?: SortOrderInput | SortOrder
+    attempts?: SortOrder
+    workerId?: SortOrderInput | SortOrder
+    leaseUntil?: SortOrderInput | SortOrder
+    heartbeatAt?: SortOrderInput | SortOrder
+    errorCode?: SortOrderInput | SortOrder
+    preventiveBackupId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+    actor?: UserOrderByWithRelationInput
+    preventiveBackup?: BackupRecordOrderByWithRelationInput
+  }
+
+  export type DataOperationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: DataOperationWhereInput | DataOperationWhereInput[]
+    OR?: DataOperationWhereInput[]
+    NOT?: DataOperationWhereInput | DataOperationWhereInput[]
+    organizationId?: UuidFilter<"DataOperation"> | string
+    actorUserId?: UuidNullableFilter<"DataOperation"> | string | null
+    kind?: StringFilter<"DataOperation"> | string
+    state?: StringFilter<"DataOperation"> | string
+    payload?: JsonFilter<"DataOperation">
+    checkpoint?: JsonFilter<"DataOperation">
+    stage?: StringFilter<"DataOperation"> | string
+    processed?: IntFilter<"DataOperation"> | number
+    total?: IntNullableFilter<"DataOperation"> | number | null
+    attempts?: IntFilter<"DataOperation"> | number
+    workerId?: StringNullableFilter<"DataOperation"> | string | null
+    leaseUntil?: DateTimeNullableFilter<"DataOperation"> | Date | string | null
+    heartbeatAt?: DateTimeNullableFilter<"DataOperation"> | Date | string | null
+    errorCode?: StringNullableFilter<"DataOperation"> | string | null
+    preventiveBackupId?: UuidNullableFilter<"DataOperation"> | string | null
+    createdAt?: DateTimeFilter<"DataOperation"> | Date | string
+    updatedAt?: DateTimeFilter<"DataOperation"> | Date | string
+    completedAt?: DateTimeNullableFilter<"DataOperation"> | Date | string | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    actor?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    preventiveBackup?: XOR<BackupRecordNullableScalarRelationFilter, BackupRecordWhereInput> | null
+  }, "id">
+
+  export type DataOperationOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrderInput | SortOrder
+    kind?: SortOrder
+    state?: SortOrder
+    payload?: SortOrder
+    checkpoint?: SortOrder
+    stage?: SortOrder
+    processed?: SortOrder
+    total?: SortOrderInput | SortOrder
+    attempts?: SortOrder
+    workerId?: SortOrderInput | SortOrder
+    leaseUntil?: SortOrderInput | SortOrder
+    heartbeatAt?: SortOrderInput | SortOrder
+    errorCode?: SortOrderInput | SortOrder
+    preventiveBackupId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    _count?: DataOperationCountOrderByAggregateInput
+    _avg?: DataOperationAvgOrderByAggregateInput
+    _max?: DataOperationMaxOrderByAggregateInput
+    _min?: DataOperationMinOrderByAggregateInput
+    _sum?: DataOperationSumOrderByAggregateInput
+  }
+
+  export type DataOperationScalarWhereWithAggregatesInput = {
+    AND?: DataOperationScalarWhereWithAggregatesInput | DataOperationScalarWhereWithAggregatesInput[]
+    OR?: DataOperationScalarWhereWithAggregatesInput[]
+    NOT?: DataOperationScalarWhereWithAggregatesInput | DataOperationScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"DataOperation"> | string
+    organizationId?: UuidWithAggregatesFilter<"DataOperation"> | string
+    actorUserId?: UuidNullableWithAggregatesFilter<"DataOperation"> | string | null
+    kind?: StringWithAggregatesFilter<"DataOperation"> | string
+    state?: StringWithAggregatesFilter<"DataOperation"> | string
+    payload?: JsonWithAggregatesFilter<"DataOperation">
+    checkpoint?: JsonWithAggregatesFilter<"DataOperation">
+    stage?: StringWithAggregatesFilter<"DataOperation"> | string
+    processed?: IntWithAggregatesFilter<"DataOperation"> | number
+    total?: IntNullableWithAggregatesFilter<"DataOperation"> | number | null
+    attempts?: IntWithAggregatesFilter<"DataOperation"> | number
+    workerId?: StringNullableWithAggregatesFilter<"DataOperation"> | string | null
+    leaseUntil?: DateTimeNullableWithAggregatesFilter<"DataOperation"> | Date | string | null
+    heartbeatAt?: DateTimeNullableWithAggregatesFilter<"DataOperation"> | Date | string | null
+    errorCode?: StringNullableWithAggregatesFilter<"DataOperation"> | string | null
+    preventiveBackupId?: UuidNullableWithAggregatesFilter<"DataOperation"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"DataOperation"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DataOperation"> | Date | string
+    completedAt?: DateTimeNullableWithAggregatesFilter<"DataOperation"> | Date | string | null
+  }
+
+  export type BackupScheduleWhereInput = {
+    AND?: BackupScheduleWhereInput | BackupScheduleWhereInput[]
+    OR?: BackupScheduleWhereInput[]
+    NOT?: BackupScheduleWhereInput | BackupScheduleWhereInput[]
+    organizationId?: UuidFilter<"BackupSchedule"> | string
+    enabled?: BoolFilter<"BackupSchedule"> | boolean
+    frequency?: StringFilter<"BackupSchedule"> | string
+    localTime?: StringFilter<"BackupSchedule"> | string
+    weekday?: IntFilter<"BackupSchedule"> | number
+    intervalMinutes?: IntNullableFilter<"BackupSchedule"> | number | null
+    retentionCount?: IntFilter<"BackupSchedule"> | number
+    timezone?: StringFilter<"BackupSchedule"> | string
+    nextRunAt?: DateTimeNullableFilter<"BackupSchedule"> | Date | string | null
+    lastScheduledAt?: DateTimeNullableFilter<"BackupSchedule"> | Date | string | null
+    updatedBy?: UuidNullableFilter<"BackupSchedule"> | string | null
+    updatedAt?: DateTimeFilter<"BackupSchedule"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    updater?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type BackupScheduleOrderByWithRelationInput = {
+    organizationId?: SortOrder
+    enabled?: SortOrder
+    frequency?: SortOrder
+    localTime?: SortOrder
+    weekday?: SortOrder
+    intervalMinutes?: SortOrderInput | SortOrder
+    retentionCount?: SortOrder
+    timezone?: SortOrder
+    nextRunAt?: SortOrderInput | SortOrder
+    lastScheduledAt?: SortOrderInput | SortOrder
+    updatedBy?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+    updater?: UserOrderByWithRelationInput
+  }
+
+  export type BackupScheduleWhereUniqueInput = Prisma.AtLeast<{
+    organizationId?: string
+    AND?: BackupScheduleWhereInput | BackupScheduleWhereInput[]
+    OR?: BackupScheduleWhereInput[]
+    NOT?: BackupScheduleWhereInput | BackupScheduleWhereInput[]
+    enabled?: BoolFilter<"BackupSchedule"> | boolean
+    frequency?: StringFilter<"BackupSchedule"> | string
+    localTime?: StringFilter<"BackupSchedule"> | string
+    weekday?: IntFilter<"BackupSchedule"> | number
+    intervalMinutes?: IntNullableFilter<"BackupSchedule"> | number | null
+    retentionCount?: IntFilter<"BackupSchedule"> | number
+    timezone?: StringFilter<"BackupSchedule"> | string
+    nextRunAt?: DateTimeNullableFilter<"BackupSchedule"> | Date | string | null
+    lastScheduledAt?: DateTimeNullableFilter<"BackupSchedule"> | Date | string | null
+    updatedBy?: UuidNullableFilter<"BackupSchedule"> | string | null
+    updatedAt?: DateTimeFilter<"BackupSchedule"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    updater?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "organizationId">
+
+  export type BackupScheduleOrderByWithAggregationInput = {
+    organizationId?: SortOrder
+    enabled?: SortOrder
+    frequency?: SortOrder
+    localTime?: SortOrder
+    weekday?: SortOrder
+    intervalMinutes?: SortOrderInput | SortOrder
+    retentionCount?: SortOrder
+    timezone?: SortOrder
+    nextRunAt?: SortOrderInput | SortOrder
+    lastScheduledAt?: SortOrderInput | SortOrder
+    updatedBy?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+    _count?: BackupScheduleCountOrderByAggregateInput
+    _avg?: BackupScheduleAvgOrderByAggregateInput
+    _max?: BackupScheduleMaxOrderByAggregateInput
+    _min?: BackupScheduleMinOrderByAggregateInput
+    _sum?: BackupScheduleSumOrderByAggregateInput
+  }
+
+  export type BackupScheduleScalarWhereWithAggregatesInput = {
+    AND?: BackupScheduleScalarWhereWithAggregatesInput | BackupScheduleScalarWhereWithAggregatesInput[]
+    OR?: BackupScheduleScalarWhereWithAggregatesInput[]
+    NOT?: BackupScheduleScalarWhereWithAggregatesInput | BackupScheduleScalarWhereWithAggregatesInput[]
+    organizationId?: UuidWithAggregatesFilter<"BackupSchedule"> | string
+    enabled?: BoolWithAggregatesFilter<"BackupSchedule"> | boolean
+    frequency?: StringWithAggregatesFilter<"BackupSchedule"> | string
+    localTime?: StringWithAggregatesFilter<"BackupSchedule"> | string
+    weekday?: IntWithAggregatesFilter<"BackupSchedule"> | number
+    intervalMinutes?: IntNullableWithAggregatesFilter<"BackupSchedule"> | number | null
+    retentionCount?: IntWithAggregatesFilter<"BackupSchedule"> | number
+    timezone?: StringWithAggregatesFilter<"BackupSchedule"> | string
+    nextRunAt?: DateTimeNullableWithAggregatesFilter<"BackupSchedule"> | Date | string | null
+    lastScheduledAt?: DateTimeNullableWithAggregatesFilter<"BackupSchedule"> | Date | string | null
+    updatedBy?: UuidNullableWithAggregatesFilter<"BackupSchedule"> | string | null
+    updatedAt?: DateTimeWithAggregatesFilter<"BackupSchedule"> | Date | string
+  }
+
   export type OrganizationCreateInput = {
     id?: string
     name: string
@@ -55055,6 +59788,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -55095,6 +59831,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -55135,6 +59874,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -55175,6 +59917,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -55372,6 +60117,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -55423,6 +60171,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -55474,6 +60225,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -55525,6 +60279,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -58635,6 +63392,367 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BackupRecordCreateInput = {
+    id?: string
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutBackupsInput
+    actor?: UserCreateNestedOneWithoutBackupsCreatedInput
+    protectedByOperations?: DataOperationCreateNestedManyWithoutPreventiveBackupInput
+  }
+
+  export type BackupRecordUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    actorUserId?: string | null
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    protectedByOperations?: DataOperationUncheckedCreateNestedManyWithoutPreventiveBackupInput
+  }
+
+  export type BackupRecordUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutBackupsNestedInput
+    actor?: UserUpdateOneWithoutBackupsCreatedNestedInput
+    protectedByOperations?: DataOperationUpdateManyWithoutPreventiveBackupNestedInput
+  }
+
+  export type BackupRecordUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    protectedByOperations?: DataOperationUncheckedUpdateManyWithoutPreventiveBackupNestedInput
+  }
+
+  export type BackupRecordCreateManyInput = {
+    id?: string
+    organizationId: string
+    actorUserId?: string | null
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type BackupRecordUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BackupRecordUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DataOperationCreateInput = {
+    id?: string
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutDataOperationsInput
+    actor?: UserCreateNestedOneWithoutDataOperationsCreatedInput
+    preventiveBackup?: BackupRecordCreateNestedOneWithoutProtectedByOperationsInput
+  }
+
+  export type DataOperationUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    actorUserId?: string | null
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    preventiveBackupId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type DataOperationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutDataOperationsNestedInput
+    actor?: UserUpdateOneWithoutDataOperationsCreatedNestedInput
+    preventiveBackup?: BackupRecordUpdateOneWithoutProtectedByOperationsNestedInput
+  }
+
+  export type DataOperationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    preventiveBackupId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DataOperationCreateManyInput = {
+    id?: string
+    organizationId: string
+    actorUserId?: string | null
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    preventiveBackupId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type DataOperationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DataOperationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    preventiveBackupId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BackupScheduleCreateInput = {
+    enabled?: boolean
+    frequency?: string
+    localTime?: string
+    weekday?: number
+    intervalMinutes?: number | null
+    retentionCount?: number
+    timezone?: string
+    nextRunAt?: Date | string | null
+    lastScheduledAt?: Date | string | null
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutBackupScheduleInput
+    updater?: UserCreateNestedOneWithoutBackupSchedulesUpdatedInput
+  }
+
+  export type BackupScheduleUncheckedCreateInput = {
+    organizationId: string
+    enabled?: boolean
+    frequency?: string
+    localTime?: string
+    weekday?: number
+    intervalMinutes?: number | null
+    retentionCount?: number
+    timezone?: string
+    nextRunAt?: Date | string | null
+    lastScheduledAt?: Date | string | null
+    updatedBy?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type BackupScheduleUpdateInput = {
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    frequency?: StringFieldUpdateOperationsInput | string
+    localTime?: StringFieldUpdateOperationsInput | string
+    weekday?: IntFieldUpdateOperationsInput | number
+    intervalMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    retentionCount?: IntFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    nextRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastScheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutBackupScheduleNestedInput
+    updater?: UserUpdateOneWithoutBackupSchedulesUpdatedNestedInput
+  }
+
+  export type BackupScheduleUncheckedUpdateInput = {
+    organizationId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    frequency?: StringFieldUpdateOperationsInput | string
+    localTime?: StringFieldUpdateOperationsInput | string
+    weekday?: IntFieldUpdateOperationsInput | number
+    intervalMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    retentionCount?: IntFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    nextRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastScheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupScheduleCreateManyInput = {
+    organizationId: string
+    enabled?: boolean
+    frequency?: string
+    localTime?: string
+    weekday?: number
+    intervalMinutes?: number | null
+    retentionCount?: number
+    timezone?: string
+    nextRunAt?: Date | string | null
+    lastScheduledAt?: Date | string | null
+    updatedBy?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type BackupScheduleUpdateManyMutationInput = {
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    frequency?: StringFieldUpdateOperationsInput | string
+    localTime?: StringFieldUpdateOperationsInput | string
+    weekday?: IntFieldUpdateOperationsInput | number
+    intervalMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    retentionCount?: IntFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    nextRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastScheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupScheduleUncheckedUpdateManyInput = {
+    organizationId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    frequency?: StringFieldUpdateOperationsInput | string
+    localTime?: StringFieldUpdateOperationsInput | string
+    weekday?: IntFieldUpdateOperationsInput | number
+    intervalMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    retentionCount?: IntFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    nextRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastScheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UuidFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -58676,6 +63794,23 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type BackupRecordListRelationFilter = {
+    every?: BackupRecordWhereInput
+    some?: BackupRecordWhereInput
+    none?: BackupRecordWhereInput
+  }
+
+  export type DataOperationListRelationFilter = {
+    every?: DataOperationWhereInput
+    some?: DataOperationWhereInput
+    none?: DataOperationWhereInput
+  }
+
+  export type BackupScheduleNullableScalarRelationFilter = {
+    is?: BackupScheduleWhereInput | null
+    isNot?: BackupScheduleWhereInput | null
   }
 
   export type OrganizationMembershipListRelationFilter = {
@@ -58862,6 +63997,14 @@ export namespace Prisma {
     every?: IntegrationCredentialWhereInput
     some?: IntegrationCredentialWhereInput
     none?: IntegrationCredentialWhereInput
+  }
+
+  export type BackupRecordOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DataOperationOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type OrganizationMembershipOrderByRelationAggregateInput = {
@@ -59152,6 +64295,16 @@ export namespace Prisma {
     organizationId?: SortOrder
     permission?: SortOrder
     scope?: SortOrder
+  }
+
+  export type BackupScheduleListRelationFilter = {
+    every?: BackupScheduleWhereInput
+    some?: BackupScheduleWhereInput
+    none?: BackupScheduleWhereInput
+  }
+
+  export type BackupScheduleOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -61415,6 +66568,247 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type BigIntNullableFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableFilter<$PrismaModel> | bigint | number | null
+  }
+
+  export type BackupRecordIdOrganizationIdCompoundUniqueInput = {
+    id: string
+    organizationId: string
+  }
+
+  export type BackupRecordCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrder
+    reason?: SortOrder
+    state?: SortOrder
+    schemaVersion?: SortOrder
+    checksum?: SortOrder
+    byteCount?: SortOrder
+    counts?: SortOrder
+    errorCode?: SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type BackupRecordAvgOrderByAggregateInput = {
+    schemaVersion?: SortOrder
+    byteCount?: SortOrder
+  }
+
+  export type BackupRecordMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrder
+    reason?: SortOrder
+    state?: SortOrder
+    schemaVersion?: SortOrder
+    checksum?: SortOrder
+    byteCount?: SortOrder
+    errorCode?: SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type BackupRecordMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrder
+    reason?: SortOrder
+    state?: SortOrder
+    schemaVersion?: SortOrder
+    checksum?: SortOrder
+    byteCount?: SortOrder
+    errorCode?: SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type BackupRecordSumOrderByAggregateInput = {
+    schemaVersion?: SortOrder
+    byteCount?: SortOrder
+  }
+
+  export type BigIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableWithAggregatesFilter<$PrismaModel> | bigint | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedBigIntNullableFilter<$PrismaModel>
+    _min?: NestedBigIntNullableFilter<$PrismaModel>
+    _max?: NestedBigIntNullableFilter<$PrismaModel>
+  }
+
+  export type BackupRecordNullableScalarRelationFilter = {
+    is?: BackupRecordWhereInput | null
+    isNot?: BackupRecordWhereInput | null
+  }
+
+  export type DataOperationCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrder
+    kind?: SortOrder
+    state?: SortOrder
+    payload?: SortOrder
+    checkpoint?: SortOrder
+    stage?: SortOrder
+    processed?: SortOrder
+    total?: SortOrder
+    attempts?: SortOrder
+    workerId?: SortOrder
+    leaseUntil?: SortOrder
+    heartbeatAt?: SortOrder
+    errorCode?: SortOrder
+    preventiveBackupId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type DataOperationAvgOrderByAggregateInput = {
+    processed?: SortOrder
+    total?: SortOrder
+    attempts?: SortOrder
+  }
+
+  export type DataOperationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrder
+    kind?: SortOrder
+    state?: SortOrder
+    stage?: SortOrder
+    processed?: SortOrder
+    total?: SortOrder
+    attempts?: SortOrder
+    workerId?: SortOrder
+    leaseUntil?: SortOrder
+    heartbeatAt?: SortOrder
+    errorCode?: SortOrder
+    preventiveBackupId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type DataOperationMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    actorUserId?: SortOrder
+    kind?: SortOrder
+    state?: SortOrder
+    stage?: SortOrder
+    processed?: SortOrder
+    total?: SortOrder
+    attempts?: SortOrder
+    workerId?: SortOrder
+    leaseUntil?: SortOrder
+    heartbeatAt?: SortOrder
+    errorCode?: SortOrder
+    preventiveBackupId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type DataOperationSumOrderByAggregateInput = {
+    processed?: SortOrder
+    total?: SortOrder
+    attempts?: SortOrder
+  }
+
+  export type BackupScheduleCountOrderByAggregateInput = {
+    organizationId?: SortOrder
+    enabled?: SortOrder
+    frequency?: SortOrder
+    localTime?: SortOrder
+    weekday?: SortOrder
+    intervalMinutes?: SortOrder
+    retentionCount?: SortOrder
+    timezone?: SortOrder
+    nextRunAt?: SortOrder
+    lastScheduledAt?: SortOrder
+    updatedBy?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BackupScheduleAvgOrderByAggregateInput = {
+    weekday?: SortOrder
+    intervalMinutes?: SortOrder
+    retentionCount?: SortOrder
+  }
+
+  export type BackupScheduleMaxOrderByAggregateInput = {
+    organizationId?: SortOrder
+    enabled?: SortOrder
+    frequency?: SortOrder
+    localTime?: SortOrder
+    weekday?: SortOrder
+    intervalMinutes?: SortOrder
+    retentionCount?: SortOrder
+    timezone?: SortOrder
+    nextRunAt?: SortOrder
+    lastScheduledAt?: SortOrder
+    updatedBy?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BackupScheduleMinOrderByAggregateInput = {
+    organizationId?: SortOrder
+    enabled?: SortOrder
+    frequency?: SortOrder
+    localTime?: SortOrder
+    weekday?: SortOrder
+    intervalMinutes?: SortOrder
+    retentionCount?: SortOrder
+    timezone?: SortOrder
+    nextRunAt?: SortOrder
+    lastScheduledAt?: SortOrder
+    updatedBy?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BackupScheduleSumOrderByAggregateInput = {
+    weekday?: SortOrder
+    intervalMinutes?: SortOrder
+    retentionCount?: SortOrder
+  }
+
+  export type BackupRecordCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<BackupRecordCreateWithoutOrganizationInput, BackupRecordUncheckedCreateWithoutOrganizationInput> | BackupRecordCreateWithoutOrganizationInput[] | BackupRecordUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutOrganizationInput | BackupRecordCreateOrConnectWithoutOrganizationInput[]
+    createMany?: BackupRecordCreateManyOrganizationInputEnvelope
+    connect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+  }
+
+  export type DataOperationCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<DataOperationCreateWithoutOrganizationInput, DataOperationUncheckedCreateWithoutOrganizationInput> | DataOperationCreateWithoutOrganizationInput[] | DataOperationUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutOrganizationInput | DataOperationCreateOrConnectWithoutOrganizationInput[]
+    createMany?: DataOperationCreateManyOrganizationInputEnvelope
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+  }
+
+  export type BackupScheduleCreateNestedOneWithoutOrganizationInput = {
+    create?: XOR<BackupScheduleCreateWithoutOrganizationInput, BackupScheduleUncheckedCreateWithoutOrganizationInput>
+    connectOrCreate?: BackupScheduleCreateOrConnectWithoutOrganizationInput
+    connect?: BackupScheduleWhereUniqueInput
+  }
+
   export type OrganizationMembershipCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<OrganizationMembershipCreateWithoutOrganizationInput, OrganizationMembershipUncheckedCreateWithoutOrganizationInput> | OrganizationMembershipCreateWithoutOrganizationInput[] | OrganizationMembershipUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutOrganizationInput | OrganizationMembershipCreateOrConnectWithoutOrganizationInput[]
@@ -61630,6 +67024,26 @@ export namespace Prisma {
     connectOrCreate?: IntegrationCredentialCreateOrConnectWithoutOrganizationInput | IntegrationCredentialCreateOrConnectWithoutOrganizationInput[]
     createMany?: IntegrationCredentialCreateManyOrganizationInputEnvelope
     connect?: IntegrationCredentialWhereUniqueInput | IntegrationCredentialWhereUniqueInput[]
+  }
+
+  export type BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<BackupRecordCreateWithoutOrganizationInput, BackupRecordUncheckedCreateWithoutOrganizationInput> | BackupRecordCreateWithoutOrganizationInput[] | BackupRecordUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutOrganizationInput | BackupRecordCreateOrConnectWithoutOrganizationInput[]
+    createMany?: BackupRecordCreateManyOrganizationInputEnvelope
+    connect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+  }
+
+  export type DataOperationUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<DataOperationCreateWithoutOrganizationInput, DataOperationUncheckedCreateWithoutOrganizationInput> | DataOperationCreateWithoutOrganizationInput[] | DataOperationUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutOrganizationInput | DataOperationCreateOrConnectWithoutOrganizationInput[]
+    createMany?: DataOperationCreateManyOrganizationInputEnvelope
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+  }
+
+  export type BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput = {
+    create?: XOR<BackupScheduleCreateWithoutOrganizationInput, BackupScheduleUncheckedCreateWithoutOrganizationInput>
+    connectOrCreate?: BackupScheduleCreateOrConnectWithoutOrganizationInput
+    connect?: BackupScheduleWhereUniqueInput
   }
 
   export type OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput = {
@@ -61859,6 +67273,44 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type BackupRecordUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<BackupRecordCreateWithoutOrganizationInput, BackupRecordUncheckedCreateWithoutOrganizationInput> | BackupRecordCreateWithoutOrganizationInput[] | BackupRecordUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutOrganizationInput | BackupRecordCreateOrConnectWithoutOrganizationInput[]
+    upsert?: BackupRecordUpsertWithWhereUniqueWithoutOrganizationInput | BackupRecordUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: BackupRecordCreateManyOrganizationInputEnvelope
+    set?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    disconnect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    delete?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    connect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    update?: BackupRecordUpdateWithWhereUniqueWithoutOrganizationInput | BackupRecordUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: BackupRecordUpdateManyWithWhereWithoutOrganizationInput | BackupRecordUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: BackupRecordScalarWhereInput | BackupRecordScalarWhereInput[]
+  }
+
+  export type DataOperationUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<DataOperationCreateWithoutOrganizationInput, DataOperationUncheckedCreateWithoutOrganizationInput> | DataOperationCreateWithoutOrganizationInput[] | DataOperationUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutOrganizationInput | DataOperationCreateOrConnectWithoutOrganizationInput[]
+    upsert?: DataOperationUpsertWithWhereUniqueWithoutOrganizationInput | DataOperationUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: DataOperationCreateManyOrganizationInputEnvelope
+    set?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    disconnect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    delete?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    update?: DataOperationUpdateWithWhereUniqueWithoutOrganizationInput | DataOperationUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: DataOperationUpdateManyWithWhereWithoutOrganizationInput | DataOperationUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: DataOperationScalarWhereInput | DataOperationScalarWhereInput[]
+  }
+
+  export type BackupScheduleUpdateOneWithoutOrganizationNestedInput = {
+    create?: XOR<BackupScheduleCreateWithoutOrganizationInput, BackupScheduleUncheckedCreateWithoutOrganizationInput>
+    connectOrCreate?: BackupScheduleCreateOrConnectWithoutOrganizationInput
+    upsert?: BackupScheduleUpsertWithoutOrganizationInput
+    disconnect?: BackupScheduleWhereInput | boolean
+    delete?: BackupScheduleWhereInput | boolean
+    connect?: BackupScheduleWhereUniqueInput
+    update?: XOR<XOR<BackupScheduleUpdateToOneWithWhereWithoutOrganizationInput, BackupScheduleUpdateWithoutOrganizationInput>, BackupScheduleUncheckedUpdateWithoutOrganizationInput>
   }
 
   export type OrganizationMembershipUpdateManyWithoutOrganizationNestedInput = {
@@ -62293,6 +67745,44 @@ export namespace Prisma {
     update?: IntegrationCredentialUpdateWithWhereUniqueWithoutOrganizationInput | IntegrationCredentialUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: IntegrationCredentialUpdateManyWithWhereWithoutOrganizationInput | IntegrationCredentialUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: IntegrationCredentialScalarWhereInput | IntegrationCredentialScalarWhereInput[]
+  }
+
+  export type BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<BackupRecordCreateWithoutOrganizationInput, BackupRecordUncheckedCreateWithoutOrganizationInput> | BackupRecordCreateWithoutOrganizationInput[] | BackupRecordUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutOrganizationInput | BackupRecordCreateOrConnectWithoutOrganizationInput[]
+    upsert?: BackupRecordUpsertWithWhereUniqueWithoutOrganizationInput | BackupRecordUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: BackupRecordCreateManyOrganizationInputEnvelope
+    set?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    disconnect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    delete?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    connect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    update?: BackupRecordUpdateWithWhereUniqueWithoutOrganizationInput | BackupRecordUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: BackupRecordUpdateManyWithWhereWithoutOrganizationInput | BackupRecordUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: BackupRecordScalarWhereInput | BackupRecordScalarWhereInput[]
+  }
+
+  export type DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<DataOperationCreateWithoutOrganizationInput, DataOperationUncheckedCreateWithoutOrganizationInput> | DataOperationCreateWithoutOrganizationInput[] | DataOperationUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutOrganizationInput | DataOperationCreateOrConnectWithoutOrganizationInput[]
+    upsert?: DataOperationUpsertWithWhereUniqueWithoutOrganizationInput | DataOperationUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: DataOperationCreateManyOrganizationInputEnvelope
+    set?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    disconnect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    delete?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    update?: DataOperationUpdateWithWhereUniqueWithoutOrganizationInput | DataOperationUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: DataOperationUpdateManyWithWhereWithoutOrganizationInput | DataOperationUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: DataOperationScalarWhereInput | DataOperationScalarWhereInput[]
+  }
+
+  export type BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput = {
+    create?: XOR<BackupScheduleCreateWithoutOrganizationInput, BackupScheduleUncheckedCreateWithoutOrganizationInput>
+    connectOrCreate?: BackupScheduleCreateOrConnectWithoutOrganizationInput
+    upsert?: BackupScheduleUpsertWithoutOrganizationInput
+    disconnect?: BackupScheduleWhereInput | boolean
+    delete?: BackupScheduleWhereInput | boolean
+    connect?: BackupScheduleWhereUniqueInput
+    update?: XOR<XOR<BackupScheduleUpdateToOneWithWhereWithoutOrganizationInput, BackupScheduleUpdateWithoutOrganizationInput>, BackupScheduleUncheckedUpdateWithoutOrganizationInput>
   }
 
   export type OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput = {
@@ -62799,6 +68289,27 @@ export namespace Prisma {
     update?: XOR<XOR<RoleUpdateToOneWithWhereWithoutPermissionsInput, RoleUpdateWithoutPermissionsInput>, RoleUncheckedUpdateWithoutPermissionsInput>
   }
 
+  export type BackupRecordCreateNestedManyWithoutActorInput = {
+    create?: XOR<BackupRecordCreateWithoutActorInput, BackupRecordUncheckedCreateWithoutActorInput> | BackupRecordCreateWithoutActorInput[] | BackupRecordUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutActorInput | BackupRecordCreateOrConnectWithoutActorInput[]
+    createMany?: BackupRecordCreateManyActorInputEnvelope
+    connect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+  }
+
+  export type DataOperationCreateNestedManyWithoutActorInput = {
+    create?: XOR<DataOperationCreateWithoutActorInput, DataOperationUncheckedCreateWithoutActorInput> | DataOperationCreateWithoutActorInput[] | DataOperationUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutActorInput | DataOperationCreateOrConnectWithoutActorInput[]
+    createMany?: DataOperationCreateManyActorInputEnvelope
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+  }
+
+  export type BackupScheduleCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<BackupScheduleCreateWithoutUpdaterInput, BackupScheduleUncheckedCreateWithoutUpdaterInput> | BackupScheduleCreateWithoutUpdaterInput[] | BackupScheduleUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: BackupScheduleCreateOrConnectWithoutUpdaterInput | BackupScheduleCreateOrConnectWithoutUpdaterInput[]
+    createMany?: BackupScheduleCreateManyUpdaterInputEnvelope
+    connect?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+  }
+
   export type OrganizationMembershipCreateNestedManyWithoutUserInput = {
     create?: XOR<OrganizationMembershipCreateWithoutUserInput, OrganizationMembershipUncheckedCreateWithoutUserInput> | OrganizationMembershipCreateWithoutUserInput[] | OrganizationMembershipUncheckedCreateWithoutUserInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutUserInput | OrganizationMembershipCreateOrConnectWithoutUserInput[]
@@ -63079,6 +68590,27 @@ export namespace Prisma {
     connect?: IntegrationCredentialWhereUniqueInput | IntegrationCredentialWhereUniqueInput[]
   }
 
+  export type BackupRecordUncheckedCreateNestedManyWithoutActorInput = {
+    create?: XOR<BackupRecordCreateWithoutActorInput, BackupRecordUncheckedCreateWithoutActorInput> | BackupRecordCreateWithoutActorInput[] | BackupRecordUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutActorInput | BackupRecordCreateOrConnectWithoutActorInput[]
+    createMany?: BackupRecordCreateManyActorInputEnvelope
+    connect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+  }
+
+  export type DataOperationUncheckedCreateNestedManyWithoutActorInput = {
+    create?: XOR<DataOperationCreateWithoutActorInput, DataOperationUncheckedCreateWithoutActorInput> | DataOperationCreateWithoutActorInput[] | DataOperationUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutActorInput | DataOperationCreateOrConnectWithoutActorInput[]
+    createMany?: DataOperationCreateManyActorInputEnvelope
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+  }
+
+  export type BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput = {
+    create?: XOR<BackupScheduleCreateWithoutUpdaterInput, BackupScheduleUncheckedCreateWithoutUpdaterInput> | BackupScheduleCreateWithoutUpdaterInput[] | BackupScheduleUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: BackupScheduleCreateOrConnectWithoutUpdaterInput | BackupScheduleCreateOrConnectWithoutUpdaterInput[]
+    createMany?: BackupScheduleCreateManyUpdaterInputEnvelope
+    connect?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+  }
+
   export type OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<OrganizationMembershipCreateWithoutUserInput, OrganizationMembershipUncheckedCreateWithoutUserInput> | OrganizationMembershipCreateWithoutUserInput[] | OrganizationMembershipUncheckedCreateWithoutUserInput[]
     connectOrCreate?: OrganizationMembershipCreateOrConnectWithoutUserInput | OrganizationMembershipCreateOrConnectWithoutUserInput[]
@@ -63357,6 +68889,48 @@ export namespace Prisma {
     connectOrCreate?: IntegrationCredentialCreateOrConnectWithoutRevokerInput | IntegrationCredentialCreateOrConnectWithoutRevokerInput[]
     createMany?: IntegrationCredentialCreateManyRevokerInputEnvelope
     connect?: IntegrationCredentialWhereUniqueInput | IntegrationCredentialWhereUniqueInput[]
+  }
+
+  export type BackupRecordUpdateManyWithoutActorNestedInput = {
+    create?: XOR<BackupRecordCreateWithoutActorInput, BackupRecordUncheckedCreateWithoutActorInput> | BackupRecordCreateWithoutActorInput[] | BackupRecordUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutActorInput | BackupRecordCreateOrConnectWithoutActorInput[]
+    upsert?: BackupRecordUpsertWithWhereUniqueWithoutActorInput | BackupRecordUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: BackupRecordCreateManyActorInputEnvelope
+    set?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    disconnect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    delete?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    connect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    update?: BackupRecordUpdateWithWhereUniqueWithoutActorInput | BackupRecordUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: BackupRecordUpdateManyWithWhereWithoutActorInput | BackupRecordUpdateManyWithWhereWithoutActorInput[]
+    deleteMany?: BackupRecordScalarWhereInput | BackupRecordScalarWhereInput[]
+  }
+
+  export type DataOperationUpdateManyWithoutActorNestedInput = {
+    create?: XOR<DataOperationCreateWithoutActorInput, DataOperationUncheckedCreateWithoutActorInput> | DataOperationCreateWithoutActorInput[] | DataOperationUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutActorInput | DataOperationCreateOrConnectWithoutActorInput[]
+    upsert?: DataOperationUpsertWithWhereUniqueWithoutActorInput | DataOperationUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: DataOperationCreateManyActorInputEnvelope
+    set?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    disconnect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    delete?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    update?: DataOperationUpdateWithWhereUniqueWithoutActorInput | DataOperationUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: DataOperationUpdateManyWithWhereWithoutActorInput | DataOperationUpdateManyWithWhereWithoutActorInput[]
+    deleteMany?: DataOperationScalarWhereInput | DataOperationScalarWhereInput[]
+  }
+
+  export type BackupScheduleUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<BackupScheduleCreateWithoutUpdaterInput, BackupScheduleUncheckedCreateWithoutUpdaterInput> | BackupScheduleCreateWithoutUpdaterInput[] | BackupScheduleUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: BackupScheduleCreateOrConnectWithoutUpdaterInput | BackupScheduleCreateOrConnectWithoutUpdaterInput[]
+    upsert?: BackupScheduleUpsertWithWhereUniqueWithoutUpdaterInput | BackupScheduleUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: BackupScheduleCreateManyUpdaterInputEnvelope
+    set?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+    disconnect?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+    delete?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+    connect?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+    update?: BackupScheduleUpdateWithWhereUniqueWithoutUpdaterInput | BackupScheduleUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: BackupScheduleUpdateManyWithWhereWithoutUpdaterInput | BackupScheduleUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: BackupScheduleScalarWhereInput | BackupScheduleScalarWhereInput[]
   }
 
   export type OrganizationMembershipUpdateManyWithoutUserNestedInput = {
@@ -63917,6 +69491,48 @@ export namespace Prisma {
     update?: IntegrationCredentialUpdateWithWhereUniqueWithoutRevokerInput | IntegrationCredentialUpdateWithWhereUniqueWithoutRevokerInput[]
     updateMany?: IntegrationCredentialUpdateManyWithWhereWithoutRevokerInput | IntegrationCredentialUpdateManyWithWhereWithoutRevokerInput[]
     deleteMany?: IntegrationCredentialScalarWhereInput | IntegrationCredentialScalarWhereInput[]
+  }
+
+  export type BackupRecordUncheckedUpdateManyWithoutActorNestedInput = {
+    create?: XOR<BackupRecordCreateWithoutActorInput, BackupRecordUncheckedCreateWithoutActorInput> | BackupRecordCreateWithoutActorInput[] | BackupRecordUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutActorInput | BackupRecordCreateOrConnectWithoutActorInput[]
+    upsert?: BackupRecordUpsertWithWhereUniqueWithoutActorInput | BackupRecordUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: BackupRecordCreateManyActorInputEnvelope
+    set?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    disconnect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    delete?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    connect?: BackupRecordWhereUniqueInput | BackupRecordWhereUniqueInput[]
+    update?: BackupRecordUpdateWithWhereUniqueWithoutActorInput | BackupRecordUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: BackupRecordUpdateManyWithWhereWithoutActorInput | BackupRecordUpdateManyWithWhereWithoutActorInput[]
+    deleteMany?: BackupRecordScalarWhereInput | BackupRecordScalarWhereInput[]
+  }
+
+  export type DataOperationUncheckedUpdateManyWithoutActorNestedInput = {
+    create?: XOR<DataOperationCreateWithoutActorInput, DataOperationUncheckedCreateWithoutActorInput> | DataOperationCreateWithoutActorInput[] | DataOperationUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutActorInput | DataOperationCreateOrConnectWithoutActorInput[]
+    upsert?: DataOperationUpsertWithWhereUniqueWithoutActorInput | DataOperationUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: DataOperationCreateManyActorInputEnvelope
+    set?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    disconnect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    delete?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    update?: DataOperationUpdateWithWhereUniqueWithoutActorInput | DataOperationUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: DataOperationUpdateManyWithWhereWithoutActorInput | DataOperationUpdateManyWithWhereWithoutActorInput[]
+    deleteMany?: DataOperationScalarWhereInput | DataOperationScalarWhereInput[]
+  }
+
+  export type BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput = {
+    create?: XOR<BackupScheduleCreateWithoutUpdaterInput, BackupScheduleUncheckedCreateWithoutUpdaterInput> | BackupScheduleCreateWithoutUpdaterInput[] | BackupScheduleUncheckedCreateWithoutUpdaterInput[]
+    connectOrCreate?: BackupScheduleCreateOrConnectWithoutUpdaterInput | BackupScheduleCreateOrConnectWithoutUpdaterInput[]
+    upsert?: BackupScheduleUpsertWithWhereUniqueWithoutUpdaterInput | BackupScheduleUpsertWithWhereUniqueWithoutUpdaterInput[]
+    createMany?: BackupScheduleCreateManyUpdaterInputEnvelope
+    set?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+    disconnect?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+    delete?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+    connect?: BackupScheduleWhereUniqueInput | BackupScheduleWhereUniqueInput[]
+    update?: BackupScheduleUpdateWithWhereUniqueWithoutUpdaterInput | BackupScheduleUpdateWithWhereUniqueWithoutUpdaterInput[]
+    updateMany?: BackupScheduleUpdateManyWithWhereWithoutUpdaterInput | BackupScheduleUpdateManyWithWhereWithoutUpdaterInput[]
+    deleteMany?: BackupScheduleScalarWhereInput | BackupScheduleScalarWhereInput[]
   }
 
   export type OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput = {
@@ -67538,6 +73154,162 @@ export namespace Prisma {
     update?: XOR<XOR<OrganizationMembershipUpdateToOneWithWhereWithoutWorkspacePreferenceInput, OrganizationMembershipUpdateWithoutWorkspacePreferenceInput>, OrganizationMembershipUncheckedUpdateWithoutWorkspacePreferenceInput>
   }
 
+  export type OrganizationCreateNestedOneWithoutBackupsInput = {
+    create?: XOR<OrganizationCreateWithoutBackupsInput, OrganizationUncheckedCreateWithoutBackupsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutBackupsInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutBackupsCreatedInput = {
+    create?: XOR<UserCreateWithoutBackupsCreatedInput, UserUncheckedCreateWithoutBackupsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBackupsCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type DataOperationCreateNestedManyWithoutPreventiveBackupInput = {
+    create?: XOR<DataOperationCreateWithoutPreventiveBackupInput, DataOperationUncheckedCreateWithoutPreventiveBackupInput> | DataOperationCreateWithoutPreventiveBackupInput[] | DataOperationUncheckedCreateWithoutPreventiveBackupInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutPreventiveBackupInput | DataOperationCreateOrConnectWithoutPreventiveBackupInput[]
+    createMany?: DataOperationCreateManyPreventiveBackupInputEnvelope
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+  }
+
+  export type DataOperationUncheckedCreateNestedManyWithoutPreventiveBackupInput = {
+    create?: XOR<DataOperationCreateWithoutPreventiveBackupInput, DataOperationUncheckedCreateWithoutPreventiveBackupInput> | DataOperationCreateWithoutPreventiveBackupInput[] | DataOperationUncheckedCreateWithoutPreventiveBackupInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutPreventiveBackupInput | DataOperationCreateOrConnectWithoutPreventiveBackupInput[]
+    createMany?: DataOperationCreateManyPreventiveBackupInputEnvelope
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+  }
+
+  export type NullableBigIntFieldUpdateOperationsInput = {
+    set?: bigint | number | null
+    increment?: bigint | number
+    decrement?: bigint | number
+    multiply?: bigint | number
+    divide?: bigint | number
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutBackupsNestedInput = {
+    create?: XOR<OrganizationCreateWithoutBackupsInput, OrganizationUncheckedCreateWithoutBackupsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutBackupsInput
+    upsert?: OrganizationUpsertWithoutBackupsInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutBackupsInput, OrganizationUpdateWithoutBackupsInput>, OrganizationUncheckedUpdateWithoutBackupsInput>
+  }
+
+  export type UserUpdateOneWithoutBackupsCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutBackupsCreatedInput, UserUncheckedCreateWithoutBackupsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBackupsCreatedInput
+    upsert?: UserUpsertWithoutBackupsCreatedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBackupsCreatedInput, UserUpdateWithoutBackupsCreatedInput>, UserUncheckedUpdateWithoutBackupsCreatedInput>
+  }
+
+  export type DataOperationUpdateManyWithoutPreventiveBackupNestedInput = {
+    create?: XOR<DataOperationCreateWithoutPreventiveBackupInput, DataOperationUncheckedCreateWithoutPreventiveBackupInput> | DataOperationCreateWithoutPreventiveBackupInput[] | DataOperationUncheckedCreateWithoutPreventiveBackupInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutPreventiveBackupInput | DataOperationCreateOrConnectWithoutPreventiveBackupInput[]
+    upsert?: DataOperationUpsertWithWhereUniqueWithoutPreventiveBackupInput | DataOperationUpsertWithWhereUniqueWithoutPreventiveBackupInput[]
+    createMany?: DataOperationCreateManyPreventiveBackupInputEnvelope
+    set?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    disconnect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    delete?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    update?: DataOperationUpdateWithWhereUniqueWithoutPreventiveBackupInput | DataOperationUpdateWithWhereUniqueWithoutPreventiveBackupInput[]
+    updateMany?: DataOperationUpdateManyWithWhereWithoutPreventiveBackupInput | DataOperationUpdateManyWithWhereWithoutPreventiveBackupInput[]
+    deleteMany?: DataOperationScalarWhereInput | DataOperationScalarWhereInput[]
+  }
+
+  export type DataOperationUncheckedUpdateManyWithoutPreventiveBackupNestedInput = {
+    create?: XOR<DataOperationCreateWithoutPreventiveBackupInput, DataOperationUncheckedCreateWithoutPreventiveBackupInput> | DataOperationCreateWithoutPreventiveBackupInput[] | DataOperationUncheckedCreateWithoutPreventiveBackupInput[]
+    connectOrCreate?: DataOperationCreateOrConnectWithoutPreventiveBackupInput | DataOperationCreateOrConnectWithoutPreventiveBackupInput[]
+    upsert?: DataOperationUpsertWithWhereUniqueWithoutPreventiveBackupInput | DataOperationUpsertWithWhereUniqueWithoutPreventiveBackupInput[]
+    createMany?: DataOperationCreateManyPreventiveBackupInputEnvelope
+    set?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    disconnect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    delete?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    connect?: DataOperationWhereUniqueInput | DataOperationWhereUniqueInput[]
+    update?: DataOperationUpdateWithWhereUniqueWithoutPreventiveBackupInput | DataOperationUpdateWithWhereUniqueWithoutPreventiveBackupInput[]
+    updateMany?: DataOperationUpdateManyWithWhereWithoutPreventiveBackupInput | DataOperationUpdateManyWithWhereWithoutPreventiveBackupInput[]
+    deleteMany?: DataOperationScalarWhereInput | DataOperationScalarWhereInput[]
+  }
+
+  export type OrganizationCreateNestedOneWithoutDataOperationsInput = {
+    create?: XOR<OrganizationCreateWithoutDataOperationsInput, OrganizationUncheckedCreateWithoutDataOperationsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutDataOperationsInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutDataOperationsCreatedInput = {
+    create?: XOR<UserCreateWithoutDataOperationsCreatedInput, UserUncheckedCreateWithoutDataOperationsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDataOperationsCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type BackupRecordCreateNestedOneWithoutProtectedByOperationsInput = {
+    create?: XOR<BackupRecordCreateWithoutProtectedByOperationsInput, BackupRecordUncheckedCreateWithoutProtectedByOperationsInput>
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutProtectedByOperationsInput
+    connect?: BackupRecordWhereUniqueInput
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutDataOperationsNestedInput = {
+    create?: XOR<OrganizationCreateWithoutDataOperationsInput, OrganizationUncheckedCreateWithoutDataOperationsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutDataOperationsInput
+    upsert?: OrganizationUpsertWithoutDataOperationsInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutDataOperationsInput, OrganizationUpdateWithoutDataOperationsInput>, OrganizationUncheckedUpdateWithoutDataOperationsInput>
+  }
+
+  export type UserUpdateOneWithoutDataOperationsCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutDataOperationsCreatedInput, UserUncheckedCreateWithoutDataOperationsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDataOperationsCreatedInput
+    upsert?: UserUpsertWithoutDataOperationsCreatedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDataOperationsCreatedInput, UserUpdateWithoutDataOperationsCreatedInput>, UserUncheckedUpdateWithoutDataOperationsCreatedInput>
+  }
+
+  export type BackupRecordUpdateOneWithoutProtectedByOperationsNestedInput = {
+    create?: XOR<BackupRecordCreateWithoutProtectedByOperationsInput, BackupRecordUncheckedCreateWithoutProtectedByOperationsInput>
+    connectOrCreate?: BackupRecordCreateOrConnectWithoutProtectedByOperationsInput
+    upsert?: BackupRecordUpsertWithoutProtectedByOperationsInput
+    disconnect?: BackupRecordWhereInput | boolean
+    delete?: BackupRecordWhereInput | boolean
+    connect?: BackupRecordWhereUniqueInput
+    update?: XOR<XOR<BackupRecordUpdateToOneWithWhereWithoutProtectedByOperationsInput, BackupRecordUpdateWithoutProtectedByOperationsInput>, BackupRecordUncheckedUpdateWithoutProtectedByOperationsInput>
+  }
+
+  export type OrganizationCreateNestedOneWithoutBackupScheduleInput = {
+    create?: XOR<OrganizationCreateWithoutBackupScheduleInput, OrganizationUncheckedCreateWithoutBackupScheduleInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutBackupScheduleInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutBackupSchedulesUpdatedInput = {
+    create?: XOR<UserCreateWithoutBackupSchedulesUpdatedInput, UserUncheckedCreateWithoutBackupSchedulesUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBackupSchedulesUpdatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutBackupScheduleNestedInput = {
+    create?: XOR<OrganizationCreateWithoutBackupScheduleInput, OrganizationUncheckedCreateWithoutBackupScheduleInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutBackupScheduleInput
+    upsert?: OrganizationUpsertWithoutBackupScheduleInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutBackupScheduleInput, OrganizationUpdateWithoutBackupScheduleInput>, OrganizationUncheckedUpdateWithoutBackupScheduleInput>
+  }
+
+  export type UserUpdateOneWithoutBackupSchedulesUpdatedNestedInput = {
+    create?: XOR<UserCreateWithoutBackupSchedulesUpdatedInput, UserUncheckedCreateWithoutBackupSchedulesUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBackupSchedulesUpdatedInput
+    upsert?: UserUpsertWithoutBackupSchedulesUpdatedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBackupSchedulesUpdatedInput, UserUpdateWithoutBackupSchedulesUpdatedInput>, UserUncheckedUpdateWithoutBackupSchedulesUpdatedInput>
+  }
+
   export type NestedUuidFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -68132,6 +73904,158 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedBigIntNullableFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableFilter<$PrismaModel> | bigint | number | null
+  }
+
+  export type NestedBigIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableWithAggregatesFilter<$PrismaModel> | bigint | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedBigIntNullableFilter<$PrismaModel>
+    _min?: NestedBigIntNullableFilter<$PrismaModel>
+    _max?: NestedBigIntNullableFilter<$PrismaModel>
+  }
+
+  export type BackupRecordCreateWithoutOrganizationInput = {
+    id?: string
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    actor?: UserCreateNestedOneWithoutBackupsCreatedInput
+    protectedByOperations?: DataOperationCreateNestedManyWithoutPreventiveBackupInput
+  }
+
+  export type BackupRecordUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    actorUserId?: string | null
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    protectedByOperations?: DataOperationUncheckedCreateNestedManyWithoutPreventiveBackupInput
+  }
+
+  export type BackupRecordCreateOrConnectWithoutOrganizationInput = {
+    where: BackupRecordWhereUniqueInput
+    create: XOR<BackupRecordCreateWithoutOrganizationInput, BackupRecordUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type BackupRecordCreateManyOrganizationInputEnvelope = {
+    data: BackupRecordCreateManyOrganizationInput | BackupRecordCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DataOperationCreateWithoutOrganizationInput = {
+    id?: string
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+    actor?: UserCreateNestedOneWithoutDataOperationsCreatedInput
+    preventiveBackup?: BackupRecordCreateNestedOneWithoutProtectedByOperationsInput
+  }
+
+  export type DataOperationUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    actorUserId?: string | null
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    preventiveBackupId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type DataOperationCreateOrConnectWithoutOrganizationInput = {
+    where: DataOperationWhereUniqueInput
+    create: XOR<DataOperationCreateWithoutOrganizationInput, DataOperationUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type DataOperationCreateManyOrganizationInputEnvelope = {
+    data: DataOperationCreateManyOrganizationInput | DataOperationCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BackupScheduleCreateWithoutOrganizationInput = {
+    enabled?: boolean
+    frequency?: string
+    localTime?: string
+    weekday?: number
+    intervalMinutes?: number | null
+    retentionCount?: number
+    timezone?: string
+    nextRunAt?: Date | string | null
+    lastScheduledAt?: Date | string | null
+    updatedAt?: Date | string
+    updater?: UserCreateNestedOneWithoutBackupSchedulesUpdatedInput
+  }
+
+  export type BackupScheduleUncheckedCreateWithoutOrganizationInput = {
+    enabled?: boolean
+    frequency?: string
+    localTime?: string
+    weekday?: number
+    intervalMinutes?: number | null
+    retentionCount?: number
+    timezone?: string
+    nextRunAt?: Date | string | null
+    lastScheduledAt?: Date | string | null
+    updatedBy?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type BackupScheduleCreateOrConnectWithoutOrganizationInput = {
+    where: BackupScheduleWhereUniqueInput
+    create: XOR<BackupScheduleCreateWithoutOrganizationInput, BackupScheduleUncheckedCreateWithoutOrganizationInput>
   }
 
   export type OrganizationMembershipCreateWithoutOrganizationInput = {
@@ -69291,6 +75215,120 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type BackupRecordUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: BackupRecordWhereUniqueInput
+    update: XOR<BackupRecordUpdateWithoutOrganizationInput, BackupRecordUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<BackupRecordCreateWithoutOrganizationInput, BackupRecordUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type BackupRecordUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: BackupRecordWhereUniqueInput
+    data: XOR<BackupRecordUpdateWithoutOrganizationInput, BackupRecordUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type BackupRecordUpdateManyWithWhereWithoutOrganizationInput = {
+    where: BackupRecordScalarWhereInput
+    data: XOR<BackupRecordUpdateManyMutationInput, BackupRecordUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type BackupRecordScalarWhereInput = {
+    AND?: BackupRecordScalarWhereInput | BackupRecordScalarWhereInput[]
+    OR?: BackupRecordScalarWhereInput[]
+    NOT?: BackupRecordScalarWhereInput | BackupRecordScalarWhereInput[]
+    id?: UuidFilter<"BackupRecord"> | string
+    organizationId?: UuidFilter<"BackupRecord"> | string
+    actorUserId?: UuidNullableFilter<"BackupRecord"> | string | null
+    reason?: StringFilter<"BackupRecord"> | string
+    state?: StringFilter<"BackupRecord"> | string
+    schemaVersion?: IntNullableFilter<"BackupRecord"> | number | null
+    checksum?: StringNullableFilter<"BackupRecord"> | string | null
+    byteCount?: BigIntNullableFilter<"BackupRecord"> | bigint | number | null
+    counts?: JsonNullableFilter<"BackupRecord">
+    errorCode?: StringNullableFilter<"BackupRecord"> | string | null
+    createdAt?: DateTimeFilter<"BackupRecord"> | Date | string
+    completedAt?: DateTimeNullableFilter<"BackupRecord"> | Date | string | null
+  }
+
+  export type DataOperationUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: DataOperationWhereUniqueInput
+    update: XOR<DataOperationUpdateWithoutOrganizationInput, DataOperationUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<DataOperationCreateWithoutOrganizationInput, DataOperationUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type DataOperationUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: DataOperationWhereUniqueInput
+    data: XOR<DataOperationUpdateWithoutOrganizationInput, DataOperationUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type DataOperationUpdateManyWithWhereWithoutOrganizationInput = {
+    where: DataOperationScalarWhereInput
+    data: XOR<DataOperationUpdateManyMutationInput, DataOperationUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type DataOperationScalarWhereInput = {
+    AND?: DataOperationScalarWhereInput | DataOperationScalarWhereInput[]
+    OR?: DataOperationScalarWhereInput[]
+    NOT?: DataOperationScalarWhereInput | DataOperationScalarWhereInput[]
+    id?: UuidFilter<"DataOperation"> | string
+    organizationId?: UuidFilter<"DataOperation"> | string
+    actorUserId?: UuidNullableFilter<"DataOperation"> | string | null
+    kind?: StringFilter<"DataOperation"> | string
+    state?: StringFilter<"DataOperation"> | string
+    payload?: JsonFilter<"DataOperation">
+    checkpoint?: JsonFilter<"DataOperation">
+    stage?: StringFilter<"DataOperation"> | string
+    processed?: IntFilter<"DataOperation"> | number
+    total?: IntNullableFilter<"DataOperation"> | number | null
+    attempts?: IntFilter<"DataOperation"> | number
+    workerId?: StringNullableFilter<"DataOperation"> | string | null
+    leaseUntil?: DateTimeNullableFilter<"DataOperation"> | Date | string | null
+    heartbeatAt?: DateTimeNullableFilter<"DataOperation"> | Date | string | null
+    errorCode?: StringNullableFilter<"DataOperation"> | string | null
+    preventiveBackupId?: UuidNullableFilter<"DataOperation"> | string | null
+    createdAt?: DateTimeFilter<"DataOperation"> | Date | string
+    updatedAt?: DateTimeFilter<"DataOperation"> | Date | string
+    completedAt?: DateTimeNullableFilter<"DataOperation"> | Date | string | null
+  }
+
+  export type BackupScheduleUpsertWithoutOrganizationInput = {
+    update: XOR<BackupScheduleUpdateWithoutOrganizationInput, BackupScheduleUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<BackupScheduleCreateWithoutOrganizationInput, BackupScheduleUncheckedCreateWithoutOrganizationInput>
+    where?: BackupScheduleWhereInput
+  }
+
+  export type BackupScheduleUpdateToOneWithWhereWithoutOrganizationInput = {
+    where?: BackupScheduleWhereInput
+    data: XOR<BackupScheduleUpdateWithoutOrganizationInput, BackupScheduleUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type BackupScheduleUpdateWithoutOrganizationInput = {
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    frequency?: StringFieldUpdateOperationsInput | string
+    localTime?: StringFieldUpdateOperationsInput | string
+    weekday?: IntFieldUpdateOperationsInput | number
+    intervalMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    retentionCount?: IntFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    nextRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastScheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updater?: UserUpdateOneWithoutBackupSchedulesUpdatedNestedInput
+  }
+
+  export type BackupScheduleUncheckedUpdateWithoutOrganizationInput = {
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    frequency?: StringFieldUpdateOperationsInput | string
+    localTime?: StringFieldUpdateOperationsInput | string
+    weekday?: IntFieldUpdateOperationsInput | number
+    intervalMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    retentionCount?: IntFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    nextRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastScheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type OrganizationMembershipUpsertWithWhereUniqueWithoutOrganizationInput = {
     where: OrganizationMembershipWhereUniqueInput
     update: XOR<OrganizationMembershipUpdateWithoutOrganizationInput, OrganizationMembershipUncheckedUpdateWithoutOrganizationInput>
@@ -70306,6 +76344,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -70345,6 +76386,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -70424,6 +76468,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -70463,6 +76510,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -70576,6 +76626,136 @@ export namespace Prisma {
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupRecordCreateWithoutActorInput = {
+    id?: string
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutBackupsInput
+    protectedByOperations?: DataOperationCreateNestedManyWithoutPreventiveBackupInput
+  }
+
+  export type BackupRecordUncheckedCreateWithoutActorInput = {
+    id?: string
+    organizationId: string
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    protectedByOperations?: DataOperationUncheckedCreateNestedManyWithoutPreventiveBackupInput
+  }
+
+  export type BackupRecordCreateOrConnectWithoutActorInput = {
+    where: BackupRecordWhereUniqueInput
+    create: XOR<BackupRecordCreateWithoutActorInput, BackupRecordUncheckedCreateWithoutActorInput>
+  }
+
+  export type BackupRecordCreateManyActorInputEnvelope = {
+    data: BackupRecordCreateManyActorInput | BackupRecordCreateManyActorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DataOperationCreateWithoutActorInput = {
+    id?: string
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutDataOperationsInput
+    preventiveBackup?: BackupRecordCreateNestedOneWithoutProtectedByOperationsInput
+  }
+
+  export type DataOperationUncheckedCreateWithoutActorInput = {
+    id?: string
+    organizationId: string
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    preventiveBackupId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type DataOperationCreateOrConnectWithoutActorInput = {
+    where: DataOperationWhereUniqueInput
+    create: XOR<DataOperationCreateWithoutActorInput, DataOperationUncheckedCreateWithoutActorInput>
+  }
+
+  export type DataOperationCreateManyActorInputEnvelope = {
+    data: DataOperationCreateManyActorInput | DataOperationCreateManyActorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BackupScheduleCreateWithoutUpdaterInput = {
+    enabled?: boolean
+    frequency?: string
+    localTime?: string
+    weekday?: number
+    intervalMinutes?: number | null
+    retentionCount?: number
+    timezone?: string
+    nextRunAt?: Date | string | null
+    lastScheduledAt?: Date | string | null
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutBackupScheduleInput
+  }
+
+  export type BackupScheduleUncheckedCreateWithoutUpdaterInput = {
+    organizationId: string
+    enabled?: boolean
+    frequency?: string
+    localTime?: string
+    weekday?: number
+    intervalMinutes?: number | null
+    retentionCount?: number
+    timezone?: string
+    nextRunAt?: Date | string | null
+    lastScheduledAt?: Date | string | null
+    updatedAt?: Date | string
+  }
+
+  export type BackupScheduleCreateOrConnectWithoutUpdaterInput = {
+    where: BackupScheduleWhereUniqueInput
+    create: XOR<BackupScheduleCreateWithoutUpdaterInput, BackupScheduleUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type BackupScheduleCreateManyUpdaterInputEnvelope = {
+    data: BackupScheduleCreateManyUpdaterInput | BackupScheduleCreateManyUpdaterInput[]
+    skipDuplicates?: boolean
   }
 
   export type OrganizationMembershipCreateWithoutUserInput = {
@@ -72482,6 +78662,72 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type BackupRecordUpsertWithWhereUniqueWithoutActorInput = {
+    where: BackupRecordWhereUniqueInput
+    update: XOR<BackupRecordUpdateWithoutActorInput, BackupRecordUncheckedUpdateWithoutActorInput>
+    create: XOR<BackupRecordCreateWithoutActorInput, BackupRecordUncheckedCreateWithoutActorInput>
+  }
+
+  export type BackupRecordUpdateWithWhereUniqueWithoutActorInput = {
+    where: BackupRecordWhereUniqueInput
+    data: XOR<BackupRecordUpdateWithoutActorInput, BackupRecordUncheckedUpdateWithoutActorInput>
+  }
+
+  export type BackupRecordUpdateManyWithWhereWithoutActorInput = {
+    where: BackupRecordScalarWhereInput
+    data: XOR<BackupRecordUpdateManyMutationInput, BackupRecordUncheckedUpdateManyWithoutActorInput>
+  }
+
+  export type DataOperationUpsertWithWhereUniqueWithoutActorInput = {
+    where: DataOperationWhereUniqueInput
+    update: XOR<DataOperationUpdateWithoutActorInput, DataOperationUncheckedUpdateWithoutActorInput>
+    create: XOR<DataOperationCreateWithoutActorInput, DataOperationUncheckedCreateWithoutActorInput>
+  }
+
+  export type DataOperationUpdateWithWhereUniqueWithoutActorInput = {
+    where: DataOperationWhereUniqueInput
+    data: XOR<DataOperationUpdateWithoutActorInput, DataOperationUncheckedUpdateWithoutActorInput>
+  }
+
+  export type DataOperationUpdateManyWithWhereWithoutActorInput = {
+    where: DataOperationScalarWhereInput
+    data: XOR<DataOperationUpdateManyMutationInput, DataOperationUncheckedUpdateManyWithoutActorInput>
+  }
+
+  export type BackupScheduleUpsertWithWhereUniqueWithoutUpdaterInput = {
+    where: BackupScheduleWhereUniqueInput
+    update: XOR<BackupScheduleUpdateWithoutUpdaterInput, BackupScheduleUncheckedUpdateWithoutUpdaterInput>
+    create: XOR<BackupScheduleCreateWithoutUpdaterInput, BackupScheduleUncheckedCreateWithoutUpdaterInput>
+  }
+
+  export type BackupScheduleUpdateWithWhereUniqueWithoutUpdaterInput = {
+    where: BackupScheduleWhereUniqueInput
+    data: XOR<BackupScheduleUpdateWithoutUpdaterInput, BackupScheduleUncheckedUpdateWithoutUpdaterInput>
+  }
+
+  export type BackupScheduleUpdateManyWithWhereWithoutUpdaterInput = {
+    where: BackupScheduleScalarWhereInput
+    data: XOR<BackupScheduleUpdateManyMutationInput, BackupScheduleUncheckedUpdateManyWithoutUpdaterInput>
+  }
+
+  export type BackupScheduleScalarWhereInput = {
+    AND?: BackupScheduleScalarWhereInput | BackupScheduleScalarWhereInput[]
+    OR?: BackupScheduleScalarWhereInput[]
+    NOT?: BackupScheduleScalarWhereInput | BackupScheduleScalarWhereInput[]
+    organizationId?: UuidFilter<"BackupSchedule"> | string
+    enabled?: BoolFilter<"BackupSchedule"> | boolean
+    frequency?: StringFilter<"BackupSchedule"> | string
+    localTime?: StringFilter<"BackupSchedule"> | string
+    weekday?: IntFilter<"BackupSchedule"> | number
+    intervalMinutes?: IntNullableFilter<"BackupSchedule"> | number | null
+    retentionCount?: IntFilter<"BackupSchedule"> | number
+    timezone?: StringFilter<"BackupSchedule"> | string
+    nextRunAt?: DateTimeNullableFilter<"BackupSchedule"> | Date | string | null
+    lastScheduledAt?: DateTimeNullableFilter<"BackupSchedule"> | Date | string | null
+    updatedBy?: UuidNullableFilter<"BackupSchedule"> | string | null
+    updatedAt?: DateTimeFilter<"BackupSchedule"> | Date | string
+  }
+
   export type OrganizationMembershipUpsertWithWhereUniqueWithoutUserInput = {
     where: OrganizationMembershipWhereUniqueInput
     update: XOR<OrganizationMembershipUpdateWithoutUserInput, OrganizationMembershipUncheckedUpdateWithoutUserInput>
@@ -73129,6 +79375,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
     companies?: CompanyCreateNestedManyWithoutOrganizationInput
@@ -73168,6 +79417,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
     companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
@@ -73214,6 +79466,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
@@ -73264,6 +79519,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
@@ -73466,6 +79724,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
     companies?: CompanyUpdateManyWithoutOrganizationNestedInput
@@ -73505,6 +79766,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -73557,6 +79821,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
@@ -73607,6 +79874,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
@@ -73710,6 +79980,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
     companies?: CompanyCreateNestedManyWithoutOrganizationInput
@@ -73749,6 +80022,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
     companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
@@ -73795,6 +80071,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
@@ -73845,6 +80124,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
@@ -73909,6 +80191,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
     companies?: CompanyUpdateManyWithoutOrganizationNestedInput
@@ -73948,6 +80233,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -74000,6 +80288,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
@@ -74050,6 +80341,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
@@ -74098,6 +80392,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     companies?: CompanyCreateNestedManyWithoutOrganizationInput
@@ -74137,6 +80434,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
@@ -74183,6 +80483,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
@@ -74233,6 +80536,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
@@ -74297,6 +80603,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     companies?: CompanyUpdateManyWithoutOrganizationNestedInput
@@ -74336,6 +80645,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -74388,6 +80700,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
@@ -74438,6 +80753,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
@@ -74486,6 +80804,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -74525,6 +80846,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -74571,6 +80895,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -74621,6 +80948,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -74676,6 +81006,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -74726,6 +81059,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -74781,6 +81117,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -74831,6 +81170,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -75208,6 +81550,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -75247,6 +81592,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -75299,6 +81647,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -75349,6 +81700,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -75410,6 +81764,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -75460,6 +81817,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -75521,6 +81881,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -75571,6 +81934,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -75747,6 +82113,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -75786,6 +82155,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -75832,6 +82204,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -75882,6 +82257,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -75937,6 +82315,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -75987,6 +82368,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -76042,6 +82426,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -76092,6 +82479,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -76147,6 +82537,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -76197,6 +82590,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -76345,6 +82741,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -76384,6 +82783,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -76436,6 +82838,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -76486,6 +82891,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -76547,6 +82955,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -76597,6 +83008,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -76658,6 +83072,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -76708,6 +83125,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -76769,6 +83189,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -76819,6 +83242,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -76931,6 +83357,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -76970,6 +83399,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -77066,6 +83498,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -77105,6 +83540,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -77191,6 +83629,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -77230,6 +83671,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -77379,6 +83823,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -77418,6 +83865,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -77563,6 +84013,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -77602,6 +84055,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -77698,6 +84154,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -77737,6 +84196,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -77823,6 +84285,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -77862,6 +84327,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -77908,6 +84376,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -77958,6 +84429,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -78013,6 +84487,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -78063,6 +84540,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -78118,6 +84598,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -78168,6 +84651,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -78550,6 +85036,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -78589,6 +85078,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -78641,6 +85133,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -78691,6 +85186,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -78752,6 +85250,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -78802,6 +85303,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -78863,6 +85367,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -78913,6 +85420,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -79089,6 +85599,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -79128,6 +85641,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -79232,6 +85748,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -79271,6 +85790,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -79365,6 +85887,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -79404,6 +85929,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -79561,6 +86089,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -79600,6 +86131,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -79753,6 +86287,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -79792,6 +86329,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -79940,6 +86480,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -79990,6 +86533,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -80054,6 +86600,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -80093,6 +86642,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -80259,6 +86811,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -80309,6 +86864,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -80357,6 +86915,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -80396,6 +86957,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -80499,6 +87063,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -80538,6 +87105,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -80609,6 +87179,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -80648,6 +87221,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -80779,6 +87355,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -80818,6 +87397,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -80945,6 +87527,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -80984,6 +87569,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -81111,6 +87699,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -81150,6 +87741,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -81273,6 +87867,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -81312,6 +87909,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -81423,6 +88023,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -81462,6 +88065,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -81533,6 +88139,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -81572,6 +88181,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -81715,6 +88327,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -81754,6 +88369,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -81893,6 +88511,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -81932,6 +88553,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -82071,6 +88695,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -82110,6 +88737,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -82245,6 +88875,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -82284,6 +88917,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -82425,6 +89061,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -82464,6 +89103,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -82679,6 +89321,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -82718,6 +89363,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -82916,6 +89564,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -82966,6 +89617,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -83021,6 +89675,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -83071,6 +89728,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -83126,6 +89786,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -83176,6 +89839,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -83231,6 +89897,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -83281,6 +89950,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -83345,6 +90017,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -83384,6 +90059,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -83606,6 +90284,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -83656,6 +90337,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -83717,6 +90401,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -83767,6 +90454,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -83828,6 +90518,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -83878,6 +90571,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -83939,6 +90635,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -83989,6 +90688,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -84037,6 +90739,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -84076,6 +90781,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -84279,6 +90987,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -84329,6 +91040,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -84415,6 +91129,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -84465,6 +91182,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -84520,6 +91240,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -84570,6 +91293,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -84625,6 +91351,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -84675,6 +91404,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -84831,6 +91563,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -84870,6 +91605,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -85103,6 +91841,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -85153,6 +91894,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -85251,6 +91995,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -85301,6 +92048,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -85362,6 +92112,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -85412,6 +92165,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -85473,6 +92229,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -85523,6 +92282,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -85603,6 +92365,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -85642,6 +92407,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -85688,6 +92456,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -85738,6 +92509,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -85793,6 +92567,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -85843,6 +92620,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -85898,6 +92678,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -85948,6 +92731,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -86051,6 +92837,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -86090,6 +92879,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -86142,6 +92934,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -86192,6 +92987,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -86253,6 +93051,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -86303,6 +93104,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -86364,6 +93168,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -86414,6 +93221,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -86478,6 +93288,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -86517,6 +93330,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -86652,6 +93468,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -86702,6 +93521,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -86757,6 +93579,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -86807,6 +93632,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -86871,6 +93699,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -86910,6 +93741,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -87063,6 +93897,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -87113,6 +93950,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -87174,6 +94014,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -87224,6 +94067,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -87272,6 +94118,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -87311,6 +94160,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -87490,6 +94342,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -87540,6 +94395,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -87595,6 +94453,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -87645,6 +94506,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -87700,6 +94564,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -87750,6 +94617,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -87920,6 +94790,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -87959,6 +94832,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -88162,6 +95038,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -88212,6 +95091,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -88273,6 +95155,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -88323,6 +95208,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -88384,6 +95272,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -88434,6 +95325,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -88581,6 +95475,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -88620,6 +95517,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -88729,6 +95629,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -88779,6 +95682,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -88843,6 +95749,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -88882,6 +95791,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -89003,6 +95915,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -89053,6 +95968,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -89101,6 +96019,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -89140,6 +96061,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -89195,6 +96119,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -89234,6 +96161,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -89273,6 +96203,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -89312,6 +96245,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -89358,6 +96294,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -89408,6 +96347,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -89463,6 +96405,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -89513,6 +96458,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -89568,6 +96516,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -89618,6 +96569,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -89749,6 +96703,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -89788,6 +96745,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -89840,6 +96800,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -89890,6 +96853,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -89951,6 +96917,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -90001,6 +96970,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -90062,6 +97034,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -90112,6 +97087,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -90176,6 +97154,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -90215,6 +97196,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -90261,6 +97245,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -90311,6 +97298,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -90366,6 +97356,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -90416,6 +97409,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -90480,6 +97476,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -90519,6 +97518,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -90571,6 +97573,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -90621,6 +97626,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -90682,6 +97690,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -90732,6 +97743,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -90780,6 +97794,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -90819,6 +97836,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -90928,6 +97948,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -90978,6 +98001,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -91033,6 +98059,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -91083,6 +98112,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -91147,6 +98179,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -91186,6 +98221,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -91307,6 +98345,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -91357,6 +98398,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -91418,6 +98462,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -91468,6 +98515,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -91516,6 +98566,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -91555,6 +98608,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -91601,6 +98657,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -91651,6 +98710,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -91706,6 +98768,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -91756,6 +98821,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
     memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
     refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -91820,6 +98888,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -91859,6 +98930,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -91911,6 +98985,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -91961,6 +99038,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -92022,6 +99102,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -92072,6 +99155,9 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
     memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
     refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -92179,6 +99265,1420 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownedOpportunities?: OpportunityUncheckedUpdateManyWithoutOwnerMembershipNestedInput
     assignedTickets?: TicketUncheckedUpdateManyWithoutAssigneeMembershipNestedInput
+  }
+
+  export type OrganizationCreateWithoutBackupsInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
+    memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryCreateNestedManyWithoutOrganizationInput
+    tags?: TagCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
+    territories?: TerritoryCreateNestedManyWithoutOrganizationInput
+    territoryQuotas?: TerritoryQuotaCreateNestedManyWithoutOrganizationInput
+    territoryTargets?: TerritoryTargetCreateNestedManyWithoutOrganizationInput
+    territoryMetrics?: TerritoryMetricsCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
+    ticketSatisfactions?: TicketSatisfactionSurveyCreateNestedManyWithoutOrganizationInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutBackupsInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelUncheckedCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactUncheckedCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryUncheckedCreateNestedManyWithoutOrganizationInput
+    tags?: TagUncheckedCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagUncheckedCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagUncheckedCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
+    territories?: TerritoryUncheckedCreateNestedManyWithoutOrganizationInput
+    territoryQuotas?: TerritoryQuotaUncheckedCreateNestedManyWithoutOrganizationInput
+    territoryTargets?: TerritoryTargetUncheckedCreateNestedManyWithoutOrganizationInput
+    territoryMetrics?: TerritoryMetricsUncheckedCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketSatisfactions?: TicketSatisfactionSurveyUncheckedCreateNestedManyWithoutOrganizationInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutBackupsInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutBackupsInput, OrganizationUncheckedCreateWithoutBackupsInput>
+  }
+
+  export type UserCreateWithoutBackupsCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+    territoriesAssigned?: TerritoryCreateNestedManyWithoutSalesRepInput
+    territoriesCreated?: TerritoryCreateNestedManyWithoutCreatorInput
+    territoriesUpdated?: TerritoryCreateNestedManyWithoutUpdaterInput
+    territoriesDeleted?: TerritoryCreateNestedManyWithoutDeleterInput
+    ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyCreateNestedManyWithoutCreatorInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyCreateNestedManyWithoutUpdaterInput
+    integrationCredentialsCreated?: IntegrationCredentialCreateNestedManyWithoutCreatorInput
+    integrationCredentialsRevoked?: IntegrationCredentialCreateNestedManyWithoutRevokerInput
+  }
+
+  export type UserUncheckedCreateWithoutBackupsCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+    territoriesAssigned?: TerritoryUncheckedCreateNestedManyWithoutSalesRepInput
+    territoriesCreated?: TerritoryUncheckedCreateNestedManyWithoutCreatorInput
+    territoriesUpdated?: TerritoryUncheckedCreateNestedManyWithoutUpdaterInput
+    territoriesDeleted?: TerritoryUncheckedCreateNestedManyWithoutDeleterInput
+    ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyUncheckedCreateNestedManyWithoutCreatorInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyUncheckedCreateNestedManyWithoutUpdaterInput
+    integrationCredentialsCreated?: IntegrationCredentialUncheckedCreateNestedManyWithoutCreatorInput
+    integrationCredentialsRevoked?: IntegrationCredentialUncheckedCreateNestedManyWithoutRevokerInput
+  }
+
+  export type UserCreateOrConnectWithoutBackupsCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBackupsCreatedInput, UserUncheckedCreateWithoutBackupsCreatedInput>
+  }
+
+  export type DataOperationCreateWithoutPreventiveBackupInput = {
+    id?: string
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutDataOperationsInput
+    actor?: UserCreateNestedOneWithoutDataOperationsCreatedInput
+  }
+
+  export type DataOperationUncheckedCreateWithoutPreventiveBackupInput = {
+    id?: string
+    actorUserId?: string | null
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type DataOperationCreateOrConnectWithoutPreventiveBackupInput = {
+    where: DataOperationWhereUniqueInput
+    create: XOR<DataOperationCreateWithoutPreventiveBackupInput, DataOperationUncheckedCreateWithoutPreventiveBackupInput>
+  }
+
+  export type DataOperationCreateManyPreventiveBackupInputEnvelope = {
+    data: DataOperationCreateManyPreventiveBackupInput | DataOperationCreateManyPreventiveBackupInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OrganizationUpsertWithoutBackupsInput = {
+    update: XOR<OrganizationUpdateWithoutBackupsInput, OrganizationUncheckedUpdateWithoutBackupsInput>
+    create: XOR<OrganizationCreateWithoutBackupsInput, OrganizationUncheckedCreateWithoutBackupsInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutBackupsInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutBackupsInput, OrganizationUncheckedUpdateWithoutBackupsInput>
+  }
+
+  export type OrganizationUpdateWithoutBackupsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
+    memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
+    territories?: TerritoryUpdateManyWithoutOrganizationNestedInput
+    territoryQuotas?: TerritoryQuotaUpdateManyWithoutOrganizationNestedInput
+    territoryTargets?: TerritoryTargetUpdateManyWithoutOrganizationNestedInput
+    territoryMetrics?: TerritoryMetricsUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
+    ticketSatisfactions?: TicketSatisfactionSurveyUpdateManyWithoutOrganizationNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutBackupsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
+    territories?: TerritoryUncheckedUpdateManyWithoutOrganizationNestedInput
+    territoryQuotas?: TerritoryQuotaUncheckedUpdateManyWithoutOrganizationNestedInput
+    territoryTargets?: TerritoryTargetUncheckedUpdateManyWithoutOrganizationNestedInput
+    territoryMetrics?: TerritoryMetricsUncheckedUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketSatisfactions?: TicketSatisfactionSurveyUncheckedUpdateManyWithoutOrganizationNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type UserUpsertWithoutBackupsCreatedInput = {
+    update: XOR<UserUpdateWithoutBackupsCreatedInput, UserUncheckedUpdateWithoutBackupsCreatedInput>
+    create: XOR<UserCreateWithoutBackupsCreatedInput, UserUncheckedCreateWithoutBackupsCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBackupsCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBackupsCreatedInput, UserUncheckedUpdateWithoutBackupsCreatedInput>
+  }
+
+  export type UserUpdateWithoutBackupsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+    territoriesAssigned?: TerritoryUpdateManyWithoutSalesRepNestedInput
+    territoriesCreated?: TerritoryUpdateManyWithoutCreatorNestedInput
+    territoriesUpdated?: TerritoryUpdateManyWithoutUpdaterNestedInput
+    territoriesDeleted?: TerritoryUpdateManyWithoutDeleterNestedInput
+    ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyUpdateManyWithoutCreatorNestedInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyUpdateManyWithoutUpdaterNestedInput
+    integrationCredentialsCreated?: IntegrationCredentialUpdateManyWithoutCreatorNestedInput
+    integrationCredentialsRevoked?: IntegrationCredentialUpdateManyWithoutRevokerNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBackupsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+    territoriesAssigned?: TerritoryUncheckedUpdateManyWithoutSalesRepNestedInput
+    territoriesCreated?: TerritoryUncheckedUpdateManyWithoutCreatorNestedInput
+    territoriesUpdated?: TerritoryUncheckedUpdateManyWithoutUpdaterNestedInput
+    territoriesDeleted?: TerritoryUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyUncheckedUpdateManyWithoutUpdaterNestedInput
+    integrationCredentialsCreated?: IntegrationCredentialUncheckedUpdateManyWithoutCreatorNestedInput
+    integrationCredentialsRevoked?: IntegrationCredentialUncheckedUpdateManyWithoutRevokerNestedInput
+  }
+
+  export type DataOperationUpsertWithWhereUniqueWithoutPreventiveBackupInput = {
+    where: DataOperationWhereUniqueInput
+    update: XOR<DataOperationUpdateWithoutPreventiveBackupInput, DataOperationUncheckedUpdateWithoutPreventiveBackupInput>
+    create: XOR<DataOperationCreateWithoutPreventiveBackupInput, DataOperationUncheckedCreateWithoutPreventiveBackupInput>
+  }
+
+  export type DataOperationUpdateWithWhereUniqueWithoutPreventiveBackupInput = {
+    where: DataOperationWhereUniqueInput
+    data: XOR<DataOperationUpdateWithoutPreventiveBackupInput, DataOperationUncheckedUpdateWithoutPreventiveBackupInput>
+  }
+
+  export type DataOperationUpdateManyWithWhereWithoutPreventiveBackupInput = {
+    where: DataOperationScalarWhereInput
+    data: XOR<DataOperationUpdateManyMutationInput, DataOperationUncheckedUpdateManyWithoutPreventiveBackupInput>
+  }
+
+  export type OrganizationCreateWithoutDataOperationsInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleCreateNestedOneWithoutOrganizationInput
+    memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryCreateNestedManyWithoutOrganizationInput
+    tags?: TagCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
+    territories?: TerritoryCreateNestedManyWithoutOrganizationInput
+    territoryQuotas?: TerritoryQuotaCreateNestedManyWithoutOrganizationInput
+    territoryTargets?: TerritoryTargetCreateNestedManyWithoutOrganizationInput
+    territoryMetrics?: TerritoryMetricsCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
+    ticketSatisfactions?: TicketSatisfactionSurveyCreateNestedManyWithoutOrganizationInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutDataOperationsInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    backupSchedule?: BackupScheduleUncheckedCreateNestedOneWithoutOrganizationInput
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelUncheckedCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactUncheckedCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryUncheckedCreateNestedManyWithoutOrganizationInput
+    tags?: TagUncheckedCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagUncheckedCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagUncheckedCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
+    territories?: TerritoryUncheckedCreateNestedManyWithoutOrganizationInput
+    territoryQuotas?: TerritoryQuotaUncheckedCreateNestedManyWithoutOrganizationInput
+    territoryTargets?: TerritoryTargetUncheckedCreateNestedManyWithoutOrganizationInput
+    territoryMetrics?: TerritoryMetricsUncheckedCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketSatisfactions?: TicketSatisfactionSurveyUncheckedCreateNestedManyWithoutOrganizationInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutDataOperationsInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutDataOperationsInput, OrganizationUncheckedCreateWithoutDataOperationsInput>
+  }
+
+  export type UserCreateWithoutDataOperationsCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleCreateNestedManyWithoutUpdaterInput
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+    territoriesAssigned?: TerritoryCreateNestedManyWithoutSalesRepInput
+    territoriesCreated?: TerritoryCreateNestedManyWithoutCreatorInput
+    territoriesUpdated?: TerritoryCreateNestedManyWithoutUpdaterInput
+    territoriesDeleted?: TerritoryCreateNestedManyWithoutDeleterInput
+    ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyCreateNestedManyWithoutCreatorInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyCreateNestedManyWithoutUpdaterInput
+    integrationCredentialsCreated?: IntegrationCredentialCreateNestedManyWithoutCreatorInput
+    integrationCredentialsRevoked?: IntegrationCredentialCreateNestedManyWithoutRevokerInput
+  }
+
+  export type UserUncheckedCreateWithoutDataOperationsCreatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedCreateNestedManyWithoutUpdaterInput
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+    territoriesAssigned?: TerritoryUncheckedCreateNestedManyWithoutSalesRepInput
+    territoriesCreated?: TerritoryUncheckedCreateNestedManyWithoutCreatorInput
+    territoriesUpdated?: TerritoryUncheckedCreateNestedManyWithoutUpdaterInput
+    territoriesDeleted?: TerritoryUncheckedCreateNestedManyWithoutDeleterInput
+    ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyUncheckedCreateNestedManyWithoutCreatorInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyUncheckedCreateNestedManyWithoutUpdaterInput
+    integrationCredentialsCreated?: IntegrationCredentialUncheckedCreateNestedManyWithoutCreatorInput
+    integrationCredentialsRevoked?: IntegrationCredentialUncheckedCreateNestedManyWithoutRevokerInput
+  }
+
+  export type UserCreateOrConnectWithoutDataOperationsCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDataOperationsCreatedInput, UserUncheckedCreateWithoutDataOperationsCreatedInput>
+  }
+
+  export type BackupRecordCreateWithoutProtectedByOperationsInput = {
+    id?: string
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutBackupsInput
+    actor?: UserCreateNestedOneWithoutBackupsCreatedInput
+  }
+
+  export type BackupRecordUncheckedCreateWithoutProtectedByOperationsInput = {
+    id?: string
+    organizationId: string
+    actorUserId?: string | null
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type BackupRecordCreateOrConnectWithoutProtectedByOperationsInput = {
+    where: BackupRecordWhereUniqueInput
+    create: XOR<BackupRecordCreateWithoutProtectedByOperationsInput, BackupRecordUncheckedCreateWithoutProtectedByOperationsInput>
+  }
+
+  export type OrganizationUpsertWithoutDataOperationsInput = {
+    update: XOR<OrganizationUpdateWithoutDataOperationsInput, OrganizationUncheckedUpdateWithoutDataOperationsInput>
+    create: XOR<OrganizationCreateWithoutDataOperationsInput, OrganizationUncheckedCreateWithoutDataOperationsInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutDataOperationsInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutDataOperationsInput, OrganizationUncheckedUpdateWithoutDataOperationsInput>
+  }
+
+  export type OrganizationUpdateWithoutDataOperationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUpdateOneWithoutOrganizationNestedInput
+    memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
+    territories?: TerritoryUpdateManyWithoutOrganizationNestedInput
+    territoryQuotas?: TerritoryQuotaUpdateManyWithoutOrganizationNestedInput
+    territoryTargets?: TerritoryTargetUpdateManyWithoutOrganizationNestedInput
+    territoryMetrics?: TerritoryMetricsUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
+    ticketSatisfactions?: TicketSatisfactionSurveyUpdateManyWithoutOrganizationNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutDataOperationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    backupSchedule?: BackupScheduleUncheckedUpdateOneWithoutOrganizationNestedInput
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
+    territories?: TerritoryUncheckedUpdateManyWithoutOrganizationNestedInput
+    territoryQuotas?: TerritoryQuotaUncheckedUpdateManyWithoutOrganizationNestedInput
+    territoryTargets?: TerritoryTargetUncheckedUpdateManyWithoutOrganizationNestedInput
+    territoryMetrics?: TerritoryMetricsUncheckedUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketSatisfactions?: TicketSatisfactionSurveyUncheckedUpdateManyWithoutOrganizationNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type UserUpsertWithoutDataOperationsCreatedInput = {
+    update: XOR<UserUpdateWithoutDataOperationsCreatedInput, UserUncheckedUpdateWithoutDataOperationsCreatedInput>
+    create: XOR<UserCreateWithoutDataOperationsCreatedInput, UserUncheckedCreateWithoutDataOperationsCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDataOperationsCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDataOperationsCreatedInput, UserUncheckedUpdateWithoutDataOperationsCreatedInput>
+  }
+
+  export type UserUpdateWithoutDataOperationsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUpdateManyWithoutUpdaterNestedInput
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+    territoriesAssigned?: TerritoryUpdateManyWithoutSalesRepNestedInput
+    territoriesCreated?: TerritoryUpdateManyWithoutCreatorNestedInput
+    territoriesUpdated?: TerritoryUpdateManyWithoutUpdaterNestedInput
+    territoriesDeleted?: TerritoryUpdateManyWithoutDeleterNestedInput
+    ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyUpdateManyWithoutCreatorNestedInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyUpdateManyWithoutUpdaterNestedInput
+    integrationCredentialsCreated?: IntegrationCredentialUpdateManyWithoutCreatorNestedInput
+    integrationCredentialsRevoked?: IntegrationCredentialUpdateManyWithoutRevokerNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDataOperationsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    backupSchedulesUpdated?: BackupScheduleUncheckedUpdateManyWithoutUpdaterNestedInput
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+    territoriesAssigned?: TerritoryUncheckedUpdateManyWithoutSalesRepNestedInput
+    territoriesCreated?: TerritoryUncheckedUpdateManyWithoutCreatorNestedInput
+    territoriesUpdated?: TerritoryUncheckedUpdateManyWithoutUpdaterNestedInput
+    territoriesDeleted?: TerritoryUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyUncheckedUpdateManyWithoutUpdaterNestedInput
+    integrationCredentialsCreated?: IntegrationCredentialUncheckedUpdateManyWithoutCreatorNestedInput
+    integrationCredentialsRevoked?: IntegrationCredentialUncheckedUpdateManyWithoutRevokerNestedInput
+  }
+
+  export type BackupRecordUpsertWithoutProtectedByOperationsInput = {
+    update: XOR<BackupRecordUpdateWithoutProtectedByOperationsInput, BackupRecordUncheckedUpdateWithoutProtectedByOperationsInput>
+    create: XOR<BackupRecordCreateWithoutProtectedByOperationsInput, BackupRecordUncheckedCreateWithoutProtectedByOperationsInput>
+    where?: BackupRecordWhereInput
+  }
+
+  export type BackupRecordUpdateToOneWithWhereWithoutProtectedByOperationsInput = {
+    where?: BackupRecordWhereInput
+    data: XOR<BackupRecordUpdateWithoutProtectedByOperationsInput, BackupRecordUncheckedUpdateWithoutProtectedByOperationsInput>
+  }
+
+  export type BackupRecordUpdateWithoutProtectedByOperationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutBackupsNestedInput
+    actor?: UserUpdateOneWithoutBackupsCreatedNestedInput
+  }
+
+  export type BackupRecordUncheckedUpdateWithoutProtectedByOperationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type OrganizationCreateWithoutBackupScheduleInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    backups?: BackupRecordCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationCreateNestedManyWithoutOrganizationInput
+    memberships?: OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryCreateNestedManyWithoutOrganizationInput
+    tags?: TagCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityCreateNestedManyWithoutOrganizationInput
+    roles?: RoleCreateNestedManyWithoutOrganizationInput
+    products?: ProductCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemCreateNestedManyWithoutOrganizationInput
+    territories?: TerritoryCreateNestedManyWithoutOrganizationInput
+    territoryQuotas?: TerritoryQuotaCreateNestedManyWithoutOrganizationInput
+    territoryTargets?: TerritoryTargetCreateNestedManyWithoutOrganizationInput
+    territoryMetrics?: TerritoryMetricsCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyCreateNestedManyWithoutOrganizationInput
+    ticketSatisfactions?: TicketSatisfactionSurveyCreateNestedManyWithoutOrganizationInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutBackupScheduleInput = {
+    id?: string
+    name: string
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    backups?: BackupRecordUncheckedCreateNestedManyWithoutOrganizationInput
+    dataOperations?: DataOperationUncheckedCreateNestedManyWithoutOrganizationInput
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutOrganizationInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutOrganizationInput
+    contactChannels?: ContactChannelUncheckedCreateNestedManyWithoutOrganizationInput
+    companyContacts?: CompanyContactUncheckedCreateNestedManyWithoutOrganizationInput
+    relationshipEntries?: RelationshipEntryUncheckedCreateNestedManyWithoutOrganizationInput
+    tags?: TagUncheckedCreateNestedManyWithoutOrganizationInput
+    companyTags?: CompanyTagUncheckedCreateNestedManyWithoutOrganizationInput
+    contactTags?: ContactTagUncheckedCreateNestedManyWithoutOrganizationInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedCreateNestedManyWithoutOrganizationInput
+    pipelines?: PipelineUncheckedCreateNestedManyWithoutOrganizationInput
+    activities?: ActivityUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunities?: OpportunityUncheckedCreateNestedManyWithoutOrganizationInput
+    roles?: RoleUncheckedCreateNestedManyWithoutOrganizationInput
+    products?: ProductUncheckedCreateNestedManyWithoutOrganizationInput
+    opportunityItems?: OpportunityItemUncheckedCreateNestedManyWithoutOrganizationInput
+    territories?: TerritoryUncheckedCreateNestedManyWithoutOrganizationInput
+    territoryQuotas?: TerritoryQuotaUncheckedCreateNestedManyWithoutOrganizationInput
+    territoryTargets?: TerritoryTargetUncheckedCreateNestedManyWithoutOrganizationInput
+    territoryMetrics?: TerritoryMetricsUncheckedCreateNestedManyWithoutOrganizationInput
+    tickets?: TicketUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketEvents?: TicketEventUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedCreateNestedManyWithoutOrganizationInput
+    supportQueues?: SupportQueueUncheckedCreateNestedManyWithoutOrganizationInput
+    slaPolicies?: SlaPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+    ticketSatisfactions?: TicketSatisfactionSurveyUncheckedCreateNestedManyWithoutOrganizationInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutBackupScheduleInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutBackupScheduleInput, OrganizationUncheckedCreateWithoutBackupScheduleInput>
+  }
+
+  export type UserCreateWithoutBackupSchedulesUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    backupsCreated?: BackupRecordCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationCreateNestedManyWithoutActorInput
+    memberships?: OrganizationMembershipCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemCreateNestedManyWithoutUpdaterInput
+    territoriesAssigned?: TerritoryCreateNestedManyWithoutSalesRepInput
+    territoriesCreated?: TerritoryCreateNestedManyWithoutCreatorInput
+    territoriesUpdated?: TerritoryCreateNestedManyWithoutUpdaterInput
+    territoriesDeleted?: TerritoryCreateNestedManyWithoutDeleterInput
+    ticketsCreated?: TicketCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyCreateNestedManyWithoutUpdaterInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyCreateNestedManyWithoutCreatorInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyCreateNestedManyWithoutUpdaterInput
+    integrationCredentialsCreated?: IntegrationCredentialCreateNestedManyWithoutCreatorInput
+    integrationCredentialsRevoked?: IntegrationCredentialCreateNestedManyWithoutRevokerInput
+  }
+
+  export type UserUncheckedCreateWithoutBackupSchedulesUpdatedInput = {
+    id?: string
+    email: string
+    emailNormalized: string
+    displayName: string
+    passwordHash: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    backupsCreated?: BackupRecordUncheckedCreateNestedManyWithoutActorInput
+    dataOperationsCreated?: DataOperationUncheckedCreateNestedManyWithoutActorInput
+    memberships?: OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+    refreshSessions?: RefreshSessionUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    companiesCreated?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    companiesUpdated?: CompanyUncheckedCreateNestedManyWithoutUpdaterInput
+    companiesDeleted?: CompanyUncheckedCreateNestedManyWithoutDeleterInput
+    contactsCreated?: ContactUncheckedCreateNestedManyWithoutCreatorInput
+    contactsUpdated?: ContactUncheckedCreateNestedManyWithoutUpdaterInput
+    contactsDeleted?: ContactUncheckedCreateNestedManyWithoutDeleterInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedCreateNestedManyWithoutAuthorInput
+    activitiesOwned?: ActivityUncheckedCreateNestedManyWithoutOwnerInput
+    activitiesCreated?: ActivityUncheckedCreateNestedManyWithoutCreatorInput
+    activitiesUpdated?: ActivityUncheckedCreateNestedManyWithoutUpdaterInput
+    activitiesDeleted?: ActivityUncheckedCreateNestedManyWithoutDeleterInput
+    opportunitiesOwned?: OpportunityUncheckedCreateNestedManyWithoutOwnerInput
+    opportunitiesCreated?: OpportunityUncheckedCreateNestedManyWithoutCreatorInput
+    opportunitiesUpdated?: OpportunityUncheckedCreateNestedManyWithoutUpdaterInput
+    opportunitiesDeleted?: OpportunityUncheckedCreateNestedManyWithoutDeleterInput
+    productsCreated?: ProductUncheckedCreateNestedManyWithoutCreatorInput
+    productsUpdated?: ProductUncheckedCreateNestedManyWithoutUpdaterInput
+    productsDeleted?: ProductUncheckedCreateNestedManyWithoutDeleterInput
+    opportunityItemsCreated?: OpportunityItemUncheckedCreateNestedManyWithoutCreatorInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedCreateNestedManyWithoutUpdaterInput
+    territoriesAssigned?: TerritoryUncheckedCreateNestedManyWithoutSalesRepInput
+    territoriesCreated?: TerritoryUncheckedCreateNestedManyWithoutCreatorInput
+    territoriesUpdated?: TerritoryUncheckedCreateNestedManyWithoutUpdaterInput
+    territoriesDeleted?: TerritoryUncheckedCreateNestedManyWithoutDeleterInput
+    ticketsCreated?: TicketUncheckedCreateNestedManyWithoutCreatorInput
+    ticketsUpdated?: TicketUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketsDeleted?: TicketUncheckedCreateNestedManyWithoutDeleterInput
+    ticketEventsAuthored?: TicketEventUncheckedCreateNestedManyWithoutAuthorInput
+    supportQueuesCreated?: SupportQueueUncheckedCreateNestedManyWithoutCreatorInput
+    supportQueuesUpdated?: SupportQueueUncheckedCreateNestedManyWithoutUpdaterInput
+    supportQueuesDeleted?: SupportQueueUncheckedCreateNestedManyWithoutDeleterInput
+    slaPoliciesCreated?: SlaPolicyUncheckedCreateNestedManyWithoutCreatorInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedCreateNestedManyWithoutUpdaterInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyUncheckedCreateNestedManyWithoutCreatorInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyUncheckedCreateNestedManyWithoutUpdaterInput
+    integrationCredentialsCreated?: IntegrationCredentialUncheckedCreateNestedManyWithoutCreatorInput
+    integrationCredentialsRevoked?: IntegrationCredentialUncheckedCreateNestedManyWithoutRevokerInput
+  }
+
+  export type UserCreateOrConnectWithoutBackupSchedulesUpdatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBackupSchedulesUpdatedInput, UserUncheckedCreateWithoutBackupSchedulesUpdatedInput>
+  }
+
+  export type OrganizationUpsertWithoutBackupScheduleInput = {
+    update: XOR<OrganizationUpdateWithoutBackupScheduleInput, OrganizationUncheckedUpdateWithoutBackupScheduleInput>
+    create: XOR<OrganizationCreateWithoutBackupScheduleInput, OrganizationUncheckedCreateWithoutBackupScheduleInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutBackupScheduleInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutBackupScheduleInput, OrganizationUncheckedUpdateWithoutBackupScheduleInput>
+  }
+
+  export type OrganizationUpdateWithoutBackupScheduleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUpdateManyWithoutOrganizationNestedInput
+    memberships?: OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUpdateManyWithoutOrganizationNestedInput
+    territories?: TerritoryUpdateManyWithoutOrganizationNestedInput
+    territoryQuotas?: TerritoryQuotaUpdateManyWithoutOrganizationNestedInput
+    territoryTargets?: TerritoryTargetUpdateManyWithoutOrganizationNestedInput
+    territoryMetrics?: TerritoryMetricsUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUpdateManyWithoutOrganizationNestedInput
+    ticketSatisfactions?: TicketSatisfactionSurveyUpdateManyWithoutOrganizationNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutBackupScheduleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backups?: BackupRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+    dataOperations?: DataOperationUncheckedUpdateManyWithoutOrganizationNestedInput
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutOrganizationNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactChannels?: ContactChannelUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyContacts?: CompanyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+    relationshipEntries?: RelationshipEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+    tags?: TagUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyTags?: CompanyTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactTags?: ContactTagUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFieldDefinitions?: CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+    companyCustomFieldValues?: CompanyCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    contactCustomFieldValues?: ContactCustomFieldValueUncheckedUpdateManyWithoutOrganizationNestedInput
+    pipelines?: PipelineUncheckedUpdateManyWithoutOrganizationNestedInput
+    activities?: ActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunities?: OpportunityUncheckedUpdateManyWithoutOrganizationNestedInput
+    roles?: RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+    products?: ProductUncheckedUpdateManyWithoutOrganizationNestedInput
+    opportunityItems?: OpportunityItemUncheckedUpdateManyWithoutOrganizationNestedInput
+    territories?: TerritoryUncheckedUpdateManyWithoutOrganizationNestedInput
+    territoryQuotas?: TerritoryQuotaUncheckedUpdateManyWithoutOrganizationNestedInput
+    territoryTargets?: TerritoryTargetUncheckedUpdateManyWithoutOrganizationNestedInput
+    territoryMetrics?: TerritoryMetricsUncheckedUpdateManyWithoutOrganizationNestedInput
+    tickets?: TicketUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketEvents?: TicketEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketProtocolCounters?: TicketProtocolCounterUncheckedUpdateManyWithoutOrganizationNestedInput
+    supportQueues?: SupportQueueUncheckedUpdateManyWithoutOrganizationNestedInput
+    slaPolicies?: SlaPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+    ticketSatisfactions?: TicketSatisfactionSurveyUncheckedUpdateManyWithoutOrganizationNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type UserUpsertWithoutBackupSchedulesUpdatedInput = {
+    update: XOR<UserUpdateWithoutBackupSchedulesUpdatedInput, UserUncheckedUpdateWithoutBackupSchedulesUpdatedInput>
+    create: XOR<UserCreateWithoutBackupSchedulesUpdatedInput, UserUncheckedCreateWithoutBackupSchedulesUpdatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBackupSchedulesUpdatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBackupSchedulesUpdatedInput, UserUncheckedUpdateWithoutBackupSchedulesUpdatedInput>
+  }
+
+  export type UserUpdateWithoutBackupSchedulesUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUpdateManyWithoutActorNestedInput
+    memberships?: OrganizationMembershipUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUpdateManyWithoutUpdaterNestedInput
+    territoriesAssigned?: TerritoryUpdateManyWithoutSalesRepNestedInput
+    territoriesCreated?: TerritoryUpdateManyWithoutCreatorNestedInput
+    territoriesUpdated?: TerritoryUpdateManyWithoutUpdaterNestedInput
+    territoriesDeleted?: TerritoryUpdateManyWithoutDeleterNestedInput
+    ticketsCreated?: TicketUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUpdateManyWithoutUpdaterNestedInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyUpdateManyWithoutCreatorNestedInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyUpdateManyWithoutUpdaterNestedInput
+    integrationCredentialsCreated?: IntegrationCredentialUpdateManyWithoutCreatorNestedInput
+    integrationCredentialsRevoked?: IntegrationCredentialUpdateManyWithoutRevokerNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBackupSchedulesUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailNormalized?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    backupsCreated?: BackupRecordUncheckedUpdateManyWithoutActorNestedInput
+    dataOperationsCreated?: DataOperationUncheckedUpdateManyWithoutActorNestedInput
+    memberships?: OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+    refreshSessions?: RefreshSessionUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    companiesCreated?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    companiesUpdated?: CompanyUncheckedUpdateManyWithoutUpdaterNestedInput
+    companiesDeleted?: CompanyUncheckedUpdateManyWithoutDeleterNestedInput
+    contactsCreated?: ContactUncheckedUpdateManyWithoutCreatorNestedInput
+    contactsUpdated?: ContactUncheckedUpdateManyWithoutUpdaterNestedInput
+    contactsDeleted?: ContactUncheckedUpdateManyWithoutDeleterNestedInput
+    relationshipEntriesAuthored?: RelationshipEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    activitiesOwned?: ActivityUncheckedUpdateManyWithoutOwnerNestedInput
+    activitiesCreated?: ActivityUncheckedUpdateManyWithoutCreatorNestedInput
+    activitiesUpdated?: ActivityUncheckedUpdateManyWithoutUpdaterNestedInput
+    activitiesDeleted?: ActivityUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunitiesOwned?: OpportunityUncheckedUpdateManyWithoutOwnerNestedInput
+    opportunitiesCreated?: OpportunityUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunitiesUpdated?: OpportunityUncheckedUpdateManyWithoutUpdaterNestedInput
+    opportunitiesDeleted?: OpportunityUncheckedUpdateManyWithoutDeleterNestedInput
+    productsCreated?: ProductUncheckedUpdateManyWithoutCreatorNestedInput
+    productsUpdated?: ProductUncheckedUpdateManyWithoutUpdaterNestedInput
+    productsDeleted?: ProductUncheckedUpdateManyWithoutDeleterNestedInput
+    opportunityItemsCreated?: OpportunityItemUncheckedUpdateManyWithoutCreatorNestedInput
+    opportunityItemsUpdated?: OpportunityItemUncheckedUpdateManyWithoutUpdaterNestedInput
+    territoriesAssigned?: TerritoryUncheckedUpdateManyWithoutSalesRepNestedInput
+    territoriesCreated?: TerritoryUncheckedUpdateManyWithoutCreatorNestedInput
+    territoriesUpdated?: TerritoryUncheckedUpdateManyWithoutUpdaterNestedInput
+    territoriesDeleted?: TerritoryUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketsCreated?: TicketUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketsUpdated?: TicketUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketsDeleted?: TicketUncheckedUpdateManyWithoutDeleterNestedInput
+    ticketEventsAuthored?: TicketEventUncheckedUpdateManyWithoutAuthorNestedInput
+    supportQueuesCreated?: SupportQueueUncheckedUpdateManyWithoutCreatorNestedInput
+    supportQueuesUpdated?: SupportQueueUncheckedUpdateManyWithoutUpdaterNestedInput
+    supportQueuesDeleted?: SupportQueueUncheckedUpdateManyWithoutDeleterNestedInput
+    slaPoliciesCreated?: SlaPolicyUncheckedUpdateManyWithoutCreatorNestedInput
+    slaPoliciesUpdated?: SlaPolicyUncheckedUpdateManyWithoutUpdaterNestedInput
+    ticketSatisfactionsCreated?: TicketSatisfactionSurveyUncheckedUpdateManyWithoutCreatorNestedInput
+    ticketSatisfactionsUpdated?: TicketSatisfactionSurveyUncheckedUpdateManyWithoutUpdaterNestedInput
+    integrationCredentialsCreated?: IntegrationCredentialUncheckedUpdateManyWithoutCreatorNestedInput
+    integrationCredentialsRevoked?: IntegrationCredentialUncheckedUpdateManyWithoutRevokerNestedInput
+  }
+
+  export type BackupRecordCreateManyOrganizationInput = {
+    id?: string
+    actorUserId?: string | null
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type DataOperationCreateManyOrganizationInput = {
+    id?: string
+    actorUserId?: string | null
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    preventiveBackupId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
   }
 
   export type OrganizationMembershipCreateManyOrganizationInput = {
@@ -92567,6 +101067,113 @@ export namespace Prisma {
     createdBy: string
     revokedAt?: Date | string | null
     revokedBy?: string | null
+  }
+
+  export type BackupRecordUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actor?: UserUpdateOneWithoutBackupsCreatedNestedInput
+    protectedByOperations?: DataOperationUpdateManyWithoutPreventiveBackupNestedInput
+  }
+
+  export type BackupRecordUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    protectedByOperations?: DataOperationUncheckedUpdateManyWithoutPreventiveBackupNestedInput
+  }
+
+  export type BackupRecordUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DataOperationUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actor?: UserUpdateOneWithoutDataOperationsCreatedNestedInput
+    preventiveBackup?: BackupRecordUpdateOneWithoutProtectedByOperationsNestedInput
+  }
+
+  export type DataOperationUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    preventiveBackupId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DataOperationUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    preventiveBackupId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type OrganizationMembershipUpdateWithoutOrganizationInput = {
@@ -93832,6 +102439,55 @@ export namespace Prisma {
     scope?: StringFieldUpdateOperationsInput | string
   }
 
+  export type BackupRecordCreateManyActorInput = {
+    id?: string
+    organizationId: string
+    reason: string
+    state?: string
+    schemaVersion?: number | null
+    checksum?: string | null
+    byteCount?: bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: string | null
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type DataOperationCreateManyActorInput = {
+    id?: string
+    organizationId: string
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    preventiveBackupId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type BackupScheduleCreateManyUpdaterInput = {
+    organizationId: string
+    enabled?: boolean
+    frequency?: string
+    localTime?: string
+    weekday?: number
+    intervalMinutes?: number | null
+    retentionCount?: number
+    timezone?: string
+    nextRunAt?: Date | string | null
+    lastScheduledAt?: Date | string | null
+    updatedAt?: Date | string
+  }
+
   export type OrganizationMembershipCreateManyUserInput = {
     isSuperuser?: boolean
     id?: string
@@ -94497,6 +103153,155 @@ export namespace Prisma {
     createdAt?: Date | string
     createdBy: string
     revokedAt?: Date | string | null
+  }
+
+  export type BackupRecordUpdateWithoutActorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutBackupsNestedInput
+    protectedByOperations?: DataOperationUpdateManyWithoutPreventiveBackupNestedInput
+  }
+
+  export type BackupRecordUncheckedUpdateWithoutActorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    protectedByOperations?: DataOperationUncheckedUpdateManyWithoutPreventiveBackupNestedInput
+  }
+
+  export type BackupRecordUncheckedUpdateManyWithoutActorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    schemaVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    byteCount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    counts?: NullableJsonNullValueInput | InputJsonValue
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DataOperationUpdateWithoutActorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutDataOperationsNestedInput
+    preventiveBackup?: BackupRecordUpdateOneWithoutProtectedByOperationsNestedInput
+  }
+
+  export type DataOperationUncheckedUpdateWithoutActorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    preventiveBackupId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DataOperationUncheckedUpdateManyWithoutActorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    preventiveBackupId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BackupScheduleUpdateWithoutUpdaterInput = {
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    frequency?: StringFieldUpdateOperationsInput | string
+    localTime?: StringFieldUpdateOperationsInput | string
+    weekday?: IntFieldUpdateOperationsInput | number
+    intervalMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    retentionCount?: IntFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    nextRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastScheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutBackupScheduleNestedInput
+  }
+
+  export type BackupScheduleUncheckedUpdateWithoutUpdaterInput = {
+    organizationId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    frequency?: StringFieldUpdateOperationsInput | string
+    localTime?: StringFieldUpdateOperationsInput | string
+    weekday?: IntFieldUpdateOperationsInput | number
+    intervalMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    retentionCount?: IntFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    nextRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastScheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupScheduleUncheckedUpdateManyWithoutUpdaterInput = {
+    organizationId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    frequency?: StringFieldUpdateOperationsInput | string
+    localTime?: StringFieldUpdateOperationsInput | string
+    weekday?: IntFieldUpdateOperationsInput | number
+    intervalMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    retentionCount?: IntFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    nextRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastScheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OrganizationMembershipUpdateWithoutUserInput = {
@@ -98538,6 +107343,87 @@ export namespace Prisma {
     deletedBy?: NullableStringFieldUpdateOperationsInput | string | null
     firstResponseDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DataOperationCreateManyPreventiveBackupInput = {
+    id?: string
+    actorUserId?: string | null
+    kind: string
+    state?: string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: string
+    processed?: number
+    total?: number | null
+    attempts?: number
+    workerId?: string | null
+    leaseUntil?: Date | string | null
+    heartbeatAt?: Date | string | null
+    errorCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type DataOperationUpdateWithoutPreventiveBackupInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutDataOperationsNestedInput
+    actor?: UserUpdateOneWithoutDataOperationsCreatedNestedInput
+  }
+
+  export type DataOperationUncheckedUpdateWithoutPreventiveBackupInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DataOperationUncheckedUpdateManyWithoutPreventiveBackupInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actorUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    checkpoint?: JsonNullValueInput | InputJsonValue
+    stage?: StringFieldUpdateOperationsInput | string
+    processed?: IntFieldUpdateOperationsInput | number
+    total?: NullableIntFieldUpdateOperationsInput | number | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    workerId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    heartbeatAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
 
