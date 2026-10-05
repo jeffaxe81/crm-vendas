@@ -52,6 +52,7 @@ function summary(row: StoredBackup): BackupRecord {
 @Injectable()
 export class BackupService {
   constructor(
+    @Inject(PrismaService)
     private readonly prisma: PrismaService,
     @Inject(BACKUP_STORE) private readonly store: BackupStore | null,
     @Inject(BACKUP_OPTIONS) private readonly options: BackupOptions
