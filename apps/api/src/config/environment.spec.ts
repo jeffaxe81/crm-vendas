@@ -11,6 +11,36 @@ const secureEnvironment = {
 };
 
 describe("parseApiEnvironment", () => {
+  it("requires a private absolute directory and a canonical 32-byte backup key together", () => {
+    const key = Buffer.alloc(32, 7).toString("base64");
+    for (const invalid of [
+      { BACKUP_DIRECTORY: "/var/lib/axes/backups" },
+      { BACKUP_ENCRYPTION_KEY: key },
+      { BACKUP_DIRECTORY: "relative", BACKUP_ENCRYPTION_KEY: key },
+      { BACKUP_DIRECTORY: "/", BACKUP_ENCRYPTION_KEY: key },
+      { BACKUP_DIRECTORY: "/app/public/backups", BACKUP_ENCRYPTION_KEY: key },
+      {
+        BACKUP_DIRECTORY: "/var/lib/axes/backups",
+        BACKUP_ENCRYPTION_KEY: "short",
+      },
+      { BACKUP_MAX_BYTES: 0 },
+    ])
+      expect(() =>
+        parseApiEnvironment({ ...secureEnvironment, ...invalid })
+      ).toThrow();
+    expect(
+      parseApiEnvironment({
+        ...secureEnvironment,
+        BACKUP_DIRECTORY: "/var/lib/axes/backups",
+        BACKUP_ENCRYPTION_KEY: key,
+      })
+    ).toMatchObject({
+      BACKUP_DIRECTORY: "/var/lib/axes/backups",
+      BACKUP_ENCRYPTION_KEY: key,
+      BACKUP_MAX_BYTES: 67108864,
+      BACKUP_SNAPSHOT_TIMEOUT_MS: 60000,
+    });
+  });
   it("rejects a missing database URL", () => {
     expect(() =>
       parseApiEnvironment({

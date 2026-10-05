@@ -350,3 +350,13 @@ export {
   type WorkspacePreferences,
   type WorkspaceSection,
 } from "./workspace-preferences";
+
+export {
+  BackupManifestSchema,
+  BackupRecordSchema,
+  BackupReasonSchema,
+  DataOperationStateSchema,
+  type BackupManifest,
+  type BackupRecord,
+  type BackupReason,
+} from "./data-management";
