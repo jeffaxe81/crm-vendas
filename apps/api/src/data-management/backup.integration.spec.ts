@@ -109,7 +109,7 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
         name: "Synthetic",
         keyPrefix: "syn",
         keyHash: "synthetic-key-hash",
-        scopes: [],
+        scopes: ["companies:read"],
         createdBy: user.id,
       },
     });
