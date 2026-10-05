@@ -30,7 +30,7 @@ test("user authenticates in the active organization and logs out", async ({
   const accessPanel = page.getByLabel("Sessão ativa");
   await expect(accessPanel).toBeVisible();
   await expect(
-    accessPanel.getByText("Axesistemas", { exact: true })
+    page.getByLabel("Acesso ao CRM").getByText("Axesistemas", { exact: true })
   ).toBeVisible();
   await expect(accessPanel.getByText("ADMIN", { exact: true })).toBeVisible();
   await expect(

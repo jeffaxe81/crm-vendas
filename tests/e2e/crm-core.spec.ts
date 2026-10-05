@@ -81,6 +81,7 @@ test("CRM core journey persists company contact channel link and history", async
   await page.reload();
 
   await expect(page.getByLabel("Acesso ao CRM")).toBeVisible();
+  await openWorkspaceSection(page, "Empresas");
   await expect(
     page.getByText(companyName, { exact: true }).first()
   ).toBeVisible();
