@@ -30,7 +30,7 @@ Manter como autoridade a especificação 2026-10-05-crm-backup-design.md e o pla
 
 Utilizar Role/RolePermission existentes; carregar permissões efetivas no servidor em vez de depender somente do enum estático. Papéis de sistema permanecem como padrões; perfis personalizados podem conceder apenas permissões delegáveis que o administrador possui. Superusuário continua fora dessa delegação.
 
-Escopos de registro: OWN e ORGANIZATION. SELLER inicia com OWN para oportunidades e entidades da carteira. Associação de empresa/contato à carteira precisa ser explícita e auditada, com migração dos registros existentes para preservar integridade; não inferir propriedade só pelo criador do cadastro. Aplicar escopo também em detalhes por ID, importações, exportações, relatórios e integrações. MANAGER/ADMIN usam ORGANIZATION conforme permissões. Definir a regra para contatos compartilhados durante a especificação deste módulo.
+Escopos de registro: OWN e ORGANIZATION. SELLER inicia com OWN para oportunidades e entidades da carteira. Associação de empresa/contato à carteira precisa ser explícita e auditada, com migração dos registros existentes para preservar integridade; não inferir propriedade só pelo criador do cadastro. Aplicar escopo também em detalhes por ID, importações, exportações, relatórios e integrações. MANAGER/ADMIN usam ORGANIZATION conforme permissões. Contatos compartilhados exigem associações explícitas de carteira para cada usuário autorizado; a associação à empresa não concede acesso implicitamente. Registros antigos sem associação ficam disponíveis a ADMIN/MANAGER para atribuição, sem exclusão de dados ou concessão automática a vendedores.
 
 ## 3. Campos e tags
 
