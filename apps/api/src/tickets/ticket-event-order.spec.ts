@@ -10,11 +10,11 @@ describe("ticket event chronology", () => {
       assigned,
     ]);
   });
-  it("preserves chronological order and deterministic IDs for other ties", () => {
+  it("preserves the database order when timestamps lose microsecond precision", () => {
     const early = { id: "z", type: "COMMENT", createdAt: timestamp };
     const later = new Date(timestamp.getTime() + 1);
     const a = { id: "a", type: "UPDATED", createdAt: later };
     const b = { id: "b", type: "COMMENT", createdAt: later };
-    expect([b, a, early].sort(compareTicketEvents)).toEqual([early, a, b]);
+    expect([b, a, early].sort(compareTicketEvents)).toEqual([early, b, a]);
   });
 });
