@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import request from "supertest";
+import { randomUUID } from "node:crypto";
 
 import { AppModule } from "../app.module";
 import { PasswordService } from "../auth/password.service";
@@ -39,19 +40,23 @@ describe("superuser SQL and HTTP boundary", () => {
         "RLS_DATABASE_URL is required for the restricted-role test."
       );
     }
+    owner = new PrismaService(
+      process.env.MIGRATION_DATABASE_URL ?? process.env.DATABASE_URL
+    );
+    runtime = new PrismaService(process.env.RLS_DATABASE_URL);
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, AuthorizationModule],
       controllers: [SuperuserProbeController],
-    }).compile();
+    })
+      .overrideProvider(PrismaService)
+      .useValue(runtime)
+      .compile();
     app = moduleRef.createNestApplication();
     app.useGlobalFilters(new ApiErrorFilter());
     app.setGlobalPrefix("api/v1");
     await app.init();
     passwords = moduleRef.get(PasswordService);
-    owner = new PrismaService(
-      process.env.MIGRATION_DATABASE_URL ?? process.env.DATABASE_URL
-    );
-    runtime = new PrismaService(process.env.RLS_DATABASE_URL);
+    expect(moduleRef.get(PrismaService)).toBe(runtime);
   });
 
   async function reset() {
@@ -155,7 +160,7 @@ describe("superuser SQL and HTTP boundary", () => {
   });
 
   it("prevents runtime SQL and ordinary administration payloads from delegating the flag", async () => {
-    const { organization, membership } = await fixture();
+    const { organization, otherOrganization, membership } = await fixture();
     const roles = await runtime.$queryRaw<
       Array<{ rolbypassrls: boolean; rolsuper: boolean }>
     >`
@@ -235,6 +240,21 @@ describe("superuser SQL and HTTP boundary", () => {
     ).rejects.toThrow(
       "Superuser provisioning requires the deployment database role"
     );
+    for (const data of [
+      { id: randomUUID() },
+      { organizationId: otherOrganization.id },
+    ]) {
+      await expect(
+        runtime.withTenant(organization.id, tenant =>
+          tenant.organizationMembership.update({
+            where: { id: membership.id },
+            data,
+          })
+        )
+      ).rejects.toThrow(
+        "Superuser provisioning requires the deployment database role"
+      );
+    }
     await expect(
       runtime.withTenant(organization.id, tenant =>
         tenant.organizationMembership.update({

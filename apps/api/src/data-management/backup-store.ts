@@ -37,6 +37,12 @@ export class BackupStore {
     this.maxBytes = options.maxBytes;
   }
 
+  /**
+   * A failure after publication (for example fsync failure) can leave an
+   * encrypted object. A catalog must stay pending until this call succeeds;
+   * recovery must read and verify the object before retrying or removing it.
+   * Object existence alone is never evidence of a completed backup.
+   */
   async put(id: string, bytes: Buffer): Promise<void> {
     const objectId = this.objectId(id);
     if (bytes.length > this.maxBytes)

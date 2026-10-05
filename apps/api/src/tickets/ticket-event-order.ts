@@ -11,5 +11,7 @@ export function compareTicketEvents(
   const creation =
     Number(right.type === "CREATED") - Number(left.type === "CREATED");
   if (creation !== 0) return creation;
-  return left.id < right.id ? -1 : left.id > right.id ? 1 : 0;
+  // SQL has already ordered by precise timestamps and IDs. JS dates discard
+  // PostgreSQL microseconds; preserve that order for every other tied event.
+  return 0;
 }
