@@ -1,11 +1,44 @@
 {
-  "schemaSha256": "c818b48153f09e56a06c2fe5867dd38dc09687d4f7104d960d86710e6168f1ce",
+  "schemaSha256": "f58cca8b37d28794a43c5ddcffdeeaaf186ed3efee9d8291bb5188cf4f7fe855",
   "models": [
     {
       "name": "Organization",
       "dbName": "organizations",
       "primaryKey": ["id"],
       "fields": [
+        {
+          "name": "backups",
+          "type": "BackupRecord",
+          "kind": "object",
+          "dbName": "backups",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "dataOperations",
+          "type": "DataOperation",
+          "kind": "object",
+          "dbName": "dataOperations",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "backupSchedule",
+          "type": "BackupSchedule",
+          "kind": "object",
+          "dbName": "backupSchedule",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
         {
           "name": "id",
           "type": "String",
@@ -599,6 +632,39 @@
       "dbName": "users",
       "primaryKey": ["id"],
       "fields": [
+        {
+          "name": "backupsCreated",
+          "type": "BackupRecord",
+          "kind": "object",
+          "dbName": "backupsCreated",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "dataOperationsCreated",
+          "type": "DataOperation",
+          "kind": "object",
+          "dbName": "dataOperationsCreated",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "backupSchedulesUpdated",
+          "type": "BackupSchedule",
+          "kind": "object",
+          "dbName": "backupSchedulesUpdated",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
         {
           "name": "id",
           "type": "String",
@@ -6553,6 +6619,588 @@
           "isId": false,
           "nativeType": null,
           "relationFromFields": ["organizationId", "userId"]
+        }
+      ]
+    },
+    {
+      "name": "BackupRecord",
+      "dbName": "backups",
+      "primaryKey": ["id"],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "actorUserId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "actor_user_id",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "reason",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "reason",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(24)",
+          "relationFromFields": []
+        },
+        {
+          "name": "state",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "state",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(16)",
+          "relationFromFields": []
+        },
+        {
+          "name": "schemaVersion",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "schema_version",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "checksum",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "checksum",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(64)",
+          "relationFromFields": []
+        },
+        {
+          "name": "byteCount",
+          "type": "BigInt",
+          "kind": "scalar",
+          "dbName": "byte_count",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "counts",
+          "type": "Json",
+          "kind": "scalar",
+          "dbName": "counts",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "JsonB",
+          "relationFromFields": []
+        },
+        {
+          "name": "errorCode",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "error_code",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(80)",
+          "relationFromFields": []
+        },
+        {
+          "name": "createdAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "created_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "completedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "completed_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        },
+        {
+          "name": "actor",
+          "type": "User",
+          "kind": "object",
+          "dbName": "actor",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["actorUserId"]
+        },
+        {
+          "name": "protectedByOperations",
+          "type": "DataOperation",
+          "kind": "object",
+          "dbName": "protectedByOperations",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        }
+      ]
+    },
+    {
+      "name": "DataOperation",
+      "dbName": "data_operations",
+      "primaryKey": ["id"],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "actorUserId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "actor_user_id",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "kind",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "kind",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(16)",
+          "relationFromFields": []
+        },
+        {
+          "name": "state",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "state",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(16)",
+          "relationFromFields": []
+        },
+        {
+          "name": "payload",
+          "type": "Json",
+          "kind": "scalar",
+          "dbName": "payload",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "JsonB",
+          "relationFromFields": []
+        },
+        {
+          "name": "checkpoint",
+          "type": "Json",
+          "kind": "scalar",
+          "dbName": "checkpoint",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "JsonB",
+          "relationFromFields": []
+        },
+        {
+          "name": "stage",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "stage",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(80)",
+          "relationFromFields": []
+        },
+        {
+          "name": "processed",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "processed",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "total",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "total",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "attempts",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "attempts",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "workerId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "worker_id",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(160)",
+          "relationFromFields": []
+        },
+        {
+          "name": "leaseUntil",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "lease_until",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "heartbeatAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "heartbeat_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "errorCode",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "error_code",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(80)",
+          "relationFromFields": []
+        },
+        {
+          "name": "preventiveBackupId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "preventive_backup_id",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "createdAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "created_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "updated_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "completedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "completed_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        },
+        {
+          "name": "actor",
+          "type": "User",
+          "kind": "object",
+          "dbName": "actor",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["actorUserId"]
+        },
+        {
+          "name": "preventiveBackup",
+          "type": "BackupRecord",
+          "kind": "object",
+          "dbName": "preventiveBackup",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["preventiveBackupId", "organizationId"]
+        }
+      ]
+    },
+    {
+      "name": "BackupSchedule",
+      "dbName": "backup_schedules",
+      "primaryKey": ["organizationId"],
+      "fields": [
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "enabled",
+          "type": "Boolean",
+          "kind": "scalar",
+          "dbName": "enabled",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "frequency",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "frequency",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(16)",
+          "relationFromFields": []
+        },
+        {
+          "name": "localTime",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "local_time",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(5)",
+          "relationFromFields": []
+        },
+        {
+          "name": "weekday",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "weekday",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "intervalMinutes",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "interval_minutes",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "retentionCount",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "retention_count",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "timezone",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "timezone",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(80)",
+          "relationFromFields": []
+        },
+        {
+          "name": "nextRunAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "next_run_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "lastScheduledAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "last_scheduled_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedBy",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "updated_by",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "updated_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        },
+        {
+          "name": "updater",
+          "type": "User",
+          "kind": "object",
+          "dbName": "updater",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["updatedBy"]
         }
       ]
     }

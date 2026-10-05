@@ -587,6 +587,58 @@ exports.Prisma.UserWorkspacePreferenceScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BackupRecordScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  actorUserId: 'actorUserId',
+  reason: 'reason',
+  state: 'state',
+  schemaVersion: 'schemaVersion',
+  checksum: 'checksum',
+  byteCount: 'byteCount',
+  counts: 'counts',
+  errorCode: 'errorCode',
+  createdAt: 'createdAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.DataOperationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  actorUserId: 'actorUserId',
+  kind: 'kind',
+  state: 'state',
+  payload: 'payload',
+  checkpoint: 'checkpoint',
+  stage: 'stage',
+  processed: 'processed',
+  total: 'total',
+  attempts: 'attempts',
+  workerId: 'workerId',
+  leaseUntil: 'leaseUntil',
+  heartbeatAt: 'heartbeatAt',
+  errorCode: 'errorCode',
+  preventiveBackupId: 'preventiveBackupId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.BackupScheduleScalarFieldEnum = {
+  organizationId: 'organizationId',
+  enabled: 'enabled',
+  frequency: 'frequency',
+  localTime: 'localTime',
+  weekday: 'weekday',
+  intervalMinutes: 'intervalMinutes',
+  retentionCount: 'retentionCount',
+  timezone: 'timezone',
+  nextRunAt: 'nextRunAt',
+  lastScheduledAt: 'lastScheduledAt',
+  updatedBy: 'updatedBy',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -756,7 +808,10 @@ exports.Prisma.ModelName = {
   SlaPolicy: 'SlaPolicy',
   TicketSatisfactionSurvey: 'TicketSatisfactionSurvey',
   IntegrationCredential: 'IntegrationCredential',
-  UserWorkspacePreference: 'UserWorkspacePreference'
+  UserWorkspacePreference: 'UserWorkspacePreference',
+  BackupRecord: 'BackupRecord',
+  DataOperation: 'DataOperation',
+  BackupSchedule: 'BackupSchedule'
 };
 
 /**

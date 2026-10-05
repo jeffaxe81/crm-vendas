@@ -38,6 +38,21 @@ function full(
  */
 export const TENANT_DATA_REGISTRY: readonly TenantDataPolicy[] = [
   {
+    ...full("BackupRecord", "backups", "SECURITY"),
+    export: "EXCLUDE",
+    restore: "PRESERVE",
+  },
+  {
+    ...full("DataOperation", "data_operations", "SECURITY"),
+    export: "EXCLUDE",
+    restore: "PRESERVE",
+  },
+  {
+    ...full("BackupSchedule", "backup_schedules", "SECURITY"),
+    export: "EXCLUDE",
+    restore: "PRESERVE",
+  },
+  {
     ...full("Organization", "organizations", "CONFIGURATION"),
     scope: "ORGANIZATION_ROOT",
   },
