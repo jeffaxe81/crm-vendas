@@ -6,6 +6,7 @@ dist/
 **/dist/
 coverage/
 **/coverage/
+.superpowers/
 apps/api/src/generated/
 pnpm-lock.yaml
 client/

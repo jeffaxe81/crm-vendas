@@ -28,6 +28,7 @@ import { Prisma } from "../generated/prisma/client";
 import { SLA_CLOCK, type SlaClock } from "../sla/sla-clock";
 import { resolveSlaDeadlines } from "../sla/sla-deadlines";
 import { TicketSatisfactionService } from "./ticket-satisfaction.service";
+import { compareTicketEvents } from "./ticket-event-order";
 
 export type TicketAdministrationContext = {
   organizationId: string;
@@ -162,7 +163,7 @@ export class TicketsService {
         orderBy: [{ createdAt: "asc" }, { id: "asc" }],
       });
     });
-    return { items };
+    return { items: items.sort(compareTicketEvents) };
   }
 
   async create(
