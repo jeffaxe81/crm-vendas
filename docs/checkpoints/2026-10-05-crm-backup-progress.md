@@ -19,8 +19,9 @@ Módulo em implementação. Ainda não há catálogo, exportador de snapshot, wo
 
 - PR #87: CI 37254071582 completo, incluindo PostgreSQL 18, papel sem BYPASSRLS, 71 suítes/312 testes da API, seis E2E e imagens Docker.
 - PR #88: CI 37297848737 completo, incluindo testes SQL/HTTP, seis E2E e imagens Docker; revisão sem bloqueios.
+- Revisão do manifesto: corrigida aceitação de datas normalizadas, VarChar acima do limite, overflow SmallInt e precisão/escala Decimal. Duas regressões reproduziram a falha e passaram após correção; valores decimais exatos também tiveram round-trip validado. Não há coluna BigInt no conjunto exportável atual para um round-trip real desse tipo.
 - Manifesto: quatro testes falharam com as funções ainda não implementadas e passaram após implementação. Configuração: regressão falhou na versão anterior e passou após implementação.
-- Incremento atual: 20 testes locais de manifesto, inventário, configuração e armazenamento aprovados; tipos e build da API e formatação aprovados. Validação integral deste incremento será registrada após CI.
+- Incremento atual: 22 testes locais de manifesto, inventário, configuração e armazenamento aprovados; tipos e build da API e formatação aprovados. Validação integral deste incremento será registrada após CI.
 - O ambiente local recuperado não tem PostgreSQL/Docker configurados. Validação real de migrações/RLS continua obrigatória no CI; nenhum banco de produção é usado.
 
 ## Próximas entregas

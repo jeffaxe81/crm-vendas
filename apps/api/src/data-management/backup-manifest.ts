@@ -79,8 +79,11 @@ function scalar(value: unknown, field: Field): boolean {
     );
   switch (field.type) {
     case "String":
+      const maxLength = /^VarChar\((\d+)\)$/.exec(field.nativeType ?? "")?.[1];
       return (
         typeof value === "string" &&
+        !value.includes("\0") &&
+        (!maxLength || Array.from(value).length <= Number(maxLength)) &&
         (field.nativeType !== "Uuid" || uuid.test(value))
       );
     case "Boolean":
@@ -89,8 +92,8 @@ function scalar(value: unknown, field: Field): boolean {
       return (
         typeof value === "number" &&
         Number.isInteger(value) &&
-        value >= -2147483648 &&
-        value <= 2147483647
+        value >= (field.nativeType === "SmallInt" ? -32768 : -2147483648) &&
+        value <= (field.nativeType === "SmallInt" ? 32767 : 2147483647)
       );
     case "Float":
       return typeof value === "number" && Number.isFinite(value);
@@ -102,12 +105,25 @@ function scalar(value: unknown, field: Field): boolean {
         BigInt(value) < 2n ** 63n
       );
     case "Decimal":
-      return typeof value === "string" && /^-?\d+(?:\.\d+)?$/.test(value);
+      if (typeof value !== "string" || !/^-?\d+(?:\.\d+)?$/.test(value))
+        return false;
+      const decimal = /^Decimal\((\d+),\s*(\d+)\)$/.exec(
+        field.nativeType ?? ""
+      );
+      if (!decimal) return false;
+      const [whole = "", fraction = ""] = value.replace(/^-/, "").split(".");
+      return (
+        whole.replace(/^0+/, "").length <=
+          Number(decimal[1]) - Number(decimal[2]) &&
+        fraction.length <= Number(decimal[2])
+      );
     case "DateTime":
       return (
         typeof value === "string" &&
         /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3,6}Z$/.test(value) &&
-        Number.isFinite(Date.parse(value))
+        Number.isFinite(Date.parse(value)) &&
+        value.slice(0, 4) !== "0000" &&
+        new Date(value).toISOString().slice(0, 19) === value.slice(0, 19)
       );
     // Preserve raw PostgreSQL JSON text: parsing and reserializing loses large numeric values.
     case "Json":

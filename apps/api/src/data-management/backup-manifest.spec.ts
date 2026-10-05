@@ -185,4 +185,80 @@ describe("verified backup manifest", () => {
       "BACKUP_TOO_LARGE"
     );
   });
+  it("rejects invalid calendar dates and strings exceeding database character limits", () => {
+    for (const change of [
+      { createdAt: "2026-02-31T01:00:00.123456Z" },
+      { name: "x".repeat(161) },
+    ]) {
+      const data = emptySnapshot(organizationId);
+      Object.assign(data.Organization![0]!, change);
+      expect(() =>
+        encodeSnapshot(organizationId, data, new Date(), 1048576)
+      ).toThrow("BACKUP_INVALID");
+    }
+    const valid = emptySnapshot(organizationId);
+    valid.Organization![0]!.name = "🚢".repeat(160);
+    expect(
+      decodeSnapshot(
+        encodeSnapshot(organizationId, valid, new Date(), 1048576),
+        organizationId,
+        1048576
+      ).data.Organization![0]!.name
+    ).toBe("🚢".repeat(160));
+  });
+  it("preserves exact decimal strings and rejects native precision, scale and smallint overflow", () => {
+    const actor = randomUUID();
+    const data = emptySnapshot(organizationId);
+    data.User = [
+      { id: actor, email: "actor@example.test", displayName: "Actor" },
+    ];
+    data.Product = [
+      {
+        id: randomUUID(),
+        organizationId,
+        code: "exact",
+        name: "Exact",
+        description: null,
+        unitPrice: "900719925474099.99",
+        isActive: true,
+        createdAt: "2026-10-05T01:00:00.123456Z",
+        updatedAt: "2026-10-05T01:00:00.123456Z",
+        createdBy: actor,
+        updatedBy: actor,
+        version: 1,
+        deletedAt: null,
+        deletedBy: null,
+      },
+    ];
+    const bytes = encodeSnapshot(organizationId, data, new Date(), 1048576);
+    expect(
+      decodeSnapshot(bytes, organizationId, 1048576).data.Product![0]!.unitPrice
+    ).toBe("900719925474099.99");
+    for (const price of ["1.001", "100000000000000000.00"]) {
+      data.Product![0]!.unitPrice = price;
+      expect(() =>
+        encodeSnapshot(organizationId, data, new Date(), 1048576)
+      ).toThrow("BACKUP_INVALID");
+    }
+    data.Product = [];
+    data.TicketSatisfactionSurvey = [
+      {
+        id: randomUUID(),
+        organizationId,
+        ticketId: randomUUID(),
+        expiresAt: "2026-10-05T01:00:00.123456Z",
+        rating: 32768,
+        comment: null,
+        respondedAt: null,
+        createdAt: "2026-10-05T01:00:00.123456Z",
+        updatedAt: "2026-10-05T01:00:00.123456Z",
+        createdBy: actor,
+        updatedBy: actor,
+        version: 1,
+      },
+    ];
+    expect(() =>
+      encodeSnapshot(organizationId, data, new Date(), 1048576)
+    ).toThrow("BACKUP_INVALID");
+  });
 });
