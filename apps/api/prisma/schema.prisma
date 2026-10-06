@@ -306,6 +306,7 @@ model RefreshSession {
   createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   user           User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  operationPreviews OperationPreview[]
 
   @@index([userId, revokedAt, expiresAt], map: "refresh_sessions_user_status_idx")
   @@index([organizationId, revokedAt, expiresAt], map: "refresh_sessions_org_status_idx")
@@ -1037,6 +1038,7 @@ model OperationPreview {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict)
   actor User @relation("OperationPreviewActor",fields:[actorUserId],references:[id],onDelete:Restrict)
+  session RefreshSession @relation(fields:[sessionId],references:[id],onDelete:Restrict)
   targetBackup BackupRecord? @relation(fields:[targetBackupId,organizationId],references:[id,organizationId],onDelete:Restrict)
   @@index([organizationId,actorUserId,sessionId,expiresAt],map:"operation_previews_scope_expiry_idx")
   @@index([organizationId,targetBackupId],map:"operation_previews_target_backup_idx")
