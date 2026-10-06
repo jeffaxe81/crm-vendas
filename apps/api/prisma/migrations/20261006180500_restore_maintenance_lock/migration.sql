@@ -8,20 +8,32 @@ AS $$
 DECLARE
   old_org uuid;
   new_org uuid;
+  maintenance_org uuid;
 BEGIN
-  IF current_setting('app.maintenance_authorized', true) = 'on' THEN
-    IF TG_OP = 'DELETE' THEN
-      RETURN OLD;
-    END IF;
-    RETURN NEW;
-  END IF;
-
   IF TG_TABLE_NAME = 'organizations' THEN
     IF TG_OP <> 'INSERT' THEN old_org := OLD.id; END IF;
     IF TG_OP <> 'DELETE' THEN new_org := NEW.id; END IF;
   ELSE
     IF TG_OP <> 'INSERT' THEN old_org := OLD.organization_id; END IF;
     IF TG_OP <> 'DELETE' THEN new_org := NEW.organization_id; END IF;
+  END IF;
+
+  maintenance_org := nullif(
+    current_setting('app.current_organization_id', true),
+    ''
+  )::uuid;
+
+  IF current_setting('app.maintenance_authorized', true) = 'on' THEN
+    IF maintenance_org IS NULL
+       OR (old_org IS NOT NULL AND old_org <> maintenance_org)
+       OR (new_org IS NOT NULL AND new_org <> maintenance_org) THEN
+      RAISE EXCEPTION 'maintenance tenant scope mismatch'
+        USING ERRCODE = '42501';
+    END IF;
+    IF TG_OP = 'DELETE' THEN
+      RETURN OLD;
+    END IF;
+    RETURN NEW;
   END IF;
 
   -- Acquire in deterministic order if an update ever changes tenant identity.
