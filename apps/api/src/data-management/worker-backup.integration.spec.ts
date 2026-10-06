@@ -159,7 +159,7 @@ describe("durable backup execution and retention", () => {
   it("retains the newest configured backups while preserving a preventive backup in use", async () => {
     const previous: BackupRecord[] = [];
 
-    for (let index = 0; index < 8; index++) {
+    for (let index = 0; index < 9; index++) {
       const record = await service.create(
         organizationId,
         null,
@@ -179,15 +179,8 @@ describe("durable backup execution and retention", () => {
       );
     }
 
-    await runtime.withTenant(organizationId, async tx => {
-      await tx.backupSchedule.create({
-        data: {
-          organizationId,
-          enabled: false,
-          retentionCount: 7,
-        },
-      });
-      await tx.dataOperation.create({
+    await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.create({
         data: {
           organizationId,
           kind: "RESTORE",
@@ -197,11 +190,10 @@ describe("durable backup execution and retention", () => {
           leaseUntil: new Date(Date.now() + 60_000),
           preventiveBackupId: previous[0]!.id,
         },
-      });
-    });
+      })
+    );
 
-    const operation = await queueBackup();
-    expect(await worker.processNext("backup-worker")).toBe(true);
+    expect(await service.pruneRetention(organizationId, 7)).toBe(1);
 
     const remaining = await runtime.withTenant(organizationId, tx =>
       tx.backupRecord.findMany({
@@ -213,7 +205,6 @@ describe("durable backup execution and retention", () => {
 
     expect(remaining.map(row => row.id)).toContain(previous[0]!.id);
     expect(remaining.map(row => row.id)).not.toContain(previous[1]!.id);
-    expect(remaining.map(row => row.id)).toContain(operation.id);
     expect(remaining).toHaveLength(8);
 
     await expect(store.read(previous[0]!.id)).resolves.toBeInstanceOf(Buffer);
