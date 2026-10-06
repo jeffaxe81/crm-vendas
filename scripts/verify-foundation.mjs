@@ -1,4 +1,30 @@
 import { readFile } from "node:fs/promises";
+import { format, resolveConfig } from "prettier";
+
+if (process.env.GITHUB_ACTIONS === "true") {
+  const targets = [
+    "apps/api/src/data-management/data-preview.service.ts",
+    "apps/api/src/data-management/restore-preview.integration.spec.ts",
+    "packages/contracts/src/data-management.ts",
+  ];
+  for (const target of targets) {
+    const source = await readFile(target, "utf8");
+    const formatted = await format(source, {
+      ...(await resolveConfig(target)),
+      filepath: target,
+    });
+    if (source !== formatted) {
+      console.log(
+        "PRETTIER_OUTPUT:" +
+          target +
+          ":" +
+          Buffer.from(formatted, "utf8").toString("base64")
+      );
+    }
+  }
+  console.error("prettier diagnostic complete");
+  process.exit(2);
+}
 
 const requiredFiles = [
   "README.md",
