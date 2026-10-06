@@ -111,7 +111,8 @@ export class BackupService {
   async create(
     organizationId: string,
     actorId: string | null,
-    reason: BackupReason
+    reason: BackupReason,
+    requestedId?: string
   ): Promise<BackupRecord> {
     if (!this.store) throw new BackupError("BACKUP_NOT_CONFIGURED");
     const store = this.store;
@@ -120,9 +121,48 @@ export class BackupService {
     const parsedReason = BackupReasonSchema.safeParse(reason);
     if (!parsedReason.success) throw new BackupError("BACKUP_INVALID");
     reason = parsedReason.data;
-    const id = randomUUID();
-    await this.prisma.withTenant(organizationId, async tx => {
+    const id = requestedId === undefined ? randomUUID() : uuid(requestedId);
+    const existing = await this.prisma.withTenant(organizationId, async tx => {
       await this.authorize(tx, organizationId, actorId, reason);
+      const row = await tx.backupRecord.findFirst({
+        where: { id, organizationId },
+      });
+      if (row) {
+        if (row.actorUserId !== actorId || row.reason !== reason) {
+          throw new BackupError("BACKUP_INVALID");
+        }
+        if (row.state === "COMPLETED") {
+          return summary(row);
+        }
+        if (row.state !== "FAILED") {
+          throw new BackupError("BACKUP_IN_PROGRESS");
+        }
+
+        const retried = await tx.backupRecord.updateMany({
+          where: {
+            id,
+            organizationId,
+            state: "FAILED",
+          },
+          data: {
+            state: "PENDING",
+            errorCode: null,
+            completedAt: null,
+          },
+        });
+        if (retried.count !== 1) {
+          throw new BackupError("BACKUP_IN_PROGRESS");
+        }
+        await this.audit(
+          tx,
+          organizationId,
+          actorId,
+          id,
+          "backup.retry_requested",
+          { reason }
+        );
+        return null;
+      }
       await tx.backupRecord.create({
         data: {
           id,
@@ -135,7 +175,12 @@ export class BackupService {
       await this.audit(tx, organizationId, actorId, id, "backup.requested", {
         reason,
       });
+      return null;
     });
+    if (existing) {
+      await this.verify(organizationId, id);
+      return existing;
+    }
     try {
       const bytes = await this.prisma.withTenant(
         organizationId,
@@ -228,6 +273,83 @@ export class BackupService {
       throw new BackupError(code);
     }
   }
+  async pruneRetention(
+    organizationId: string,
+    retentionCount: 7 | 15 | 30 | 90
+  ): Promise<number> {
+    if (!this.store) throw new BackupError("BACKUP_NOT_CONFIGURED");
+    if (![7, 15, 30, 90].includes(retentionCount)) {
+      throw new BackupError("BACKUP_INVALID");
+    }
+    organizationId = uuid(organizationId);
+
+    const candidates = await this.prisma.withTenant(
+      organizationId,
+      async tx => {
+        const protectedRows = await tx.dataOperation.findMany({
+          where: {
+            organizationId,
+            state: { in: ["PENDING", "RUNNING"] },
+            preventiveBackupId: { not: null },
+          },
+          select: { preventiveBackupId: true },
+        });
+        const protectedIds = new Set(
+          protectedRows
+            .map(row => row.preventiveBackupId)
+            .filter((id): id is string => id !== null)
+        );
+        const completed = await tx.backupRecord.findMany({
+          where: { organizationId, state: "COMPLETED" },
+          orderBy: [
+            { completedAt: "desc" },
+            { createdAt: "desc" },
+            { id: "desc" },
+          ],
+          select: { id: true },
+        });
+        return completed
+          .slice(retentionCount)
+          .map(row => row.id)
+          .filter(id => !protectedIds.has(id));
+      }
+    );
+
+    let removed = 0;
+    for (const id of candidates) {
+      const deleted = await this.prisma.withTenant(organizationId, async tx => {
+        const protectedByOperation = await tx.dataOperation.count({
+          where: {
+            organizationId,
+            preventiveBackupId: id,
+            state: { in: ["PENDING", "RUNNING"] },
+          },
+        });
+        if (protectedByOperation > 0) return false;
+        const row = await tx.backupRecord.findFirst({
+          where: { id, organizationId, state: "COMPLETED" },
+          select: { id: true },
+        });
+        if (!row) return false;
+        await this.audit(
+          tx,
+          organizationId,
+          null,
+          id,
+          "backup.retention_deleted"
+        );
+        await tx.backupRecord.delete({
+          where: { id_organizationId: { id, organizationId } },
+        });
+        return true;
+      });
+      if (!deleted) continue;
+      await this.store.remove(id);
+      removed += 1;
+    }
+    return removed;
+  }
+
   async verify(
     organizationId: string,
     backupId: string
