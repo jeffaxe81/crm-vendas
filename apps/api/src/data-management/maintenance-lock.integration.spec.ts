@@ -157,8 +157,10 @@ describe("tenant maintenance write lock", () => {
     ]);
   });
 
-  it("installs a maintenance guard on the organization root and every current tenant table", async () => {
-    const missing = await owner.$queryRawUnsafe<{ table_name: string }[]>(`
+  it(
+    "installs a maintenance guard on the organization root and every current tenant table",
+    async () => {
+      const missing = await owner.$queryRawUnsafe<{ table_name: string }[]>(`
       SELECT tables.table_name::text
       FROM (
         SELECT 'organizations'::text AS table_name
@@ -185,11 +187,14 @@ describe("tenant maintenance write lock", () => {
       ORDER BY tables.table_name
     `);
 
-    expect(missing).toEqual([]);
-  });
+      expect(missing).toEqual([]);
+    }
+  );
 
-  it("allows the internal maintenance transaction to write while holding the exclusive lock", async () => {
-    await maintenance.withMaintenance(organizationId, tx =>
+  it(
+    "allows the internal maintenance transaction to write while holding the exclusive lock",
+    async () => {
+      await maintenance.withMaintenance(organizationId, tx =>
       tx.company.create({
         data: {
           organizationId,
@@ -198,10 +203,11 @@ describe("tenant maintenance write lock", () => {
           updatedBy: userId,
         },
       })
-    );
+      );
 
-    expect(
-      await writer.withTenant(organizationId, tx => tx.company.count())
-    ).toBe(1);
-  });
+      expect(
+        await writer.withTenant(organizationId, tx => tx.company.count())
+      ).toBe(1);
+    }
+  );
 });
