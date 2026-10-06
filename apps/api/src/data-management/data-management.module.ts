@@ -9,6 +9,7 @@ import { BackupWorkerRunner } from "./backup-worker.runner";
 import { BackupWorkerRuntime } from "./backup-worker.runtime";
 import { BACKUP_OPTIONS, BACKUP_STORE, BackupService } from "./backup.service";
 import { DataOperationWorker } from "./data-operation.worker";
+import { DataPreviewService } from "./data-preview.service";
 
 @Module({
   imports: [DatabaseModule],
@@ -38,6 +39,7 @@ import { DataOperationWorker } from "./data-operation.worker";
     },
     BackupService,
     BackupScheduleService,
+    DataPreviewService,
     DataOperationWorker,
     {
       provide: BackupWorkerRunner,
@@ -64,6 +66,6 @@ import { DataOperationWorker } from "./data-operation.worker";
       },
     },
   ],
-  exports: [BackupService, BACKUP_STORE, BACKUP_OPTIONS],
+  exports: [BackupService, DataPreviewService, BACKUP_STORE, BACKUP_OPTIONS],
 })
 export class DataManagementModule {}
