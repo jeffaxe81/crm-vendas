@@ -1,3 +1,5 @@
+import { jest } from "@jest/globals";
+
 import { BackupWorkerRuntime } from "./backup-worker.runtime";
 
 describe("backup worker runtime", () => {
