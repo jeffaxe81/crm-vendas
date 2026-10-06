@@ -47,6 +47,12 @@ export function snapshotFingerprint(): string {
     }))
   );
 }
+export function snapshotDataFingerprint(data: SnapshotData): string {
+  return digest({
+    schemaFingerprint: snapshotFingerprint(),
+    data,
+  });
+}
 export function referencedUserIds(data: SnapshotData): string[] {
   const ids = new Set<string>();
   for (const policy of SNAPSHOT_POLICIES.filter(p => p.model !== "User")) {
