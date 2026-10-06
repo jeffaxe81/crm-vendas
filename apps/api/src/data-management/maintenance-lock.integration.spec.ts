@@ -45,7 +45,9 @@ describe("tenant maintenance write lock", () => {
   });
 
   beforeEach(async () => {
-    await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
+    await owner.$executeRawUnsafe(
+      'TRUNCATE "organizations", "users" CASCADE'
+    );
     const user = await owner.user.create({
       data: {
         email: "maintenance@example.test",
@@ -69,93 +71,98 @@ describe("tenant maintenance write lock", () => {
 
   afterAll(async () => {
     if (owner) {
-      await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
+      await owner.$executeRawUnsafe(
+        'TRUNCATE "organizations", "users" CASCADE'
+      );
       await owner.onModuleDestroy();
     }
     await writer?.onModuleDestroy();
     await maintenance?.onModuleDestroy();
   });
 
-  it("waits for an earlier write and blocks new writes only for that organization", async () => {
-    const firstInserted = deferred();
-    const releaseFirst = deferred();
+  it(
+    "waits for an earlier write and blocks new writes only for that organization",
+    async () => {
+      const firstInserted = deferred();
+      const releaseFirst = deferred();
 
-    const firstWrite = writer.withTenant(organizationId, async tx => {
-      await tx.company.create({
-        data: {
-          organizationId,
-          legalName: "Before maintenance",
-          createdBy: userId,
-          updatedBy: userId,
-        },
-      });
-      firstInserted.resolve();
-      await releaseFirst.promise;
-    });
-    await firstInserted.promise;
-
-    const maintenanceAcquired = deferred();
-    const releaseMaintenance = deferred();
-    const maintenanceWork = maintenance.withMaintenance(
-      organizationId,
-      async tx => {
-        maintenanceAcquired.resolve();
-        await releaseMaintenance.promise;
-        await tx.company.updateMany({
-          where: { organizationId },
-          data: { notes: "maintained" },
+      const firstWrite = writer.withTenant(organizationId, async tx => {
+        await tx.company.create({
+          data: {
+            organizationId,
+            legalName: "Before maintenance",
+            createdBy: userId,
+            updatedBy: userId,
+          },
         });
-      }
-    );
-
-    expect(await settlesWithin(maintenanceAcquired.promise)).toBe(false);
-
-    releaseFirst.resolve();
-    await firstWrite;
-    await maintenanceAcquired.promise;
-
-    const secondInserted = deferred();
-    const secondWrite = writer.withTenant(organizationId, async tx => {
-      await tx.company.create({
-        data: {
-          organizationId,
-          legalName: "After maintenance",
-          createdBy: userId,
-          updatedBy: userId,
-        },
+        firstInserted.resolve();
+        await releaseFirst.promise;
       });
-      secondInserted.resolve();
-    });
+      await firstInserted.promise;
 
-    expect(await settlesWithin(secondInserted.promise)).toBe(false);
+      const maintenanceAcquired = deferred();
+      const releaseMaintenance = deferred();
+      const maintenanceWork = maintenance.withMaintenance(
+        organizationId,
+        async tx => {
+          maintenanceAcquired.resolve();
+          await releaseMaintenance.promise;
+          await tx.company.updateMany({
+            where: { organizationId },
+            data: { notes: "maintained" },
+          });
+        }
+      );
 
-    await writer.withTenant(otherOrganizationId, tx =>
-      tx.company.create({
-        data: {
-          organizationId: otherOrganizationId,
-          legalName: "Other tenant remains writable",
-          createdBy: userId,
-          updatedBy: userId,
-        },
-      })
-    );
+      expect(await settlesWithin(maintenanceAcquired.promise)).toBe(false);
 
-    releaseMaintenance.resolve();
-    await maintenanceWork;
-    await secondWrite;
-    expect(await settlesWithin(secondInserted.promise)).toBe(true);
+      releaseFirst.resolve();
+      await firstWrite;
+      await maintenanceAcquired.promise;
 
-    const names = await writer.withTenant(organizationId, tx =>
-      tx.company.findMany({
-        orderBy: { legalName: "asc" },
-        select: { legalName: true, notes: true },
-      })
-    );
-    expect(names).toEqual([
-      { legalName: "After maintenance", notes: null },
-      { legalName: "Before maintenance", notes: "maintained" },
-    ]);
-  });
+      const secondInserted = deferred();
+      const secondWrite = writer.withTenant(organizationId, async tx => {
+        await tx.company.create({
+          data: {
+            organizationId,
+            legalName: "After maintenance",
+            createdBy: userId,
+            updatedBy: userId,
+          },
+        });
+        secondInserted.resolve();
+      });
+
+      expect(await settlesWithin(secondInserted.promise)).toBe(false);
+
+      await writer.withTenant(otherOrganizationId, tx =>
+        tx.company.create({
+          data: {
+            organizationId: otherOrganizationId,
+            legalName: "Other tenant remains writable",
+            createdBy: userId,
+            updatedBy: userId,
+          },
+        })
+      );
+
+      releaseMaintenance.resolve();
+      await maintenanceWork;
+      await secondWrite;
+      expect(await settlesWithin(secondInserted.promise)).toBe(true);
+
+      const names = await writer.withTenant(organizationId, tx =>
+        tx.company.findMany({
+          orderBy: { legalName: "asc" },
+          select: { legalName: true, notes: true },
+        })
+      );
+      expect(names).toEqual([
+        { legalName: "After maintenance", notes: null },
+        { legalName: "Before maintenance", notes: "maintained" },
+      ]);
+    }
+  );
 
   it(
     "installs a maintenance guard on the organization root and every current tenant table",
@@ -195,14 +202,14 @@ describe("tenant maintenance write lock", () => {
     "allows the internal maintenance transaction to write while holding the exclusive lock",
     async () => {
       await maintenance.withMaintenance(organizationId, tx =>
-      tx.company.create({
-        data: {
-          organizationId,
-          legalName: "Internal maintenance write",
-          createdBy: userId,
-          updatedBy: userId,
-        },
-      })
+        tx.company.create({
+          data: {
+            organizationId,
+            legalName: "Internal maintenance write",
+            createdBy: userId,
+            updatedBy: userId,
+          },
+        })
       );
 
       expect(
