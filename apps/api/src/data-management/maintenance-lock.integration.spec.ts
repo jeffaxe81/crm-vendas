@@ -198,25 +198,28 @@ describe("tenant maintenance write lock", () => {
     }
   );
 
-  it("scopes the internal maintenance bypass to the locked organization", async () => {
-    await expect(
-      maintenance.withMaintenance(organizationId, tx =>
-        tx.$executeRawUnsafe(
-          "UPDATE public.organizations SET name='Escaped' WHERE id=$1::uuid",
-          otherOrganizationId
+  it(
+    "scopes the internal maintenance bypass to the locked organization",
+    async () => {
+      await expect(
+        maintenance.withMaintenance(organizationId, tx =>
+          tx.$executeRawUnsafe(
+            "UPDATE public.organizations SET name='Escaped' WHERE id=$1::uuid",
+            otherOrganizationId
+          )
         )
-      )
-    ).rejects.toThrow();
+      ).rejects.toThrow();
 
-    expect(
-      (
-        await owner.organization.findUniqueOrThrow({
-          where: { id: otherOrganizationId },
-          select: { name: true },
-        })
-      ).name
-    ).toBe("Maintenance B");
-  });
+      expect(
+        (
+          await owner.organization.findUniqueOrThrow({
+            where: { id: otherOrganizationId },
+            select: { name: true },
+          })
+        ).name
+      ).toBe("Maintenance B");
+    }
+  );
 
   it(
     "allows the internal maintenance transaction to write while holding the exclusive lock",
