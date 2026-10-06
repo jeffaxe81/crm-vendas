@@ -1,4 +1,8 @@
-import { Logger, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
+import {
+  Logger,
+  type OnModuleDestroy,
+  type OnModuleInit,
+} from "@nestjs/common";
 
 import type { BackupWorkerRunner } from "./backup-worker.runner";
 
