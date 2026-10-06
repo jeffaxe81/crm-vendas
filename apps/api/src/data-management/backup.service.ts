@@ -131,10 +131,37 @@ export class BackupService {
         if (row.actorUserId !== actorId || row.reason !== reason) {
           throw new BackupError("BACKUP_INVALID");
         }
-        if (row.state !== "COMPLETED") {
+        if (row.state === "COMPLETED") {
+          return summary(row);
+        }
+        if (row.state !== "FAILED") {
           throw new BackupError("BACKUP_IN_PROGRESS");
         }
-        return summary(row);
+
+        const retried = await tx.backupRecord.updateMany({
+          where: {
+            id,
+            organizationId,
+            state: "FAILED",
+          },
+          data: {
+            state: "PENDING",
+            errorCode: null,
+            completedAt: null,
+          },
+        });
+        if (retried.count !== 1) {
+          throw new BackupError("BACKUP_IN_PROGRESS");
+        }
+        await this.audit(
+          tx,
+          organizationId,
+          actorId,
+          id,
+          "backup.retry_requested",
+          { reason }
+        );
+        return null;
       }
       await tx.backupRecord.create({
         data: {
