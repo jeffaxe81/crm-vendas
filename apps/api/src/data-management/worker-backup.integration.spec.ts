@@ -27,6 +27,18 @@ type ProcessingWorker = DataOperationWorker & {
   processNext(workerId: string): Promise<boolean>;
 };
 
+class FailOnceBackupStore extends BackupStore {
+  private shouldFail = true;
+
+  override async put(id: string, bytes: Buffer): Promise<void> {
+    if (this.shouldFail) {
+      this.shouldFail = false;
+      throw new Error("synthetic backup store failure");
+    }
+    await super.put(id, bytes);
+  }
+}
+
 describe("durable backup execution and retention", () => {
   let owner: PrismaService;
   let runtime: PrismaService;
@@ -154,6 +166,85 @@ describe("durable backup execution and retention", () => {
       });
     });
     await expect(store.read(operation.id)).resolves.toBeInstanceOf(Buffer);
+  });
+
+  it("retries the same backup operation after a transient store failure without duplicating the catalog row", async () => {
+    const retryRoot = await mkdtemp(join(tmpdir(), "axes-backup-retry-"));
+    const retryStore = new FailOnceBackupStore({
+      directory: retryRoot,
+      key: randomBytes(32),
+      maxBytes: options.maxBytes,
+    });
+    const retryService = new BackupService(
+      runtime,
+      retryStore,
+      options
+    ) as IdempotentBackupService;
+    const Worker = DataOperationWorker as unknown as new (
+      prisma: PrismaService,
+      backupService: BackupService
+    ) => DataOperationWorker;
+    const retryWorker = new Worker(runtime, retryService) as ProcessingWorker;
+    const operation = await queueBackup();
+
+    try {
+      await expect(
+        retryWorker.processNext("worker-first-attempt")
+      ).rejects.toThrow("BACKUP_FAILED");
+
+      await runtime.withTenant(organizationId, async tx => {
+        const backup = await tx.backupRecord.findUniqueOrThrow({
+          where: {
+            id_organizationId: {
+              id: operation.id,
+              organizationId,
+            },
+          },
+        });
+        expect(backup.state).toBe("FAILED");
+
+        const running = await tx.dataOperation.findUniqueOrThrow({
+          where: { id: operation.id },
+        });
+        expect(running.state).toBe("RUNNING");
+
+        await tx.dataOperation.update({
+          where: { id: operation.id },
+          data: { leaseUntil: new Date(0) },
+        });
+      });
+
+      await expect(
+        retryWorker.processNext("worker-second-attempt")
+      ).resolves.toBe(true);
+
+      await runtime.withTenant(organizationId, async tx => {
+        expect(await tx.backupRecord.count()).toBe(1);
+        const backup = await tx.backupRecord.findUniqueOrThrow({
+          where: {
+            id_organizationId: {
+              id: operation.id,
+              organizationId,
+            },
+          },
+        });
+        expect(backup.state).toBe("COMPLETED");
+
+        const completed = await tx.dataOperation.findUniqueOrThrow({
+          where: { id: operation.id },
+        });
+        expect(completed.state).toBe("COMPLETED");
+        expect(completed.checkpoint).toMatchObject({
+          businessCommitted: true,
+          backupId: operation.id,
+        });
+      });
+      await expect(retryStore.read(operation.id)).resolves.toBeInstanceOf(
+        Buffer
+      );
+    } finally {
+      await rm(retryRoot, { recursive: true, force: true });
+    }
   });
 
   it("retains the newest configured backups while preserving a preventive backup in use", async () => {
