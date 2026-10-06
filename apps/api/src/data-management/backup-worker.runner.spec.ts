@@ -1,17 +1,23 @@
-import { jest } from "@jest/globals";
 import { BackupWorkerRunner } from "./backup-worker.runner";
 
 describe("backup worker runner", () => {
   it("enqueues due schedules and drains available operations sequentially", async () => {
+    let scheduleCalls = 0;
+    let processCalls = 0;
     const schedule = {
-      enqueueDue: jest.fn().mockResolvedValue(2),
+      async enqueueDue() {
+        scheduleCalls += 1;
+        return 2;
+      },
     };
+    const outcomes = [true, true, false];
     const worker = {
-      processNext: jest
-        .fn()
-        .mockResolvedValueOnce(true)
-        .mockResolvedValueOnce(true)
-        .mockResolvedValueOnce(false),
+      async processNext(workerId: string) {
+        expect(workerId).toBe("backup-worker:test");
+        const result = outcomes[processCalls];
+        processCalls += 1;
+        return result ?? false;
+      },
     };
 
     const runner = new BackupWorkerRunner(
@@ -27,9 +33,8 @@ describe("backup worker runner", () => {
       processed: 2,
     });
 
-    expect(schedule.enqueueDue).toHaveBeenCalledTimes(1);
-    expect(worker.processNext).toHaveBeenCalledTimes(3);
-    expect(worker.processNext).toHaveBeenCalledWith("backup-worker:test");
+    expect(scheduleCalls).toBe(1);
+    expect(processCalls).toBe(3);
   });
 
   it("does not overlap cycles while a previous poll is still running", async () => {
@@ -37,14 +42,18 @@ describe("backup worker runner", () => {
     const blocked = new Promise<void>(resolve => {
       release = resolve;
     });
+    let scheduleCalls = 0;
     const schedule = {
-      enqueueDue: jest.fn().mockImplementation(async () => {
+      async enqueueDue() {
+        scheduleCalls += 1;
         await blocked;
         return 0;
-      }),
+      },
     };
     const worker = {
-      processNext: jest.fn().mockResolvedValue(false),
+      async processNext() {
+        return false;
+      },
     };
 
     const runner = new BackupWorkerRunner(
@@ -57,7 +66,7 @@ describe("backup worker runner", () => {
     await Promise.resolve();
 
     await expect(runner.runCycle()).resolves.toBeNull();
-    expect(schedule.enqueueDue).toHaveBeenCalledTimes(1);
+    expect(scheduleCalls).toBe(1);
 
     release();
     await expect(first).resolves.toEqual({ enqueued: 0, processed: 0 });
