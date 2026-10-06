@@ -48,4 +48,8 @@ PR #91 em draft. Cálculo de agenda diária, semanal e por intervalo validado em
 
 Após o merge do PR #91, a Task 4 foi iniciada em branch isolada `feat/crm-backup-restore`. A primeira microentrega implementa a fundação de bloqueio de escritas por organização: escritas comuns adquirem advisory lock compartilhado por trigger e a rotina interna de manutenção adquire lock exclusivo transacional. Assim, escrita já iniciada conclui antes da manutenção; novas escritas da mesma organização aguardam; outra organização permanece independente. Há teste de cobertura para exigir o trigger em toda tabela atual com `organization_id` e na raiz `organizations`.
 
-Ainda não declarar restauração disponível. Permanecem prévia persistente, reautenticação/confirmação, cópia preventiva, preparação/validação do snapshot, substituição transacional, revogação de sessões e integração do worker.
+PR #92 foi integrado à main no commit 8c48811cfe51871a7b0576b0b2bfc60ee2a98a49 após o CI 37530607563 integralmente aprovado. O bloqueio transacional por organização está pronto: escritas anteriores terminam antes da manutenção, novas escritas do mesmo tenant aguardam, outro tenant continua independente e o bypass interno rejeita escopo divergente.
+
+A microentrega seguinte está em desenvolvimento na branch `feat/crm-backup-restore-preview`: catálogo persistente de prévias de operações destrutivas, prévia de restauração restrita a Superusuário humano, vínculo com sessão ativa, organização, backup/checksum e fingerprint do estado atual, com validade de cinco minutos. A prévia permanece fora dos snapshots e sob RLS/bloqueio de manutenção.
+
+Ainda não declarar restauração disponível. Permanecem reautenticação/confirmação de uso único, cópia preventiva, preparação/validação do snapshot, substituição transacional, revogação de sessões e integração do worker.
