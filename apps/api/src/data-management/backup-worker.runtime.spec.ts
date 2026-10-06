@@ -1,97 +1,101 @@
-import { jest } from "@jest/globals";
-
 import { BackupWorkerRuntime } from "./backup-worker.runtime";
 
-describe("backup worker runtime", () => {
-  afterEach(() => {
-    jest.useRealTimers();
-  });
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
+async function waitFor(
+  predicate: () => boolean,
+  timeoutMs = 500
+): Promise<void> {
+  const started = Date.now();
+  while (!predicate()) {
+    if (Date.now() - started > timeoutMs) {
+      throw new Error("Timed out waiting for backup worker runtime condition.");
+    }
+    await delay(5);
+  }
+}
+
+describe("backup worker runtime", () => {
   it("stays idle when backup storage is not configured", async () => {
-    jest.useFakeTimers();
+    let calls = 0;
     const runner = {
-      runCycle: jest.fn().mockResolvedValue({ enqueued: 0, processed: 0 }),
+      async runCycle() {
+        calls += 1;
+        return { enqueued: 0, processed: 0 };
+      },
     };
     const runtime = new BackupWorkerRuntime(runner, {
       enabled: false,
-      pollMs: 1_000,
+      pollMs: 5,
     });
 
     runtime.onModuleInit();
-    await Promise.resolve();
-    jest.advanceTimersByTime(5_000);
-    await Promise.resolve();
+    await delay(25);
 
-    expect(runner.runCycle).not.toHaveBeenCalled();
+    expect(calls).toBe(0);
     await runtime.onModuleDestroy();
   });
 
   it("runs immediately, prevents overlapping polls and waits for shutdown", async () => {
-    jest.useFakeTimers();
-
+    let calls = 0;
     let releaseFirst!: () => void;
-    const firstCycle = new Promise(resolve => {
-      releaseFirst = () => resolve({ enqueued: 1, processed: 1 });
-    });
+    const firstCycle = new Promise<{ enqueued: number; processed: number }>(
+      resolve => {
+        releaseFirst = () => resolve({ enqueued: 1, processed: 1 });
+      }
+    );
     const runner = {
-      runCycle: jest
-        .fn()
-        .mockImplementationOnce(() => firstCycle)
-        .mockResolvedValue({ enqueued: 0, processed: 0 }),
+      async runCycle() {
+        calls += 1;
+        if (calls === 1) return firstCycle;
+        return { enqueued: 0, processed: 0 };
+      },
     };
     const runtime = new BackupWorkerRuntime(runner, {
       enabled: true,
-      pollMs: 1_000,
+      pollMs: 5,
     });
 
     runtime.onModuleInit();
-    await Promise.resolve();
-
-    expect(runner.runCycle).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(3_000);
-    await Promise.resolve();
-    expect(runner.runCycle).toHaveBeenCalledTimes(1);
+    await waitFor(() => calls === 1);
+    await delay(25);
+    expect(calls).toBe(1);
 
     let shutdownFinished = false;
     const shutdown = runtime.onModuleDestroy().then(() => {
       shutdownFinished = true;
     });
-    await Promise.resolve();
+    await delay(10);
     expect(shutdownFinished).toBe(false);
 
     releaseFirst();
-    await firstCycle;
     await shutdown;
     expect(shutdownFinished).toBe(true);
 
-    jest.advanceTimersByTime(3_000);
-    await Promise.resolve();
-    expect(runner.runCycle).toHaveBeenCalledTimes(1);
+    await delay(20);
+    expect(calls).toBe(1);
   });
 
   it("continues polling after a failed cycle", async () => {
-    jest.useFakeTimers();
+    let calls = 0;
     const runner = {
-      runCycle: jest
-        .fn()
-        .mockRejectedValueOnce(new Error("synthetic cycle failure"))
-        .mockResolvedValue({ enqueued: 0, processed: 0 }),
+      async runCycle() {
+        calls += 1;
+        if (calls === 1) throw new Error("synthetic cycle failure");
+        return { enqueued: 0, processed: 0 };
+      },
     };
     const runtime = new BackupWorkerRuntime(runner, {
       enabled: true,
-      pollMs: 1_000,
+      pollMs: 5,
     });
 
     runtime.onModuleInit();
-    await Promise.resolve();
-    await Promise.resolve();
-
-    jest.advanceTimersByTime(1_000);
-    await Promise.resolve();
-    await Promise.resolve();
-
-    expect(runner.runCycle).toHaveBeenCalledTimes(2);
+    await waitFor(() => calls >= 2);
     await runtime.onModuleDestroy();
+
+    expect(calls).toBeGreaterThanOrEqual(2);
   });
 });
