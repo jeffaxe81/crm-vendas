@@ -41,6 +41,35 @@ describe("parseApiEnvironment", () => {
       BACKUP_SNAPSHOT_TIMEOUT_MS: 60000,
     });
   });
+  it("treats blank backup settings as disabled and validates the worker poll interval", () => {
+    expect(
+      parseApiEnvironment({
+        ...secureEnvironment,
+        BACKUP_DIRECTORY: "",
+        BACKUP_ENCRYPTION_KEY: "",
+      })
+    ).toMatchObject({
+      BACKUP_WORKER_POLL_MS: 15000,
+    });
+
+    const configured = parseApiEnvironment({
+      ...secureEnvironment,
+      BACKUP_DIRECTORY: "/var/lib/axes/backups",
+      BACKUP_ENCRYPTION_KEY: Buffer.alloc(32, 9).toString("base64"),
+      BACKUP_WORKER_POLL_MS: "2500",
+    });
+    expect(configured.BACKUP_WORKER_POLL_MS).toBe(2500);
+
+    for (const invalid of ["999", "300001"]) {
+      expect(() =>
+        parseApiEnvironment({
+          ...secureEnvironment,
+          BACKUP_WORKER_POLL_MS: invalid,
+        })
+      ).toThrow("BACKUP_WORKER_POLL_MS");
+    }
+  });
+
   it("rejects a missing database URL", () => {
     expect(() =>
       parseApiEnvironment({
