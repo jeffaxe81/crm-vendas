@@ -58,9 +58,7 @@ import { DataOperationWorker } from "./data-operation.worker";
       useFactory: (runner: BackupWorkerRunner) => {
         const env = parseApiEnvironment(process.env);
         return new BackupWorkerRuntime(runner, {
-          enabled: Boolean(
-            env.BACKUP_DIRECTORY && env.BACKUP_ENCRYPTION_KEY
-          ),
+          enabled: Boolean(env.BACKUP_DIRECTORY && env.BACKUP_ENCRYPTION_KEY),
           pollMs: env.BACKUP_WORKER_POLL_MS,
         });
       },
