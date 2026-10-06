@@ -16,7 +16,9 @@ export class BackupWorkerRunner {
     private readonly workerId: string
   ) {}
 
-  async runCycle(_now: Date = new Date()): Promise<BackupWorkerCycleResult | null> {
+  async runCycle(
+    _now: Date = new Date()
+  ): Promise<BackupWorkerCycleResult | null> {
     void this.schedule;
     void this.worker;
     void this.workerId;
