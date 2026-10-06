@@ -143,6 +143,7 @@ enum TicketEventType {
 
 model Organization {
   backups BackupRecord[]
+  operationPreviews OperationPreview[]
   dataOperations DataOperation[]
   backupSchedule BackupSchedule?
   id                       String                     @id @default(uuid()) @db.Uuid
@@ -217,6 +218,7 @@ model RolePermission {
 
 model User {
   backupsCreated BackupRecord[] @relation("BackupActor")
+  operationPreviewsCreated OperationPreview[] @relation("OperationPreviewActor")
   dataOperationsCreated DataOperation[] @relation("DataOperationActor")
   backupSchedulesUpdated BackupSchedule[] @relation("BackupScheduleUpdater")
   id                          String                     @id @default(uuid()) @db.Uuid
@@ -1013,10 +1015,32 @@ model BackupRecord {
   completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
   organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict)
   actor User? @relation("BackupActor",fields:[actorUserId],references:[id],onDelete:Restrict)
+  operationPreviews OperationPreview[]
   protectedByOperations DataOperation[]
   @@unique([id,organizationId],map:"backups_id_organization_key")
   @@index([organizationId,state,createdAt],map:"backups_org_state_created_idx")
   @@map("backups")
+}
+
+model OperationPreview {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @map("organization_id") @db.Uuid
+  actorUserId String @map("actor_user_id") @db.Uuid
+  sessionId String @map("session_id") @db.Uuid
+  kind String @db.VarChar(16)
+  targetBackupId String? @map("target_backup_id") @db.Uuid
+  targetChecksum String? @map("target_checksum") @db.VarChar(64)
+  currentFingerprint String @map("current_fingerprint") @db.VarChar(64)
+  payload Json @default("{}") @db.JsonB
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict)
+  actor User @relation("OperationPreviewActor",fields:[actorUserId],references:[id],onDelete:Restrict)
+  targetBackup BackupRecord? @relation(fields:[targetBackupId,organizationId],references:[id,organizationId],onDelete:Restrict)
+  @@index([organizationId,actorUserId,sessionId,expiresAt],map:"operation_previews_scope_expiry_idx")
+  @@index([organizationId,targetBackupId],map:"operation_previews_target_backup_idx")
+  @@map("operation_previews")
 }
 
 model DataOperation {
