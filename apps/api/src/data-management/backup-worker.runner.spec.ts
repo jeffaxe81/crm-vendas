@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { BackupWorkerRunner } from "./backup-worker.runner";
 
 describe("backup worker runner", () => {
