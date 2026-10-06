@@ -69,101 +69,98 @@ describe("tenant maintenance write lock", () => {
 
   afterAll(async () => {
     if (owner) {
-      await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
+      await owner.$executeRawUnsafe(
+        'TRUNCATE "organizations", "users" CASCADE'
+      );
       await owner.onModuleDestroy();
     }
     await writer?.onModuleDestroy();
     await maintenance?.onModuleDestroy();
   });
 
-  it(
-    "waits for an earlier write and blocks new writes only for that organization",
-    async () => {
-      const firstInserted = deferred();
-      const releaseFirst = deferred();
+  it("waits for an earlier write and blocks new writes only for that organization", async () => {
+    const firstInserted = deferred();
+    const releaseFirst = deferred();
 
-      const firstWrite = writer.withTenant(organizationId, async tx => {
-        await tx.company.create({
-          data: {
-            organizationId,
-            legalName: "Before maintenance",
-            createdBy: userId,
-            updatedBy: userId,
-          },
-        });
-        firstInserted.resolve();
-        await releaseFirst.promise;
+    const firstWrite = writer.withTenant(organizationId, async tx => {
+      await tx.company.create({
+        data: {
+          organizationId,
+          legalName: "Before maintenance",
+          createdBy: userId,
+          updatedBy: userId,
+        },
       });
-      await firstInserted.promise;
+      firstInserted.resolve();
+      await releaseFirst.promise;
+    });
+    await firstInserted.promise;
 
-      const maintenanceAcquired = deferred();
-      const releaseMaintenance = deferred();
-      const maintenanceWork = maintenance.withMaintenance(
-        organizationId,
-        async tx => {
-          maintenanceAcquired.resolve();
-          await releaseMaintenance.promise;
-          await tx.company.updateMany({
-            where: { organizationId },
-            data: { notes: "maintained" },
-          });
-        }
-      );
-
-      expect(await settlesWithin(maintenanceAcquired.promise)).toBe(false);
-
-      releaseFirst.resolve();
-      await firstWrite;
-      await maintenanceAcquired.promise;
-
-      const secondInserted = deferred();
-      const secondWrite = writer.withTenant(organizationId, async tx => {
-        await tx.company.create({
-          data: {
-            organizationId,
-            legalName: "After maintenance",
-            createdBy: userId,
-            updatedBy: userId,
-          },
+    const maintenanceAcquired = deferred();
+    const releaseMaintenance = deferred();
+    const maintenanceWork = maintenance.withMaintenance(
+      organizationId,
+      async tx => {
+        maintenanceAcquired.resolve();
+        await releaseMaintenance.promise;
+        await tx.company.updateMany({
+          where: { organizationId },
+          data: { notes: "maintained" },
         });
-        secondInserted.resolve();
+      }
+    );
+
+    expect(await settlesWithin(maintenanceAcquired.promise)).toBe(false);
+
+    releaseFirst.resolve();
+    await firstWrite;
+    await maintenanceAcquired.promise;
+
+    const secondInserted = deferred();
+    const secondWrite = writer.withTenant(organizationId, async tx => {
+      await tx.company.create({
+        data: {
+          organizationId,
+          legalName: "After maintenance",
+          createdBy: userId,
+          updatedBy: userId,
+        },
       });
+      secondInserted.resolve();
+    });
 
-      expect(await settlesWithin(secondInserted.promise)).toBe(false);
+    expect(await settlesWithin(secondInserted.promise)).toBe(false);
 
-      await writer.withTenant(otherOrganizationId, tx =>
-        tx.company.create({
-          data: {
-            organizationId: otherOrganizationId,
-            legalName: "Other tenant remains writable",
-            createdBy: userId,
-            updatedBy: userId,
-          },
-        })
-      );
+    await writer.withTenant(otherOrganizationId, tx =>
+      tx.company.create({
+        data: {
+          organizationId: otherOrganizationId,
+          legalName: "Other tenant remains writable",
+          createdBy: userId,
+          updatedBy: userId,
+        },
+      })
+    );
 
-      releaseMaintenance.resolve();
-      await maintenanceWork;
-      await secondWrite;
-      expect(await settlesWithin(secondInserted.promise)).toBe(true);
+    releaseMaintenance.resolve();
+    await maintenanceWork;
+    await secondWrite;
+    expect(await settlesWithin(secondInserted.promise)).toBe(true);
 
-      const names = await writer.withTenant(organizationId, tx =>
-        tx.company.findMany({
-          orderBy: { legalName: "asc" },
-          select: { legalName: true, notes: true },
-        })
-      );
-      expect(names).toEqual([
-        { legalName: "After maintenance", notes: null },
-        { legalName: "Before maintenance", notes: "maintained" },
-      ]);
-    }
-  );
+    const names = await writer.withTenant(organizationId, tx =>
+      tx.company.findMany({
+        orderBy: { legalName: "asc" },
+        select: { legalName: true, notes: true },
+      })
+    );
+    expect(names).toEqual([
+      { legalName: "After maintenance", notes: null },
+      { legalName: "Before maintenance", notes: "maintained" },
+    ]);
+  });
 
-  it(
-    "installs a maintenance guard on the organization root and every current tenant table",
-    async () => {
-      const missing = await owner.$queryRawUnsafe<{ table_name: string }[]>(`
+  it("installs a maintenance guard on the organization root and every current tenant table", async () => {
+    const missing = await owner.$queryRawUnsafe<{ table_name: string }[]>(`
       SELECT tables.table_name::text
       FROM (
         SELECT 'organizations'::text AS table_name
@@ -190,50 +187,43 @@ describe("tenant maintenance write lock", () => {
       ORDER BY tables.table_name
     `);
 
-      expect(missing).toEqual([]);
-    }
-  );
+    expect(missing).toEqual([]);
+  });
 
-  it(
-    "scopes the internal maintenance bypass to the locked organization",
-    async () => {
-      await expect(
-        maintenance.withMaintenance(organizationId, tx =>
-          tx.$executeRawUnsafe(
-            "UPDATE public.organizations SET name='Escaped' WHERE id=$1::uuid",
-            otherOrganizationId
-          )
+  it("scopes the internal maintenance bypass to the locked organization", async () => {
+    await expect(
+      maintenance.withMaintenance(organizationId, tx =>
+        tx.$executeRawUnsafe(
+          "UPDATE public.organizations SET name='Escaped' WHERE id=$1::uuid",
+          otherOrganizationId
         )
-      ).rejects.toThrow();
+      )
+    ).rejects.toThrow();
 
-      expect(
-        (
-          await owner.organization.findUniqueOrThrow({
-            where: { id: otherOrganizationId },
-            select: { name: true },
-          })
-        ).name
-      ).toBe("Maintenance B");
-    }
-  );
-
-  it(
-    "allows the internal maintenance transaction to write while holding the exclusive lock",
-    async () => {
-      await maintenance.withMaintenance(organizationId, tx =>
-        tx.company.create({
-          data: {
-            organizationId,
-            legalName: "Internal maintenance write",
-            createdBy: userId,
-            updatedBy: userId,
-          },
+    expect(
+      (
+        await owner.organization.findUniqueOrThrow({
+          where: { id: otherOrganizationId },
+          select: { name: true },
         })
-      );
+      ).name
+    ).toBe("Maintenance B");
+  });
 
-      expect(
-        await writer.withTenant(organizationId, tx => tx.company.count())
-      ).toBe(1);
-    }
-  );
+  it("allows the internal maintenance transaction to write while holding the exclusive lock", async () => {
+    await maintenance.withMaintenance(organizationId, tx =>
+      tx.company.create({
+        data: {
+          organizationId,
+          legalName: "Internal maintenance write",
+          createdBy: userId,
+          updatedBy: userId,
+        },
+      })
+    );
+
+    expect(
+      await writer.withTenant(organizationId, tx => tx.company.count())
+    ).toBe(1);
+  });
 });
