@@ -43,3 +43,9 @@ Catálogo/snapshot do PR #90 validado e mergeado no commit da9e1ac375b008aa73de4
 ## Worker, agenda e retenção — em andamento
 
 PR #91 em draft. Cálculo de agenda diária, semanal e por intervalo validado em seis testes locais, incluindo fuso de São Paulo, limites de retenção e horário de verão histórico. Testes reais de concorrência, lease e checkpoint foram publicados antes da implementação do worker. Ainda não há worker ativo ou agendamento disponível no produto.
+
+## Bloqueio, prévia e restauração — iniciado em 6 de outubro de 2026
+
+Após o merge do PR #91, a Task 4 foi iniciada em branch isolada `feat/crm-backup-restore`. A primeira microentrega implementa a fundação de bloqueio de escritas por organização: escritas comuns adquirem advisory lock compartilhado por trigger e a rotina interna de manutenção adquire lock exclusivo transacional. Assim, escrita já iniciada conclui antes da manutenção; novas escritas da mesma organização aguardam; outra organização permanece independente. Há teste de cobertura para exigir o trigger em toda tabela atual com `organization_id` e na raiz `organizations`.
+
+Ainda não declarar restauração disponível. Permanecem prévia persistente, reautenticação/confirmação, cópia preventiva, preparação/validação do snapshot, substituição transacional, revogação de sessões e integração do worker.
