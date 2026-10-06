@@ -10,6 +10,8 @@ export type BackupWorkerCycleResult = {
 };
 
 export class BackupWorkerRunner {
+  private running = false;
+
   constructor(
     private readonly schedule: ScheduleRunner,
     private readonly worker: OperationRunner,
@@ -17,11 +19,22 @@ export class BackupWorkerRunner {
   ) {}
 
   async runCycle(
-    _now: Date = new Date()
+    now: Date = new Date()
   ): Promise<BackupWorkerCycleResult | null> {
-    void this.schedule;
-    void this.worker;
-    void this.workerId;
-    throw new Error("NOT_IMPLEMENTED");
+    if (this.running) return null;
+
+    this.running = true;
+    try {
+      const enqueued = await this.schedule.enqueueDue(now);
+      let processed = 0;
+
+      while (await this.worker.processNext(this.workerId)) {
+        processed += 1;
+      }
+
+      return { enqueued, processed };
+    } finally {
+      this.running = false;
+    }
   }
 }
