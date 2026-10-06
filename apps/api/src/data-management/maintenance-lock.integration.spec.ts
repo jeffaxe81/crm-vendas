@@ -45,9 +45,7 @@ describe("tenant maintenance write lock", () => {
   });
 
   beforeEach(async () => {
-    await owner.$executeRawUnsafe(
-      'TRUNCATE "organizations", "users" CASCADE'
-    );
+    await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
     const user = await owner.user.create({
       data: {
         email: "maintenance@example.test",
@@ -71,9 +69,7 @@ describe("tenant maintenance write lock", () => {
 
   afterAll(async () => {
     if (owner) {
-      await owner.$executeRawUnsafe(
-        'TRUNCATE "organizations", "users" CASCADE'
-      );
+      await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
       await owner.onModuleDestroy();
     }
     await writer?.onModuleDestroy();
