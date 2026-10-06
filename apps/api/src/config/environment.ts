@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { isAbsolute, normalize, sep } from "node:path";
 
+const blankToUndefined = (value: unknown): unknown =>
+  typeof value === "string" && value.trim() === "" ? undefined : value;
+
 const ApiEnvironmentSchema = z
   .object({
     NODE_ENV: z
@@ -45,23 +48,29 @@ const ApiEnvironmentSchema = z
       .min(3600)
       .max(60 * 60 * 24 * 90)
       .default(60 * 60 * 24 * 30),
-    BACKUP_DIRECTORY: z
-      .string()
-      .refine(
-        value =>
-          isAbsolute(value) &&
-          normalize(value) !== sep &&
-          !normalize(value).split(sep).includes("public"),
-        "BACKUP_DIRECTORY deve ser um diretório privado absoluto."
-      )
-      .optional(),
-    BACKUP_ENCRYPTION_KEY: z
-      .string()
-      .refine(value => {
-        const bytes = Buffer.from(value, "base64");
-        return bytes.length === 32 && bytes.toString("base64") === value;
-      }, "BACKUP_ENCRYPTION_KEY deve conter 32 bytes em base64 canônico.")
-      .optional(),
+    BACKUP_DIRECTORY: z.preprocess(
+      blankToUndefined,
+      z
+        .string()
+        .refine(
+          value =>
+            isAbsolute(value) &&
+            normalize(value) !== sep &&
+            !normalize(value).split(sep).includes("public"),
+          "BACKUP_DIRECTORY deve ser um diretório privado absoluto."
+        )
+        .optional()
+    ),
+    BACKUP_ENCRYPTION_KEY: z.preprocess(
+      blankToUndefined,
+      z
+        .string()
+        .refine(value => {
+          const bytes = Buffer.from(value, "base64");
+          return bytes.length === 32 && bytes.toString("base64") === value;
+        }, "BACKUP_ENCRYPTION_KEY deve conter 32 bytes em base64 canônico.")
+        .optional()
+    ),
     BACKUP_MAX_BYTES: z.coerce
       .number()
       .int()
@@ -74,6 +83,12 @@ const ApiEnvironmentSchema = z
       .min(1000)
       .max(300000)
       .default(60000),
+    BACKUP_WORKER_POLL_MS: z.coerce
+      .number()
+      .int()
+      .min(1000)
+      .max(300000)
+      .default(15000),
   })
   .superRefine((value, context) => {
     if (
