@@ -1,9 +1,12 @@
+import { Inject, Injectable } from "@nestjs/common";
+
+import { PrismaService } from "../database/prisma.service";
 import type { Prisma } from "../generated/prisma/client";
-import type { PrismaService } from "../database/prisma.service";
 import { nextBackupRun } from "./backup-schedule";
 
+@Injectable()
 export class BackupScheduleService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async enqueueDue(now: Date = new Date()): Promise<number> {
     if (!Number.isFinite(now.getTime())) {
@@ -26,13 +29,13 @@ export class BackupScheduleService {
         );
         if (!lock?.acquired) return 0;
 
-        const schedule = await tx.backupSchedule.findUnique({
+        const backupSchedule = await tx.backupSchedule.findUnique({
           where: { organizationId: organization.id },
         });
         if (
-          !schedule?.enabled ||
-          schedule.nextRunAt === null ||
-          schedule.nextRunAt > now
+          !backupSchedule?.enabled ||
+          backupSchedule.nextRunAt === null ||
+          backupSchedule.nextRunAt > now
         ) {
           return 0;
         }
@@ -53,12 +56,12 @@ export class BackupScheduleService {
 
         const nextRunAt = nextBackupRun(
           {
-            frequency: schedule.frequency,
-            localTime: schedule.localTime,
-            weekday: schedule.weekday,
-            intervalMinutes: schedule.intervalMinutes,
-            retentionCount: schedule.retentionCount,
-            timezone: schedule.timezone,
+            frequency: backupSchedule.frequency,
+            localTime: backupSchedule.localTime,
+            weekday: backupSchedule.weekday,
+            intervalMinutes: backupSchedule.intervalMinutes,
+            retentionCount: backupSchedule.retentionCount,
+            timezone: backupSchedule.timezone,
           },
           now
         );
