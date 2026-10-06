@@ -91,7 +91,10 @@ jobs:
         run: pnpm verify:foundation
 
       - name: Check formatting
-        run: pnpm format:check
+        run: |
+          pnpm exec prettier apps/api/src/data-management/maintenance-lock.integration.spec.ts --write
+          git diff -- apps/api/src/data-management/maintenance-lock.integration.spec.ts
+          exit 1
 
       - name: Lint source
         run: pnpm lint
