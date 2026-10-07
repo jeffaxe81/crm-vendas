@@ -2393,3 +2393,27 @@ textarea {
     grid-column: auto;
   }
 }
+
+.crm-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.crm-pagination span {
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .crm-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .crm-pagination span {
+    order: -1;
+    width: 100%;
+  }
+}
