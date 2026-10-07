@@ -308,17 +308,36 @@ export class OpportunitiesService {
           context.organizationId
         );
 
-        const targetStage = await tenant.pipelineStage.findFirst({
-          where: {
-            id: input.stageId,
-            organizationId: context.organizationId,
-            pipelineId: existing.pipelineId,
-            isActive: true,
-          },
-          select: { id: true, kind: true },
-        });
-        if (!targetStage) {
+        const [currentStage, targetStage] = await Promise.all([
+          tenant.pipelineStage.findFirst({
+            where: {
+              id: existing.stageId,
+              organizationId: context.organizationId,
+              pipelineId: existing.pipelineId,
+            },
+            select: { kind: true },
+          }),
+          tenant.pipelineStage.findFirst({
+            where: {
+              id: input.stageId,
+              organizationId: context.organizationId,
+              pipelineId: existing.pipelineId,
+              isActive: true,
+            },
+            select: { id: true, kind: true },
+          }),
+        ]);
+
+        if (!currentStage || !targetStage) {
           this.referenceNotFound();
+        }
+
+        if (currentStage.kind !== "OPEN") {
+          throw new ConflictException({
+            code: "OPPORTUNITY_ALREADY_CLOSED",
+            message:
+              "Oportunidades ganhas ou perdidas não podem ser reabertas.",
+          });
         }
 
         const result = await tenant.opportunity.updateMany({

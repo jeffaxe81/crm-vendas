@@ -2252,3 +2252,144 @@ textarea {
   min-width: 44px;
   min-height: 44px;
 }
+
+/* Cycle 3 — fechamento visual de oportunidades, detalhes e edição */
+.opportunity-card__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.opportunity-status {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eef2f6;
+  color: #475467;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.opportunity-status--won {
+  background: #e7f6ec;
+  color: #067647;
+}
+
+.opportunity-status--lost {
+  background: #fde8e6;
+  color: #b42318;
+}
+
+.opportunity-status--open {
+  background: #e8f3fb;
+  color: #175cd3;
+}
+
+.opportunity-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.opportunity-card__details {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--crm-border);
+  border-radius: var(--crm-radius);
+  background: #f8fafc;
+}
+
+.opportunity-card__details dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 20px;
+  margin: 0;
+}
+
+.opportunity-card__details dt {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.opportunity-card__details dd {
+  margin: 4px 0 0;
+}
+
+.opportunity-card__details p {
+  margin: 6px 0 0;
+  color: #475569;
+  white-space: pre-wrap;
+}
+
+.opportunity-card__edit {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--crm-border);
+  border-radius: var(--crm-radius);
+  background: #fff;
+}
+
+.opportunity-card__edit label {
+  display: grid;
+  gap: 7px;
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.opportunity-card__edit label:last-of-type,
+.opportunity-card__edit .opportunity-card__actions {
+  grid-column: 1 / -1;
+}
+
+.opportunity-card__terminal-note {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.opportunities-view__kanban-column--won {
+  border-color: #a6d8b8;
+  background: #f4fbf6;
+}
+
+.opportunities-view__kanban-column--lost {
+  border-color: #f3b6b0;
+  background: #fff7f6;
+}
+
+.opportunities-view__kanban-column > header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.opportunities-view__kanban-column > header small {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .opportunity-card__heading {
+    flex-direction: column;
+  }
+
+  .opportunity-card__details dl,
+  .opportunity-card__edit {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .opportunity-card__edit label:last-of-type,
+  .opportunity-card__edit .opportunity-card__actions {
+    grid-column: auto;
+  }
+}
