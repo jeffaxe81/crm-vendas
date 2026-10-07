@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased] - Auditoria funcional C4.1.6 — Territórios
+
+- Territory Management passa a exibir o nome do vendedor em vez do UUID;
+- reatribuição de território usa seletor por nome com membros comerciais ativos da organização;
+- backend bloqueia vendedor de outra organização, usuário inativo ou perfil sem permissão comercial;
+- cobertura de empresas passa a permitir busca e seleção por razão social/nome fantasia/documento, sem digitação manual de UUID;
+- adicionada cobertura automatizada Web e API para os fluxos corrigidos.
+
+
 ## [Unreleased] - Complemento do Ciclo 3 no app de Oportunidades
 
 - Web: detalhe expandido da oportunidade com cliente, funil, etapa, responsável, atualização e observações;
