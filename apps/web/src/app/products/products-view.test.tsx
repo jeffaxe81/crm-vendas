@@ -82,6 +82,50 @@ describe("C4.3 products view", () => {
     });
   });
 
+  it("navigates through server-side product pages", async () => {
+    const secondPageProduct = {
+      ...product,
+      id: "p-51",
+      code: "P051",
+      name: "Produto 51",
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        response({
+          items: [product],
+          page: 1,
+          limit: 50,
+          total: 51,
+        })
+      )
+      .mockResolvedValueOnce(
+        response({
+          items: [secondPageProduct],
+          page: 2,
+          limit: 50,
+          total: 51,
+        })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<ProductsView accessToken="token" canWrite />);
+
+    await screen.findByText("Licença PABX");
+    expect(screen.getByText(/Página 1 de 2/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+
+    expect(await screen.findByText("Produto 51")).toBeInTheDocument();
+    expect(screen.getByText(/Página 2 de 2/)).toBeInTheDocument();
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain(
+      "/products?page=1&limit=50"
+    );
+    expect(String(fetchMock.mock.calls[1]?.[0])).toContain(
+      "/products?page=2&limit=50"
+    );
+  });
+
   it("hides write actions without product.write", async () => {
     vi.stubGlobal(
       "fetch",
