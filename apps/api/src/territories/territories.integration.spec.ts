@@ -176,6 +176,74 @@ describe("C4.1.6 territories API", () => {
       .expect(403);
   });
 
+  it("lists assignable sales reps and blocks cross-organization assignment", async () => {
+    const orgA = await createOrgWithAdmin("territory-sales-reps-a");
+    const orgB = await createOrgWithAdmin("territory-sales-reps-b");
+    const seller = await createUser({
+      email: "seller-territory@example.test",
+      password: "Strong-Seller-Password-2026!",
+      displayName: "Seller Territory",
+    });
+    const viewer = await createUser({
+      email: "viewer-territory@example.test",
+      password: "Strong-Viewer-Territory-2026!",
+      displayName: "Viewer Territory",
+    });
+    await prisma.organizationMembership.createMany({
+      data: [
+        {
+          organizationId: orgA.organization.id,
+          userId: seller.id,
+          role: "SELLER",
+        },
+        {
+          organizationId: orgA.organization.id,
+          userId: viewer.id,
+          role: "VIEWER",
+        },
+      ],
+    });
+
+    const options = await request(app.getHttpServer())
+      .get("/api/v1/territories/sales-reps")
+      .set("Authorization", `Bearer ${orgA.token}`)
+      .expect(200);
+
+    expect(options.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: seller.id,
+          displayName: "Seller Territory",
+          role: "SELLER",
+        }),
+      ])
+    );
+    expect(
+      options.body.some((item: { id: string }) => item.id === viewer.id)
+    ).toBe(false);
+    expect(
+      options.body.some((item: { id: string }) => item.id === orgB.user.id)
+    ).toBe(false);
+
+    const created = await request(app.getHttpServer())
+      .post("/api/v1/territories")
+      .set("Authorization", `Bearer ${orgA.token}`)
+      .send({ name: "Território Seguro", region: "Sul" })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/territories/${created.body.id}/reassign`)
+      .set("Authorization", `Bearer ${orgA.token}`)
+      .send({ salesRepId: orgB.user.id })
+      .expect(404);
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/territories/${created.body.id}`)
+      .set("Authorization", `Bearer ${orgA.token}`)
+      .send({ salesRepId: viewer.id })
+      .expect(404);
+  });
+
   it("creates, updates, reassigns and soft-deletes a territory with audit records", async () => {
     const org = await createOrgWithAdmin("territory-lifecycle-org");
     const salesRep = await createUser({

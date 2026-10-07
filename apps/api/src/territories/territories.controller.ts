@@ -71,6 +71,14 @@ export class TerritoriesController {
     );
   }
 
+  @Get("sales-reps")
+  @RequirePermissions("territory.read")
+  listAssignableSalesReps(@Req() request: TerritoryRequest) {
+    return this.territories.listAssignableSalesReps(
+      this.requirePrincipal(request).organizationId
+    );
+  }
+
   @Get(":id")
   @RequirePermissions("territory.read")
   read(@Param("id") id: string, @Req() request: TerritoryRequest) {
