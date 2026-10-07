@@ -1131,6 +1131,7 @@ export function OpportunitiesView({
           {boardPipeline ? (
             <div className="opportunities-view__kanban-columns">
               {boardStages.map(stage => {
+                const stageKind = stage.kind ?? "OPEN";
                 const stageOpportunities = opportunities.filter(
                   opportunity =>
                     opportunity.pipelineId === boardPipeline.id &&
@@ -1140,13 +1141,13 @@ export function OpportunitiesView({
                 return (
                   <section
                     key={stage.id}
-                    className={`opportunities-view__kanban-column opportunities-view__kanban-column--${stage.kind.toLowerCase()}`}
+                    className={`opportunities-view__kanban-column opportunities-view__kanban-column--${stageKind.toLowerCase()}`}
                     aria-labelledby={`pipeline-stage-${stage.id}`}
                   >
                     <header>
                       <div>
                         <h2 id={`pipeline-stage-${stage.id}`}>{stage.name}</h2>
-                        <small>{stageStatusLabel(stage.kind)}</small>
+                        <small>{stageStatusLabel(stageKind)}</small>
                       </div>
                       <span>{stageOpportunities.length}</span>
                     </header>
@@ -1178,12 +1179,12 @@ export function OpportunitiesView({
                                 </span>
 
                                 <span
-                                  className={`opportunity-status opportunity-status--${stage.kind.toLowerCase()}`}
+                                  className={`opportunity-status opportunity-status--${stageKind.toLowerCase()}`}
                                 >
-                                  {stageStatusLabel(stage.kind)}
+                                  {stageStatusLabel(stageKind)}
                                 </span>
 
-                                {canMove && stage.kind === "OPEN" ? (
+                                {canMove && stageKind === "OPEN" ? (
                                   <div className="opportunity-card__stage">
                                     <label>
                                       <span>Etapa</span>
