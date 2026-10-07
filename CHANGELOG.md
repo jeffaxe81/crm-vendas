@@ -8,7 +8,6 @@
 - seletor de itens mantém uma primeira lista curta, mas produtos fora dela podem ser localizados explicitamente;
 - adicionados testes Web para paginação e busca além da primeira página.
 
-
 ## [Unreleased] - Auditoria funcional C4.1.6 — Territórios
 
 - Territory Management passa a exibir o nome do vendedor em vez do UUID;
