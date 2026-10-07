@@ -147,8 +147,17 @@ describe("Cycle 3.6.2 opportunities API", () => {
       .post("/api/v1/pipelines/default")
       .set("Authorization", `Bearer ${token}`)
       .expect(200);
-    const stage = pipeline.body.stages[0] as { id: string };
-    const secondStage = pipeline.body.stages[1] as { id: string };
+    const stages = pipeline.body.stages as Array<{
+      id: string;
+      kind: "OPEN" | "WON" | "LOST";
+    }>;
+    const stage = stages[0];
+    const secondStage = stages[1];
+    const wonStage = stages.find(item => item.kind === "WON");
+
+    if (!stage || !secondStage || !wonStage) {
+      throw new Error("Expected default OPEN and WON pipeline stages.");
+    }
 
     return {
       organization,
@@ -159,6 +168,7 @@ describe("Cycle 3.6.2 opportunities API", () => {
       pipelineId: pipeline.body.id as string,
       stageId: stage.id,
       secondStageId: secondStage.id,
+      wonStageId: wonStage.id,
     };
   }
 
@@ -366,6 +376,32 @@ describe("Cycle 3.6.2 opportunities API", () => {
       stageId: fixture.secondStageId,
       version: 2,
     });
+  });
+
+  it("closes an opportunity in a WON stage and rejects reopening it", async () => {
+    const fixture = await createFixture("closed-opportunity");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    const closed = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}/stage`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({ stageId: fixture.wonStageId, version: 1 })
+      .expect(200);
+
+    expect(closed.body).toMatchObject({
+      id: opportunityId,
+      stageId: fixture.wonStageId,
+      version: 2,
+    });
+
+    const reopened = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}/stage`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({ stageId: fixture.stageId, version: 2 })
+      .expect(409);
+
+    expect(reopened.body.code).toBe("OPPORTUNITY_ALREADY_CLOSED");
   });
 
   it("rejects a destination stage that belongs to another pipeline", async () => {
