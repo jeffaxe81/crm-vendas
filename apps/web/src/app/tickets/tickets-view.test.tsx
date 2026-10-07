@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -115,6 +116,140 @@ afterEach(() => {
 });
 
 describe("C5.1 tickets view", () => {
+  it("clears the previous ticket draft when selecting another ticket", async () => {
+    routeFetch({
+      "GET /support-queues": [response({ items: [] })],
+      "GET /tickets": [
+        response({
+          items: [ticket, { ...ticket, id: "t-2", protocol: "2026-000002" }],
+          total: 2,
+        }),
+      ],
+      "GET /tickets/t-1/events": [response({ items: [] })],
+      "GET /tickets/t-2/events": [response({ items: [] })],
+    });
+    render(<TicketsView accessToken="token" canWrite />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Abrir 2026-000001" })
+    );
+    fireEvent.change(screen.getByLabelText("Comentário", { exact: true }), {
+      target: { value: "Somente chamado A" },
+    });
+    fireEvent.click(screen.getByLabelText("Comentário interno"));
+    fireEvent.click(screen.getByRole("button", { name: "Abrir 2026-000002" }));
+    expect(screen.getByLabelText("Comentário", { exact: true })).toHaveValue(
+      ""
+    );
+    expect(screen.getByLabelText("Comentário interno")).not.toBeChecked();
+  });
+
+  it("keeps a late comment response out of another ticket timeline", async () => {
+    let finish!: (value: Response) => void;
+    const pending = new Promise<Response>(resolve => {
+      finish = resolve;
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (init?.method === "POST") return pending;
+        if (url.includes("/satisfaction")) return response({ survey: null });
+        if (url.includes("/events") || url.includes("/support-queues"))
+          return response({ items: [] });
+        return response({
+          items: [ticket, { ...ticket, id: "t-2", protocol: "2026-000002" }],
+          total: 2,
+        });
+      })
+    );
+    render(<TicketsView accessToken="token" canWrite />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Abrir 2026-000001" })
+    );
+    fireEvent.change(screen.getByLabelText("Comentário", { exact: true }), {
+      target: { value: "Resposta de A" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Comentar", exact: true })
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Abrir 2026-000002" }));
+    await act(async () => {
+      finish(
+        response({
+          ticket: { ...ticket, version: 2 },
+          event: {
+            id: "event-a",
+            type: "COMMENT",
+            body: "Resposta de A",
+            isInternal: false,
+            authorUserId: "u-1",
+            createdAt: ticket.openedAt,
+          },
+        })
+      );
+      await pending;
+    });
+    expect(screen.queryByText("Resposta de A")).not.toBeInTheDocument();
+  });
+
+  it.each(["search", "status", "queue", "mine"])(
+    "pages beyond 50 tickets and resets page for %s",
+    async filter => {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(async (input: string | URL) => {
+          const url = new URL(String(input));
+          if (url.pathname.endsWith("/support-queues"))
+            return response({ items: queues });
+          const filtered = ["q", "status", "queueId", "assigneeUserId"].some(
+            key => url.searchParams.has(key)
+          );
+          const page = url.searchParams.get("page");
+          return response({
+            items: [
+              {
+                ...ticket,
+                subject:
+                  filtered && page === "1"
+                    ? "Resultado filtrado"
+                    : page === "2"
+                      ? "Chamado 51"
+                      : "Chamado inicial",
+              },
+            ],
+            total: filtered ? 1 : 51,
+          });
+        })
+      );
+      render(<TicketsView accessToken="token" canWrite={false} />);
+      await screen.findByText("Chamado inicial");
+      fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+      expect(await screen.findByText("Chamado 51")).toBeVisible();
+      if (filter === "search") {
+        fireEvent.change(screen.getByLabelText("Buscar solicitações"), {
+          target: { value: "cliente" },
+        });
+        fireEvent.click(
+          screen.getByRole("button", { name: "Buscar", exact: true })
+        );
+      } else if (filter === "status") {
+        fireEvent.change(screen.getByLabelText("Filtrar por status"), {
+          target: { value: "OPEN" },
+        });
+      } else if (filter === "queue") {
+        fireEvent.change(screen.getByLabelText("Filtrar por fila"), {
+          target: { value: "q-1" },
+        });
+      } else {
+        fireEvent.click(
+          screen.getByRole("button", { name: "Minhas solicitações" })
+        );
+      }
+      expect(await screen.findByText("Resultado filtrado")).toBeVisible();
+      expect(screen.getByRole("button", { name: "Anterior" })).toBeDisabled();
+    }
+  );
+
   it("lists tickets and opens a new one", async () => {
     const fetchMock = routeFetch({
       "GET /support-queues": [response({ items: [] })],
