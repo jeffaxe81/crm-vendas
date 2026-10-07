@@ -98,7 +98,7 @@ test("CRM products journey adds edits and removes an opportunity item", async ({
   const itemForm = card.getByRole("form", {
     name: `Adicionar item em ${opportunityTitle}`,
   });
-  const productSelect = itemForm.getByLabel("Produto");
+  const productSelect = itemForm.getByLabel("Produto", { exact: true });
   await expect(
     productSelect.locator("option", { hasText: productCode })
   ).toHaveCount(1);
