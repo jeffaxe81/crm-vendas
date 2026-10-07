@@ -464,6 +464,20 @@ describe("C4.1.6 territories API", () => {
     expect(Number(january.body[0].amount)).toBe(11000);
     expect(Number(january.body[0].actual)).toBe(5000);
 
+    await prisma.withTenant(org.organization.id, tenant =>
+      tenant.territoryQuota.create({
+        data: {
+          organizationId: org.organization.id,
+          territoryId: territory.id,
+          period: "MONTH",
+          year: 2026,
+          periodIndex: 0,
+          amount: 10000,
+          actual: 4000,
+        },
+      })
+    );
+
     const metrics = await request(app.getHttpServer())
       .get(`/api/v1/territories/${territory.id}/metrics`)
       .set("Authorization", `Bearer ${org.token}`)

@@ -1,3 +1,4 @@
+import { selectMetricQuotas } from "./quota-metric-scope";
 import type {
   TerritoryCoverageTargetInput,
   TerritoryCreateInput,
@@ -581,7 +582,9 @@ export class TerritoriesService {
       const metricQuotas =
         quotaPeriod === null
           ? []
-          : quotasInLatestYear.filter(quota => quota.period === quotaPeriod);
+          : selectMetricQuotas(
+              quotasInLatestYear.filter(quota => quota.period === quotaPeriod)
+            );
 
       const totalQuota = metricQuotas.reduce(
         (sum, quota) => sum + Number(quota.amount),

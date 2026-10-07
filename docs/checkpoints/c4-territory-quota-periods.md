@@ -47,3 +47,7 @@ Assim uma cota anual não é somada novamente quando já existem cotas mensais n
 - consulta por `periodIndex`;
 - métrica evita soma duplicada com cota anual;
 - teste Web comprova envio de mês e realizado.
+
+## Compatibilidade das métricas legadas
+
+No ano e granularidade selecionados, cotas sem subdivisão conhecida (índice 0) são usadas apenas enquanto não existem cotas com mês/trimestre explícito. Ao cadastrar períodos explícitos, somente esses valores entram na métrica; os registros legados permanecem preservados para consulta. Cotas anuais continuam usando índice 0.
