@@ -76,11 +76,7 @@ describe("C4.1.6 territory detail usability", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     render(
-      <TerritoryDetailPanel
-        accessToken="token"
-        territoryId="t-1"
-        canWrite
-      />
+      <TerritoryDetailPanel accessToken="token" territoryId="t-1" canWrite />
     );
 
     await screen.findByText("Nenhuma empresa-alvo cadastrada.");
