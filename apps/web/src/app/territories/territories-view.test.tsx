@@ -77,6 +77,39 @@ describe("C4.1.6 territories view", () => {
     });
   });
 
+  it("navigates through server-side territory pages", async () => {
+    const secondPage = {
+      ...territory,
+      id: "t-51",
+      name: "Território 51",
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        response({ items: [territory], page: 1, limit: 50, total: 51 })
+      )
+      .mockResolvedValueOnce(
+        response({ items: [secondPage], page: 2, limit: 50, total: 51 })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<TerritoriesView accessToken="token" canWrite />);
+
+    await screen.findByText(/Território Norte/);
+    expect(screen.getByText(/Página 1 de 2/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+
+    expect(await screen.findByText(/Território 51/)).toBeInTheDocument();
+    expect(screen.getByText(/Página 2 de 2/)).toBeInTheDocument();
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain(
+      "/territories?page=1&limit=50"
+    );
+    expect(String(fetchMock.mock.calls[1]?.[0])).toContain(
+      "/territories?page=2&limit=50"
+    );
+  });
+
   it("reassigns a sales rep by display name", async () => {
     const fetchMock = vi
       .fn()
