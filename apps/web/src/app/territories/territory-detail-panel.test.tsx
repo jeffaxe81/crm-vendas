@@ -108,7 +108,6 @@ describe("C4.1.6 territory detail usability", () => {
     });
   });
 
-
   it("saves a monthly quota with month and realized value", async () => {
     let quotaBody: Record<string, unknown> | null = null;
 
@@ -173,9 +172,7 @@ describe("C4.1.6 territory detail usability", () => {
     fireEvent.change(within(form).getByLabelText("Realizado"), {
       target: { value: "4500" },
     });
-    fireEvent.click(
-      within(form).getByRole("button", { name: "Salvar cota" })
-    );
+    fireEvent.click(within(form).getByRole("button", { name: "Salvar cota" }));
 
     await waitFor(() => {
       expect(quotaBody).toEqual({
