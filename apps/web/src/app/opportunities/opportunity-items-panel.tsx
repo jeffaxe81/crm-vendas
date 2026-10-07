@@ -86,6 +86,8 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
 }: OpportunityItemsPanelProps<T>) {
   const [items, setItems] = useState<OpportunityItemRecord[]>([]);
   const [products, setProducts] = useState<ProductOption[]>([]);
+  const [productQuery, setProductQuery] = useState("");
+  const [productSearching, setProductSearching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -113,7 +115,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
           ),
           canWrite
             ? apiRequest<{ items: ProductOption[] }>(
-                "/products?active=true&limit=100&sortBy=name",
+                "/products?active=true&page=1&limit=50&sortBy=name",
                 { accessToken }
               )
             : Promise.resolve({ items: [] as ProductOption[] }),
@@ -136,6 +138,43 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
       active = false;
     };
   }, [accessToken, opportunity.id, canWrite]);
+
+  async function searchProducts() {
+    if (!canWrite || productSearching) {
+      return;
+    }
+
+    setProductSearching(true);
+    setError("");
+    try {
+      const params = new URLSearchParams({
+        active: "true",
+        page: "1",
+        limit: "50",
+        sortBy: "name",
+      });
+      const query = productQuery.trim();
+      if (query) {
+        params.set("q", query);
+      }
+      const result = await apiRequest<{ items: ProductOption[] }>(
+        `/products?${params.toString()}`,
+        { accessToken }
+      );
+      setProducts(result.items);
+      setProductId(current =>
+        result.items.some(product => product.id === current) ? current : ""
+      );
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível buscar os produtos."
+      );
+    } finally {
+      setProductSearching(false);
+    }
+  }
 
   function applyOpportunity(updated: Pick<T, "estimatedValue" | "version">) {
     onOpportunityChange({
@@ -401,10 +440,27 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
           onSubmit={addItem}
         >
           <label>
+            <span>Buscar produto</span>
+            <input
+              type="search"
+              value={productQuery}
+              disabled={busy || productSearching}
+              placeholder="Código ou nome"
+              onChange={event => setProductQuery(event.target.value)}
+            />
+          </label>
+          <button
+            type="button"
+            disabled={busy || productSearching}
+            onClick={() => void searchProducts()}
+          >
+            {productSearching ? "Buscando..." : "Buscar produtos"}
+          </button>
+          <label>
             <span>Produto</span>
             <select
               value={productId}
-              disabled={busy}
+              disabled={busy || productSearching}
               onChange={event => setProductId(event.target.value)}
             >
               <option value="">Selecione</option>
