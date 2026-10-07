@@ -271,9 +271,9 @@ describe("session-bound restore previews", () => {
       sessionId: "api-key:synthetic",
       apiKeyId: randomUUID(),
     };
-    await expect(previews.previewRestore(apiPrincipal, backup.id)).rejects.toThrow(
-      "OPERATION_PREVIEW_FORBIDDEN"
-    );
+    await expect(
+      previews.previewRestore(apiPrincipal, backup.id)
+    ).rejects.toThrow("OPERATION_PREVIEW_FORBIDDEN");
 
     await owner.refreshSession.update({
       where: { id: session.id },
@@ -308,7 +308,10 @@ describe("session-bound restore previews", () => {
       superuser.id,
       "MANUAL"
     );
-    const localPreview = await previews.previewRestore(principal, localBackup.id);
+    const localPreview = await previews.previewRestore(
+      principal,
+      localBackup.id
+    );
 
     expect(
       await runtime.withTenant(otherOrganization.id, tx =>

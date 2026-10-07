@@ -47,7 +47,6 @@ export type BackupManifest = z.infer<typeof BackupManifestSchema>;
 export type BackupRecord = z.infer<typeof BackupRecordSchema>;
 export type BackupReason = z.infer<typeof BackupReasonSchema>;
 
-
 export const DataOperationKindSchema = z.enum(["BACKUP", "RESTORE", "DELETE"]);
 export const OperationPreviewKindSchema = z.enum(["RESTORE", "DELETE"]);
 export const OperationPreviewSchema = z
@@ -60,7 +59,12 @@ export const OperationPreviewSchema = z
     targetChecksum: checksum.nullable(),
     currentFingerprint: checksum,
     targetSchemaVersion: z.number().int().positive().nullable(),
-    targetByteCount: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).nullable(),
+    targetByteCount: z
+      .number()
+      .int()
+      .nonnegative()
+      .max(Number.MAX_SAFE_INTEGER)
+      .nullable(),
     targetCounts: z.record(z.string(), z.number().int().nonnegative()),
     currentCounts: z.record(z.string(), z.number().int().nonnegative()),
     createdAt: z.string().datetime(),

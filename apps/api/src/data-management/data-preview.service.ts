@@ -1,16 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
-import {
-  OperationPreviewSchema,
-  type OperationPreview,
-} from "@axes/contracts";
+import { OperationPreviewSchema, type OperationPreview } from "@axes/contracts";
 
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
 import { BackupError } from "./backup-error";
-import {
-  snapshotDataFingerprint,
-  type SnapshotData,
-} from "./backup-manifest";
+import { snapshotDataFingerprint, type SnapshotData } from "./backup-manifest";
 import {
   BACKUP_OPTIONS,
   BackupService,
