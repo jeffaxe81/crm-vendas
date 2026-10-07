@@ -382,7 +382,7 @@ describe("C4.1.6 territories API", () => {
       .expect(404);
   });
 
-  it("tracks quota progress per period and year", async () => {
+  it("tracks distinct monthly quotas and uses the latest granular scope for metrics", async () => {
     const org = await createOrgWithAdmin("territory-quota-org");
     const territory = await prisma.withTenant(org.organization.id, tenant =>
       tenant.territory.create({
@@ -399,13 +399,36 @@ describe("C4.1.6 territories API", () => {
     await request(app.getHttpServer())
       .post(`/api/v1/territories/${territory.id}/quotas`)
       .set("Authorization", `Bearer ${org.token}`)
-      .send({ period: "MONTH", year: 2026, amount: 10000, actual: 4000 })
+      .send({
+        period: "MONTH",
+        year: 2026,
+        periodIndex: 1,
+        amount: 10000,
+        actual: 4000,
+      })
       .expect(201);
 
     await request(app.getHttpServer())
       .post(`/api/v1/territories/${territory.id}/quotas`)
       .set("Authorization", `Bearer ${org.token}`)
-      .send({ period: "MONTH", year: 2026, amount: 12000, actual: 6000 })
+      .send({
+        period: "MONTH",
+        year: 2026,
+        periodIndex: 2,
+        amount: 12000,
+        actual: 6000,
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/territories/${territory.id}/quotas`)
+      .set("Authorization", `Bearer ${org.token}`)
+      .send({
+        period: "YEAR",
+        year: 2026,
+        amount: 100000,
+        actual: 50000,
+      })
       .expect(201);
 
     const quotas = await request(app.getHttpServer())
@@ -413,14 +436,60 @@ describe("C4.1.6 territories API", () => {
       .set("Authorization", `Bearer ${org.token}`)
       .expect(200);
 
-    expect(quotas.body).toHaveLength(1);
-    expect(Number(quotas.body[0].amount)).toBe(12000);
-    expect(Number(quotas.body[0].actual)).toBe(6000);
+    expect(quotas.body).toHaveLength(2);
+    expect(quotas.body.map((quota: { periodIndex: number }) => quota.periodIndex)).toEqual([
+      1,
+      2,
+    ]);
 
     await request(app.getHttpServer())
       .post(`/api/v1/territories/${territory.id}/quotas`)
       .set("Authorization", `Bearer ${org.token}`)
-      .send({ amount: -1, period: "MONTH", year: 2026 })
+      .send({
+        period: "MONTH",
+        year: 2026,
+        periodIndex: 1,
+        amount: 11000,
+        actual: 5000,
+      })
+      .expect(201);
+
+    const january = await request(app.getHttpServer())
+      .get(
+        `/api/v1/territories/${territory.id}/quotas?period=MONTH&year=2026&periodIndex=1`
+      )
+      .set("Authorization", `Bearer ${org.token}`)
+      .expect(200);
+
+    expect(january.body).toHaveLength(1);
+    expect(Number(january.body[0].amount)).toBe(11000);
+    expect(Number(january.body[0].actual)).toBe(5000);
+
+    const metrics = await request(app.getHttpServer())
+      .get(`/api/v1/territories/${territory.id}/metrics`)
+      .set("Authorization", `Bearer ${org.token}`)
+      .expect(200);
+
+    expect(metrics.body.quotaYear).toBe(2026);
+    expect(metrics.body.quotaPeriod).toBe("MONTH");
+    expect(Number(metrics.body.actualRevenue)).toBe(11000);
+    expect(Number(metrics.body.quotaPercentage)).toBeCloseTo(47.83, 2);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/territories/${territory.id}/quotas`)
+      .set("Authorization", `Bearer ${org.token}`)
+      .send({ period: "MONTH", year: 2026, amount: 1000 })
+      .expect(400);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/territories/${territory.id}/quotas`)
+      .set("Authorization", `Bearer ${org.token}`)
+      .send({
+        period: "QUARTER",
+        year: 2026,
+        periodIndex: 5,
+        amount: 1000,
+      })
       .expect(400);
   });
 });
