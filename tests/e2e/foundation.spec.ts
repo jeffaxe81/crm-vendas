@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const adminEmail = "admin@axes.test";
-const adminPassword = "Strong-CI-Password-2026!";
+const adminPassword = process.env.BOOTSTRAP_ADMIN_PASSWORD ?? "";
 
 test("user authenticates in the active organization and logs out", async ({
   page,
