@@ -40,11 +40,22 @@ const emptyForm: ProductForm = {
   isActive: true,
 };
 
+const PAGE_SIZE = 50;
+
+type ProductListResponse = {
+  items: ProductRecord[];
+  page: number;
+  limit: number;
+  total: number;
+};
+
 /** C4.3 — catálogo de produtos. */
 export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
   const [products, setProducts] = useState<ProductRecord[]>([]);
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
@@ -59,14 +70,20 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
     async function load() {
       setLoading(true);
       setError("");
-      const params = new URLSearchParams({ page: "1", limit: "100" });
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(PAGE_SIZE),
+      });
       if (query) params.set("q", query);
       try {
-        const result = await apiRequest<{ items: ProductRecord[] }>(
+        const result = await apiRequest<ProductListResponse>(
           `/products?${params.toString()}`,
           { accessToken }
         );
-        if (active) setProducts(result.items);
+        if (active) {
+          setProducts(result.items);
+          setTotal(result.total);
+        }
       } catch (cause) {
         if (active) {
           setError(
@@ -83,7 +100,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
     return () => {
       active = false;
     };
-  }, [accessToken, query, refresh]);
+  }, [accessToken, page, query, refresh]);
 
   function openCreate() {
     setError("");
@@ -218,6 +235,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
         role="search"
         onSubmit={event => {
           event.preventDefault();
+          setPage(1);
           setQuery(queryInput.trim());
         }}
       >
@@ -336,52 +354,74 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
       ) : null}
 
       {!loading && products.length > 0 ? (
-        <div
-          className="company-import__table-wrapper"
-          role="region"
-          aria-label="Tabela: Produtos"
-          tabIndex={0}
-        >
-          <table>
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Nome</th>
-                <th>Preço</th>
-                <th>Situação</th>
-                {canWrite ? <th aria-label="Ações" /> : null}
-              </tr>
-            </thead>
-            <tbody>
-              {products.map(product => (
-                <tr key={product.id}>
-                  <td>{product.code}</td>
-                  <td>{product.name}</td>
-                  <td>{formatMoney(product.unitPrice)}</td>
-                  <td>{product.isActive ? "Ativo" : "Inativo"}</td>
-                  {canWrite ? (
-                    <td>
-                      <button
-                        type="button"
-                        onClick={() => openEdit(product)}
-                        aria-label={`Editar ${product.name}`}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => void remove(product)}
-                        aria-label={`Excluir ${product.name}`}
-                      >
-                        Excluir
-                      </button>
-                    </td>
-                  ) : null}
+        <>
+          <div
+            className="company-import__table-wrapper"
+            role="region"
+            aria-label="Tabela: Produtos"
+            tabIndex={0}
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Preço</th>
+                  <th>Situação</th>
+                  {canWrite ? <th aria-label="Ações" /> : null}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {products.map(product => (
+                  <tr key={product.id}>
+                    <td>{product.code}</td>
+                    <td>{product.name}</td>
+                    <td>{formatMoney(product.unitPrice)}</td>
+                    <td>{product.isActive ? "Ativo" : "Inativo"}</td>
+                    {canWrite ? (
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => openEdit(product)}
+                          aria-label={`Editar ${product.name}`}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => void remove(product)}
+                          aria-label={`Excluir ${product.name}`}
+                        >
+                          Excluir
+                        </button>
+                      </td>
+                    ) : null}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <nav className="crm-pagination" aria-label="Paginação de produtos">
+            <button
+              type="button"
+              disabled={page <= 1 || loading}
+              onClick={() => setPage(current => Math.max(1, current - 1))}
+            >
+              Anterior
+            </button>
+            <span>
+              Página {page} de {Math.max(1, Math.ceil(total / PAGE_SIZE))} ·{" "}
+              {total} produto(s)
+            </span>
+            <button
+              type="button"
+              disabled={page * PAGE_SIZE >= total || loading}
+              onClick={() => setPage(current => current + 1)}
+            >
+              Próxima
+            </button>
+          </nav>
+        </>
       ) : null}
     </section>
   );
