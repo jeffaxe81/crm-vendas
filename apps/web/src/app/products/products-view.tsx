@@ -83,6 +83,8 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
         if (active) {
           setProducts(result.items);
           setTotal(result.total);
+          const lastPage = Math.max(1, Math.ceil(result.total / PAGE_SIZE));
+          if (page > lastPage) setPage(lastPage);
         }
       } catch (cause) {
         if (active) {
@@ -190,7 +192,10 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
         accessToken,
         method: "DELETE",
       });
-      setProducts(current => current.filter(item => item.id !== product.id));
+      if (products.length === 1 && page > 1) {
+        setPage(current => current - 1);
+      }
+      setRefresh(current => current + 1);
     } catch (cause) {
       setError(
         cause instanceof Error

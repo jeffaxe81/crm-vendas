@@ -34,6 +34,37 @@ afterEach(() => {
 });
 
 describe("C4.3 products view", () => {
+  it("returns to the previous page after deleting its final record", async () => {
+    let deleted = false;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string | URL, init?: RequestInit) => {
+        if (init?.method === "DELETE") {
+          deleted = true;
+          return response(null, 204);
+        }
+        const page = new URL(String(input)).searchParams.get("page");
+        return response({
+          items:
+            page === "2"
+              ? deleted
+                ? []
+                : [product]
+              : [{ ...product, id: "remaining", name: "Registro restante" }],
+          total: deleted ? 50 : 51,
+        });
+      })
+    );
+    render(<ProductsView accessToken="token" canWrite />);
+    await screen.findByText("Registro restante");
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Excluir Licença PABX" })
+    );
+    expect(await screen.findByText("Registro restante")).toBeVisible();
+    expect(screen.queryByText("Licença PABX")).not.toBeInTheDocument();
+  });
+
   it("lists products and creates a new one", async () => {
     const fetchMock = vi
       .fn()
