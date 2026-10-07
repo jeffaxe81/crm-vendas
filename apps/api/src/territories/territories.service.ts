@@ -13,6 +13,7 @@ import {
 } from "@nestjs/common";
 
 import { AuditService } from "../audit/audit.service";
+import { roleHasPermission } from "../authorization/permissions";
 import { PrismaService } from "../database/prisma.service";
 import { Prisma } from "../generated/prisma/client";
 
@@ -68,6 +69,11 @@ export class TerritoriesService {
             orderBy,
             skip: (query.page - 1) * query.limit,
             take: query.limit,
+            include: {
+              salesRep: {
+                select: { id: true, displayName: true },
+              },
+            },
           }),
           tenant.territory.count({ where }),
         ])
@@ -82,14 +88,48 @@ export class TerritoriesService {
     );
   }
 
+  async listAssignableSalesReps(organizationId: string) {
+    return this.prisma.withTenant(organizationId, async tenant => {
+      const memberships = await tenant.organizationMembership.findMany({
+        where: {
+          organizationId,
+          isActive: true,
+          user: { isActive: true },
+        },
+        include: {
+          user: {
+            select: { id: true, displayName: true },
+          },
+        },
+        orderBy: [{ user: { displayName: "asc" } }, { createdAt: "asc" }],
+      });
+
+      return memberships
+        .filter(membership => roleHasPermission(membership.role, "territory.write"))
+        .map(membership => ({
+          id: membership.user.id,
+          displayName: membership.user.displayName,
+          role: membership.role,
+        }));
+    });
+  }
+
   async create(
     input: TerritoryCreateInput,
     context: TerritoryAdministrationContext
   ) {
     const territory = await this.prisma.withTenant(
       context.organizationId,
-      tenant =>
-        tenant.territory.create({
+      async tenant => {
+        if (input.salesRepId) {
+          await this.requireAssignableSalesRep(
+            tenant,
+            input.salesRepId,
+            context.organizationId
+          );
+        }
+
+        return tenant.territory.create({
           data: {
             organizationId: context.organizationId,
             name: input.name,
@@ -99,7 +139,8 @@ export class TerritoriesService {
             createdBy: context.actorUserId,
             updatedBy: context.actorUserId,
           },
-        })
+        });
+      }
     );
 
     await this.audit.record({
@@ -129,6 +170,14 @@ export class TerritoriesService {
           id,
           context.organizationId
         );
+        if (input.salesRepId !== undefined) {
+          await this.requireAssignableSalesRep(
+            tenant,
+            input.salesRepId,
+            context.organizationId
+          );
+        }
+
         const updated = await tenant.territory.update({
           where: { id: existing.id },
           data: {
@@ -217,6 +266,12 @@ export class TerritoriesService {
         const existing = await this.requireTerritory(
           tenant,
           id,
+          context.organizationId
+        );
+
+        await this.requireAssignableSalesRep(
+          tenant,
+          salesRepId,
           context.organizationId
         );
 
@@ -535,6 +590,35 @@ export class TerritoriesService {
   }
 
   // --- Helpers ----------------------------------------------------------
+
+  private async requireAssignableSalesRep(
+    tenant: Prisma.TransactionClient,
+    salesRepId: string,
+    organizationId: string
+  ) {
+    const membership = await tenant.organizationMembership.findFirst({
+      where: {
+        organizationId,
+        userId: salesRepId,
+        isActive: true,
+        user: { isActive: true },
+      },
+      include: { user: { select: { id: true, displayName: true } } },
+    });
+
+    if (
+      !membership ||
+      !roleHasPermission(membership.role, "territory.write")
+    ) {
+      throw new NotFoundException({
+        code: "TERRITORY_SALES_REP_NOT_FOUND",
+        message:
+          "Vendedor não encontrado ou não disponível nesta organização.",
+      });
+    }
+
+    return membership;
+  }
 
   private async requireTerritory(
     tenant: Prisma.TransactionClient,
