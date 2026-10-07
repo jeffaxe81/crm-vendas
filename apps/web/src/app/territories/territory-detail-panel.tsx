@@ -17,6 +17,7 @@ type Quota = {
   id: string;
   period: "MONTH" | "QUARTER" | "YEAR";
   year: number;
+  periodIndex?: number;
   amount: string;
   actual: string;
 };
@@ -27,6 +28,8 @@ type Metrics = {
   actualRevenue: string;
   targetCount: number;
   coveredCount: number;
+  quotaYear?: number | null;
+  quotaPeriod?: Quota["period"] | null;
 };
 
 type CompanyOption = {
@@ -53,6 +56,34 @@ const COVERAGE_LABELS: Record<CoverageStatus, string> = {
   PARTIAL: "Parcial",
   COVERED: "Coberta",
 };
+
+const MONTH_LABELS = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+function quotaPeriodLabel(quota: Quota): string {
+  const index = quota.periodIndex ?? 0;
+  if (quota.period === "YEAR") return "Anual";
+  if (quota.period === "MONTH") {
+    return index >= 1 && index <= 12
+      ? MONTH_LABELS[index - 1]
+      : "Mensal (legado)";
+  }
+  return index >= 1 && index <= 4
+    ? `${index}º trimestre`
+    : "Trimestral (legado)";
+}
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -84,10 +115,12 @@ export function TerritoryDetailPanel({
   const [coverageError, setCoverageError] = useState("");
 
   const [quotaPeriod, setQuotaPeriod] = useState<Quota["period"]>("MONTH");
+  const [quotaPeriodIndex, setQuotaPeriodIndex] = useState("1");
   const [quotaYear, setQuotaYear] = useState(
     String(new Date().getUTCFullYear())
   );
   const [quotaAmount, setQuotaAmount] = useState("");
+  const [quotaActual, setQuotaActual] = useState("");
   const [quotaError, setQuotaError] = useState("");
 
   useEffect(() => {
