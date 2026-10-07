@@ -77,7 +77,7 @@ function quotaPeriodLabel(quota: Quota): string {
   if (quota.period === "YEAR") return "Anual";
   if (quota.period === "MONTH") {
     return index >= 1 && index <= 12
-      ? MONTH_LABELS[index - 1]
+      ? (MONTH_LABELS[index - 1] ?? "Mensal (legado)")
       : "Mensal (legado)";
   }
   return index >= 1 && index <= 4
