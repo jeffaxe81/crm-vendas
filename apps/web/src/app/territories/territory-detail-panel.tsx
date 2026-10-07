@@ -265,18 +265,40 @@ export function TerritoryDetailPanel({
     event.preventDefault();
     const year = Number(quotaYear);
     const amount = quotaAmount.trim();
+    const actual = quotaActual.trim();
+    const periodIndex =
+      quotaPeriod === "YEAR" ? undefined : Number(quotaPeriodIndex);
+
     if (!year || !amount) {
       setQuotaError("Informe ano e meta.");
       return;
     }
+
+    if (
+      quotaPeriod !== "YEAR" &&
+      (!periodIndex ||
+        (quotaPeriod === "MONTH" && periodIndex > 12) ||
+        (quotaPeriod === "QUARTER" && periodIndex > 4))
+    ) {
+      setQuotaError("Informe o mês ou trimestre da cota.");
+      return;
+    }
+
     setQuotaError("");
     try {
       await apiRequest(`/territories/${territoryId}/quotas`, {
         accessToken,
         method: "POST",
-        body: { period: quotaPeriod, year, amount },
+        body: {
+          period: quotaPeriod,
+          year,
+          ...(periodIndex !== undefined ? { periodIndex } : {}),
+          amount,
+          ...(actual ? { actual } : {}),
+        },
       });
       setQuotaAmount("");
+      setQuotaActual("");
       setRefresh(current => current + 1);
     } catch (cause) {
       setQuotaError(
@@ -313,6 +335,16 @@ export function TerritoryDetailPanel({
           <article className="companies-view__card">
             <span>Cota atingida</span>
             <strong>{metrics.quotaPercentage}%</strong>
+            {metrics.quotaYear && metrics.quotaPeriod ? (
+              <small>
+                {metrics.quotaPeriod === "MONTH"
+                  ? "Mensal"
+                  : metrics.quotaPeriod === "QUARTER"
+                    ? "Trimestral"
+                    : "Anual"}{" "}
+                · {metrics.quotaYear}
+              </small>
+            ) : null}
           </article>
           <article className="companies-view__card">
             <span>Receita realizada</span>
