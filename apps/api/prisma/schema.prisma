@@ -142,6 +142,10 @@ enum TicketEventType {
 }
 
 model Organization {
+  backups BackupRecord[]
+  operationPreviews OperationPreview[]
+  dataOperations DataOperation[]
+  backupSchedule BackupSchedule?
   id                       String                     @id @default(uuid()) @db.Uuid
   name                     String                     @db.VarChar(160)
   slug                     String                     @unique @db.VarChar(80)
@@ -213,6 +217,10 @@ model RolePermission {
 }
 
 model User {
+  backupsCreated BackupRecord[] @relation("BackupActor")
+  operationPreviewsCreated OperationPreview[] @relation("OperationPreviewActor")
+  dataOperationsCreated DataOperation[] @relation("DataOperationActor")
+  backupSchedulesUpdated BackupSchedule[] @relation("BackupScheduleUpdater")
   id                          String                     @id @default(uuid()) @db.Uuid
   email                       String                     @db.VarChar(254)
   emailNormalized             String                     @unique @map("email_normalized") @db.VarChar(254)
@@ -266,6 +274,7 @@ model User {
 }
 
 model OrganizationMembership {
+  isSuperuser        Boolean        @default(false) @map("is_superuser")
   id                 String         @id @default(uuid()) @db.Uuid
   organizationId     String         @map("organization_id") @db.Uuid
   userId             String         @map("user_id") @db.Uuid
@@ -297,6 +306,7 @@ model RefreshSession {
   createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   user           User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  operationPreviews OperationPreview[]
 
   @@index([userId, revokedAt, expiresAt], map: "refresh_sessions_user_status_idx")
   @@index([organizationId, revokedAt, expiresAt], map: "refresh_sessions_org_status_idx")
@@ -988,4 +998,94 @@ model UserWorkspacePreference {
 
   @@id([organizationId, userId])
   @@map("user_workspace_preferences")
+}
+
+
+model BackupRecord {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @map("organization_id") @db.Uuid
+  actorUserId String? @map("actor_user_id") @db.Uuid
+  reason String @db.VarChar(24)
+  state String @default("PENDING") @db.VarChar(16)
+  schemaVersion Int? @map("schema_version")
+  checksum String? @db.VarChar(64)
+  byteCount BigInt? @map("byte_count")
+  counts Json? @db.JsonB
+  errorCode String? @map("error_code") @db.VarChar(80)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
+  organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict)
+  actor User? @relation("BackupActor",fields:[actorUserId],references:[id],onDelete:Restrict)
+  operationPreviews OperationPreview[]
+  protectedByOperations DataOperation[]
+  @@unique([id,organizationId],map:"backups_id_organization_key")
+  @@index([organizationId,state,createdAt],map:"backups_org_state_created_idx")
+  @@map("backups")
+}
+
+model OperationPreview {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @map("organization_id") @db.Uuid
+  actorUserId String @map("actor_user_id") @db.Uuid
+  sessionId String @map("session_id") @db.Uuid
+  kind String @db.VarChar(16)
+  targetBackupId String? @map("target_backup_id") @db.Uuid
+  targetChecksum String? @map("target_checksum") @db.VarChar(64)
+  currentFingerprint String @map("current_fingerprint") @db.VarChar(64)
+  payload Json @default("{}") @db.JsonB
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict)
+  actor User @relation("OperationPreviewActor",fields:[actorUserId],references:[id],onDelete:Restrict)
+  session RefreshSession @relation(fields:[sessionId],references:[id],onDelete:Restrict)
+  targetBackup BackupRecord? @relation(fields:[targetBackupId,organizationId],references:[id,organizationId],onDelete:Restrict)
+  @@index([organizationId,actorUserId,sessionId,expiresAt],map:"operation_previews_scope_expiry_idx")
+  @@index([organizationId,targetBackupId],map:"operation_previews_target_backup_idx")
+  @@map("operation_previews")
+}
+
+model DataOperation {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @map("organization_id") @db.Uuid
+  actorUserId String? @map("actor_user_id") @db.Uuid
+  kind String @db.VarChar(16)
+  state String @default("PENDING") @db.VarChar(16)
+  payload Json @default("{}") @db.JsonB
+  checkpoint Json @default("{}") @db.JsonB
+  stage String @default("QUEUED") @db.VarChar(80)
+  processed Int @default(0)
+  total Int?
+  attempts Int @default(0)
+  workerId String? @map("worker_id") @db.VarChar(160)
+  leaseUntil DateTime? @map("lease_until") @db.Timestamptz(6)
+  heartbeatAt DateTime? @map("heartbeat_at") @db.Timestamptz(6)
+  errorCode String? @map("error_code") @db.VarChar(80)
+  preventiveBackupId String? @map("preventive_backup_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
+  organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict)
+  actor User? @relation("DataOperationActor",fields:[actorUserId],references:[id],onDelete:Restrict)
+  preventiveBackup BackupRecord? @relation(fields:[preventiveBackupId,organizationId],references:[id,organizationId],onDelete:Restrict)
+  @@index([organizationId,state,leaseUntil],map:"data_operations_org_state_lease_idx")
+  @@map("data_operations")
+}
+
+model BackupSchedule {
+  organizationId String @id @map("organization_id") @db.Uuid
+  enabled Boolean @default(false)
+  frequency String @default("DAILY") @db.VarChar(16)
+  localTime String @default("02:00") @map("local_time") @db.VarChar(5)
+  weekday Int @default(0)
+  intervalMinutes Int? @map("interval_minutes")
+  retentionCount Int @default(15) @map("retention_count")
+  timezone String @default("America/Sao_Paulo") @db.VarChar(80)
+  nextRunAt DateTime? @map("next_run_at") @db.Timestamptz(6)
+  lastScheduledAt DateTime? @map("last_scheduled_at") @db.Timestamptz(6)
+  updatedBy String? @map("updated_by") @db.Uuid
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict)
+  updater User? @relation("BackupScheduleUpdater",fields:[updatedBy],references:[id],onDelete:Restrict)
+  @@map("backup_schedules")
 }

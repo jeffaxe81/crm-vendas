@@ -159,6 +159,7 @@ exports.Prisma.UserScalarFieldEnum = {
 };
 
 exports.Prisma.OrganizationMembershipScalarFieldEnum = {
+  isSuperuser: 'isSuperuser',
   id: 'id',
   organizationId: 'organizationId',
   userId: 'userId',
@@ -210,6 +211,56 @@ exports.Prisma.CompanyScalarFieldEnum = {
   version: 'version',
   deletedAt: 'deletedAt',
   deletedBy: 'deletedBy'
+};
+
+exports.Prisma.TerritoryScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  name: 'name',
+  region: 'region',
+  description: 'description',
+  salesRepId: 'salesRepId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  version: 'version',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.TerritoryQuotaScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  territoryId: 'territoryId',
+  period: 'period',
+  year: 'year',
+  amount: 'amount',
+  actual: 'actual',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TerritoryTargetScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  territoryId: 'territoryId',
+  companyId: 'companyId',
+  coverageStatus: 'coverageStatus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TerritoryMetricsScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  territoryId: 'territoryId',
+  coveragePercentage: 'coveragePercentage',
+  quotaPercentage: 'quotaPercentage',
+  actualRevenue: 'actualRevenue',
+  targetCount: 'targetCount',
+  coveredCount: 'coveredCount',
+  lastUpdatedAt: 'lastUpdatedAt'
 };
 
 exports.Prisma.ContactScalarFieldEnum = {
@@ -512,6 +563,82 @@ exports.Prisma.TicketSatisfactionSurveyScalarFieldEnum = {
   version: 'version'
 };
 
+exports.Prisma.IntegrationCredentialScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  name: 'name',
+  keyHash: 'keyHash',
+  keyPrefix: 'keyPrefix',
+  scopes: 'scopes',
+  isActive: 'isActive',
+  lastUsedAt: 'lastUsedAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  revokedAt: 'revokedAt',
+  revokedBy: 'revokedBy'
+};
+
+exports.Prisma.UserWorkspacePreferenceScalarFieldEnum = {
+  organizationId: 'organizationId',
+  userId: 'userId',
+  preferences: 'preferences',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BackupRecordScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  actorUserId: 'actorUserId',
+  reason: 'reason',
+  state: 'state',
+  schemaVersion: 'schemaVersion',
+  checksum: 'checksum',
+  byteCount: 'byteCount',
+  counts: 'counts',
+  errorCode: 'errorCode',
+  createdAt: 'createdAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.DataOperationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  actorUserId: 'actorUserId',
+  kind: 'kind',
+  state: 'state',
+  payload: 'payload',
+  checkpoint: 'checkpoint',
+  stage: 'stage',
+  processed: 'processed',
+  total: 'total',
+  attempts: 'attempts',
+  workerId: 'workerId',
+  leaseUntil: 'leaseUntil',
+  heartbeatAt: 'heartbeatAt',
+  errorCode: 'errorCode',
+  preventiveBackupId: 'preventiveBackupId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.BackupScheduleScalarFieldEnum = {
+  organizationId: 'organizationId',
+  enabled: 'enabled',
+  frequency: 'frequency',
+  localTime: 'localTime',
+  weekday: 'weekday',
+  intervalMinutes: 'intervalMinutes',
+  retentionCount: 'retentionCount',
+  timezone: 'timezone',
+  nextRunAt: 'nextRunAt',
+  lastScheduledAt: 'lastScheduledAt',
+  updatedBy: 'updatedBy',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -546,6 +673,18 @@ exports.MembershipRole = exports.$Enums.MembershipRole = {
   MANAGER: 'MANAGER',
   SELLER: 'SELLER',
   VIEWER: 'VIEWER'
+};
+
+exports.TerritoryQuotaPeriod = exports.$Enums.TerritoryQuotaPeriod = {
+  MONTH: 'MONTH',
+  QUARTER: 'QUARTER',
+  YEAR: 'YEAR'
+};
+
+exports.TerritoryCoverageStatus = exports.$Enums.TerritoryCoverageStatus = {
+  UNCOVERED: 'UNCOVERED',
+  PARTIAL: 'PARTIAL',
+  COVERED: 'COVERED'
 };
 
 exports.ContactChannelType = exports.$Enums.ContactChannelType = {
@@ -642,6 +781,10 @@ exports.Prisma.ModelName = {
   RefreshSession: 'RefreshSession',
   AuditLog: 'AuditLog',
   Company: 'Company',
+  Territory: 'Territory',
+  TerritoryQuota: 'TerritoryQuota',
+  TerritoryTarget: 'TerritoryTarget',
+  TerritoryMetrics: 'TerritoryMetrics',
   Contact: 'Contact',
   ContactChannel: 'ContactChannel',
   CompanyContact: 'CompanyContact',
@@ -663,7 +806,12 @@ exports.Prisma.ModelName = {
   TicketProtocolCounter: 'TicketProtocolCounter',
   SupportQueue: 'SupportQueue',
   SlaPolicy: 'SlaPolicy',
-  TicketSatisfactionSurvey: 'TicketSatisfactionSurvey'
+  TicketSatisfactionSurvey: 'TicketSatisfactionSurvey',
+  IntegrationCredential: 'IntegrationCredential',
+  UserWorkspacePreference: 'UserWorkspacePreference',
+  BackupRecord: 'BackupRecord',
+  DataOperation: 'DataOperation',
+  BackupSchedule: 'BackupSchedule'
 };
 
 /**

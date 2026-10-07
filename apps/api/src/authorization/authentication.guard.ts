@@ -85,6 +85,7 @@ export class AuthenticationGuard implements CanActivate {
       sessionId: session.id,
       permissions: permissionsForRole(role),
       authMethod: "session",
+      isSuperuser: membership.isSuperuser,
     };
 
     request.auth = principal;
@@ -161,6 +162,7 @@ export class AuthenticationGuard implements CanActivate {
       permissions: effectivePermissions,
       authMethod: "api_key",
       apiKeyId: credential.id,
+      isSuperuser: false,
     };
 
     request.auth = principal;

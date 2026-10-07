@@ -84,6 +84,22 @@ enum ActivityPriority {
   @@map("activity_priority")
 }
 
+enum TerritoryQuotaPeriod {
+  MONTH
+  QUARTER
+  YEAR
+
+  @@map("territory_quota_period")
+}
+
+enum TerritoryCoverageStatus {
+  UNCOVERED
+  PARTIAL
+  COVERED
+
+  @@map("territory_coverage_status")
+}
+
 enum TicketStatus {
   OPEN
   IN_PROGRESS
@@ -126,6 +142,9 @@ enum TicketEventType {
 }
 
 model Organization {
+  backups                  BackupRecord[]
+  dataOperations           DataOperation[]
+  backupSchedule           BackupSchedule?
   id                       String                     @id @default(uuid()) @db.Uuid
   name                     String                     @db.VarChar(160)
   slug                     String                     @unique @db.VarChar(80)
@@ -152,12 +171,17 @@ model Organization {
   roles                    Role[]
   products                 Product[]
   opportunityItems         OpportunityItem[]
+  territories              Territory[]
+  territoryQuotas          TerritoryQuota[]
+  territoryTargets         TerritoryTarget[]
+  territoryMetrics         TerritoryMetrics[]
   tickets                  Ticket[]
   ticketEvents             TicketEvent[]
   ticketProtocolCounters   TicketProtocolCounter[]
   supportQueues            SupportQueue[]
   slaPolicies              SlaPolicy[]
   ticketSatisfactions      TicketSatisfactionSurvey[]
+  integrationCredentials   IntegrationCredential[]
 
   @@map("organizations")
 }
@@ -192,64 +216,75 @@ model RolePermission {
 }
 
 model User {
-  id                          String                     @id @default(uuid()) @db.Uuid
-  email                       String                     @db.VarChar(254)
-  emailNormalized             String                     @unique @map("email_normalized") @db.VarChar(254)
-  displayName                 String                     @map("display_name") @db.VarChar(160)
-  passwordHash                String                     @map("password_hash") @db.VarChar(255)
-  isActive                    Boolean                    @default(true) @map("is_active")
-  createdAt                   DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                   DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
-  memberships                 OrganizationMembership[]
-  refreshSessions             RefreshSession[]
-  auditLogs                   AuditLog[]                 @relation("AuditActor")
-  companiesCreated            Company[]                  @relation("CompanyCreatedBy")
-  companiesUpdated            Company[]                  @relation("CompanyUpdatedBy")
-  companiesDeleted            Company[]                  @relation("CompanyDeletedBy")
-  contactsCreated             Contact[]                  @relation("ContactCreatedBy")
-  contactsUpdated             Contact[]                  @relation("ContactUpdatedBy")
-  contactsDeleted             Contact[]                  @relation("ContactDeletedBy")
-  relationshipEntriesAuthored RelationshipEntry[]        @relation("RelationshipEntryAuthor")
-  activitiesOwned             Activity[]                 @relation("ActivityOwner")
-  activitiesCreated           Activity[]                 @relation("ActivityCreatedBy")
-  activitiesUpdated           Activity[]                 @relation("ActivityUpdatedBy")
-  activitiesDeleted           Activity[]                 @relation("ActivityDeletedBy")
-  opportunitiesOwned          Opportunity[]              @relation("OpportunityOwner")
-  opportunitiesCreated        Opportunity[]              @relation("OpportunityCreatedBy")
-  opportunitiesUpdated        Opportunity[]              @relation("OpportunityUpdatedBy")
-  opportunitiesDeleted        Opportunity[]              @relation("OpportunityDeletedBy")
-  productsCreated             Product[]                  @relation("ProductCreatedBy")
-  productsUpdated             Product[]                  @relation("ProductUpdatedBy")
-  productsDeleted             Product[]                  @relation("ProductDeletedBy")
-  opportunityItemsCreated     OpportunityItem[]          @relation("OpportunityItemCreatedBy")
-  opportunityItemsUpdated     OpportunityItem[]          @relation("OpportunityItemUpdatedBy")
-  ticketsCreated              Ticket[]                   @relation("TicketCreatedBy")
-  ticketsUpdated              Ticket[]                   @relation("TicketUpdatedBy")
-  ticketsDeleted              Ticket[]                   @relation("TicketDeletedBy")
-  ticketEventsAuthored        TicketEvent[]              @relation("TicketEventAuthor")
-  supportQueuesCreated        SupportQueue[]             @relation("SupportQueueCreatedBy")
-  supportQueuesUpdated        SupportQueue[]             @relation("SupportQueueUpdatedBy")
-  supportQueuesDeleted        SupportQueue[]             @relation("SupportQueueDeletedBy")
-  slaPoliciesCreated          SlaPolicy[]                @relation("SlaPolicyCreatedBy")
-  slaPoliciesUpdated          SlaPolicy[]                @relation("SlaPolicyUpdatedBy")
-  ticketSatisfactionsCreated  TicketSatisfactionSurvey[] @relation("TicketSatisfactionCreatedBy")
-  ticketSatisfactionsUpdated  TicketSatisfactionSurvey[] @relation("TicketSatisfactionUpdatedBy")
+  backupsCreated                BackupRecord[]             @relation("BackupActor")
+  dataOperationsCreated         DataOperation[]            @relation("DataOperationActor")
+  backupSchedulesUpdated        BackupSchedule[]           @relation("BackupScheduleUpdater")
+  id                            String                     @id @default(uuid()) @db.Uuid
+  email                         String                     @db.VarChar(254)
+  emailNormalized               String                     @unique @map("email_normalized") @db.VarChar(254)
+  displayName                   String                     @map("display_name") @db.VarChar(160)
+  passwordHash                  String                     @map("password_hash") @db.VarChar(255)
+  isActive                      Boolean                    @default(true) @map("is_active")
+  createdAt                     DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                     DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  memberships                   OrganizationMembership[]
+  refreshSessions               RefreshSession[]
+  auditLogs                     AuditLog[]                 @relation("AuditActor")
+  companiesCreated              Company[]                  @relation("CompanyCreatedBy")
+  companiesUpdated              Company[]                  @relation("CompanyUpdatedBy")
+  companiesDeleted              Company[]                  @relation("CompanyDeletedBy")
+  contactsCreated               Contact[]                  @relation("ContactCreatedBy")
+  contactsUpdated               Contact[]                  @relation("ContactUpdatedBy")
+  contactsDeleted               Contact[]                  @relation("ContactDeletedBy")
+  relationshipEntriesAuthored   RelationshipEntry[]        @relation("RelationshipEntryAuthor")
+  activitiesOwned               Activity[]                 @relation("ActivityOwner")
+  activitiesCreated             Activity[]                 @relation("ActivityCreatedBy")
+  activitiesUpdated             Activity[]                 @relation("ActivityUpdatedBy")
+  activitiesDeleted             Activity[]                 @relation("ActivityDeletedBy")
+  opportunitiesOwned            Opportunity[]              @relation("OpportunityOwner")
+  opportunitiesCreated          Opportunity[]              @relation("OpportunityCreatedBy")
+  opportunitiesUpdated          Opportunity[]              @relation("OpportunityUpdatedBy")
+  opportunitiesDeleted          Opportunity[]              @relation("OpportunityDeletedBy")
+  productsCreated               Product[]                  @relation("ProductCreatedBy")
+  productsUpdated               Product[]                  @relation("ProductUpdatedBy")
+  productsDeleted               Product[]                  @relation("ProductDeletedBy")
+  opportunityItemsCreated       OpportunityItem[]          @relation("OpportunityItemCreatedBy")
+  opportunityItemsUpdated       OpportunityItem[]          @relation("OpportunityItemUpdatedBy")
+  territoriesAssigned           Territory[]                @relation("TerritorySalesRep")
+  territoriesCreated            Territory[]                @relation("TerritoryCreatedBy")
+  territoriesUpdated            Territory[]                @relation("TerritoryUpdatedBy")
+  territoriesDeleted            Territory[]                @relation("TerritoryDeletedBy")
+  ticketsCreated                Ticket[]                   @relation("TicketCreatedBy")
+  ticketsUpdated                Ticket[]                   @relation("TicketUpdatedBy")
+  ticketsDeleted                Ticket[]                   @relation("TicketDeletedBy")
+  ticketEventsAuthored          TicketEvent[]              @relation("TicketEventAuthor")
+  supportQueuesCreated          SupportQueue[]             @relation("SupportQueueCreatedBy")
+  supportQueuesUpdated          SupportQueue[]             @relation("SupportQueueUpdatedBy")
+  supportQueuesDeleted          SupportQueue[]             @relation("SupportQueueDeletedBy")
+  slaPoliciesCreated            SlaPolicy[]                @relation("SlaPolicyCreatedBy")
+  slaPoliciesUpdated            SlaPolicy[]                @relation("SlaPolicyUpdatedBy")
+  ticketSatisfactionsCreated    TicketSatisfactionSurvey[] @relation("TicketSatisfactionCreatedBy")
+  ticketSatisfactionsUpdated    TicketSatisfactionSurvey[] @relation("TicketSatisfactionUpdatedBy")
+  integrationCredentialsCreated IntegrationCredential[]    @relation("IntegrationCredentialCreatedBy")
+  integrationCredentialsRevoked IntegrationCredential[]    @relation("IntegrationCredentialRevokedBy")
 
   @@map("users")
 }
 
 model OrganizationMembership {
-  id                 String         @id @default(uuid()) @db.Uuid
-  organizationId     String         @map("organization_id") @db.Uuid
-  userId             String         @map("user_id") @db.Uuid
-  role               MembershipRole
-  isActive           Boolean        @default(true) @map("is_active")
-  createdAt          DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
-  organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  user               User           @relation(fields: [userId], references: [id], onDelete: Restrict)
-  ownedOpportunities Opportunity[]  @relation("OpportunityOwnerMembership")
-  assignedTickets    Ticket[]       @relation("TicketAssigneeMembership")
+  isSuperuser         Boolean                  @default(false) @map("is_superuser")
+  id                  String                   @id @default(uuid()) @db.Uuid
+  organizationId      String                   @map("organization_id") @db.Uuid
+  userId              String                   @map("user_id") @db.Uuid
+  role                MembershipRole
+  isActive            Boolean                  @default(true) @map("is_active")
+  createdAt           DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization        Organization             @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user                User                     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  workspacePreference UserWorkspacePreference?
+  ownedOpportunities  Opportunity[]            @relation("OpportunityOwnerMembership")
+  assignedTickets     Ticket[]                 @relation("TicketAssigneeMembership")
 
   @@unique([organizationId, userId], map: "organization_memberships_org_user_key")
   @@index([userId, isActive], map: "organization_memberships_user_active_idx")
@@ -323,12 +358,94 @@ model Company {
   customFieldValues   CompanyCustomFieldValue[]
   activities          Activity[]
   opportunities       Opportunity[]
+  territoryTargets    TerritoryTarget[]
   tickets             Ticket[]
 
   @@unique([id, organizationId], map: "companies_id_organization_key")
   @@index([organizationId, deletedAt, legalName], map: "companies_org_deleted_legal_name_idx")
   @@index([organizationId, tradeName], map: "companies_org_trade_name_idx")
   @@map("companies")
+}
+
+model Territory {
+  id             String            @id @default(uuid()) @db.Uuid
+  organizationId String            @map("organization_id") @db.Uuid
+  name           String            @db.VarChar(160)
+  region         String            @db.VarChar(120)
+  description    String?
+  salesRepId     String?           @map("sales_rep_id") @db.Uuid
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy      String            @map("created_by") @db.Uuid
+  updatedBy      String            @map("updated_by") @db.Uuid
+  version        Int               @default(1)
+  deletedAt      DateTime?         @map("deleted_at") @db.Timestamptz(6)
+  deletedBy      String?           @map("deleted_by") @db.Uuid
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  salesRep       User?             @relation("TerritorySalesRep", fields: [salesRepId], references: [id], onDelete: Restrict)
+  creator        User              @relation("TerritoryCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater        User              @relation("TerritoryUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter        User?             @relation("TerritoryDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+  quotas         TerritoryQuota[]
+  targets        TerritoryTarget[]
+  metrics        TerritoryMetrics?
+
+  @@unique([id, organizationId], map: "territories_id_organization_key")
+  @@index([organizationId, deletedAt, name], map: "territories_org_deleted_name_idx")
+  @@index([organizationId, region], map: "territories_org_region_idx")
+  @@map("territories")
+}
+
+model TerritoryQuota {
+  id             String               @id @default(uuid()) @db.Uuid
+  organizationId String               @map("organization_id") @db.Uuid
+  territoryId    String               @map("territory_id") @db.Uuid
+  period         TerritoryQuotaPeriod
+  year           Int
+  amount         Decimal              @db.Decimal(19, 2)
+  actual         Decimal              @default(0) @db.Decimal(19, 2)
+  createdAt      DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  territory      Territory            @relation(fields: [territoryId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@unique([territoryId, period, year], map: "territory_quotas_territory_period_year_key")
+  @@index([organizationId, territoryId], map: "territory_quotas_org_territory_idx")
+  @@map("territory_quotas")
+}
+
+model TerritoryTarget {
+  id             String                  @id @default(uuid()) @db.Uuid
+  organizationId String                  @map("organization_id") @db.Uuid
+  territoryId    String                  @map("territory_id") @db.Uuid
+  companyId      String                  @map("company_id") @db.Uuid
+  coverageStatus TerritoryCoverageStatus @default(UNCOVERED) @map("coverage_status")
+  createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  territory      Territory               @relation(fields: [territoryId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  company        Company                 @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@unique([territoryId, companyId], map: "territory_targets_territory_company_key")
+  @@index([organizationId, territoryId, coverageStatus], map: "territory_targets_org_territory_status_idx")
+  @@map("territory_targets")
+}
+
+model TerritoryMetrics {
+  id                 String       @id @default(uuid()) @db.Uuid
+  organizationId     String       @map("organization_id") @db.Uuid
+  territoryId        String       @unique @map("territory_id") @db.Uuid
+  coveragePercentage Decimal      @default(0) @map("coverage_percentage") @db.Decimal(5, 2)
+  quotaPercentage    Decimal      @default(0) @map("quota_percentage") @db.Decimal(5, 2)
+  actualRevenue      Decimal      @default(0) @map("actual_revenue") @db.Decimal(19, 2)
+  targetCount        Int          @default(0) @map("target_count")
+  coveredCount       Int          @default(0) @map("covered_count")
+  lastUpdatedAt      DateTime     @default(now()) @map("last_updated_at") @db.Timestamptz(6)
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  territory          Territory    @relation(fields: [territoryId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@unique([territoryId, organizationId], map: "territory_metrics_territory_organization_key")
+  @@map("territory_metrics")
 }
 
 model Contact {
@@ -841,4 +958,110 @@ model TicketSatisfactionSurvey {
   @@unique([ticketId, organizationId], map: "ticket_satisfaction_surveys_ticket_org_key")
   @@index([organizationId, createdAt], map: "ticket_satisfaction_surveys_org_created_idx")
   @@map("ticket_satisfaction_surveys")
+}
+
+/// F4.1 -- credencial de API para consumo maquina-a-maquina, com escopo
+/// nunca superior ao das permissoes de quem a criou no momento do uso.
+model IntegrationCredential {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  name           String       @db.VarChar(160)
+  keyHash        String       @unique(map: "integration_credentials_key_hash_key") @map("key_hash") @db.VarChar(64)
+  keyPrefix      String       @map("key_prefix") @db.VarChar(12)
+  scopes         String[]     @db.VarChar(64)
+  isActive       Boolean      @default(true) @map("is_active")
+  lastUsedAt     DateTime?    @map("last_used_at") @db.Timestamptz(6)
+  expiresAt      DateTime?    @map("expires_at") @db.Timestamptz(6)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy      String       @map("created_by") @db.Uuid
+  revokedAt      DateTime?    @map("revoked_at") @db.Timestamptz(6)
+  revokedBy      String?      @map("revoked_by") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  creator        User         @relation("IntegrationCredentialCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  revoker        User?        @relation("IntegrationCredentialRevokedBy", fields: [revokedBy], references: [id], onDelete: Restrict)
+
+  @@unique([id, organizationId], map: "integration_credentials_id_organization_key")
+  @@index([organizationId, isActive], map: "integration_credentials_org_active_idx")
+  @@map("integration_credentials")
+}
+
+model UserWorkspacePreference {
+  organizationId String                 @map("organization_id") @db.Uuid
+  userId         String                 @map("user_id") @db.Uuid
+  preferences    Json                   @db.JsonB
+  createdAt      DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  membership     OrganizationMembership @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade)
+
+  @@id([organizationId, userId])
+  @@map("user_workspace_preferences")
+}
+
+model BackupRecord {
+  id                    String          @id @default(uuid()) @db.Uuid
+  organizationId        String          @map("organization_id") @db.Uuid
+  actorUserId           String?         @map("actor_user_id") @db.Uuid
+  reason                String          @db.VarChar(24)
+  state                 String          @default("PENDING") @db.VarChar(16)
+  schemaVersion         Int?            @map("schema_version")
+  checksum              String?         @db.VarChar(64)
+  byteCount             BigInt?         @map("byte_count")
+  counts                Json?           @db.JsonB
+  errorCode             String?         @map("error_code") @db.VarChar(80)
+  createdAt             DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  completedAt           DateTime?       @map("completed_at") @db.Timestamptz(6)
+  organization          Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  actor                 User?           @relation("BackupActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  protectedByOperations DataOperation[]
+
+  @@unique([id, organizationId], map: "backups_id_organization_key")
+  @@index([organizationId, state, createdAt], map: "backups_org_state_created_idx")
+  @@map("backups")
+}
+
+model DataOperation {
+  id                 String        @id @default(uuid()) @db.Uuid
+  organizationId     String        @map("organization_id") @db.Uuid
+  actorUserId        String?       @map("actor_user_id") @db.Uuid
+  kind               String        @db.VarChar(16)
+  state              String        @default("PENDING") @db.VarChar(16)
+  payload            Json          @default("{}") @db.JsonB
+  checkpoint         Json          @default("{}") @db.JsonB
+  stage              String        @default("QUEUED") @db.VarChar(80)
+  processed          Int           @default(0)
+  total              Int?
+  attempts           Int           @default(0)
+  workerId           String?       @map("worker_id") @db.VarChar(160)
+  leaseUntil         DateTime?     @map("lease_until") @db.Timestamptz(6)
+  heartbeatAt        DateTime?     @map("heartbeat_at") @db.Timestamptz(6)
+  errorCode          String?       @map("error_code") @db.VarChar(80)
+  preventiveBackupId String?       @map("preventive_backup_id") @db.Uuid
+  createdAt          DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  completedAt        DateTime?     @map("completed_at") @db.Timestamptz(6)
+  organization       Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  actor              User?         @relation("DataOperationActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  preventiveBackup   BackupRecord? @relation(fields: [preventiveBackupId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  @@index([organizationId, state, leaseUntil], map: "data_operations_org_state_lease_idx")
+  @@map("data_operations")
+}
+
+model BackupSchedule {
+  organizationId  String       @id @map("organization_id") @db.Uuid
+  enabled         Boolean      @default(false)
+  frequency       String       @default("DAILY") @db.VarChar(16)
+  localTime       String       @default("02:00") @map("local_time") @db.VarChar(5)
+  weekday         Int          @default(0)
+  intervalMinutes Int?         @map("interval_minutes")
+  retentionCount  Int          @default(15) @map("retention_count")
+  timezone        String       @default("America/Sao_Paulo") @db.VarChar(80)
+  nextRunAt       DateTime?    @map("next_run_at") @db.Timestamptz(6)
+  lastScheduledAt DateTime?    @map("last_scheduled_at") @db.Timestamptz(6)
+  updatedBy       String?      @map("updated_by") @db.Uuid
+  updatedAt       DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  updater         User?        @relation("BackupScheduleUpdater", fields: [updatedBy], references: [id], onDelete: Restrict)
+
+  @@map("backup_schedules")
 }
