@@ -185,7 +185,7 @@ describe("C4.1.6 territories view", () => {
   it("expands a territory to show coverage, quotas and metrics", async () => {
     const fetchMock = vi.fn(async (input: string | URL) => {
       const url = String(input);
-      if (url.endsWith("/territories?page=1&limit=100")) {
+      if (url.endsWith("/territories?page=1&limit=50")) {
         return response({ items: [territory], total: 1 });
       }
       if (url.includes("/metrics")) {
