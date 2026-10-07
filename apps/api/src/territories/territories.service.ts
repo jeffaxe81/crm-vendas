@@ -105,7 +105,9 @@ export class TerritoriesService {
       });
 
       return memberships
-        .filter(membership => roleHasPermission(membership.role, "territory.write"))
+        .filter(membership =>
+          roleHasPermission(membership.role, "territory.write")
+        )
         .map(membership => ({
           id: membership.user.id,
           displayName: membership.user.displayName,
@@ -606,14 +608,10 @@ export class TerritoriesService {
       include: { user: { select: { id: true, displayName: true } } },
     });
 
-    if (
-      !membership ||
-      !roleHasPermission(membership.role, "territory.write")
-    ) {
+    if (!membership || !roleHasPermission(membership.role, "territory.write")) {
       throw new NotFoundException({
         code: "TERRITORY_SALES_REP_NOT_FOUND",
-        message:
-          "Vendedor não encontrado ou não disponível nesta organização.",
+        message: "Vendedor não encontrado ou não disponível nesta organização.",
       });
     }
 
