@@ -48,7 +48,7 @@ type StageOption = {
   id: string;
   name: string;
   position: number;
-  kind: StageKind;
+  kind?: StageKind;
 };
 
 type PipelineOption = {
@@ -242,7 +242,7 @@ export function OpportunitiesView({
           setPipelines(result);
         }
       } catch (cause) {
-        if (active) {
+        if (active && (canMove || viewMode === "kanban")) {
           setError(
             cause instanceof Error
               ? cause.message
@@ -257,7 +257,7 @@ export function OpportunitiesView({
     return () => {
       active = false;
     };
-  }, [accessToken]);
+  }, [accessToken, canMove, viewMode]);
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -364,7 +364,7 @@ export function OpportunitiesView({
     const currentStage = pipeline?.stages.find(
       stage => stage.id === opportunity.stageId
     );
-    if (currentStage && currentStage.kind !== "OPEN") {
+    if ((currentStage?.kind ?? "OPEN") !== "OPEN") {
       setError("Oportunidades ganhas ou perdidas não podem ser reabertas.");
       return;
     }
@@ -802,8 +802,9 @@ export function OpportunitiesView({
             const currentStage = opportunityPipeline?.stages.find(
               stage => stage.id === opportunity.stageId
             );
+            const currentStageKind = currentStage?.kind ?? "OPEN";
             const isTerminal =
-              currentStage?.kind === "WON" || currentStage?.kind === "LOST";
+              currentStageKind === "WON" || currentStageKind === "LOST";
             const company = companies.find(
               item => item.id === opportunity.companyId
             );
