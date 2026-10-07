@@ -35,6 +35,37 @@ afterEach(() => {
 });
 
 describe("C4.1.6 territories view", () => {
+  it("returns to the previous page after deleting its final record", async () => {
+    let deleted = false;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string | URL, init?: RequestInit) => {
+        if (init?.method === "DELETE") {
+          deleted = true;
+          return response(null, 204);
+        }
+        const page = new URL(String(input)).searchParams.get("page");
+        return response({
+          items:
+            page === "2"
+              ? deleted
+                ? []
+                : [territory]
+              : [{ ...territory, id: "remaining", name: "Registro restante" }],
+          total: deleted ? 50 : 51,
+        });
+      })
+    );
+    render(<TerritoriesView accessToken="token" canWrite />);
+    await screen.findByText(/Registro restante/);
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Excluir Território Norte" })
+    );
+    expect(await screen.findByText(/Registro restante/)).toBeVisible();
+    expect(screen.queryByText(/Território Norte/)).not.toBeInTheDocument();
+  });
+
   it("lists territories and creates a new one", async () => {
     const fetchMock = vi
       .fn()
@@ -164,7 +195,8 @@ describe("C4.1.6 territories view", () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(response({ items: [territory], total: 1 }))
-      .mockResolvedValueOnce(response(null, 204));
+      .mockResolvedValueOnce(response(null, 204))
+      .mockResolvedValueOnce(response({ items: [], total: 0 }));
     vi.stubGlobal("fetch", fetchMock);
 
     render(<TerritoriesView accessToken="token" canWrite />);

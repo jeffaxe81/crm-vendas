@@ -85,6 +85,8 @@ export function TerritoriesView({
         if (active) {
           setTerritories(result.items);
           setTotal(result.total);
+          const lastPage = Math.max(1, Math.ceil(result.total / PAGE_SIZE));
+          if (page > lastPage) setPage(lastPage);
         }
       } catch (cause) {
         if (active) {
@@ -174,9 +176,10 @@ export function TerritoriesView({
         accessToken,
         method: "DELETE",
       });
-      setTerritories(current =>
-        current.filter(item => item.id !== territory.id)
-      );
+      if (territories.length === 1 && page > 1) {
+        setPage(current => current - 1);
+      }
+      setRefresh(current => current + 1);
       if (expandedId === territory.id) {
         setExpandedId(null);
       }
