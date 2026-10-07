@@ -29,6 +29,19 @@ type Metrics = {
   coveredCount: number;
 };
 
+type CompanyOption = {
+  id: string;
+  legalName: string;
+  tradeName: string | null;
+};
+
+type CompanyListResponse = {
+  items: CompanyOption[];
+  page: number;
+  limit: number;
+  total: number;
+};
+
 type TerritoryDetailPanelProps = {
   accessToken: string;
   territoryId: string;
@@ -65,6 +78,9 @@ export function TerritoryDetailPanel({
   const [refresh, setRefresh] = useState(0);
 
   const [companyId, setCompanyId] = useState("");
+  const [companyQuery, setCompanyQuery] = useState("");
+  const [companyOptions, setCompanyOptions] = useState<CompanyOption[]>([]);
+  const [companyLoading, setCompanyLoading] = useState(false);
   const [coverageError, setCoverageError] = useState("");
 
   const [quotaPeriod, setQuotaPeriod] = useState<Quota["period"]>("MONTH");
@@ -117,11 +133,44 @@ export function TerritoryDetailPanel({
     };
   }, [accessToken, territoryId, refresh]);
 
+  async function searchCompanies() {
+    setCoverageError("");
+    setCompanyLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: "1",
+        limit: "50",
+        sortBy: "legalName",
+        sortOrder: "asc",
+      });
+      const query = companyQuery.trim();
+      if (query) {
+        params.set("q", query);
+      }
+      const result = await apiRequest<CompanyListResponse>(
+        `/companies?${params.toString()}`,
+        { accessToken }
+      );
+      const alreadyCovered = new Set(coverage.map(target => target.companyId));
+      setCompanyOptions(
+        result.items.filter(company => !alreadyCovered.has(company.id))
+      );
+    } catch (cause) {
+      setCoverageError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível buscar as empresas disponíveis."
+      );
+    } finally {
+      setCompanyLoading(false);
+    }
+  }
+
   async function addCoverage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const id = companyId.trim();
     if (!id) {
-      setCoverageError("Informe o identificador da empresa.");
+      setCoverageError("Selecione uma empresa-alvo.");
       return;
     }
     setCoverageError("");
@@ -310,11 +359,37 @@ export function TerritoryDetailPanel({
             className="sales-report__filters"
           >
             <label>
-              <span>ID da empresa (UUID)</span>
+              <span>Buscar empresa</span>
               <input
+                type="search"
+                value={companyQuery}
+                placeholder="Razão social, nome fantasia ou documento"
+                onChange={event => setCompanyQuery(event.target.value)}
+              />
+            </label>
+            <button
+              type="button"
+              disabled={companyLoading}
+              onClick={() => void searchCompanies()}
+            >
+              {companyLoading ? "Buscando..." : "Buscar"}
+            </button>
+            <label>
+              <span>Empresa-alvo</span>
+              <select
+                aria-label="Empresa-alvo"
                 value={companyId}
                 onChange={event => setCompanyId(event.target.value)}
-              />
+              >
+                <option value="">Selecione uma empresa</option>
+                {companyOptions.map(company => (
+                  <option key={company.id} value={company.id}>
+                    {company.tradeName
+                      ? `${company.tradeName} — ${company.legalName}`
+                      : company.legalName}
+                  </option>
+                ))}
+              </select>
             </label>
             <button type="submit">Adicionar</button>
           </form>
