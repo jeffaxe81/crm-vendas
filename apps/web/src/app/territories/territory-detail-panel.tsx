@@ -489,7 +489,7 @@ export function TerritoryDetailPanel({
               <tbody>
                 {quotas.map(quota => (
                   <tr key={quota.id}>
-                    <td>{quota.period}</td>
+                    <td>{quotaPeriodLabel(quota)}</td>
                     <td>{quota.year}</td>
                     <td>{formatCurrency(quota.amount)}</td>
                     <td>{formatCurrency(quota.actual)}</td>
@@ -509,15 +509,47 @@ export function TerritoryDetailPanel({
               <span>Período</span>
               <select
                 value={quotaPeriod}
-                onChange={event =>
-                  setQuotaPeriod(event.target.value as Quota["period"])
-                }
+                onChange={event => {
+                  const next = event.target.value as Quota["period"];
+                  setQuotaPeriod(next);
+                  setQuotaPeriodIndex(next === "YEAR" ? "0" : "1");
+                }}
               >
                 <option value="MONTH">Mensal</option>
                 <option value="QUARTER">Trimestral</option>
                 <option value="YEAR">Anual</option>
               </select>
             </label>
+            {quotaPeriod === "MONTH" ? (
+              <label>
+                <span>Mês</span>
+                <select
+                  value={quotaPeriodIndex}
+                  onChange={event => setQuotaPeriodIndex(event.target.value)}
+                >
+                  {MONTH_LABELS.map((label, index) => (
+                    <option key={label} value={String(index + 1)}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+            {quotaPeriod === "QUARTER" ? (
+              <label>
+                <span>Trimestre</span>
+                <select
+                  value={quotaPeriodIndex}
+                  onChange={event => setQuotaPeriodIndex(event.target.value)}
+                >
+                  {[1, 2, 3, 4].map(index => (
+                    <option key={index} value={String(index)}>
+                      {index}º trimestre
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
             <label>
               <span>Ano</span>
               <input
@@ -532,6 +564,14 @@ export function TerritoryDetailPanel({
                 inputMode="decimal"
                 value={quotaAmount}
                 onChange={event => setQuotaAmount(event.target.value)}
+              />
+            </label>
+            <label>
+              <span>Realizado</span>
+              <input
+                inputMode="decimal"
+                value={quotaActual}
+                onChange={event => setQuotaActual(event.target.value)}
               />
             </label>
             <button type="submit">Salvar cota</button>
