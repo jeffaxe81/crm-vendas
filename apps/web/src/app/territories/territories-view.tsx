@@ -34,6 +34,15 @@ type TerritoryForm = {
 
 const emptyForm: TerritoryForm = { name: "", region: "", description: "" };
 
+const PAGE_SIZE = 50;
+
+type TerritoryListResponse = {
+  items: TerritoryRecord[];
+  page: number;
+  limit: number;
+  total: number;
+};
+
 /** C4.1.6 — territórios comerciais, cobertura e cotas. */
 export function TerritoriesView({
   accessToken,
@@ -42,6 +51,8 @@ export function TerritoriesView({
   const [territories, setTerritories] = useState<TerritoryRecord[]>([]);
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
@@ -61,14 +72,20 @@ export function TerritoriesView({
     async function load() {
       setLoading(true);
       setError("");
-      const params = new URLSearchParams({ page: "1", limit: "100" });
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(PAGE_SIZE),
+      });
       if (query) params.set("q", query);
       try {
-        const result = await apiRequest<{ items: TerritoryRecord[] }>(
+        const result = await apiRequest<TerritoryListResponse>(
           `/territories?${params.toString()}`,
           { accessToken }
         );
-        if (active) setTerritories(result.items);
+        if (active) {
+          setTerritories(result.items);
+          setTotal(result.total);
+        }
       } catch (cause) {
         if (active) {
           setError(
@@ -85,7 +102,7 @@ export function TerritoriesView({
     return () => {
       active = false;
     };
-  }, [accessToken, query, refresh]);
+  }, [accessToken, page, query, refresh]);
 
   function openCreate() {
     setError("");
@@ -262,6 +279,7 @@ export function TerritoriesView({
         role="search"
         onSubmit={event => {
           event.preventDefault();
+          setPage(1);
           setQuery(queryInput.trim());
         }}
       >
@@ -401,12 +419,13 @@ export function TerritoriesView({
       ) : null}
 
       {!loading && territories.length > 0 ? (
-        <div
-          className="company-import__table-wrapper"
-          role="region"
-          aria-label="Tabela: Territórios"
-          tabIndex={0}
-        >
+        <>
+          <div
+            className="company-import__table-wrapper"
+            role="region"
+            aria-label="Tabela: Territórios"
+            tabIndex={0}
+          >
           <table>
             <thead>
               <tr>
@@ -478,8 +497,35 @@ export function TerritoriesView({
                 </Fragment>
               ))}
             </tbody>
-          </table>
-        </div>
+            </table>
+          </div>
+          <nav className="crm-pagination" aria-label="Paginação de territórios">
+            <button
+              type="button"
+              disabled={page <= 1 || loading}
+              onClick={() => {
+                setExpandedId(null);
+                setPage(current => Math.max(1, current - 1));
+              }}
+            >
+              Anterior
+            </button>
+            <span>
+              Página {page} de {Math.max(1, Math.ceil(total / PAGE_SIZE))} ·{" "}
+              {total} território(s)
+            </span>
+            <button
+              type="button"
+              disabled={page * PAGE_SIZE >= total || loading}
+              onClick={() => {
+                setExpandedId(null);
+                setPage(current => current + 1);
+              }}
+            >
+              Próxima
+            </button>
+          </nav>
+        </>
       ) : null}
     </section>
   );
