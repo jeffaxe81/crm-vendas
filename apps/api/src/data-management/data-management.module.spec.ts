@@ -5,6 +5,7 @@ import { BackupWorkerRunner } from "./backup-worker.runner";
 import { BackupWorkerRuntime } from "./backup-worker.runtime";
 import { DataManagementModule } from "./data-management.module";
 import { DataOperationWorker } from "./data-operation.worker";
+import { DataPreviewService } from "./data-preview.service";
 
 describe("data management backup worker wiring", () => {
   it("registers the schedule, durable worker, runner and runtime in Nest", () => {
@@ -20,6 +21,7 @@ describe("data management backup worker wiring", () => {
 
     expect(providers).toContain(BackupScheduleService);
     expect(providers).toContain(DataOperationWorker);
+    expect(providers).toContain(DataPreviewService);
     expect(
       providers.some(
         provider =>

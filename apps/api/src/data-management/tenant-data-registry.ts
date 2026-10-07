@@ -48,6 +48,12 @@ export const TENANT_DATA_REGISTRY: readonly TenantDataPolicy[] = [
     restore: "PRESERVE",
   },
   {
+    ...full("OperationPreview", "operation_previews", "SECURITY"),
+    export: "EXCLUDE",
+    restore: "PRESERVE",
+  },
+
+  {
     ...full("BackupSchedule", "backup_schedules", "SECURITY"),
     export: "EXCLUDE",
     restore: "PRESERVE",

@@ -56,6 +56,8 @@ describe("backup inventory coverage", () => {
       TENANT_DATA_REGISTRY.find(entry => entry.model === model)!;
     expect(policy("RefreshSession").export).toBe("EXCLUDE");
     expect(policy("RefreshSession").restore).toBe("PRESERVE_AND_REVOKE");
+    expect(policy("OperationPreview").export).toBe("EXCLUDE");
+    expect(policy("OperationPreview").restore).toBe("PRESERVE");
     expect(policy("AuditLog").restore).toBe("PRESERVE");
     expect(policy("User").fields).toEqual(["id", "email", "displayName"]);
     expect(policy("User").restore).toBe("REFERENCES");

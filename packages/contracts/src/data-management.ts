@@ -46,3 +46,32 @@ export const BackupRecordSchema = z
 export type BackupManifest = z.infer<typeof BackupManifestSchema>;
 export type BackupRecord = z.infer<typeof BackupRecordSchema>;
 export type BackupReason = z.infer<typeof BackupReasonSchema>;
+
+export const DataOperationKindSchema = z.enum(["BACKUP", "RESTORE", "DELETE"]);
+export const OperationPreviewKindSchema = z.enum(["RESTORE", "DELETE"]);
+export const OperationPreviewSchema = z
+  .object({
+    id: z.string().uuid(),
+    organizationId: z.string().uuid(),
+    actorUserId: z.string().uuid(),
+    kind: OperationPreviewKindSchema,
+    targetBackupId: z.string().uuid().nullable(),
+    targetChecksum: checksum.nullable(),
+    currentFingerprint: checksum,
+    targetSchemaVersion: z.number().int().positive().nullable(),
+    targetByteCount: z
+      .number()
+      .int()
+      .nonnegative()
+      .max(Number.MAX_SAFE_INTEGER)
+      .nullable(),
+    targetCounts: z.record(z.string(), z.number().int().nonnegative()),
+    currentCounts: z.record(z.string(), z.number().int().nonnegative()),
+    createdAt: z.string().datetime(),
+    expiresAt: z.string().datetime(),
+  })
+  .strict();
+
+export type DataOperationKind = z.infer<typeof DataOperationKindSchema>;
+export type OperationPreviewKind = z.infer<typeof OperationPreviewKindSchema>;
+export type OperationPreview = z.infer<typeof OperationPreviewSchema>;

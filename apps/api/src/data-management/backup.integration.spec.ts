@@ -136,7 +136,7 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
       "id",
     ]);
     expect(backup.bytes.toString()).not.toMatch(
-      /passwordHash|keyHash|isSuperuser|synthetic-do-not-export|synthetic-key-hash|Private B|RefreshSession|BackupRecord|DataOperation/
+      /passwordHash|keyHash|isSuperuser|synthetic-do-not-export|synthetic-key-hash|Private B|RefreshSession|BackupRecord|OperationPreview|DataOperation/
     );
     expect(record.byteCount).toBe(backup.bytes.length);
     expect(record.counts).toEqual(backup.manifest.counts);
