@@ -437,10 +437,9 @@ describe("C4.1.6 territories API", () => {
       .expect(200);
 
     expect(quotas.body).toHaveLength(2);
-    expect(quotas.body.map((quota: { periodIndex: number }) => quota.periodIndex)).toEqual([
-      1,
-      2,
-    ]);
+    expect(
+      quotas.body.map((quota: { periodIndex: number }) => quota.periodIndex)
+    ).toEqual([1, 2]);
 
     await request(app.getHttpServer())
       .post(`/api/v1/territories/${territory.id}/quotas`)
