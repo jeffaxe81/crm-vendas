@@ -335,7 +335,8 @@ export class OpportunitiesService {
         if (currentStage.kind !== "OPEN") {
           throw new ConflictException({
             code: "OPPORTUNITY_ALREADY_CLOSED",
-            message: "Oportunidades ganhas ou perdidas não podem ser reabertas.",
+            message:
+              "Oportunidades ganhas ou perdidas não podem ser reabertas.",
           });
         }
 
