@@ -35,6 +35,37 @@ afterEach(() => {
 });
 
 describe("C4.1.6 territories view", () => {
+  it("returns to the previous page after deleting its final record", async () => {
+    let deleted = false;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string | URL, init?: RequestInit) => {
+        if (init?.method === "DELETE") {
+          deleted = true;
+          return response(null, 204);
+        }
+        const page = new URL(String(input)).searchParams.get("page");
+        return response({
+          items:
+            page === "2"
+              ? deleted
+                ? []
+                : [territory]
+              : [{ ...territory, id: "remaining", name: "Registro restante" }],
+          total: deleted ? 50 : 51,
+        });
+      })
+    );
+    render(<TerritoriesView accessToken="token" canWrite />);
+    await screen.findByText(/Registro restante/);
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Excluir Território Norte" })
+    );
+    expect(await screen.findByText(/Registro restante/)).toBeVisible();
+    expect(screen.queryByText(/Território Norte/)).not.toBeInTheDocument();
+  });
+
   it("lists territories and creates a new one", async () => {
     const fetchMock = vi
       .fn()
@@ -75,6 +106,39 @@ describe("C4.1.6 territories view", () => {
       name: "Território Sul",
       region: "Sul",
     });
+  });
+
+  it("navigates through server-side territory pages", async () => {
+    const secondPage = {
+      ...territory,
+      id: "t-51",
+      name: "Território 51",
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        response({ items: [territory], page: 1, limit: 50, total: 51 })
+      )
+      .mockResolvedValueOnce(
+        response({ items: [secondPage], page: 2, limit: 50, total: 51 })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<TerritoriesView accessToken="token" canWrite />);
+
+    await screen.findByText(/Território Norte/);
+    expect(screen.getByText(/Página 1 de 2/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+
+    expect(await screen.findByText(/Território 51/)).toBeInTheDocument();
+    expect(screen.getByText(/Página 2 de 2/)).toBeInTheDocument();
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain(
+      "/territories?page=1&limit=50"
+    );
+    expect(String(fetchMock.mock.calls[1]?.[0])).toContain(
+      "/territories?page=2&limit=50"
+    );
   });
 
   it("reassigns a sales rep by display name", async () => {
@@ -131,7 +195,8 @@ describe("C4.1.6 territories view", () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(response({ items: [territory], total: 1 }))
-      .mockResolvedValueOnce(response(null, 204));
+      .mockResolvedValueOnce(response(null, 204))
+      .mockResolvedValueOnce(response({ items: [], total: 0 }));
     vi.stubGlobal("fetch", fetchMock);
 
     render(<TerritoriesView accessToken="token" canWrite />);
@@ -152,7 +217,7 @@ describe("C4.1.6 territories view", () => {
   it("expands a territory to show coverage, quotas and metrics", async () => {
     const fetchMock = vi.fn(async (input: string | URL) => {
       const url = String(input);
-      if (url.endsWith("/territories?page=1&limit=100")) {
+      if (url.endsWith("/territories?page=1&limit=50")) {
         return response({ items: [territory], total: 1 });
       }
       if (url.includes("/metrics")) {

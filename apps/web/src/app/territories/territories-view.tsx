@@ -34,6 +34,15 @@ type TerritoryForm = {
 
 const emptyForm: TerritoryForm = { name: "", region: "", description: "" };
 
+const PAGE_SIZE = 50;
+
+type TerritoryListResponse = {
+  items: TerritoryRecord[];
+  page: number;
+  limit: number;
+  total: number;
+};
+
 /** C4.1.6 — territórios comerciais, cobertura e cotas. */
 export function TerritoriesView({
   accessToken,
@@ -42,6 +51,8 @@ export function TerritoriesView({
   const [territories, setTerritories] = useState<TerritoryRecord[]>([]);
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
@@ -61,14 +72,22 @@ export function TerritoriesView({
     async function load() {
       setLoading(true);
       setError("");
-      const params = new URLSearchParams({ page: "1", limit: "100" });
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(PAGE_SIZE),
+      });
       if (query) params.set("q", query);
       try {
-        const result = await apiRequest<{ items: TerritoryRecord[] }>(
+        const result = await apiRequest<TerritoryListResponse>(
           `/territories?${params.toString()}`,
           { accessToken }
         );
-        if (active) setTerritories(result.items);
+        if (active) {
+          setTerritories(result.items);
+          setTotal(result.total);
+          const lastPage = Math.max(1, Math.ceil(result.total / PAGE_SIZE));
+          if (page > lastPage) setPage(lastPage);
+        }
       } catch (cause) {
         if (active) {
           setError(
@@ -85,7 +104,7 @@ export function TerritoriesView({
     return () => {
       active = false;
     };
-  }, [accessToken, query, refresh]);
+  }, [accessToken, page, query, refresh]);
 
   function openCreate() {
     setError("");
@@ -157,9 +176,10 @@ export function TerritoriesView({
         accessToken,
         method: "DELETE",
       });
-      setTerritories(current =>
-        current.filter(item => item.id !== territory.id)
-      );
+      if (territories.length === 1 && page > 1) {
+        setPage(current => current - 1);
+      }
+      setRefresh(current => current + 1);
       if (expandedId === territory.id) {
         setExpandedId(null);
       }
@@ -262,6 +282,7 @@ export function TerritoriesView({
         role="search"
         onSubmit={event => {
           event.preventDefault();
+          setPage(1);
           setQuery(queryInput.trim());
         }}
       >
@@ -401,85 +422,115 @@ export function TerritoriesView({
       ) : null}
 
       {!loading && territories.length > 0 ? (
-        <div
-          className="company-import__table-wrapper"
-          role="region"
-          aria-label="Tabela: Territórios"
-          tabIndex={0}
-        >
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Região</th>
-                <th>Vendedor</th>
-                {canWrite ? <th aria-label="Ações" /> : null}
-              </tr>
-            </thead>
-            <tbody>
-              {territories.map(territory => (
-                <Fragment key={territory.id}>
-                  <tr>
-                    <td>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setExpandedId(current =>
-                            current === territory.id ? null : territory.id
-                          )
-                        }
-                      >
-                        {expandedId === territory.id ? "▾" : "▸"}{" "}
-                        {territory.name}
-                      </button>
-                    </td>
-                    <td>{territory.region}</td>
-                    <td>
-                      {territory.salesRep?.displayName ??
-                        (territory.salesRepId ? "Vendedor indisponível" : "—")}
-                    </td>
-                    {canWrite ? (
+        <>
+          <div
+            className="company-import__table-wrapper"
+            role="region"
+            aria-label="Tabela: Territórios"
+            tabIndex={0}
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Região</th>
+                  <th>Vendedor</th>
+                  {canWrite ? <th aria-label="Ações" /> : null}
+                </tr>
+              </thead>
+              <tbody>
+                {territories.map(territory => (
+                  <Fragment key={territory.id}>
+                    <tr>
                       <td>
                         <button
                           type="button"
-                          onClick={() => openEdit(territory)}
-                          aria-label={`Editar ${territory.name}`}
+                          onClick={() =>
+                            setExpandedId(current =>
+                              current === territory.id ? null : territory.id
+                            )
+                          }
                         >
-                          Editar
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => openReassign(territory)}
-                          aria-label={`Atribuir vendedor a ${territory.name}`}
-                        >
-                          Atribuir vendedor
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void remove(territory)}
-                          aria-label={`Excluir ${territory.name}`}
-                        >
-                          Excluir
+                          {expandedId === territory.id ? "▾" : "▸"}{" "}
+                          {territory.name}
                         </button>
                       </td>
-                    ) : null}
-                  </tr>
-                  {expandedId === territory.id ? (
-                    <tr>
-                      <td colSpan={canWrite ? 4 : 3}>
-                        <TerritoryDetailPanel
-                          accessToken={accessToken}
-                          territoryId={territory.id}
-                          canWrite={canWrite}
-                        />
+                      <td>{territory.region}</td>
+                      <td>
+                        {territory.salesRep?.displayName ??
+                          (territory.salesRepId
+                            ? "Vendedor indisponível"
+                            : "—")}
                       </td>
+                      {canWrite ? (
+                        <td>
+                          <button
+                            type="button"
+                            onClick={() => openEdit(territory)}
+                            aria-label={`Editar ${territory.name}`}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openReassign(territory)}
+                            aria-label={`Atribuir vendedor a ${territory.name}`}
+                          >
+                            Atribuir vendedor
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void remove(territory)}
+                            aria-label={`Excluir ${territory.name}`}
+                          >
+                            Excluir
+                          </button>
+                        </td>
+                      ) : null}
                     </tr>
-                  ) : null}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    {expandedId === territory.id ? (
+                      <tr>
+                        <td colSpan={canWrite ? 4 : 3}>
+                          <TerritoryDetailPanel
+                            accessToken={accessToken}
+                            territoryId={territory.id}
+                            canWrite={canWrite}
+                          />
+                        </td>
+                      </tr>
+                    ) : null}
+                  </Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <nav className="crm-pagination" aria-label="Paginação de territórios">
+            <button
+              type="button"
+              disabled={page <= 1 || loading}
+              onClick={() => {
+                setExpandedId(null);
+                setPage(current => Math.max(1, current - 1));
+              }}
+            >
+              Anterior
+            </button>
+            <span>
+              Página {page} de {Math.max(1, Math.ceil(total / PAGE_SIZE))} ·{" "}
+              {total} território(s)
+            </span>
+            <button
+              type="button"
+              disabled={page * PAGE_SIZE >= total || loading}
+              onClick={() => {
+                setExpandedId(null);
+                setPage(current => current + 1);
+              }}
+            >
+              Próxima
+            </button>
+          </nav>
+        </>
       ) : null}
     </section>
   );
