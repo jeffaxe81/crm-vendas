@@ -3,6 +3,7 @@
 import type {
   OpportunityCreateInput,
   OpportunityMoveInput,
+  OpportunityUpdateInput,
 } from "@axes/contracts";
 import { FormEvent, useEffect, useState } from "react";
 
@@ -41,10 +42,13 @@ type ContactOption = {
   fullName: string;
 };
 
+type StageKind = "OPEN" | "WON" | "LOST";
+
 type StageOption = {
   id: string;
   name: string;
   position: number;
+  kind: StageKind;
 };
 
 type PipelineOption = {
@@ -89,9 +93,45 @@ const emptyForm: OpportunityFormState = {
   notes: "",
 };
 
+type OpportunityEditFormState = {
+  title: string;
+  customer: string;
+  estimatedValue: string;
+  expectedCloseAt: string;
+  notes: string;
+};
+
+const emptyEditForm: OpportunityEditFormState = {
+  title: "",
+  customer: "",
+  estimatedValue: "",
+  expectedCloseAt: "",
+  notes: "",
+};
+
 const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
   dateStyle: "short",
 });
+
+function toDateTimeLocal(value: string | null): string {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return local.toISOString().slice(0, 16);
+}
+
+function stageStatusLabel(kind?: StageKind): string {
+  if (kind === "WON") {
+    return "Ganha";
+  }
+  if (kind === "LOST") {
+    return "Perdida";
+  }
+  return "Aberta";
+}
 
 export function OpportunitiesView({
   accessToken,
@@ -122,6 +162,14 @@ export function OpportunitiesView({
   );
   const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
   const [boardPipelineId, setBoardPipelineId] = useState("");
+  const [selectedOpportunityId, setSelectedOpportunityId] = useState<
+    string | null
+  >(null);
+  const [editingOpportunityId, setEditingOpportunityId] = useState<
+    string | null
+  >(null);
+  const [editForm, setEditForm] =
+    useState<OpportunityEditFormState>(emptyEditForm);
 
   const selectedPipeline = pipelines.find(
     pipeline => pipeline.id === form.pipelineId
@@ -185,12 +233,6 @@ export function OpportunitiesView({
   useEffect(() => {
     let active = true;
 
-    if (!canMove && viewMode !== "kanban") {
-      return () => {
-        active = false;
-      };
-    }
-
     async function loadPipelines() {
       try {
         const result = await apiRequest<PipelineOption[]>("/pipelines", {
@@ -215,7 +257,7 @@ export function OpportunitiesView({
     return () => {
       active = false;
     };
-  }, [accessToken, canMove, viewMode]);
+  }, [accessToken]);
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -318,6 +360,15 @@ export function OpportunitiesView({
       return;
     }
 
+    const pipeline = pipelines.find(item => item.id === opportunity.pipelineId);
+    const currentStage = pipeline?.stages.find(
+      stage => stage.id === opportunity.stageId
+    );
+    if (currentStage && currentStage.kind !== "OPEN") {
+      setError("Oportunidades ganhas ou perdidas não podem ser reabertas.");
+      return;
+    }
+
     const stageId = stageSelections[opportunity.id] ?? opportunity.stageId;
     if (stageId === opportunity.stageId) {
       return;
@@ -354,6 +405,159 @@ export function OpportunitiesView({
       );
     } finally {
       setMovingOpportunityId(null);
+    }
+  }
+
+  async function loadCustomers() {
+    const [companyResult, contactResult] = await Promise.all([
+      apiRequest<ListResponse<CompanyOption>>("/companies?page=1&limit=100", {
+        accessToken,
+      }),
+      apiRequest<ListResponse<ContactOption>>("/contacts?page=1&limit=100", {
+        accessToken,
+      }),
+    ]);
+    setCompanies(companyResult.items);
+    setContacts(contactResult.items);
+  }
+
+  async function toggleDetails(opportunity: OpportunityRecord) {
+    if (selectedOpportunityId === opportunity.id) {
+      setSelectedOpportunityId(null);
+      return;
+    }
+
+    setSelectedOpportunityId(opportunity.id);
+    if (companies.length === 0 && contacts.length === 0) {
+      try {
+        await loadCustomers();
+      } catch (cause) {
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Não foi possível carregar os dados do cliente."
+        );
+      }
+    }
+  }
+
+  async function openEdit(opportunity: OpportunityRecord) {
+    if (!canWrite) {
+      return;
+    }
+
+    setError("");
+    setEditingOpportunityId(opportunity.id);
+    setEditForm({
+      title: opportunity.title,
+      customer: opportunity.companyId
+        ? `company:${opportunity.companyId}`
+        : opportunity.contactId
+          ? `contact:${opportunity.contactId}`
+          : "",
+      estimatedValue: opportunity.estimatedValue,
+      expectedCloseAt: toDateTimeLocal(opportunity.expectedCloseAt),
+      notes: opportunity.notes ?? "",
+    });
+
+    try {
+      await loadCustomers();
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível carregar os dados para edição."
+      );
+    }
+  }
+
+  async function submitEdit(
+    event: FormEvent<HTMLFormElement>,
+    opportunity: OpportunityRecord
+  ) {
+    event.preventDefault();
+
+    if (!canWrite || submitting) {
+      return;
+    }
+
+    const title = editForm.title.trim();
+    const estimatedValue = editForm.estimatedValue.trim();
+    const [customerType, customerId] = editForm.customer.split(":", 2);
+
+    if (!title || !estimatedValue || !customerId) {
+      setError("Preencha os campos obrigatórios da oportunidade.");
+      return;
+    }
+
+    const payload: OpportunityUpdateInput = {
+      version: opportunity.version,
+    };
+
+    if (title !== opportunity.title) {
+      payload.title = title;
+    }
+
+    const originalCustomer = opportunity.companyId
+      ? `company:${opportunity.companyId}`
+      : opportunity.contactId
+        ? `contact:${opportunity.contactId}`
+        : "";
+    if (editForm.customer !== originalCustomer) {
+      if (customerType === "company") {
+        payload.companyId = customerId;
+        payload.contactId = null;
+      } else {
+        payload.companyId = null;
+        payload.contactId = customerId;
+      }
+    }
+
+    if (estimatedValue !== opportunity.estimatedValue) {
+      payload.estimatedValue = estimatedValue;
+    }
+
+    if (editForm.expectedCloseAt !== toDateTimeLocal(opportunity.expectedCloseAt)) {
+      payload.expectedCloseAt = editForm.expectedCloseAt
+        ? new Date(editForm.expectedCloseAt).toISOString()
+        : null;
+    }
+
+    const notes = editForm.notes.trim() || null;
+    if (notes !== opportunity.notes) {
+      payload.notes = notes;
+    }
+
+    if (Object.keys(payload).length === 1) {
+      setError("Altere pelo menos um campo antes de salvar.");
+      return;
+    }
+
+    setError("");
+    setSubmitting(true);
+
+    try {
+      const updated = await apiRequest<OpportunityRecord>(
+        `/opportunities/${opportunity.id}`,
+        {
+          accessToken,
+          method: "PATCH",
+          body: payload,
+        }
+      );
+      setOpportunities(current =>
+        current.map(item => (item.id === updated.id ? updated : item))
+      );
+      setEditingOpportunityId(null);
+      setEditForm(emptyEditForm);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível editar a oportunidade."
+      );
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -593,12 +797,37 @@ export function OpportunitiesView({
             const selectedStageId =
               stageSelections[opportunity.id] ?? opportunity.stageId;
             const isMoving = movingOpportunityId === opportunity.id;
+            const currentStage = opportunityPipeline?.stages.find(
+              stage => stage.id === opportunity.stageId
+            );
+            const isTerminal =
+              currentStage?.kind === "WON" || currentStage?.kind === "LOST";
+            const company = companies.find(
+              item => item.id === opportunity.companyId
+            );
+            const contact = contacts.find(
+              item => item.id === opportunity.contactId
+            );
+            const customerName = opportunity.companyId
+              ? company?.tradeName || company?.legalName || "Empresa vinculada"
+              : contact?.fullName || "Contato vinculado";
 
             return (
               <li key={opportunity.id} className="opportunity-card">
                 <article>
-                  <p className="opportunity-card__eyebrow">Oportunidade</p>
-                  <h2>{opportunity.title}</h2>
+                  <div className="opportunity-card__heading">
+                    <div>
+                      <p className="opportunity-card__eyebrow">Oportunidade</p>
+                      <h2>{opportunity.title}</h2>
+                    </div>
+                    <span
+                      className={`opportunity-status opportunity-status--${(
+                        currentStage?.kind ?? "OPEN"
+                      ).toLowerCase()}`}
+                    >
+                      {stageStatusLabel(currentStage?.kind)}
+                    </span>
+                  </div>
                   <dl>
                     <div>
                       <dt>Valor estimado</dt>
@@ -615,7 +844,7 @@ export function OpportunitiesView({
                       </dd>
                     </div>
                   </dl>
-                  {canMove && opportunityPipeline ? (
+                  {canMove && opportunityPipeline && !isTerminal ? (
                     <div className="opportunity-card__stage">
                       <label>
                         <span>Etapa</span>
@@ -648,19 +877,206 @@ export function OpportunitiesView({
                       </button>
                     </div>
                   ) : null}
-                  <button
-                    type="button"
-                    aria-expanded={itemsOpportunityId === opportunity.id}
-                    onClick={() =>
-                      setItemsOpportunityId(current =>
-                        current === opportunity.id ? null : opportunity.id
-                      )
-                    }
-                  >
-                    {itemsOpportunityId === opportunity.id
-                      ? "Ocultar itens"
-                      : "Itens"}
-                  </button>
+                  {isTerminal ? (
+                    <p className="opportunity-card__terminal-note">
+                      Oportunidade encerrada em {currentStage?.name}.
+                    </p>
+                  ) : null}
+
+                  <div className="opportunity-card__actions">
+                    <button
+                      type="button"
+                      aria-expanded={selectedOpportunityId === opportunity.id}
+                      onClick={() => void toggleDetails(opportunity)}
+                    >
+                      {selectedOpportunityId === opportunity.id
+                        ? "Ocultar detalhes"
+                        : "Ver detalhes"}
+                    </button>
+                    {canWrite ? (
+                      <button
+                        type="button"
+                        aria-expanded={editingOpportunityId === opportunity.id}
+                        onClick={() => void openEdit(opportunity)}
+                      >
+                        {editingOpportunityId === opportunity.id
+                          ? "Editando"
+                          : "Editar"}
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      aria-expanded={itemsOpportunityId === opportunity.id}
+                      onClick={() =>
+                        setItemsOpportunityId(current =>
+                          current === opportunity.id ? null : opportunity.id
+                        )
+                      }
+                    >
+                      {itemsOpportunityId === opportunity.id
+                        ? "Ocultar itens"
+                        : "Itens"}
+                    </button>
+                  </div>
+
+                  {selectedOpportunityId === opportunity.id ? (
+                    <section
+                      className="opportunity-card__details"
+                      aria-label={`Detalhes de ${opportunity.title}`}
+                    >
+                      <dl>
+                        <div>
+                          <dt>Cliente</dt>
+                          <dd>{customerName}</dd>
+                        </div>
+                        <div>
+                          <dt>Funil</dt>
+                          <dd>{opportunityPipeline?.name ?? "Não identificado"}</dd>
+                        </div>
+                        <div>
+                          <dt>Etapa</dt>
+                          <dd>{currentStage?.name ?? "Não identificada"}</dd>
+                        </div>
+                        <div>
+                          <dt>Responsável</dt>
+                          <dd>
+                            {opportunity.ownerUserId === ownerUserId
+                              ? "Você"
+                              : "Outro usuário"}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Atualizada em</dt>
+                          <dd>{dateFormatter.format(new Date(opportunity.updatedAt))}</dd>
+                        </div>
+                      </dl>
+                      <div>
+                        <strong>Observações</strong>
+                        <p>{opportunity.notes || "Sem observações."}</p>
+                      </div>
+                    </section>
+                  ) : null}
+
+                  {canWrite && editingOpportunityId === opportunity.id ? (
+                    <form
+                      className="opportunity-card__edit"
+                      aria-label={`Editar ${opportunity.title}`}
+                      onSubmit={event => void submitEdit(event, opportunity)}
+                    >
+                      <label>
+                        <span>Título</span>
+                        <input
+                          type="text"
+                          value={editForm.title}
+                          onChange={event =>
+                            setEditForm(current => ({
+                              ...current,
+                              title: event.target.value,
+                            }))
+                          }
+                          required
+                        />
+                      </label>
+                      <label>
+                        <span>Cliente</span>
+                        <select
+                          value={editForm.customer}
+                          onChange={event =>
+                            setEditForm(current => ({
+                              ...current,
+                              customer: event.target.value,
+                            }))
+                          }
+                          required
+                        >
+                          <option value="">Selecione o cliente</option>
+                          {companies.length > 0 ? (
+                            <optgroup label="Empresas">
+                              {companies.map(item => (
+                                <option
+                                  key={item.id}
+                                  value={`company:${item.id}`}
+                                >
+                                  {item.tradeName || item.legalName}
+                                </option>
+                              ))}
+                            </optgroup>
+                          ) : null}
+                          {contacts.length > 0 ? (
+                            <optgroup label="Contatos">
+                              {contacts.map(item => (
+                                <option
+                                  key={item.id}
+                                  value={`contact:${item.id}`}
+                                >
+                                  {item.fullName}
+                                </option>
+                              ))}
+                            </optgroup>
+                          ) : null}
+                        </select>
+                      </label>
+                      <label>
+                        <span>Valor estimado</span>
+                        <input
+                          inputMode="decimal"
+                          value={editForm.estimatedValue}
+                          onChange={event =>
+                            setEditForm(current => ({
+                              ...current,
+                              estimatedValue: event.target.value,
+                            }))
+                          }
+                          required
+                        />
+                      </label>
+                      <label>
+                        <span>Previsão de fechamento</span>
+                        <input
+                          type="datetime-local"
+                          value={editForm.expectedCloseAt}
+                          onChange={event =>
+                            setEditForm(current => ({
+                              ...current,
+                              expectedCloseAt: event.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        <span>Observações</span>
+                        <textarea
+                          value={editForm.notes}
+                          onChange={event =>
+                            setEditForm(current => ({
+                              ...current,
+                              notes: event.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+                      <div className="opportunity-card__actions">
+                        <button
+                          className="button"
+                          type="submit"
+                          disabled={submitting}
+                        >
+                          {submitting ? "Salvando..." : "Salvar alterações"}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={submitting}
+                          onClick={() => {
+                            setEditingOpportunityId(null);
+                            setEditForm(emptyEditForm);
+                          }}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </form>
+                  ) : null}
+
                   {itemsOpportunityId === opportunity.id ? (
                     <OpportunityItemsPanel
                       accessToken={accessToken}
@@ -715,11 +1131,14 @@ export function OpportunitiesView({
                 return (
                   <section
                     key={stage.id}
-                    className="opportunities-view__kanban-column"
+                    className={`opportunities-view__kanban-column opportunities-view__kanban-column--${stage.kind.toLowerCase()}`}
                     aria-labelledby={`pipeline-stage-${stage.id}`}
                   >
                     <header>
-                      <h2 id={`pipeline-stage-${stage.id}`}>{stage.name}</h2>
+                      <div>
+                        <h2 id={`pipeline-stage-${stage.id}`}>{stage.name}</h2>
+                        <small>{stageStatusLabel(stage.kind)}</small>
+                      </div>
                       <span>{stageOpportunities.length}</span>
                     </header>
 
@@ -749,7 +1168,13 @@ export function OpportunitiesView({
                                     : "Sem previsão"}
                                 </span>
 
-                                {canMove ? (
+                                <span
+                                  className={`opportunity-status opportunity-status--${stage.kind.toLowerCase()}`}
+                                >
+                                  {stageStatusLabel(stage.kind)}
+                                </span>
+
+                                {canMove && stage.kind === "OPEN" ? (
                                   <div className="opportunity-card__stage">
                                     <label>
                                       <span>Etapa</span>
