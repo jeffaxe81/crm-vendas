@@ -8,7 +8,6 @@
 - cobertura de empresas passa a permitir busca e seleção por razão social/nome fantasia/documento, sem digitação manual de UUID;
 - adicionada cobertura automatizada Web e API para os fluxos corrigidos.
 
-
 ## [Unreleased] - Complemento do Ciclo 3 no app de Oportunidades
 
 - Web: detalhe expandido da oportunidade com cliente, funil, etapa, responsável, atualização e observações;
