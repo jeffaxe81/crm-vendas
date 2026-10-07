@@ -11,7 +11,14 @@ export type TerritoryRecord = {
   region: string;
   description: string | null;
   salesRepId: string | null;
+  salesRep?: { id: string; displayName: string } | null;
   version: number;
+};
+
+type SalesRepOption = {
+  id: string;
+  displayName: string;
+  role: "ADMIN" | "MANAGER" | "SELLER";
 };
 
 type TerritoriesViewProps = {
@@ -46,6 +53,8 @@ export function TerritoriesView({
   const [reassigning, setReassigning] = useState<TerritoryRecord | null>(null);
   const [reassignValue, setReassignValue] = useState("");
   const [reassignError, setReassignError] = useState("");
+  const [salesRepOptions, setSalesRepOptions] = useState<SalesRepOption[]>([]);
+  const [loadingSalesReps, setLoadingSalesReps] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -163,10 +172,26 @@ export function TerritoriesView({
     }
   }
 
-  function openReassign(territory: TerritoryRecord) {
+  async function openReassign(territory: TerritoryRecord) {
     setReassignError("");
     setReassignValue(territory.salesRepId ?? "");
     setReassigning(territory);
+    setLoadingSalesReps(true);
+    try {
+      const options = await apiRequest<SalesRepOption[]>(
+        "/territories/sales-reps",
+        { accessToken }
+      );
+      setSalesRepOptions(options);
+    } catch (cause) {
+      setReassignError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível carregar os vendedores disponíveis."
+      );
+    } finally {
+      setLoadingSalesReps(false);
+    }
   }
 
   async function submitReassign(event: FormEvent<HTMLFormElement>) {
@@ -183,8 +208,20 @@ export function TerritoriesView({
         `/territories/${reassigning.id}/reassign`,
         { accessToken, method: "POST", body: { salesRepId } }
       );
+      const selectedRep = salesRepOptions.find(
+        option => option.id === updated.salesRepId
+      );
       setTerritories(current =>
-        current.map(item => (item.id === updated.id ? updated : item))
+        current.map(item =>
+          item.id === updated.id
+            ? {
+                ...updated,
+                salesRep: selectedRep
+                  ? { id: selectedRep.id, displayName: selectedRep.displayName }
+                  : null,
+              }
+            : item
+        )
       );
       setReassigning(null);
     } catch (cause) {
@@ -326,11 +363,24 @@ export function TerritoriesView({
           </div>
           <div className="company-form__fields">
             <label>
-              <span>ID do vendedor (UUID)</span>
-              <input
+              <span>Vendedor</span>
+              <select
+                aria-label="Vendedor"
                 value={reassignValue}
+                disabled={loadingSalesReps}
                 onChange={event => setReassignValue(event.target.value)}
-              />
+              >
+                <option value="">
+                  {loadingSalesReps
+                    ? "Carregando vendedores..."
+                    : "Selecione um vendedor"}
+                </option>
+                {salesRepOptions.map(option => (
+                  <option key={option.id} value={option.id}>
+                    {option.displayName}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
           {reassignError ? (
@@ -384,7 +434,10 @@ export function TerritoriesView({
                       </button>
                     </td>
                     <td>{territory.region}</td>
-                    <td>{territory.salesRepId ?? "—"}</td>
+                    <td>
+                      {territory.salesRep?.displayName ??
+                        (territory.salesRepId ? "Vendedor indisponível" : "—")}
+                    </td>
                     {canWrite ? (
                       <td>
                         <button
