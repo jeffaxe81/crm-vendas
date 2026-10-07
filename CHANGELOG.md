@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased] - Auditoria funcional C4.3 — escala de Produtos
+
+- catálogo de Produtos passa a usar paginação server-side de 50 registros;
+- a busca do catálogo preserva acesso a todos os produtos, sem teto invisível de 100 itens;
+- inclusão de itens em oportunidades passa a permitir busca server-side por código ou nome do produto;
+- seletor de itens mantém uma primeira lista curta, mas produtos fora dela podem ser localizados explicitamente;
+- adicionados testes Web para paginação e busca além da primeira página.
+
+
 ## [Unreleased] - Auditoria funcional C4.1.6 — Territórios
 
 - Territory Management passa a exibir o nome do vendedor em vez do UUID;
