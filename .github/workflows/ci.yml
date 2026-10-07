@@ -108,11 +108,17 @@ jobs:
       - name: Run contracts and web tests
         run: pnpm --filter @axes/contracts --filter @axes/web test
 
-      - name: Run API tests
+      - name: Run API tests (shard 1 of 2)
         timeout-minutes: 5
         env:
           APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
-        run: pnpm --filter @axes/api test
+        run: pnpm --filter @axes/api test --shard=1/2
+
+      - name: Run API tests (shard 2 of 2)
+        timeout-minutes: 5
+        env:
+          APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
+        run: pnpm --filter @axes/api test --shard=2/2
 
       - name: Build source
         timeout-minutes: 10
