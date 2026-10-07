@@ -8,7 +8,6 @@
 - Web/API: oportunidades em etapas `WON` ou `LOST` não podem ser reabertas por movimentação de etapa;
 - Kanban: colunas e cartões passam a evidenciar estados abertos e terminais sem introduzir um segundo campo de status.
 
-
 ## [Unreleased] - Relatórios da Fase 2 (C4.4.1, C4.4.2, C4.4.3) e release candidata
 
 - C4.4.1: filtros de funil e responsável na aba Vendas por produto; `GET /api/v1/reports/sales-by-product/export` (CSV `;`, BOM, proteção contra fórmula) e `/owners`;
