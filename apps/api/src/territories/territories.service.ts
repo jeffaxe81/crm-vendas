@@ -478,11 +478,7 @@ export class TerritoriesService {
             ? { periodIndex: query.periodIndex }
             : {}),
         },
-        orderBy: [
-          { year: "desc" },
-          { period: "asc" },
-          { periodIndex: "asc" },
-        ],
+        orderBy: [{ year: "desc" }, { period: "asc" }, { periodIndex: "asc" }],
       });
     });
   }
@@ -571,9 +567,13 @@ export class TerritoriesService {
           : Math.round((coveredCount / targetCount) * 10_000) / 100;
 
       const quotaYear =
-        quotas.length === 0 ? null : Math.max(...quotas.map(quota => quota.year));
+        quotas.length === 0
+          ? null
+          : Math.max(...quotas.map(quota => quota.year));
       const quotasInLatestYear =
-        quotaYear === null ? [] : quotas.filter(quota => quota.year === quotaYear);
+        quotaYear === null
+          ? []
+          : quotas.filter(quota => quota.year === quotaYear);
       const quotaPeriod =
         (["MONTH", "QUARTER", "YEAR"] as const).find(period =>
           quotasInLatestYear.some(quota => quota.period === period)
