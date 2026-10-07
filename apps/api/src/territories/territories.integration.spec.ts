@@ -218,9 +218,9 @@ describe("C4.1.6 territories API", () => {
         }),
       ])
     );
-    expect(options.body.some((item: { id: string }) => item.id === viewer.id)).toBe(
-      false
-    );
+    expect(
+      options.body.some((item: { id: string }) => item.id === viewer.id)
+    ).toBe(false);
     expect(
       options.body.some((item: { id: string }) => item.id === orgB.user.id)
     ).toBe(false);
