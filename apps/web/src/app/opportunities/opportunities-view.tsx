@@ -517,7 +517,9 @@ export function OpportunitiesView({
       payload.estimatedValue = estimatedValue;
     }
 
-    if (editForm.expectedCloseAt !== toDateTimeLocal(opportunity.expectedCloseAt)) {
+    if (
+      editForm.expectedCloseAt !== toDateTimeLocal(opportunity.expectedCloseAt)
+    ) {
       payload.expectedCloseAt = editForm.expectedCloseAt
         ? new Date(editForm.expectedCloseAt).toISOString()
         : null;
@@ -931,7 +933,9 @@ export function OpportunitiesView({
                         </div>
                         <div>
                           <dt>Funil</dt>
-                          <dd>{opportunityPipeline?.name ?? "Não identificado"}</dd>
+                          <dd>
+                            {opportunityPipeline?.name ?? "Não identificado"}
+                          </dd>
                         </div>
                         <div>
                           <dt>Etapa</dt>
@@ -947,7 +951,11 @@ export function OpportunitiesView({
                         </div>
                         <div>
                           <dt>Atualizada em</dt>
-                          <dd>{dateFormatter.format(new Date(opportunity.updatedAt))}</dd>
+                          <dd>
+                            {dateFormatter.format(
+                              new Date(opportunity.updatedAt)
+                            )}
+                          </dd>
                         </div>
                       </dl>
                       <div>
