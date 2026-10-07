@@ -77,10 +77,19 @@ describe("C4.1.6 territories view", () => {
     });
   });
 
-  it("reassigns a sales rep", async () => {
+  it("reassigns a sales rep by display name", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(response({ items: [territory], total: 1 }))
+      .mockResolvedValueOnce(
+        response([
+          {
+            id: SALES_REP_ID,
+            displayName: "Sales Rep",
+            role: "SELLER",
+          },
+        ])
+      )
       .mockResolvedValueOnce(
         response({ ...territory, salesRepId: SALES_REP_ID })
       );
@@ -97,15 +106,20 @@ describe("C4.1.6 territories view", () => {
     const form = screen.getByRole("form", {
       name: "Atribuir vendedor a Território Norte",
     });
-    fireEvent.change(within(form).getByLabelText("ID do vendedor (UUID)"), {
+
+    await screen.findByRole("option", { name: "Sales Rep" });
+    fireEvent.change(within(form).getByLabelText("Vendedor"), {
       target: { value: SALES_REP_ID },
     });
     fireEvent.click(
       within(form).getByRole("button", { name: "Confirmar atribuição" })
     );
 
-    await waitFor(() => expect(screen.getByText(SALES_REP_ID)).toBeVisible());
-    const [url, init] = fetchMock.mock.calls[1] as [string, RequestInit];
+    await waitFor(() => expect(screen.getByText("Sales Rep")).toBeVisible());
+    expect(String(fetchMock.mock.calls[1]?.[0])).toContain(
+      "/territories/sales-reps"
+    );
+    const [url, init] = fetchMock.mock.calls[2] as [string, RequestInit];
     expect(url).toContain("/territories/t-1/reassign");
     expect(init.method).toBe("POST");
     expect(JSON.parse(String(init.body))).toEqual({
