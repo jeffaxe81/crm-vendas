@@ -33,16 +33,58 @@ export const TerritoryListQuerySchema = PaginationQuerySchema.extend({
   sortOrder: z.enum(["asc", "desc"]).default("asc"),
 });
 
-export const TerritoryQuotaInputSchema = z.object({
-  period: TerritoryQuotaPeriodSchema,
-  year: z.coerce.number().int().min(2000).max(2100),
-  amount: z.coerce.number().min(0),
-  actual: z.coerce.number().min(0).optional(),
-});
+export const TerritoryQuotaInputSchema = z
+  .object({
+    period: TerritoryQuotaPeriodSchema,
+    year: z.coerce.number().int().min(2000).max(2100),
+    periodIndex: z.coerce.number().int().min(0).max(12).optional(),
+    amount: z.coerce.number().min(0),
+    actual: z.coerce.number().min(0).optional(),
+  })
+  .superRefine((value, context) => {
+    if (
+      value.period === "MONTH" &&
+      (value.periodIndex === undefined ||
+        value.periodIndex < 1 ||
+        value.periodIndex > 12)
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["periodIndex"],
+        message: "Informe o mês entre 1 e 12.",
+      });
+    }
+
+    if (
+      value.period === "QUARTER" &&
+      (value.periodIndex === undefined ||
+        value.periodIndex < 1 ||
+        value.periodIndex > 4)
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["periodIndex"],
+        message: "Informe o trimestre entre 1 e 4.",
+      });
+    }
+
+    if (
+      value.period === "YEAR" &&
+      value.periodIndex !== undefined &&
+      value.periodIndex !== 0
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["periodIndex"],
+        message: "Cota anual não possui subdivisão.",
+      });
+    }
+  });
 
 export const TerritoryQuotaQuerySchema = z.object({
   period: TerritoryQuotaPeriodSchema.optional(),
   year: z.coerce.number().int().min(2000).max(2100).optional(),
+  periodIndex: z.coerce.number().int().min(0).max(12).optional(),
 });
 
 export const TerritoryCoverageTargetInputSchema = z.object({
