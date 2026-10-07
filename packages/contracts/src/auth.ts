@@ -36,6 +36,7 @@ export const AuthSessionResponseSchema = z.object({
   membership: z.object({
     id: z.string().uuid(),
     role: MembershipRoleSchema,
+    isSuperuser: z.boolean().optional(),
   }),
   permissions: z.array(z.string()),
 });

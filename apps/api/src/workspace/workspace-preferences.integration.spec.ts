@@ -64,7 +64,7 @@ describe("Workspace preferences real database integration", () => {
     const member = await request(app.getHttpServer())
       .post("/api/v1/auth/login")
       .send({ email, password })
-      .expect(201);
+      .expect(200);
     await request(app.getHttpServer())
       .get("/api/v1/me/workspace-preferences")
       .auth(member.body.accessToken, { type: "bearer" })
@@ -75,7 +75,7 @@ describe("Workspace preferences real database integration", () => {
         email: first.credentials.adminEmail,
         password: first.credentials.adminPassword,
       })
-      .expect(201);
+      .expect(200);
     await request(app.getHttpServer())
       .get("/api/v1/me/workspace-preferences")
       .auth(relogin.body.accessToken, { type: "bearer" })

@@ -30,11 +30,14 @@ import { OrganizationUsersModule } from "./users/organization-users.module";
 import { SlaModule } from "./sla/sla.module";
 import { IntegrationsModule } from "./integrations/integrations.module";
 
+import { DataManagementModule } from "./data-management/data-management.module";
+
 import { WorkspaceModule } from "./workspace/workspace.module";
 
 @Module({
   imports: [
     WorkspaceModule,
+    DataManagementModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ["../../.env", ".env"],
