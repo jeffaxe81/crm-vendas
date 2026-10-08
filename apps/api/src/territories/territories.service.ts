@@ -1,3 +1,4 @@
+import { selectMetricQuotas } from "./quota-metric-scope";
 import type {
   TerritoryCoverageTargetInput,
   TerritoryCreateInput,
@@ -460,7 +461,11 @@ export class TerritoriesService {
   async listQuotas(
     territoryId: string,
     organizationId: string,
-    query: { period?: TerritoryQuotaPeriod; year?: number }
+    query: {
+      period?: TerritoryQuotaPeriod;
+      year?: number;
+      periodIndex?: number;
+    }
   ) {
     return this.prisma.withTenant(organizationId, async tenant => {
       await this.requireTerritory(tenant, territoryId, organizationId);
@@ -470,8 +475,11 @@ export class TerritoriesService {
           territoryId,
           ...(query.period ? { period: query.period } : {}),
           ...(query.year !== undefined ? { year: query.year } : {}),
+          ...(query.periodIndex !== undefined
+            ? { periodIndex: query.periodIndex }
+            : {}),
         },
-        orderBy: [{ year: "desc" }, { period: "asc" }],
+        orderBy: [{ year: "desc" }, { period: "asc" }, { periodIndex: "asc" }],
       });
     });
   }
@@ -490,12 +498,16 @@ export class TerritoriesService {
           context.organizationId
         );
 
+        const periodIndex =
+          input.period === "YEAR" ? 0 : (input.periodIndex as number);
+
         return tenant.territoryQuota.upsert({
           where: {
-            territoryId_period_year: {
+            territoryId_period_year_periodIndex: {
               territoryId,
               period: input.period,
               year: input.year,
+              periodIndex,
             },
           },
           create: {
@@ -503,6 +515,7 @@ export class TerritoriesService {
             territoryId,
             period: input.period,
             year: input.year,
+            periodIndex,
             amount: input.amount,
             actual: input.actual ?? 0,
           },
@@ -525,6 +538,7 @@ export class TerritoriesService {
         territoryId,
         period: quota.period,
         year: quota.year,
+        periodIndex: quota.periodIndex,
         amount: quota.amount.toString(),
       },
       ipAddress: context.ipAddress ?? null,
@@ -553,11 +567,30 @@ export class TerritoriesService {
           ? 0
           : Math.round((coveredCount / targetCount) * 10_000) / 100;
 
-      const totalQuota = quotas.reduce(
+      const quotaYear =
+        quotas.length === 0
+          ? null
+          : Math.max(...quotas.map(quota => quota.year));
+      const quotasInLatestYear =
+        quotaYear === null
+          ? []
+          : quotas.filter(quota => quota.year === quotaYear);
+      const quotaPeriod =
+        (["MONTH", "QUARTER", "YEAR"] as const).find(period =>
+          quotasInLatestYear.some(quota => quota.period === period)
+        ) ?? null;
+      const metricQuotas =
+        quotaPeriod === null
+          ? []
+          : selectMetricQuotas(
+              quotasInLatestYear.filter(quota => quota.period === quotaPeriod)
+            );
+
+      const totalQuota = metricQuotas.reduce(
         (sum, quota) => sum + Number(quota.amount),
         0
       );
-      const totalActual = quotas.reduce(
+      const totalActual = metricQuotas.reduce(
         (sum, quota) => sum + Number(quota.actual),
         0
       );
@@ -587,7 +620,11 @@ export class TerritoriesService {
         },
       });
 
-      return metrics;
+      return {
+        ...metrics,
+        quotaYear,
+        quotaPeriod,
+      };
     });
   }
 
