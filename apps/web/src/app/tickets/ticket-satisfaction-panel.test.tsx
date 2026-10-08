@@ -190,7 +190,7 @@ describe("C5.4 ticket satisfaction panel", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Falha de rede");
     expect(
-      screen.queryByText("A pesquisa é criada quando a solicitação é resolvida.")
+      screen.queryByText(/A pesquisa é criada quando/)
     ).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Atualizar pesquisa" }));
     expect(await screen.findByText("Aguardando resposta")).toBeInTheDocument();
