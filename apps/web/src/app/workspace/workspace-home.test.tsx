@@ -58,6 +58,7 @@ describe("Workspace start page", () => {
             !url.endsWith("workspace-preferences")
         )
     ).toEqual([]);
+    await waitFor(() => expect(resolve).toBeTypeOf("function"));
     resolve(
       response({
         ...createDefaultWorkspacePreferences(),
@@ -124,6 +125,7 @@ describe("Workspace start page", () => {
     fireEvent.click(screen.getByRole("button", { name: "Grupo Comercial" }));
     fireEvent.click(screen.getByRole("button", { name: "Empresas" }));
     await screen.findByRole("heading", { name: "Empresas" });
+    await waitFor(() => expect(resolve).toBeTypeOf("function"));
     resolve(response(createDefaultWorkspacePreferences()));
     await waitFor(() =>
       expect(
