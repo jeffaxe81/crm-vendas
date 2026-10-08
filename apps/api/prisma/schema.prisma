@@ -405,6 +405,7 @@ model TerritoryQuota {
   territoryId    String               @map("territory_id") @db.Uuid
   period         TerritoryQuotaPeriod
   year           Int
+  periodIndex    Int                  @default(0) @map("period_index")
   amount         Decimal              @db.Decimal(19, 2)
   actual         Decimal              @default(0) @db.Decimal(19, 2)
   createdAt      DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -412,7 +413,7 @@ model TerritoryQuota {
   organization   Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   territory      Territory            @relation(fields: [territoryId, organizationId], references: [id, organizationId], onDelete: Restrict)
 
-  @@unique([territoryId, period, year], map: "territory_quotas_territory_period_year_key")
+  @@unique([territoryId, period, year, periodIndex], map: "territory_quotas_territory_period_year_index_key")
   @@index([organizationId, territoryId], map: "territory_quotas_org_territory_idx")
   @@map("territory_quotas")
 }
