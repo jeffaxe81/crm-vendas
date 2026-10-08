@@ -205,7 +205,11 @@ export function TicketSatisfactionPanel({
         <button
           type="button"
           disabled={!loaded || busy}
-          onClick={() => setRefreshVersion(value => value + 1)}
+          onClick={() => {
+            setLink(null);
+            setCopied(false);
+            setRefreshVersion(value => value + 1);
+          }}
         >
           Atualizar pesquisa
         </button>
