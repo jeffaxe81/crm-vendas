@@ -64,6 +64,8 @@ export function TicketsView({
   canManageQueues = false,
   canManageSla = false,
 }: TicketsViewProps) {
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [tickets, setTickets] = useState<TicketRecord[]>([]);
   const [status, setStatus] = useState<TicketStatus | "">("");
   const [queryInput, setQueryInput] = useState("");
@@ -104,17 +106,26 @@ export function TicketsView({
     async function load() {
       setLoading(true);
       setError("");
-      const params = new URLSearchParams({ page: "1", limit: "50" });
+      const params = new URLSearchParams({ page: String(page), limit: "50" });
       if (status) params.set("status", status);
       if (query) params.set("q", query);
       if (queueFilter) params.set("queueId", queueFilter);
       if (onlyMine) params.set("assigneeUserId", "me");
       try {
-        const result = await apiRequest<{ items: TicketRecord[] }>(
-          `/tickets?${params.toString()}`,
-          { accessToken }
-        );
-        if (active) setTickets(result.items);
+        const result = await apiRequest<{
+          items: TicketRecord[];
+          total: number;
+        }>(`/tickets?${params.toString()}`, { accessToken });
+        if (active) {
+          setTickets(result.items);
+          const count = result.total ?? result.items.length;
+          setTotal(count);
+          const lastPage = Math.max(1, Math.ceil(count / 50));
+          if (page > lastPage) {
+            setPage(lastPage);
+            setSelectedId(null);
+          }
+        }
       } catch (cause) {
         if (active) {
           setError(
@@ -131,7 +142,7 @@ export function TicketsView({
     return () => {
       active = false;
     };
-  }, [accessToken, status, query, queueFilter, onlyMine, refresh]);
+  }, [accessToken, status, query, queueFilter, onlyMine, refresh, page]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -214,6 +225,8 @@ export function TicketsView({
         onSubmit={event => {
           event.preventDefault();
           setQuery(queryInput.trim());
+          setPage(1);
+          setSelectedId(null);
         }}
       >
         <label>
@@ -231,9 +244,11 @@ export function TicketsView({
           <select
             aria-label="Filtrar por status"
             value={status}
-            onChange={event =>
-              setStatus(event.target.value as TicketStatus | "")
-            }
+            onChange={event => {
+              setStatus(event.target.value as TicketStatus | "");
+              setPage(1);
+              setSelectedId(null);
+            }}
           >
             <option value="">Todos</option>
             {TicketStatusSchema.options.map(option => (
@@ -248,7 +263,11 @@ export function TicketsView({
           <select
             aria-label="Filtrar por fila"
             value={queueFilter}
-            onChange={event => setQueueFilter(event.target.value)}
+            onChange={event => {
+              setQueueFilter(event.target.value);
+              setPage(1);
+              setSelectedId(null);
+            }}
           >
             <option value="">Todas</option>
             {queues.map(queue => (
@@ -262,7 +281,11 @@ export function TicketsView({
         <button
           type="button"
           aria-pressed={onlyMine}
-          onClick={() => setOnlyMine(current => !current)}
+          onClick={() => {
+            setOnlyMine(current => !current);
+            setPage(1);
+            setSelectedId(null);
+          }}
         >
           Minhas solicitações
         </button>
@@ -398,6 +421,7 @@ export function TicketsView({
 
       {selected ? (
         <TicketDetail
+          key={selected.id}
           accessToken={accessToken}
           ticket={selected}
           canWrite={canWrite}
@@ -470,6 +494,37 @@ export function TicketsView({
             </tbody>
           </table>
         </div>
+      ) : null}
+      {!loading && !error && (total > 0 || page > 1) ? (
+        <nav
+          className="companies-view__pagination"
+          aria-label="Paginação de solicitações"
+        >
+          <button
+            type="button"
+            disabled={page <= 1}
+            onClick={() => {
+              setPage(current => current - 1);
+              setSelectedId(null);
+            }}
+          >
+            Anterior
+          </button>
+          <span>
+            Página {page} de {Math.max(1, Math.ceil(total / 50))} · {total}{" "}
+            solicitações
+          </span>
+          <button
+            type="button"
+            disabled={page * 50 >= total}
+            onClick={() => {
+              setPage(current => current + 1);
+              setSelectedId(null);
+            }}
+          >
+            Próxima
+          </button>
+        </nav>
       ) : null}
     </section>
   );
