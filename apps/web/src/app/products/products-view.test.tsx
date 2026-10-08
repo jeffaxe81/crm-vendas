@@ -34,6 +34,37 @@ afterEach(() => {
 });
 
 describe("C4.3 products view", () => {
+  it("returns to the previous page after deleting its final record", async () => {
+    let deleted = false;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string | URL, init?: RequestInit) => {
+        if (init?.method === "DELETE") {
+          deleted = true;
+          return response(null, 204);
+        }
+        const page = new URL(String(input)).searchParams.get("page");
+        return response({
+          items:
+            page === "2"
+              ? deleted
+                ? []
+                : [product]
+              : [{ ...product, id: "remaining", name: "Registro restante" }],
+          total: deleted ? 50 : 51,
+        });
+      })
+    );
+    render(<ProductsView accessToken="token" canWrite />);
+    await screen.findByText("Registro restante");
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Excluir Licença PABX" })
+    );
+    expect(await screen.findByText("Registro restante")).toBeVisible();
+    expect(screen.queryByText("Licença PABX")).not.toBeInTheDocument();
+  });
+
   it("lists products and creates a new one", async () => {
     const fetchMock = vi
       .fn()
@@ -80,6 +111,50 @@ describe("C4.3 products view", () => {
       unitPrice: "2500.00",
       isActive: true,
     });
+  });
+
+  it("navigates through server-side product pages", async () => {
+    const secondPageProduct = {
+      ...product,
+      id: "p-51",
+      code: "P051",
+      name: "Produto 51",
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        response({
+          items: [product],
+          page: 1,
+          limit: 50,
+          total: 51,
+        })
+      )
+      .mockResolvedValueOnce(
+        response({
+          items: [secondPageProduct],
+          page: 2,
+          limit: 50,
+          total: 51,
+        })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<ProductsView accessToken="token" canWrite />);
+
+    await screen.findByText("Licença PABX");
+    expect(screen.getByText(/Página 1 de 2/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+
+    expect(await screen.findByText("Produto 51")).toBeInTheDocument();
+    expect(screen.getByText(/Página 2 de 2/)).toBeInTheDocument();
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain(
+      "/products?page=1&limit=50"
+    );
+    expect(String(fetchMock.mock.calls[1]?.[0])).toContain(
+      "/products?page=2&limit=50"
+    );
   });
 
   it("hides write actions without product.write", async () => {

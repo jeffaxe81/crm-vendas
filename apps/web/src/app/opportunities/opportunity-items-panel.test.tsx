@@ -119,6 +119,66 @@ describe("C4.3.1 opportunity items panel", () => {
     });
   });
 
+  it("searches products beyond the initial option page", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ items: [] }))
+      .mockResolvedValueOnce(
+        response({
+          items: [
+            {
+              id: "p-1",
+              code: "LIC",
+              name: "Licença",
+              unitPrice: "100.00",
+            },
+          ],
+        })
+      )
+      .mockResolvedValueOnce(
+        response({
+          items: [
+            {
+              id: "p-150",
+              code: "SRV150",
+              name: "Serviço Especial 150",
+              unitPrice: "250.00",
+            },
+          ],
+        })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <OpportunityItemsPanel
+        accessToken="token"
+        opportunity={opportunity}
+        canWrite
+        onOpportunityChange={vi.fn()}
+      />
+    );
+
+    const form = await screen.findByRole("form", {
+      name: "Adicionar item em Contrato PABX",
+    });
+    await within(form).findByRole("option", { name: /LIC/ });
+
+    fireEvent.change(within(form).getByLabelText("Buscar produto"), {
+      target: { value: "Especial 150" },
+    });
+    fireEvent.click(
+      within(form).getByRole("button", { name: "Buscar produtos" })
+    );
+
+    expect(
+      await within(form).findByRole("option", { name: /SRV150/ })
+    ).toBeInTheDocument();
+    const searchUrl = String(fetchMock.mock.calls[2]?.[0]);
+    expect(searchUrl).toContain("/products?");
+    expect(searchUrl).toContain("q=Especial+150");
+    expect(searchUrl).toContain("limit=50");
+  });
+
   it("removes an item using the opportunity version", async () => {
     const fetchMock = vi
       .fn()
