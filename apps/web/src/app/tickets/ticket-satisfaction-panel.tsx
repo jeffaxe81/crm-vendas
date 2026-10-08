@@ -59,7 +59,8 @@ export function TicketSatisfactionPanel({
     apiRequest<unknown>(`/tickets/${ticketId}/satisfaction`, { accessToken })
       .then(payload => {
         if (!active) return;
-        const currentSurvey = TicketSatisfactionStatusSchema.parse(payload).survey;
+        const currentSurvey =
+          TicketSatisfactionStatusSchema.parse(payload).survey;
         setSurvey(currentSurvey);
         if (
           currentSurvey?.state === "RESPONDED" ||
