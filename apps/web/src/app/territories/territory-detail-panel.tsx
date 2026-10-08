@@ -17,6 +17,7 @@ type Quota = {
   id: string;
   period: "MONTH" | "QUARTER" | "YEAR";
   year: number;
+  periodIndex?: number;
   amount: string;
   actual: string;
 };
@@ -27,6 +28,8 @@ type Metrics = {
   actualRevenue: string;
   targetCount: number;
   coveredCount: number;
+  quotaYear?: number | null;
+  quotaPeriod?: Quota["period"] | null;
 };
 
 type CompanyOption = {
@@ -53,6 +56,34 @@ const COVERAGE_LABELS: Record<CoverageStatus, string> = {
   PARTIAL: "Parcial",
   COVERED: "Coberta",
 };
+
+const MONTH_LABELS = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+function quotaPeriodLabel(quota: Quota): string {
+  const index = quota.periodIndex ?? 0;
+  if (quota.period === "YEAR") return "Anual";
+  if (quota.period === "MONTH") {
+    return index >= 1 && index <= 12
+      ? (MONTH_LABELS[index - 1] ?? "Mensal (legado)")
+      : "Mensal (legado)";
+  }
+  return index >= 1 && index <= 4
+    ? `${index}º trimestre`
+    : "Trimestral (legado)";
+}
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -84,10 +115,12 @@ export function TerritoryDetailPanel({
   const [coverageError, setCoverageError] = useState("");
 
   const [quotaPeriod, setQuotaPeriod] = useState<Quota["period"]>("MONTH");
+  const [quotaPeriodIndex, setQuotaPeriodIndex] = useState("1");
   const [quotaYear, setQuotaYear] = useState(
     String(new Date().getUTCFullYear())
   );
   const [quotaAmount, setQuotaAmount] = useState("");
+  const [quotaActual, setQuotaActual] = useState("");
   const [quotaError, setQuotaError] = useState("");
 
   useEffect(() => {
@@ -232,18 +265,40 @@ export function TerritoryDetailPanel({
     event.preventDefault();
     const year = Number(quotaYear);
     const amount = quotaAmount.trim();
+    const actual = quotaActual.trim();
+    const periodIndex =
+      quotaPeriod === "YEAR" ? undefined : Number(quotaPeriodIndex);
+
     if (!year || !amount) {
       setQuotaError("Informe ano e meta.");
       return;
     }
+
+    if (
+      quotaPeriod !== "YEAR" &&
+      (!periodIndex ||
+        (quotaPeriod === "MONTH" && periodIndex > 12) ||
+        (quotaPeriod === "QUARTER" && periodIndex > 4))
+    ) {
+      setQuotaError("Informe o mês ou trimestre da cota.");
+      return;
+    }
+
     setQuotaError("");
     try {
       await apiRequest(`/territories/${territoryId}/quotas`, {
         accessToken,
         method: "POST",
-        body: { period: quotaPeriod, year, amount },
+        body: {
+          period: quotaPeriod,
+          year,
+          ...(periodIndex !== undefined ? { periodIndex } : {}),
+          amount,
+          ...(actual ? { actual } : {}),
+        },
       });
       setQuotaAmount("");
+      setQuotaActual("");
       setRefresh(current => current + 1);
     } catch (cause) {
       setQuotaError(
@@ -280,6 +335,16 @@ export function TerritoryDetailPanel({
           <article className="companies-view__card">
             <span>Cota atingida</span>
             <strong>{metrics.quotaPercentage}%</strong>
+            {metrics.quotaYear && metrics.quotaPeriod ? (
+              <small>
+                {metrics.quotaPeriod === "MONTH"
+                  ? "Mensal"
+                  : metrics.quotaPeriod === "QUARTER"
+                    ? "Trimestral"
+                    : "Anual"}{" "}
+                · {metrics.quotaYear}
+              </small>
+            ) : null}
           </article>
           <article className="companies-view__card">
             <span>Receita realizada</span>
@@ -424,7 +489,7 @@ export function TerritoryDetailPanel({
               <tbody>
                 {quotas.map(quota => (
                   <tr key={quota.id}>
-                    <td>{quota.period}</td>
+                    <td>{quotaPeriodLabel(quota)}</td>
                     <td>{quota.year}</td>
                     <td>{formatCurrency(quota.amount)}</td>
                     <td>{formatCurrency(quota.actual)}</td>
@@ -444,15 +509,47 @@ export function TerritoryDetailPanel({
               <span>Período</span>
               <select
                 value={quotaPeriod}
-                onChange={event =>
-                  setQuotaPeriod(event.target.value as Quota["period"])
-                }
+                onChange={event => {
+                  const next = event.target.value as Quota["period"];
+                  setQuotaPeriod(next);
+                  setQuotaPeriodIndex(next === "YEAR" ? "0" : "1");
+                }}
               >
                 <option value="MONTH">Mensal</option>
                 <option value="QUARTER">Trimestral</option>
                 <option value="YEAR">Anual</option>
               </select>
             </label>
+            {quotaPeriod === "MONTH" ? (
+              <label>
+                <span>Mês</span>
+                <select
+                  value={quotaPeriodIndex}
+                  onChange={event => setQuotaPeriodIndex(event.target.value)}
+                >
+                  {MONTH_LABELS.map((label, index) => (
+                    <option key={label} value={String(index + 1)}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+            {quotaPeriod === "QUARTER" ? (
+              <label>
+                <span>Trimestre</span>
+                <select
+                  value={quotaPeriodIndex}
+                  onChange={event => setQuotaPeriodIndex(event.target.value)}
+                >
+                  {[1, 2, 3, 4].map(index => (
+                    <option key={index} value={String(index)}>
+                      {index}º trimestre
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
             <label>
               <span>Ano</span>
               <input
@@ -467,6 +564,14 @@ export function TerritoryDetailPanel({
                 inputMode="decimal"
                 value={quotaAmount}
                 onChange={event => setQuotaAmount(event.target.value)}
+              />
+            </label>
+            <label>
+              <span>Realizado</span>
+              <input
+                inputMode="decimal"
+                value={quotaActual}
+                onChange={event => setQuotaActual(event.target.value)}
               />
             </label>
             <button type="submit">Salvar cota</button>

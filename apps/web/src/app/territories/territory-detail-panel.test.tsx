@@ -4,6 +4,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -103,6 +104,83 @@ describe("C4.1.6 territory detail usability", () => {
       expect(init.method).toBe("POST");
       expect(JSON.parse(String(init.body))).toEqual({
         companyId: "11111111-1111-4111-8111-111111111111",
+      });
+    });
+  });
+
+  it("saves a monthly quota with month and realized value", async () => {
+    let quotaBody: Record<string, unknown> | null = null;
+
+    const fetchMock = vi.fn(
+      async (input: string | URL, init?: RequestInit): Promise<Response> => {
+        const url = String(input);
+
+        if (
+          url.includes("/territories/t-1/quotas") &&
+          init?.method === "POST"
+        ) {
+          quotaBody = JSON.parse(String(init.body)) as Record<string, unknown>;
+          return response(
+            {
+              id: "quota-2",
+              period: "MONTH",
+              year: 2026,
+              periodIndex: 2,
+              amount: "10000.00",
+              actual: "4500.00",
+            },
+            201
+          );
+        }
+        if (url.includes("/territories/t-1/metrics")) {
+          return response({
+            coveragePercentage: "0.00",
+            quotaPercentage: "45.00",
+            actualRevenue: "4500.00",
+            targetCount: 0,
+            coveredCount: 0,
+            quotaYear: 2026,
+            quotaPeriod: "MONTH",
+          });
+        }
+        if (url.includes("/territories/t-1/coverage")) {
+          return response([]);
+        }
+        if (url.includes("/territories/t-1/quotas")) {
+          return response([]);
+        }
+
+        throw new Error(`Unexpected request: ${url}`);
+      }
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <TerritoryDetailPanel accessToken="token" territoryId="t-1" canWrite />
+    );
+
+    const form = await screen.findByRole("form", { name: "Definir cota" });
+    fireEvent.change(within(form).getByLabelText("Mês"), {
+      target: { value: "2" },
+    });
+    fireEvent.change(within(form).getByLabelText("Ano"), {
+      target: { value: "2026" },
+    });
+    fireEvent.change(within(form).getByLabelText("Meta"), {
+      target: { value: "10000" },
+    });
+    fireEvent.change(within(form).getByLabelText("Realizado"), {
+      target: { value: "4500" },
+    });
+    fireEvent.click(within(form).getByRole("button", { name: "Salvar cota" }));
+
+    await waitFor(() => {
+      expect(quotaBody).toEqual({
+        period: "MONTH",
+        year: 2026,
+        periodIndex: 2,
+        amount: "10000",
+        actual: "4500",
       });
     });
   });
