@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { TicketDetail } from "./ticket-detail";
@@ -48,19 +54,26 @@ describe("C5 ticket editing", () => {
       version: 4,
     };
 
-    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
+    const fetchMock = vi.fn(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
 
-      if (url.endsWith(`/tickets/${ticket.id}/events`)) {
-        return response({ items: [] });
+        if (url.endsWith(`/tickets/${ticket.id}/events`)) {
+          return response({ items: [] });
+        }
+
+        if (
+          url.endsWith(`/tickets/${ticket.id}`) &&
+          init?.method === "PATCH"
+        ) {
+          return response(updated);
+        }
+
+        throw new Error(
+          `Unexpected request: ${init?.method ?? "GET"} ${url}`
+        );
       }
-
-      if (url.endsWith(`/tickets/${ticket.id}`) && init?.method === "PATCH") {
-        return response(updated);
-      }
-
-      throw new Error(`Unexpected request: ${init?.method ?? "GET"} ${url}`);
-    });
+    );
     vi.stubGlobal("fetch", fetchMock);
 
     const onChange = vi.fn();
