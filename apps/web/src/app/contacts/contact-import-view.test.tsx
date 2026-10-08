@@ -104,6 +104,10 @@ describe("C4.2.2 contact CSV import view", () => {
     render(<ContactsView accessToken="access-token" canWrite />);
 
     fireEvent.click(screen.getByRole("button", { name: "Importar CSV" }));
+    expect(screen.getByText("companyDocument")).toBeVisible();
+    expect(
+      screen.getByText(/documento de uma empresa já cadastrada/)
+    ).toBeVisible();
     const file = new File(
       ["fullName,email\nAna Souza,ana@example.test\nBia,nao-e-email"],
       "contatos.csv",
