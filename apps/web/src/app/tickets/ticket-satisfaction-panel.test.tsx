@@ -132,6 +132,72 @@ describe("C5.4 ticket satisfaction panel", () => {
     ).toBeInTheDocument();
   });
 
+  it("refreshes a pending survey after the customer responds and removes the stale link", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ survey }))
+      .mockResolvedValueOnce(
+        response({
+          survey: {
+            ...survey,
+            state: "RESPONDED",
+            rating: 5,
+            comment: "Resolvido",
+            respondedAt: "2026-10-04T12:00:00.000Z",
+            version: 2,
+          },
+        })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <TicketSatisfactionPanel
+        accessToken="token"
+        ticketId={TICKET_ID}
+        ticketStatus="RESOLVED"
+        canWrite
+        freshLink={{
+          url: `http://127.0.0.1:3000/avaliacao/${TOKEN}`,
+          expiresAt: survey.expiresAt,
+        }}
+      />
+    );
+
+    expect(await screen.findByText("Aguardando resposta")).toBeInTheDocument();
+    expect(screen.getByLabelText("Link para o cliente")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Atualizar pesquisa" }));
+    expect(await screen.findByText("5/5")).toBeInTheDocument();
+    expect(screen.getByText("Resolvido")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Link para o cliente")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Gerar link" })).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("lets the operator retry after a failed satisfaction lookup", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Falha de rede"))
+      .mockResolvedValueOnce(response({ survey }));
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <TicketSatisfactionPanel
+        accessToken="token"
+        ticketId={TICKET_ID}
+        ticketStatus="CLOSED"
+        canWrite={false}
+        freshLink={null}
+      />
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Falha de rede");
+    expect(
+      screen.queryByText("A pesquisa é criada quando a solicitação é resolvida.")
+    ).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Atualizar pesquisa" }));
+    expect(await screen.findByText("Aguardando resposta")).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it("shows the customer rating and hides generation when answered or read-only", async () => {
     vi.stubGlobal(
       "fetch",
