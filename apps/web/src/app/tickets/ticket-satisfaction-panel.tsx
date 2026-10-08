@@ -41,10 +41,12 @@ export function TicketSatisfactionPanel({
 }: TicketSatisfactionPanelProps) {
   const [survey, setSurvey] = useState<TicketSatisfactionSurvey | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [readFailed, setReadFailed] = useState(false);
   const [link, setLink] = useState<TicketSatisfactionLink | null>(freshLink);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [refreshVersion, setRefreshVersion] = useState(0);
 
   useEffect(() => {
     setLink(freshLink);
@@ -53,24 +55,37 @@ export function TicketSatisfactionPanel({
 
   useEffect(() => {
     let active = true;
+    setError("");
+    setLoaded(false);
+    setReadFailed(false);
     apiRequest<unknown>(`/tickets/${ticketId}/satisfaction`, { accessToken })
       .then(payload => {
         if (!active) return;
-        setSurvey(TicketSatisfactionStatusSchema.parse(payload).survey);
+        const currentSurvey =
+          TicketSatisfactionStatusSchema.parse(payload).survey;
+        setSurvey(currentSurvey);
+        if (
+          currentSurvey?.state === "RESPONDED" ||
+          currentSurvey?.state === "EXPIRED"
+        ) {
+          setLink(null);
+        }
         setLoaded(true);
       })
       .catch(cause => {
         if (!active) return;
+        setReadFailed(true);
         setError(
           cause instanceof Error
             ? cause.message
             : "Não foi possível carregar a pesquisa de satisfação."
         );
+        setLoaded(true);
       });
     return () => {
       active = false;
     };
-  }, [accessToken, ticketId, ticketStatus]);
+  }, [accessToken, ticketId, ticketStatus, refreshVersion]);
 
   async function generateLink() {
     setBusy(true);
@@ -113,6 +128,8 @@ export function TicketSatisfactionPanel({
 
   const canGenerate =
     canWrite &&
+    loaded &&
+    !readFailed &&
     survey !== null &&
     survey.state !== "RESPONDED" &&
     LINK_STATUSES.includes(ticketStatus);
@@ -130,7 +147,7 @@ export function TicketSatisfactionPanel({
         </p>
       ) : null}
 
-      {!loaded ? null : survey === null ? (
+      {!loaded || readFailed ? null : survey === null ? (
         <p className="activities-view__status">
           A pesquisa é criada quando a solicitação é resolvida.
         </p>
@@ -182,6 +199,20 @@ export function TicketSatisfactionPanel({
             invalida o anterior.
           </p>
         </div>
+      ) : null}
+
+      {LINK_STATUSES.includes(ticketStatus) ? (
+        <button
+          type="button"
+          disabled={!loaded || busy}
+          onClick={() => {
+            setLink(null);
+            setCopied(false);
+            setRefreshVersion(value => value + 1);
+          }}
+        >
+          Atualizar pesquisa
+        </button>
       ) : null}
 
       {canGenerate ? (
