@@ -294,11 +294,7 @@ export function TicketDetail({
         </div>
         <div className="support-queues__actions">
           {canWrite && !TICKET_FINAL_STATUSES.includes(ticket.status) ? (
-            <button
-              type="button"
-              disabled={busy}
-              onClick={openEdit}
-            >
+            <button type="button" disabled={busy} onClick={openEdit}>
               Editar solicitação
             </button>
           ) : null}
