@@ -62,16 +62,11 @@ describe("C5 ticket editing", () => {
           return response({ items: [] });
         }
 
-        if (
-          url.endsWith(`/tickets/${ticket.id}`) &&
-          init?.method === "PATCH"
-        ) {
+        if (url.endsWith(`/tickets/${ticket.id}`) && init?.method === "PATCH") {
           return response(updated);
         }
 
-        throw new Error(
-          `Unexpected request: ${init?.method ?? "GET"} ${url}`
-        );
+        throw new Error(`Unexpected request: ${init?.method ?? "GET"} ${url}`);
       }
     );
     vi.stubGlobal("fetch", fetchMock);
