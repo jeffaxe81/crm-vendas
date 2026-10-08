@@ -170,7 +170,7 @@ describe("C5.1 tickets view", () => {
       target: { value: "Resposta de A" },
     });
     fireEvent.click(
-      screen.getByRole("button", { name: "Comentar", exact: true })
+      screen.getByRole("button", { name: /^Comentar$/ })
     );
     fireEvent.click(screen.getByRole("button", { name: "Abrir 2026-000002" }));
     await act(async () => {
@@ -230,7 +230,7 @@ describe("C5.1 tickets view", () => {
           target: { value: "cliente" },
         });
         fireEvent.click(
-          screen.getByRole("button", { name: "Buscar", exact: true })
+          screen.getByRole("button", { name: /^Buscar$/ })
         );
       } else if (filter === "status") {
         fireEvent.change(screen.getByLabelText("Filtrar por status"), {
