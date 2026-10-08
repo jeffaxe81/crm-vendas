@@ -172,6 +172,31 @@ describe("C5.4 ticket satisfaction panel", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it("keeps the survey visible if copying the link fails", async () => {
+    vi.stubGlobal("navigator", {
+      clipboard: { writeText: vi.fn().mockRejectedValue(new Error("blocked")) },
+    });
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response({ survey })));
+    render(
+      <TicketSatisfactionPanel
+        accessToken="token"
+        ticketId={TICKET_ID}
+        ticketStatus="RESOLVED"
+        canWrite
+        freshLink={{
+          url: `http://127.0.0.1:3000/avaliacao/${TOKEN}`,
+          expiresAt: survey.expiresAt,
+        }}
+      />
+    );
+    expect(await screen.findByText("Aguardando resposta")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Copiar link" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Não foi possível copiar"
+    );
+    expect(screen.getByText("Aguardando resposta")).toBeInTheDocument();
+  });
+
   it("lets the operator retry after a failed satisfaction lookup", async () => {
     const fetchMock = vi
       .fn()
