@@ -41,6 +41,7 @@ export function TicketSatisfactionPanel({
 }: TicketSatisfactionPanelProps) {
   const [survey, setSurvey] = useState<TicketSatisfactionSurvey | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [readFailed, setReadFailed] = useState(false);
   const [link, setLink] = useState<TicketSatisfactionLink | null>(freshLink);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -56,6 +57,7 @@ export function TicketSatisfactionPanel({
     let active = true;
     setError("");
     setLoaded(false);
+    setReadFailed(false);
     apiRequest<unknown>(`/tickets/${ticketId}/satisfaction`, { accessToken })
       .then(payload => {
         if (!active) return;
@@ -72,6 +74,7 @@ export function TicketSatisfactionPanel({
       })
       .catch(cause => {
         if (!active) return;
+        setReadFailed(true);
         setError(
           cause instanceof Error
             ? cause.message
@@ -126,7 +129,7 @@ export function TicketSatisfactionPanel({
   const canGenerate =
     canWrite &&
     loaded &&
-    !error &&
+    !readFailed &&
     survey !== null &&
     survey.state !== "RESPONDED" &&
     LINK_STATUSES.includes(ticketStatus);
@@ -144,7 +147,7 @@ export function TicketSatisfactionPanel({
         </p>
       ) : null}
 
-      {!loaded || error ? null : survey === null ? (
+      {!loaded || readFailed ? null : survey === null ? (
         <p className="activities-view__status">
           A pesquisa é criada quando a solicitação é resolvida.
         </p>
