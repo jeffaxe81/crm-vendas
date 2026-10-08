@@ -102,8 +102,9 @@ export function ContactImportPanel({
       <p>
         Colunas aceitas: <code>fullName</code> (obrigatória),{" "}
         <code>jobTitle</code>, <code>email</code>, <code>phone</code>,{" "}
-        <code>mobile</code>, <code>whatsapp</code> e <code>notes</code>. Até 500
-        linhas.
+        <code>mobile</code>, <code>whatsapp</code>, <code>notes</code> e{" "}
+        <code>companyDocument</code> (documento de uma empresa já cadastrada
+        para vincular o contato). Até 500 linhas.
       </p>
 
       <label>
