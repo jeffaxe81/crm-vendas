@@ -75,7 +75,7 @@ describe("NEO communication in CRM navigation", () => {
     fireEvent.click(
       await screen.findByRole("button", { name: "Comunicação integrada" })
     );
-    const link = screen.getByRole("link", { name: "Abrir em outra aba" });
+    const link = await screen.findByRole("link", { name: "Abrir em outra aba" });
     expect(link).toHaveAttribute("href", "https://neo.example.test/neo/");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
@@ -147,7 +147,7 @@ describe("NEO communication in CRM navigation", () => {
       await screen.findByRole("button", { name: "Comunicação integrada" })
     );
     expect(
-      screen.getByText("Comunicação ainda não configurada")
+      await screen.findByText("Comunicação ainda não configurada")
     ).toBeInTheDocument();
     expect(screen.queryByTitle("NEO Interact")).not.toBeInTheDocument();
   });
