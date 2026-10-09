@@ -9,6 +9,7 @@ import { SalesByProductService } from "./sales-by-product.service";
 import { ReportsController } from "./reports.controller";
 import { SalesByProductOwnersService } from "./sales-by-product-owners.service";
 import { FunnelService } from "./funnel.service";
+import { OpportunityAgingService } from "./opportunity-aging.service";
 import {
   ACTIVITIES_BY_OWNER_CLOCK,
   ActivitiesByOwnerService,
@@ -26,6 +27,7 @@ import { CsatReportService } from "./csat.service";
     SalesByProductService,
     SalesByProductOwnersService,
     FunnelService,
+    OpportunityAgingService,
     ActivitiesByOwnerService,
     { provide: ACTIVITIES_BY_OWNER_CLOCK, useValue: systemReportClock },
     SalesByOwnerService,
@@ -39,6 +41,7 @@ import { CsatReportService } from "./csat.service";
     SalesByProductService,
     SalesByProductOwnersService,
     FunnelService,
+    OpportunityAgingService,
     ActivitiesByOwnerService,
     SalesByOwnerService,
     SalesByMonthService,
