@@ -1,4 +1,3 @@
-import { describe, expect, it } from "@jest/globals";
 import { summarizePipelineHealth } from "./pipeline-health";
 
 const report = (counts: number[]) =>
