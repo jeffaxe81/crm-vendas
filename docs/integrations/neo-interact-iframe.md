@@ -2,9 +2,7 @@
 
 ## Estado atual
 
-O menu **Comunicação** já existe no CRM. A configuração de origem é feita no
-servidor web por variáveis de ambiente; **não existe ainda uma tela administrativa
-persistida por organização**.
+O menu **Comunicação** já existe no CRM. A URL e o modo agora podem ser administrados por organização no módulo **Chaves de integração**. A configuração por variáveis de ambiente permanece como referência para ambientes de teste sem sessão autenticada.
 
 ```dotenv
 NEO_INTERACT_URL=https://neo.example.com/neo/
@@ -55,10 +53,10 @@ endpoint validado para a respectiva instalação.
 
 ## Evoluções não implementadas
 
-- Gestão administrativa da URL e dimensões por organização, persistida no banco.
 - Painel lateral sobreposto/minimizado em todas as telas do CRM.
 - Associação de chamadas a contatos e eventos avançados da integração.
 - SSO entre CRM e NEO.
 
 Esses recursos exigem desenho de permissões e modelo multi-tenant e, no caso
 dos eventos avançados, confirmação do protocolo disponibilizado pelo NEO.
+\n## Configuração por organização\n\nAplicar a migração `20261009180000_neo_communication_settings` antes de liberar a nova tela. A API `GET/PUT /integrations/neo-communication` exige sessão autenticada; a atualização exige `integration.manage`. O formulário aparece na administração de integrações. Sem registro habilitado, a comunicação da organização fica desativada, independentemente de outras organizações. A janela continua sujeita à política de incorporação do NEO.\n
