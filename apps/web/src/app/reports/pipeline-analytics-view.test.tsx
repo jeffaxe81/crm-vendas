@@ -33,7 +33,10 @@ describe("Ciclo 6: contexto da saúde comercial", () => {
         return response([
           {
             id: token === "Bearer tenant-a" ? "funil-a" : "funil-b",
-            name: "Funil ativo",
+            name:
+              token === "Bearer tenant-a"
+                ? "Funil da empresa A"
+                : "Funil da empresa B",
           },
         ]);
       }
@@ -71,6 +74,7 @@ describe("Ciclo 6: contexto da saúde comercial", () => {
     );
 
     view.rerender(<PipelineAnalyticsView accessToken="tenant-b" />);
+    expect(screen.queryByText("Funil da empresa A")).not.toBeInTheDocument();
     await waitFor(() =>
       expect(
         calls.some(
@@ -89,6 +93,7 @@ describe("Ciclo 6: contexto da saúde comercial", () => {
       )
     ).toHaveLength(0);
     expect(screen.getByRole("combobox")).toHaveValue("funil-b");
+    expect(screen.getByText("Funil da empresa B")).toBeVisible();
   });
 
   it("não consulta relatórios quando a nova organização não tem funis", async () => {
@@ -106,4 +111,57 @@ describe("Ciclo 6: contexto da saúde comercial", () => {
     expect(await screen.findByText("Nenhum funil disponível.")).toBeVisible();
     expect(calls.filter(path => path.includes("/reports/"))).toHaveLength(0);
   });
+  it("remove métricas e opções antigas ao trocar para uma organização sem funis", async () => {
+    const calls: Array<{ token: string; path: string }> = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string, init?: RequestInit) => {
+        const url = new URL(String(input));
+        const token = new Headers(init?.headers).get("Authorization") ?? "";
+        calls.push({ token, path: url.pathname });
+        if (url.pathname.endsWith("/pipelines")) {
+          return response(
+            token === "Bearer tenant-a"
+              ? [{ id: "funil-a", name: "Funil confidencial A" }]
+              : []
+          );
+        }
+        if (url.pathname.endsWith("/reports/pipeline-health")) {
+          return response({
+            totalOpenOpportunities: 42,
+            openValue: "0",
+            winRate: null,
+            stageConcentration: {
+              stageName: null,
+              percentage: 0,
+              exceeded: false,
+            },
+          });
+        }
+        if (url.pathname.endsWith("/reports/opportunity-aging")) {
+          return response({ stages: [] });
+        }
+        if (url.pathname.endsWith("/reports/commercial-risks")) {
+          return response({ risks: [], evaluated: 0, truncated: false });
+        }
+        throw new Error("Rota inesperada: " + url.pathname);
+      })
+    );
+    const view = render(<PipelineAnalyticsView accessToken="tenant-a" />);
+    expect(await screen.findByText("Funil confidencial A")).toBeVisible();
+    expect(await screen.findByText("42")).toBeVisible();
+
+    view.rerender(<PipelineAnalyticsView accessToken="tenant-sem-funis" />);
+    expect(screen.queryByText("Funil confidencial A")).not.toBeInTheDocument();
+    expect(screen.queryByText("42")).not.toBeInTheDocument();
+    expect(await screen.findByText("Nenhum funil disponível.")).toBeVisible();
+    expect(
+      calls.filter(
+        call =>
+          call.token === "Bearer tenant-sem-funis" &&
+          call.path.includes("/reports/")
+      )
+    ).toHaveLength(0);
+  });
+
 });
