@@ -141,7 +141,9 @@ export function PipelineAnalyticsView({
         <span>Funil comercial </span>
         <select
           value={pipelineId}
-          onChange={event => setSelection({ token: accessToken, id: event.target.value })}
+          onChange={event =>
+            setSelection({ token: accessToken, id: event.target.value })
+          }
         >
           {pipelines.map(pipeline => (
             <option key={pipeline.id} value={pipeline.id}>
