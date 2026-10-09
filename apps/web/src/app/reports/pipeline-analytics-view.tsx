@@ -41,8 +41,20 @@ export function PipelineAnalyticsView({
 }: {
   accessToken: string;
 }) {
+  // A troca de credencial deve desmontar todo o estado da organização anterior
+  // antes de renderizar qualquer funil ou indicador da nova sessão.
+  return (
+    <TenantPipelineAnalytics key={accessToken} accessToken={accessToken} />
+  );
+}
+
+function TenantPipelineAnalytics({ accessToken }: { accessToken: string }) {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
-  const [pipelineId, setPipelineId] = useState("");
+  const [selection, setSelection] = useState<{ token: string; id: string }>({
+    token: accessToken,
+    id: "",
+  });
+  const pipelineId = selection.token === accessToken ? selection.id : "";
   const [health, setHealth] = useState<Health | null>(null);
   const [aging, setAging] = useState<Aging | null>(null);
   const [risk, setRisk] = useState<Risk | null>(null);
@@ -51,11 +63,19 @@ export function PipelineAnalyticsView({
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setError("");
+    setPipelines([]);
+    setSelection({ token: accessToken, id: "" });
+    setHealth(null);
+    setAging(null);
+    setRisk(null);
     void apiRequest<Pipeline[]>("/pipelines", { accessToken })
       .then(items => {
         if (!active) return;
         setPipelines(items);
-        setPipelineId(current => current || items[0]?.id || "");
+        // A seleção anterior pode pertencer a outra organização.
+        setSelection({ token: accessToken, id: items[0]?.id ?? "" });
       })
       .catch(cause => {
         if (active)
@@ -129,7 +149,9 @@ export function PipelineAnalyticsView({
         <span>Funil comercial </span>
         <select
           value={pipelineId}
-          onChange={event => setPipelineId(event.target.value)}
+          onChange={event =>
+            setSelection({ token: accessToken, id: event.target.value })
+          }
         >
           {pipelines.map(pipeline => (
             <option key={pipeline.id} value={pipeline.id}>
