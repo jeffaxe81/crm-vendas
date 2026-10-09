@@ -112,7 +112,7 @@ describe("Ciclo 6: contexto da saúde comercial", () => {
     expect(calls.filter(path => path.includes("/reports/"))).toHaveLength(0);
   });
 
-  it("limpa dados ao trocar para organização sem funis" async () => {
+  it("limpa dados ao trocar para organização sem funis", async () => {
     const calls: Array<{ token: string; path: string }> = [];
     vi.stubGlobal(
       "fetch",
