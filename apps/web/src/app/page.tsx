@@ -306,7 +306,7 @@ export default function Home() {
                     </button>
                   </div>
                 ) : null}
-                <CommunicationView />
+                <CommunicationView accessToken={session.accessToken} />
               </div>
             </>
           ) : null}
