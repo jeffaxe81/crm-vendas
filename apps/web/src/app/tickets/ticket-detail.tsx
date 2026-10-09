@@ -1,8 +1,12 @@
 "use client";
 
 import {
+  TicketChannelSchema,
+  TicketPrioritySchema,
   TICKET_FINAL_STATUSES,
   TICKET_STATUS_TRANSITIONS,
+  type TicketChannel,
+  type TicketPriority,
   type TicketSatisfactionLink,
   type TicketStatus,
 } from "@axes/contracts";
@@ -29,6 +33,14 @@ type TicketDetailProps = {
   queueNames?: ReadonlyMap<string, string>;
   onChange: (ticket: TicketRecord) => void;
   onClose: () => void;
+};
+
+type TicketEditForm = {
+  subject: string;
+  description: string;
+  priority: TicketPriority;
+  channel: TicketChannel;
+  queueId: string;
 };
 
 function describeEvent(
@@ -86,6 +98,14 @@ export function TicketDetail({
   const [reload, setReload] = useState(0);
   const [satisfactionLink, setSatisfactionLink] =
     useState<TicketSatisfactionLink | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editForm, setEditForm] = useState<TicketEditForm>({
+    subject: ticket.subject,
+    description: ticket.description ?? "",
+    priority: ticket.priority,
+    channel: ticket.channel,
+    queueId: ticket.queueId ?? "",
+  });
 
   useEffect(() => {
     setSatisfactionLink(null);
@@ -122,6 +142,56 @@ export function TicketDetail({
     Boolean(currentUserId) &&
     !isMine &&
     !TICKET_FINAL_STATUSES.includes(ticket.status);
+
+  function openEdit() {
+    setError("");
+    setEditForm({
+      subject: ticket.subject,
+      description: ticket.description ?? "",
+      priority: ticket.priority,
+      channel: ticket.channel,
+      queueId: ticket.queueId ?? "",
+    });
+    setEditOpen(true);
+  }
+
+  async function submitEdit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const subject = editForm.subject.trim();
+    if (!subject) {
+      setError("Informe o assunto.");
+      return;
+    }
+
+    setBusy(true);
+    setError("");
+    try {
+      const description = editForm.description.trim();
+      const updated = await apiRequest<TicketRecord>(`/tickets/${ticket.id}`, {
+        accessToken,
+        method: "PATCH",
+        body: {
+          subject,
+          description: description || null,
+          priority: editForm.priority,
+          channel: editForm.channel,
+          queueId: editForm.queueId || null,
+          version: ticket.version,
+        },
+      });
+      onChange(updated);
+      setEditOpen(false);
+      setReload(current => current + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível editar a solicitação."
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function assignToMe() {
     setBusy(true);
@@ -223,6 +293,11 @@ export function TicketDetail({
           <h2>{ticket.subject}</h2>
         </div>
         <div className="support-queues__actions">
+          {canWrite && !TICKET_FINAL_STATUSES.includes(ticket.status) ? (
+            <button type="button" disabled={busy} onClick={openEdit}>
+              Editar solicitação
+            </button>
+          ) : null}
           {canTakeOver ? (
             <button
               type="button"
@@ -238,6 +313,108 @@ export function TicketDetail({
           </button>
         </div>
       </div>
+
+      {editOpen ? (
+        <form aria-label="Editar solicitação" onSubmit={submitEdit}>
+          <label>
+            <span>Assunto</span>
+            <input
+              value={editForm.subject}
+              disabled={busy}
+              onChange={event =>
+                setEditForm(current => ({
+                  ...current,
+                  subject: event.target.value,
+                }))
+              }
+              required
+            />
+          </label>
+          <label>
+            <span>Descrição</span>
+            <textarea
+              value={editForm.description}
+              disabled={busy}
+              onChange={event =>
+                setEditForm(current => ({
+                  ...current,
+                  description: event.target.value,
+                }))
+              }
+            />
+          </label>
+          <label>
+            <span>Prioridade</span>
+            <select
+              value={editForm.priority}
+              disabled={busy}
+              onChange={event =>
+                setEditForm(current => ({
+                  ...current,
+                  priority: event.target.value as TicketPriority,
+                }))
+              }
+            >
+              {TicketPrioritySchema.options.map(priority => (
+                <option key={priority} value={priority}>
+                  {priorityLabels[priority]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <span>Canal</span>
+            <select
+              value={editForm.channel}
+              disabled={busy}
+              onChange={event =>
+                setEditForm(current => ({
+                  ...current,
+                  channel: event.target.value as TicketChannel,
+                }))
+              }
+            >
+              {TicketChannelSchema.options.map(channel => (
+                <option key={channel} value={channel}>
+                  {channelLabels[channel]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <span>Fila</span>
+            <select
+              value={editForm.queueId}
+              disabled={busy}
+              onChange={event =>
+                setEditForm(current => ({
+                  ...current,
+                  queueId: event.target.value,
+                }))
+              }
+            >
+              <option value="">Sem fila</option>
+              {Array.from(queueNames.entries()).map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="support-queues__actions">
+            <button type="submit" className="button" disabled={busy}>
+              Salvar alterações
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => setEditOpen(false)}
+            >
+              Cancelar edição
+            </button>
+          </div>
+        </form>
+      ) : null}
 
       <dl className="ticket-detail__facts">
         <div>
