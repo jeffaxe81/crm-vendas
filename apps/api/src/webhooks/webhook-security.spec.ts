@@ -13,6 +13,13 @@ describe("F4.2 webhook security", () => {
       "https://192.168.1.10/hook",
       "https://169.254.169.254/latest/meta-data/",
       "https://[::1]/hook",
+      "https://192.0.2.1/hook",
+      "https://198.18.0.1/hook",
+      "https://198.51.100.1/hook",
+      "https://203.0.113.1/hook",
+      "https://[ff02::1]/hook",
+      "https://[2001:db8::1]/hook",
+      "https://[2002:7f00:1::]/hook",
     ])("rejects SSRF target %s", targetUrl => {
       expect(() => assertSafeWebhookTargetUrl(targetUrl)).toThrow();
     });
@@ -27,6 +34,14 @@ describe("F4.2 webhook security", () => {
       expect(() =>
         assertSafeWebhookTargetUrl("https://hooks.example.com/crm")
       ).not.toThrow();
+    });
+
+    test.each([
+      "https://hooks.example.com:8443/crm",
+      "https://hooks.example.com/crm?token=hidden",
+      "https://hooks.example.com/crm#hidden",
+    ])("rejects ports and secret-bearing URL parts %s", target => {
+      expect(() => assertSafeWebhookTargetUrl(target)).toThrow();
     });
   });
 

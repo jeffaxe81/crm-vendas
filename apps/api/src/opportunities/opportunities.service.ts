@@ -15,6 +15,7 @@ import {
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../database/prisma.service";
 import { Prisma } from "../generated/prisma/client";
+import { enqueueWebhookEvent } from "../webhooks/webhook-outbox";
 
 export type OpportunityAdministrationContext = {
   organizationId: string;
@@ -136,7 +137,7 @@ export class OpportunitiesService {
           context.organizationId
         );
 
-        return tenant.opportunity.create({
+        const created = await tenant.opportunity.create({
           data: {
             organizationId: context.organizationId,
             pipelineId: input.pipelineId,
@@ -154,6 +155,21 @@ export class OpportunitiesService {
             updatedBy: context.actorUserId,
           },
         });
+        const stage = await tenant.pipelineStage.findFirst({
+          where: { id: input.stageId, organizationId: context.organizationId },
+          select: { kind: true },
+        });
+        if (stage?.kind === "WON" || stage?.kind === "LOST") {
+          await enqueueWebhookEvent(tenant, {
+            ...context,
+            eventType:
+              stage.kind === "WON" ? "opportunity.won" : "opportunity.lost",
+            entityId: created.id,
+            entityVersion: created.version,
+            occurredAt: created.createdAt,
+          });
+        }
+        return created;
       }
     );
 
@@ -364,6 +380,18 @@ export class OpportunitiesService {
           context.organizationId
         );
 
+        if (targetStage.kind === "WON" || targetStage.kind === "LOST") {
+          await enqueueWebhookEvent(tenant, {
+            ...context,
+            eventType:
+              targetStage.kind === "WON"
+                ? "opportunity.won"
+                : "opportunity.lost",
+            entityId: updated.id,
+            entityVersion: updated.version,
+            occurredAt: updated.updatedAt,
+          });
+        }
         return {
           before: existing,
           after: updated,
