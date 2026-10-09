@@ -8,10 +8,17 @@ export function summarizeOpportunityAges(
   opportunities: readonly { createdAt: Date; stageId: string }[],
   asOf: Date
 ) {
-  const totals = new Map<string, { count: number; sum: number; oldest: number }>();
+  const totals = new Map<
+    string,
+    { count: number; sum: number; oldest: number }
+  >();
   for (const opportunity of opportunities) {
     const days = opportunityAgeDays(opportunity.createdAt, asOf);
-    const current = totals.get(opportunity.stageId) ?? { count: 0, sum: 0, oldest: 0 };
+    const current = totals.get(opportunity.stageId) ?? {
+      count: 0,
+      sum: 0,
+      oldest: 0,
+    };
     current.count += 1;
     current.sum += days;
     current.oldest = Math.max(current.oldest, days);

@@ -7,11 +7,15 @@ describe("C6-02 opportunity aging", () => {
   const asOf = new Date("2026-10-09T12:00:00.000Z");
 
   it("measures age since creation", () => {
-    expect(opportunityAgeDays(new Date("2026-10-07T12:00:00.000Z"), asOf)).toBe(2);
+    expect(opportunityAgeDays(new Date("2026-10-07T12:00:00.000Z"), asOf)).toBe(
+      2
+    );
   });
 
   it("clamps future timestamps to zero", () => {
-    expect(opportunityAgeDays(new Date("2026-10-10T12:00:00.000Z"), asOf)).toBe(0);
+    expect(opportunityAgeDays(new Date("2026-10-10T12:00:00.000Z"), asOf)).toBe(
+      0
+    );
   });
 
   it("aggregates age by stage without confusing age with stage dwell time", () => {

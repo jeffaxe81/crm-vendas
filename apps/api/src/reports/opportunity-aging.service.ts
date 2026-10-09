@@ -39,7 +39,8 @@ export class OpportunityAgingService {
         asOf: asOf.toISOString(),
         pipeline,
         metric: "age-since-creation",
-        description: "Idade desde a criação, não tempo de permanência na etapa.",
+        description:
+          "Idade desde a criação, não tempo de permanência na etapa.",
         stages: summarizeOpportunityAges(opportunities, asOf),
       };
     });
