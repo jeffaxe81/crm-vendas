@@ -13,11 +13,16 @@ export type WebhookTransportResult = {
   responseStatus: number | null;
   errorCode: string | null;
 };
+export type WebhookConnectionGate = (
+  open: () => boolean,
+  signal: AbortSignal
+) => Promise<boolean>;
 export interface WebhookTransport {
   send(
     targetUrl: string,
     body: string,
-    headers: Record<string, string>
+    headers: Record<string, string>,
+    gate?: WebhookConnectionGate
   ): Promise<WebhookTransportResult>;
 }
 export type WebhookTransportDependencies = {
@@ -39,7 +44,8 @@ export class HttpsWebhookTransport implements WebhookTransport {
   async send(
     targetUrl: string,
     body: string,
-    headers: Record<string, string>
+    headers: Record<string, string>,
+    gate?: WebhookConnectionGate
   ): Promise<WebhookTransportResult> {
     try {
       assertSafeWebhookTargetUrl(targetUrl);
@@ -49,6 +55,8 @@ export class HttpsWebhookTransport implements WebhookTransport {
     const url = new URL(targetUrl);
     const hostname = url.hostname.replace(/^\[|\]$/g, "");
     return new Promise(resolve => {
+      const controller = new AbortController();
+      const deadline = Date.now() + 5000;
       let settled = false;
       let req: ClientRequest | undefined;
       const finish = (
@@ -58,6 +66,7 @@ export class HttpsWebhookTransport implements WebhookTransport {
         if (settled) return;
         settled = true;
         clearTimeout(timer);
+        controller.abort();
         resolve({ responseStatus, errorCode });
       };
       // A single wall-clock deadline includes DNS, handshake and response headers.
@@ -69,7 +78,7 @@ export class HttpsWebhookTransport implements WebhookTransport {
         ? Promise.resolve([{ address: hostname, family: isIP(hostname) }])
         : Promise.resolve().then(() => this.dependencies.resolve(hostname));
       void resolveAddresses.then(
-        addresses => {
+        async addresses => {
           if (settled) return;
           if (
             !addresses.length ||
@@ -83,50 +92,67 @@ export class HttpsWebhookTransport implements WebhookTransport {
             return;
           }
           const pinned = addresses[0]!;
+          const open = () => {
+            // The deadline may have elapsed while the cross-worker gate was waiting.
+            if (settled) return false;
+            if (Date.now() >= deadline) {
+              finish(null, "TIMEOUT");
+              return false;
+            }
+            try {
+              req = this.dependencies.request(
+                {
+                  protocol: "https:",
+                  hostname,
+                  servername: isIP(hostname) ? undefined : hostname,
+                  port: 443,
+                  path: url.pathname,
+                  method: "POST",
+                  agent: false,
+                  rejectUnauthorized: true,
+                  headers: {
+                    ...headers,
+                    Host: url.host,
+                    "Content-Type": "application/json",
+                    "Content-Length": Buffer.byteLength(body),
+                  },
+                  family: pinned.family,
+                  lookup: (_host, options, callback) => {
+                    if (options.all) callback(null, [pinned]);
+                    else callback(null, pinned.address, pinned.family);
+                  },
+                },
+                response => {
+                  const status = response.statusCode ?? null;
+                  finish(
+                    status,
+                    status === null
+                      ? "NETWORK_ERROR"
+                      : status >= 300 && status < 400
+                        ? "REDIRECT_BLOCKED"
+                        : status >= 200 && status < 300
+                          ? null
+                          : "HTTP_ERROR"
+                  );
+                  // Never consume, log or persist the recipient's response body.
+                  response.destroy();
+                }
+              );
+              req.on("error", () => finish(null, "NETWORK_ERROR"));
+              req.end(body);
+            } catch {
+              finish(null, "NETWORK_ERROR");
+              req?.destroy();
+            }
+            return true;
+          };
           try {
-            req = this.dependencies.request(
-              {
-                protocol: "https:",
-                hostname,
-                servername: isIP(hostname) ? undefined : hostname,
-                port: 443,
-                path: url.pathname,
-                method: "POST",
-                agent: false,
-                rejectUnauthorized: true,
-                headers: {
-                  ...headers,
-                  Host: url.host,
-                  "Content-Type": "application/json",
-                  "Content-Length": Buffer.byteLength(body),
-                },
-                family: pinned.family,
-                lookup: (_host, options, callback) => {
-                  if (options.all) callback(null, [pinned]);
-                  else callback(null, pinned.address, pinned.family);
-                },
-              },
-              response => {
-                const status = response.statusCode ?? null;
-                finish(
-                  status,
-                  status === null
-                    ? "NETWORK_ERROR"
-                    : status >= 300 && status < 400
-                      ? "REDIRECT_BLOCKED"
-                      : status >= 200 && status < 300
-                        ? null
-                        : "HTTP_ERROR"
-                );
-                // Never consume, log or persist the recipient's response body.
-                response.destroy();
-              }
-            );
-            req.on("error", () => finish(null, "NETWORK_ERROR"));
-            req.end(body);
+            if (gate) {
+              if (!(await gate(open, controller.signal)))
+                finish(null, "SUBSCRIPTION_CHANGED");
+            } else open();
           } catch {
             finish(null, "NETWORK_ERROR");
-            req?.destroy();
           }
         },
         () => finish(null, "DNS_ERROR")

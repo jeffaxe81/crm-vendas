@@ -25,6 +25,7 @@ import type {
 } from "../generated/prisma/client";
 import { assertSafeWebhookTargetUrl } from "./webhook-security";
 import { encryptWebhookSecret, webhookEncryptionKey } from "./webhook-secret";
+import { lockWebhookTransaction } from "./webhook-connection-lock";
 
 export type WebhookManagementContext = {
   organizationId: string;
@@ -225,6 +226,7 @@ export class WebhooksService {
   ): Promise<WebhookSubscriptionSummary> {
     if (input.targetUrl !== undefined) this.validateTarget(input.targetUrl);
     return this.prisma.withTenant(context.organizationId, async tenant => {
+      await lockWebhookTransaction(tenant, context.organizationId);
       const previous = await tenant.webhookSubscription.findFirst({
         where: { id, organizationId: context.organizationId },
         select: subscriptionSelect,
@@ -250,20 +252,31 @@ export class WebhooksService {
         event => !nextEvents.has(event)
       );
       if (destinationChanged || deactivated || removedEvents.length) {
+        const affected = {
+          organizationId: context.organizationId,
+          subscriptionId: id,
+          status: { in: ["PENDING", "RETRY_SCHEDULED", "PROCESSING"] },
+          ...(!destinationChanged && !deactivated
+            ? { eventType: { in: removedEvents } }
+            : {}),
+        };
         await tenant.webhookDispatch.updateMany({
-          where: {
-            organizationId: context.organizationId,
-            subscriptionId: id,
-            status: { in: ["PENDING", "RETRY_SCHEDULED", "PROCESSING"] },
-            ...(!destinationChanged && !deactivated
-              ? { eventType: { in: removedEvents } }
-              : {}),
-          },
+          where: { ...affected, requestStartedAt: null },
           data: {
             status: "CANCELLED",
             nextAttemptAt: null,
             lockedUntil: null,
             leaseToken: null,
+            lastErrorCode: "SUBSCRIPTION_CHANGED",
+          },
+        });
+        // A started attempt owns its result even after cancellation. Keep its
+        // lease until completion/recovery; CANCELLED forbids obsolete retries.
+        await tenant.webhookDispatch.updateMany({
+          where: { ...affected, requestStartedAt: { not: null } },
+          data: {
+            status: "CANCELLED",
+            nextAttemptAt: null,
             lastErrorCode: "SUBSCRIPTION_CHANGED",
           },
         });

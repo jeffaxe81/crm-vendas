@@ -1,20 +1,33 @@
 import { randomUUID } from "node:crypto";
+import { EventEmitter } from "node:events";
+import type { ClientRequest, IncomingMessage } from "node:http";
+import type { LookupAddress } from "node:dns";
 import type { PrismaService } from "../database/prisma.service";
 import { WebhookWorker } from "./webhook-worker";
 import { encryptWebhookSecret } from "./webhook-secret";
 import { verifyWebhookSignature } from "./webhook-security";
 import type { WebhookTransport } from "./webhook-transport";
+import { HttpsWebhookTransport } from "./webhook-transport";
+import { WebhooksService } from "./webhooks.service";
 const key = Buffer.alloc(32, 9).toString("base64");
 const now = new Date("2026-10-09T00:00:00Z");
 function fixture() {
+  const subscriptionId = randomUUID();
   const subscription = {
-    id: "subscription",
+    id: subscriptionId,
     organizationId: "org",
     version: 1,
     isActive: true,
     targetUrl: "https://example.com",
     eventTypes: ["company.created"],
-    encryptedSecret: encryptWebhookSecret("secret", key, "org:subscription"),
+    encryptedSecret: encryptWebhookSecret(
+      "secret",
+      key,
+      `org:${subscriptionId}`
+    ),
+    name: "ERP",
+    createdAt: now,
+    updatedAt: now,
   };
   const row = {
     id: "dispatch",
@@ -33,46 +46,65 @@ function fixture() {
     leaseToken: null as string | null,
     requestId: "request",
     lastErrorCode: null as string | null,
+    requestStartedAt: null as Date | null,
   };
   const deliveries: any[] = [],
     audits: any[] = [],
     sends: any[] = [];
   let transactionDepth = 0;
+  let startWriteHook: (() => void) | undefined;
   const tx = {
+    $executeRaw: async () => 1,
     $queryRaw: async () => {
       const due =
         ["PENDING", "RETRY_SCHEDULED"].includes(row.status) &&
         row.nextAttemptAt &&
         row.nextAttemptAt <= clock;
       const expired =
-        row.status === "PROCESSING" &&
+        (row.status === "PROCESSING" ||
+          (row.status === "CANCELLED" && row.requestStartedAt !== null)) &&
         row.lockedUntil &&
         row.lockedUntil <= clock;
       return due || expired ? [{ id: row.id }] : [];
     },
     webhookDispatch: {
       findFirst: async ({ where }: any) =>
-        where.leaseToken && row.leaseToken !== where.leaseToken
+        (where.leaseToken && row.leaseToken !== where.leaseToken) ||
+        (where.status && row.status !== where.status)
           ? null
           : { ...row },
       findFirstOrThrow: async () => ({ ...row }),
       update: async ({ data }: any) => {
+        if (data.requestStartedAt) startWriteHook?.();
         Object.assign(row, data);
         return { ...row };
       },
       updateMany: async ({ where, data }: any) => {
+        if (data.requestStartedAt) startWriteHook?.();
         if (
           (where.leaseToken && where.leaseToken !== row.leaseToken) ||
           (where.status &&
             typeof where.status === "string" &&
-            where.status !== row.status)
+            where.status !== row.status) ||
+          (where.status?.in && !where.status.in.includes(row.status)) ||
+          (where.requestStartedAt === null && row.requestStartedAt !== null) ||
+          (where.requestStartedAt?.not === null &&
+            row.requestStartedAt === null)
         )
           return { count: 0 };
         Object.assign(row, data);
         return { count: 1 };
       },
     },
-    webhookSubscription: { findFirst: async () => ({ ...subscription }) },
+    webhookSubscription: {
+      findFirst: async () => ({ ...subscription }),
+      updateMany: async ({ data }: any) => {
+        const { version, ...changes } = data;
+        Object.assign(subscription, changes);
+        subscription.version += version.increment;
+        return { count: 1 };
+      },
+    },
     webhookDelivery: {
       create: async ({ data }: any) => {
         if (deliveries.some(d => d.attempt === data.attempt))
@@ -90,6 +122,11 @@ function fixture() {
   };
   let clock = now;
   const prisma = {
+    withSessionAdvisoryLock: async (
+      _key: string,
+      fn: Function,
+      signal: AbortSignal
+    ) => fn(signal),
     withTenant: async (_org: string, fn: Function) => {
       transactionDepth++;
       try {
@@ -108,9 +145,16 @@ function fixture() {
   };
   let sendHook: (() => Promise<void>) | undefined;
   const transport: WebhookTransport = {
-    send: async (target, body, headers) => {
-      expect(transactionDepth).toBe(0);
-      sends.push({ target, body, headers });
+    send: async (target, body, headers, gate) => {
+      const open = () => {
+        expect(transactionDepth).toBe(0);
+        sends.push({ target, body, headers });
+        return true;
+      };
+      if (gate) {
+        if (!(await gate(open, new AbortController().signal)))
+          return { responseStatus: null, errorCode: "SUBSCRIPTION_CHANGED" };
+      } else open();
       await sendHook?.();
       return result;
     },
@@ -127,6 +171,7 @@ function fixture() {
     audits,
     sends,
     prisma,
+    management: new WebhooksService(prisma as unknown as PrismaService),
     setResult: (value: typeof result) => {
       result = value;
     },
@@ -135,6 +180,9 @@ function fixture() {
     },
     setSendHook: (hook: () => Promise<void>) => {
       sendHook = hook;
+    },
+    setStartWriteHook: (hook: () => void) => {
+      startWriteHook = hook;
     },
   };
 }
@@ -147,6 +195,106 @@ describe("webhook worker lease and delivery state", () => {
     if (previous === undefined) delete process.env.WEBHOOK_ENCRYPTION_KEY;
     else process.env.WEBHOOK_ENCRYPTION_KEY = previous;
   });
+  it.each(["disabled", "url"])(
+    "blocks a committed %s edit during DNS before opening HTTPS",
+    async change => {
+      const f = fixture();
+      let releaseDns!: (addresses: LookupAddress[]) => void;
+      let dnsStarted!: () => void;
+      const resolving = new Promise<void>(r => (dnsStarted = r));
+      let connections = 0;
+      const transport = new HttpsWebhookTransport({
+        resolve: () => {
+          dnsStarted();
+          return new Promise(r => (releaseDns = r));
+        },
+        request: (_options, response) => {
+          connections++;
+          return Object.assign(new EventEmitter(), {
+            end: () =>
+              queueMicrotask(() =>
+                response({ statusCode: 200, destroy() {} } as IncomingMessage)
+              ),
+            destroy() {},
+          }) as ClientRequest;
+        },
+      });
+      const work = new WebhookWorker(
+        f.prisma as unknown as PrismaService,
+        transport
+      ).processNext("org", now);
+      await resolving;
+      await f.management.update(
+        f.subscription.id,
+        {
+          version: 1,
+          ...(change === "disabled"
+            ? { isActive: false }
+            : { targetUrl: "https://example.net" }),
+        },
+        {
+          organizationId: "org",
+          actorUserId: randomUUID(),
+          requestId: "edit-during-dns",
+        }
+      );
+      releaseDns([{ address: "8.8.8.8", family: 4 }]);
+      await work;
+      expect(connections).toBe(0);
+      expect(f.row.status).toBe("CANCELLED");
+      expect(f.deliveries).toEqual([]);
+    }
+  );
+  it.each([200, 503])(
+    "records actual HTTP %s after a committed edit without reviving obsolete retries",
+    async status => {
+      const f = fixture();
+      let respond!: (response: IncomingMessage) => void;
+      let opened!: () => void;
+      const started = new Promise<void>(r => (opened = r));
+      const transport = new HttpsWebhookTransport({
+        resolve: async () => [{ address: "8.8.8.8", family: 4 }],
+        request: (_options, response) => {
+          respond = response;
+          return Object.assign(new EventEmitter(), {
+            end: opened,
+            destroy() {},
+          }) as ClientRequest;
+        },
+      });
+      const worker = new WebhookWorker(
+        f.prisma as unknown as PrismaService,
+        transport
+      );
+      const work = worker.processNext("org", now);
+      await started;
+      await f.management.update(
+        f.subscription.id,
+        { version: 1, isActive: false },
+        {
+          organizationId: "org",
+          actorUserId: randomUUID(),
+          requestId: "edit-after-request",
+        }
+      );
+      respond({ statusCode: status, destroy() {} } as IncomingMessage);
+      await work;
+      expect(f.deliveries).toEqual([
+        expect.objectContaining({
+          attempt: 1,
+          status: status === 200 ? "DELIVERED" : "FAILED",
+          responseStatus: status,
+          errorCode: status === 200 ? null : "HTTP_ERROR",
+        }),
+      ]);
+      expect(f.row).toMatchObject({
+        status: "CANCELLED",
+        nextAttemptAt: null,
+        leaseToken: null,
+      });
+      expect(await worker.processNext("org", now)).toBe(false);
+    }
+  );
   it("signs the exact body, records successful attempt outside transaction, and never replays it", async () => {
     const f = fixture();
     expect(await f.worker.processNext("org", now)).toBe(true);
@@ -281,6 +429,54 @@ describe("webhook worker lease and delivery state", () => {
     expect(f.deliveries).toHaveLength(0);
     expect(f.row.status).toBe("PROCESSING");
   });
+  it("recovers a cancelled started attempt after process death without replay or stale overwrite", async () => {
+    const f = fixture();
+    Object.assign(f.row, {
+      status: "CANCELLED",
+      attemptCount: 1,
+      requestStartedAt: now,
+      lockedUntil: now,
+      leaseToken: randomUUID(),
+    });
+    expect(await f.worker.processNext("org", now)).toBe(true);
+    expect(f.deliveries).toEqual([
+      expect.objectContaining({
+        attempt: 1,
+        status: "FAILED",
+        errorCode: "LEASE_EXPIRED",
+      }),
+    ]);
+    expect(f.sends).toHaveLength(0);
+    expect(f.row).toMatchObject({
+      status: "CANCELLED",
+      leaseToken: null,
+      requestStartedAt: null,
+    });
+    expect(await f.worker.processNext("org", now)).toBe(false);
+  });
+  it("never changes a replacement owner's marker when the connection gate expires during its final write", async () => {
+    const f = fixture();
+    const replacement = randomUUID(),
+      held = new AbortController();
+    f.prisma.withSessionAdvisoryLock = async (_key, operation) =>
+      operation(held.signal);
+    f.setStartWriteHook(() => {
+      held.abort();
+      Object.assign(f.row, {
+        status: "RETRY_SCHEDULED",
+        leaseToken: replacement,
+        requestStartedAt: null,
+      });
+    });
+    await f.worker.processNext("org", now);
+    expect(f.row).toMatchObject({
+      status: "RETRY_SCHEDULED",
+      leaseToken: replacement,
+      requestStartedAt: null,
+    });
+    expect(f.sends).toEqual([]);
+    expect(f.deliveries).toEqual([]);
+  });
   it("does not access data or send when encryption is unavailable", async () => {
     delete process.env.WEBHOOK_ENCRYPTION_KEY;
     const f = fixture();
@@ -302,7 +498,7 @@ describe("webhook worker lease and delivery state", () => {
       },
       withTenant: async (org: string, fn: Function) => {
         visited.push(org);
-        return fn({ $queryRaw: async () => [] });
+        return fn({ $queryRaw: async () => [], $executeRaw: async () => 1 });
       },
     };
     const worker = new WebhookWorker(prisma as unknown as PrismaService, {

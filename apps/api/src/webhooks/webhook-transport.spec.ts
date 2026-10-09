@@ -56,6 +56,47 @@ function fixture(
   };
 }
 describe("pinned webhook HTTPS transport", () => {
+  it("never opens a request when the post-DNS connection gate denies it", async () => {
+    const f = fixture();
+    const result = await f.transport.send(
+      "https://hooks.example.com/events",
+      "{}",
+      {},
+      async () => false
+    );
+    expect(f.calls).toHaveLength(0);
+    expect(result).toEqual({
+      responseStatus: null,
+      errorCode: "SUBSCRIPTION_CHANGED",
+    });
+  });
+  it("aborts a blocked gate at the deadline and refuses its late opening callback", async () => {
+    const f = fixture();
+    let release!: () => void, held!: () => void;
+    let allowed: boolean | undefined;
+    let signal!: AbortSignal;
+    const blocked = new Promise<void>(r => (release = r)),
+      acquired = new Promise<void>(r => (held = r));
+    const work = f.transport.send(
+      "https://hooks.example.com/events",
+      "{}",
+      {},
+      async (open, deadlineSignal) => {
+        signal = deadlineSignal;
+        held();
+        await blocked;
+        allowed = open();
+        return allowed;
+      }
+    );
+    await acquired;
+    expect(await work).toEqual({ responseStatus: null, errorCode: "TIMEOUT" });
+    expect(signal.aborted).toBe(true);
+    release();
+    await Promise.resolve();
+    expect(allowed).toBe(false);
+    expect(f.calls).toHaveLength(0);
+  }, 10000);
   it("pins approved DNS while keeping Host, TLS hostname and certificate validation", async () => {
     const f = fixture();
     expect(

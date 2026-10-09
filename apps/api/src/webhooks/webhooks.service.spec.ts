@@ -42,6 +42,7 @@ function fixture() {
   };
   const state = { count: 1, found: row as typeof row | null };
   const tenant = {
+    $executeRaw: async () => 1,
     webhookSubscription: {
       findMany: async () => [row],
       create: async ({ data }: any) => {
@@ -179,19 +180,26 @@ describe("webhook subscription management", () => {
       context
     );
     expect(f.calls.updated).toHaveLength(1);
-    expect(f.calls.cancelled).toEqual([
+    expect(f.calls.cancelled[0]).toEqual(
       expect.objectContaining({
         where: {
           organizationId: org,
           subscriptionId: id,
           status: { in: ["PENDING", "RETRY_SCHEDULED", "PROCESSING"] },
+          requestStartedAt: null,
         },
         data: expect.objectContaining({
           status: "CANCELLED",
           leaseToken: null,
         }),
-      }),
-    ]);
+      })
+    );
+    expect(f.calls.cancelled[1]).toMatchObject({
+      where: { requestStartedAt: { not: null } },
+      data: { status: "CANCELLED", nextAttemptAt: null },
+    });
+    expect(f.calls.cancelled[1].data).not.toHaveProperty("leaseToken");
+    expect(f.calls.cancelled[1].data).not.toHaveProperty("lockedUntil");
   });
   it("retains still-subscribed events when adding an event", async () => {
     const f = fixture();
@@ -209,13 +217,15 @@ describe("webhook subscription management", () => {
       { version: 1, eventTypes: ["ticket.closed"] },
       context
     );
-    expect(f.calls.cancelled).toEqual([
-      expect.objectContaining({
-        where: expect.objectContaining({
-          eventType: { in: ["company.created"] },
+    expect(f.calls.cancelled).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          where: expect.objectContaining({
+            eventType: { in: ["company.created"] },
+          }),
         }),
-      }),
-    ]);
+      ])
+    );
   });
   it("does not cancel pending dispatches on name-only edits", async () => {
     const f = fixture();

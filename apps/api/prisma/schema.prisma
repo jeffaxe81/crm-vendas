@@ -1132,6 +1132,7 @@ model WebhookDispatch {
   nextAttemptAt DateTime? @default(now()) @map("next_attempt_at") @db.Timestamptz(6)
   leaseToken String? @map("lease_token") @db.Uuid
   lockedUntil DateTime? @map("locked_until") @db.Timestamptz(6)
+  requestStartedAt DateTime? @map("request_started_at") @db.Timestamptz(6)
   requestId String @map("request_id") @db.VarChar(160)
   lastErrorCode String? @map("last_error_code") @db.VarChar(80)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)

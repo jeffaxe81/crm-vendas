@@ -1,4 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { EventEmitter } from "node:events";
+import type { ClientRequest, IncomingMessage } from "node:http";
+import type { LookupAddress } from "node:dns";
 import { ConflictException } from "@nestjs/common";
 import { PrismaService } from "../database/prisma.service";
 import { AuditService } from "../audit/audit.service";
@@ -11,6 +14,44 @@ import { WebhookWorker } from "./webhook-worker";
 import { WebhooksService } from "./webhooks.service";
 import { encryptWebhookSecret } from "./webhook-secret";
 import type { WebhookTransport } from "./webhook-transport";
+import { HttpsWebhookTransport } from "./webhook-transport";
+import { webhookConnectionLockKey } from "./webhook-connection-lock";
+
+function controlledHttps(delayedDns = false) {
+  let releaseDns!: (addresses: LookupAddress[]) => void;
+  let dnsStarted!: () => void, opened!: () => void;
+  let respond!: (response: IncomingMessage) => void;
+  let connections = 0;
+  const resolving = new Promise<void>(r => (dnsStarted = r));
+  const started = new Promise<void>(r => (opened = r));
+  const transport = new HttpsWebhookTransport({
+    resolve: () => {
+      dnsStarted();
+      return delayedDns
+        ? new Promise(r => (releaseDns = r))
+        : Promise.resolve([{ address: "8.8.8.8", family: 4 }]);
+    },
+    request: (_options, callback) => {
+      connections++;
+      respond = callback;
+      return Object.assign(new EventEmitter(), {
+        end: opened,
+        destroy() {},
+      }) as ClientRequest;
+    },
+  });
+  return {
+    transport,
+    resolving,
+    started,
+    releaseDns: () => releaseDns([{ address: "8.8.8.8", family: 4 }]),
+    respond: (statusCode: number) =>
+      respond({ statusCode, destroy() {} } as IncomingMessage),
+    get connections() {
+      return connections;
+    },
+  };
+}
 
 // Real PostgreSQL tests: CI must supply a NOSUPERUSER/NOBYPASSRLS role.
 describe("webhook transactional outbox and adversarial PostgreSQL leases", () => {
@@ -123,6 +164,168 @@ describe("webhook transactional outbox and adversarial PostgreSQL leases", () =>
       })
     );
   }
+  it.each(["disabled", "url"])(
+    "blocks a committed %s edit in another process during DNS",
+    async change => {
+      const dispatch = await queued(),
+        https = controlledHttps(true);
+      const work = new WebhookWorker(app, https.transport).processNext(
+        org,
+        now
+      );
+      await https.resolving;
+      await new WebhooksService(contender).update(
+        subscriptionId,
+        {
+          version: 1,
+          ...(change === "disabled"
+            ? { isActive: false }
+            : { targetUrl: "https://example.net" }),
+        },
+        context()
+      );
+      https.releaseDns();
+      await work;
+      expect(https.connections).toBe(0);
+      expect(await stored(dispatch.id)).toMatchObject({
+        status: "CANCELLED",
+        leaseToken: null,
+        deliveries: [],
+      });
+    }
+  );
+  it.each([200, 503])(
+    "persists actual HTTP %s after cross-process cancellation and forbids obsolete retry",
+    async status => {
+      const dispatch = await queued(),
+        https = controlledHttps();
+      const worker = new WebhookWorker(app, https.transport);
+      const work = worker.processNext(org, now);
+      await https.started;
+      await new WebhooksService(contender).update(
+        subscriptionId,
+        {
+          version: 1,
+          ...(status === 200
+            ? { isActive: false }
+            : { targetUrl: "https://example.net" }),
+        },
+        context()
+      );
+      expect(await stored(dispatch.id)).toMatchObject({
+        status: "CANCELLED",
+        requestStartedAt: now,
+        leaseToken: expect.any(String),
+        deliveries: [],
+      });
+      https.respond(status);
+      await work;
+      const row = await stored(dispatch.id);
+      expect(row).toMatchObject({
+        status: "CANCELLED",
+        leaseToken: null,
+        requestStartedAt: null,
+        nextAttemptAt: null,
+      });
+      expect(row.deliveries).toEqual([
+        expect.objectContaining({
+          attempt: 1,
+          status: status === 200 ? "DELIVERED" : "FAILED",
+          responseStatus: status,
+        }),
+      ]);
+      await expect(
+        app.withTenant(org, tx =>
+          tx.webhookDelivery.update({
+            where: { id: row.deliveries[0]!.id },
+            data: { responseStatus: 201 },
+          })
+        )
+      ).rejects.toThrow(/webhook delivery attempts are immutable/);
+      expect(
+        await worker.processNext(org, new Date(now.getTime() + 60000))
+      ).toBe(false);
+      expect(https.connections).toBe(1);
+    }
+  );
+  it("holds the opening gate across commit, blocks another client's edit, then releases the dedicated session", async () => {
+    let held!: () => void, release!: () => void;
+    const acquired = new Promise<void>(r => (held = r)),
+      blocked = new Promise<void>(r => (release = r));
+    let connectionOpened = false,
+      editCommitted = false;
+    const key = webhookConnectionLockKey(org);
+    const gate = app.withSessionAdvisoryLock(
+      key,
+      async () => {
+        await app.withTenant(org, tx => tx.webhookSubscription.count());
+        held();
+        await blocked;
+        connectionOpened = true;
+      },
+      new AbortController().signal,
+      `tenant-maintenance:${org}`
+    );
+    await acquired;
+    const edit = new WebhooksService(contender)
+      .update(subscriptionId, { version: 1, isActive: false }, context())
+      .then(() => {
+        editCommitted = true;
+        expect(connectionOpened).toBe(true);
+      });
+    try {
+      await new Promise(r => setTimeout(r, 100));
+      expect(editCommitted).toBe(false);
+    } finally {
+      release();
+      await gate;
+      await edit;
+    }
+    const [available] = await app.$queryRaw<
+      { available: boolean }[]
+    >`SELECT pg_try_advisory_xact_lock(hashtextextended(${key},0)) AS available`;
+    expect(available?.available).toBe(true);
+  });
+  it("recovers cancelled started work exactly once and discards its old owner's late success", async () => {
+    const dispatch = await queued(),
+      https = controlledHttps();
+    const work = new WebhookWorker(app, https.transport).processNext(org, now);
+    await https.started;
+    await new WebhooksService(contender).update(
+      subscriptionId,
+      { version: 1, isActive: false },
+      context()
+    );
+    let replay = 0;
+    const transport: WebhookTransport = {
+      send: async () => {
+        replay++;
+        return { responseStatus: 200, errorCode: null };
+      },
+    };
+    const later = new Date(now.getTime() + 31000);
+    await new WebhookWorker(contender, transport).processNext(org, later);
+    https.respond(200);
+    await work;
+    const row = await stored(dispatch.id);
+    expect(row).toMatchObject({
+      status: "CANCELLED",
+      attemptCount: 1,
+      leaseToken: null,
+      requestStartedAt: null,
+    });
+    expect(row.deliveries).toEqual([
+      expect.objectContaining({
+        attempt: 1,
+        status: "FAILED",
+        errorCode: "LEASE_EXPIRED",
+      }),
+    ]);
+    expect(replay).toBe(0);
+    expect(
+      await new WebhookWorker(contender, transport).processNext(org, later)
+    ).toBe(false);
+  });
   it("rolls back data and dispatches together after enqueue or a failed outbox write", async () => {
     const companyId = randomUUID();
     await expect(
@@ -454,6 +657,7 @@ describe("webhook transactional outbox and adversarial PostgreSQL leases", () =>
     let transactions = 0,
       sends = 0;
     const guarded = {
+      withSessionAdvisoryLock: app.withSessionAdvisoryLock.bind(app),
       withTenant: async <T>(
         organizationId: string,
         fn: Parameters<PrismaService["withTenant"]>[1]
