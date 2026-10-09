@@ -1,1 +1,11 @@
+# Fim de linha LF em tudo que roda em Linux/containers. Um .env ou script com
+# CRLF (editado no Windows) corrompe valores lidos pelo shell — por exemplo a
+# senha do role axes_app, causando "password authentication failed".
 *.sh text eol=lf
+*.bash text eol=lf
+*.conf text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sql text eol=lf
+.env* text eol=lf
+Dockerfile text eol=lf
