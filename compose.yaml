@@ -83,6 +83,9 @@ services:
       NODE_ENV: production
       NEXT_PUBLIC_API_BASE_URL: http://localhost:3001/api/v1
       NEO_INTERACT_URL: ${NEO_INTERACT_URL:-}
+      NEO_INTERACT_MODE: ${NEO_INTERACT_MODE:-iframe}
+      NEO_INTERACT_FRAME_HEIGHT: ${NEO_INTERACT_FRAME_HEIGHT:-800}
+      NEO_INTERACT_FRAME_MAX_WIDTH: ${NEO_INTERACT_FRAME_MAX_WIDTH:-1600}
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
     ports:
       - "3000:3000"

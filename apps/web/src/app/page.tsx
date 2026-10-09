@@ -28,6 +28,7 @@ import { WorkspaceHome } from "./workspace/workspace-home";
 import { WorkspaceEditor } from "./workspace/workspace-editor";
 import { UsersView } from "./admin/users-view";
 import { SupportSettingsView } from "./admin/support-settings-view";
+import { IntegrationCredentialsView } from "./admin/integration-credentials-view";
 
 export default function Home() {
   const manualNavigation = useRef(false);
@@ -192,6 +193,12 @@ export default function Home() {
           ) : activeSection === "support-settings" &&
             session.permissions.includes("support.manage") ? (
             <SupportSettingsView accessToken={session.accessToken} />
+          ) : activeSection === "integration-credentials" &&
+            session.permissions.includes("integration.read") ? (
+            <IntegrationCredentialsView
+              accessToken={session.accessToken}
+              permissions={session.permissions}
+            />
           ) : activeSection === "companies" ? (
             <CompaniesView
               accessToken={session.accessToken}

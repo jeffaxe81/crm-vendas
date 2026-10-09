@@ -2235,6 +2235,23 @@ textarea {
 .workspace-checkbox input {
   width: auto;
 }
+.integration-credentials__scopes,
+.integration-credentials__list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+.integration-credentials__secret output {
+  display: block;
+  padding: 1rem;
+  margin: 1rem 0;
+  border: 1px solid var(--crm-border);
+  border-radius: 0.5rem;
+  background: var(--crm-bg);
+  overflow-wrap: anywhere;
+  user-select: all;
+  font-family: monospace;
+}
 .workspace-order-list {
   list-style: none;
   padding: 0;

@@ -30,7 +30,18 @@ export type EmbeddedApplication = {
 
 export type CommunicationConfiguration =
   | { status: "disabled" | "invalid" }
-  | { status: "ready"; application: EmbeddedApplication };
+  | {
+      status: "ready";
+      mode: "iframe" | "tab";
+      application: EmbeddedApplication;
+    };
+
+const frameDimensionSchema = z.coerce.number().int().min(320).max(1600);
+const openingConfigurationSchema = z.object({
+  mode: z.enum(["iframe", "tab"]),
+  height: frameDimensionSchema,
+  maxWidth: frameDimensionSchema,
+});
 
 export function readCommunicationApplication(
   env: Record<string, string | undefined>
@@ -39,6 +50,12 @@ export function readCommunicationApplication(
   if (!value) return { status: "disabled" };
   const result = neoUrlSchema.safeParse(value);
   if (!result.success) return { status: "invalid" };
+  const opening = openingConfigurationSchema.safeParse({
+    mode: env.NEO_INTERACT_MODE?.trim() || "iframe",
+    height: env.NEO_INTERACT_FRAME_HEIGHT?.trim() || 800,
+    maxWidth: env.NEO_INTERACT_FRAME_MAX_WIDTH?.trim() || 1600,
+  });
+  if (!opening.success) return { status: "invalid" };
   const url = new URL(result.data);
   if (env.WEB_ORIGIN) {
     try {
@@ -50,15 +67,16 @@ export function readCommunicationApplication(
   }
   return {
     status: "ready",
+    mode: opening.data.mode,
     application: {
       id: "neo-interact",
       name: "NEO Interact",
       src: url.href,
       origin: url.origin,
-      defaultHeight: 800,
+      defaultHeight: opening.data.height,
       minHeight: 320,
       maxHeight: 1600,
-      maxWidth: 1600,
+      maxWidth: opening.data.maxWidth,
     },
   };
 }

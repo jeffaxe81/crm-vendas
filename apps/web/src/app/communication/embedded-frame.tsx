@@ -115,7 +115,7 @@ export function EmbeddedFrame({
           style={{
             width: dimensions.width,
             height: `${dimensions.height}px`,
-            maxWidth: "100%",
+            maxWidth: `min(100%, ${application.maxWidth}px)`,
           }}
           onLoad={() => {
             setStatus("loaded");

@@ -13,6 +13,7 @@ import {
   ClipboardList,
   DoorOpen,
   Headset,
+  KeyRound,
   MapPin,
   Menu,
   Package,
@@ -48,6 +49,7 @@ const icons: Partial<Record<CrmSection, typeof Building2>> = {
   "admin-users": UsersRound,
   "support-settings": ShieldCheck,
   "workspace-settings": PanelLeft,
+  "integration-credentials": KeyRound,
 };
 const navigation = workspaceDestinations.map(item => ({
   ...item,

@@ -21,13 +21,11 @@ const session = {
   membership: { id: "33333333-3333-4333-8333-333333333333", role: "SELLER" },
   permissions: ["company.read", "contact.read", "ticket.read"],
 };
-const configuration = readCommunicationApplication({
-  NEO_INTERACT_URL: "https://neo.example.test/neo/",
-});
 function mount(
   permissions = session.permissions,
   configured = true,
-  authenticated = true
+  authenticated = true,
+  mode = "iframe"
 ) {
   vi.stubGlobal(
     "fetch",
@@ -43,7 +41,14 @@ function mount(
   );
   render(
     <CommunicationProvider
-      configuration={configured ? configuration : { status: "disabled" }}
+      configuration={
+        configured
+          ? readCommunicationApplication({
+              NEO_INTERACT_URL: "https://neo.example.test/neo/",
+              NEO_INTERACT_MODE: mode,
+            })
+          : { status: "disabled" }
+      }
     >
       <Home />
     </CommunicationProvider>
@@ -56,6 +61,21 @@ afterEach(() => {
 });
 
 describe("NEO communication in CRM navigation", () => {
+  it("opens communication through an external link without loading an iframe in tab mode", async () => {
+    mount(undefined, true, true, "tab");
+    await openNavigationGroup("Atendimento");
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Comunicação integrada" })
+    );
+    const link = screen.getByRole("link", { name: "Abrir em outra aba" });
+    expect(link).toHaveAttribute("href", "https://neo.example.test/neo/");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(screen.queryByTitle("NEO Interact")).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/configurada para abrir em outra aba/i)
+    ).toBeInTheDocument();
+  });
   it("starts the iframe only on opening and preserves it across navigation", async () => {
     mount();
     await openNavigationGroup("Atendimento");

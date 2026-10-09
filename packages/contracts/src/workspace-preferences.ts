@@ -80,6 +80,12 @@ export const workspaceDestinations = [
     group: "Administração",
     permission: null,
   },
+  {
+    id: "integration-credentials",
+    label: "Chaves de integração",
+    group: "Administração",
+    permission: "integration.read",
+  },
 ] as const;
 export type WorkspaceSection = (typeof workspaceDestinations)[number]["id"];
 const section = z.enum(
