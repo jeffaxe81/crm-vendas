@@ -75,7 +75,9 @@ describe("NEO communication in CRM navigation", () => {
     fireEvent.click(
       await screen.findByRole("button", { name: "Comunicação integrada" })
     );
-    const link = await screen.findByRole("link", { name: "Abrir em outra aba" });
+    const link = await screen.findByRole("link", {
+      name: "Abrir em outra aba",
+    });
     expect(link).toHaveAttribute("href", "https://neo.example.test/neo/");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
