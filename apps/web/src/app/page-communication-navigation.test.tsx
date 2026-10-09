@@ -35,7 +35,15 @@ function mount(
         url.endsWith("/auth/refresh") && !authenticated ? 401 : 200;
       const body = url.endsWith("/auth/refresh")
         ? { ...session, permissions }
-        : { items: [], page: 1, limit: 20, total: 0 };
+        : url.endsWith("/integrations/neo-communication")
+          ? {
+              enabled: configured,
+              url: "https://neo.example.test/neo/",
+              mode,
+              height: 800,
+              maxWidth: 1600,
+            }
+          : { items: [], page: 1, limit: 20, total: 0 };
       return { ok: status === 200, status, json: async () => body } as Response;
     })
   );
@@ -67,7 +75,9 @@ describe("NEO communication in CRM navigation", () => {
     fireEvent.click(
       await screen.findByRole("button", { name: "Comunicação integrada" })
     );
-    const link = screen.getByRole("link", { name: "Abrir em outra aba" });
+    const link = await screen.findByRole("link", {
+      name: "Abrir em outra aba",
+    });
     expect(link).toHaveAttribute("href", "https://neo.example.test/neo/");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
@@ -101,6 +111,29 @@ describe("NEO communication in CRM navigation", () => {
     ).toBeInTheDocument();
     expect(screen.queryByTitle("NEO Interact")).not.toBeInTheDocument();
   });
+  it("opens and collapses a floating panel without remounting the NEO iframe", async () => {
+    mount();
+    await openNavigationGroup("Atendimento");
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Comunicação integrada" })
+    );
+    const iframe = await screen.findByTitle("NEO Interact");
+    await openNavigationGroup("Comercial");
+    fireEvent.click(screen.getByRole("button", { name: "Empresas" }));
+    fireEvent.click(screen.getByRole("button", { name: "Abrir comunicação" }));
+    expect(screen.getByTitle("NEO Interact")).toBe(iframe);
+    expect(iframe.closest("[hidden]")).toBeNull();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Recolher painel NEO Interact" })
+    );
+    expect(iframe.closest("[hidden]")).not.toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Abrir comunicação" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Abrir comunicação em tela inteira" })
+    );
+    expect(screen.getByTitle("NEO Interact")).toBe(iframe);
+    expect(iframe.closest("[hidden]")).toBeNull();
+  });
   it("does not expose communication to a session without ticket.read", async () => {
     mount(["company.read", "contact.read"]);
     await screen.findByText("Axesistemas");
@@ -116,7 +149,7 @@ describe("NEO communication in CRM navigation", () => {
       await screen.findByRole("button", { name: "Comunicação integrada" })
     );
     expect(
-      screen.getByText("Comunicação ainda não configurada")
+      await screen.findByText("Comunicação ainda não configurada")
     ).toBeInTheDocument();
     expect(screen.queryByTitle("NEO Interact")).not.toBeInTheDocument();
   });

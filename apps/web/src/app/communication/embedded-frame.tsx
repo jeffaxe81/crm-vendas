@@ -25,6 +25,7 @@ export function EmbeddedFrame({
   >("loading");
   const [size, setSize] = useState<FrameSize>({ isExpanded: false });
   const [containerWidth, setContainerWidth] = useState(application.maxWidth);
+  const [protocolConfirmed, setProtocolConfirmed] = useState(false);
   const dimensions = resolveFrameDimensions(size, containerWidth, application);
 
   useEffect(() => {
@@ -62,7 +63,10 @@ export function EmbeddedFrame({
       )
         return;
       const parsed = parseFrameMessage(event.data);
-      if (parsed.success) setSize(parsed.data);
+      if (parsed.success) {
+        setProtocolConfirmed(true);
+        setSize(parsed.data);
+      }
     };
     window.addEventListener("message", receive);
     return () => window.removeEventListener("message", receive);
@@ -70,6 +74,7 @@ export function EmbeddedFrame({
 
   function retry() {
     setStatus("loading");
+    setProtocolConfirmed(false);
     setSize({ isExpanded: false });
     setReloadKey(value => value + 1);
   }
@@ -80,9 +85,11 @@ export function EmbeddedFrame({
         <p role="status" aria-live="polite">
           {status === "loading" && `Carregando ${application.name}...`}
           {status === "loaded" &&
-            "Conteúdo incorporado carregado. A autenticação ocorre no NEO Interact."}
+            (protocolConfirmed
+              ? "Documento carregado e comunicação de dimensionamento recebida do NEO. Isso não confirma autenticação ou atendimento ativo."
+              : "Documento do iframe carregado; autenticação e funcionamento do NEO ainda não foram confirmados.")}
           {status === "timeout" &&
-            "O NEO Interact ainda não confirmou o carregamento. Você pode tentar novamente ou abrir em outra aba."}
+            "O documento do iframe não informou conclusão de carregamento no prazo. Tente novamente ou abra em outra aba."}
           {status === "error" &&
             "Não foi possível carregar o NEO Interact. Tente novamente ou abra em outra aba."}
         </p>
@@ -119,6 +126,7 @@ export function EmbeddedFrame({
           }}
           onLoad={() => {
             setStatus("loaded");
+            setProtocolConfirmed(false);
             iframeRef.current?.contentWindow?.postMessage(
               { type: "init", timestamp: Date.now() },
               application.origin

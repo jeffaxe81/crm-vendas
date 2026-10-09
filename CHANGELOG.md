@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased] - Ciclo 12 (P0) — Deploy HTTPS reproduzível e correção do 502
+
+- compose: serviço `db-bootstrap` sincroniza a senha e os GRANTs do role `axes_app` a cada `up` (antes só na criação do volume — causa do 502 de 2026-10-09);
+- compose: credenciais do superusuário via `POSTGRES_*`, portas publicadas em `${BIND_ADDRESS:-127.0.0.1}`, `restart: unless-stopped`;
+- web: `NEXT_PUBLIC_API_BASE_URL` passa a ser build arg — o bundle deixa de ficar fixo em `http://localhost:3001`;
+- api: readiness registra no log o motivo real da falha do banco;
+- `docker-compose.yml` (stack FastAPI) renomeado para `docker-compose.fastapi.yml`, eliminando a ambiguidade com `compose.yaml`;
+- novos `deploy/nginx/crm-vendas.conf`, `deploy/certs/gerar-certificados.sh`, `deploy/setup-servidor.sh` e `scripts/verificar-deploy.sh`;
+- `.gitattributes` força LF em `.env*`, scripts, YAML e configs; `.gitignore` bloqueia chaves TLS;
+- documentação em `docs/deploy/deploy-https.md`.
+
 ## [Unreleased] - Auditoria funcional C4.3 — escala de Produtos
 
 - catálogo de Produtos passa a usar paginação server-side de 50 registros;

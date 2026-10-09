@@ -1,3 +1,4 @@
+import { Logger } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 
 import { DatabaseHealthService } from "../database/database-health.service";
@@ -88,5 +89,36 @@ describe("HealthController", () => {
         database: "down",
       },
     });
+  });
+
+  it("logs the underlying database error when readiness fails", async () => {
+    const logged: string[] = [];
+    const originalError = Logger.prototype.error;
+    Logger.prototype.error = function (message: unknown) {
+      logged.push(String(message));
+    };
+    const databaseHealth = {
+      isReady: async () => {
+        throw new Error('password authentication failed for user "axes_app"');
+      },
+    };
+
+    const moduleRef = await Test.createTestingModule({
+      controllers: [HealthController],
+      providers: [
+        {
+          provide: DatabaseHealthService,
+          useValue: databaseHealth,
+        },
+      ],
+    }).compile();
+
+    const controller = moduleRef.get(HealthController);
+
+    await expect(controller.readiness()).rejects.toMatchObject({
+      status: 503,
+    });
+    Logger.prototype.error = originalError;
+    expect(logged.join("\n")).toContain("password authentication failed");
   });
 });

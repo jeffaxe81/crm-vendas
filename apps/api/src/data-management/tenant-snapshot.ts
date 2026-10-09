@@ -57,11 +57,18 @@ export async function exportTenantSnapshot(
     if (JSON.stringify(actual) !== JSON.stringify(expected))
       throw new BackupError("BACKUP_SCHEMA_UNSUPPORTED");
   }
+  // NEO settings is managed through a standalone SQL migration, not Prisma.
+  // It is deliberately excluded from snapshot export and restore. Keep this
+  // allowlist explicit: any other unknown tenant table must still fail closed.
+  const explicitlyExcludedTenantTables = new Set([
+    "neo_communication_settings",
+  ]);
   if (
     databaseColumns.some(
       c =>
         c.column_name === "organization_id" &&
-        !BACKUP_SCHEMA.models.some(m => m.dbName === c.table_name)
+        !BACKUP_SCHEMA.models.some(m => m.dbName === c.table_name) &&
+        !explicitlyExcludedTenantTables.has(c.table_name)
     )
   )
     throw new BackupError("BACKUP_SCHEMA_UNSUPPORTED");

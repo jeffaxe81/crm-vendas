@@ -2,22 +2,26 @@ services:
   postgres:
     image: postgres:18-bookworm
     environment:
-      POSTGRES_DB: axes_crm
-      POSTGRES_USER: axes
-      POSTGRES_PASSWORD: axes
+      # Superusuário (dono do schema). Em volume existente, estes valores DEVEM
+      # ser os mesmos usados na criação do volume — o Postgres não os reaplica.
+      POSTGRES_DB: ${POSTGRES_DB:-axes_crm}
+      POSTGRES_USER: ${POSTGRES_USER:-axes}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-axes}
       # Restricted runtime role — see postgres-init/01-create-app-role.sh.
       # The API connects as this role, never as the POSTGRES_USER superuser,
       # so that Row-Level Security tenant policies are actually enforced
       # (superusers have BYPASSRLS by nature and silently ignore every policy).
       APP_DB_USER: ${APP_DB_USER:-axes_app}
       APP_DB_PASSWORD: ${APP_DB_PASSWORD:?set APP_DB_PASSWORD before starting the stack}
+    restart: unless-stopped
     ports:
-      - "5432:5432"
+      # Só local por padrão. Use BIND_ADDRESS=0.0.0.0 apenas se precisar expor.
+      - "${BIND_ADDRESS:-127.0.0.1}:5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql
       - ./postgres-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U axes -d axes_crm"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -33,9 +37,10 @@ services:
       LOG_LEVEL: info
       # Superuser connection — schema owner, used only if migrations run
       # from inside this service. The running app never uses this one.
-      DATABASE_URL: postgresql://axes:axes@postgres:5432/axes_crm
+      DATABASE_URL: postgresql://${POSTGRES_USER:-axes}:${POSTGRES_PASSWORD:-axes}@postgres:5432/${POSTGRES_DB:-axes_crm}
       # Restricted role the app actually connects as (no BYPASSRLS).
-      APP_DATABASE_URL: postgresql://${APP_DB_USER:-axes_app}:${APP_DB_PASSWORD:?set APP_DB_PASSWORD before starting the stack}@postgres:5432/axes_crm
+      APP_DATABASE_URL: postgresql://${APP_DB_USER:-axes_app}:${APP_DB_PASSWORD:?set APP_DB_PASSWORD before starting the stack}@postgres:5432/${POSTGRES_DB:-axes_crm}
+      # Origem pública do front (CORS e links). Atrás do Nginx: https://<ip-ou-host>
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
       WEBHOOK_ENCRYPTION_KEY: ${WEBHOOK_ENCRYPTION_KEY:-}
@@ -44,12 +49,15 @@ services:
       REFRESH_TOKEN_PEPPER: ${REFRESH_TOKEN_PEPPER}
       AUTH_ACCESS_TTL_SECONDS: ${AUTH_ACCESS_TTL_SECONDS:-900}
       AUTH_REFRESH_TTL_SECONDS: ${AUTH_REFRESH_TTL_SECONDS:-2592000}
+    restart: unless-stopped
     ports:
-      - "3001:3001"
+      - "${BIND_ADDRESS:-127.0.0.1}:3001:3001"
     depends_on:
       postgres:
         condition: service_healthy
       migrate:
+        condition: service_completed_successfully
+      db-bootstrap:
         condition: service_completed_successfully
     healthcheck:
       test:
@@ -72,26 +80,54 @@ services:
       dockerfile: apps/api/Dockerfile
       target: build
     environment:
-      DATABASE_URL: postgresql://axes:axes@postgres:5432/axes_crm
+      DATABASE_URL: postgresql://${POSTGRES_USER:-axes}:${POSTGRES_PASSWORD:-axes}@postgres:5432/${POSTGRES_DB:-axes_crm}
     command: ["pnpm", "--filter", "@axes/api", "prisma:migrate:deploy"]
     depends_on:
       postgres:
         condition: service_healthy
 
+  # Cria ou atualiza o role restrito da aplicação a CADA subida (não só na
+  # primeira inicialização do volume): sincroniza a senha com APP_DB_PASSWORD e
+  # reaplica os GRANTs nas tabelas criadas pelas migrations. Evita o 502 causado
+  # por "password authentication failed for user axes_app" quando a senha muda.
+  db-bootstrap:
+    image: postgres:18-bookworm
+    restart: "no"
+    environment:
+      PGHOST: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD:-axes}
+      POSTGRES_USER: ${POSTGRES_USER:-axes}
+      POSTGRES_DB: ${POSTGRES_DB:-axes_crm}
+      APP_DB_USER: ${APP_DB_USER:-axes_app}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?set APP_DB_PASSWORD before starting the stack}
+    volumes:
+      - ./postgres-init:/postgres-init:ro
+    entrypoint: ["sh", "/postgres-init/01-create-app-role.sh"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
   web:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        # Embutido no bundle do navegador em tempo de build (NEXT_PUBLIC_*).
+        # Atrás do Nginx/HTTPS: https://<ip-ou-host>/api/v1 — nunca http:// nem localhost.
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:3001/api/v1}
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:3001/api/v1
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:3001/api/v1}
       NEO_INTERACT_URL: ${NEO_INTERACT_URL:-}
       NEO_INTERACT_MODE: ${NEO_INTERACT_MODE:-iframe}
       NEO_INTERACT_FRAME_HEIGHT: ${NEO_INTERACT_FRAME_HEIGHT:-800}
       NEO_INTERACT_FRAME_MAX_WIDTH: ${NEO_INTERACT_FRAME_MAX_WIDTH:-1600}
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+    restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${BIND_ADDRESS:-127.0.0.1}:3000:3000"
     depends_on:
       api:
         condition: service_healthy

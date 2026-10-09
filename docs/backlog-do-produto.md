@@ -27,6 +27,16 @@
 | F2-14  | Relatórios          | Vendas por vendedor (C4.5)                    | P1         | 2    | Concluído             | F2-10, reports.read         | Médio   |
 | F2-15  | Relatórios          | Vendas por período mensal (C4.6)              | P1         | 2    | Concluído             | F2-10, reports.read         | Médio   |
 
+## Ciclo 12 — prioridades
+
+| ID     | Épico          | Título                                                                | Prioridade  | Situação   | Dependências | Esforço |
+| ------ | -------------- | --------------------------------------------------------------------- | ----------- | ---------- | ------------ | ------- |
+| C12-01 | Infraestrutura | Deploy HTTPS reproduzível (Nginx, certificados, role do banco, front) | P0 — máxima | Em revisão | —            | Médio   |
+
+C12-01 é a primeira entrega do Ciclo 12 e bloqueia as demais em ambiente de servidor:
+corrige a causa do incidente de 2026-10-09 (502 por senha do `axes_app` dessincronizada)
+e versiona o deploy completo. Detalhes em `docs/deploy/deploy-https.md`.
+
 ## Histórias de usuário prioritárias
 
 | ID    | História de usuário                                                                         | Critério resumido                                                                |

@@ -13,6 +13,7 @@ import { SalesByOwnerView } from "./sales-by-owner-view";
 import { SalesByProductView } from "./sales-by-product-view";
 import { ActivitiesByOwnerView } from "./activities-by-owner-view";
 import { FunnelView } from "./funnel-view";
+import { PipelineAnalyticsView } from "./pipeline-analytics-view";
 import { SalesByMonthView } from "./sales-by-month-view";
 import { CsatView } from "./csat-view";
 import { SlaReportView } from "./sla-report-view";
@@ -23,6 +24,7 @@ export type ReportTab =
   | "sales-by-owner"
   | "sales-by-month"
   | "funnel"
+  | "pipeline-analytics"
   | "activities-by-owner"
   | "sla"
   | "csat";
@@ -33,6 +35,7 @@ const reportTabs: Array<{ id: ReportTab; label: string }> = [
   { id: "sales-by-owner", label: "Vendas por vendedor" },
   { id: "sales-by-month", label: "Vendas por período" },
   { id: "funnel", label: "Funil" },
+  { id: "pipeline-analytics", label: "Saúde comercial" },
   { id: "activities-by-owner", label: "Atividades" },
   { id: "sla", label: "SLA" },
   { id: "csat", label: "Satisfação" },
@@ -166,6 +169,14 @@ export function ManagementSummaryView({
           aria-labelledby="report-tab-sales-by-month"
         >
           <SalesByMonthView accessToken={accessToken} />
+        </div>
+      ) : tab === "pipeline-analytics" ? (
+        <div
+          role="tabpanel"
+          id="report-panel-pipeline-analytics"
+          aria-labelledby="report-tab-pipeline-analytics"
+        >
+          <PipelineAnalyticsView accessToken={accessToken} />
         </div>
       ) : tab === "funnel" ? (
         <div

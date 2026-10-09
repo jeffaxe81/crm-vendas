@@ -123,3 +123,8 @@ htmlcov/
 .venv/
 venv/
 backend/.env
+
+# Certificados e chaves TLS (deploy/certs gera em /etc/pki/tls, nunca no repo)
+*.key
+*.srl
+*.csr
