@@ -38,6 +38,7 @@ import {
 } from "./sales-by-product-csv";
 import { SalesByProductOwnersService } from "./sales-by-product-owners.service";
 import { FunnelService } from "./funnel.service";
+import { CommercialRiskService } from "./commercial-risk.service";
 import { OpportunityAgingService } from "./opportunity-aging.service";
 import { summarizePipelineHealth } from "./pipeline-health";
 import { SlaReportService, parseSlaReportQuery } from "./sla.service";
@@ -238,6 +239,28 @@ export class ReportsController {
       });
     }
     return this.opportunityAging.read(
+      this.requireOrganizationId(request),
+      parsed.data
+    );
+  }
+
+  @Inject(CommercialRiskService)
+  private readonly commercialRisk!: CommercialRiskService;
+
+  @Get("commercial-risks")
+  @RequirePermissions("reports.read")
+  readCommercialRisks(
+    @Query() query: Record<string, unknown>,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = FunnelQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: "VALIDATION_ERROR",
+        message: parsed.error.issues.map(issue => issue.message),
+      });
+    }
+    return this.commercialRisk.read(
       this.requireOrganizationId(request),
       parsed.data
     );
