@@ -35,7 +35,9 @@ function mount(
         url.endsWith("/auth/refresh") && !authenticated ? 401 : 200;
       const body = url.endsWith("/auth/refresh")
         ? { ...session, permissions }
-        : { items: [], page: 1, limit: 20, total: 0 };
+        : url.endsWith("/integrations/neo-communication")
+          ? { enabled: configured, url: "https://neo.example.test/neo/", mode, height: 800, maxWidth: 1600 }
+          : { items: [], page: 1, limit: 20, total: 0 };
       return { ok: status === 200, status, json: async () => body } as Response;
     })
   );
