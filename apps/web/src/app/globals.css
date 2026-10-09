@@ -2434,3 +2434,64 @@ textarea {
     width: 100%;
   }
 }
+
+/* NEO Interact: painel persistente sem remontar o iframe entre seções */
+.communication-dock--floating {
+  position: fixed;
+  z-index: 80;
+  right: 16px;
+  bottom: 78px;
+  width: min(640px, calc(100vw - 32px));
+  max-height: min(82vh, 860px);
+  overflow: auto;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid var(--crm-border);
+  border-radius: var(--crm-radius);
+  box-shadow: 0 12px 44px rgb(15 23 42 / 20%);
+}
+.communication-dock__trigger {
+  position: fixed;
+  z-index: 81;
+  right: 16px;
+  bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--crm-primary);
+  color: #fff;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 20px rgb(15 23 42 / 20%);
+  cursor: pointer;
+}
+.communication-dock__trigger svg,
+.communication-dock__toolbar svg { width: 18px; height: 18px; }
+.communication-dock__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-bottom: 10px;
+}
+.communication-dock__toolbar strong { margin-right: auto; }
+.communication-dock__toolbar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid var(--crm-border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+.communication-dock--floating .communication-frame__viewport { max-height: 55vh; overflow: auto; }
+.communication-dock--floating .communication-frame iframe { max-height: 55vh; }
+@media (max-width: 480px) {
+  .communication-dock--floating { right: 8px; bottom: 72px; width: calc(100vw - 16px); max-height: 78vh; }
+  .communication-dock__trigger { right: 8px; bottom: 8px; }
+}
