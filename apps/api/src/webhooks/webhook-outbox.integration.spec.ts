@@ -523,7 +523,7 @@ describe("webhook transactional outbox and adversarial PostgreSQL leases", () =>
       tx.ticket.create({
         data: {
           organizationId: org,
-          protocol: "AX-2026-000001",
+          protocol: "2026-000001",
           subject: "Private ticket",
           status: "RESOLVED",
           priority: "MEDIUM",
