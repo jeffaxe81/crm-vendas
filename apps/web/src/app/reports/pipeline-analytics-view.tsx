@@ -42,7 +42,8 @@ export function PipelineAnalyticsView({
   accessToken: string;
 }) {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
-  const [pipelineId, setPipelineId] = useState("");
+  const [selection, setSelection] = useState<{ token: string; id: string }>({ token: accessToken, id: "" });
+  const pipelineId = selection.token === accessToken ? selection.id : "";
   const [health, setHealth] = useState<Health | null>(null);
   const [aging, setAging] = useState<Aging | null>(null);
   const [risk, setRisk] = useState<Risk | null>(null);
@@ -54,7 +55,7 @@ export function PipelineAnalyticsView({
     setLoading(true);
     setError("");
     setPipelines([]);
-    setPipelineId("");
+    setSelection({ token: accessToken, id: "" });
     setHealth(null);
     setAging(null);
     setRisk(null);
@@ -63,7 +64,7 @@ export function PipelineAnalyticsView({
         if (!active) return;
         setPipelines(items);
         // A seleção anterior pode pertencer a outra organização.
-        setPipelineId(items[0]?.id ?? "");
+        setSelection({ token: accessToken, id: items[0]?.id ?? "" });
       })
       .catch(cause => {
         if (active)
@@ -137,7 +138,7 @@ export function PipelineAnalyticsView({
         <span>Funil comercial </span>
         <select
           value={pipelineId}
-          onChange={event => setPipelineId(event.target.value)}
+          onChange={event => setSelection({ token: accessToken, id: event.target.value })}
         >
           {pipelines.map(pipeline => (
             <option key={pipeline.id} value={pipeline.id}>
