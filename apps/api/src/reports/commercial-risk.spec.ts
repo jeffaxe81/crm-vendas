@@ -11,9 +11,7 @@ describe("C6-03 commercial risk signals", () => {
   };
 
   it("detects lack of activity separately from stale opportunity", () => {
-    expect(evaluateCommercialRisk(base, asOf).signals).toEqual([
-      "NO_ACTIVITY",
-    ]);
+    expect(evaluateCommercialRisk(base, asOf).signals).toEqual(["NO_ACTIVITY"]);
   });
 
   it("detects both risks when neither activity nor record changed", () => {
@@ -21,10 +19,7 @@ describe("C6-03 commercial risk signals", () => {
       { ...base, updatedAt: base.createdAt },
       asOf
     );
-    expect(risk.signals).toEqual([
-      "NO_ACTIVITY",
-      "STALE_OPPORTUNITY",
-    ]);
+    expect(risk.signals).toEqual(["NO_ACTIVITY", "STALE_OPPORTUNITY"]);
     expect(risk.severity).toBe("HIGH");
   });
 

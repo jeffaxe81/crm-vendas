@@ -17,12 +17,8 @@ export function evaluateCommercialRisk(
   const daysWithoutActivity = Math.floor(elapsed(lastContact));
   const daysWithoutUpdate = Math.floor(elapsed(candidate.updatedAt));
   const signals = [
-    ...(daysWithoutActivity > inactivityDays
-      ? ["NO_ACTIVITY"]
-      : []),
-    ...(daysWithoutUpdate > inactivityDays
-      ? ["STALE_OPPORTUNITY"]
-      : []),
+    ...(daysWithoutActivity > inactivityDays ? ["NO_ACTIVITY"] : []),
+    ...(daysWithoutUpdate > inactivityDays ? ["STALE_OPPORTUNITY"] : []),
   ];
   return {
     opportunityId: candidate.id,
@@ -30,6 +26,7 @@ export function evaluateCommercialRisk(
     daysWithoutActivity,
     daysWithoutUpdate,
     signals,
-    severity: signals.length === 2 ? "HIGH" : signals.length === 1 ? "MEDIUM" : "NONE",
+    severity:
+      signals.length === 2 ? "HIGH" : signals.length === 1 ? "MEDIUM" : "NONE",
   };
 }
