@@ -156,7 +156,8 @@ export function WebhookSubscriptionsView({
         <ul>
           {items.map(item => (
             <li key={item.id}>
-              <strong>{item.name}</strong> — {item.isActive ? "Ativo" : "Inativo"}
+              <strong>{item.name}</strong> —{" "}
+              {item.isActive ? "Ativo" : "Inativo"}
               <p>{item.targetUrl}</p>
               <p>{item.eventTypes.join(", ")}</p>
             </li>
