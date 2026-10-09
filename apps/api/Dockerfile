@@ -1,4 +1,4 @@
-FROM node:24.20.0-bookworm-slim AS dependencies
+FROM public.ecr.aws/docker/library/node:24.20.0-bookworm-slim AS dependencies
 
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
@@ -28,7 +28,7 @@ RUN pnpm --filter @axes/api prisma:generate \
     && pnpm --filter @axes/contracts build \
     && pnpm --filter @axes/api build
 
-FROM node:24.20.0-bookworm-slim AS runtime
+FROM public.ecr.aws/docker/library/node:24.20.0-bookworm-slim AS runtime
 
 ENV NODE_ENV=production
 ENV PORT=3001
