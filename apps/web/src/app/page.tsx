@@ -6,6 +6,7 @@ import {
   type AuthSessionResponse,
 } from "@axes/contracts";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { Headset, PanelRightClose, PanelRightOpen } from "lucide-react";
 
 import { authApiRequest } from "../lib/api-client";
 import { ActivitiesView } from "./activities/activities-view";
@@ -36,6 +37,7 @@ export default function Home() {
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
   const [activeSection, setActiveSection] = useState<CrmSection>("home");
   const [communicationOpened, setCommunicationOpened] = useState(false);
+  const [communicationDockOpen, setCommunicationDockOpen] = useState(false);
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -139,6 +141,7 @@ export default function Home() {
       manualNavigation.current = false;
       setSession(null);
       setCommunicationOpened(false);
+      setCommunicationDockOpen(false);
       setPassword("");
     }
   }
@@ -153,7 +156,10 @@ export default function Home() {
       return;
     manualNavigation.current = true;
     if (section === "management-summary") setReportTab("summary");
-    if (section === "communication") setCommunicationOpened(true);
+    if (section === "communication") {
+      setCommunicationOpened(true);
+      setCommunicationDockOpen(false);
+    }
     setActiveSection(section);
   }
 
@@ -255,9 +261,54 @@ export default function Home() {
           ) : null}
           {communicationOpened &&
           session.permissions.includes("ticket.read") ? (
-            <div hidden={activeSection !== "communication"}>
-              <CommunicationView />
-            </div>
+            <>
+              {activeSection !== "communication" ? (
+                <button
+                  className="communication-dock__trigger"
+                  type="button"
+                  aria-expanded={communicationDockOpen}
+                  aria-controls="neo-communication-panel"
+                  onClick={() => setCommunicationDockOpen(open => !open)}
+                >
+                  <Headset aria-hidden="true" />
+                  {communicationDockOpen ? "Recolher comunicação" : "Abrir comunicação"}
+                </button>
+              ) : null}
+              <div
+                id="neo-communication-panel"
+                className={
+                  activeSection === "communication"
+                    ? "communication-dock communication-dock--full"
+                    : communicationDockOpen
+                      ? "communication-dock communication-dock--floating"
+                      : "communication-dock communication-dock--closed"
+                }
+                hidden={activeSection !== "communication" && !communicationDockOpen}
+              >
+                {activeSection !== "communication" && communicationDockOpen ? (
+                  <div className="communication-dock__toolbar">
+                    <strong>NEO Interact</strong>
+                    <button
+                      type="button"
+                      onClick={() => setCommunicationDockOpen(false)}
+                      aria-label="Recolher painel NEO Interact"
+                    >
+                      <PanelRightClose aria-hidden="true" />
+                      Recolher
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate("communication")}
+                      aria-label="Abrir comunicação em tela inteira"
+                    >
+                      <PanelRightOpen aria-hidden="true" />
+                      Expandir
+                    </button>
+                  </div>
+                ) : null}
+                <CommunicationView accessToken={session.accessToken} />
+              </div>
+            </>
           ) : null}
         </CrmShell>
       </WorkspaceProvider>
