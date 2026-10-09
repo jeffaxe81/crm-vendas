@@ -111,7 +111,8 @@ describe("Ciclo 6: contexto da saúde comercial", () => {
     expect(await screen.findByText("Nenhum funil disponível.")).toBeVisible();
     expect(calls.filter(path => path.includes("/reports/"))).toHaveLength(0);
   });
-  it("remove métricas e opções antigas ao trocar para uma organização sem funis", async () => {
+
+  it("limpa dados ao trocar para organização sem funis" async () => {
     const calls: Array<{ token: string; path: string }> = [];
     vi.stubGlobal(
       "fetch",
@@ -163,5 +164,4 @@ describe("Ciclo 6: contexto da saúde comercial", () => {
       )
     ).toHaveLength(0);
   });
-
 });
