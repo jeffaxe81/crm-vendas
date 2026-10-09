@@ -41,6 +41,12 @@ export function PipelineAnalyticsView({
 }: {
   accessToken: string;
 }) {
+  // A troca de credencial deve desmontar todo o estado da organização anterior
+  // antes de renderizar qualquer funil ou indicador da nova sessão.
+  return <TenantPipelineAnalytics key={accessToken} accessToken={accessToken} />;
+}
+
+function TenantPipelineAnalytics({ accessToken }: { accessToken: string }) {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [selection, setSelection] = useState<{ token: string; id: string }>({
     token: accessToken,
