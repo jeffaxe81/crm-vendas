@@ -73,7 +73,9 @@ describe("Communication iframe", () => {
     );
     expect(iframe.style.width).toBe("600px");
     expect(iframe.style.height).toBe("900px");
-    expect(screen.getByRole("status")).not.toHaveTextContent("comunicação de dimensionamento recebida");
+    expect(screen.getByRole("status")).not.toHaveTextContent(
+      "comunicação de dimensionamento recebida"
+    );
   });
   it("does not confuse iframe load with authenticated NEO service, even after a valid resize", () => {
     render(<EmbeddedFrame application={application} />);
@@ -82,11 +84,15 @@ describe("Communication iframe", () => {
     expect(screen.getByRole("status")).toHaveTextContent(
       "autenticação e funcionamento do NEO ainda não foram confirmados"
     );
-    act(() => window.dispatchEvent(new MessageEvent("message", {
-      origin: application.origin,
-      source: iframe.contentWindow,
-      data: { type: "TOGGLE_IFRAME_SIZE", isExpanded: true, width: 500 },
-    })));
+    act(() =>
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          origin: application.origin,
+          source: iframe.contentWindow,
+          data: { type: "TOGGLE_IFRAME_SIZE", isExpanded: true, width: 500 },
+        })
+      )
+    );
     expect(screen.getByRole("status")).toHaveTextContent(
       "Isso não confirma autenticação ou atendimento ativo"
     );
@@ -96,7 +102,9 @@ describe("Communication iframe", () => {
     render(<EmbeddedFrame application={application} timeoutMs={50} />);
     const iframe = screen.getByTitle("NEO Interact") as HTMLIFrameElement;
     act(() => vi.advanceTimersByTime(51));
-    expect(screen.getByRole("status")).toHaveTextContent("não informou conclusão");
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "não informou conclusão"
+    );
     fireEvent.click(screen.getByRole("button", { name: "Tentar novamente" }));
     expect(screen.getByTitle("NEO Interact")).not.toBe(iframe);
     expect(screen.getByRole("status")).toHaveTextContent("Carregando");

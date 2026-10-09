@@ -3,37 +3,49 @@
 import { ExternalLink, Headset } from "lucide-react";
 import { useEffect, useState } from "react";
 import { apiRequest } from "../../lib/api-client";
-import { readCommunicationApplication, type CommunicationConfiguration } from "./embedded-application";
+import {
+  readCommunicationApplication,
+  type CommunicationConfiguration,
+} from "./embedded-application";
 import type { NeoSettings } from "../admin/neo-communication-settings-view";
 import { EmbeddedFrame } from "./embedded-frame";
 import { useCommunicationConfiguration } from "./communication-provider";
 
 export function CommunicationView({ accessToken }: { accessToken?: string }) {
   const environmentConfiguration = useCommunicationConfiguration();
-  const [tenantConfiguration, setTenantConfiguration] = useState<CommunicationConfiguration | null>(null);
+  const [tenantConfiguration, setTenantConfiguration] =
+    useState<CommunicationConfiguration | null>(null);
   const [loading, setLoading] = useState(Boolean(accessToken));
   useEffect(() => {
     if (!accessToken) return;
     let active = true;
     setLoading(true);
-    void apiRequest<NeoSettings>("/integrations/neo-communication", { accessToken })
+    void apiRequest<NeoSettings>("/integrations/neo-communication", {
+      accessToken,
+    })
       .then(settings => {
         if (!active) return;
-        setTenantConfiguration(settings.enabled
-          ? readCommunicationApplication({
-              NEO_INTERACT_URL: settings.url,
-              NEO_INTERACT_MODE: settings.mode,
-              NEO_INTERACT_FRAME_HEIGHT: String(settings.height),
-              NEO_INTERACT_FRAME_MAX_WIDTH: String(settings.maxWidth),
-              WEB_ORIGIN: window.location.origin,
-            })
-          : { status: "disabled" });
+        setTenantConfiguration(
+          settings.enabled
+            ? readCommunicationApplication({
+                NEO_INTERACT_URL: settings.url,
+                NEO_INTERACT_MODE: settings.mode,
+                NEO_INTERACT_FRAME_HEIGHT: String(settings.height),
+                NEO_INTERACT_FRAME_MAX_WIDTH: String(settings.maxWidth),
+                WEB_ORIGIN: window.location.origin,
+              })
+            : { status: "disabled" }
+        );
       })
       .catch(() => {
         if (active) setTenantConfiguration({ status: "invalid" });
       })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [accessToken]);
   const configuration = accessToken
     ? (tenantConfiguration ?? { status: "disabled" as const })
@@ -64,7 +76,9 @@ export function CommunicationView({ accessToken }: { accessToken?: string }) {
           </a>
         ) : null}
       </header>
-      {loading ? <p role="status">Consultando configuração de comunicação...</p> : configuration.status === "ready" ? (
+      {loading ? (
+        <p role="status">Consultando configuração de comunicação...</p>
+      ) : configuration.status === "ready" ? (
         <>
           {configuration.mode === "tab" ? (
             <div className="companies-view__empty" role="status">
