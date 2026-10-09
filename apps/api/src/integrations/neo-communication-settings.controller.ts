@@ -48,7 +48,7 @@ export class NeoCommunicationSettingsController {
   @Get()
   async read(@Req() req: AuthenticatedRequest) {
     const actor = this.principal(req);
-    if (!actor.permissions.includes("ticket.read") && !actor.permissions.includes("integration.manage"))
+    if (!actor.permissions.includes("ticket.read") && !actor.permissions.includes("integration.read") && !actor.permissions.includes("integration.manage"))
       throw new ForbiddenException();
     const row = await this.readRow(actor.organizationId);
     return row ? {
