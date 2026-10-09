@@ -1,6 +1,6 @@
 # 🚀 Local Development Setup - CRM Vendas
 
-> **⚠️ Este guia cobre apenas o serviço Python (`backend/`, `docker-compose.yml`).**
+> **⚠️ Este guia cobre apenas o serviço Python (`backend/`, `docker-compose.fastapi.yml`).**
 > Pelo [ADR-0002](./docs/decisions/ADR-0002-stack-principal-typescript.md), o CRM é desenvolvido no
 > monorepositório TypeScript (`compose.yaml` + pnpm: `pnpm install`, `pnpm dev`, `pnpm verify`).
 > O `backend/` fica congelado até o Ciclo 6 (serviço de ML).
@@ -67,7 +67,7 @@ cp .env.example .env
 
 ### Step 4: Inicie os Containers
 
-> ⚠️ **Sempre use `-f docker-compose.yml`.** A raiz também tem um `compose.yaml`
+> ⚠️ **Sempre use `-f docker-compose.fastapi.yml`.** A raiz também tem um `compose.yaml`
 > (stack TypeScript/AXE Relationship). O Docker Compose v2 dá preferência ao
 > `compose.yaml` quando nenhum arquivo é indicado, e subiria a stack errada.
 >
@@ -77,13 +77,13 @@ cp .env.example .env
 
 ```bash
 # Build e inicie os containers
-docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose.fastapi.yml up -d
 
 # Aguarde ~30s para todos os serviços estarem prontos
 sleep 30
 
 # Verifique se todos estão saudáveis
-docker compose -f docker-compose.yml ps
+docker compose -f docker-compose.fastapi.yml ps
 ```
 
 Saída esperada:
@@ -133,7 +133,7 @@ start http://localhost:3000  # Windows
 
 ```bash
 # Via Docker
-docker compose -f docker-compose.yml exec postgres psql -U vendas_user -d crm_vendas_dev
+docker compose -f docker-compose.fastapi.yml exec postgres psql -U vendas_user -d crm_vendas_dev
 
 # Via pgAdmin (opcional)
 # Ou use seu cliente SQL favorito (DBeaver, DataGrip, etc)
@@ -146,10 +146,10 @@ são aplicadas automaticamente quando o backend sobe.
 
 ```bash
 # Gerar nova migração a partir dos models
-docker compose -f docker-compose.yml exec backend alembic revision --autogenerate -m "descricao"
+docker compose -f docker-compose.fastapi.yml exec backend alembic revision --autogenerate -m "descricao"
 
 # Aplicar migrações
-docker compose -f docker-compose.yml exec backend alembic upgrade head
+docker compose -f docker-compose.fastapi.yml exec backend alembic upgrade head
 ```
 
 ---
@@ -163,30 +163,30 @@ Os testes usam o banco descartável `crm_vendas_dev_test` (criado pelo
 qualquer banco cujo nome não termine em `_test`. O CI exige cobertura ≥ 90%.
 
 > Se o volume do Postgres foi criado antes desta versão, recrie-o com
-> `docker compose -f docker-compose.yml down -v` para que o banco de testes exista.
+> `docker compose -f docker-compose.fastapi.yml down -v` para que o banco de testes exista.
 
 ```bash
 # Todos os testes
-docker compose -f docker-compose.yml exec backend pytest -v
+docker compose -f docker-compose.fastapi.yml exec backend pytest -v
 
 # Com coverage
-docker compose -f docker-compose.yml exec backend pytest --cov=app --cov-report=html
+docker compose -f docker-compose.fastapi.yml exec backend pytest --cov=app --cov-report=html
 
 # Teste específico
-docker compose -f docker-compose.yml exec backend pytest tests/test_auth.py::test_login_with_seeded_demo_user -v
+docker compose -f docker-compose.fastapi.yml exec backend pytest tests/test_auth.py::test_login_with_seeded_demo_user -v
 ```
 
 ### Frontend Tests
 
 ```bash
 # Todos os testes
-docker compose -f docker-compose.yml exec frontend npm test
+docker compose -f docker-compose.fastapi.yml exec frontend npm test
 
 # Watch mode
-docker compose -f docker-compose.yml exec frontend npm test -- --watch
+docker compose -f docker-compose.fastapi.yml exec frontend npm test -- --watch
 
 # Coverage
-docker compose -f docker-compose.yml exec frontend npm test -- --coverage
+docker compose -f docker-compose.fastapi.yml exec frontend npm test -- --coverage
 ```
 
 ---
@@ -197,20 +197,20 @@ docker compose -f docker-compose.yml exec frontend npm test -- --coverage
 
 ```bash
 # Lint (ruff)
-docker compose -f docker-compose.yml exec backend ruff check .
+docker compose -f docker-compose.fastapi.yml exec backend ruff check .
 
 # Format
-docker compose -f docker-compose.yml exec backend ruff format app tests
+docker compose -f docker-compose.fastapi.yml exec backend ruff format app tests
 ```
 
 ### Frontend
 
 ```bash
 # Lint
-docker compose -f docker-compose.yml exec frontend npm run lint
+docker compose -f docker-compose.fastapi.yml exec frontend npm run lint
 
 # Format
-docker compose -f docker-compose.yml exec frontend npm run format
+docker compose -f docker-compose.fastapi.yml exec frontend npm run format
 ```
 
 ---
@@ -221,25 +221,25 @@ docker compose -f docker-compose.yml exec frontend npm run format
 
 ```bash
 # Tail logs
-docker compose -f docker-compose.yml logs -f backend
+docker compose -f docker-compose.fastapi.yml logs -f backend
 
 # Últimas N linhas
-docker compose -f docker-compose.yml logs --tail=50 backend
+docker compose -f docker-compose.fastapi.yml logs --tail=50 backend
 
 # Sem timestamp
-docker compose -f docker-compose.yml logs --no-log-prefix backend
+docker compose -f docker-compose.fastapi.yml logs --no-log-prefix backend
 ```
 
 ### Frontend Logs
 
 ```bash
-docker compose -f docker-compose.yml logs -f frontend
+docker compose -f docker-compose.fastapi.yml logs -f frontend
 ```
 
 ### Redis CLI
 
 ```bash
-docker compose -f docker-compose.yml exec redis redis-cli
+docker compose -f docker-compose.fastapi.yml exec redis redis-cli
 > PING
 > KEYS *
 > FLUSHDB
@@ -248,7 +248,7 @@ docker compose -f docker-compose.yml exec redis redis-cli
 ### Database Query
 
 ```bash
-docker compose -f docker-compose.yml exec postgres psql -U vendas_user -d crm_vendas_dev
+docker compose -f docker-compose.fastapi.yml exec postgres psql -U vendas_user -d crm_vendas_dev
 > \dt  # List tables
 > SELECT * FROM organizations;
 ```
@@ -260,19 +260,19 @@ docker compose -f docker-compose.yml exec postgres psql -U vendas_user -d crm_ve
 ### Parar containers (mantém volumes)
 
 ```bash
-docker compose -f docker-compose.yml stop
+docker compose -f docker-compose.fastapi.yml stop
 ```
 
 ### Parar e remover containers (remove volumes também)
 
 ```bash
-docker compose -f docker-compose.yml down -v
+docker compose -f docker-compose.fastapi.yml down -v
 ```
 
 ### Remover tudo (containers, images, volumes)
 
 ```bash
-docker compose -f docker-compose.yml down -v --rmi all
+docker compose -f docker-compose.fastapi.yml down -v --rmi all
 ```
 
 ---
@@ -289,18 +289,18 @@ lsof -i :5432    # Database
 lsof -i :6379    # Redis
 
 # Ou use porta diferente
-docker compose -f docker-compose.yml down
-# Edite docker-compose.yml ou .env
-docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose.fastapi.yml down
+# Edite docker-compose.fastapi.yml ou .env
+docker compose -f docker-compose.fastapi.yml up -d
 ```
 
 ### Containers não iniciam
 
 ```bash
 # Remova volumes e recrie
-docker compose -f docker-compose.yml down -v
-docker compose -f docker-compose.yml build --no-cache
-docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose.fastapi.yml down -v
+docker compose -f docker-compose.fastapi.yml build --no-cache
+docker compose -f docker-compose.fastapi.yml up -d
 ```
 
 ### Hot reload não funcionando
@@ -311,18 +311,18 @@ chmod -R 755 backend
 chmod -R 755 frontend
 
 # Ou recrie os containers
-docker compose -f docker-compose.yml restart backend frontend
+docker compose -f docker-compose.fastapi.yml restart backend frontend
 ```
 
 ### Database migration error
 
 ```bash
 # Reset database (atenção: deleta dados!)
-docker compose -f docker-compose.yml exec postgres psql -U vendas_user -d crm_vendas_dev -c "DROP SCHEMA public CASCADE;"
-docker compose -f docker-compose.yml exec postgres psql -U vendas_user -d crm_vendas_dev -c "CREATE SCHEMA public;"
+docker compose -f docker-compose.fastapi.yml exec postgres psql -U vendas_user -d crm_vendas_dev -c "DROP SCHEMA public CASCADE;"
+docker compose -f docker-compose.fastapi.yml exec postgres psql -U vendas_user -d crm_vendas_dev -c "CREATE SCHEMA public;"
 
 # Reapply migrations
-docker compose -f docker-compose.yml exec backend alembic upgrade head
+docker compose -f docker-compose.fastapi.yml exec backend alembic upgrade head
 ```
 
 ---
@@ -364,7 +364,7 @@ git branch -a
 
 ## 💬 Need Help?
 
-- Verifique logs: `docker compose -f docker-compose.yml logs`
+- Verifique logs: `docker compose -f docker-compose.fastapi.yml logs`
 - Leia a documentação: `/docs`
 - Abra uma issue: GitHub Issues
 - Converse no Slack: #crm-vendas

@@ -18,4 +18,4 @@ lugar à validação dos tokens emitidos pela API NestJS.
 
 ## Rodar localmente
 
-Veja a seção do backend Python no `SETUP.md` (`docker compose -f docker-compose.yml ...`).
+Veja a seção do backend Python no `SETUP.md` (`docker compose -f docker-compose.fastapi.yml ...`).

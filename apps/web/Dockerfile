@@ -20,6 +20,11 @@ RUN pnpm install --frozen-lockfile
 
 FROM dependencies AS build
 
+# URL pública da API embutida no bundle do navegador (Next inlines NEXT_PUBLIC_*
+# em tempo de build). Atrás do Nginx/HTTPS use https://<ip-ou-host>/api/v1.
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api/v1
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
 COPY tsconfig.base.json ./
 COPY apps/web apps/web
 COPY packages/contracts packages/contracts
