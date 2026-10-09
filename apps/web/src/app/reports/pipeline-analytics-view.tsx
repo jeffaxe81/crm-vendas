@@ -42,7 +42,10 @@ export function PipelineAnalyticsView({
   accessToken: string;
 }) {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
-  const [selection, setSelection] = useState<{ token: string; id: string }>({ token: accessToken, id: "" });
+  const [selection, setSelection] = useState<{ token: string; id: string }>({
+    token: accessToken,
+    id: "",
+  });
   const pipelineId = selection.token === accessToken ? selection.id : "";
   const [health, setHealth] = useState<Health | null>(null);
   const [aging, setAging] = useState<Aging | null>(null);
