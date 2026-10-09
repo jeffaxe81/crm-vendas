@@ -51,11 +51,19 @@ export function PipelineAnalyticsView({
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setError("");
+    setPipelines([]);
+    setPipelineId("");
+    setHealth(null);
+    setAging(null);
+    setRisk(null);
     void apiRequest<Pipeline[]>("/pipelines", { accessToken })
       .then(items => {
         if (!active) return;
         setPipelines(items);
-        setPipelineId(current => current || items[0]?.id || "");
+        // A seleção anterior pode pertencer a outra organização.
+        setPipelineId(items[0]?.id ?? "");
       })
       .catch(cause => {
         if (active)
