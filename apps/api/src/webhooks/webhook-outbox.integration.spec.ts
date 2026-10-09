@@ -286,6 +286,105 @@ describe("webhook transactional outbox and adversarial PostgreSQL leases", () =>
     >`SELECT pg_try_advisory_xact_lock(hashtextextended(${key},0)) AS available`;
     expect(available?.available).toBe(true);
   });
+  it("releases the opening gate at its deadline when queued maintenance blocks the separate marker transaction", async () => {
+    const dispatch = await queued(),
+      https = controlledHttps();
+    const maintenanceKey = `tenant-maintenance:${org}`;
+    let held!: () => void, releaseMarker!: () => void;
+    const gateHeld = new Promise<void>(r => (held = r)),
+      markerAllowed = new Promise<void>(r => (releaseMarker = r));
+    const guarded = {
+      withTenant: app.withTenant.bind(app),
+      withSessionAdvisoryLock: <T>(
+        key: string,
+        operation: (signal: AbortSignal) => Promise<T>,
+        signal: AbortSignal,
+        sharedKey?: string
+      ) =>
+        app.withSessionAdvisoryLock(
+          key,
+          async heldSignal => {
+            held();
+            await markerAllowed;
+            return operation(heldSignal);
+          },
+          signal,
+          sharedKey
+        ),
+    } as unknown as PrismaService;
+    const work = new WebhookWorker(guarded, https.transport).processNext(
+      org,
+      now
+    );
+    let maintenance: Promise<void> | undefined,
+      maintenanceCompleted = false;
+    let gateTimer: NodeJS.Timeout | undefined;
+    const waitForQueuedLock = async (mode: "ExclusiveLock" | "ShareLock") => {
+      const deadline = Date.now() + 2000;
+      for (;;) {
+        const [state] = await app.$queryRaw<{ queued: boolean }[]>`
+          SELECT EXISTS (
+            SELECT 1 FROM pg_locks
+            WHERE locktype = 'advisory' AND NOT granted AND mode = ${mode}
+              AND classid::bigint = ((hashtextextended(${maintenanceKey},0) >> 32) & 4294967295)
+              AND objid::bigint = (hashtextextended(${maintenanceKey},0) & 4294967295)
+              AND objsubid = 1
+          ) AS queued`;
+        if (state?.queued) return;
+        if (Date.now() >= deadline)
+          throw Error(`Expected queued maintenance ${mode}`);
+        await new Promise(r => setTimeout(r, 10));
+      }
+    };
+    try {
+      await Promise.race([
+        gateHeld,
+        new Promise<never>((_resolve, reject) => {
+          gateTimer = setTimeout(
+            () => reject(Error("Expected held connection gate")),
+            2000
+          );
+        }),
+      ]);
+      clearTimeout(gateTimer);
+      maintenance = contender.withMaintenance(org, async () => {
+        maintenanceCompleted = true;
+      });
+      await waitForQueuedLock("ExclusiveLock");
+      releaseMarker();
+      // This shared lock belongs to the separate Prisma UPDATE's maintenance
+      // trigger, queued behind the exclusive waiter rather than its gate session.
+      await waitForQueuedLock("ShareLock");
+      await work;
+      await maintenance;
+      expect(maintenanceCompleted).toBe(true);
+      expect(https.connections).toBe(0);
+      const row = await stored(dispatch.id);
+      expect(row).toMatchObject({
+        status: "RETRY_SCHEDULED",
+        requestStartedAt: null,
+        leaseToken: null,
+      });
+      expect(row.deliveries).toEqual([
+        expect.objectContaining({
+          attempt: 1,
+          status: "FAILED",
+          errorCode: "TIMEOUT",
+        }),
+      ]);
+      for (const key of [maintenanceKey, webhookConnectionLockKey(org)]) {
+        const [state] = await app.$queryRaw<
+          { available: boolean }[]
+        >`SELECT pg_try_advisory_xact_lock(hashtextextended(${key},0)) AS available`;
+        expect(state?.available).toBe(true);
+      }
+    } finally {
+      clearTimeout(gateTimer);
+      releaseMarker();
+      await work;
+      await maintenance;
+    }
+  }, 15000);
   it("recovers cancelled started work exactly once and discards its old owner's late success", async () => {
     const dispatch = await queued(),
       https = controlledHttps();
@@ -382,7 +481,7 @@ describe("webhook transactional outbox and adversarial PostgreSQL leases", () =>
               pipelineId: pipeline.id,
               name: kind,
               kind,
-              position,
+              position: position + 1,
             },
           })
         )
@@ -654,34 +753,37 @@ describe("webhook transactional outbox and adversarial PostgreSQL leases", () =>
   });
   it("checks management invalidation again between the committed claim and opening a connection", async () => {
     const dispatch = await queued();
-    let transactions = 0,
-      sends = 0;
+    let gateCalls = 0;
+    const https = controlledHttps();
     const guarded = {
-      withSessionAdvisoryLock: app.withSessionAdvisoryLock.bind(app),
-      withTenant: async <T>(
-        organizationId: string,
-        fn: Parameters<PrismaService["withTenant"]>[1]
+      withTenant: app.withTenant.bind(app),
+      withSessionAdvisoryLock: async <T>(
+        key: string,
+        operation: (signal: AbortSignal) => Promise<T>,
+        signal: AbortSignal,
+        sharedKey?: string
       ) => {
-        transactions++;
-        if (transactions === 2)
-          await new WebhooksService(contender).update(
-            subscriptionId,
-            { version: 1, isActive: false },
-            context()
-          );
-        return app.withTenant(organizationId, fn) as Promise<T>;
+        gateCalls++;
+        expect(await stored(dispatch.id)).toMatchObject({
+          status: "PROCESSING",
+          requestStartedAt: null,
+        });
+        // Commit the edit before acquiring the session gate: management also
+        // needs that gate, so awaiting it inside the held gate would deadlock.
+        await new WebhooksService(contender).update(
+          subscriptionId,
+          { version: 1, isActive: false },
+          context()
+        );
+        return app.withSessionAdvisoryLock(key, operation, signal, sharedKey);
       },
     } as unknown as PrismaService;
-    await new WebhookWorker(guarded, {
-      send: async () => {
-        sends++;
-        return { responseStatus: 200, errorCode: null };
-      },
-    }).processNext(org, now);
+    await new WebhookWorker(guarded, https.transport).processNext(org, now);
     const row = await stored(dispatch.id);
     expect(row.status).toBe("CANCELLED");
     expect(row.deliveries).toEqual([]);
-    expect(sends).toBe(0);
+    expect(gateCalls).toBe(1);
+    expect(https.connections).toBe(0);
   });
   it("retains eligible events and manual tests when another subscribed event is removed", async () => {
     const company = await queued();
