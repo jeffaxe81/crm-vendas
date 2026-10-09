@@ -9,7 +9,10 @@ import { IntegrationCredentialsService } from "./integration-credentials.service
 
 @Module({
   imports: [DatabaseModule, AuditModule, AuthorizationModule],
-  controllers: [IntegrationCredentialsController, NeoCommunicationSettingsController],
+  controllers: [
+    IntegrationCredentialsController,
+    NeoCommunicationSettingsController,
+  ],
   providers: [IntegrationCredentialsService],
   exports: [IntegrationCredentialsService],
 })

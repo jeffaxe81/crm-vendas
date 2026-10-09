@@ -271,7 +271,9 @@ export default function Home() {
                   onClick={() => setCommunicationDockOpen(open => !open)}
                 >
                   <Headset aria-hidden="true" />
-                  {communicationDockOpen ? "Recolher comunicação" : "Abrir comunicação"}
+                  {communicationDockOpen
+                    ? "Recolher comunicação"
+                    : "Abrir comunicação"}
                 </button>
               ) : null}
               <div
@@ -283,7 +285,9 @@ export default function Home() {
                       ? "communication-dock communication-dock--floating"
                       : "communication-dock communication-dock--closed"
                 }
-                hidden={activeSection !== "communication" && !communicationDockOpen}
+                hidden={
+                  activeSection !== "communication" && !communicationDockOpen
+                }
               >
                 {activeSection !== "communication" && communicationDockOpen ? (
                   <div className="communication-dock__toolbar">

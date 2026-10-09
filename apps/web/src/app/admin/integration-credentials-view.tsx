@@ -199,7 +199,10 @@ export function IntegrationCredentialsView({
       className="activities-view integration-credentials"
       aria-labelledby="integration-credentials-title"
     >
-      <NeoCommunicationSettingsView accessToken={accessToken} canManage={canManage} />
+      <NeoCommunicationSettingsView
+        accessToken={accessToken}
+        canManage={canManage}
+      />
       <header className="activities-view__header">
         <div>
           <p className="activities-view__eyebrow">Integrações</p>

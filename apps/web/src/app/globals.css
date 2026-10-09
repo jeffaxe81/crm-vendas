@@ -2468,7 +2468,10 @@ textarea {
   cursor: pointer;
 }
 .communication-dock__trigger svg,
-.communication-dock__toolbar svg { width: 18px; height: 18px; }
+.communication-dock__toolbar svg {
+  width: 18px;
+  height: 18px;
+}
 .communication-dock__toolbar {
   display: flex;
   align-items: center;
@@ -2477,7 +2480,9 @@ textarea {
   flex-wrap: wrap;
   padding-bottom: 10px;
 }
-.communication-dock__toolbar strong { margin-right: auto; }
+.communication-dock__toolbar strong {
+  margin-right: auto;
+}
 .communication-dock__toolbar button {
   display: inline-flex;
   align-items: center;
@@ -2489,9 +2494,22 @@ textarea {
   background: #fff;
   cursor: pointer;
 }
-.communication-dock--floating .communication-frame__viewport { max-height: 55vh; overflow: auto; }
-.communication-dock--floating .communication-frame iframe { max-height: 55vh; }
+.communication-dock--floating .communication-frame__viewport {
+  max-height: 55vh;
+  overflow: auto;
+}
+.communication-dock--floating .communication-frame iframe {
+  max-height: 55vh;
+}
 @media (max-width: 480px) {
-  .communication-dock--floating { right: 8px; bottom: 72px; width: calc(100vw - 16px); max-height: 78vh; }
-  .communication-dock__trigger { right: 8px; bottom: 8px; }
+  .communication-dock--floating {
+    right: 8px;
+    bottom: 72px;
+    width: calc(100vw - 16px);
+    max-height: 78vh;
+  }
+  .communication-dock__trigger {
+    right: 8px;
+    bottom: 8px;
+  }
 }

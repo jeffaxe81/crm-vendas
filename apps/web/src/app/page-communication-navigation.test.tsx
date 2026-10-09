@@ -36,7 +36,13 @@ function mount(
       const body = url.endsWith("/auth/refresh")
         ? { ...session, permissions }
         : url.endsWith("/integrations/neo-communication")
-          ? { enabled: configured, url: "https://neo.example.test/neo/", mode, height: 800, maxWidth: 1600 }
+          ? {
+              enabled: configured,
+              url: "https://neo.example.test/neo/",
+              mode,
+              height: 800,
+              maxWidth: 1600,
+            }
           : { items: [], page: 1, limit: 20, total: 0 };
       return { ok: status === 200, status, json: async () => body } as Response;
     })
@@ -106,17 +112,23 @@ describe("NEO communication in CRM navigation", () => {
   it("opens and collapses a floating panel without remounting the NEO iframe", async () => {
     mount();
     await openNavigationGroup("Atendimento");
-    fireEvent.click(await screen.findByRole("button", { name: "Comunicação integrada" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Comunicação integrada" })
+    );
     const iframe = await screen.findByTitle("NEO Interact");
     await openNavigationGroup("Comercial");
     fireEvent.click(screen.getByRole("button", { name: "Empresas" }));
     fireEvent.click(screen.getByRole("button", { name: "Abrir comunicação" }));
     expect(screen.getByTitle("NEO Interact")).toBe(iframe);
     expect(iframe.closest("[hidden]")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Recolher painel NEO Interact" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Recolher painel NEO Interact" })
+    );
     expect(iframe.closest("[hidden]")).not.toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Abrir comunicação" }));
-    fireEvent.click(screen.getByRole("button", { name: "Abrir comunicação em tela inteira" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Abrir comunicação em tela inteira" })
+    );
     expect(screen.getByTitle("NEO Interact")).toBe(iframe);
     expect(iframe.closest("[hidden]")).toBeNull();
   });
