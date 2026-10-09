@@ -9,6 +9,7 @@ const groups: Record<string, string> = {
   Atendimento: "Atendimento",
   "Comunicação integrada": "Atendimento",
   "Resumo gerencial": "Gestão",
+  "Chaves de integração": "Administração",
 };
 export async function openWorkspaceSection(page: Page, label: string) {
   const group = page.getByRole("button", { name: `Grupo ${groups[label]}` });

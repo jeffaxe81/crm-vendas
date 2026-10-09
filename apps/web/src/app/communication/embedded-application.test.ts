@@ -9,6 +9,63 @@ describe("NEO communication configuration", () => {
   it("stays disabled until an environment URL is configured", () => {
     expect(readCommunicationApplication({})).toEqual({ status: "disabled" });
   });
+  it("preserves iframe mode by default", () => {
+    expect(
+      readCommunicationApplication({
+        NEO_INTERACT_URL: "https://neo.example.test/",
+      })
+    ).toMatchObject({ status: "ready", mode: "iframe" });
+  });
+  it("accepts an explicit separate-tab mode", () => {
+    expect(
+      readCommunicationApplication({
+        NEO_INTERACT_URL: "https://neo.example.test/portal/",
+        NEO_INTERACT_MODE: " tab ",
+      })
+    ).toMatchObject({ status: "ready", mode: "tab" });
+  });
+  it("rejects an unsupported opening mode", () => {
+    expect(
+      readCommunicationApplication({
+        NEO_INTERACT_URL: "https://neo.example.test/",
+        NEO_INTERACT_MODE: "popup",
+      })
+    ).toEqual({ status: "invalid" });
+  });
+  it("uses configured iframe dimensions within the supported bounds", () => {
+    expect(
+      readCommunicationApplication({
+        NEO_INTERACT_URL: "https://neo.example.test/",
+        NEO_INTERACT_FRAME_HEIGHT: "1000",
+        NEO_INTERACT_FRAME_MAX_WIDTH: "1200",
+      })
+    ).toMatchObject({
+      status: "ready",
+      application: { defaultHeight: 1000, maxWidth: 1200 },
+    });
+  });
+  it.each(["0", "319", "1601", "Infinity", "800.5", "large"])(
+    "rejects an invalid iframe height: %s",
+    NEO_INTERACT_FRAME_HEIGHT => {
+      expect(
+        readCommunicationApplication({
+          NEO_INTERACT_URL: "https://neo.example.test/",
+          NEO_INTERACT_FRAME_HEIGHT,
+        })
+      ).toEqual({ status: "invalid" });
+    }
+  );
+  it.each(["0", "319", "1601", "Infinity", "800.5", "wide"])(
+    "rejects an invalid iframe maximum width: %s",
+    NEO_INTERACT_FRAME_MAX_WIDTH => {
+      expect(
+        readCommunicationApplication({
+          NEO_INTERACT_URL: "https://neo.example.test/",
+          NEO_INTERACT_FRAME_MAX_WIDTH,
+        })
+      ).toEqual({ status: "invalid" });
+    }
+  );
   it("derives the exact allowed origin from the configured HTTPS URL", () => {
     expect(
       readCommunicationApplication({
@@ -16,6 +73,7 @@ describe("NEO communication configuration", () => {
       })
     ).toEqual({
       status: "ready",
+      mode: "iframe",
       application: {
         id: "neo-interact",
         name: "NEO Interact",

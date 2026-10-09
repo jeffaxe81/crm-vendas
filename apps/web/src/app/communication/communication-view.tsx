@@ -18,10 +18,7 @@ export function CommunicationView() {
             <Headset aria-hidden="true" />
             Comunicação integrada
           </h1>
-          <p>
-            Acesse o NEO Interact e mantenha sua sessão de atendimento enquanto
-            navega pelo CRM.
-          </p>
+          <p>Acesse o NEO Interact para realizar seu atendimento.</p>
         </div>
         {configuration.status === "ready" ? (
           <a
@@ -37,14 +34,27 @@ export function CommunicationView() {
       </header>
       {configuration.status === "ready" ? (
         <>
-          <p className="communication-view__notice">
-            Entre com suas credenciais do NEO Interact. Se o navegador ou o
-            serviço impedir a abertura integrada, use “Abrir em outra aba”.
-          </p>
-          <EmbeddedFrame
-            key={configuration.application.src}
-            application={configuration.application}
-          />
+          {configuration.mode === "tab" ? (
+            <div className="companies-view__empty" role="status">
+              <strong>Comunicação configurada para abrir em outra aba</strong>
+              <span>
+                Use “Abrir em outra aba” e entre com suas credenciais do NEO
+                Interact. A aba de atendimento permanece aberta enquanto você
+                navega pelo CRM.
+              </span>
+            </div>
+          ) : (
+            <>
+              <p className="communication-view__notice">
+                Entre com suas credenciais do NEO Interact. Se o navegador ou o
+                serviço impedir a abertura integrada, use “Abrir em outra aba”.
+              </p>
+              <EmbeddedFrame
+                key={configuration.application.src}
+                application={configuration.application}
+              />
+            </>
+          )}
         </>
       ) : (
         <div className="companies-view__empty" role="status">
