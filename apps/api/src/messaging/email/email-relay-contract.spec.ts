@@ -1,8 +1,6 @@
 import { emailIdempotencyHash } from "./email-outbox-crypto";
 import { HttpsEmailRelayProvider } from "./email-http-relay.provider";
-import type {
-  EmailRelayTransport,
-} from "./email-http-relay.provider";
+import type { EmailRelayTransport } from "./email-http-relay.provider";
 import { EmailDeliveryUnknownError } from "./email-provider";
 import type { TransactionalEmail } from "./email-provider";
 
@@ -56,10 +54,7 @@ describe("F4.3-02D2 simulated durable relay acceptance contract", () => {
       };
     };
 
-    const firstProcess = new HttpsEmailRelayProvider(
-      config,
-      simulatedRelay
-    );
+    const firstProcess = new HttpsEmailRelayProvider(config, simulatedRelay);
     await expect(firstProcess.send(original)).rejects.toBeInstanceOf(
       EmailDeliveryUnknownError
     );
