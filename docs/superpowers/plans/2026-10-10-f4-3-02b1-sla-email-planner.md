@@ -9,7 +9,7 @@ Data: 10/10/2026. Base: F4.3-02 (PR #116, merge `9827c73ca298fff743c9f6f54a2c194
 - Não usa canal de contato externo para obter destinatário: alerta **operacional interno** vai apenas ao e-mail da conta do membro atribuído à solicitação.
 - Dentre os vencimentos aplicáveis, escolhe o mais próximo. Só considera primeiro atendimento quando ainda não houve `firstResponseAt`.
 - Composição por template com sanitização e inserção da mensagem criptografada no outbox via `enqueueTransactionalEmail` dentro de `withTenant`. Replays do mesmo SLA ficam idempotentes.
-- Seleção limitada a 100 solicitações por ciclo. Testes PostgreSQL usam role RLS restrita, além de validação de deduplicação, criptografia, usuários inativos, vencimentos e org distinta.
+- Varredura paginada de todos os candidatos elegíveis, com limite de 100 alertas novos por ciclo (repetições não bloqueiam páginas seguintes). Testes PostgreSQL usam role RLS restrita, além de validação de deduplicação, criptografia, usuários inativos, vencimentos e org distinta.
 
 ## Gates antes de envio externo real
 
