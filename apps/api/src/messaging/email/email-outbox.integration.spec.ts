@@ -40,46 +40,55 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
   beforeEach(async () => {
     process.env.EMAIL_OUTBOX_ENCRYPTION_KEY = key;
     await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
-    userId = (await owner.user.create({
-      data: {
-        email: "email-outbox@example.test",
-        emailNormalized: "email-outbox@example.test",
-        displayName: "Email Outbox",
-        passwordHash: "synthetic",
-      },
-    })).id;
-    organizationId = (await owner.organization.create({
-      data: { name: "Mail A", slug: "mail-a" },
-    })).id;
-    otherOrganizationId = (await owner.organization.create({
-      data: { name: "Mail B", slug: "mail-b" },
-    })).id;
-    ticketId = (await owner.ticket.create({
-      data: {
-        organizationId,
-        protocol: "2026-101",
-        subject: "Tenant A",
-        createdBy: userId,
-        updatedBy: userId,
-      },
-    })).id;
-    otherTicketId = (await owner.ticket.create({
-      data: {
-        organizationId: otherOrganizationId,
-        protocol: "2026-102",
-        subject: "Tenant B",
-        createdBy: userId,
-        updatedBy: userId,
-      },
-    })).id;
+    userId = (
+      await owner.user.create({
+        data: {
+          email: "email-outbox@example.test",
+          emailNormalized: "email-outbox@example.test",
+          displayName: "Email Outbox",
+          passwordHash: "synthetic",
+        },
+      })
+    ).id;
+    organizationId = (
+      await owner.organization.create({
+        data: { name: "Mail A", slug: "mail-a" },
+      })
+    ).id;
+    otherOrganizationId = (
+      await owner.organization.create({
+        data: { name: "Mail B", slug: "mail-b" },
+      })
+    ).id;
+    ticketId = (
+      await owner.ticket.create({
+        data: {
+          organizationId,
+          protocol: "2026-101",
+          subject: "Tenant A",
+          createdBy: userId,
+          updatedBy: userId,
+        },
+      })
+    ).id;
+    otherTicketId = (
+      await owner.ticket.create({
+        data: {
+          organizationId: otherOrganizationId,
+          protocol: "2026-102",
+          subject: "Tenant B",
+          createdBy: userId,
+          updatedBy: userId,
+        },
+      })
+    ).id;
   });
 
   afterAll(async () => {
     await owner?.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
     await owner?.onModuleDestroy();
     await app?.onModuleDestroy();
-    if (original === undefined)
-      delete process.env.EMAIL_OUTBOX_ENCRYPTION_KEY;
+    if (original === undefined) delete process.env.EMAIL_OUTBOX_ENCRYPTION_KEY;
     else process.env.EMAIL_OUTBOX_ENCRYPTION_KEY = original;
   });
 
@@ -100,19 +109,23 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
       enqueueTransactionalEmail(tx, email())
     );
     expect(await app.emailOutbox.findMany()).toEqual([]);
-    expect(await app.withTenant(otherOrganizationId, tx =>
-      tx.emailOutbox.findMany()
-    )).toEqual([]);
-    await expect(app.withTenant(otherOrganizationId, tx =>
-      enqueueTransactionalEmail(tx, email())
-    )).rejects.toThrow();
-    await expect(app.withTenant(organizationId, tx =>
-      enqueueTransactionalEmail(tx, {
-        ...email(),
-        referenceId: otherTicketId,
-        idempotencyKey: "different-key",
-      })
-    )).rejects.toThrow();
+    expect(
+      await app.withTenant(otherOrganizationId, tx => tx.emailOutbox.findMany())
+    ).toEqual([]);
+    await expect(
+      app.withTenant(otherOrganizationId, tx =>
+        enqueueTransactionalEmail(tx, email())
+      )
+    ).rejects.toThrow();
+    await expect(
+      app.withTenant(organizationId, tx =>
+        enqueueTransactionalEmail(tx, {
+          ...email(),
+          referenceId: otherTicketId,
+          idempotencyKey: "different-key",
+        })
+      )
+    ).rejects.toThrow();
   });
 
   it("deduplicates atomically and keeps recipient/body encrypted at rest", async () => {
@@ -135,16 +148,18 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
       purpose: "SLA_DUE_SOON",
       attemptCount: 0,
     });
-    await expect(app.withTenant(organizationId, async tx => {
-      await enqueueTransactionalEmail(tx, {
-        ...email(),
-        idempotencyKey: "roll-back",
-      });
-      throw Error("business transaction failed");
-    })).rejects.toThrow("business transaction failed");
-    expect(await app.withTenant(organizationId, tx =>
-      tx.emailOutbox.count()
-    )).toBe(1);
+    await expect(
+      app.withTenant(organizationId, async tx => {
+        await enqueueTransactionalEmail(tx, {
+          ...email(),
+          idempotencyKey: "roll-back",
+        });
+        throw Error("business transaction failed");
+      })
+    ).rejects.toThrow("business transaction failed");
+    expect(
+      await app.withTenant(organizationId, tx => tx.emailOutbox.count())
+    ).toBe(1);
   });
 
   it("accepts once after commit and never sends an accepted email again", async () => {
