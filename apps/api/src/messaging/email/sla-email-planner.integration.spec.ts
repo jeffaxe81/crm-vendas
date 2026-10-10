@@ -186,6 +186,27 @@ describe("F4.3-02B1 SLA alerts with PostgreSQL RLS", () => {
       .toBe(0);
   });
 
+  it("processes later eligible pages without starving tickets after the first 100", async () => {
+    await owner.ticket.createMany({
+      data: Array.from({ length: 101 }, (_, index) => ({
+        organizationId,
+        protocol: `2026-${String(index + 1).padStart(6, "0")}`,
+        subject: "Bulk eligible",
+        createdBy: userId,
+        updatedBy: userId,
+        assigneeUserId: userId,
+        firstResponseDueAt: new Date(now.getTime() + 10 * 60000),
+      })),
+    });
+    const planner = new SlaEmailPlanner(app);
+    expect(await planner.enqueueDueAlerts(organizationId, now)).toBe(100);
+    expect(await planner.enqueueDueAlerts(organizationId, now)).toBe(1);
+    expect(await planner.enqueueDueAlerts(organizationId, now)).toBe(0);
+    expect(await app.withTenant(organizationId, tx =>
+      tx.emailOutbox.count()
+    )).toBe(101);
+  });
+
   it("fails closed without an encryption key and rolls back all candidate alerts", async () => {
     await ticket({
       firstResponseDueAt: new Date(now.getTime() + 10 * 60000),
