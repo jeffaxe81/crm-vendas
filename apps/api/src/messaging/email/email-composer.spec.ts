@@ -106,7 +106,9 @@ describe("F4.3 email composition", () => {
     expect(message.text).toContain(
       "https://crm.example.com/avaliacao/valid-token"
     );
-    expect(message.html).toContain('href="https://crm.example.com/avaliacao/valid-token"');
+    expect(message.html).toContain(
+      'href="https://crm.example.com/avaliacao/valid-token"'
+    );
   });
 
   it.each([
@@ -114,6 +116,8 @@ describe("F4.3 email composition", () => {
     "http://crm.example.com/avaliacao/token",
     "https://user:password@crm.example.com/avaliacao/token",
     "https://crm.example.com/avaliacao/token#fragment",
+    "https://crm.example.com/avaliacao/token?redirect=https://evil.example",
+    "https://crm.example.com/other-route",
   ])("rejects unsafe survey URL %s", surveyUrl => {
     expect(() =>
       composeSatisfactionEmail({
