@@ -334,6 +334,33 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
     );
   });
 
+  it("cancels a queued SLA alert when the assignee user is disabled", async () => {
+    await assertCancelledAfterMutation(() =>
+      owner.user.update({
+        where: { id: userId },
+        data: { isActive: false },
+      })
+    );
+  });
+
+  it("cancels a queued SLA alert when its organization is disabled", async () => {
+    await assertCancelledAfterMutation(() =>
+      owner.organization.update({
+        where: { id: organizationId },
+        data: { isActive: false },
+      })
+    );
+  });
+
+  it("cancels a queued SLA alert when the SLA is moved outside the alert window", async () => {
+    await assertCancelledAfterMutation(() =>
+      owner.ticket.update({
+        where: { id: ticketId },
+        data: { firstResponseDueAt: new Date(when.getTime() + 90 * 60000) },
+      })
+    );
+  });
+
   it("never sends CSAT mail before a separate consent gate is implemented", async () => {
     await app.withTenant(organizationId, tx =>
       enqueueTransactionalEmail(tx, {
