@@ -37,6 +37,7 @@ describe("F4.3-02D2 simulated durable relay acceptance contract", () => {
     const simulatedRelay: EmailRelayTransport = async (_url, options) => {
       const headers = options.headers as Record<string, string>;
       const idempotencyKey = headers["Idempotency-Key"];
+      if (!idempotencyKey) throw new Error("missing idempotency header");
       receivedKeys.push(idempotencyKey);
       if (!durableJournal.has(idempotencyKey)) {
         upstreamAcceptances++;
