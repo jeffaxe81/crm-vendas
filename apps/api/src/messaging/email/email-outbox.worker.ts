@@ -98,8 +98,7 @@ export class EmailOutboxWorker {
     const retryAt =
       !accepted && !exhausted
         ? new Date(
-            now.getTime() +
-              BASE_BACKOFF_MS * 2 ** (row.attemptCount - 1)
+            now.getTime() + BASE_BACKOFF_MS * 2 ** (row.attemptCount - 1)
           )
         : null;
     await this.prisma.withTenant(organizationId, async tx => {
@@ -120,8 +119,7 @@ export class EmailOutboxWorker {
             outcome.status === "ACCEPTED"
               ? outcome.providerMessageId.slice(0, 200)
               : null,
-          lastErrorCode:
-            outcome.status === "FAILED" ? outcome.errorCode : null,
+          lastErrorCode: outcome.status === "FAILED" ? outcome.errorCode : null,
         },
       });
     });
