@@ -42,15 +42,13 @@ export class EmailDispatchService {
         providerMessageId: result.providerMessageId,
       };
     } catch (error) {
-      return {
-        status: "FAILED",
-        errorCode:
-          error instanceof EmailProviderUnavailableError
-            ? "PROVIDER_NOT_CONFIGURED"
-            : error instanceof EmailDeliveryUnknownError
-              ? "DELIVERY_UNKNOWN"
-              : "PROVIDER_ERROR",
-      };
+      let errorCode: EmailFailureCode = "PROVIDER_ERROR";
+      if (error instanceof EmailProviderUnavailableError) {
+        errorCode = "PROVIDER_NOT_CONFIGURED";
+      } else if (error instanceof EmailDeliveryUnknownError) {
+        errorCode = "DELIVERY_UNKNOWN";
+      }
+      return { status: "FAILED", errorCode };
     }
   }
 }
