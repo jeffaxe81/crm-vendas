@@ -35,8 +35,10 @@ describe("F4.3-02D1 tenant relay staging with PostgreSQL RLS", () => {
   });
 
   beforeEach(async () => {
-    process.env.EMAIL_RELAY_SETTINGS_ENCRYPTION_KEY =
-      Buffer.alloc(32, 12).toString("base64");
+    process.env.EMAIL_RELAY_SETTINGS_ENCRYPTION_KEY = Buffer.alloc(
+      32,
+      12
+    ).toString("base64");
     process.env.EMAIL_RELAY_ALLOWED_HOSTNAME = "relay.example.test";
     await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
     adminId = (
