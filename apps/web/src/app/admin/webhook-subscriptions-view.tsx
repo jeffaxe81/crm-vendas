@@ -96,10 +96,9 @@ function TenantWebhooks({
     setHistory(null);
     setHistoryError("");
     setHistoryLoading(true);
-    void apiRequest<unknown>(
-      `/integrations/webhooks/${historyId}/deliveries`,
-      { accessToken }
-    )
+    void apiRequest<unknown>(`/integrations/webhooks/${historyId}/deliveries`, {
+      accessToken,
+    })
       .then(payload => {
         const parsed = WebhookDispatchSummarySchema.array().parse(payload);
         if (active) setHistory(parsed);
@@ -187,7 +186,9 @@ function TenantWebhooks({
         setEditingId(null);
         setConfirmId(null);
         setReload(current => current + 1);
-        setError("Webhook alterado por outra sessão. Lista atualizada; revise e tente novamente.");
+        setError(
+          "Webhook alterado por outra sessão. Lista atualizada; revise e tente novamente."
+        );
       } else {
         setError(message(cause, "Falha ao atualizar webhook."));
       }
@@ -207,7 +208,9 @@ function TenantWebhooks({
         { accessToken, method: "POST", body: {} }
       );
       WebhookDispatchSummarySchema.parse(payload);
-      setNotice("Teste enfileirado. Consulte o histórico para conferir a entrega.");
+      setNotice(
+        "Teste enfileirado. Consulte o histórico para conferir a entrega."
+      );
       setHistoryId(null);
     } catch (cause) {
       setError(message(cause, "Falha ao solicitar teste."));
@@ -219,7 +222,9 @@ function TenantWebhooks({
   return (
     <section className="companies-view__card" aria-labelledby="webhooks-title">
       <h2 id="webhooks-title">Webhooks de saída</h2>
-      <p>Notificações HTTPS assinadas para sistemas externos desta organização.</p>
+      <p>
+        Notificações HTTPS assinadas para sistemas externos desta organização.
+      </p>
       {error ? <p role="alert">{error}</p> : null}
       {notice ? <p role="status">{notice}</p> : null}
       {secret ? (
@@ -236,7 +241,12 @@ function TenantWebhooks({
             <legend>Novo webhook</legend>
             <label>
               Nome
-              <input required maxLength={160} value={name} onChange={event => setName(event.target.value)} />
+              <input
+                required
+                maxLength={160}
+                value={name}
+                onChange={event => setName(event.target.value)}
+              />
             </label>
             <label>
               Destino HTTPS
@@ -283,7 +293,9 @@ function TenantWebhooks({
         Atualizar webhooks
       </button>
       {loading ? <p role="status">Carregando webhooks...</p> : null}
-      {!loading && items.length === 0 ? <p>Nenhum webhook cadastrado.</p> : null}
+      {!loading && items.length === 0 ? (
+        <p>Nenhum webhook cadastrado.</p>
+      ) : null}
       {!loading && items.length > 0 ? (
         <ul>
           {items.map(item => (
@@ -326,7 +338,11 @@ function TenantWebhooks({
               <button
                 type="button"
                 disabled={busy}
-                onClick={() => setHistoryId(current => (current === item.id ? null : item.id))}
+                onClick={() =>
+                  setHistoryId(current =>
+                    current === item.id ? null : item.id
+                  )
+                }
                 aria-label={`Histórico webhook ${item.name}`}
               >
                 {historyId === item.id ? "Ocultar histórico" : "Ver histórico"}
@@ -348,16 +364,30 @@ function TenantWebhooks({
                     <legend>Editar assinatura</legend>
                     <label>
                       Nome da assinatura
-                      <input required maxLength={160} value={editName} onChange={event => setEditName(event.target.value)} />
+                      <input
+                        required
+                        maxLength={160}
+                        value={editName}
+                        onChange={event => setEditName(event.target.value)}
+                      />
                     </label>
                     <label>
                       URL da assinatura
-                      <input required type="url" maxLength={2048} value={editTargetUrl} onChange={event => setEditTargetUrl(event.target.value)} />
+                      <input
+                        required
+                        type="url"
+                        maxLength={2048}
+                        value={editTargetUrl}
+                        onChange={event => setEditTargetUrl(event.target.value)}
+                      />
                     </label>
                     <fieldset>
                       <legend>Eventos da assinatura</legend>
                       {events.map(option => (
-                        <label key={option.value} className="workspace-checkbox">
+                        <label
+                          key={option.value}
+                          className="workspace-checkbox"
+                        >
                           <input
                             type="checkbox"
                             checked={editEvents.includes(option.value)}
@@ -365,7 +395,9 @@ function TenantWebhooks({
                               setEditEvents(current =>
                                 event.target.checked
                                   ? [...current, option.value]
-                                  : current.filter(value => value !== option.value)
+                                  : current.filter(
+                                      value => value !== option.value
+                                    )
                               )
                             }
                           />
@@ -373,13 +405,20 @@ function TenantWebhooks({
                         </label>
                       ))}
                     </fieldset>
-                    <button type="submit" disabled={busy || !editEvents.length}>Salvar alterações</button>
-                    <button type="button" onClick={() => setEditingId(null)}>Cancelar edição</button>
+                    <button type="submit" disabled={busy || !editEvents.length}>
+                      Salvar alterações
+                    </button>
+                    <button type="button" onClick={() => setEditingId(null)}>
+                      Cancelar edição
+                    </button>
                   </fieldset>
                 </form>
               ) : null}
               {canManage && confirmId === item.id ? (
-                <div role="group" aria-label={`Confirmar status de ${item.name}`}>
+                <div
+                  role="group"
+                  aria-label={`Confirmar status de ${item.name}`}
+                >
                   <p>
                     {item.isActive
                       ? "Desativar a assinatura e cancelar envios pendentes?"
@@ -388,29 +427,47 @@ function TenantWebhooks({
                   <button
                     type="button"
                     disabled={busy}
-                    onClick={() => void update(item, { isActive: !item.isActive })}
+                    onClick={() =>
+                      void update(item, { isActive: !item.isActive })
+                    }
                   >
-                    {item.isActive ? "Confirmar desativação" : "Confirmar ativação"}
+                    {item.isActive
+                      ? "Confirmar desativação"
+                      : "Confirmar ativação"}
                   </button>
-                  <button type="button" disabled={busy} onClick={() => setConfirmId(null)}>Cancelar</button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => setConfirmId(null)}
+                  >
+                    Cancelar
+                  </button>
                 </div>
               ) : null}
               {historyId === item.id ? (
                 <section aria-label={`Histórico de ${item.name}`}>
                   <h3>Últimos envios</h3>
-                  {historyLoading ? <p role="status">Consultando entregas...</p> : null}
+                  {historyLoading ? (
+                    <p role="status">Consultando entregas...</p>
+                  ) : null}
                   {historyError ? <p role="alert">{historyError}</p> : null}
-                  {!historyLoading && history?.length === 0 ? <p>Nenhuma entrega registrada.</p> : null}
+                  {!historyLoading && history?.length === 0 ? (
+                    <p>Nenhuma entrega registrada.</p>
+                  ) : null}
                   {!historyLoading && history ? (
                     <ul>
                       {history.map(dispatch => (
                         <li key={dispatch.id}>
-                          <strong>{dispatch.eventType}</strong> — {dispatch.status}
+                          <strong>{dispatch.eventType}</strong> —{" "}
+                          {dispatch.status}
                           <p>Tentativas: {dispatch.attemptCount}</p>
                           {dispatch.deliveries.map(delivery => (
                             <p key={delivery.id}>
-                              Tentativa {delivery.attempt}: {delivery.status} — HTTP {delivery.responseStatus ?? "sem resposta"}
-                              {delivery.errorCode ? ` — ${delivery.errorCode}` : ""}
+                              Tentativa {delivery.attempt}: {delivery.status} —
+                              HTTP {delivery.responseStatus ?? "sem resposta"}
+                              {delivery.errorCode
+                                ? ` — ${delivery.errorCode}`
+                                : ""}
                             </p>
                           ))}
                         </li>
