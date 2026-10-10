@@ -1,14 +1,14 @@
 # Roadmap do Produto
 
-| Fase                   | Direção                                                                 | Situação                                                                |
-| ---------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual                                       |
-| Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026                                            |
-| Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Concluída — mesclada em `main` (26/09/2026)                             |
-| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Concluída — mesclada em `main` (27/09/2026)                             |
-| Fase 4 — Integrações   | API pública, webhooks, e-mail, WhatsApp, telefonia e ERP                | Em andamento — API pública por chave integrada; demais canais pendentes |
-| Fase 5 — Automação     | Regras, distribuição, jornadas e alertas                                | Planejada                                                               |
-| Fase 6 — IA assistida  | Resumos, recomendações, classificação e previsões com supervisão humana | Banco de Ideias                                                         |
+| Fase                   | Direção                                                                 | Situação                                                                                   |
+| ---------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual                                                          |
+| Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026                                                               |
+| Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Concluída — mesclada em `main` (26/09/2026)                                                |
+| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Concluída — mesclada em `main` (27/09/2026)                                                |
+| Fase 4 — Integrações   | API pública, webhooks, e-mail, WhatsApp, telefonia e ERP                | Em andamento — F4.1 e F4.2 integradas; F4.3-01 em desenvolvimento, demais canais pendentes |
+| Fase 5 — Automação     | Regras, distribuição, jornadas e alertas                                | Planejada                                                                                  |
+| Fase 6 — IA assistida  | Resumos, recomendações, classificação e previsões com supervisão humana | Banco de Ideias                                                                            |
 
 ## Marco concluído
 
@@ -22,7 +22,7 @@ A Fase 2 — Produtividade segue em microentregas. Já estão integradas à `dev
 
 Campos personalizados e tags já existem na base atual e não serão reimplementados.
 
-> **Próximo passo:** concluir a interface administrativa de F4.1 e avançar em F4.2 — Webhooks de Saída (ver `docs/superpowers/plans/2026-09-27-phase-4-integracoes.md`), mantendo o gate integral antes de qualquer merge na `main`.
+> **Próximo passo:** desenvolver F4.3 — E-mail Transacional em microentregas, começando pela base de provedor, com CI e revisão antes de qualquer merge na `main`.
 
 ## Fase 3 — Atendimento
 
@@ -43,7 +43,7 @@ A arquitetura detalhada está registrada em `docs/superpowers/specs/2026-09-24-p
 
 ## Fase 4 — Integrações
 
-Em 27/09/2026 foi criado o design e o plano de execução da Fase 4 — Integrações. A fundação de credenciais e API pública foi integrada pelo PR #76. A continuidade de 09/10/2026 adiciona a interface administrativa de chaves e a escolha de abertura do NEO em aba separada ou iframe, sem implementar automaticamente os demais canais.
+Em 27/09/2026 foi criado o design e o plano de execução da Fase 4 — Integrações. A fundação de credenciais e API pública foi integrada pelo PR #76, com interface administrativa no PR #105. A integração do NEO foi ampliada no PR #108. Webhooks de saída foram integrados à `main` no PR #106 (10/10/2026). A próxima frente F4.3 — E-mail Transacional está em desenvolvimento na microentrega F4.3-01, sem provedor externo nem disparos reais habilitados.
 
 A fase será executada de forma incremental:
 
