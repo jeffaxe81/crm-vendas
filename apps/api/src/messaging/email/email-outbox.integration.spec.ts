@@ -261,7 +261,9 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
     });
   });
 
-  async function assertCancelledAfterMutation(changeTicket: () => Promise<unknown>) {
+  async function assertCancelledAfterMutation(
+    changeTicket: () => Promise<unknown>
+  ) {
     await app.withTenant(organizationId, tx =>
       enqueueTransactionalEmail(tx, email())
     );
