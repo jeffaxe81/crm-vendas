@@ -11,7 +11,10 @@ export type EmailSendOutcome =
   | Readonly<{ status: "ACCEPTED"; providerMessageId: string }>
   | Readonly<{
       status: "FAILED";
-      errorCode: "PROVIDER_NOT_CONFIGURED" | "PROVIDER_ERROR" | "DELIVERY_UNKNOWN";
+      errorCode:
+        | "PROVIDER_NOT_CONFIGURED"
+        | "PROVIDER_ERROR"
+        | "DELIVERY_UNKNOWN";
     }>;
 
 /**
