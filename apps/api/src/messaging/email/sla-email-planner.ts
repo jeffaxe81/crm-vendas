@@ -4,7 +4,8 @@ import { composeSlaDueEmail } from "./email-composer";
 import { enqueueTransactionalEmail } from "./email-outbox";
 
 export const SLA_EMAIL_ALERT_WINDOW_MINUTES = 30;
-const MAX_TICKETS_PER_CYCLE = 100;
+const PAGE_SIZE = 100;
+const MAX_ENQUEUED_PER_CYCLE = 100;
 
 /**
  * F4.3-02B1: deterministic post-commit planning for operational SLA alerts.
@@ -32,7 +33,10 @@ export class SlaEmailPlanner {
     );
 
     return this.prisma.withTenant(organizationId, async tenant => {
-      const tickets = await tenant.ticket.findMany({
+      let enqueued = 0;
+      let cursor: string | undefined;
+      for (;;) {
+        const tickets = await tenant.ticket.findMany({
         where: {
           organizationId,
           deletedAt: null,
@@ -53,12 +57,11 @@ export class SlaEmailPlanner {
             include: { user: { select: { email: true, isActive: true } } },
           },
         },
-        orderBy: { openedAt: "asc" },
-        take: MAX_TICKETS_PER_CYCLE,
-      });
-
-      let enqueued = 0;
-      for (const ticket of tickets) {
+        orderBy: [{ openedAt: "asc" }, { id: "asc" }],
+        take: PAGE_SIZE,
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+        });
+        for (const ticket of tickets) {
         const assignee = ticket.assigneeMembership;
         if (!assignee?.isActive || !assignee.user.isActive) continue;
 
@@ -94,10 +97,15 @@ export class SlaEmailPlanner {
           continue;
         }
 
-        if (await enqueueTransactionalEmail(tenant, message))
-          enqueued += 1;
+          if (await enqueueTransactionalEmail(tenant, message)) {
+            enqueued += 1;
+            if (enqueued >= MAX_ENQUEUED_PER_CYCLE) return enqueued;
+          }
+        }
+        if (tickets.length < PAGE_SIZE) break;
+        cursor = tickets[tickets.length - 1]!.id;
       }
       return enqueued;
-    });
+    }, { timeout: 30000 });
   }
 }
