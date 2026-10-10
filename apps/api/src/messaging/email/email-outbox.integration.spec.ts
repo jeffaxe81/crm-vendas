@@ -64,7 +64,7 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
       await owner.ticket.create({
         data: {
           organizationId,
-          protocol: "2026-101",
+          protocol: "2026-000101",
           subject: "Tenant A",
           createdBy: userId,
           updatedBy: userId,
@@ -75,7 +75,7 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
       await owner.ticket.create({
         data: {
           organizationId: otherOrganizationId,
-          protocol: "2026-102",
+          protocol: "2026-000102",
           subject: "Tenant B",
           createdBy: userId,
           updatedBy: userId,
