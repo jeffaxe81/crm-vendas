@@ -3,6 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 import { parseApiEnvironment } from "../config/environment";
 import { Prisma, PrismaClient } from "../generated/prisma/client";
+import { runWithSessionAdvisoryLock } from "./session-advisory-lock";
 
 type TenantTransactionOptions = {
   maxWait?: number;
@@ -12,6 +13,7 @@ type TenantTransactionOptions = {
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleDestroy {
+  private readonly lockConnectionString: string;
   constructor(
     @Optional()
     @Inject("PRISMA_CONNECTION_STRING")
@@ -23,6 +25,23 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
     });
 
     super({ adapter });
+    this.lockConnectionString =
+      connectionString ?? environment.APP_DATABASE_URL;
+  }
+
+  withSessionAdvisoryLock<T>(
+    key: string,
+    operation: (signal: AbortSignal) => Promise<T>,
+    signal: AbortSignal,
+    sharedKey?: string
+  ): Promise<T> {
+    return runWithSessionAdvisoryLock(
+      this.lockConnectionString,
+      key,
+      operation,
+      signal,
+      sharedKey
+    );
   }
 
   async withTenant<T>(

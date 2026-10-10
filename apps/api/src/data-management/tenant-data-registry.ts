@@ -37,6 +37,15 @@ function full(
  * a future restorer must implement each special policy before accepting a backup.
  */
 export const TENANT_DATA_REGISTRY: readonly TenantDataPolicy[] = [
+  ...[
+    ["WebhookSubscription", "webhook_subscriptions"],
+    ["WebhookDispatch", "webhook_dispatches"],
+    ["WebhookDelivery", "webhook_deliveries"],
+  ].map(([model, table]) => ({
+    ...full(model!, table!, "SECURITY"),
+    export: "EXCLUDE" as const,
+    restore: "PRESERVE" as const,
+  })),
   {
     ...full("BackupRecord", "backups", "SECURITY"),
     export: "EXCLUDE",

@@ -5,51 +5,43 @@ function normalizeHostname(hostname: string): string {
   return hostname.replace(/^\[|\]$/g, "").toLowerCase();
 }
 
-function isBlockedIpv4(address: string): boolean {
-  const octets = address.split(".").map(Number);
-
-  if (octets.length !== 4 || octets.some(value => !Number.isInteger(value))) {
-    return true;
+/** Fail closed for special-use, documentation, multicast and transition ranges. */
+export function isPublicWebhookAddress(address: string): boolean {
+  if (isIP(address) === 4) {
+    const [a = 0, b = 0, c = 0] = address.split(".").map(Number);
+    return !(
+      a === 0 ||
+      a === 10 ||
+      a === 127 ||
+      a >= 224 ||
+      (a === 100 && b >= 64 && b <= 127) ||
+      (a === 169 && b === 254) ||
+      (a === 172 && b >= 16 && b <= 31) ||
+      (a === 192 &&
+        (b === 168 ||
+          // 192.0.0.0/24 contains special-use protocol and discovery addresses.
+          // Fail closed for the whole range instead of only selected hosts.
+          b === 0 ||
+          (b === 88 && c === 99))) ||
+      (a === 198 && (b === 18 || b === 19 || (b === 51 && c === 100))) ||
+      (a === 203 && b === 0 && c === 113)
+    );
   }
-
-  const a = octets[0]!;
-  const b = octets[1]!;
-
-  return (
-    a === 0 ||
-    a === 10 ||
-    a === 127 ||
-    (a === 100 && b >= 64 && b <= 127) ||
-    (a === 169 && b === 254) ||
-    (a === 172 && b >= 16 && b <= 31) ||
-    (a === 192 && b === 168) ||
-    a >= 224
-  );
-}
-
-function isBlockedIpv6(address: string): boolean {
-  const normalized = address.toLowerCase();
-
-  if (
-    normalized === "::" ||
-    normalized === "::1" ||
-    normalized.startsWith("fc") ||
-    normalized.startsWith("fd")
-  ) {
-    return true;
-  }
-
-  const firstGroup = normalized.split(":")[0] ?? "";
-  if (/^fe[89ab]/.test(firstGroup)) {
-    return true;
-  }
-
-  if (normalized.startsWith("::ffff:")) {
-    const mappedIpv4 = normalized.slice("::ffff:".length);
-    return isIP(mappedIpv4) === 4 ? isBlockedIpv4(mappedIpv4) : true;
-  }
-
-  return false;
+  if (isIP(address) !== 6 || address.includes(".")) return false;
+  const halves = address.toLowerCase().split("::");
+  const left = halves[0] ? halves[0].split(":") : [];
+  const right = halves[1] ? halves[1].split(":") : [];
+  const groups =
+    halves.length === 1
+      ? left
+      : [...left, ...Array(8 - left.length - right.length).fill("0"), ...right];
+  const first = parseInt(groups[0] ?? "0", 16);
+  const second = parseInt(groups[1] ?? "0", 16);
+  // Only global unicast; mapped, NAT64, ULA, link-local and multicast cannot pass.
+  if (first < 0x2000 || first > 0x3fff) return false;
+  if (first === 0x2001 && (second < 0x0200 || second === 0x0db8)) return false;
+  if (first === 0x2002 || (first === 0x3fff && second < 0x1000)) return false;
+  return true;
 }
 
 function isBlockedHostname(hostname: string): boolean {
@@ -65,10 +57,10 @@ function isBlockedHostname(hostname: string): boolean {
 
   const version = isIP(normalized);
   if (version === 4) {
-    return isBlockedIpv4(normalized);
+    return !isPublicWebhookAddress(normalized);
   }
   if (version === 6) {
-    return isBlockedIpv6(normalized);
+    return !isPublicWebhookAddress(normalized);
   }
 
   return false;
@@ -85,6 +77,17 @@ export function assertSafeWebhookTargetUrl(targetUrl: string): void {
 
   if (parsed.protocol !== "https:") {
     throw new Error("Webhook target URL must use HTTPS.");
+  }
+
+  if (
+    parsed.port ||
+    targetUrl.includes("?") ||
+    targetUrl.includes("#") ||
+    targetUrl !== targetUrl.trim()
+  ) {
+    throw new Error(
+      "Webhook target must use port 443 without query or fragment."
+    );
   }
 
   if (parsed.username || parsed.password) {

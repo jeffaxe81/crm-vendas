@@ -95,3 +95,14 @@ describe("backup inventory coverage", () => {
     }
   });
 });
+
+describe("webhook restore safety", () => {
+  it.each(["WebhookSubscription", "WebhookDispatch", "WebhookDelivery"])(
+    "preserves and excludes %s from backup",
+    model => {
+      expect(
+        TENANT_DATA_REGISTRY.find(policy => policy.model === model)
+      ).toMatchObject({ export: "EXCLUDE", restore: "PRESERVE" });
+    }
+  );
+});

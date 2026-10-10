@@ -4,6 +4,7 @@ import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../database/prisma.service";
 import { Prisma } from "../generated/prisma/client";
+import { enqueueWebhookEvent } from "../webhooks/webhook-outbox";
 
 export type CompanyAdministrationContext = {
   organizationId: string;
@@ -172,8 +173,8 @@ export class CompaniesService {
   ) {
     const company = await this.prisma.withTenant(
       context.organizationId,
-      tenant =>
-        tenant.company.create({
+      async tenant => {
+        const created = await tenant.company.create({
           data: {
             organizationId: context.organizationId,
             legalName: input.legalName,
@@ -184,7 +185,16 @@ export class CompaniesService {
             createdBy: context.actorUserId,
             updatedBy: context.actorUserId,
           },
-        })
+        });
+        await enqueueWebhookEvent(tenant, {
+          ...context,
+          eventType: "company.created",
+          entityId: created.id,
+          entityVersion: created.version,
+          occurredAt: created.createdAt,
+        });
+        return created;
+      }
     );
 
     await this.audit.record({

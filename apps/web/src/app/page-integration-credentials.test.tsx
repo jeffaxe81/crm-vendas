@@ -56,6 +56,7 @@ function mount(
         requests.push({ path, init });
         return handleCredentialRequest(init);
       }
+      if (path.endsWith("/integrations/webhooks")) return response([]);
       return response({ items: [], page: 1, limit: 20, total: 0 });
     })
   );

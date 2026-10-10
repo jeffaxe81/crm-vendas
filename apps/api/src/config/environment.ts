@@ -61,6 +61,26 @@ const ApiEnvironmentSchema = z
         )
         .optional()
     ),
+    WEBHOOK_ENCRYPTION_KEY: z.preprocess(
+      blankToUndefined,
+      z
+        .string()
+        .refine(value => {
+          const bytes = Buffer.from(value, "base64");
+          return bytes.length === 32 && bytes.toString("base64") === value;
+        }, "WEBHOOK_ENCRYPTION_KEY deve conter 32 bytes em base64 canônico.")
+        .optional()
+    ),
+    WEBHOOK_WORKER_ENABLED: z
+      .enum(["true", "false"])
+      .default("false")
+      .transform(value => value === "true"),
+    WEBHOOK_WORKER_POLL_MS: z.coerce
+      .number()
+      .int()
+      .min(1000)
+      .max(300000)
+      .default(5000),
     BACKUP_ENCRYPTION_KEY: z.preprocess(
       blankToUndefined,
       z

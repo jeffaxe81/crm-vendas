@@ -25,6 +25,7 @@ import { AuditService } from "../audit/audit.service";
 import { roleHasPermission } from "../authorization/permissions";
 import { PrismaService } from "../database/prisma.service";
 import { Prisma } from "../generated/prisma/client";
+import { enqueueWebhookEvent } from "../webhooks/webhook-outbox";
 import { SLA_CLOCK, type SlaClock } from "../sla/sla-clock";
 import { resolveSlaDeadlines } from "../sla/sla-deadlines";
 import { TicketSatisfactionService } from "./ticket-satisfaction.service";
@@ -497,6 +498,15 @@ export class TicketsService {
           id,
           context.organizationId
         );
+        if (input.status === "CLOSED") {
+          await enqueueWebhookEvent(tenant, {
+            ...context,
+            eventType: "ticket.closed",
+            entityId: updated.id,
+            entityVersion: updated.version,
+            occurredAt: now,
+          });
+        }
         return { before: existing, after: updated, satisfaction };
       }
     );

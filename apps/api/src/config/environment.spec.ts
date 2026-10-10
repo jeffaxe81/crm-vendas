@@ -70,6 +70,30 @@ describe("parseApiEnvironment", () => {
     }
   });
 
+  it("defaults webhooks to explicit opt-in and validates its polling interval", () => {
+    expect(parseApiEnvironment(secureEnvironment)).toMatchObject({
+      WEBHOOK_WORKER_ENABLED: false,
+      WEBHOOK_WORKER_POLL_MS: 5000,
+    });
+    expect(
+      parseApiEnvironment({
+        ...secureEnvironment,
+        WEBHOOK_WORKER_ENABLED: "true",
+        WEBHOOK_WORKER_POLL_MS: "2500",
+      })
+    ).toMatchObject({
+      WEBHOOK_WORKER_ENABLED: true,
+      WEBHOOK_WORKER_POLL_MS: 2500,
+    });
+    for (const invalid of [
+      { WEBHOOK_WORKER_ENABLED: "yes" },
+      { WEBHOOK_WORKER_POLL_MS: "999" },
+      { WEBHOOK_WORKER_POLL_MS: "300001" },
+    ])
+      expect(() =>
+        parseApiEnvironment({ ...secureEnvironment, ...invalid })
+      ).toThrow();
+  });
   it("rejects a missing database URL", () => {
     expect(() =>
       parseApiEnvironment({
@@ -107,5 +131,28 @@ describe("parseApiEnvironment", () => {
       AUTH_ACCESS_TTL_SECONDS: 900,
       AUTH_REFRESH_TTL_SECONDS: 2592000,
     });
+  });
+});
+
+describe("webhook encryption configuration", () => {
+  it("requires a canonical base64 key of 32 bytes", () => {
+    for (const invalid of [
+      "bad",
+      Buffer.alloc(31).toString("base64"),
+      Buffer.alloc(32).toString("base64") + "\n",
+    ])
+      expect(() =>
+        parseApiEnvironment({
+          ...secureEnvironment,
+          WEBHOOK_ENCRYPTION_KEY: invalid,
+        })
+      ).toThrow("WEBHOOK_ENCRYPTION_KEY");
+    expect(
+      parseApiEnvironment({ ...secureEnvironment, WEBHOOK_ENCRYPTION_KEY: "" })
+    ).not.toHaveProperty("WEBHOOK_ENCRYPTION_KEY", "");
+    const key = Buffer.alloc(32, 3).toString("base64");
+    expect(
+      parseApiEnvironment({ ...secureEnvironment, WEBHOOK_ENCRYPTION_KEY: key })
+    ).toHaveProperty("WEBHOOK_ENCRYPTION_KEY", key);
   });
 });

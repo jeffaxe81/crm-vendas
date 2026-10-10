@@ -9,6 +9,7 @@ import {
 } from "@axes/contracts";
 import { apiRequest } from "../../lib/api-client";
 import { NeoCommunicationSettingsView } from "./neo-communication-settings-view";
+import { WebhookSubscriptionsView } from "./webhook-subscriptions-view";
 
 // Escopos dos domínios publicados na fundação F4.1. Administração e
 // Superusuário não são delegados por esta tela.
@@ -199,6 +200,10 @@ export function IntegrationCredentialsView({
       className="activities-view integration-credentials"
       aria-labelledby="integration-credentials-title"
     >
+      <WebhookSubscriptionsView
+        accessToken={accessToken}
+        canManage={canManage}
+      />
       <NeoCommunicationSettingsView
         accessToken={accessToken}
         canManage={canManage}
