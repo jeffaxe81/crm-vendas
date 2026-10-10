@@ -71,7 +71,11 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
       data: [
         { organizationId, userId: actorUserId, role: "ADMIN" },
         { organizationId, userId: sellerUserId, role: "SELLER" },
-        { organizationId: anotherOrganizationId, userId: actorUserId, role: "ADMIN" },
+        {
+          organizationId: anotherOrganizationId,
+          userId: actorUserId,
+          role: "ADMIN",
+        },
       ],
     });
 
@@ -119,7 +123,9 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
       });
     }
     reviewId = (
-      await app.withTenant(organizationId, tx => tx.emailOutbox.findFirstOrThrow())
+      await app.withTenant(organizationId, tx =>
+        tx.emailOutbox.findFirstOrThrow()
+      )
     ).id;
     otherReviewId = (
       await app.withTenant(anotherOrganizationId, tx =>
@@ -132,7 +138,8 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
     await owner?.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
     await owner?.onModuleDestroy();
     await app?.onModuleDestroy();
-    if (previousKey === undefined) delete process.env.EMAIL_OUTBOX_ENCRYPTION_KEY;
+    if (previousKey === undefined)
+      delete process.env.EMAIL_OUTBOX_ENCRYPTION_KEY;
     else process.env.EMAIL_OUTBOX_ENCRYPTION_KEY = previousKey;
   });
 
@@ -141,7 +148,9 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
     expect(rows).toHaveLength(1);
     expect(rows[0]?.id).toBe(reviewId);
     expect(rows[0]).toHaveProperty("idempotencyHash");
-    expect(JSON.stringify(rows)).not.toContain("private-recipient@example.test");
+    expect(JSON.stringify(rows)).not.toContain(
+      "private-recipient@example.test"
+    );
     expect(JSON.stringify(rows)).not.toContain("encryptedEmail");
     expect(JSON.stringify(rows)).not.toContain(otherReviewId);
   });
@@ -151,11 +160,15 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
       service.list({ ...context(), actorUserId: sellerUserId })
     ).rejects.toThrow();
     await expect(
-      service.resolve(otherReviewId, {
-        decision: "CONFIRMED_ACCEPTED",
-        providerMessageId: "relay-2",
-        evidenceReference: "relay/case-123456",
-      }, context())
+      service.resolve(
+        otherReviewId,
+        {
+          decision: "CONFIRMED_ACCEPTED",
+          providerMessageId: "relay-2",
+          evidenceReference: "relay/case-123456",
+        },
+        context()
+      )
     ).rejects.toThrow();
     await owner.organizationMembership.updateMany({
       where: { organizationId, userId: actorUserId },
@@ -178,7 +191,9 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
       id: reviewId,
       status: "ACCEPTED",
     });
-    await expect(service.resolve(reviewId, resolution, context())).rejects.toThrow();
+    await expect(
+      service.resolve(reviewId, resolution, context())
+    ).rejects.toThrow();
     const data = await app.withTenant(organizationId, tx =>
       Promise.all([
         tx.emailOutbox.findFirstOrThrow({ where: { id: reviewId } }),
@@ -204,7 +219,9 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
       action: "email.manual_review.resolve",
       requestId: context().requestId,
     });
-    expect(JSON.stringify(data[1])).not.toContain("private-recipient@example.test");
+    expect(JSON.stringify(data[1])).not.toContain(
+      "private-recipient@example.test"
+    );
   });
 
   it("records definite non-acceptance as terminal cancellation, never retry", async () => {
