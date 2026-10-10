@@ -46,6 +46,21 @@ export class EmailOutboxWorker {
       const row = await tx.emailOutbox.findFirstOrThrow({
         where: { id: candidate.id, organizationId },
       });
+      // An expired lease may have been lost after remote acceptance.
+      // Never resubmit it automatically without verified relay deduplication.
+      if (row.status === "PROCESSING") {
+        await tx.emailOutbox.update({
+          where: { id: row.id },
+          data: {
+            status: "MANUAL_REVIEW",
+            nextAttemptAt: null,
+            leaseToken: null,
+            leasedUntil: null,
+            lastErrorCode: "LEASE_EXPIRED_UNKNOWN",
+          },
+        });
+        return { kind: "FINAL" as const };
+      }
       if (row.attemptCount >= MAX_ATTEMPTS) {
         await tx.emailOutbox.update({
           where: { id: row.id },
@@ -97,15 +112,19 @@ export class EmailOutboxWorker {
 
     const accepted = outcome.status === "ACCEPTED";
     const exhausted = !accepted && row.attemptCount >= MAX_ATTEMPTS;
+    const unknown =
+      outcome.status === "FAILED" && outcome.errorCode === "DELIVERY_UNKNOWN";
     const status = staleAlert
       ? "CANCELLED"
-      : accepted
+      : unknown
+        ? "MANUAL_REVIEW"
+        : accepted
         ? "ACCEPTED"
         : exhausted
           ? "EXHAUSTED"
           : "RETRY_SCHEDULED";
     const retryAt =
-      !accepted && !exhausted && !staleAlert
+      !accepted && !exhausted && !staleAlert && !unknown
         ? new Date(
             now.getTime() + BASE_BACKOFF_MS * 2 ** (row.attemptCount - 1)
           )
