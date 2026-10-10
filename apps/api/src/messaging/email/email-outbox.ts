@@ -25,13 +25,15 @@ export async function enqueueTransactionalEmail(
   );
   const result = await tenant.emailOutbox.createMany({
     skipDuplicates: true,
-    data: [{
-      organizationId: email.organizationId,
-      ticketId: email.referenceId,
-      idempotencyHash,
-      encryptedEmail,
-      purpose: email.purpose,
-    }],
+    data: [
+      {
+        organizationId: email.organizationId,
+        ticketId: email.referenceId,
+        idempotencyHash,
+        encryptedEmail,
+        purpose: email.purpose,
+      },
+    ],
   });
   return result.count === 1;
 }
