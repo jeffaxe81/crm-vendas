@@ -6,6 +6,8 @@ import { EmailManualReviewController } from "./email-manual-review.controller";
 import { EmailManualReviewService } from "./email-manual-review.service";
 import { EmailRelaySettingsController } from "./email-relay-settings.controller";
 import { EmailRelayReadinessController } from "./email-relay-readiness.controller";
+import { EmailRelayEvidenceController } from "./email-relay-evidence.controller";
+import { EmailRelayEvidenceService } from "./email-relay-evidence.service";
 import { EmailRelayReadinessService } from "./email-relay-readiness.service";
 import { EmailRelaySettingsService } from "./email-relay-settings.service";
 import { SlaEmailPlanner } from "./sla-email-planner";
@@ -22,9 +24,11 @@ import { DisabledEmailProvider, EMAIL_PROVIDER } from "./email-provider";
     EmailManualReviewController,
     EmailRelaySettingsController,
     EmailRelayReadinessController,
+    EmailRelayEvidenceController,
   ],
   providers: [
     EmailRelayReadinessService,
+    EmailRelayEvidenceService,
     EmailRelaySettingsService,
     EmailManualReviewService,
     EmailOutboxWorker,
