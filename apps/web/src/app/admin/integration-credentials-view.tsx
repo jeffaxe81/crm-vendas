@@ -40,9 +40,11 @@ function credentialStatus(credential: IntegrationCredentialSummary) {
 
 export function IntegrationCredentialsView({
   accessToken,
+  currentUserId,
   permissions,
 }: {
   accessToken: string;
+  currentUserId: string;
   permissions: readonly string[];
 }) {
   const canRead = permissions.includes("integration.read");
@@ -222,7 +224,10 @@ export function IntegrationCredentialsView({
               : "Abrir diagnóstico de e-mail"}
           </button>
           {showEmailDiagnostics ? (
-            <EmailRelayDiagnosticsPanel accessToken={accessToken} />
+            <EmailRelayDiagnosticsPanel
+              accessToken={accessToken}
+              currentUserId={currentUserId}
+            />
           ) : null}
         </div>
       ) : null}
