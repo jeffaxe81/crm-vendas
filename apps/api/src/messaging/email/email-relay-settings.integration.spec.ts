@@ -1,7 +1,7 @@
 import { PrismaService } from "../../database/prisma.service";
-import { EmailRelaySettingsService } from "./email-relay-settings.service";
 import { EmailDispatchService } from "./email-dispatch.service";
 import { DisabledEmailProvider } from "./email-provider";
+import { EmailRelaySettingsService } from "./email-relay-settings.service";
 
 describe("F4.3-02D1 tenant relay staging with PostgreSQL RLS", () => {
   let owner: PrismaService;
@@ -118,9 +118,7 @@ describe("F4.3-02D1 tenant relay staging with PostgreSQL RLS", () => {
     expect(row.encryptedBearerToken).toBeTruthy();
     expect(row.encryptedBearerToken).not.toContain(token);
     expect(JSON.stringify(result)).not.toContain(token);
-    expect(
-      await app.emailRelaySettings.findMany()
-    ).toEqual([]);
+    expect(await app.emailRelaySettings.findMany()).toEqual([]);
     const audit = await app.withTenant(tenantA, tx =>
       tx.auditLog.findMany({
         where: { action: "email.relay_settings.updated" },
@@ -129,16 +127,18 @@ describe("F4.3-02D1 tenant relay staging with PostgreSQL RLS", () => {
     expect(audit).toHaveLength(1);
     expect(audit[0]?.actorUserId).toBe(adminId);
     expect(JSON.stringify(audit)).not.toContain(token);
-    expect(await new EmailDispatchService(new DisabledEmailProvider()).attempt({
-      organizationId: tenantA,
-      referenceId: tenantA,
-      idempotencyKey: "stage-only",
-      purpose: "SLA_DUE_SOON",
-      recipient: "internal@example.test",
-      subject: "Internal",
-      text: "Internal",
-      html: "<p>Internal</p>",
-    })).toEqual({ status: "FAILED", errorCode: "PROVIDER_NOT_CONFIGURED" });
+    expect(
+      await new EmailDispatchService(new DisabledEmailProvider()).attempt({
+        organizationId: tenantA,
+        referenceId: tenantA,
+        idempotencyKey: "stage-only",
+        purpose: "SLA_DUE_SOON",
+        recipient: "internal@example.test",
+        subject: "Internal",
+        text: "Internal",
+        html: "<p>Internal</p>",
+      })
+    ).toEqual({ status: "FAILED", errorCode: "PROVIDER_NOT_CONFIGURED" });
   });
 
   it("requires active admin membership, and isolates organizations", async () => {
@@ -224,10 +224,7 @@ describe("F4.3-02D1 tenant relay staging with PostgreSQL RLS", () => {
     );
     expect(first.version).toBe(1);
     await expect(
-      settings.update(
-        { version: 0, mode: "PREPARED" },
-        context()
-      )
+      settings.update({ version: 0, mode: "PREPARED" }, context())
     ).rejects.toThrow();
     const prepared = await settings.update(
       { version: 1, mode: "PREPARED" },
