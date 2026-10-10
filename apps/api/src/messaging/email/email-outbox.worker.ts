@@ -119,10 +119,10 @@ export class EmailOutboxWorker {
       : unknown
         ? "MANUAL_REVIEW"
         : accepted
-        ? "ACCEPTED"
-        : exhausted
-          ? "EXHAUSTED"
-          : "RETRY_SCHEDULED";
+          ? "ACCEPTED"
+          : exhausted
+            ? "EXHAUSTED"
+            : "RETRY_SCHEDULED";
     const retryAt =
       !accepted && !exhausted && !staleAlert && !unknown
         ? new Date(
