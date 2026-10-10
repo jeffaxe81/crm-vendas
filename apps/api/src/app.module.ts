@@ -29,6 +29,7 @@ import { TerritoriesModule } from "./territories/territories.module";
 import { OrganizationUsersModule } from "./users/organization-users.module";
 import { SlaModule } from "./sla/sla.module";
 import { WebhooksModule } from "./webhooks/webhooks.module";
+import { EmailModule } from "./messaging/email/email.module";
 import { IntegrationsModule } from "./integrations/integrations.module";
 
 import { DataManagementModule } from "./data-management/data-management.module";
@@ -70,6 +71,7 @@ import { WorkspaceModule } from "./workspace/workspace.module";
     SlaModule,
     IntegrationsModule,
     WebhooksModule,
+    EmailModule,
   ],
 })
 export class AppModule implements NestModule {
