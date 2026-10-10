@@ -221,7 +221,10 @@ export function EmailRelayDiagnosticsPanel({
             informe URLs, senhas, tokens, documentos ou dados pessoais. O
             registro fica auditado e permanece não verificado.
           </p>
-          <form className="activity-form" onSubmit={event => void submit(event)}>
+          <form
+            className="activity-form"
+            onSubmit={event => void submit(event)}
+          >
             <fieldset disabled={busy}>
               <legend>Registrar referência</legend>
               <div className="activity-form__fields">
