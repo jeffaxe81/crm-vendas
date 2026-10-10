@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "../../database/prisma.service";
 import { EmailDispatchService } from "./email-dispatch.service";
 import { decryptOutboxEmail, emailOutboxKey } from "./email-outbox-crypto";
+import { isSlaEmailStillCurrent } from "./sla-email-dispatch-guard";
 
 const MAX_ATTEMPTS = 5;
 const LEASE_MS = 30000;
@@ -45,6 +46,21 @@ export class EmailOutboxWorker {
       const row = await tx.emailOutbox.findFirstOrThrow({
         where: { id: candidate.id, organizationId },
       });
+      // An expired lease may have been lost after remote acceptance.
+      // Never resubmit it automatically without verified relay deduplication.
+      if (row.status === "PROCESSING") {
+        await tx.emailOutbox.update({
+          where: { id: row.id },
+          data: {
+            status: "MANUAL_REVIEW",
+            nextAttemptAt: null,
+            leaseToken: null,
+            leasedUntil: null,
+            lastErrorCode: "LEASE_EXPIRED_UNKNOWN",
+          },
+        });
+        return { kind: "FINAL" as const };
+      }
       if (row.attemptCount >= MAX_ATTEMPTS) {
         await tx.emailOutbox.update({
           where: { id: row.id },
@@ -75,6 +91,7 @@ export class EmailOutboxWorker {
 
     const row = claimed.row;
     let outcome: Awaited<ReturnType<EmailDispatchService["attempt"]>>;
+    let staleAlert = false;
     try {
       const email = decryptOutboxEmail(
         row.encryptedEmail,
@@ -83,20 +100,31 @@ export class EmailOutboxWorker {
         row.ticketId,
         row.idempotencyHash
       );
-      outcome = await this.dispatch.attempt(email);
+      if (await isSlaEmailStillCurrent(this.prisma, email, now)) {
+        outcome = await this.dispatch.attempt(email);
+      } else {
+        staleAlert = true;
+        outcome = { status: "FAILED", errorCode: "PROVIDER_ERROR" };
+      }
     } catch {
       outcome = { status: "FAILED", errorCode: "PROVIDER_ERROR" };
     }
 
     const accepted = outcome.status === "ACCEPTED";
     const exhausted = !accepted && row.attemptCount >= MAX_ATTEMPTS;
-    const status = accepted
-      ? "ACCEPTED"
-      : exhausted
-        ? "EXHAUSTED"
-        : "RETRY_SCHEDULED";
+    const unknown =
+      outcome.status === "FAILED" && outcome.errorCode === "DELIVERY_UNKNOWN";
+    const status = staleAlert
+      ? "CANCELLED"
+      : unknown
+        ? "MANUAL_REVIEW"
+        : accepted
+          ? "ACCEPTED"
+          : exhausted
+            ? "EXHAUSTED"
+            : "RETRY_SCHEDULED";
     const retryAt =
-      !accepted && !exhausted
+      !accepted && !exhausted && !staleAlert && !unknown
         ? new Date(
             now.getTime() + BASE_BACKOFF_MS * 2 ** (row.attemptCount - 1)
           )
@@ -119,7 +147,11 @@ export class EmailOutboxWorker {
             outcome.status === "ACCEPTED"
               ? outcome.providerMessageId.slice(0, 200)
               : null,
-          lastErrorCode: outcome.status === "FAILED" ? outcome.errorCode : null,
+          lastErrorCode: staleAlert
+            ? "STALE_OR_UNAUTHORIZED_ALERT"
+            : outcome.status === "FAILED"
+              ? outcome.errorCode
+              : null,
         },
       });
     });
