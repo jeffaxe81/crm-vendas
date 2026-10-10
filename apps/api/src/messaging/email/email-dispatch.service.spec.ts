@@ -26,17 +26,19 @@ describe("F4.3 provider isolation", () => {
   });
 
   it("returns acceptance, not a false delivery confirmation", async () => {
+    let captured: TransactionalEmail | undefined;
     const provider: EmailProvider = {
-      send: jest.fn(async (_email: TransactionalEmail) => ({
-        providerMessageId: "remote-100",
-      })),
+      send: async email => {
+        captured = email;
+        return { providerMessageId: "remote-100" };
+      },
     };
     const mail = new EmailDispatchService(provider);
     await expect(mail.attempt(message)).resolves.toEqual({
       status: "ACCEPTED",
       providerMessageId: "remote-100",
     });
-    expect(provider.send).toHaveBeenCalledWith(message);
+    expect(captured).toEqual(message);
   });
 
   it("turns provider exceptions into safe failures without leaking secrets", async () => {
