@@ -11,7 +11,7 @@ const shared = {
 };
 
 describe("F4.3 email composition", () => {
-  it("renders a stable SLA notification without leaking customer data", () => {
+  it("renders a stable SLA notification", () => {
     const dueAt = new Date("2026-10-11T10:00:00.000Z");
     const message = composeSlaDueEmail({
       ...shared,
@@ -23,7 +23,12 @@ describe("F4.3 email composition", () => {
       organizationId: shared.organizationId,
       referenceId: shared.ticketId,
       recipient: shared.recipient,
-      idempotencyKey: `sla:${shared.organizationId}:${shared.ticketId}:${dueAt.toISOString()}`,
+      idempotencyKey: [
+        "sla",
+        shared.organizationId,
+        shared.ticketId,
+        dueAt.toISOString(),
+      ].join(":"),
     });
     expect(message.subject).toContain(shared.protocol);
     expect(message.text).toContain("30 minutos");
@@ -92,7 +97,7 @@ describe("F4.3 email composition", () => {
     ).toThrow("INVALID_EMAIL_RECIPIENT");
   });
 
-  it("creates a versioned, safe satisfaction email without printing raw HTML", () => {
+  it("creates a versioned satisfaction email", () => {
     const message = composeSatisfactionEmail({
       ...shared,
       surveyId: "00000000-0000-4000-8000-000000000003",
@@ -101,7 +106,12 @@ describe("F4.3 email composition", () => {
     });
     expect(message).toMatchObject({
       purpose: "SATISFACTION_REQUEST",
-      idempotencyKey: `satisfaction:${shared.organizationId}:00000000-0000-4000-8000-000000000003:2`,
+      idempotencyKey: [
+        "satisfaction",
+        shared.organizationId,
+        "00000000-0000-4000-8000-000000000003",
+        2,
+      ].join(":"),
     });
     expect(message.text).toContain(
       "https://crm.example.com/avaliacao/valid-token"
