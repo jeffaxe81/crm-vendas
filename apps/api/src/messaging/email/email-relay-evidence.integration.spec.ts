@@ -319,5 +319,4 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
       )
     ).rejects.toThrow();
   });
-
 });
