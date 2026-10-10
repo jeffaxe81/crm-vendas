@@ -15,7 +15,8 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
   let userId: string;
   const key = Buffer.alloc(32, 7).toString("base64");
   const original = process.env.EMAIL_OUTBOX_ENCRYPTION_KEY;
-  const when = new Date("2026-10-10T12:00:00.000Z");
+  // Fixed future clock keeps due-at claims deterministic across CI runtimes.
+  const when = new Date("2099-10-10T12:00:00.000Z");
 
   const email = (): TransactionalEmail => ({
     organizationId,
