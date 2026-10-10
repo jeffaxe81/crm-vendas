@@ -172,7 +172,7 @@ describe("C6 webhook administration", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Confirmar desativação" })
     );
-    await screen.findByText("Inativo");
+    expect(await screen.findByRole("button", { name: "Ativar webhook ERP" })).toBeVisible();
     expect(
       JSON.parse(
         String(calls.find(call => call.init?.method === "PATCH")?.init?.body)
@@ -251,7 +251,7 @@ describe("C6 webhook administration", () => {
     expect(
       await screen.findByText("Atualizado por outro operador")
     ).toBeVisible();
-    expect(screen.queryByText("Inativo")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Desativar webhook Atualizado por outro operador" })).toBeVisible();
     expect(calls.filter(call => call.init?.method === "PATCH")).toHaveLength(1);
   });
 
