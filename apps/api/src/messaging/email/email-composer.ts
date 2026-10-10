@@ -79,16 +79,19 @@ export function composeSlaDueEmail(
   )
     throw new Error("INVALID_SLA_EMAIL_INPUT");
   const minutes = input.minutesRemaining;
-  const message = `A solicitação ${fields.protocol} está próxima do vencimento do SLA. Restam ${minutes} minutos.`;
+  const message =
+    `A solicitação ${fields.protocol} está próxima do vencimento do SLA. Restam ${minutes} minutos.`;
   return {
     organizationId: fields.organizationId,
     referenceId: fields.referenceId,
-    idempotencyKey: `sla:${fields.organizationId}:${fields.referenceId}:${input.dueAt.toISOString()}`,
+    idempotencyKey:
+      `sla:${fields.organizationId}:${fields.referenceId}:${input.dueAt.toISOString()}`,
     recipient: fields.recipient,
     purpose: "SLA_DUE_SOON",
     subject: `Alerta de SLA — ${fields.protocol}`,
     text: message,
-    html: `<p>A solicitação <strong>${escapeHtml(fields.protocol)}</strong> está próxima do vencimento do SLA.</p><p>Restam ${minutes} minutos.</p>`,
+    html:
+      `<p>A solicitação <strong>${escapeHtml(fields.protocol)}</strong> está próxima do vencimento do SLA.</p><p>Restam ${minutes} minutos.</p>`,
   };
 }
 
@@ -98,7 +101,10 @@ export function composeSatisfactionEmail(
 ): TransactionalEmail {
   const fields = shared(input);
   const surveyId = singleLine(input.surveyId, 64);
-  if (!Number.isSafeInteger(input.surveyVersion) || input.surveyVersion < 1)
+  if (
+    !Number.isSafeInteger(input.surveyVersion) ||
+    input.surveyVersion < 1
+  )
     throw new Error("INVALID_SURVEY_VERSION");
   const url = new URL(input.surveyUrl);
   if (
@@ -106,17 +112,22 @@ export function composeSatisfactionEmail(
     url.username ||
     url.password ||
     url.hash ||
+    url.search ||
+    !url.pathname.startsWith("/avaliacao/") ||
     url.toString() !== input.surveyUrl
   )
     throw new Error("INVALID_SURVEY_URL");
   return {
     organizationId: fields.organizationId,
     referenceId: fields.referenceId,
-    idempotencyKey: `satisfaction:${fields.organizationId}:${surveyId}:${input.surveyVersion}`,
+    idempotencyKey:
+      `satisfaction:${fields.organizationId}:${surveyId}:${input.surveyVersion}`,
     recipient: fields.recipient,
     purpose: "SATISFACTION_REQUEST",
     subject: `Pesquisa de satisfação — ${fields.protocol}`,
-    text: `Avalie o atendimento da solicitação ${fields.protocol}: ${url.toString()}`,
-    html: `<p>Avalie o atendimento da solicitação <strong>${escapeHtml(fields.protocol)}</strong>.</p><p><a href="${escapeHtml(url.toString())}">Responder à pesquisa</a></p>`,
+    text:
+      `Avalie o atendimento da solicitação ${fields.protocol}: ${url.toString()}`,
+    html:
+      `<p>Avalie o atendimento da solicitação <strong>${escapeHtml(fields.protocol)}</strong>.</p><p><a href="${escapeHtml(url.toString())}">Responder à pesquisa</a></p>`,
   };
 }
