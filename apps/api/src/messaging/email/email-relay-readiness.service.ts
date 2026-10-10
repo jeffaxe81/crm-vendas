@@ -121,13 +121,13 @@ export class EmailRelayReadinessService {
       }
 
       const checks = {
-        relayConfigured:
-          row?.mode === "PREPARED" ? "PASS" : "BLOCKED",
+        relayConfigured: row?.mode === "PREPARED" ? "PASS" : "BLOCKED",
         hostnameAllowlisted: hostnameAllowlisted ? "PASS" : "BLOCKED",
         encryptionKeyPresent: encryptionKeyPresent ? "PASS" : "BLOCKED",
         credentialIntegrity: token !== null ? "PASS" : "BLOCKED",
-        providerContractCompatible:
-          providerContractCompatible ? "PASS" : "BLOCKED",
+        providerContractCompatible: providerContractCompatible
+          ? "PASS"
+          : "BLOCKED",
         durableProviderIdempotency: "NOT_VERIFIED",
         networkEgressPolicy: "NOT_VERIFIED",
         tlsAndDnsPinning: "NOT_VERIFIED",
