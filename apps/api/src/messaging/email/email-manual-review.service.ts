@@ -59,7 +59,10 @@ export class EmailManualReviewService {
     return this.prisma.withTenant(context.organizationId, async tx => {
       await this.assertAdministrator(tx, context);
       return tx.emailOutbox.findMany({
-        where: { organizationId: context.organizationId, status: "MANUAL_REVIEW" },
+        where: {
+          organizationId: context.organizationId,
+          status: "MANUAL_REVIEW",
+        },
         orderBy: [{ createdAt: "asc" }, { id: "asc" }],
         take: limit,
         // No encrypted body, raw recipient, or plaintext message is returned.
@@ -105,15 +108,18 @@ export class EmailManualReviewService {
       throw new Error("INVALID_EMAIL_REVIEW_DECISION");
     }
     const status = accepted ? "ACCEPTED" : "CANCELLED";
-    const errorCode = accepted
-      ? null
-      : "MANUAL_CONFIRMED_NOT_ACCEPTED";
+    const errorCode = accepted ? null : "MANUAL_CONFIRMED_NOT_ACCEPTED";
 
     return this.prisma.withTenant(context.organizationId, async tx => {
       await this.assertAdministrator(tx, context);
       const previous = await tx.emailOutbox.findFirst({
         where: { id, organizationId: context.organizationId },
-        select: { id: true, status: true, attemptCount: true, lastErrorCode: true },
+        select: {
+          id: true,
+          status: true,
+          attemptCount: true,
+          lastErrorCode: true,
+        },
       });
       if (!previous) {
         throw new NotFoundException({ code: "EMAIL_REVIEW_NOT_FOUND" });
