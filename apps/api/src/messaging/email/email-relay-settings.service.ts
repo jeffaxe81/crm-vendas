@@ -170,7 +170,7 @@ export class EmailRelaySettingsService {
       const nextEndpoint = endpoint ?? previous?.endpoint ?? null;
       const nextEncrypted = input.clearCredential
         ? null
-        : encrypted ?? previous?.encryptedBearerToken ?? null;
+        : (encrypted ?? previous?.encryptedBearerToken ?? null);
       if (input.mode === "PREPARED") {
         if (!nextEndpoint || !nextEncrypted)
           throw new BadRequestException({
