@@ -38,6 +38,7 @@ function full(
  */
 export const TENANT_DATA_REGISTRY: readonly TenantDataPolicy[] = [
   ...[
+    ["EmailOutbox", "email_outbox"],
     ["WebhookSubscription", "webhook_subscriptions"],
     ["WebhookDispatch", "webhook_dispatches"],
     ["WebhookDelivery", "webhook_deliveries"],
