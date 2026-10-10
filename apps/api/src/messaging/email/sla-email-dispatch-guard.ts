@@ -47,8 +47,7 @@ export async function isSlaEmailStillCurrent(
     })
   );
   const assignee = ticket?.assigneeMembership;
-  if (!ticket || !assignee?.isActive || !assignee.user.isActive)
-    return false;
+  if (!ticket || !assignee?.isActive || !assignee.user.isActive) return false;
   if (assignee.user.email !== email.recipient) return false;
 
   const candidateDueDates = [
@@ -72,9 +71,7 @@ export async function isSlaEmailStillCurrent(
       recipient: assignee.user.email,
       protocol: ticket.protocol,
       dueAt,
-      minutesRemaining: Math.ceil(
-        (dueAt.getTime() - now.getTime()) / 60000
-      ),
+      minutesRemaining: Math.ceil((dueAt.getTime() - now.getTime()) / 60000),
     });
     return (
       email.idempotencyKey === current.idempotencyKey &&
