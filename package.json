@@ -13,7 +13,7 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter @axes/contracts build && pnpm test:repo && pnpm -r test",
     "test:e2e": "playwright test",
-    "format:check": "prettier --write apps/api/src/messaging/email/email-outbox-crypto.spec.ts apps/api/src/messaging/email/email-outbox.integration.spec.ts apps/api/src/messaging/email/email-outbox.ts apps/api/src/messaging/email/email-outbox.worker.ts && node -e 'const fs=require(\"node:fs\");for(const p of process.argv.slice(1)){console.log(\"FORMATTED:\"+JSON.stringify({path:p,content:fs.readFileSync(p,\"utf8\")}))}' apps/api/src/messaging/email/email-outbox-crypto.spec.ts apps/api/src/messaging/email/email-outbox.integration.spec.ts apps/api/src/messaging/email/email-outbox.ts apps/api/src/messaging/email/email-outbox.worker.ts && exit 1",
+    "format:check": "prettier --check .",
     "verify": "pnpm verify:foundation && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "test:repo": "node --test tests/*.test.mjs",
     "verify:foundation": "node scripts/verify-foundation.mjs"
