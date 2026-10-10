@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "../../database/prisma.service";
 import { EmailDispatchService } from "./email-dispatch.service";
 import { decryptOutboxEmail, emailOutboxKey } from "./email-outbox-crypto";
+import { isSlaEmailStillCurrent } from "./sla-email-dispatch-guard";
 
 const MAX_ATTEMPTS = 5;
 const LEASE_MS = 30000;
@@ -75,6 +76,7 @@ export class EmailOutboxWorker {
 
     const row = claimed.row;
     let outcome: Awaited<ReturnType<EmailDispatchService["attempt"]>>;
+    let staleAlert = false;
     try {
       const email = decryptOutboxEmail(
         row.encryptedEmail,
@@ -83,20 +85,27 @@ export class EmailOutboxWorker {
         row.ticketId,
         row.idempotencyHash
       );
-      outcome = await this.dispatch.attempt(email);
+      if (await isSlaEmailStillCurrent(this.prisma, email, now)) {
+        outcome = await this.dispatch.attempt(email);
+      } else {
+        staleAlert = true;
+        outcome = { status: "FAILED", errorCode: "PROVIDER_ERROR" };
+      }
     } catch {
       outcome = { status: "FAILED", errorCode: "PROVIDER_ERROR" };
     }
 
     const accepted = outcome.status === "ACCEPTED";
     const exhausted = !accepted && row.attemptCount >= MAX_ATTEMPTS;
-    const status = accepted
-      ? "ACCEPTED"
-      : exhausted
-        ? "EXHAUSTED"
-        : "RETRY_SCHEDULED";
+    const status = staleAlert
+      ? "CANCELLED"
+      : accepted
+        ? "ACCEPTED"
+        : exhausted
+          ? "EXHAUSTED"
+          : "RETRY_SCHEDULED";
     const retryAt =
-      !accepted && !exhausted
+      !accepted && !exhausted && !staleAlert
         ? new Date(
             now.getTime() + BASE_BACKOFF_MS * 2 ** (row.attemptCount - 1)
           )
@@ -119,7 +128,11 @@ export class EmailOutboxWorker {
             outcome.status === "ACCEPTED"
               ? outcome.providerMessageId.slice(0, 200)
               : null,
-          lastErrorCode: outcome.status === "FAILED" ? outcome.errorCode : null,
+          lastErrorCode: staleAlert
+            ? "STALE_OR_UNAUTHORIZED_ALERT"
+            : outcome.status === "FAILED"
+              ? outcome.errorCode
+              : null,
         },
       });
     });

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { PrismaService } from "../../database/prisma.service";
 import { EmailDispatchService } from "./email-dispatch.service";
+import { composeSlaDueEmail } from "./email-composer";
 import { enqueueTransactionalEmail } from "./email-outbox";
 import { EmailOutboxWorker } from "./email-outbox.worker";
 import type { EmailProvider, TransactionalEmail } from "./email-provider";
@@ -15,18 +16,18 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
   let userId: string;
   const key = Buffer.alloc(32, 7).toString("base64");
   const original = process.env.EMAIL_OUTBOX_ENCRYPTION_KEY;
-  const when = new Date("2026-10-10T12:00:00.000Z");
+  // Fixed future clock keeps due-at claims deterministic across CI runtimes.
+  const when = new Date("2099-10-10T12:00:00.000Z");
 
-  const email = (): TransactionalEmail => ({
-    organizationId,
-    referenceId: ticketId,
-    idempotencyKey: `sla:${organizationId}:${ticketId}:v1`,
-    purpose: "SLA_DUE_SOON",
-    recipient: "test@example.com",
-    subject: "SLA",
-    text: "Private SLA notification",
-    html: "<p>Private SLA notification</p>",
-  });
+  const email = (): TransactionalEmail =>
+    composeSlaDueEmail({
+      organizationId,
+      ticketId,
+      protocol: "2026-000101",
+      recipient: "email-outbox@example.test",
+      dueAt: new Date(when.getTime() + 25 * 60000),
+      minutesRemaining: 25,
+    });
 
   beforeAll(() => {
     if (!process.env.RLS_DATABASE_URL)
@@ -60,12 +61,17 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
         data: { name: "Mail B", slug: "mail-b" },
       })
     ).id;
+    await owner.organizationMembership.create({
+      data: { organizationId, userId, role: "SELLER" },
+    });
     ticketId = (
       await owner.ticket.create({
         data: {
           organizationId,
           protocol: "2026-000101",
           subject: "Tenant A",
+          assigneeUserId: userId,
+          firstResponseDueAt: new Date(when.getTime() + 25 * 60000),
           createdBy: userId,
           updatedBy: userId,
         },
@@ -253,6 +259,134 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
       status: "ACCEPTED",
       providerMessageId: "recovered",
     });
+  });
+
+  async function assertCancelledAfterMutation(
+    changeTicket: () => Promise<unknown>
+  ) {
+    await app.withTenant(organizationId, tx =>
+      enqueueTransactionalEmail(tx, email())
+    );
+    await changeTicket();
+    const received: TransactionalEmail[] = [];
+    const worker = new EmailOutboxWorker(
+      app,
+      new EmailDispatchService({
+        send: async payload => {
+          received.push(payload);
+          return { providerMessageId: "should-not-send" };
+        },
+      })
+    );
+    expect(await worker.processNext(organizationId, when)).toBe(true);
+    expect(received).toEqual([]);
+    const row = await app.withTenant(organizationId, tx =>
+      tx.emailOutbox.findFirstOrThrow()
+    );
+    expect(row.status).toBe("CANCELLED");
+    expect(row.lastErrorCode).toBe("STALE_OR_UNAUTHORIZED_ALERT");
+    expect(row.nextAttemptAt).toBeNull();
+    expect(await worker.processNext(organizationId, when)).toBe(false);
+  }
+
+  it("cancels a queued SLA alert when the ticket is closed", async () => {
+    await assertCancelledAfterMutation(() =>
+      owner.ticket.update({
+        where: { id: ticketId },
+        data: { status: "CLOSED" },
+      })
+    );
+  });
+
+  it("cancels a queued SLA alert when its deadline changes", async () => {
+    await assertCancelledAfterMutation(() =>
+      owner.ticket.update({
+        where: { id: ticketId },
+        data: { firstResponseDueAt: new Date(when.getTime() + 10 * 60000) },
+      })
+    );
+  });
+
+  it("cancels a queued SLA alert when the assignee membership is revoked", async () => {
+    await assertCancelledAfterMutation(() =>
+      owner.organizationMembership.updateMany({
+        where: { organizationId, userId },
+        data: { isActive: false },
+      })
+    );
+  });
+
+  it("cancels a queued SLA alert when the recipient changes", async () => {
+    const replacement = await owner.user.create({
+      data: {
+        email: "replacement@example.test",
+        emailNormalized: "replacement@example.test",
+        displayName: "Replacement",
+        passwordHash: "synthetic",
+      },
+    });
+    await owner.organizationMembership.create({
+      data: { organizationId, userId: replacement.id, role: "SELLER" },
+    });
+    await assertCancelledAfterMutation(() =>
+      owner.ticket.update({
+        where: { id: ticketId },
+        data: { assigneeUserId: replacement.id },
+      })
+    );
+  });
+
+  it("cancels a queued SLA alert when the assignee user is disabled", async () => {
+    await assertCancelledAfterMutation(() =>
+      owner.user.update({
+        where: { id: userId },
+        data: { isActive: false },
+      })
+    );
+  });
+
+  it("cancels a queued SLA alert when its organization is disabled", async () => {
+    await assertCancelledAfterMutation(() =>
+      owner.organization.update({
+        where: { id: organizationId },
+        data: { isActive: false },
+      })
+    );
+  });
+
+  it("cancels a queued SLA alert when the SLA is moved outside the alert window", async () => {
+    await assertCancelledAfterMutation(() =>
+      owner.ticket.update({
+        where: { id: ticketId },
+        data: { firstResponseDueAt: new Date(when.getTime() + 90 * 60000) },
+      })
+    );
+  });
+
+  it("never sends CSAT mail before a separate consent gate is implemented", async () => {
+    await app.withTenant(organizationId, tx =>
+      enqueueTransactionalEmail(tx, {
+        ...email(),
+        idempotencyKey: "satisfaction:consent-not-verified",
+        purpose: "SATISFACTION_REQUEST",
+      })
+    );
+    let calls = 0;
+    const worker = new EmailOutboxWorker(
+      app,
+      new EmailDispatchService({
+        send: async () => {
+          calls += 1;
+          return { providerMessageId: "unexpected" };
+        },
+      })
+    );
+    expect(await worker.processNext(organizationId, when)).toBe(true);
+    expect(calls).toBe(0);
+    const row = await app.withTenant(organizationId, tx =>
+      tx.emailOutbox.findFirstOrThrow()
+    );
+    expect(row.status).toBe("CANCELLED");
   });
 
   it("never dispatches without a validated encryption key", async () => {
