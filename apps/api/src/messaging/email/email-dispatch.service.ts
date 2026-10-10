@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import {
   EMAIL_PROVIDER,
   EmailProviderUnavailableError,
+  EmailDeliveryUnknownError,
   type EmailProvider,
   type TransactionalEmail,
 } from "./email-provider";
@@ -10,7 +11,7 @@ export type EmailSendOutcome =
   | Readonly<{ status: "ACCEPTED"; providerMessageId: string }>
   | Readonly<{
       status: "FAILED";
-      errorCode: "PROVIDER_NOT_CONFIGURED" | "PROVIDER_ERROR";
+      errorCode: "PROVIDER_NOT_CONFIGURED" | "PROVIDER_ERROR" | "DELIVERY_UNKNOWN";
     }>;
 
 /**
@@ -44,7 +45,9 @@ export class EmailDispatchService {
         errorCode:
           error instanceof EmailProviderUnavailableError
             ? "PROVIDER_NOT_CONFIGURED"
-            : "PROVIDER_ERROR",
+            : error instanceof EmailDeliveryUnknownError
+              ? "DELIVERY_UNKNOWN"
+              : "PROVIDER_ERROR",
       };
     }
   }
