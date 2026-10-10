@@ -173,14 +173,11 @@ export function EmailRelayDiagnosticsPanel({
     setError("");
     setNotice("");
     try {
-      await apiRequest(
-        `/admin/email/relay-evidence/${evidenceId}/review`,
-        {
-          accessToken,
-          method: "POST",
-          body: { decision },
-        }
-      );
+      await apiRequest(`/admin/email/relay-evidence/${evidenceId}/review`, {
+        accessToken,
+        method: "POST",
+        body: { decision },
+      });
       setNotice(
         "Análise independente registrada. O relay continua sem homologação ou envio."
       );
@@ -263,8 +260,8 @@ export function EmailRelayDiagnosticsPanel({
             Registre somente a referência opaca do chamado ou artefato. Não
             informe URLs, senhas, tokens, documentos ou dados pessoais. O
             registro fica auditado e permanece não verificado. Outro
-            administrador poderá analisar ou rejeitar a referência; nenhuma
-            das opções certifica o provedor ou libera o envio.
+            administrador poderá analisar ou rejeitar a referência; nenhuma das
+            opções certifica o provedor ou libera o envio.
           </p>
           <form
             className="activity-form"
