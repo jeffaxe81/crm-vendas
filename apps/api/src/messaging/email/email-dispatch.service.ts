@@ -7,15 +7,14 @@ import {
   type TransactionalEmail,
 } from "./email-provider";
 
+export type EmailFailureCode =
+  | "PROVIDER_NOT_CONFIGURED"
+  | "PROVIDER_ERROR"
+  | "DELIVERY_UNKNOWN";
+
 export type EmailSendOutcome =
   | Readonly<{ status: "ACCEPTED"; providerMessageId: string }>
-  | Readonly<{
-      status: "FAILED";
-      errorCode:
-        | "PROVIDER_NOT_CONFIGURED"
-        | "PROVIDER_ERROR"
-        | "DELIVERY_UNKNOWN";
-    }>;
+  | Readonly<{ status: "FAILED"; errorCode: EmailFailureCode }>;
 
 /**
  * Operational sends are best effort and never throw into the caller's
