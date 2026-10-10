@@ -383,11 +383,10 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
     );
     expect(await worker.processNext(organizationId, when)).toBe(true);
     expect(calls).toBe(0);
-    expect(
-      (await app.withTenant(organizationId, tx =>
-        tx.emailOutbox.findFirstOrThrow()
-      )).status
-    ).toBe("CANCELLED");
+    const row = await app.withTenant(organizationId, tx =>
+      tx.emailOutbox.findFirstOrThrow()
+    );
+    expect(row.status).toBe("CANCELLED");
   });
 
   it("never dispatches without a validated encryption key", async () => {
