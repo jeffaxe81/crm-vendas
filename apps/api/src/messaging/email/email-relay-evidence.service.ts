@@ -88,10 +88,7 @@ export class EmailRelayEvidenceService {
             orderBy: { createdAt: "desc" },
           })
         : [];
-      const reviewedByEvidence = new Map<
-        string,
-        (typeof reviews)[number]
-      >();
+      const reviewedByEvidence = new Map<string, (typeof reviews)[number]>();
       for (const review of reviews) {
         const data =
           review.metadata &&
@@ -257,7 +254,10 @@ export class EmailRelayEvidenceService {
         },
         select: { actorUserId: true, metadata: true },
       });
-      if (!evidence.actorUserId || evidence.actorUserId === context.actorUserId) {
+      if (
+        !evidence.actorUserId ||
+        evidence.actorUserId === context.actorUserId
+      ) {
         throw new ForbiddenException({
           code: "EMAIL_EVIDENCE_INDEPENDENT_REVIEW_REQUIRED",
         });
@@ -292,7 +292,9 @@ export class EmailRelayEvidenceService {
         select: { id: true },
       });
       if (existing) {
-        throw new ConflictException({ code: "EMAIL_EVIDENCE_ALREADY_REVIEWED" });
+        throw new ConflictException({
+          code: "EMAIL_EVIDENCE_ALREADY_REVIEWED",
+        });
       }
       const review = await tx.auditLog.create({
         data: {
