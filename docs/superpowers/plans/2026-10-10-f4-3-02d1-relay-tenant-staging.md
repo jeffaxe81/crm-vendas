@@ -16,6 +16,7 @@ Data: 10/10/2026. Base: PR #120; dependências #117 → #118 → #119 → #120.
 ## Exemplo de preparação
 
 `PUT /admin/email/relay-settings` com corpo:
+
 ```json
 {
   "version": 0,
@@ -24,6 +25,7 @@ Data: 10/10/2026. Base: PR #120; dependências #117 → #118 → #119 → #120.
   "bearerToken": "valor-fornecido-no-canal-autenticado"
 }
 ```
+
 O endpoint de exemplo só pode ser cadastrado se `EMAIL_RELAY_ALLOWED_HOSTNAME=relay.example.test` estiver ajustado pelo operador do servidor.
 
 O retorno contém `version:1`, `mode:"PREPARED"`, `hasCredential:true`, `sendingEnabled:false`. Jamais retornar credencial, nem em auditoria.
