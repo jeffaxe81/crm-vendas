@@ -86,7 +86,7 @@ const ApiEnvironmentSchema = z
       blankToUndefined,
       z
         .string()
-        .regex(/^[a-z0-9-]+(?:\\.[a-z0-9-]+)+$/)
+        .regex(/^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/)
         .max(253)
         .optional()
     ),
