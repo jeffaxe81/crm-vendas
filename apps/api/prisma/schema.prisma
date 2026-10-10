@@ -142,6 +142,7 @@ enum TicketEventType {
 }
 
 model Organization {
+  emailOutbox EmailOutbox[]
   webhookSubscriptions WebhookSubscription[]
   webhookDispatches WebhookDispatch[]
   webhookDeliveries WebhookDelivery[]
@@ -815,6 +816,7 @@ model OpportunityItem {
 
 /// C5.1 — solicitações de atendimento com protocolo por organização/ano.
 model Ticket {
+  emailOutbox EmailOutbox[]
   id                 String                    @id @default(uuid()) @db.Uuid
   organizationId     String                    @map("organization_id") @db.Uuid
   protocol           String                    @db.VarChar(20)
@@ -1095,6 +1097,31 @@ model BackupSchedule {
   @@map("backup_schedules")
 }
 
+
+/// F4.3-02 — email outbox; encrypted content never enters backups.
+model EmailOutbox {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @map("organization_id") @db.Uuid
+  ticketId String @map("ticket_id") @db.Uuid
+  idempotencyHash String @map("idempotency_hash") @db.VarChar(64)
+  purpose String @db.VarChar(32)
+  encryptedEmail String @map("encrypted_email") @db.Text
+  status String @default("PENDING") @db.VarChar(24)
+  attemptCount Int @default(0) @map("attempt_count")
+  nextAttemptAt DateTime? @default(now()) @map("next_attempt_at") @db.Timestamptz(6)
+  leaseToken String? @map("lease_token") @db.Uuid
+  leasedUntil DateTime? @map("leased_until") @db.Timestamptz(6)
+  providerMessageId String? @map("provider_message_id") @db.VarChar(200)
+  lastErrorCode String? @map("last_error_code") @db.VarChar(80)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  ticket Ticket @relation(fields: [ticketId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "email_outbox_ticket_org_fkey")
+
+  @@unique([organizationId, idempotencyHash], map: "email_outbox_org_idempotency_key")
+  @@index([organizationId, status, nextAttemptAt, leasedUntil], map: "email_outbox_org_due_idx")
+  @@map("email_outbox")
+}
 
 model WebhookSubscription {
   id String @id @default(uuid()) @db.Uuid
