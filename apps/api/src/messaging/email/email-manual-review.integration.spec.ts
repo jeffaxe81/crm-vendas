@@ -143,7 +143,7 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
     else process.env.EMAIL_OUTBOX_ENCRYPTION_KEY = previousKey;
   });
 
-  it("lists only the administrator's tenant and never exposes decrypted PII", async () => {
+  it("lists tenant reviews without exposing plaintext", async () => {
     const rows = await service.list(context());
     expect(rows).toHaveLength(1);
     expect(rows[0]?.id).toBe(reviewId);
@@ -155,7 +155,7 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
     expect(JSON.stringify(rows)).not.toContain(otherReviewId);
   });
 
-  it("rejects inactive users, sellers and cross-tenant resolutions", async () => {
+  it("rejects non-admin and cross-tenant resolutions", async () => {
     await expect(
       service.list({ ...context(), actorUserId: sellerUserId })
     ).rejects.toThrow();
@@ -181,7 +181,7 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
     expect(row.status).toBe("MANUAL_REVIEW");
   });
 
-  it("confirms relay acceptance atomically, audits proof and prevents replay", async () => {
+  it("records accepted receipt once with audit", async () => {
     const resolution = {
       decision: "CONFIRMED_ACCEPTED" as const,
       evidenceReference: "relay/acceptance-001",
@@ -224,7 +224,7 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
     );
   });
 
-  it("records definite non-acceptance as terminal cancellation, never retry", async () => {
+  it("cancels confirmed non-acceptance without retry", async () => {
     expect(
       await service.resolve(
         reviewId,
