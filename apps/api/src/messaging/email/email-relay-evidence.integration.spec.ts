@@ -105,9 +105,9 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
     const readinessReport = await readiness.inspect(context());
     expect(readinessReport.activationEligible).toBe(false);
     expect(readinessReport.sendingEnabled).toBe(false);
-    expect(
-      readinessReport.checks.durableProviderIdempotency
-    ).toBe("NOT_VERIFIED");
+    expect(readinessReport.checks.durableProviderIdempotency).toBe(
+      "NOT_VERIFIED"
+    );
   });
 
   it("blocks seller and inactive administrator", async () => {
@@ -149,10 +149,7 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
     ];
     for (const reference of invalid) {
       await expect(
-        service.record(
-          { type: "OPERATIONAL_REVIEW", reference },
-          context()
-        )
+        service.record({ type: "OPERATIONAL_REVIEW", reference }, context())
       ).rejects.toThrow();
     }
     expect(await service.list(context())).toHaveLength(0);
