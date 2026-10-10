@@ -34,7 +34,14 @@ function recipientAddress(value: string): string {
   const address = singleLine(value, 254);
   // Deliberately narrow mailbox syntax: fail closed rather than risk SMTP
   // header injection or provider-specific interpretation of display names.
-  if (!/^[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9-]+(?:\.[A-Z0-9-]+)+$/i.test(address))
+  const parts = address.split("@");
+  const [local, domain] = parts;
+  if (
+    parts.length !== 2 ||
+    !local ||
+    !/^[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/i.test(local) ||
+    !/^[A-Z0-9-]+(?:\.[A-Z0-9-]+)+$/i.test(domain ?? "")
+  )
     throw new Error("INVALID_EMAIL_RECIPIENT");
   return address;
 }
@@ -79,19 +86,28 @@ export function composeSlaDueEmail(
   )
     throw new Error("INVALID_SLA_EMAIL_INPUT");
   const minutes = input.minutesRemaining;
-  const message =
-    `A solicitação ${fields.protocol} está próxima do vencimento do SLA. Restam ${minutes} minutos.`;
+  const message = [
+    `A solicitação ${fields.protocol} está próxima do vencimento do SLA.`,
+    `Restam ${minutes} minutos.`,
+  ].join(" ");
   return {
     organizationId: fields.organizationId,
     referenceId: fields.referenceId,
-    idempotencyKey:
-      `sla:${fields.organizationId}:${fields.referenceId}:${input.dueAt.toISOString()}`,
+    idempotencyKey: [
+      "sla",
+      fields.organizationId,
+      fields.referenceId,
+      input.dueAt.toISOString(),
+    ].join(":"),
     recipient: fields.recipient,
     purpose: "SLA_DUE_SOON",
     subject: `Alerta de SLA — ${fields.protocol}`,
     text: message,
-    html:
-      `<p>A solicitação <strong>${escapeHtml(fields.protocol)}</strong> está próxima do vencimento do SLA.</p><p>Restam ${minutes} minutos.</p>`,
+    html: [
+      "<p>A solicitação",
+      `<strong>${escapeHtml(fields.protocol)}</strong>`,
+      `está próxima do vencimento do SLA.</p><p>Restam ${minutes} minutos.</p>`,
+    ].join(" "),
   };
 }
 
@@ -120,14 +136,23 @@ export function composeSatisfactionEmail(
   return {
     organizationId: fields.organizationId,
     referenceId: fields.referenceId,
-    idempotencyKey:
-      `satisfaction:${fields.organizationId}:${surveyId}:${input.surveyVersion}`,
+    idempotencyKey: [
+      "satisfaction",
+      fields.organizationId,
+      surveyId,
+      input.surveyVersion,
+    ].join(":"),
     recipient: fields.recipient,
     purpose: "SATISFACTION_REQUEST",
     subject: `Pesquisa de satisfação — ${fields.protocol}`,
-    text:
-      `Avalie o atendimento da solicitação ${fields.protocol}: ${url.toString()}`,
-    html:
-      `<p>Avalie o atendimento da solicitação <strong>${escapeHtml(fields.protocol)}</strong>.</p><p><a href="${escapeHtml(url.toString())}">Responder à pesquisa</a></p>`,
+    text: [
+      `Avalie o atendimento da solicitação ${fields.protocol}:`,
+      url.toString(),
+    ].join(" "),
+    html: [
+      "<p>Avalie o atendimento da solicitação",
+      `<strong>${escapeHtml(fields.protocol)}</strong>.</p>`,
+      `<p><a href="${escapeHtml(url.toString())}">Responder à pesquisa</a></p>`,
+    ].join(" "),
   };
 }
