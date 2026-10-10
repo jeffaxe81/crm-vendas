@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { PrismaService } from "../../database/prisma.service";
+import type { Prisma } from "../../generated/prisma/client";
 
 export type EmailReviewContext = Readonly<{
   organizationId: string;
@@ -30,7 +31,7 @@ export class EmailManualReviewService {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   private async assertAdministrator(
-    tx: Parameters<Parameters<PrismaService["withTenant"]>[1]>[0],
+    tx: Prisma.TransactionClient,
     context: EmailReviewContext
   ) {
     const membership = await tx.organizationMembership.findFirst({
