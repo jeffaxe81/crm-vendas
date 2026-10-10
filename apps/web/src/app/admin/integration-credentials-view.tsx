@@ -10,6 +10,7 @@ import {
 import { apiRequest } from "../../lib/api-client";
 import { NeoCommunicationSettingsView } from "./neo-communication-settings-view";
 import { WebhookSubscriptionsView } from "./webhook-subscriptions-view";
+import { EmailRelayDiagnosticsPanel } from "./email-relay-diagnostics-panel";
 
 // Escopos dos domínios publicados na fundação F4.1. Administração e
 // Superusuário não são delegados por esta tela.
@@ -208,6 +209,9 @@ export function IntegrationCredentialsView({
         accessToken={accessToken}
         canManage={canManage}
       />
+      {canManage ? (
+        <EmailRelayDiagnosticsPanel accessToken={accessToken} />
+      ) : null}
       <header className="activities-view__header">
         <div>
           <p className="activities-view__eyebrow">Integrações</p>
