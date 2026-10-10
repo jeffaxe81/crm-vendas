@@ -69,7 +69,6 @@ function TenantWebhooks({
   useEffect(() => {
     let active = true;
     setLoading(true);
-    setError("");
     void apiRequest<unknown>("/integrations/webhooks", { accessToken })
       .then(payload => {
         const parsed = WebhookSubscriptionSummarySchema.array().parse(payload);
@@ -290,7 +289,10 @@ function TenantWebhooks({
       <button
         type="button"
         disabled={busy || loading}
-        onClick={() => setReload(value => value + 1)}
+        onClick={() => {
+          setError("");
+          setReload(value => value + 1);
+        }}
       >
         Atualizar webhooks
       </button>
