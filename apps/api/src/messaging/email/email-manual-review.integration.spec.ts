@@ -101,7 +101,7 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
     for (const [tenantId, ticketId, protocol] of [
       [organizationId, ticketA.id, ticketA.protocol],
       [anotherOrganizationId, ticketB.id, ticketB.protocol],
-    ]) {
+    ] as const) {
       const email = composeSlaDueEmail({
         organizationId: tenantId,
         ticketId,
