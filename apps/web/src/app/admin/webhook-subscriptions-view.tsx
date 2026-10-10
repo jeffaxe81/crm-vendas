@@ -137,9 +137,11 @@ function TenantWebhooks({
         method: "POST",
         body: { name: name.trim(), targetUrl, eventTypes },
       });
-      const parsed = WebhookSubscriptionCreatedSchema.parse(payload);
-      setItems(current => [parsed, ...current]);
-      setSecret(parsed.plainSecret);
+      const { plainSecret, ...summary } =
+        WebhookSubscriptionCreatedSchema.parse(payload);
+      // The one-time signing secret is intentionally absent from list state.
+      setItems(current => [summary, ...current]);
+      setSecret(plainSecret);
       setName("");
       setTargetUrl("");
       setEventTypes([]);
