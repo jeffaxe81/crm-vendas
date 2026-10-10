@@ -19,7 +19,9 @@ export function isPublicWebhookAddress(address: string): boolean {
       (a === 172 && b >= 16 && b <= 31) ||
       (a === 192 &&
         (b === 168 ||
-          (b === 0 && (c === 0 || c === 2)) ||
+          // 192.0.0.0/24 contains special-use protocol and discovery addresses.
+          // Fail closed for the whole range instead of only selected hosts.
+          b === 0 ||
           (b === 88 && c === 99))) ||
       (a === 198 && (b === 18 || b === 19 || (b === 51 && c === 100))) ||
       (a === 203 && b === 0 && c === 113)
