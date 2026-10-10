@@ -8,9 +8,7 @@ import {
 } from "./email-provider";
 
 export type EmailFailureCode =
-  | "PROVIDER_NOT_CONFIGURED"
-  | "PROVIDER_ERROR"
-  | "DELIVERY_UNKNOWN";
+  "PROVIDER_NOT_CONFIGURED" | "PROVIDER_ERROR" | "DELIVERY_UNKNOWN";
 
 export type EmailSendOutcome =
   | Readonly<{ status: "ACCEPTED"; providerMessageId: string }>
