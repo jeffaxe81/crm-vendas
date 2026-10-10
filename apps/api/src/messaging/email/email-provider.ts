@@ -35,6 +35,18 @@ export class EmailProviderUnavailableError extends Error {
   }
 }
 
+/**
+ * The relay may have accepted a message before the connection failed.
+ * Automatic retries without a durable remote idempotency guarantee can
+ * create duplicate emails; callers must quarantine this outcome.
+ */
+export class EmailDeliveryUnknownError extends Error {
+  constructor() {
+    super("Transactional email acceptance could not be confirmed");
+    this.name = "EmailDeliveryUnknownError";
+  }
+}
+
 /** Fail closed: no transport, credentials, network call or silent fake success. */
 export class DisabledEmailProvider implements EmailProvider {
   async send(_email: TransactionalEmail): Promise<EmailSubmission> {
