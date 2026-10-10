@@ -117,10 +117,7 @@ export function composeSatisfactionEmail(
 ): TransactionalEmail {
   const fields = shared(input);
   const surveyId = singleLine(input.surveyId, 64);
-  if (
-    !Number.isSafeInteger(input.surveyVersion) ||
-    input.surveyVersion < 1
-  )
+  if (!Number.isSafeInteger(input.surveyVersion) || input.surveyVersion < 1)
     throw new Error("INVALID_SURVEY_VERSION");
   const url = new URL(input.surveyUrl);
   if (
