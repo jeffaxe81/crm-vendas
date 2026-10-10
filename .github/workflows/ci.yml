@@ -91,12 +91,7 @@ jobs:
         run: pnpm verify:foundation
 
       - name: Check formatting
-        run: |
-          for file in apps/web/src/app/admin/webhook-subscriptions-view.tsx apps/web/src/app/admin/webhook-subscriptions-view.test.tsx; do
-            pnpm exec prettier "$file" > /tmp/format-proposal
-            diff -u "$file" /tmp/format-proposal || true
-          done
-          pnpm format:check
+        run: pnpm format:check
 
       - name: Lint source
         run: pnpm lint
