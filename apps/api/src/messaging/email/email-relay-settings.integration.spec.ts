@@ -100,7 +100,7 @@ describe("F4.3-02D1 tenant relay staging with PostgreSQL RLS", () => {
     });
   });
 
-  it("stores encrypted token, never returns it, and audits only metadata", async () => {
+  it("encrypts and redacts credentials with auditable metadata", async () => {
     const result = await settings.update(
       { version: 0, mode: "PREPARED", endpoint, bearerToken: token },
       context()
@@ -141,7 +141,7 @@ describe("F4.3-02D1 tenant relay staging with PostgreSQL RLS", () => {
     ).toEqual({ status: "FAILED", errorCode: "PROVIDER_NOT_CONFIGURED" });
   });
 
-  it("requires active admin membership, and isolates organizations", async () => {
+  it("requires active tenant administrator", async () => {
     await expect(
       settings.update(
         { version: 0, mode: "PREPARED", endpoint, bearerToken: token },
@@ -178,7 +178,7 @@ describe("F4.3-02D1 tenant relay staging with PostgreSQL RLS", () => {
     await expect(settings.read(context())).rejects.toThrow();
   });
 
-  it("rejects unsafe endpoints and missing allowlist or encryption key", async () => {
+  it("rejects unsafe relay configuration", async () => {
     const invalid = [
       "http://relay.example.test/v1/send",
       "https://127.0.0.1/v1/send",
@@ -214,7 +214,7 @@ describe("F4.3-02D1 tenant relay staging with PostgreSQL RLS", () => {
     expect(await owner.emailRelaySettings.count()).toBe(0);
   });
 
-  it("requires version CAS and prevents preparing without credentials", async () => {
+  it("requires CAS and credential for preparation", async () => {
     await expect(
       settings.update({ version: 0, mode: "PREPARED", endpoint }, context())
     ).rejects.toThrow();
