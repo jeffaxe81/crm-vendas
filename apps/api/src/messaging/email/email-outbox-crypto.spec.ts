@@ -28,23 +28,29 @@ describe("F4.3 encrypted mail queue payloads", () => {
     const encrypted = encryptOutboxEmail(email, key, hash);
     expect(encrypted).not.toContain(email.recipient);
     expect(encrypted).not.toContain(email.text);
-    expect(decryptOutboxEmail(encrypted, key, "org", "ticket", hash))
-      .toEqual(email);
-    expect(() => decryptOutboxEmail(encrypted, key, "other", "ticket", hash))
-      .toThrow();
-    expect(() => decryptOutboxEmail(encrypted, key, "org", "other", hash))
-      .toThrow();
-    expect(() => decryptOutboxEmail(encrypted, key, "org", "ticket", "0".repeat(64)))
-      .toThrow();
+    expect(decryptOutboxEmail(encrypted, key, "org", "ticket", hash)).toEqual(
+      email
+    );
+    expect(() =>
+      decryptOutboxEmail(encrypted, key, "other", "ticket", hash)
+    ).toThrow();
+    expect(() =>
+      decryptOutboxEmail(encrypted, key, "org", "other", hash)
+    ).toThrow();
+    expect(() =>
+      decryptOutboxEmail(encrypted, key, "org", "ticket", "0".repeat(64))
+    ).toThrow();
   });
   it("hashes the logical event and rejects unsafe keys or unbounded content", () => {
     expect(emailIdempotencyHash(email.idempotencyKey)).toHaveLength(64);
     expect(() => emailIdempotencyHash("x\nsecret")).toThrow();
     expect(() => emailIdempotencyHash("x".repeat(501))).toThrow();
-    expect(() => encryptOutboxEmail(
-      { ...email, text: "x".repeat(32769) },
-      key,
-      emailIdempotencyHash(email.idempotencyKey)
-    )).toThrow("EMAIL_PAYLOAD_TOO_LARGE");
+    expect(() =>
+      encryptOutboxEmail(
+        { ...email, text: "x".repeat(32769) },
+        key,
+        emailIdempotencyHash(email.idempotencyKey)
+      )
+    ).toThrow("EMAIL_PAYLOAD_TOO_LARGE");
   });
 });
