@@ -9,7 +9,10 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "../../database/prisma.service";
 import type { Prisma } from "../../generated/prisma/client";
-import { encryptWebhookSecret, webhookEncryptionKey } from "../../webhooks/webhook-secret";
+import {
+  encryptWebhookSecret,
+  webhookEncryptionKey,
+} from "../../webhooks/webhook-secret";
 
 export type EmailRelaySettingsContext = Readonly<{
   organizationId: string;
@@ -139,7 +142,7 @@ export class EmailRelaySettingsService {
     if (
       !Number.isSafeInteger(input.version) ||
       input.version < 0 ||
-      input.clearCredential === true && input.bearerToken !== undefined
+      (input.clearCredential === true && input.bearerToken !== undefined)
     ) {
       throw new BadRequestException({ code: "EMAIL_RELAY_SETTINGS_INVALID" });
     }
@@ -189,11 +192,13 @@ export class EmailRelaySettingsService {
       };
       if (!previous) {
         const created = await tx.emailRelaySettings.createMany({
-          data: [{
-            organizationId: context.organizationId,
-            ...data,
-            version: 1,
-          }],
+          data: [
+            {
+              organizationId: context.organizationId,
+              ...data,
+              version: 1,
+            },
+          ],
           skipDuplicates: true,
         });
         if (created.count !== 1) {
