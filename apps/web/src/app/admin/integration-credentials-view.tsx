@@ -66,6 +66,7 @@ export function IntegrationCredentialsView({
     null
   );
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [showEmailDiagnostics, setShowEmailDiagnostics] = useState(false);
 
   useEffect(() => {
     if (!canRead) return;
@@ -210,7 +211,20 @@ export function IntegrationCredentialsView({
         canManage={canManage}
       />
       {canManage ? (
-        <EmailRelayDiagnosticsPanel accessToken={accessToken} />
+        <div className="companies-view__card">
+          <button
+            type="button"
+            aria-expanded={showEmailDiagnostics}
+            onClick={() => setShowEmailDiagnostics(open => !open)}
+          >
+            {showEmailDiagnostics
+              ? "Fechar diagnóstico de e-mail"
+              : "Abrir diagnóstico de e-mail"}
+          </button>
+          {showEmailDiagnostics ? (
+            <EmailRelayDiagnosticsPanel accessToken={accessToken} />
+          ) : null}
+        </div>
       ) : null}
       <header className="activities-view__header">
         <div>
