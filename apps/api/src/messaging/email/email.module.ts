@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { AuthorizationModule } from "../../authorization/authorization.module";
 import { DatabaseModule } from "../../database/database.module";
 import { EmailOutboxWorker } from "./email-outbox.worker";
 import { EmailManualReviewController } from "./email-manual-review.controller";
@@ -12,7 +13,7 @@ import { DisabledEmailProvider, EMAIL_PROVIDER } from "./email-provider";
  * Future provider configuration replaces this fail-closed binding.
  */
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthorizationModule],
   controllers: [EmailManualReviewController],
   providers: [
     EmailManualReviewService,
