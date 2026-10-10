@@ -125,6 +125,7 @@ describe("pinned webhook HTTPS transport", () => {
   });
   it.each([
     [[{ address: "127.0.0.1", family: 4 }]],
+    [[{ address: "192.0.0.170", family: 4 }]],
     [
       [
         { address: "8.8.8.8", family: 4 },
