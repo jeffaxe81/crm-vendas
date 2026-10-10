@@ -61,15 +61,17 @@ describe("F4.3-02B1 SLA alerts with PostgreSQL RLS", () => {
     else process.env.EMAIL_OUTBOX_ENCRYPTION_KEY = previousKey;
   });
 
-  async function ticket(fields: {
-    organizationId?: string;
-    protocol?: string;
-    firstResponseDueAt?: Date;
-    resolutionDueAt?: Date;
-    firstResponseAt?: Date;
-    assigneeUserId?: string | null;
-    status?: "OPEN" | "IN_PROGRESS" | "CLOSED";
-  } = {}) {
+  async function ticket(
+    fields: {
+      organizationId?: string;
+      protocol?: string;
+      firstResponseDueAt?: Date;
+      resolutionDueAt?: Date;
+      firstResponseAt?: Date;
+      assigneeUserId?: string | null;
+      status?: "OPEN" | "IN_PROGRESS" | "CLOSED";
+    } = {}
+  ) {
     return owner.ticket.create({
       data: {
         organizationId: fields.organizationId ?? organizationId,
@@ -128,13 +130,17 @@ describe("F4.3-02B1 SLA alerts with PostgreSQL RLS", () => {
       firstResponseDueAt: new Date(now.getTime() + 2 * 60000),
       resolutionDueAt: due,
     });
-    expect(await new SlaEmailPlanner(app).enqueueDueAlerts(organizationId, now))
-      .toBe(1);
+    expect(
+      await new SlaEmailPlanner(app).enqueueDueAlerts(organizationId, now)
+    ).toBe(1);
     const row = await app.withTenant(organizationId, tx =>
       tx.emailOutbox.findFirstOrThrow()
     );
     const decoded = decryptOutboxEmail(
-      row.encryptedEmail, encryptionKey, organizationId, row.ticketId,
+      row.encryptedEmail,
+      encryptionKey,
+      organizationId,
+      row.ticketId,
       row.idempotencyHash
     );
     expect(decoded.text).toContain("9 minutos");
@@ -155,8 +161,9 @@ describe("F4.3-02B1 SLA alerts with PostgreSQL RLS", () => {
       protocol: "2026-000103",
       status: "CLOSED",
     });
-    expect(await new SlaEmailPlanner(app).enqueueDueAlerts(organizationId, now))
-      .toBe(0);
+    expect(
+      await new SlaEmailPlanner(app).enqueueDueAlerts(organizationId, now)
+    ).toBe(0);
     await ticket({
       firstResponseDueAt: new Date(now.getTime() + 10 * 60000),
       protocol: "2026-000104",
@@ -165,25 +172,30 @@ describe("F4.3-02B1 SLA alerts with PostgreSQL RLS", () => {
       where: { organizationId, userId },
       data: { isActive: false },
     });
-    expect(await new SlaEmailPlanner(app).enqueueDueAlerts(organizationId, now))
-      .toBe(0);
-    expect(await app.withTenant(organizationId, tx =>
-      tx.emailOutbox.count()
-    )).toBe(0);
+    expect(
+      await new SlaEmailPlanner(app).enqueueDueAlerts(organizationId, now)
+    ).toBe(0);
+    expect(
+      await app.withTenant(organizationId, tx => tx.emailOutbox.count())
+    ).toBe(0);
   });
 
   it("never queues another organization's ticket", async () => {
     await ticket({
       firstResponseDueAt: new Date(now.getTime() + 3 * 60000),
     });
-    expect(await new SlaEmailPlanner(app).enqueueDueAlerts(foreignOrg, now))
-      .toBe(0);
-    expect(await app.withTenant(foreignOrg, tx => tx.emailOutbox.count()))
-      .toBe(0);
-    expect(await new SlaEmailPlanner(app).enqueueDueAlerts(organizationId, now))
-      .toBe(1);
-    expect(await app.withTenant(foreignOrg, tx => tx.emailOutbox.count()))
-      .toBe(0);
+    expect(
+      await new SlaEmailPlanner(app).enqueueDueAlerts(foreignOrg, now)
+    ).toBe(0);
+    expect(await app.withTenant(foreignOrg, tx => tx.emailOutbox.count())).toBe(
+      0
+    );
+    expect(
+      await new SlaEmailPlanner(app).enqueueDueAlerts(organizationId, now)
+    ).toBe(1);
+    expect(await app.withTenant(foreignOrg, tx => tx.emailOutbox.count())).toBe(
+      0
+    );
   });
 
   it("processes later eligible pages without starving tickets after the first 100", async () => {
@@ -202,9 +214,9 @@ describe("F4.3-02B1 SLA alerts with PostgreSQL RLS", () => {
     expect(await planner.enqueueDueAlerts(organizationId, now)).toBe(100);
     expect(await planner.enqueueDueAlerts(organizationId, now)).toBe(1);
     expect(await planner.enqueueDueAlerts(organizationId, now)).toBe(0);
-    expect(await app.withTenant(organizationId, tx =>
-      tx.emailOutbox.count()
-    )).toBe(101);
+    expect(
+      await app.withTenant(organizationId, tx => tx.emailOutbox.count())
+    ).toBe(101);
   });
 
   it("fails closed without an encryption key and rolls back all candidate alerts", async () => {
@@ -215,7 +227,8 @@ describe("F4.3-02B1 SLA alerts with PostgreSQL RLS", () => {
     await expect(
       new SlaEmailPlanner(app).enqueueDueAlerts(organizationId, now)
     ).rejects.toThrow("EMAIL_OUTBOX_ENCRYPTION_UNAVAILABLE");
-    expect(await app.withTenant(organizationId, tx => tx.emailOutbox.count()))
-      .toBe(0);
+    expect(
+      await app.withTenant(organizationId, tx => tx.emailOutbox.count())
+    ).toBe(0);
   });
 });
