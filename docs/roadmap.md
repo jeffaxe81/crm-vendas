@@ -1,14 +1,14 @@
 # Roadmap do Produto
 
-| Fase                   | Direção                                                                 | Situação                                                                |
-| ---------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual                                       |
-| Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026                                            |
-| Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Concluída — mesclada em `main` (26/09/2026)                             |
-| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Concluída — mesclada em `main` (27/09/2026)                             |
+| Fase                   | Direção                                                                 | Situação                                                                                   |
+| ---------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Fase 0 — Descoberta    | Finalidade comercial, escopo do MVP e documentação inicial              | Concluída para o incremento atual                                                          |
+| Fase 1 — MVP Comercial | Acesso, cadastros, atividades, funil, painel e auditoria                | Release fechada — 11/09/2026                                                               |
+| Fase 2 — Produtividade | Campos personalizados, tags, agenda, importação, produtos e relatórios  | Concluída — mesclada em `main` (26/09/2026)                                                |
+| Fase 3 — Atendimento   | Solicitações, protocolos, filas, SLA e satisfação                       | Concluída — mesclada em `main` (27/09/2026)                                                |
 | Fase 4 — Integrações   | API pública, webhooks, e-mail, WhatsApp, telefonia e ERP                | Em andamento — F4.1 e F4.2 integradas; F4.3-01 em desenvolvimento, demais canais pendentes |
-| Fase 5 — Automação     | Regras, distribuição, jornadas e alertas                                | Planejada                                                               |
-| Fase 6 — IA assistida  | Resumos, recomendações, classificação e previsões com supervisão humana | Banco de Ideias                                                         |
+| Fase 5 — Automação     | Regras, distribuição, jornadas e alertas                                | Planejada                                                                                  |
+| Fase 6 — IA assistida  | Resumos, recomendações, classificação e previsões com supervisão humana | Banco de Ideias                                                                            |
 
 ## Marco concluído
 
