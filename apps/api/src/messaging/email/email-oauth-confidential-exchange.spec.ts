@@ -15,6 +15,7 @@ const google: CodeExchangeInput = {
     provider: "GMAIL",
     clientId: "123456789012-confidentialapp.apps.googleusercontent.com",
     clientSecret: "synthetic-server-only-confidential-secret",
+    registeredRedirectUri: "https://crm.example.com/admin/email/oauth/callback",
   },
 };
 const tenant = "00000000-0000-4000-8000-000000000001";
@@ -26,6 +27,7 @@ const microsoft: CodeExchangeInput = {
     clientId: "00000000-0000-4000-8000-000000000002",
     microsoftTenantId: tenant,
     clientSecret: google.client.clientSecret,
+    registeredRedirectUri: google.client.registeredRedirectUri,
   },
 };
 const material = {
@@ -85,6 +87,20 @@ describe("F4.3-05B4 confidential token exchange gate", () => {
         grant: {
           ...google.grant,
           redirectUri: google.grant.redirectUri + "?next=evil",
+        },
+      },
+      {
+        ...google,
+        grant: {
+          ...google.grant,
+          redirectUri: "https://other.example.org/admin/email/oauth/callback",
+        },
+      },
+      {
+        ...google,
+        client: {
+          ...google.client,
+          registeredRedirectUri: "https://other.example.org/admin/email/oauth/callback",
         },
       },
       { ...google, client: { ...google.client, provider: "MICROSOFT_365" } },

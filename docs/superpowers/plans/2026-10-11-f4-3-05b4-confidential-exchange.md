@@ -11,3 +11,5 @@ Sequência de dependências: PR #140, #141, #143, #144, esta PR. Exigir revisão
 Documentação oficial:
 https://developers.google.com/identity/protocols/oauth2/web-server
 https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow
+
+Gate adicional: o endereço `redirect_uri` do grant deve ser idêntico ao `registeredRedirectUri` resolvido da configuração confidencial do servidor. HTTPS e formato correto, isoladamente, não são suficientes. Testes negativos cobrem callback HTTPS em outro host.

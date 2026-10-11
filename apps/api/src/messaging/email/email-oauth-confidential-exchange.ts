@@ -7,6 +7,8 @@ export type ConfidentialClient = Readonly<{
   provider: EmailOAuthProvider;
   clientId: string;
   clientSecret: string;
+  /** Exact server-owned callback URI registered with the OAuth provider. */
+  registeredRedirectUri: string;
   microsoftTenantId?: string;
 }>;
 export type CodeExchangeInput = Readonly<{
@@ -96,6 +98,8 @@ export function prepareOAuthCodeExchange(
     !/^[A-Za-z0-9_-]{64}$/.test(input.grant.codeVerifier) ||
     !/^[A-Za-z0-9_-]{43}$/.test(input.grant.oidcNonce) ||
     !validRedirect(input.grant.redirectUri) ||
+    !validRedirect(input.client.registeredRedirectUri) ||
+    input.grant.redirectUri !== input.client.registeredRedirectUri ||
     !visible(input.client.clientSecret, 16, 4096)
   )
     denied();
