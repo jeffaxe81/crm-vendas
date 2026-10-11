@@ -111,9 +111,7 @@ describe("F4.3-03A inbound email quarantine PostgreSQL RLS", () => {
       await app.withTenant(organizationId, tx => tx.inboundMessage.count())
     ).toBe(2);
     expect(
-      await app.withTenant(otherOrganizationId, tx =>
-        tx.inboundMessage.count()
-      )
+      await app.withTenant(otherOrganizationId, tx => tx.inboundMessage.count())
     ).toBe(1);
   });
 
