@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 import { isIP } from "node:net";
-import { ForbiddenException, ServiceUnavailableException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  ServiceUnavailableException,
+} from "@nestjs/common";
 import { PrismaService } from "../../database/prisma.service";
 import type { Prisma } from "../../generated/prisma/client";
 import {
@@ -70,15 +73,24 @@ function validateRedirect(raw: string): boolean {
   }
 }
 
-function binding(grant: Pick<EmailOAuthPendingGrant, "organizationId" | "actorUserId" | "provider" | "stateHash">): string {
+function binding(
+  grant: Pick<
+    EmailOAuthPendingGrant,
+    "organizationId" | "actorUserId" | "provider" | "stateHash"
+  >
+): string {
   return `email-oauth-pending:v1:${grant.organizationId}:${grant.actorUserId}:${grant.provider}:${grant.stateHash}`;
 }
 
 export class EmailOAuthPendingGrantStore {
   private readonly key: string;
 
-  constructor(private readonly prisma: PrismaService, encryptionKey?: string) {
-    const candidate = encryptionKey ?? process.env.EMAIL_OAUTH_PENDING_ENCRYPTION_KEY;
+  constructor(
+    private readonly prisma: PrismaService,
+    encryptionKey?: string
+  ) {
+    const candidate =
+      encryptionKey ?? process.env.EMAIL_OAUTH_PENDING_ENCRYPTION_KEY;
     try {
       webhookEncryptionKey(candidate);
     } catch {
@@ -89,7 +101,10 @@ export class EmailOAuthPendingGrantStore {
     this.key = candidate!;
   }
 
-  private async assertAdmin(tx: Prisma.TransactionClient, context: EmailOAuthGrantContext) {
+  private async assertAdmin(
+    tx: Prisma.TransactionClient,
+    context: EmailOAuthGrantContext
+  ) {
     const membership = await tx.organizationMembership.findFirst({
       where: {
         organizationId: context.organizationId,
@@ -105,7 +120,10 @@ export class EmailOAuthPendingGrantStore {
   }
 
   /** Only a server-created, short-lived intent can be staged. */
-  async stage(grant: EmailOAuthPendingGrant, context: EmailOAuthGrantContext): Promise<void> {
+  async stage(
+    grant: EmailOAuthPendingGrant,
+    context: EmailOAuthGrantContext
+  ): Promise<void> {
     const now = Date.now();
     if (
       !UUID.test(context.organizationId) ||
@@ -121,7 +139,8 @@ export class EmailOAuthPendingGrantStore {
       grant.createdAt < now - 30000 ||
       grant.createdAt > now + 30000 ||
       grant.expiresAt !== grant.createdAt + EMAIL_OAUTH_INTENT_TTL_MS
-    ) forbidden();
+    )
+      forbidden();
 
     const encrypted = encryptWebhookSecret(
       grant.codeVerifier,
@@ -168,12 +187,16 @@ export class EmailOAuthPendingGrantStore {
    * receives the same generic rejection, with no PKCE verifier disclosure.
    * Rollback restores the row if authenticated decryption fails.
    */
-  async consume(state: string, context: EmailOAuthGrantContext): Promise<ConsumedEmailOAuthGrant> {
+  async consume(
+    state: string,
+    context: EmailOAuthGrantContext
+  ): Promise<ConsumedEmailOAuthGrant> {
     if (
       !URL_SAFE_STATE.test(state) ||
       !UUID.test(context.organizationId) ||
       !UUID.test(context.actorUserId)
-    ) forbidden();
+    )
+      forbidden();
     const stateHash = createHash("sha256").update(state, "ascii").digest("hex");
     return this.prisma.withTenant(context.organizationId, async tx => {
       await this.assertAdmin(tx, context);
