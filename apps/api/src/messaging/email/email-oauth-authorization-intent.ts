@@ -29,6 +29,8 @@ export type EmailOAuthPendingGrant = Readonly<{
   stateHash: string;
   /** Secret: persist only encrypted, never send to the client or log. */
   codeVerifier: string;
+  /** Secret server-side copy of the nonce supplied in the OIDC request. */
+  oidcNonce: string;
   redirectUri: string;
   createdAt: number;
   expiresAt: number;
@@ -114,6 +116,7 @@ export function createEmailOAuthAuthorizationIntent(
 
   const state = randomBytes(32).toString("base64url");
   const codeVerifier = randomBytes(48).toString("base64url");
+  const oidcNonce = randomBytes(32).toString("base64url");
   const codeChallenge = createHash("sha256")
     .update(codeVerifier, "ascii")
     .digest("base64url");
@@ -124,6 +127,7 @@ export function createEmailOAuthAuthorizationIntent(
   url.searchParams.set("response_type", "code");
   url.searchParams.set("scope", scope);
   url.searchParams.set("state", state);
+  url.searchParams.set("nonce", oidcNonce);
   url.searchParams.set("code_challenge", codeChallenge);
   url.searchParams.set("code_challenge_method", "S256");
 
@@ -144,6 +148,7 @@ export function createEmailOAuthAuthorizationIntent(
       provider: input.provider,
       stateHash: createHash("sha256").update(state, "ascii").digest("hex"),
       codeVerifier,
+      oidcNonce,
       redirectUri,
       createdAt: nowMs,
       expiresAt: nowMs + EMAIL_OAUTH_INTENT_TTL_MS,
