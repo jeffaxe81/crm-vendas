@@ -36,7 +36,7 @@ test("release smoke refuses a nonexistent CA file", () => {
 
 test("release smoke has no TLS verification bypass", () => {
   const code = readFileSync(script, "utf8");
-  assert.doesNotMatch(code, /--insecure|(^|[[:space:]])-k([[:space:]]|$)/m);
+  assert.doesNotMatch(code, /--insecure|(^|\s)-k(\s|$)/m);
   assert.match(code, /opts=\(--cacert "\$CA_CERT"\)/);
   assert.match(code, /expected_redirect/);
 });
