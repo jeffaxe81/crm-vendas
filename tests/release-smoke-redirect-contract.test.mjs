@@ -57,28 +57,36 @@ function executeSmoke(t, env = {}) {
   });
 }
 
-test("smoke requires correct origin, trusted-CA curl arguments and healthy endpoints", t => {
-  const result = executeSmoke(t);
-  assert.equal(result.error, undefined);
-  assert.equal(result.status, 0, result.stderr + "\n" + result.stdout);
-  assert.match(result.stdout, /HTTP redireciona para o CRM HTTPS esperado/);
-  assert.match(result.stdout, /Certificado TLS validado com a CA informada/);
-  assert.match(result.stdout, /0 falha\(s\)/);
-});
+test(
+  "smoke requires correct origin, trusted-CA curl arguments and healthy endpoints",
+  t => {
+    const result = executeSmoke(t);
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 0, result.stderr + "\n" + result.stdout);
+    assert.match(result.stdout, /HTTP redireciona para o CRM HTTPS esperado/);
+    assert.match(result.stdout, /Certificado TLS validado com a CA informada/);
+    assert.match(result.stdout, /0 falha\(s\)/);
+  }
+);
 
 test("smoke rejects redirect to a different HTTPS hostname", t => {
-  const result = executeSmoke(t, { FAKE_REDIRECT: "https://attacker.example.test/" });
+  const result = executeSmoke(t, {
+    FAKE_REDIRECT: "https://attacker.example.test/",
+  });
   assert.equal(result.status, 1, result.stderr + "\n" + result.stdout);
   assert.match(result.stdout, /Redirecionamento inesperado/);
   assert.match(result.stdout, /1 falha\(s\)/);
 });
 
-test("smoke rejects HTTPS health failure even with correct redirect and CA", t => {
-  const result = executeSmoke(t, { FAKE_HTTPS_STATUS: "503" });
-  assert.equal(result.status, 1, result.stderr + "\n" + result.stdout);
-  assert.match(result.stdout, /Frontend HTTPS retornou 503/);
-  assert.match(result.stdout, /API .* retornou 503/);
-});
+test(
+  "smoke rejects HTTPS health failure even with correct redirect and CA",
+  t => {
+    const result = executeSmoke(t, { FAKE_HTTPS_STATUS: "503" });
+    assert.equal(result.status, 1, result.stderr + "\n" + result.stdout);
+    assert.match(result.stdout, /Frontend HTTPS retornou 503/);
+    assert.match(result.stdout, /API .* retornou 503/);
+  }
+);
 
 test("smoke rejects an invalid HTTP base before network checks", t => {
   const result = executeSmoke(t, { CRM_HTTP_URL: "https://crm.example.test" });
