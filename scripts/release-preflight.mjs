@@ -24,20 +24,28 @@ function requireEvidence(condition, description) {
   if (!condition) errors.push(description);
 }
 
-const [emailModule, compose, deployCheck, externalSmoke, ciWorkflow, deployGuide] =
-  await Promise.all([
-    load("apps/api/src/messaging/email/email.module.ts"),
-    load("compose.yaml"),
-    load("scripts/verificar-deploy.sh"),
-    load("scripts/smoke-externo-c12.sh"),
-    load(".github/workflows/ci.yml"),
-    load("docs/deploy/deploy-https.md"),
-  ]);
+const [
+  emailModule,
+  compose,
+  deployCheck,
+  externalSmoke,
+  ciWorkflow,
+  deployGuide,
+] = await Promise.all([
+  load("apps/api/src/messaging/email/email.module.ts"),
+  load("compose.yaml"),
+  load("scripts/verificar-deploy.sh"),
+  load("scripts/smoke-externo-c12.sh"),
+  load(".github/workflows/ci.yml"),
+  load("docs/deploy/deploy-https.md"),
+]);
 
 // Safe release baseline: email remains explicitly disabled until the
 // independent provider and operational security gates are complete.
 requireEvidence(
-  /\{\s*provide:\s*EMAIL_PROVIDER,\s*useClass:\s*DisabledEmailProvider\s*\}/.test(emailModule),
+  /\{\s*provide:\s*EMAIL_PROVIDER,\s*useClass:\s*DisabledEmailProvider\s*\}/.test(
+    emailModule
+  ),
   "EmailProvider nao esta explicitamente desabilitado"
 );
 requireEvidence(
@@ -45,11 +53,14 @@ requireEvidence(
   "Webhooks nao estao desabilitados por padrao"
 );
 requireEvidence(
-  (compose.match(/\$\{BIND_ADDRESS:-127\.0\.0\.1\}:(?:3000|3001|5432):/g) ?? []).length === 3,
+  (compose.match(/\$\{BIND_ADDRESS:-127\.0\.0\.1\}:(?:3000|3001|5432):/g) ?? [])
+    .length === 3,
   "Portas de front, API e banco devem ficar ligadas a 127.0.0.1 por padrao"
 );
 requireEvidence(
-  /db-bootstrap:\s*\n\s*condition:\s*service_completed_successfully/.test(compose),
+  /db-bootstrap:\s*\n\s*condition:\s*service_completed_successfully/.test(
+    compose
+  ),
   "API nao aguarda bootstrap seguro do banco"
 );
 requireEvidence(
@@ -98,8 +109,10 @@ if (process.argv.includes("--json")) {
   process.stdout.write(JSON.stringify(result, null, 2) + "\n");
 } else {
   process.stdout.write(
-    "CRM RC code preflight: " + result.status + "\n" +
-    "ATENCAO: nao valida deploy nem autoriza producao.\n"
+    "CRM RC code preflight: " +
+      result.status +
+      "\n" +
+      "ATENCAO: nao valida deploy nem autoriza producao.\n"
   );
   for (const error of errors) process.stderr.write("- " + error + "\n");
 }
