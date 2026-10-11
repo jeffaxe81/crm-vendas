@@ -67,7 +67,10 @@ const tampering = [
     name: "external email transport activated",
     path: "apps/api/src/messaging/email/email.module.ts",
     mutate: code =>
-      code.replace("useClass: DisabledEmailProvider", "useClass: ActiveEmailProvider"),
+      code.replace(
+        "useClass: DisabledEmailProvider",
+        "useClass: ActiveEmailProvider"
+      ),
   },
   {
     name: "webhook worker enabled by default",
@@ -91,7 +94,10 @@ const tampering = [
     name: "migration readiness dependency removed",
     path: "compose.yaml",
     mutate: code =>
-      code.replace("condition: service_completed_successfully", "condition: service_started"),
+      code.replace(
+        "condition: service_completed_successfully",
+        "condition: service_started"
+      ),
   },
   {
     name: "external HTTPS trust evidence omitted",
