@@ -128,3 +128,6 @@ backend/.env
 *.key
 *.srl
 *.csr
+
+# Local, potentially sensitive release validation evidence
+rc-evidence/
