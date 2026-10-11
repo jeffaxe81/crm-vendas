@@ -95,12 +95,7 @@ jobs:
         run: pnpm verify:foundation
 
       - name: Check formatting
-        run: |
-          pnpm format:check || {
-            pnpm exec prettier --write apps/api/src/messaging/email/email-oauth-credential-vault.ts apps/api/src/messaging/email/email-oauth-credential-vault.integration.spec.ts
-            git diff -- apps/api/src/messaging/email/email-oauth-credential-vault.ts apps/api/src/messaging/email/email-oauth-credential-vault.integration.spec.ts
-            exit 1
-          }
+        run: pnpm format:check
 
       - name: Lint source
         run: pnpm lint

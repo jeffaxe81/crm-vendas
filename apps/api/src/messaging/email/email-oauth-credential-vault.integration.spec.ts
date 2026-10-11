@@ -119,15 +119,17 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
       connectionStatus: "STAGED_ONLY",
       sendingEnabled: false,
     });
-    const rows = await app.withTenant(organizationId, tx =>
-      tx.$queryRaw<
-        {
-          version: number;
-          subject_hmac: string;
-          encrypted_sender: string;
-          encrypted_refresh_token: string;
-        }[]
-      >`
+    const rows = await app.withTenant(
+      organizationId,
+      tx =>
+        tx.$queryRaw<
+          {
+            version: number;
+            subject_hmac: string;
+            encrypted_sender: string;
+            encrypted_refresh_token: string;
+          }[]
+        >`
         SELECT version, subject_hmac, encrypted_sender, encrypted_refresh_token
         FROM public.email_oauth_credentials
       `
@@ -190,19 +192,24 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
     ).rejects.toThrow();
     const one = await vault.stageVerified(credential(), context());
     expect(one.version).toBe(1);
-    await expect(vault.stageVerified(credential(), context())).rejects.toThrow();
+    await expect(
+      vault.stageVerified(credential(), context())
+    ).rejects.toThrow();
     await expect(
       vault.stageVerified(credential(9), context())
     ).rejects.toThrow();
     const rotated = await vault.stageVerified(
-      { ...credential(1), refreshToken: "next-rotation-refresh-token-example.2" },
+      {
+        ...credential(1),
+        refreshToken: "next-rotation-refresh-token-example.2",
+      },
       context()
     );
     expect(rotated.version).toBe(2);
-    await expect(vault.stageVerified(credential(1), context())).rejects.toThrow();
     await expect(
-      vault.deleteLocal("GMAIL", 1, context())
+      vault.stageVerified(credential(1), context())
     ).rejects.toThrow();
+    await expect(vault.deleteLocal("GMAIL", 1, context())).rejects.toThrow();
   });
 
   it("makes concurrent write rotations linearizable with version CAS", async () => {
@@ -210,16 +217,26 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
     await vault.stageVerified(credential(), context());
     const results = await Promise.allSettled([
       vault.stageVerified(
-        { ...credential(1), refreshToken: "concurrent-refresh-token-value-A.2" },
+        {
+          ...credential(1),
+          refreshToken: "concurrent-refresh-token-value-A.2",
+        },
         context()
       ),
       vault.stageVerified(
-        { ...credential(1), refreshToken: "concurrent-refresh-token-value-B.2" },
+        {
+          ...credential(1),
+          refreshToken: "concurrent-refresh-token-value-B.2",
+        },
         context()
       ),
     ]);
-    expect(results.filter(value => value.status === "fulfilled")).toHaveLength(1);
-    expect(results.filter(value => value.status === "rejected")).toHaveLength(1);
+    expect(results.filter(value => value.status === "fulfilled")).toHaveLength(
+      1
+    );
+    expect(results.filter(value => value.status === "rejected")).toHaveLength(
+      1
+    );
     expect((await vault.status("GMAIL", context())).version).toBe(2);
   });
 
@@ -237,8 +254,7 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
     expect(
       await app.withTenant(
         organizationId,
-        tx =>
-          tx.$queryRaw`SELECT id FROM public.email_oauth_pending_grants`
+        tx => tx.$queryRaw`SELECT id FROM public.email_oauth_pending_grants`
       )
     ).toHaveLength(1);
     await expect(
@@ -257,17 +273,14 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
     expect(
       await app.withTenant(
         organizationId,
-        tx =>
-          tx.$queryRaw`SELECT id FROM public.email_oauth_pending_grants`
+        tx => tx.$queryRaw`SELECT id FROM public.email_oauth_pending_grants`
       )
     ).toEqual([]);
     expect(await vault.status("GMAIL", context())).toMatchObject({
       version: 0,
       hasEncryptedCredential: false,
     });
-    await expect(
-      vault.deleteLocal("GMAIL", 1, context())
-    ).rejects.toThrow();
+    await expect(vault.deleteLocal("GMAIL", 1, context())).rejects.toThrow();
     const audits = await app.withTenant(organizationId, tx =>
       tx.auditLog.findMany({
         where: { action: "email.oauth_vault.local_credential_deleted" },

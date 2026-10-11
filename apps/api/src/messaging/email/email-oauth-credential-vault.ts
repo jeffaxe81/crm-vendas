@@ -38,7 +38,8 @@ export type CredentialVaultStatus = Readonly<{
 type StoredVersion = { version: number };
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const SUBJECT = /^[A-Za-z0-9._:@-]{1,512}$/;
-const SENDER = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[a-z0-9-]+(?:\.[a-z0-9-]+)+$/;
+const SENDER =
+  /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[a-z0-9-]+(?:\.[a-z0-9-]+)+$/;
 const REFRESH_TOKEN = /^[\x21-\x7e]{20,8192}$/;
 const PROVIDERS: readonly string[] = ["GMAIL", "MICROSOFT_365"];
 
@@ -63,7 +64,10 @@ export class EmailOAuthCredentialVault {
   private readonly encryptionKey: string;
   private readonly subjectHmacKey: Buffer;
 
-  constructor(private readonly prisma: PrismaService, key?: string) {
+  constructor(
+    private readonly prisma: PrismaService,
+    key?: string
+  ) {
     const candidate = key ?? process.env.EMAIL_OAUTH_TOKEN_ENCRYPTION_KEY;
     try {
       this.subjectHmacKey = webhookEncryptionKey(candidate);
@@ -83,7 +87,8 @@ export class EmailOAuthCredentialVault {
       !UUID.test(context.organizationId) ||
       !UUID.test(context.actorUserId) ||
       !PROVIDERS.includes(provider)
-    ) denied();
+    )
+      denied();
   }
 
   private async assertAdmin(
@@ -134,7 +139,8 @@ export class EmailOAuthCredentialVault {
       !SENDER.test(input.verifiedSenderEmail) ||
       input.verifiedSenderEmail.length > 254 ||
       !REFRESH_TOKEN.test(input.refreshToken)
-    ) denied();
+    )
+      denied();
 
     const version = input.expectedVersion + 1;
     const org = context.organizationId;
@@ -247,8 +253,7 @@ export class EmailOAuthCredentialVault {
     context: EmailOAuthGrantContext
   ): Promise<CredentialVaultStatus> {
     this.validateContext(provider, context);
-    if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1)
-      denied();
+    if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1) denied();
     return this.prisma.withTenant(context.organizationId, async tx => {
       await this.assertAdmin(tx, context);
       const deleted = await tx.$queryRaw<StoredVersion[]>`
