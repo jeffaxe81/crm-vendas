@@ -57,12 +57,13 @@ export async function exportTenantSnapshot(
     if (JSON.stringify(actual) !== JSON.stringify(expected))
       throw new BackupError("BACKUP_SCHEMA_UNSUPPORTED");
   }
-  // NEO settings and temporary OAuth PKCE grants are standalone SQL-only
-  // security tables. They must NEVER be included in backup or restore.
+  // NEO settings, temporary OAuth PKCE grants and encrypted OAuth tokens
+  // are SQL-only security tables, deliberately excluded from backups.
   // Keep this list explicit: unknown tenant tables still fail closed.
   const explicitlyExcludedTenantTables = new Set([
     "neo_communication_settings",
     "email_oauth_pending_grants",
+    "email_oauth_credentials",
   ]);
   if (
     databaseColumns.some(
