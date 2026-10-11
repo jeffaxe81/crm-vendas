@@ -157,9 +157,7 @@ export class InboundSourceVerifier {
       throw unauthorized();
     }
 
-    const binding = this.bindings.get(
-      `${envelope.routeKey}:${envelope.keyId}`
-    );
+    const binding = this.bindings.get(`${envelope.routeKey}:${envelope.keyId}`);
     if (!binding || !binding.enabled) throw unauthorized();
 
     const computed = mac(
