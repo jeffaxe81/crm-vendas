@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { generateKeyPairSync, sign } from "node:crypto";
 import { EmailOAuthOidcIdentityService } from "./email-oauth-oidc-identity.service";
 import { EmailOAuthPinnedJwksReader } from "./email-oauth-pinned-jwks-reader";
