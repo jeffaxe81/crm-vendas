@@ -34,6 +34,7 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
     verifiedSenderEmail: "Admin@Example.com",
     refreshToken: token,
     expectedVersion,
+    expectedProviderPreferenceVersion: 1,
   });
   const selectProvider = async () =>
     app.withTenant(organizationId, tx =>
@@ -252,6 +253,55 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
     expect((await vault.status("GMAIL", context())).version).toBe(2);
   });
 
+  it("rejects staging a token from a stale provider revision even after switch-back", async () => {
+    await selectProvider();
+    await vault.stageVerified(credential(), context());
+    await app.withTenant(organizationId, tx =>
+      tx.emailProviderPreference.update({
+        where: { organizationId },
+        data: { providerCode: "MICROSOFT_365", version: { increment: 1 } },
+      })
+    );
+    await expect(
+      vault.stageVerified(credential(1), context())
+    ).rejects.toThrow();
+    await app.withTenant(organizationId, tx =>
+      tx.emailProviderPreference.update({
+        where: { organizationId },
+        data: { providerCode: "GMAIL", version: { increment: 1 } },
+      })
+    );
+    // Same string "GMAIL", but the OAuth state was authorized at revision 1.
+    await expect(
+      vault.stageVerified(credential(1), context())
+    ).rejects.toThrow();
+    expect(await vault.status("GMAIL", context())).toMatchObject({
+      version: 1,
+      sendingEnabled: false,
+    });
+    const current = await app.withTenant(organizationId, tx =>
+      tx.emailProviderPreference.findFirstOrThrow({ where: { organizationId } })
+    );
+    expect(current.version).toBe(3);
+    const rotated = await vault.stageVerified(
+      { ...credential(1), expectedProviderPreferenceVersion: current.version },
+      context()
+    );
+    expect(rotated).toMatchObject({ version: 2, sendingEnabled: false });
+  });
+
+  it("rejects a re-saved identical provider when preference revision increases", async () => {
+    await selectProvider();
+    await app.withTenant(organizationId, tx =>
+      tx.emailProviderPreference.update({
+        where: { organizationId },
+        data: { version: { increment: 1 } },
+      })
+    );
+    await expect(vault.stageVerified(credential(), context())).rejects.toThrow();
+    expect(await vault.status("GMAIL", context())).toMatchObject({ version: 0 });
+  });
+
   it("local deletion purges encrypted credentials and pending grants", async () => {
     await selectProvider();
     await vault.stageVerified(credential(), context());
@@ -313,6 +363,8 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
       { verifiedSenderEmail: "bad" },
       { expectedVersion: -1 },
       { expectedVersion: 1.5 },
+      { expectedProviderPreferenceVersion: 0 },
+      { expectedProviderPreferenceVersion: 1.5 },
     ])
       await expect(
         vault.stageVerified({ ...credential(), ...patch }, context())
