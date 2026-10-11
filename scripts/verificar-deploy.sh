@@ -20,7 +20,14 @@ fa=0
 OK() { echo "  [ OK ] $*"; ok=$((ok + 1)); }
 AT() { echo "  [ATENÇÃO] $*"; at=$((at + 1)); }
 FA() { echo "  [FALHA] $*"; fa=$((fa + 1)); }
-code() { curl -sk -o /dev/null -m 5 -w '%{http_code}' "$1"; }
+code() { curl -s -o /dev/null -m 5 -w '%{http_code}' "$1"; }
+# Usa a identidade HTTPS/IP esperada do servidor, mas conecta ao nginx local.
+# CA ausente, certificado inválido ou hostname/IP divergente resultam em 000.
+trusted_code() {
+  curl --silent --show-error --output /dev/null --max-time 6 \
+    --write-out '%{http_code}' --cacert "$CA" \
+    --resolve "$IP:443:127.0.0.1" "$1" 2>/dev/null || true
+}
 exposta() { ss -tln | awk -v p=":$1\$" '$4 ~ p {print $4}' | grep -qvE '^(127\.0\.0\.1|\[::1\]):'; }
 
 echo "CRM-vendas — verificação em $(date '+%F %T') | IP: $IP"
@@ -77,17 +84,21 @@ for u in http://127.0.0.1 "http://$IP"; do
 done
 
 echo
-echo "5. HTTPS"
-for u in https://127.0.0.1 "https://$IP" "https://$IP/api/v1/health"; do
-  c=$(code "$u")
-  [[ $c =~ ^[23] ]] && OK "$u responde ($c)" || FA "$u falhou ($c)"
-done
-if [[ -f "$CA" ]]; then
-  curl -s -o /dev/null -m 5 --cacert "$CA" "https://$IP" && OK "Certificado validado pela CA" || FA "Certificado não valida com a CA $CA"
+echo "5. HTTPS — validação de confiança obrigatória"
+if [[ -f "$CA" && -r "$CA" ]]; then
+  OK "CA confiável disponível para teste TLS"
+else
+  FA "CA obrigatória ausente ou ilegível: $CA"
 fi
+for u in "https://$IP" "https://$IP/api/v1/health"; do
+  c=$(trusted_code "$u")
+  [[ $c == 200 ]] && OK "$u responde 200 com TLS autenticado" || FA "$u falhou TLS/HTTP ($c)"
+done
 p=$(echo | openssl s_client -connect 127.0.0.1:443 2>/dev/null | awk '/Protocol *:/ {print $3; exit}')
 [[ $p == TLSv1.3 || $p == TLSv1.2 ]] && OK "Protocolo negociado: $p" || FA "Protocolo: ${p:-nenhum}"
-curl -skI -m 5 https://127.0.0.1 | grep -qi '^strict-transport-security' && OK "Cabeçalho HSTS presente" || AT "HSTS ausente"
+curl --silent --head --max-time 5 --cacert "$CA" \
+  --resolve "$IP:443:127.0.0.1" "https://$IP/" 2>/dev/null | \
+  grep -qi '^strict-transport-security' && OK "Cabeçalho HSTS presente com TLS autenticado" || FA "HSTS ausente ou TLS não autenticado"
 
 echo
 echo "6. Certificado"
@@ -104,7 +115,7 @@ if [[ -f "$CERT" ]]; then
 else
   FA "Certificado não encontrado: $CERT"
 fi
-[[ -f "$CA" ]] && OK "CA para os clientes: $CA" || AT "CA não encontrada: $CA"
+[[ -f "$CA" && -r "$CA" ]] && OK "CA para os clientes: $CA" || FA "CA ausente ou ilegível: $CA"
 
 echo
 echo "7. Front em HTTPS (sem conteúdo misto)"
