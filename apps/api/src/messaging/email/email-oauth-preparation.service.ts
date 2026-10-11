@@ -134,6 +134,7 @@ export class EmailOAuthPreparationService {
     await this.grants.stage(intent.pendingGrant, {
       organizationId: context.organizationId,
       actorUserId: context.actorUserId,
+      sessionId: context.sessionId,
       requestId: context.requestId,
     });
 

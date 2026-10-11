@@ -18,12 +18,14 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
   let organizationId: string;
   let otherOrganizationId: string;
   let adminId: string;
+  let sessionId: string;
   let otherAdminId: string;
   let sellerId: string;
 
   const context = () => ({
     organizationId,
     actorUserId: adminId,
+    sessionId,
     requestId: "oauth-vault-tests",
   });
   const credential = (expectedVersion = 0) => ({
@@ -101,6 +103,16 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
         { organizationId: otherOrganizationId, userId: adminId, role: "ADMIN" },
       ],
     });
+    sessionId = (
+      await owner.refreshSession.create({
+        data: {
+          organizationId,
+          userId: adminId,
+          tokenHash: "oauth-vault-refresh-token",
+          expiresAt: new Date(Date.now() + 3600000),
+        },
+      })
+    ).id;
   });
 
   afterAll(async () => {

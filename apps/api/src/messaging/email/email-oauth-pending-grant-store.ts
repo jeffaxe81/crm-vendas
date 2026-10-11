@@ -30,20 +30,27 @@ export type EmailOAuthGrantContext = Readonly<{
   requestId: string;
 }>;
 
+export type EmailOAuthSessionGrantContext = EmailOAuthGrantContext &
+  Readonly<{ sessionId: string }>;
+
 export type ConsumedEmailOAuthGrant = Readonly<{
   provider: EmailOAuthProvider;
   codeVerifier: string;
+  /** Compare with the verified OIDC token nonce; do not send to browsers. */
+  oidcNonce: string;
   redirectUri: string;
 }>;
 
 type StoredGrant = {
   provider_code: string;
   encrypted_code_verifier: string;
+  encrypted_nonce: string;
   redirect_uri: string;
 };
 
 const SHA256_HEX = /^[0-9a-f]{64}$/;
 const PKCE_VERIFIER = /^[a-zA-Z0-9_-]{64}$/;
+const OIDC_NONCE = /^[a-zA-Z0-9_-]{43}$/;
 const URL_SAFE_STATE = /^[a-zA-Z0-9_-]{43}$/;
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const PROVIDERS: readonly string[] = ["GMAIL", "MICROSOFT_365"];
@@ -80,6 +87,15 @@ function binding(
   >
 ): string {
   return `email-oauth-pending:v1:${grant.organizationId}:${grant.actorUserId}:${grant.provider}:${grant.stateHash}`;
+}
+
+function nonceBinding(
+  grant: Pick<
+    EmailOAuthPendingGrant,
+    "organizationId" | "actorUserId" | "provider" | "stateHash"
+  >
+): string {
+  return binding(grant) + ":oidc-nonce";
 }
 
 export class EmailOAuthPendingGrantStore {
@@ -119,20 +135,39 @@ export class EmailOAuthPendingGrantStore {
     if (!membership) forbidden();
   }
 
+  private async assertSession(
+    tx: Prisma.TransactionClient,
+    context: EmailOAuthSessionGrantContext
+  ): Promise<void> {
+    const active = await tx.refreshSession.findFirst({
+      where: {
+        id: context.sessionId,
+        organizationId: context.organizationId,
+        userId: context.actorUserId,
+        revokedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      select: { id: true },
+    });
+    if (!active) forbidden();
+  }
+
   /** Only a server-created, short-lived intent can be staged. */
   async stage(
     grant: EmailOAuthPendingGrant,
-    context: EmailOAuthGrantContext
+    context: EmailOAuthSessionGrantContext
   ): Promise<void> {
     const now = Date.now();
     if (
       !UUID.test(context.organizationId) ||
       !UUID.test(context.actorUserId) ||
+      !UUID.test(context.sessionId) ||
       context.organizationId !== grant.organizationId ||
       context.actorUserId !== grant.actorUserId ||
       !PROVIDERS.includes(grant.provider) ||
       !SHA256_HEX.test(grant.stateHash) ||
       !PKCE_VERIFIER.test(grant.codeVerifier) ||
+      !OIDC_NONCE.test(grant.oidcNonce) ||
       !validateRedirect(grant.redirectUri) ||
       !Number.isSafeInteger(grant.createdAt) ||
       !Number.isSafeInteger(grant.expiresAt) ||
@@ -147,22 +182,30 @@ export class EmailOAuthPendingGrantStore {
       this.key,
       binding(grant)
     );
+    const encryptedNonce = encryptWebhookSecret(
+      grant.oidcNonce,
+      this.key,
+      nonceBinding(grant)
+    );
     await this.prisma.withTenant(context.organizationId, async tx => {
       await this.assertAdmin(tx, context);
+      await this.assertSession(tx, context);
       const pref = await tx.emailProviderPreference.findFirst({
         where: { organizationId: context.organizationId },
       });
       if (pref?.providerCode !== grant.provider) forbidden();
       await tx.$executeRaw`
         INSERT INTO public.email_oauth_pending_grants
-          (organization_id, actor_user_id, provider_code, state_hash,
-           encrypted_code_verifier, redirect_uri, created_at, expires_at)
+          (organization_id, actor_user_id, session_id, provider_code, state_hash,
+           encrypted_code_verifier, encrypted_nonce, redirect_uri, created_at, expires_at)
         VALUES (
           ${context.organizationId}::uuid,
           ${context.actorUserId}::uuid,
+          ${context.sessionId}::uuid,
           ${grant.provider},
           ${grant.stateHash},
           ${encrypted},
+          ${encryptedNonce},
           ${grant.redirectUri},
           ${new Date(grant.createdAt)},
           ${new Date(grant.expiresAt)}
@@ -189,24 +232,27 @@ export class EmailOAuthPendingGrantStore {
    */
   async consume(
     state: string,
-    context: EmailOAuthGrantContext
+    context: EmailOAuthSessionGrantContext
   ): Promise<ConsumedEmailOAuthGrant> {
     if (
       !URL_SAFE_STATE.test(state) ||
       !UUID.test(context.organizationId) ||
-      !UUID.test(context.actorUserId)
+      !UUID.test(context.actorUserId) ||
+      !UUID.test(context.sessionId)
     )
       forbidden();
     const stateHash = createHash("sha256").update(state, "ascii").digest("hex");
     return this.prisma.withTenant(context.organizationId, async tx => {
       await this.assertAdmin(tx, context);
+      await this.assertSession(tx, context);
       const rows = await tx.$queryRaw<StoredGrant[]>`
         DELETE FROM public.email_oauth_pending_grants
         WHERE organization_id = ${context.organizationId}::uuid
           AND actor_user_id = ${context.actorUserId}::uuid
+          AND session_id = ${context.sessionId}::uuid
           AND state_hash = ${stateHash}
           AND expires_at > CURRENT_TIMESTAMP
-        RETURNING provider_code, encrypted_code_verifier, redirect_uri
+        RETURNING provider_code, encrypted_code_verifier, encrypted_nonce, redirect_uri
       `;
       const row = rows[0];
       if (!row || !PROVIDERS.includes(row.provider_code)) forbidden();
@@ -221,18 +267,28 @@ export class EmailOAuthPendingGrantStore {
         stateHash,
       };
       let verifier: string;
+      let oidcNonce: string;
       try {
         verifier = decryptWebhookSecret(
           row.encrypted_code_verifier,
           this.key,
           binding(grantBinding)
         );
+        oidcNonce = decryptWebhookSecret(
+          row.encrypted_nonce,
+          this.key,
+          nonceBinding(grantBinding)
+        );
       } catch {
         throw new ServiceUnavailableException({
           code: "EMAIL_OAUTH_PENDING_DECRYPTION_FAILED",
         });
       }
-      if (!PKCE_VERIFIER.test(verifier) || !validateRedirect(row.redirect_uri))
+      if (
+        !PKCE_VERIFIER.test(verifier) ||
+        !OIDC_NONCE.test(oidcNonce) ||
+        !validateRedirect(row.redirect_uri)
+      )
         forbidden();
       await tx.auditLog.create({
         data: {
@@ -248,6 +304,7 @@ export class EmailOAuthPendingGrantStore {
       return {
         provider: row.provider_code as EmailOAuthProvider,
         codeVerifier: verifier,
+        oidcNonce,
         redirectUri: row.redirect_uri,
       };
     });

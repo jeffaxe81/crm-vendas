@@ -22,6 +22,7 @@ describe("F4.3-04B1 OAuth authorization intent (offline only)", () => {
     const url = new URL(intent.authorizationUrl);
     const state = url.searchParams.get("state");
     const verifier = intent.pendingGrant.codeVerifier;
+    const nonce = intent.pendingGrant.oidcNonce;
     expect(url.origin).toBe("https://accounts.google.com");
     expect(url.pathname).toBe("/o/oauth2/v2/auth");
     expect(url.searchParams.get("response_type")).toBe("code");
@@ -31,6 +32,9 @@ describe("F4.3-04B1 OAuth authorization intent (offline only)", () => {
     expect(url.searchParams.get("code_challenge_method")).toBe("S256");
     expect(verifier).toMatch(/^[A-Za-z0-9_-]{64}$/);
     expect(state).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(nonce).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(url.searchParams.get("nonce")).toBe(nonce);
+    expect(nonce).not.toBe(state);
     expect(url.searchParams.get("code_challenge")).toBe(
       createHash("sha256").update(verifier, "ascii").digest("base64url")
     );
@@ -66,6 +70,7 @@ describe("F4.3-04B1 OAuth authorization intent (offline only)", () => {
     expect(url.searchParams.get("response_mode")).toBe("query");
     expect(url.searchParams.has("access_type")).toBe(false);
     expect(intent.pendingGrant.provider).toBe("MICROSOFT_365");
+    expect(url.searchParams.get("nonce")).toBe(intent.pendingGrant.oidcNonce);
   });
 
   it("generates independent secrets even for simultaneous requests", () => {
@@ -77,6 +82,9 @@ describe("F4.3-04B1 OAuth authorization intent (offline only)", () => {
     );
     expect(first.pendingGrant.codeVerifier).not.toBe(
       second.pendingGrant.codeVerifier
+    );
+    expect(first.pendingGrant.oidcNonce).not.toBe(
+      second.pendingGrant.oidcNonce
     );
   });
 
