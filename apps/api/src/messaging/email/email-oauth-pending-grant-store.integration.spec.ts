@@ -174,6 +174,7 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     ).resolves.toEqual([]);
     await expect(store.consume(state, context())).resolves.toEqual({
       provider: "GMAIL",
+      providerPreferenceVersion: 1,
       codeVerifier: created.pendingGrant.codeVerifier,
       oidcNonce: created.pendingGrant.oidcNonce,
       redirectUri: callbackUrl,
