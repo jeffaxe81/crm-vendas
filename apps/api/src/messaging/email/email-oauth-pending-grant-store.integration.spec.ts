@@ -138,8 +138,15 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     const stored = await app.withTenant(
       organizationId,
       tx =>
-        tx.$queryRaw<{ state_hash: string; encrypted_code_verifier: string; encrypted_nonce: string; session_id: string }[]>`
-        SELECT state_hash, encrypted_code_verifier
+        tx.$queryRaw<
+          {
+            state_hash: string;
+            encrypted_code_verifier: string;
+            encrypted_nonce: string;
+            session_id: string;
+          }[]
+        >`
+        SELECT state_hash, encrypted_code_verifier, encrypted_nonce, session_id
         FROM public.email_oauth_pending_grants
       `
     );
@@ -149,7 +156,9 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     expect(JSON.stringify(stored)).not.toContain(
       created.pendingGrant.codeVerifier
     );
-    expect(JSON.stringify(stored)).not.toContain(created.pendingGrant.oidcNonce);
+    expect(JSON.stringify(stored)).not.toContain(
+      created.pendingGrant.oidcNonce
+    );
     expect(stored[0]?.session_id).toBe(sessionId);
     expect(
       await app.$queryRaw`SELECT * FROM public.email_oauth_pending_grants`
@@ -271,7 +280,9 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
       data: { revokedAt: new Date() },
     });
     await expect(store.consume(state, context())).rejects.toThrow();
-    await expect(store.stage(intent().pendingGrant, context())).rejects.toThrow();
+    await expect(
+      store.stage(intent().pendingGrant, context())
+    ).rejects.toThrow();
     await owner.refreshSession.update({
       where: { id: sessionId },
       data: { revokedAt: null, expiresAt: new Date(Date.now() - 10000) },
@@ -347,15 +358,19 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     const created = intent();
     const state = new URL(created.authorizationUrl).searchParams.get("state")!;
     await store.stage(created.pendingGrant, context());
-    await app.withTenant(organizationId, tx =>
-      tx.$executeRaw`
+    await app.withTenant(
+      organizationId,
+      tx =>
+        tx.$executeRaw`
         UPDATE public.email_oauth_pending_grants
         SET encrypted_nonce = 'v1.' || repeat('A', 70)
       `
     );
     await expect(store.consume(state, context())).rejects.toThrow();
-    const rows = await app.withTenant(organizationId, tx =>
-      tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
+    const rows = await app.withTenant(
+      organizationId,
+      tx =>
+        tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
     );
     expect(rows).toHaveLength(1);
   });
