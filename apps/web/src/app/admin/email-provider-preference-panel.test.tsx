@@ -28,8 +28,16 @@ it("stages Gmail for one company without connecting account or enabling sends", 
         sendingEnabled: false,
         connectionStatus: "NOT_CONNECTED",
         providers: [
-          { code: "GMAIL", label: "Gmail / Google Workspace", authMethod: "OAUTH2" },
-          { code: "MICROSOFT_365", label: "Microsoft 365 / Outlook", authMethod: "OAUTH2" },
+          {
+            code: "GMAIL",
+            label: "Gmail / Google Workspace",
+            authMethod: "OAUTH2",
+          },
+          {
+            code: "MICROSOFT_365",
+            label: "Microsoft 365 / Outlook",
+            authMethod: "OAUTH2",
+          },
         ],
       }),
     } as Response;
