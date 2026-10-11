@@ -108,6 +108,12 @@ export class EmailRelayEvidenceService {
         select: { version: true },
       });
       const currentVersion = settings?.version ?? 0;
+      const provider = await tx.emailProviderPreference.findFirst({
+        where: { organizationId: context.organizationId },
+        select: { version: true, providerCode: true },
+      });
+      const currentProviderVersion = provider?.version ?? 0;
+      const currentProviderCode = provider?.providerCode ?? "NONE";
       // An allowlisted projection, never raw metadata or audit payloads.
       return records.map(row => {
         const metadata =
@@ -134,6 +140,29 @@ export class EmailRelayEvidenceService {
           Number.isSafeInteger(reviewData.settingsVersion)
             ? reviewData.settingsVersion
             : null;
+        const reviewedProviderVersion =
+          typeof reviewData.providerVersion === "number" &&
+          Number.isSafeInteger(reviewData.providerVersion)
+            ? reviewData.providerVersion
+            : null;
+        const reviewedProviderCode =
+          typeof reviewData.providerCode === "string"
+            ? reviewData.providerCode
+            : null;
+        const evidenceVersion =
+          typeof metadata.settingsVersion === "number" &&
+          Number.isSafeInteger(metadata.settingsVersion)
+            ? metadata.settingsVersion
+            : null;
+        const evidenceProviderVersion =
+          typeof metadata.providerVersion === "number" &&
+          Number.isSafeInteger(metadata.providerVersion)
+            ? metadata.providerVersion
+            : null;
+        const evidenceProviderCode =
+          typeof metadata.providerCode === "string"
+            ? metadata.providerCode
+            : null;
         return {
           id: row.id,
           actorUserId: row.actorUserId,
@@ -145,11 +174,13 @@ export class EmailRelayEvidenceService {
               ? metadata.reference
               : "REDACTED",
           verification: "SUBMITTED_UNVERIFIED" as const,
-          settingsVersion:
-            typeof metadata.settingsVersion === "number" &&
-            Number.isSafeInteger(metadata.settingsVersion)
-              ? metadata.settingsVersion
-              : null,
+          settingsVersion: evidenceVersion,
+          providerVersion: evidenceProviderVersion,
+          providerCode: evidenceProviderCode,
+          currentConfiguration:
+            evidenceVersion === currentVersion &&
+            evidenceProviderVersion === currentProviderVersion &&
+            evidenceProviderCode === currentProviderCode,
           ...(reviewRow && decision && reviewedVersion !== null
             ? {
                 review: {
@@ -157,7 +188,12 @@ export class EmailRelayEvidenceService {
                   reviewerUserId: reviewRow.actorUserId,
                   reviewedAt: reviewRow.createdAt.toISOString(),
                   settingsVersion: reviewedVersion,
-                  currentConfiguration: reviewedVersion === currentVersion,
+                  providerVersion: reviewedProviderVersion,
+                  providerCode: reviewedProviderCode,
+                  currentConfiguration:
+                    reviewedVersion === currentVersion &&
+                    reviewedProviderVersion === currentProviderVersion &&
+                    reviewedProviderCode === currentProviderCode,
                   verification: "REVIEWED_NOT_CERTIFIED" as const,
                 },
               }
@@ -185,6 +221,12 @@ export class EmailRelayEvidenceService {
         select: { version: true },
       });
       const settingsVersion = settings?.version ?? 0;
+      const provider = await tx.emailProviderPreference.findFirst({
+        where: { organizationId: context.organizationId },
+        select: { version: true, providerCode: true },
+      });
+      const providerVersion = provider?.version ?? 0;
+      const providerCode = provider?.providerCode ?? "NONE";
       const row = await tx.auditLog.create({
         data: {
           organizationId: context.organizationId,
@@ -199,6 +241,8 @@ export class EmailRelayEvidenceService {
             reference: input.reference,
             verification: "SUBMITTED_UNVERIFIED",
             settingsVersion,
+            providerVersion,
+            providerCode,
           },
         },
         select: { id: true, actorUserId: true, createdAt: true },
@@ -211,6 +255,9 @@ export class EmailRelayEvidenceService {
         reference: input.reference,
         verification: "SUBMITTED_UNVERIFIED" as const,
         settingsVersion,
+        providerVersion,
+        providerCode,
+        currentConfiguration: true as const,
       };
     });
   }
@@ -274,6 +321,20 @@ export class EmailRelayEvidenceService {
         select: { version: true },
       });
       const currentVersion = settings?.version ?? 0;
+      const provider = await tx.emailProviderPreference.findFirst({
+        where: { organizationId: context.organizationId },
+        select: { version: true, providerCode: true },
+      });
+      const currentProviderVersion = provider?.version ?? 0;
+      const currentProviderCode = provider?.providerCode ?? "NONE";
+      if (
+        metadata.providerVersion !== currentProviderVersion ||
+        metadata.providerCode !== currentProviderCode
+      ) {
+        throw new ConflictException({
+          code: "EMAIL_EVIDENCE_PROVIDER_CHANGED",
+        });
+      }
       if (
         typeof submissionVersion !== "number" ||
         !Number.isSafeInteger(submissionVersion) ||
@@ -309,6 +370,8 @@ export class EmailRelayEvidenceService {
             evidenceId: input.evidenceId,
             decision: input.decision,
             settingsVersion: currentVersion,
+            providerVersion: currentProviderVersion,
+            providerCode: currentProviderCode,
             verification: "REVIEWED_NOT_CERTIFIED",
           },
         },
@@ -321,6 +384,8 @@ export class EmailRelayEvidenceService {
         reviewerUserId: review.actorUserId,
         reviewedAt: review.createdAt.toISOString(),
         settingsVersion: currentVersion,
+        providerVersion: currentProviderVersion,
+        providerCode: currentProviderCode,
         verification: "REVIEWED_NOT_CERTIFIED" as const,
         sendingEnabled: false as const,
         activationEligible: false as const,
