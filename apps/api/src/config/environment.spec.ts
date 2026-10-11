@@ -156,3 +156,48 @@ describe("webhook encryption configuration", () => {
     ).toHaveProperty("WEBHOOK_ENCRYPTION_KEY", key);
   });
 });
+
+describe("OAuth client registry deployment settings", () => {
+  const origin = "https://crm.example.com";
+  const registrations = JSON.stringify({ version: 1, registrations: [] });
+
+  it("requires both server configuration values together", () => {
+    for (const patch of [
+      { EMAIL_OAUTH_CALLBACK_ORIGIN: origin },
+      { EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON: registrations },
+      {
+        EMAIL_OAUTH_CALLBACK_ORIGIN: origin,
+        EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON: "",
+      },
+      {
+        EMAIL_OAUTH_CALLBACK_ORIGIN: "",
+        EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON: registrations,
+      },
+      {
+        EMAIL_OAUTH_CALLBACK_ORIGIN: origin,
+        EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON: "x".repeat(65537),
+      },
+    ]) {
+      expect(() =>
+        parseApiEnvironment({ ...secureEnvironment, ...patch })
+      ).toThrow();
+    }
+  });
+
+  it("is disabled by default and accepts paired values without enabling mail", () => {
+    const baseline = parseApiEnvironment(secureEnvironment);
+    expect(baseline.EMAIL_OAUTH_CALLBACK_ORIGIN).toBeUndefined();
+    expect(baseline.EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON).toBeUndefined();
+
+    const environment = parseApiEnvironment({
+      ...secureEnvironment,
+      EMAIL_OAUTH_CALLBACK_ORIGIN: origin,
+      EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON: registrations,
+    });
+    expect(environment.EMAIL_OAUTH_CALLBACK_ORIGIN).toBe(origin);
+    expect(environment.EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON).toBe(
+      registrations
+    );
+    expect(environment).not.toHaveProperty("EMAIL_SENDING_ENABLED");
+  });
+});
