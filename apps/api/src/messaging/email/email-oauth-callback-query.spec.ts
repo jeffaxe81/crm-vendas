@@ -38,16 +38,44 @@ describe("F4.3-05B5 offline OAuth callback query", () => {
       "error and code mixed",
       "?error=access_denied&code=" + code + "&state=" + state,
     ],
-    ["error description", "?code=" + code + "&state=" + state + "&error_description=sensitive"],
-    ["error URI", "?code=" + code + "&state=" + state + "&error_uri=https%3A%2F%2Fevil.test"],
+    [
+      "error description",
+      "?code=" + code + "&state=" + state + "&error_description=sensitive",
+    ],
+    [
+      "error URI",
+      "?code=" +
+        code +
+        "&state=" +
+        state +
+        "&error_uri=https%3A%2F%2Fevil.test",
+    ],
     ["missing state", "?code=" + code],
     ["missing code", "?state=" + state],
-    ["duplicate state", "?state=" + state + "&state=" + state + "&code=" + code],
+    [
+      "duplicate state",
+      "?state=" + state + "&state=" + state + "&code=" + code,
+    ],
     ["duplicate code", "?state=" + state + "&code=" + code + "&code=other"],
-    ["duplicate extra", "?state=" + state + "&code=" + code + "&scope=one&scope=two"],
-    ["untrusted tenant", "?state=" + state + "&code=" + code + "&organizationId=1"],
-    ["untrusted provider", "?state=" + state + "&code=" + code + "&provider=GMAIL"],
-    ["request with URL", "https://crm.example.test/admin/email/oauth/callback?code=" + code + "&state=" + state],
+    [
+      "duplicate extra",
+      "?state=" + state + "&code=" + code + "&scope=one&scope=two",
+    ],
+    [
+      "untrusted tenant",
+      "?state=" + state + "&code=" + code + "&organizationId=1",
+    ],
+    [
+      "untrusted provider",
+      "?state=" + state + "&code=" + code + "&provider=GMAIL",
+    ],
+    [
+      "request with URL",
+      "https://crm.example.test/admin/email/oauth/callback?code=" +
+        code +
+        "&state=" +
+        state,
+    ],
     ["empty query", "?"],
     ["wrong-length state", "?state=short&code=" + code],
     ["base64 standard state", "?state=" + "a".repeat(42) + "%2B&code=" + code],
@@ -59,7 +87,17 @@ describe("F4.3-05B5 offline OAuth callback query", () => {
     ["malformed percent encoding", "?state=" + state + "&code=abcdefghi%Q0"],
     ["unencoded fragment", "?state=" + state + "&code=abcdefghi#frag"],
     ["oversized query", "?state=" + state + "&code=" + "x".repeat(10000)],
-    ["too many pairs", "?state=" + state + "&code=" + code + "&" + "scope=one&authuser=1&prompt=consent&iss=a&hd=x&session_state=v&".repeat(2)],
+    [
+      "too many pairs",
+      "?state=" +
+        state +
+        "&code=" +
+        code +
+        "&" +
+        "scope=one&authuser=1&prompt=consent&iss=a&hd=x&session_state=v&".repeat(
+          2
+        ),
+    ],
   ])("rejects %s without revealing raw provider values", (_reason, query) => {
     let message: string | undefined;
     try {
@@ -77,8 +115,8 @@ describe("F4.3-05B5 offline OAuth callback query", () => {
       code: "x".repeat(4096),
       state,
     });
-    expect(() =>
-      ok("?code=" + "x".repeat(4097) + "&state=" + state)
-    ).toThrow(denied);
+    expect(() => ok("?code=" + "x".repeat(4097) + "&state=" + state)).toThrow(
+      denied
+    );
   });
 });
