@@ -139,10 +139,7 @@ describe("F4.3-04A per-tenant provider catalog and preference PostgreSQL RLS", (
         { ...context(), actorUserId: seller }
       )
     ).rejects.toThrow();
-    await preferences.update(
-      { version: 0, providerCode: "RESEND" },
-      context()
-    );
+    await preferences.update({ version: 0, providerCode: "RESEND" }, context());
     expect(await app.emailProviderPreference.findMany()).toEqual([]);
     expect(
       await preferences.read({ ...context(), organizationId: tenantB })
@@ -162,10 +159,7 @@ describe("F4.3-04A per-tenant provider catalog and preference PostgreSQL RLS", (
   });
 
   it("rejects an outdated version and forbidden or malformed provider", async () => {
-    await preferences.update(
-      { version: 0, providerCode: "GMAIL" },
-      context()
-    );
+    await preferences.update({ version: 0, providerCode: "GMAIL" }, context());
     await expect(
       preferences.update({ version: 0, providerCode: "SMTP" }, context())
     ).rejects.toThrow();
