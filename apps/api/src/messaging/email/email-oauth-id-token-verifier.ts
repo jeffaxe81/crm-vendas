@@ -38,7 +38,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const B64URL = /^[A-Za-z0-9_-]+$/;
 const NONCE = /^[A-Za-z0-9_-]{43}$/;
 const KID = /^[\x21-\x7e]{1,128}$/;
-const EMAIL = /^[A-Za-z0-9.!#$%&'*+/=?^_\x60{|}~-]{1,64}@[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i;
+const EMAIL =
+  /^[A-Za-z0-9.!#$%&'*+/=?^_\x60{|}~-]{1,64}@[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i;
 
 function denied(): never {
   throw new Error("EMAIL_OAUTH_ID_TOKEN_REJECTED");
@@ -49,7 +50,12 @@ function object(value: unknown): value is Obj {
 function part(encoded: string, max: number): Buffer {
   if (!encoded || encoded.length > max * 2 || !B64URL.test(encoded)) denied();
   const decoded = Buffer.from(encoded, "base64url");
-  if (!decoded.length || decoded.length > max || decoded.toString("base64url") !== encoded) denied();
+  if (
+    !decoded.length ||
+    decoded.length > max ||
+    decoded.toString("base64url") !== encoded
+  )
+    denied();
   return decoded;
 }
 function jsonPart(encoded: string, max: number): Obj {
@@ -74,9 +80,13 @@ function issuerFor(input: OfflineOidcVerificationInput): string {
   if (
     input.provider !== "MICROSOFT_365" ||
     !UUID.test(input.microsoftTenantId ?? "")
-  ) denied();
-  return "https://login.microsoftonline.com/" +
-    input.microsoftTenantId!.toLowerCase() + "/v2.0";
+  )
+    denied();
+  return (
+    "https://login.microsoftonline.com/" +
+    input.microsoftTenantId!.toLowerCase() +
+    "/v2.0"
+  );
 }
 
 /**
@@ -97,12 +107,14 @@ export function verifyOfflineOidcIdToken(
     !Array.isArray(input.trustedKeys) ||
     input.trustedKeys.length < 1 ||
     input.trustedKeys.length > 20
-  ) denied();
+  )
+    denied();
 
   const issuer = issuerFor(input);
-  const now = input.nowSeconds === undefined
-    ? Math.floor(Date.now() / 1000)
-    : timestamp(input.nowSeconds);
+  const now =
+    input.nowSeconds === undefined
+      ? Math.floor(Date.now() / 1000)
+      : timestamp(input.nowSeconds);
   const segments = token.split(".");
   const headerRaw = segments[0]!;
   const claimsRaw = segments[1]!;
@@ -120,18 +132,20 @@ export function verifyOfflineOidcIdToken(
     header.crit !== undefined ||
     header.x5c !== undefined ||
     header.jwk !== undefined
-  ) denied();
+  )
+    denied();
 
-  const keys = input.trustedKeys.filter(k =>
-    k.kty === "RSA" &&
-    k.kid === header.kid &&
-    (k.alg === undefined || k.alg === "RS256") &&
-    (k.use === undefined || k.use === "sig") &&
-    (k.key_ops === undefined || k.key_ops.includes("verify")) &&
-    typeof k.n === "string" &&
-    typeof k.e === "string" &&
-    B64URL.test(k.n) &&
-    B64URL.test(k.e)
+  const keys = input.trustedKeys.filter(
+    k =>
+      k.kty === "RSA" &&
+      k.kid === header.kid &&
+      (k.alg === undefined || k.alg === "RS256") &&
+      (k.use === undefined || k.use === "sig") &&
+      (k.key_ops === undefined || k.key_ops.includes("verify")) &&
+      typeof k.n === "string" &&
+      typeof k.e === "string" &&
+      B64URL.test(k.n) &&
+      B64URL.test(k.e)
   );
   if (keys.length !== 1) denied();
 
@@ -146,8 +160,14 @@ export function verifyOfflineOidcIdToken(
       publicKey.asymmetricKeyType !== "rsa" ||
       length < 2048 ||
       length > 8192 ||
-      !verify("RSA-SHA256", Buffer.from(headerRaw + "." + claimsRaw, "ascii"), publicKey, signature)
-    ) denied();
+      !verify(
+        "RSA-SHA256",
+        Buffer.from(headerRaw + "." + claimsRaw, "ascii"),
+        publicKey,
+        signature
+      )
+    )
+      denied();
   } catch {
     denied();
   }
@@ -156,7 +176,10 @@ export function verifyOfflineOidcIdToken(
   // Google issues either accepted issuer form; Microsoft uses the exact tenant v2 issuer.
   if (
     typeof claimedIssuer !== "string" ||
-    !(claimedIssuer === issuer || (input.provider === "GMAIL" && claimedIssuer === "accounts.google.com")) ||
+    !(
+      claimedIssuer === issuer ||
+      (input.provider === "GMAIL" && claimedIssuer === "accounts.google.com")
+    ) ||
     claims.aud !== input.clientId ||
     (claims.azp !== undefined && claims.azp !== input.clientId) ||
     claims.nonce !== input.oidcNonce ||
@@ -164,7 +187,8 @@ export function verifyOfflineOidcIdToken(
     claims.sub.length < 1 ||
     claims.sub.length > 512 ||
     /[\x00-\x1f\x7f]/.test(claims.sub)
-  ) denied();
+  )
+    denied();
 
   const exp = timestamp(claims.exp);
   const iat = timestamp(claims.iat);
@@ -174,13 +198,15 @@ export function verifyOfflineOidcIdToken(
     iat < now - 600 ||
     exp <= iat ||
     (claims.nbf !== undefined && timestamp(claims.nbf) > now + 60)
-  ) denied();
+  )
+    denied();
 
   if (input.provider === "MICROSOFT_365") {
     if (
       claims.tid !== input.microsoftTenantId?.toLowerCase() ||
       claims.ver !== "2.0"
-    ) denied();
+    )
+      denied();
     return {
       provider: input.provider,
       issuer,
@@ -194,7 +220,8 @@ export function verifyOfflineOidcIdToken(
     typeof claims.email !== "string" ||
     claims.email.length > 254 ||
     !EMAIL.test(claims.email)
-  ) denied();
+  )
+    denied();
   return {
     provider: input.provider,
     issuer: claimedIssuer,

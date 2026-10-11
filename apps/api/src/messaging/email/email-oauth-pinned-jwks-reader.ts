@@ -56,7 +56,10 @@ function endpoint(context: PinnedJwksContext): string {
 
 async function readBoundedJson(response: Response): Promise<unknown> {
   const declared = response.headers.get("content-length");
-  if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > MAX_BYTES))
+  if (
+    declared !== null &&
+    (!/^\d+$/.test(declared) || Number(declared) > MAX_BYTES)
+  )
     unavailable();
   if (!response.body) unavailable();
   const reader = response.body.getReader();
@@ -149,7 +152,10 @@ function parsePublicKeys(payload: unknown): readonly TrustedOidcRsaJwk[] {
  */
 export class EmailOAuthPinnedJwksReader {
   private readonly cache = new Map<string, CacheEntry>();
-  private readonly pending = new Map<string, Promise<readonly TrustedOidcRsaJwk[]>>();
+  private readonly pending = new Map<
+    string,
+    Promise<readonly TrustedOidcRsaJwk[]>
+  >();
 
   constructor(
     private readonly request: typeof fetch = fetch,
