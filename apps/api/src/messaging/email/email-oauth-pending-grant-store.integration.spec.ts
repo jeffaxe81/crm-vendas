@@ -274,13 +274,17 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     // Re-selecting Gmail MUST NOT revive a grant bound to an older version.
     await expect(store.consume(state, context())).rejects.toThrow();
     expect(
-      await app.withTenant(organizationId, tx =>
-        tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
+      await app.withTenant(
+        organizationId,
+        tx =>
+          tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
       )
     ).toHaveLength(1);
     // A new grant created under the new provider preference is valid.
     const fresh = intent();
-    const freshState = new URL(fresh.authorizationUrl).searchParams.get("state")!;
+    const freshState = new URL(fresh.authorizationUrl).searchParams.get(
+      "state"
+    )!;
     await store.stage(fresh.pendingGrant, context());
     await expect(store.consume(freshState, context())).resolves.toMatchObject({
       provider: "GMAIL",
@@ -300,8 +304,10 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     );
     await expect(store.consume(state, context())).rejects.toThrow();
     expect(
-      await app.withTenant(organizationId, tx =>
-        tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
+      await app.withTenant(
+        organizationId,
+        tx =>
+          tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
       )
     ).toHaveLength(1);
   });
@@ -311,15 +317,19 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     const created = intent();
     const state = new URL(created.authorizationUrl).searchParams.get("state")!;
     await store.stage(created.pendingGrant, context());
-    await app.withTenant(organizationId, tx =>
-      tx.$executeRaw`
+    await app.withTenant(
+      organizationId,
+      tx =>
+        tx.$executeRaw`
         UPDATE public.email_oauth_pending_grants
         SET provider_preference_version = NULL
       `
     );
     await expect(store.consume(state, context())).rejects.toThrow();
-    const rows = await app.withTenant(organizationId, tx =>
-      tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
+    const rows = await app.withTenant(
+      organizationId,
+      tx =>
+        tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
     );
     expect(rows).toHaveLength(1);
   });
