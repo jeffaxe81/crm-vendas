@@ -99,6 +99,17 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
+      - name: Show Prettier differences for stacked OAuth PRs
+        if: failure() && startsWith(github.ref_name, 'feat/f4-3-05')
+        run: |
+          for file in apps/api/src/messaging/email/email-oauth-id-token-verifier.ts \
+                      apps/api/src/messaging/email/email-oauth-id-token-verifier.spec.ts \
+                      apps/api/src/messaging/email/email-oauth-pinned-jwks-reader.ts \
+                      apps/api/src/messaging/email/email-oauth-pinned-jwks-reader.spec.ts; do
+            echo "=== Prettier diff: $file ==="
+            pnpm exec prettier "$file" | diff -u "$file" - || true
+          done
+
       - name: Lint source
         run: pnpm lint
 
