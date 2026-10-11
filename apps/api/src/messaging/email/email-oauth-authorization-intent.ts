@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
+import { isIP } from "node:net";
 
 /**
  * F4.3-04B1: offline construction of an OAuth authorization intent.
@@ -63,6 +64,7 @@ function callbackUrl(raw: string): string {
     url.hash ||
     url.pathname !== CALLBACK_PATH ||
     !url.hostname.includes(".") ||
+    isIP(url.hostname) !== 0 ||
     !/^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i.test(url.hostname)
   ) {
     return badConfiguration();
