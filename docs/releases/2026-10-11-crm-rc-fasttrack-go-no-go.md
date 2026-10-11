@@ -3,15 +3,19 @@
 ## Objetivo
 
 Entregar **o CRM comercial integrado à main** como **preview interno**
-sem condicionar a liberação aos novos provedores OAuth. A antecipação
-de quatro semanas em relação à meta 25/10 cai em 27/09 (data passada):
-não registrar entrega retroativa. O alvo operacional é avaliar um corte
-**imediato** a partir de evidências de 11/10, não declarar uma produção pronta.
+sem condicionar a liberação aos novos provedores OAuth. O checkpoint foi
+antecipado de 25/10 para **11/10/2026** (14 dias; 28 dias em relação
+ao plano de 08/11). É um corte de avaliação das evidências disponíveis,
+**não** uma entrega retroativa, uma RC emitida nem produção pronta.
 
-## Baseline observado — ainda não é release
+## Baseline histórico — ainda não é release
 
-- `main`: `8866d00c8738419c0412b23ca8d7f4683d372498`.
-- CI da `main`: [run 38144496211](https://github.com/jeffaxe81/crm-vendas/actions/runs/38144496211), **success** (11/10/2026).
+- Referência do primeiro checkpoint: `main` em
+  `8866d00c8738419c0412b23ca8d7f4683d372498`, com
+  [CI aprovado #38144496211](https://github.com/jeffaxe81/crm-vendas/actions/runs/38144496211).
+- Esse SHA é **histórico**, não representa automaticamente o candidato atual.
+  Toda nova integração na `main` exige registrar o SHA final e **seu próprio**
+  CI concluído com sucesso, sem reaproveitar evidências de commits anteriores.
 - OAuth: #140, #141, #143 e #144 **fora da main**, revisão/CI aplicáveis ainda pendentes.
 - `EmailModule` segue com `DisabledEmailProvider`: **sem envio externo de e-mail**.
 - Não foi anexada a este checkpoint prova da saúde **do servidor instalado**, TLS confiável,
@@ -46,6 +50,17 @@ permitir `frame-ancestors`; abertura em aba continua alternativa.
 direta de produção para acelerar. O certificado com CA própria **precisa ser
 validado**, não basta `curl -k`. Se um portão falhar, marcar **NO-GO** e
 preservar a versão instalada.
+
+## Evidências a anexar ao registro de Go/No-Go
+
+- SHA exato e URL do CI de `push` correspondente, não apenas CI de PR.
+- Saídas dos scripts de servidor/HTTPS (sem tokens, cookies ou senhas).
+- Identidade e data da revisão independente de código e RLS.
+- Identificador da cópia preventiva e evidência de restauração/rollback.
+- Responsável operacional, data e decisão expressa por ambiente.
+
+Ausência de qualquer evidência obrigatória mantém o resultado **NO-GO**,
+mesmo que `pnpm release:preflight` retorne `CODE_CHECKS_PASSED`.
 
 ## Execução enxuta
 
