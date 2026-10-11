@@ -17,9 +17,27 @@ function response(body: unknown = { keys: [key] }, status = 200) {
   });
 }
 
+function fakeRequest(
+  handler: (_url: string | URL | Request, _init?: RequestInit) => Promise<Response>
+) {
+  const calls: Array<[string | URL | Request, RequestInit | undefined]> = [];
+  const oneShot: Array<() => Promise<Response>> = [];
+  const request = async (url: string | URL | Request, init?: RequestInit) => {
+    calls.push([url, init]);
+    const next = oneShot.shift();
+    return next ? next() : handler(url, init);
+  };
+  return Object.assign(request, {
+    mock: { calls },
+    mockImplementationOnce(next: () => Promise<Response>) {
+      oneShot.push(next);
+    },
+  });
+}
+
 describe("F4.3-05B3 pinned JWKS reader", () => {
   it("pins Google endpoint, disables redirects and caches keys", async () => {
-    const request = jest.fn(
+    const request = fakeRequest(
       async (_url: string | URL | Request, _init?: RequestInit) => response()
     );
     let now = 1000;
@@ -36,14 +54,14 @@ describe("F4.3-05B3 pinned JWKS reader", () => {
       credentials: "omit",
     });
     expect(await reader.getTrustedKeys(google)).toBe(first);
-    expect(request).toHaveBeenCalledTimes(1);
+    expect(request.mock.calls).toHaveLength(1);
     now += 300001;
     await reader.getTrustedKeys(google);
-    expect(request).toHaveBeenCalledTimes(2);
+    expect(request.mock.calls).toHaveLength(2);
   });
 
   it("pins a tenant-specific Microsoft endpoint and rejects arbitrary tenants", async () => {
-    const request = jest.fn(
+    const request = fakeRequest(
       async (_url: string | URL | Request, _init?: RequestInit) => response()
     );
     const reader = new EmailOAuthPinnedJwksReader(request);
@@ -68,11 +86,11 @@ describe("F4.3-05B3 pinned JWKS reader", () => {
         microsoftTenantId,
       })
     ).rejects.toThrow("EMAIL_OAUTH_JWKS_UNAVAILABLE");
-    expect(request).toHaveBeenCalledTimes(1);
+    expect(request.mock.calls).toHaveLength(1);
   });
 
   it("fails closed on unsuccessful rotation, evicting previous keys", async () => {
-    const request = jest.fn(
+    const request = fakeRequest(
       async (_url: string | URL | Request, _init?: RequestInit) => response()
     );
     const reader = new EmailOAuthPinnedJwksReader(request);
@@ -85,7 +103,7 @@ describe("F4.3-05B3 pinned JWKS reader", () => {
     await expect(reader.getTrustedKeys(google)).rejects.toThrow(
       "EMAIL_OAUTH_JWKS_UNAVAILABLE"
     );
-    expect(request).toHaveBeenCalledTimes(3);
+    expect(request.mock.calls).toHaveLength(3);
   });
 
   it.each([
@@ -105,7 +123,7 @@ describe("F4.3-05B3 pinned JWKS reader", () => {
   });
 
   it("coalesces concurrent HTTPS requests", async () => {
-    const request = jest.fn(
+    const request = fakeRequest(
       async (_url: string | URL | Request, _init?: RequestInit) => response()
     );
     const reader = new EmailOAuthPinnedJwksReader(request);
@@ -114,6 +132,6 @@ describe("F4.3-05B3 pinned JWKS reader", () => {
       reader.getTrustedKeys(google),
     ]);
     expect(a).toBe(b);
-    expect(request).toHaveBeenCalledTimes(1);
+    expect(request.mock.calls).toHaveLength(1);
   });
 });

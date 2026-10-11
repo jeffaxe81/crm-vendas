@@ -72,7 +72,7 @@ function pinnedEndpoint(client: ConfidentialClient): string {
     client.provider !== "MICROSOFT_365" ||
     !UUID.test(client.clientId) ||
     !UUID.test(client.microsoftTenantId ?? "") ||
-    /^0{8}-0{4}-0{4}-0{4}-0{4}-0{12}$/i.test(client.microsoftTenantId!)
+    /^0{8}-0{4}-0{4}-0{4}-0{12}$/i.test(client.microsoftTenantId!)
   )
     denied();
   return (
