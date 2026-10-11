@@ -22,13 +22,7 @@ const FILES = [
 ];
 
 export function buildSourceManifest(input) {
-  const {
-    env,
-    sourceSha,
-    sourceTreeSha,
-    fileHashes,
-    generatedAt,
-  } = input;
+  const { env, sourceSha, sourceTreeSha, fileHashes, generatedAt } = input;
   if (
     env.GITHUB_REPOSITORY !== EXPECTED_REPOSITORY ||
     env.GITHUB_EVENT_NAME !== "push" ||
@@ -41,8 +35,7 @@ export function buildSourceManifest(input) {
     !ATTEMPT.test(env.GITHUB_RUN_ATTEMPT ?? "") ||
     !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(generatedAt) ||
     Object.keys(fileHashes).length !== FILES.length ||
-    FILES.some(path => !SHA.test(fileHashes[path]?.slice(0, 40) ?? "") ||
-      !/^[a-f0-9]{64}$/.test(fileHashes[path] ?? ""))
+    FILES.some(path => !/^[a-f0-9]{64}$/.test(fileHashes[path] ?? ""))
   ) {
     throw new Error("RC_SOURCE_MANIFEST_CONTEXT_REJECTED");
   }
@@ -113,7 +106,10 @@ async function main() {
   );
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
   main().catch(() => {
     // Never print environment variables, file contents or unexpected stack traces.
     process.stderr.write("RC_SOURCE_MANIFEST_GENERATION_FAILED\n");
