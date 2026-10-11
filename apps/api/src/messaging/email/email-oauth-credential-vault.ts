@@ -25,6 +25,8 @@ export type StagedOAuthCredential = Readonly<{
   verifiedSenderEmail: string;
   refreshToken: string;
   expectedVersion: number;
+  /** The provider preference revision validated when consuming OAuth state. */
+  expectedProviderPreferenceVersion: number;
 }>;
 
 export type CredentialVaultStatus = Readonly<{
@@ -135,6 +137,8 @@ export class EmailOAuthCredentialVault {
     if (
       !Number.isSafeInteger(input.expectedVersion) ||
       input.expectedVersion < 0 ||
+      !Number.isSafeInteger(input.expectedProviderPreferenceVersion) ||
+      input.expectedProviderPreferenceVersion < 1 ||
       !SUBJECT.test(input.providerSubject) ||
       !SENDER.test(input.verifiedSenderEmail) ||
       input.verifiedSenderEmail.length > 254 ||
@@ -159,11 +163,22 @@ export class EmailOAuthCredentialVault {
 
     return this.prisma.withTenant(org, async tx => {
       await this.assertAdmin(tx, context);
-      const pref = await tx.emailProviderPreference.findFirst({
-        where: { organizationId: org },
-        select: { providerCode: true },
-      });
-      if (pref?.providerCode !== provider) denied();
+      // Hold a row lock through token storage. A provider switch (including
+      // Gmail -> Microsoft -> Gmail) invalidates the consumed authorization,
+      // even if the provider code is once again the same.
+      const [pref] = await tx.$queryRaw<
+        { provider_code: string; version: number }[]
+      >`
+        SELECT provider_code, version FROM public.email_provider_preferences
+        WHERE organization_id = ${org}::uuid
+        FOR UPDATE
+      `;
+      if (
+        !pref ||
+        pref.provider_code !== provider ||
+        pref.version !== input.expectedProviderPreferenceVersion
+      )
+        denied();
 
       let updated: StoredVersion[];
       if (input.expectedVersion === 0) {
@@ -203,6 +218,7 @@ export class EmailOAuthCredentialVault {
           metadata: {
             provider,
             version,
+            providerPreferenceVersion: input.expectedProviderPreferenceVersion,
             sendingEnabled: false,
             identityVerification: "UPSTREAM_REQUIRED",
           },
