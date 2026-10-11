@@ -284,7 +284,8 @@ export class EmailOAuthPendingGrantStore {
         pref.provider_code !== row.provider_code ||
         row.provider_preference_version === null ||
         pref.version !== row.provider_preference_version
-      ) forbidden();
+      )
+        forbidden();
       const grantBinding = {
         organizationId: context.organizationId,
         actorUserId: context.actorUserId,
