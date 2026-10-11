@@ -134,6 +134,7 @@ describe("F4.3-04B3 OAuth preparation remains offline and session-bound", () => 
     expect(h.stageCalls[0]?.[1]).toEqual({
       organizationId,
       actorUserId,
+      sessionId,
       requestId: context.requestId,
     });
   });
