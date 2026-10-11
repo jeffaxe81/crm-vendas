@@ -18,7 +18,10 @@ function response(body: unknown = { keys: [key] }, status = 200) {
 }
 
 function fakeRequest(
-  handler: (_url: string | URL | Request, _init?: RequestInit) => Promise<Response>
+  handler: (
+    _url: string | URL | Request,
+    _init?: RequestInit
+  ) => Promise<Response>
 ) {
   const calls: Array<[string | URL | Request, RequestInit | undefined]> = [];
   const oneShot: Array<() => Promise<Response>> = [];
