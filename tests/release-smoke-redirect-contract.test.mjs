@@ -22,14 +22,14 @@ if (url.startsWith("https://")) {
   if (i === -1 || args[i + 1] !== process.env.CA_CERT) process.exit(78);
   if (code) process.stdout.write(process.env.FAKE_HTTPS_STATUS || "200");
   else process.stdout.write(
-    "HTTP/2 200\\r\\nstrict-transport-security: max-age=31536000\\r\\n" +
-    "x-content-type-options: nosniff\\r\\n\\r\\n"
+    "HTTP/2 200\r\nstrict-transport-security: max-age=31536000\r\n" +
+    "x-content-type-options: nosniff\r\n\r\n"
   );
 } else if (url.startsWith("http://")) {
   if (code) process.stdout.write("301");
   else process.stdout.write(
-    "HTTP/1.1 301 Moved Permanently\\r\\nLocation: " +
-    (process.env.FAKE_REDIRECT || "https://crm.example.test/") + "\\r\\n\\r\\n"
+    "HTTP/1.1 301 Moved Permanently\r\nLocation: " +
+    (process.env.FAKE_REDIRECT || "https://crm.example.test/") + "\r\n\r\n"
   );
 } else process.exit(77);
 `;
