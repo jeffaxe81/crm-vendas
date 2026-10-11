@@ -41,6 +41,7 @@ export const TENANT_DATA_REGISTRY: readonly TenantDataPolicy[] = [
     ["InboundMessage", "inbound_messages"],
     ["EmailOutbox", "email_outbox"],
     ["EmailRelaySettings", "email_relay_settings"],
+    ["EmailProviderPreference", "email_provider_preferences"],
     ["WebhookSubscription", "webhook_subscriptions"],
     ["WebhookDispatch", "webhook_dispatches"],
     ["WebhookDelivery", "webhook_deliveries"],
