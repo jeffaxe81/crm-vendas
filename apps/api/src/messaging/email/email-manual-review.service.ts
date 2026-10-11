@@ -93,7 +93,9 @@ export class EmailManualReviewService {
     // Restrict proof to an opaque relay ticket/receipt reference; never persist
     // mailbox text, access tokens or secret provider payloads in audit metadata.
     if (
-      !EMAIL_MANUAL_REVIEW_REFERENCE_PATTERN.test(resolution.evidenceReference) ||
+      !EMAIL_MANUAL_REVIEW_REFERENCE_PATTERN.test(
+        resolution.evidenceReference
+      ) ||
       !/^[0-9a-fA-F-]{36}$/.test(id) ||
       !/^[\x20-\x7e]{1,120}$/.test(context.requestId)
     ) {
