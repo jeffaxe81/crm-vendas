@@ -60,11 +60,11 @@ requireEvidence(
 // Extract only the API's depends_on block. A completed migration in
 // another service must not accidentally satisfy the release preflight.
 function apiDependencies(yaml) {
-  const api = yaml.match(/^  api:\\s*$/m);
+  const api = yaml.match(/^  api:\s*$/m);
   if (!api) return "";
   const rest = yaml.slice(api.index + api[0].length);
-  const block = rest.split(/\n  [a-z][a-z0-9-]*:\\s*\n/)[0];
-  const depends = block.match(/^    depends_on:\\s*$/m);
+  const block = rest.split(/\n  [a-z][a-z0-9-]*:\s*\n/)[0];
+  const depends = block.match(/^    depends_on:\s*$/m);
   if (!depends) return "";
   return block
     .slice(depends.index + depends[0].length)
