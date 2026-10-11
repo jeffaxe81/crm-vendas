@@ -94,6 +94,11 @@ jobs:
       - name: Verify foundation
         run: pnpm verify:foundation
 
+      - name: Display Prettier corrections for RC files
+        run: |
+          pnpm exec prettier --write scripts/release-preflight.mjs docs/releases/2026-10-11-crm-rc-fasttrack-go-no-go.md
+          git diff --no-color -- scripts/release-preflight.mjs docs/releases/2026-10-11-crm-rc-fasttrack-go-no-go.md
+
       - name: Validate RC code preflight
         run: pnpm release:preflight
 
