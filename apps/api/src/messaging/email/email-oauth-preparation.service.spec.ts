@@ -22,15 +22,23 @@ function harness(options?: {
   selected?: string;
   configured?: boolean;
 }) {
-  const membership = { findFirst: jest.fn().mockResolvedValue(
-    options?.admin === false ? null : { id: "membership" }
-  ) };
-  const session = { findFirst: jest.fn().mockResolvedValue(
-    options?.session === false ? null : { id: sessionId }
-  ) };
-  const preference = { findFirst: jest.fn().mockResolvedValue({
-    providerCode: options?.selected ?? "GMAIL",
-  }) };
+  const membership = {
+    findFirst: jest
+      .fn()
+      .mockResolvedValue(
+        options?.admin === false ? null : { id: "membership" }
+      ),
+  };
+  const session = {
+    findFirst: jest
+      .fn()
+      .mockResolvedValue(options?.session === false ? null : { id: sessionId }),
+  };
+  const preference = {
+    findFirst: jest.fn().mockResolvedValue({
+      providerCode: options?.selected ?? "GMAIL",
+    }),
+  };
   const withTenant = jest.fn(
     (_org: string, callback: (tx: unknown) => Promise<unknown>) =>
       callback({
@@ -42,21 +50,19 @@ function harness(options?: {
   const prisma = { withTenant } as unknown as PrismaService;
   const stage = jest.fn().mockResolvedValue(undefined);
   const grants = { stage } as unknown as EmailOAuthPendingGrantStore;
-  const resolve = jest.fn(
-    async (_org: string, provider: EmailOAuthProvider) =>
-      options?.configured === false
-        ? undefined
-        : {
-            clientId:
-              provider === "GMAIL"
-                ? "web-test.apps.googleusercontent.com"
-                : "00000000-0000-4000-8000-000000000005",
-            redirectUri:
-              "https://crm.example.com/admin/email/oauth/callback",
-            ...(provider === "MICROSOFT_365"
-              ? { microsoftTenantId: azureTenant }
-              : {}),
-          }
+  const resolve = jest.fn(async (_org: string, provider: EmailOAuthProvider) =>
+    options?.configured === false
+      ? undefined
+      : {
+          clientId:
+            provider === "GMAIL"
+              ? "web-test.apps.googleusercontent.com"
+              : "00000000-0000-4000-8000-000000000005",
+          redirectUri: "https://crm.example.com/admin/email/oauth/callback",
+          ...(provider === "MICROSOFT_365"
+            ? { microsoftTenantId: azureTenant }
+            : {}),
+        }
   );
   const clients = { resolve } as EmailOAuthClientResolver;
   return {
@@ -106,9 +112,7 @@ describe("F4.3-04B3 OAuth preparation remains offline and session-bound", () => 
     const result = await h.service.prepare("MICROSOFT_365", context);
     const url = new URL(result.authorizationUrl);
     expect(url.origin).toBe("https://login.microsoftonline.com");
-    expect(url.pathname).toBe(
-      `/${azureTenant}/oauth2/v2.0/authorize`
-    );
+    expect(url.pathname).toBe(`/${azureTenant}/oauth2/v2.0/authorize`);
     expect(url.searchParams.get("scope")).toContain("Mail.Send");
     expect(h.stage.mock.calls[0]?.[0].provider).toBe("MICROSOFT_365");
   });

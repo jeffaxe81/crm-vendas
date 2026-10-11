@@ -11,9 +11,7 @@ describe("offline OAuth callback landing (fail closed)", () => {
       )
     );
     expect(result.status).toBe(303);
-    expect(result.headers.get("Location")).toBe(
-      "/?emailOAuth=not_connected"
-    );
+    expect(result.headers.get("Location")).toBe("/?emailOAuth=not_connected");
     expect(result.headers.get("Cache-Control")).toContain("no-store");
     expect(result.headers.get("Referrer-Policy")).toBe("no-referrer");
     expect(result.headers.get("Location")).not.toContain(state);
@@ -27,8 +25,6 @@ describe("offline OAuth callback landing (fail closed)", () => {
       )
     );
     expect(result.status).toBe(303);
-    expect(result.headers.get("Location")).toBe(
-      "/?emailOAuth=not_connected"
-    );
+    expect(result.headers.get("Location")).toBe("/?emailOAuth=not_connected");
   });
 });

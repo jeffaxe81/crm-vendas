@@ -22,7 +22,10 @@ export interface EmailOAuthClientResolver {
     organizationId: string,
     provider: EmailOAuthProvider
   ): Promise<
-    Pick<EmailOAuthStartInput, "clientId" | "redirectUri" | "microsoftTenantId">
+    | Pick<
+        EmailOAuthStartInput,
+        "clientId" | "redirectUri" | "microsoftTenantId"
+      >
     | undefined
   >;
 }
