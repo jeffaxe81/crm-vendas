@@ -93,6 +93,15 @@ const ApiEnvironmentSchema = z
         }, "EMAIL_OAUTH_PENDING_ENCRYPTION_KEY requer 32 bytes em base64 canônico.")
         .optional()
     ),
+    // Server-only OAuth public client registration; never include secrets.
+    EMAIL_OAUTH_CALLBACK_ORIGIN: z.preprocess(
+      blankToUndefined,
+      z.string().max(256).optional()
+    ),
+    EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON: z.preprocess(
+      blankToUndefined,
+      z.string().max(65536).optional()
+    ),
     EMAIL_RELAY_ALLOWED_HOSTNAME: z.preprocess(
       blankToUndefined,
       z
@@ -151,6 +160,16 @@ const ApiEnvironmentSchema = z
       .default(15000),
   })
   .superRefine((value, context) => {
+    if (
+      Boolean(value.EMAIL_OAUTH_CALLBACK_ORIGIN) !==
+      Boolean(value.EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON)
+    )
+      context.addIssue({
+        code: "custom",
+        path: ["EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON"],
+        message:
+          "EMAIL_OAUTH_CALLBACK_ORIGIN e EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON devem ser configurados juntos.",
+      });
     if (
       Boolean(value.BACKUP_DIRECTORY) !== Boolean(value.BACKUP_ENCRYPTION_KEY)
     )
