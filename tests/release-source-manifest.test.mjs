@@ -46,20 +46,20 @@ test("release source manifest records only a verified main push", () => {
 
 test("release source manifest rejects non-main events and forged HEAD", () => {
   const invalid = [
-    { ...valid, env: { ...env, GITHUB_EVENT_NAME: "pull_request" } },
-    { ...valid, env: { ...env, GITHUB_REF: "refs/heads/feature" } },
-    { ...valid, env: { ...env, GITHUB_REPOSITORY: "attacker/fork" } },
-    { ...valid, env: { ...env, GITHUB_SHA: "c".repeat(40) } },
-    { ...valid, env: { ...env, GITHUB_RUN_ID: "1/../../malicious" } },
-    { ...valid, env: { ...env, GITHUB_RUN_ATTEMPT: "0" } },
-    { ...valid, sourceTreeSha: "not-a-sha" },
-    { ...valid, generatedAt: "yesterday" },
-    { ...valid, fileHashes: { ...fileHashes, "compose.yaml": "bad" } },
-    { ...valid, fileHashes: { ...fileHashes, "extra.secret": "1".repeat(64) } },
+    { env: { ...env, GITHUB_EVENT_NAME: "pull_request" } },
+    { env: { ...env, GITHUB_REF: "refs/heads/feature" } },
+    { env: { ...env, GITHUB_REPOSITORY: "attacker/fork" } },
+    { env: { ...env, GITHUB_SHA: "c".repeat(40) } },
+    { env: { ...env, GITHUB_RUN_ID: "1/../../malicious" } },
+    { env: { ...env, GITHUB_RUN_ATTEMPT: "0" } },
+    { sourceTreeSha: "not-a-sha" },
+    { generatedAt: "yesterday" },
+    { fileHashes: { ...fileHashes, "compose.yaml": "bad" } },
+    { fileHashes: { ...fileHashes, "extra.secret": "1".repeat(64) } },
   ];
-  for (const input of invalid) {
+  for (const patch of invalid) {
     assert.throws(
-      () => buildSourceManifest(input),
+      () => buildSourceManifest({ ...valid, ...patch }),
       /RC_SOURCE_MANIFEST_CONTEXT_REJECTED/
     );
   }
