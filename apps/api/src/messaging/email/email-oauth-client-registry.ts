@@ -34,10 +34,12 @@ const Registrations = z
   .object({
     version: z.literal(1),
     registrations: z
-      .array(z.discriminatedUnion("provider", [
-        GoogleRegistration,
-        MicrosoftRegistration,
-      ]))
+      .array(
+        z.discriminatedUnion("provider", [
+          GoogleRegistration,
+          MicrosoftRegistration,
+        ])
+      )
       .max(200),
   })
   .strict();
@@ -48,7 +50,8 @@ type ClientConfiguration = Pick<
 >;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const DOMAIN = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+const DOMAIN =
+  /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
 
 function configurationUnavailable(): never {
   throw new ServiceUnavailableException({
@@ -88,15 +91,10 @@ function strictCallbackOrigin(raw: string): string {
  * Configuration is deployment-owned, immutable during resolver lifetime and
  * rejects malformed/duplicate entries rather than choosing one silently.
  */
-export class EnvironmentEmailOAuthClientResolver
-  implements EmailOAuthClientResolver
-{
+export class EnvironmentEmailOAuthClientResolver implements EmailOAuthClientResolver {
   private readonly clients = new Map<string, ClientConfiguration>();
 
-  constructor(
-    callbackOrigin?: string,
-    registrationsJson?: string
-  ) {
+  constructor(callbackOrigin?: string, registrationsJson?: string) {
     if (!callbackOrigin && !registrationsJson) return;
     if (
       !callbackOrigin ||

@@ -1,7 +1,5 @@
 import { EnvironmentEmailOAuthClientResolver } from "./email-oauth-client-registry";
-import {
-  createEmailOAuthAuthorizationIntent,
-} from "./email-oauth-authorization-intent";
+import { createEmailOAuthAuthorizationIntent } from "./email-oauth-authorization-intent";
 
 const a = "00000000-0000-4000-8000-000000000001";
 const b = "00000000-0000-4000-8000-000000000002";
@@ -42,9 +40,9 @@ describe("F4.3-04B4 deployment-owned OAuth client registry (offline)", () => {
       [callbackOrigin, JSON.stringify({ version: 2, registrations: [gmail] })],
       [callbackOrigin, registry("not an array")],
     ] as Array<[string | undefined, string | undefined]>) {
-      expect(() => new EnvironmentEmailOAuthClientResolver(origin, json)).toThrow(
-        "EMAIL_OAUTH_CLIENT_REGISTRY_UNAVAILABLE"
-      );
+      expect(
+        () => new EnvironmentEmailOAuthClientResolver(origin, json)
+      ).toThrow("EMAIL_OAUTH_CLIENT_REGISTRY_UNAVAILABLE");
     }
   });
 
@@ -109,8 +107,8 @@ describe("F4.3-04B4 deployment-owned OAuth client registry (offline)", () => {
       "https://crm.example.com.",
     ];
     for (const origin of invalid) {
-      expect(() =>
-        new EnvironmentEmailOAuthClientResolver(origin, registry([gmail]))
+      expect(
+        () => new EnvironmentEmailOAuthClientResolver(origin, registry([gmail]))
       ).toThrow("EMAIL_OAUTH_CLIENT_REGISTRY_UNAVAILABLE");
     }
   });
@@ -143,11 +141,12 @@ describe("F4.3-04B4 deployment-owned OAuth client registry (offline)", () => {
     await expect(store.resolve(a, "GMAIL")).resolves.toMatchObject({
       clientId: googleApp,
     });
-    expect(() =>
-      new EnvironmentEmailOAuthClientResolver(
-        callbackOrigin,
-        "x".repeat(65537)
-      )
+    expect(
+      () =>
+        new EnvironmentEmailOAuthClientResolver(
+          callbackOrigin,
+          "x".repeat(65537)
+        )
     ).toThrow("EMAIL_OAUTH_CLIENT_REGISTRY_UNAVAILABLE");
   });
 });

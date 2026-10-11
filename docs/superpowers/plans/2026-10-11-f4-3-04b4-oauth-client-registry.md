@@ -11,9 +11,9 @@ As duas variáveis opcionais devem ser fornecidas juntas ao servidor da API:
 - `EMAIL_OAUTH_CALLBACK_ORIGIN=https://crm.example.com` (origin HTTPS canônico, domínio público DNS, sem path, userinfo, query, porta nem fragment)
 - `EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON={"version":1,"registrations":[{"organizationId":"<UUID_EMPRESA>","provider":"GMAIL","clientId":"123456789012-exampleclient.apps.googleusercontent.com"},{"organizationId":"<OUTRO_UUID_EMPRESA>","provider":"MICROSOFT_365","clientId":"<APPLICATION_UUID>","microsoftTenantId":"<DIRECTORY_UUID>"}]}`
 
-O URI de retorno será derivado exclusivamente do origin aprovado, fixado como `https://crm.example.com/admin/email/oauth/callback`. Esse endereço deve estar registrado *exatamente* nas configurações do provedor; a rota atual da PR #138 **descarta códigos de autorização e não conecta contas**.
+O URI de retorno será derivado exclusivamente do origin aprovado, fixado como `https://crm.example.com/admin/email/oauth/callback`. Esse endereço deve estar registrado _exatamente_ nas configurações do provedor; a rota atual da PR #138 **descarta códigos de autorização e não conecta contas**.
 
-O schema aceita somente `version`, `registrations` e os campos da lista. `clientSecret`, `refreshToken` e propriedades desconhecidas são rejeitados. Client IDs OAuth não são segredos; *não* configure client secrets ou tokens nesse JSON. O resolver não faz chamadas de rede, não é instanciado em `EmailModule` e não cria endpoints.
+O schema aceita somente `version`, `registrations` e os campos da lista. `clientSecret`, `refreshToken` e propriedades desconhecidas são rejeitados. Client IDs OAuth não são segredos; _não_ configure client secrets ou tokens nesse JSON. O resolver não faz chamadas de rede, não é instanciado em `EmailModule` e não cria endpoints.
 
 ## Controles
 
