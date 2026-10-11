@@ -8,6 +8,10 @@ import {
 import { PrismaService } from "../../database/prisma.service";
 import type { Prisma } from "../../generated/prisma/client";
 
+/** Audit references are opaque IDs; do not accept URLs, addresses or paths. */
+export const EMAIL_MANUAL_REVIEW_REFERENCE_PATTERN =
+  /^[A-Za-z0-9][A-Za-z0-9._-]{7,95}$/;
+
 export type EmailReviewContext = Readonly<{
   organizationId: string;
   actorUserId: string;
@@ -89,7 +93,9 @@ export class EmailManualReviewService {
     // Restrict proof to an opaque relay ticket/receipt reference; never persist
     // mailbox text, access tokens or secret provider payloads in audit metadata.
     if (
-      !/^[A-Za-z0-9._:/#-]{8,180}$/.test(resolution.evidenceReference) ||
+      !EMAIL_MANUAL_REVIEW_REFERENCE_PATTERN.test(
+        resolution.evidenceReference
+      ) ||
       !/^[0-9a-fA-F-]{36}$/.test(id) ||
       !/^[\x20-\x7e]{1,120}$/.test(context.requestId)
     ) {
