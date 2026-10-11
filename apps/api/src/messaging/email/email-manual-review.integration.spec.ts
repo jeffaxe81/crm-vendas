@@ -202,6 +202,17 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
         )
       ).rejects.toThrow("INVALID_EMAIL_REVIEW_INPUT");
     }
+    await expect(
+      service.resolve(
+        reviewId,
+        {
+          decision: "CONFIRMED_ACCEPTED",
+          providerMessageId: "RELAY-MESSAGE-001",
+          evidenceReference: "https://relay.example.test/accepted",
+        },
+        context()
+      )
+    ).rejects.toThrow("INVALID_EMAIL_REVIEW_INPUT");
     const row = await app.withTenant(organizationId, tx =>
       tx.emailOutbox.findFirstOrThrow({ where: { id: reviewId } })
     );
