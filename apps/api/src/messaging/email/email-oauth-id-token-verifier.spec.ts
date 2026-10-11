@@ -83,6 +83,13 @@ describe("F4.3-05B2 isolated OIDC ID token RS256 verification", () => {
     });
   });
 
+  it("accepts the second documented Google issuer value", () => {
+    const identity = verifyOfflineOidcIdToken(
+      mint({ ...goodClaims, iss: "accounts.google.com" }), google
+    );
+    expect(identity.issuer).toBe("accounts.google.com");
+  });
+
   it("accepts Microsoft v2 identity but never treats username as a verified sender", () => {
     const identity = verifyOfflineOidcIdToken(mint(microsoftClaims), microsoft);
     expect(identity).toEqual({
