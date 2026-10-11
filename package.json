@@ -17,7 +17,8 @@
     "verify": "pnpm verify:foundation && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "test:repo": "node --test tests/*.test.mjs",
     "verify:foundation": "node scripts/verify-foundation.mjs",
-    "release:preflight": "node scripts/release-preflight.mjs"
+    "release:preflight": "node scripts/release-preflight.mjs",
+    "release:evidence:check": "node scripts/release-evidence-check.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1",
