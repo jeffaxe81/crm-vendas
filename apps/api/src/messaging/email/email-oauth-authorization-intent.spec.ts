@@ -58,9 +58,7 @@ describe("F4.3-04B1 OAuth authorization intent (offline only)", () => {
     });
     const url = new URL(intent.authorizationUrl);
     expect(url.origin).toBe("https://login.microsoftonline.com");
-    expect(url.pathname).toBe(
-      `/${microsoftTenantId}/oauth2/v2.0/authorize`
-    );
+    expect(url.pathname).toBe(`/${microsoftTenantId}/oauth2/v2.0/authorize`);
     expect(url.searchParams.get("scope")).toContain(
       "https://graph.microsoft.com/Mail.Send"
     );
@@ -74,7 +72,9 @@ describe("F4.3-04B1 OAuth authorization intent (offline only)", () => {
     const first = createEmailOAuthAuthorizationIntent(base, 1234);
     const second = createEmailOAuthAuthorizationIntent(base, 1234);
     expect(first.authorizationUrl).not.toBe(second.authorizationUrl);
-    expect(first.pendingGrant.stateHash).not.toBe(second.pendingGrant.stateHash);
+    expect(first.pendingGrant.stateHash).not.toBe(
+      second.pendingGrant.stateHash
+    );
     expect(first.pendingGrant.codeVerifier).not.toBe(
       second.pendingGrant.codeVerifier
     );

@@ -106,7 +106,8 @@ export function createEmailOAuthAuthorizationIntent(
     }
     endpoint = `https://login.microsoftonline.com/${input.microsoftTenantId}/oauth2/v2.0/authorize`;
     // Delegated permissions only. Application Mail.Send requires a separate gate.
-    scope = "openid profile offline_access https://graph.microsoft.com/Mail.Send";
+    scope =
+      "openid profile offline_access https://graph.microsoft.com/Mail.Send";
   }
 
   const state = randomBytes(32).toString("base64url");
