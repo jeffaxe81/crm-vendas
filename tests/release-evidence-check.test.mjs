@@ -35,8 +35,7 @@ async function fixture(t) {
       ciHeadSha: sha,
       ciEvent: "push",
       ciConclusion: "success",
-      ciRunUrl:
-        "https://github.com/jeffaxe81/crm-vendas/actions/runs/1234",
+      ciRunUrl: "https://github.com/jeffaxe81/crm-vendas/actions/runs/1234",
     },
     evidence,
   };
