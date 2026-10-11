@@ -144,9 +144,11 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
             encrypted_code_verifier: string;
             encrypted_nonce: string;
             session_id: string;
+            provider_preference_version: number | null;
           }[]
         >`
-        SELECT state_hash, encrypted_code_verifier, encrypted_nonce, session_id
+        SELECT state_hash, encrypted_code_verifier, encrypted_nonce,
+               session_id, provider_preference_version
         FROM public.email_oauth_pending_grants
       `
     );
@@ -160,6 +162,7 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
       created.pendingGrant.oidcNonce
     );
     expect(stored[0]?.session_id).toBe(sessionId);
+    expect(stored[0]?.provider_preference_version).toBe(1);
     expect(
       await app.$queryRaw`SELECT * FROM public.email_oauth_pending_grants`
     ).toEqual([]);
@@ -254,7 +257,10 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     await app.withTenant(organizationId, tx =>
       tx.emailProviderPreference.update({
         where: { organizationId },
-        data: { providerCode: "MICROSOFT_365" },
+        data: {
+          providerCode: "MICROSOFT_365",
+          version: { increment: 1 },
+        },
       })
     );
     const state = new URL(pending.authorizationUrl).searchParams.get("state")!;
@@ -262,12 +268,41 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     await app.withTenant(organizationId, tx =>
       tx.emailProviderPreference.update({
         where: { organizationId },
-        data: { providerCode: "GMAIL" },
+        data: { providerCode: "GMAIL", version: { increment: 1 } },
       })
     );
-    await expect(store.consume(state, context())).resolves.toMatchObject({
+    // Re-selecting Gmail MUST NOT revive a grant bound to an older version.
+    await expect(store.consume(state, context())).rejects.toThrow();
+    expect(
+      await app.withTenant(organizationId, tx =>
+        tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
+      )
+    ).toHaveLength(1);
+    // A new grant created under the new provider preference is valid.
+    const fresh = intent();
+    const freshState = new URL(fresh.authorizationUrl).searchParams.get("state")!;
+    await store.stage(fresh.pendingGrant, context());
+    await expect(store.consume(freshState, context())).resolves.toMatchObject({
       provider: "GMAIL",
     });
+  });
+
+  it("rejects a legacy grant without preference revision, preserving state", async () => {
+    await select();
+    const created = intent();
+    const state = new URL(created.authorizationUrl).searchParams.get("state")!;
+    await store.stage(created.pendingGrant, context());
+    await app.withTenant(organizationId, tx =>
+      tx.$executeRaw`
+        UPDATE public.email_oauth_pending_grants
+        SET provider_preference_version = NULL
+      `
+    );
+    await expect(store.consume(state, context())).rejects.toThrow();
+    const rows = await app.withTenant(organizationId, tx =>
+      tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
+    );
+    expect(rows).toHaveLength(1);
   });
 
   it("rejects revoked or expired sessions without consuming state", async () => {
