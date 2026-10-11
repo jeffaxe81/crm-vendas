@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { apiRequest } from "../../lib/api-client";
+import { EmailProviderPreferencePanel } from "./email-provider-preference-panel";
 
 const checks = [
   ["relayConfigured", "Configuração da organização"],
@@ -215,6 +216,8 @@ export function EmailRelayDiagnosticsPanel({
           Atualizar diagnóstico
         </button>
       </header>
+
+      <EmailProviderPreferencePanel accessToken={accessToken} />
 
       <div className="companies-view__card">
         <h3>Envio externo desativado</h3>

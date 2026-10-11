@@ -144,6 +144,7 @@ enum TicketEventType {
 model Organization {
   inboundMessages InboundMessage[]
   emailRelaySettings EmailRelaySettings?
+  emailProviderPreference EmailProviderPreference?
   emailOutbox EmailOutbox[]
   webhookSubscriptions WebhookSubscription[]
   webhookDispatches WebhookDispatch[]
@@ -1111,6 +1112,17 @@ model EmailRelaySettings {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
 
   @@map("email_relay_settings")
+}
+
+/// F4.3-04A: tenant-owned selection only. No OAuth tokens, API keys or sender activation.
+model EmailProviderPreference {
+  organizationId String @id @map("organization_id") @db.Uuid
+  providerCode String @default("NONE") @map("provider_code") @db.VarChar(32)
+  version Int @default(1)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@map("email_provider_preferences")
 }
 
 /// F4.3-03A — metadata-only inbound envelope. No raw message or recipient fields.
