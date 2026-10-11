@@ -57,7 +57,9 @@ function response(status = 200) {
 
 describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
   it("resolves Google identity from signed claims using only pinned keys", async () => {
-    const request = jest.fn(async (_url: string | URL | Request, _init?: RequestInit) => response());
+    const request = jest.fn(
+      async (_url: string | URL | Request, _init?: RequestInit) => response()
+    );
     const service = new EmailOAuthOidcIdentityService(
       new EmailOAuthPinnedJwksReader(request),
       () => nowSeconds
@@ -78,16 +80,22 @@ describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
     expect(request.mock.calls[0]?.[0]).toBe(
       "https://www.googleapis.com/oauth2/v3/certs"
     );
-    expect((await service.verify(token(), {
-      provider: "GMAIL",
-      clientId,
-      oidcNonce,
-    })).subject).toBe("test-subject");
+    expect(
+      (
+        await service.verify(token(), {
+          provider: "GMAIL",
+          clientId,
+          oidcNonce,
+        })
+      ).subject
+    ).toBe("test-subject");
     expect(request).toHaveBeenCalledTimes(1);
   });
 
   it("resolves Microsoft identity without trusting a sender email claim", async () => {
-    const request = jest.fn(async (_url: string | URL | Request, _init?: RequestInit) => response());
+    const request = jest.fn(
+      async (_url: string | URL | Request, _init?: RequestInit) => response()
+    );
     const service = new EmailOAuthOidcIdentityService(
       new EmailOAuthPinnedJwksReader(request),
       () => nowSeconds
@@ -109,7 +117,9 @@ describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
   });
 
   it("rejects malformed JWTs without consulting JWKS endpoint", async () => {
-    const request = jest.fn(async (_url: string | URL | Request, _init?: RequestInit) => response());
+    const request = jest.fn(
+      async (_url: string | URL | Request, _init?: RequestInit) => response()
+    );
     const service = new EmailOAuthOidcIdentityService(
       new EmailOAuthPinnedJwksReader(request),
       () => nowSeconds
@@ -128,19 +138,40 @@ describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
     const cases = [
       {
         jwt: token(),
-        context: { provider: "GMAIL" as const, clientId, oidcNonce: "b".repeat(43) },
+        context: {
+          provider: "GMAIL" as const,
+          clientId,
+          oidcNonce: "b".repeat(43),
+        },
       },
       {
         jwt: token(),
-        context: { provider: "GMAIL" as const, clientId: "another-client", oidcNonce },
+        context: {
+          provider: "GMAIL" as const,
+          clientId: "another-client",
+          oidcNonce,
+        },
       },
       {
-        jwt: token({ tid: "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa" }, "MICROSOFT_365"),
-        context: { provider: "MICROSOFT_365" as const, clientId, oidcNonce, microsoftTenantId },
+        jwt: token(
+          { tid: "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa" },
+          "MICROSOFT_365"
+        ),
+        context: {
+          provider: "MICROSOFT_365" as const,
+          clientId,
+          oidcNonce,
+          microsoftTenantId,
+        },
       },
       {
         jwt: token(),
-        context: { provider: "MICROSOFT_365" as const, clientId, oidcNonce, microsoftTenantId },
+        context: {
+          provider: "MICROSOFT_365" as const,
+          clientId,
+          oidcNonce,
+          microsoftTenantId,
+        },
       },
     ];
     for (const item of cases) {
