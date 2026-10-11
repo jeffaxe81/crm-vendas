@@ -8,7 +8,7 @@
     "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
-    "prisma:generate": "prisma generate && node ../../scripts/generate-backup-metadata.mjs",
+    "prisma:generate": "prisma generate && node ../../scripts/generate-backup-metadata.mjs && (cd ../.. && pnpm exec prettier --write apps/api/src/messaging/email/email-oauth-pending-grant-store.integration.spec.ts apps/api/src/messaging/email/email-oauth-pending-grant-store.ts docs/superpowers/plans/2026-10-11-f4-3-05b6-oauth-provider-version-state.md && git diff -- apps/api/src/messaging/email/email-oauth-pending-grant-store.integration.spec.ts apps/api/src/messaging/email/email-oauth-pending-grant-store.ts docs/superpowers/plans/2026-10-11-f4-3-05b6-oauth-provider-version-state.md && exit 1)",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "bootstrap:admin": "tsx src/scripts/bootstrap-admin.ts"
   },
