@@ -287,6 +287,25 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     });
   });
 
+  it("rejects an authorization state after saving the same provider again", async () => {
+    await select();
+    const created = intent();
+    const state = new URL(created.authorizationUrl).searchParams.get("state")!;
+    await store.stage(created.pendingGrant, context());
+    await app.withTenant(organizationId, tx =>
+      tx.emailProviderPreference.update({
+        where: { organizationId },
+        data: { version: { increment: 1 } },
+      })
+    );
+    await expect(store.consume(state, context())).rejects.toThrow();
+    expect(
+      await app.withTenant(organizationId, tx =>
+        tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
+      )
+    ).toHaveLength(1);
+  });
+
   it("rejects a legacy grant without preference revision, preserving state", async () => {
     await select();
     const created = intent();
