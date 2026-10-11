@@ -23,6 +23,9 @@ test("CI verifies PRs and merged main commits", async () => {
   );
 
   assert.match(workflow, /^on:\n  push:\n    branches:\n      - main\n/m);
-  assert.match(workflow, /^  pull_request:\n    branches:\n      - main\n/m);
+  // Includes stacked PRs whose base is another feature branch.
+  assert.match(workflow, /^  pull_request: \{\}\n/m);
+  assert.doesNotMatch(workflow, /^  pull_request:\n    branches:/m);
+  assert.match(workflow, /^permissions:\n  contents: read\n/m);
   assert.match(workflow, /^  workflow_dispatch:\s*$/m);
 });
