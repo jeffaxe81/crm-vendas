@@ -330,7 +330,8 @@ export function EmailRelayDiagnosticsPanel({
                   {" · "}
                   Relay v{item.settingsVersion ?? "legada"}
                   {" · "}
-                  Provedor {item.providerCode ?? "legado"} v{item.providerVersion ?? "legada"}
+                  Provedor {item.providerCode ?? "legado"} v
+                  {item.providerVersion ?? "legada"}
                   {!item.currentConfiguration
                     ? " · Evidência desatualizada — registre nova referência"
                     : ""}
