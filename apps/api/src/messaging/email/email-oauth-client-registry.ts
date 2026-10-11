@@ -56,6 +56,7 @@ const DOMAIN =
 function configurationUnavailable(): never {
   throw new ServiceUnavailableException({
     code: "EMAIL_OAUTH_CLIENT_REGISTRY_UNAVAILABLE",
+    message: "EMAIL_OAUTH_CLIENT_REGISTRY_UNAVAILABLE",
   });
 }
 
