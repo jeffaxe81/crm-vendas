@@ -115,8 +115,9 @@ describe("F4.3-03B1 offline inbound source signature and tenant boundary", () =>
         "INBOUND_SOURCE_UNAUTHORIZED"
       );
     }
-    expect(() => new InboundSourceVerifier([], () => nowMs).verify(signed))
-      .toThrow("INBOUND_SOURCE_UNAUTHORIZED");
+    expect(() =>
+      new InboundSourceVerifier([], () => nowMs).verify(signed)
+    ).toThrow("INBOUND_SOURCE_UNAUTHORIZED");
   });
 
   it("enforces the signed time window in both directions", () => {
