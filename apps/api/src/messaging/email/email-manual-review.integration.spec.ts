@@ -187,6 +187,7 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
       "http://relay.example.test/receipt",
       "relay/private/path",
       "relay#receipt-2026",
+      "relay:receipt-2026",
       "alice@example.test",
       "RELAY TICKET 001",
       "RELAY-001\\nsecret",
