@@ -99,6 +99,14 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
+      - name: Diagnose RC evidence formatting
+        if: failure()
+        run: |
+          for file in scripts/release-evidence-check.mjs tests/release-evidence-check.test.mjs; do
+            echo "=== RC Prettier diff: $file ==="
+            pnpm exec prettier "$file" | diff -u "$file" - || true
+          done
+
       - name: Lint source
         run: pnpm lint
 
