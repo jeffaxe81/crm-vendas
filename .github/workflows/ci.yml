@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  # Stacked PRs target feature branches; enforce the same gate for any base.
+  pull_request: {}
   workflow_dispatch:
 
 permissions:
