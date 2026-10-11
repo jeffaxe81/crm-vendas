@@ -57,11 +57,12 @@ export async function exportTenantSnapshot(
     if (JSON.stringify(actual) !== JSON.stringify(expected))
       throw new BackupError("BACKUP_SCHEMA_UNSUPPORTED");
   }
-  // NEO settings is managed through a standalone SQL migration, not Prisma.
-  // It is deliberately excluded from snapshot export and restore. Keep this
-  // allowlist explicit: any other unknown tenant table must still fail closed.
+  // NEO settings and temporary OAuth PKCE grants are standalone SQL-only
+  // security tables. They must NEVER be included in backup or restore.
+  // Keep this list explicit: unknown tenant tables still fail closed.
   const explicitlyExcludedTenantTables = new Set([
     "neo_communication_settings",
+    "email_oauth_pending_grants",
   ]);
   if (
     databaseColumns.some(
