@@ -19,7 +19,8 @@ const required = [
   "operationalApproval",
 ];
 const SHA = /^[0-9a-f]{40}$/;
-const RUN = /^https:\/\/github[.]com\/jeffaxe81\/crm-vendas\/actions\/runs\/[1-9][0-9]*$/;
+const RUN =
+  /^https:\/\/github[.]com\/jeffaxe81\/crm-vendas\/actions\/runs\/[1-9][0-9]*$/;
 const MAX_SIZE = 2 * 1024 * 1024;
 
 const isRecord = value =>
