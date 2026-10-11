@@ -337,7 +337,7 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
       providerVersion: 0,
       currentConfiguration: false,
     });
-    expect(listed.review).toBeUndefined();
+    expect(listed?.review).toBeUndefined();
     const report = await readiness.inspect(context());
     expect(report.activationEligible).toBe(false);
     expect(report.checks.externalApproval).toBe("NOT_VERIFIED");
