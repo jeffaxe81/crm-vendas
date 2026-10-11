@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "candidate": {
+    "sha": "PREENCHER_SHA_DA_MAIN_40_CARACTERES",
+    "ciHeadSha": "PREENCHER_MESMO_SHA",
+    "ciEvent": "push",
+    "ciConclusion": "pending",
+    "ciRunUrl": "PREENCHER_LINK_GITHUB_ACTIONS"
+  },
+  "evidence": {
+    "serverDiagnostics": {
+      "status": "pending",
+      "file": "evidence/serverDiagnostics.txt"
+    },
+    "httpsTrustedCa": {
+      "status": "pending",
+      "file": "evidence/httpsTrustedCa.txt"
+    },
+    "loginSession": {
+      "status": "pending",
+      "file": "evidence/loginSession.txt"
+    },
+    "commercialFlow": {
+      "status": "pending",
+      "file": "evidence/commercialFlow.txt"
+    },
+    "tenantIsolation": {
+      "status": "pending",
+      "file": "evidence/tenantIsolation.txt"
+    },
+    "backupRestore": {
+      "status": "pending",
+      "file": "evidence/backupRestore.txt"
+    },
+    "rollbackDrill": {
+      "status": "pending",
+      "file": "evidence/rollbackDrill.txt"
+    },
+    "securityReview": {
+      "status": "pending",
+      "file": "evidence/securityReview.txt"
+    },
+    "operationalApproval": {
+      "status": "pending",
+      "file": "evidence/operationalApproval.txt"
+    }
+  }
+}
