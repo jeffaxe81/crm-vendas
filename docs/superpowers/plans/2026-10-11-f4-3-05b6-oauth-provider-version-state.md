@@ -15,4 +15,4 @@ Um grant pendente antes dependia somente do código `GMAIL` ou `MICROSOFT_365`. 
 
 ## Limites
 
-Esta entrega continua *offline*. Não há controller, browser callback, troca real com provedor ou habilitação de envio. O `EmailModule` mantém `DisabledEmailProvider`, e a integração depende da cadeia de PRs OAuth #140–#154.
+Esta entrega continua _offline_. Não há controller, browser callback, troca real com provedor ou habilitação de envio. O `EmailModule` mantém `DisabledEmailProvider`, e a integração depende da cadeia de PRs OAuth #140–#154.
