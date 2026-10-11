@@ -2,16 +2,17 @@ import { Inject, Injectable } from "@nestjs/common";
 import {
   EMAIL_PROVIDER,
   EmailProviderUnavailableError,
+  EmailDeliveryUnknownError,
   type EmailProvider,
   type TransactionalEmail,
 } from "./email-provider";
 
+export type EmailFailureCode =
+  "PROVIDER_NOT_CONFIGURED" | "PROVIDER_ERROR" | "DELIVERY_UNKNOWN";
+
 export type EmailSendOutcome =
   | Readonly<{ status: "ACCEPTED"; providerMessageId: string }>
-  | Readonly<{
-      status: "FAILED";
-      errorCode: "PROVIDER_NOT_CONFIGURED" | "PROVIDER_ERROR";
-    }>;
+  | Readonly<{ status: "FAILED"; errorCode: EmailFailureCode }>;
 
 /**
  * Operational sends are best effort and never throw into the caller's
@@ -39,13 +40,13 @@ export class EmailDispatchService {
         providerMessageId: result.providerMessageId,
       };
     } catch (error) {
-      return {
-        status: "FAILED",
-        errorCode:
-          error instanceof EmailProviderUnavailableError
-            ? "PROVIDER_NOT_CONFIGURED"
-            : "PROVIDER_ERROR",
-      };
+      let errorCode: EmailFailureCode = "PROVIDER_ERROR";
+      if (error instanceof EmailProviderUnavailableError) {
+        errorCode = "PROVIDER_NOT_CONFIGURED";
+      } else if (error instanceof EmailDeliveryUnknownError) {
+        errorCode = "DELIVERY_UNKNOWN";
+      }
+      return { status: "FAILED", errorCode };
     }
   }
 }

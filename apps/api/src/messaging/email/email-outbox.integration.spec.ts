@@ -4,6 +4,7 @@ import { EmailDispatchService } from "./email-dispatch.service";
 import { composeSlaDueEmail } from "./email-composer";
 import { enqueueTransactionalEmail } from "./email-outbox";
 import { EmailOutboxWorker } from "./email-outbox.worker";
+import { EmailDeliveryUnknownError } from "./email-provider";
 import type { EmailProvider, TransactionalEmail } from "./email-provider";
 
 describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
@@ -228,7 +229,7 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
     expect(await worker.processNext(organizationId, current)).toBe(false);
   });
 
-  it("reclaims an expired lease without allowing a stale send result to overwrite it", async () => {
+  it("quarantines an expired lease rather than risking a duplicated send", async () => {
     await app.withTenant(organizationId, tx =>
       enqueueTransactionalEmail(tx, email())
     );
@@ -244,21 +245,59 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
         },
       })
     );
+    let sent = 0;
     const worker = new EmailOutboxWorker(
       app,
       new EmailDispatchService({
-        send: async () => ({ providerMessageId: "recovered" }),
+        send: async () => {
+          sent++;
+          return { providerMessageId: "unexpected" };
+        },
       })
     );
     expect(await worker.processNext(organizationId, when)).toBe(true);
+    expect(sent).toBe(0);
     const row = await app.withTenant(organizationId, tx =>
       tx.emailOutbox.findFirstOrThrow()
     );
     expect(row).toMatchObject({
-      attemptCount: 2,
-      status: "ACCEPTED",
-      providerMessageId: "recovered",
+      attemptCount: 1,
+      status: "MANUAL_REVIEW",
+      lastErrorCode: "LEASE_EXPIRED_UNKNOWN",
+      leaseToken: null,
+      leasedUntil: null,
+      nextAttemptAt: null,
     });
+    expect(await worker.processNext(organizationId, when)).toBe(false);
+  });
+
+  it("quarantines unknown provider acceptance without automatic retry", async () => {
+    await app.withTenant(organizationId, tx =>
+      enqueueTransactionalEmail(tx, email())
+    );
+    let calls = 0;
+    const worker = new EmailOutboxWorker(
+      app,
+      new EmailDispatchService({
+        send: async () => {
+          calls++;
+          throw new EmailDeliveryUnknownError();
+        },
+      })
+    );
+    expect(await worker.processNext(organizationId, when)).toBe(true);
+    expect(calls).toBe(1);
+    const row = await app.withTenant(organizationId, tx =>
+      tx.emailOutbox.findFirstOrThrow()
+    );
+    expect(row).toMatchObject({
+      status: "MANUAL_REVIEW",
+      attemptCount: 1,
+      lastErrorCode: "DELIVERY_UNKNOWN",
+      nextAttemptAt: null,
+    });
+    expect(await worker.processNext(organizationId, when)).toBe(false);
+    expect(calls).toBe(1);
   });
 
   async function assertCancelledAfterMutation(
