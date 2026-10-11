@@ -162,9 +162,9 @@ describe("F4.3-03A inbound email quarantine PostgreSQL RLS", () => {
     );
     expect(record.externalIdHash).toMatch(/^[0-9a-f]{64}$/);
     expect(JSON.stringify(record)).not.toContain(rawId);
-    expect(Object.keys(record)).not.toEqual(
-      expect.arrayContaining(["payload", "sender", "recipient", "subject"])
-    );
+    for (const field of ["payload", "sender", "recipient", "subject"]) {
+      expect(record).not.toHaveProperty(field);
+    }
     expect(
       TENANT_DATA_REGISTRY.find(p => p.model === "InboundMessage")
     ).toMatchObject({ export: "EXCLUDE", restore: "PRESERVE" });
