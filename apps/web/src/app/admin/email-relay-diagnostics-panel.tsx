@@ -52,11 +52,16 @@ type EvidenceRecord = {
   createdAt: string;
   verification: "SUBMITTED_UNVERIFIED";
   settingsVersion: number | null;
+  providerVersion: number | null;
+  providerCode: string | null;
+  currentConfiguration: boolean;
   review?: {
     decision: "CHECKED" | "REJECTED";
     reviewerUserId: string | null;
     reviewedAt: string;
     settingsVersion: number;
+    providerVersion: number | null;
+    providerCode: string | null;
     currentConfiguration: boolean;
     verification: "REVIEWED_NOT_CERTIFIED";
   };
@@ -264,7 +269,8 @@ export function EmailRelayDiagnosticsPanel({
             informe URLs, senhas, tokens, documentos ou dados pessoais. O
             registro fica auditado e permanece não verificado. Outro
             administrador poderá analisar ou rejeitar a referência; nenhuma das
-            opções certifica o provedor ou libera o envio.
+            opções certifica o provedor ou libera o envio. Trocar o provedor
+            invalida evidências de versões anteriores.
           </p>
           <form
             className="activity-form"
@@ -322,7 +328,12 @@ export function EmailRelayDiagnosticsPanel({
                   {" · "}
                   {new Date(item.createdAt).toLocaleString("pt-BR")}
                   {" · "}
-                  Versão {item.settingsVersion ?? "legada"}
+                  Relay v{item.settingsVersion ?? "legada"}
+                  {" · "}
+                  Provedor {item.providerCode ?? "legado"} v{item.providerVersion ?? "legada"}
+                  {!item.currentConfiguration
+                    ? " · Evidência desatualizada — registre nova referência"
+                    : ""}
                   {item.review ? (
                     <p>
                       Revisão independente:{" "}
@@ -332,12 +343,11 @@ export function EmailRelayDiagnosticsPanel({
                       {" · "}
                       {new Date(item.review.reviewedAt).toLocaleString("pt-BR")}
                       {!item.review.currentConfiguration
-                        ? " · Configuração modificada após a revisão"
+                        ? " · Provedor ou configuração alterados após a revisão"
                         : ""}
                     </p>
                   ) : item.actorUserId !== currentUserId &&
-                    item.settingsVersion !== null &&
-                    item.settingsVersion === settings?.version ? (
+                    item.currentConfiguration ? (
                     <div className="support-queues__actions">
                       <button
                         type="button"
