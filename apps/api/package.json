@@ -8,7 +8,7 @@
     "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
-    "prisma:generate": "prisma generate && node ../../scripts/generate-backup-metadata.mjs && (cd ../.. && pnpm exec prettier --write apps/api/src/messaging/email/email-manual-review.controller.ts apps/api/src/messaging/email/email-manual-review.service.ts docs/superpowers/plans/2026-10-10-f4-3-02d5-manual-review-opaque-reference.md && git diff -- apps/api/src/messaging/email/email-manual-review.controller.ts apps/api/src/messaging/email/email-manual-review.service.ts docs/superpowers/plans/2026-10-10-f4-3-02d5-manual-review-opaque-reference.md && exit 1)",
+    "prisma:generate": "prisma generate && node ../../scripts/generate-backup-metadata.mjs",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "bootstrap:admin": "tsx src/scripts/bootstrap-admin.ts"
   },
