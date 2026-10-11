@@ -26,6 +26,19 @@ pnpm verify
 Qualidade é medida por comportamentos protegidos, não por um percentual
 genérico de cobertura.
 
+### Execução no GitHub Actions
+
+O mesmo gate `verify` executa em PRs destinadas à `main` e em cada `push`
+na `main` após a integração, com opção de execução manual
+(`workflow_dispatch`). Um CI verde de PR não substitui a verificação do
+commit de merge, pois o conteúdo final pode diferir dos HEADs validados.
+
+Acompanhar a execução de `push` com `head_sha` igual ao SHA atual da
+`main`. Se não houver execução ou se falhar, marcar o release gate como
+**não validado** e registrar o link do run/erro; nunca afirmar que testes
+pós-merge foram executados sem evidência. Esse gate não valida o ambiente
+privado, HTTPS real, áudio ou autorizações externas do NEO/relay.
+
 ### Controles específicos do Cycle 1
 
 A suíte de integração prova:

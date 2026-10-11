@@ -1,9 +1,13 @@
 name: Cycle 1 quality gate
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
