@@ -57,14 +57,30 @@ requireEvidence(
     .length === 3,
   "Portas de front, API e banco devem ficar ligadas a 127.0.0.1 por padrao"
 );
+// Extract only the API's depends_on block. A completed migration in
+// another service must not accidentally satisfy the release preflight.
+function apiDependencies(yaml) {
+  const api = yaml.match(/^  api:\s*$/m);
+  if (!api) return "";
+  const rest = yaml.slice(api.index + api[0].length);
+  const block = rest.split(/\n  [a-z][a-z0-9-]*:\s*\n/)[0];
+  const depends = block.match(/^    depends_on:\s*$/m);
+  if (!depends) return "";
+  return block
+    .slice(depends.index + depends[0].length)
+    .split(/\n    [a-z][a-z0-9-]*:/)[0];
+}
+function completedDependency(name) {
+  return new RegExp(
+    `(?:^|\\n)      ${name}:\\s*\\n        condition: service_completed_successfully(?:\\n|$)`
+  ).test(apiDependencies(compose));
+}
 requireEvidence(
-  /db-bootstrap:\s*\n\s*condition:\s*service_completed_successfully/.test(
-    compose
-  ),
+  completedDependency("db-bootstrap"),
   "API nao aguarda bootstrap seguro do banco"
 );
 requireEvidence(
-  /migrate:\s*\n\s*condition:\s*service_completed_successfully/.test(compose),
+  completedDependency("migrate"),
   "API nao aguarda migrations concluidas"
 );
 requireEvidence(
