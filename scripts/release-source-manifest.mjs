@@ -55,7 +55,9 @@ export function buildSourceManifest(input) {
       "/attempts/" +
       env.GITHUB_RUN_ATTEMPT,
     generatedAt,
-    filesSha256: Object.fromEntries(FILES.map(path => [path, fileHashes[path]])),
+    filesSha256: Object.fromEntries(
+      FILES.map(path => [path, fileHashes[path]])
+    ),
     imagesPublished: false,
     containerRegistryDigestProven: false,
     operationalApproval: false,
