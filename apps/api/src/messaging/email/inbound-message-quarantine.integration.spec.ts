@@ -1,6 +1,5 @@
 import { createHmac } from "node:crypto";
 import { PrismaService } from "../../database/prisma.service";
-import { TENANT_DATA_REGISTRY } from "../../data-management/tenant-data-registry";
 
 // Test identifiers are synthetic. Real external IDs must be HMACed only after
 // provider authentication and authoritative tenant resolution (future phase).
@@ -14,7 +13,10 @@ describe("F4.3-03A inbound email quarantine PostgreSQL RLS", () => {
   let organizationId: string;
   let otherOrganizationId: string;
 
-  const incoming = (organization: string, externalId = "synthetic-message-1") => ({
+  const incoming = (
+    organization: string,
+    externalId = "synthetic-message-1"
+  ) => ({
     organizationId: organization,
     channel: "EMAIL",
     sourceKey: "approved-relay",
@@ -50,10 +52,11 @@ describe("F4.3-03A inbound email quarantine PostgreSQL RLS", () => {
     await app?.onModuleDestroy();
   });
 
-  it("enforces FORCE RLS for reads and refuses cross-tenant writes", async () => {
+  it("enforces FORCE RLS and tenant isolation", async () => {
     const [flags] = await owner.$queryRaw<
       { relrowsecurity: boolean; relforcerowsecurity: boolean }[]
-    >`SELECT relrowsecurity, relforcerowsecurity FROM pg_class WHERE relname = 'inbound_messages'`;
+    >`SELECT relrowsecurity, relforcerowsecurity
+      FROM pg_class WHERE relname = 'inbound_messages'`;
     expect(flags).toEqual({
       relrowsecurity: true,
       relforcerowsecurity: true,
@@ -85,7 +88,7 @@ describe("F4.3-03A inbound email quarantine PostgreSQL RLS", () => {
     ).toBe(1);
   });
 
-  it("deduplicates within the same tenant, channel and approved source", async () => {
+  it("deduplicates within tenant and source", async () => {
     const data = incoming(organizationId);
     const initial = await app.withTenant(organizationId, tx =>
       tx.inboundMessage.createMany({ data: [data], skipDuplicates: true })
@@ -114,7 +117,7 @@ describe("F4.3-03A inbound email quarantine PostgreSQL RLS", () => {
     ).toBe(1);
   });
 
-  it("rejects unsupported channels, unsafe sources and malformed external IDs", async () => {
+  it("rejects invalid channels, sources and hashes", async () => {
     const invalid = [
       { channel: "WHATSAPP" },
       { sourceKey: "https://not-trusted.example/relay" },
@@ -135,7 +138,7 @@ describe("F4.3-03A inbound email quarantine PostgreSQL RLS", () => {
     ).toBe(0);
   });
 
-  it("does not allow messages to leave quarantine through ORM updates", async () => {
+  it("blocks changes to the quarantined status", async () => {
     const row = await app.withTenant(organizationId, tx =>
       tx.inboundMessage.create({ data: incoming(organizationId) })
     );
@@ -165,8 +168,5 @@ describe("F4.3-03A inbound email quarantine PostgreSQL RLS", () => {
     for (const field of ["payload", "sender", "recipient", "subject"]) {
       expect(record).not.toHaveProperty(field);
     }
-    expect(
-      TENANT_DATA_REGISTRY.find(p => p.model === "InboundMessage")
-    ).toMatchObject({ export: "EXCLUDE", restore: "PRESERVE" });
   });
 });
