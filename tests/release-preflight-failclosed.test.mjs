@@ -100,6 +100,15 @@ const tampering = [
       ),
   },
   {
+    name: "API bootstrap weakened while another migration gate remains",
+    path: "compose.yaml",
+    mutate: code =>
+      code.replace(
+        "      db-bootstrap:\n        condition: service_completed_successfully",
+        "      db-bootstrap:\n        condition: service_started"
+      ),
+  },
+  {
     name: "external HTTPS trust evidence omitted",
     path: "scripts/smoke-externo-c12.sh",
     mutate: code => code.replaceAll("CA_CERT", "NO_TRUST_ANCHOR"),
