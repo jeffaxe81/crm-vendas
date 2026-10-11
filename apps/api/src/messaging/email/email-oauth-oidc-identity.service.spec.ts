@@ -1,4 +1,3 @@
-import { jest } from "@jest/globals";
 import { generateKeyPairSync, sign } from "node:crypto";
 import { EmailOAuthOidcIdentityService } from "./email-oauth-oidc-identity.service";
 import { EmailOAuthPinnedJwksReader } from "./email-oauth-pinned-jwks-reader";
@@ -56,13 +55,25 @@ function response(status = 200) {
   });
 }
 
+type RequestCall = { url: string | URL | Request; init?: RequestInit };
+
+function trackRequests() {
+  const calls: RequestCall[] = [];
+  async function request(
+    url: string | URL | Request,
+    init?: RequestInit
+  ): Promise<Response> {
+    calls.push({ url, init });
+    return response();
+  }
+  return { request, calls };
+}
+
 describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
   it("resolves Google identity from signed claims using only pinned keys", async () => {
-    const request = jest.fn(
-      async (_url: string | URL | Request, _init?: RequestInit) => response()
-    );
+    const tracked = trackRequests();
     const service = new EmailOAuthOidcIdentityService(
-      new EmailOAuthPinnedJwksReader(request),
+      new EmailOAuthPinnedJwksReader(tracked.request),
       () => nowSeconds
     );
     const identity = await service.verify(token(), {
@@ -77,8 +88,8 @@ describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
       subject: "test-subject",
       verifiedEmail: "owner@example.com",
     });
-    expect(request).toHaveBeenCalledTimes(1);
-    expect(request.mock.calls[0]?.[0]).toBe(
+    expect(tracked.calls).toHaveLength(1);
+    expect(tracked.calls[0]?.url).toBe(
       "https://www.googleapis.com/oauth2/v3/certs"
     );
     expect(
@@ -90,15 +101,13 @@ describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
         })
       ).subject
     ).toBe("test-subject");
-    expect(request).toHaveBeenCalledTimes(1);
+    expect(tracked.calls).toHaveLength(1);
   });
 
   it("resolves Microsoft identity without trusting a sender email claim", async () => {
-    const request = jest.fn(
-      async (_url: string | URL | Request, _init?: RequestInit) => response()
-    );
+    const tracked = trackRequests();
     const service = new EmailOAuthOidcIdentityService(
-      new EmailOAuthPinnedJwksReader(request),
+      new EmailOAuthPinnedJwksReader(tracked.request),
       () => nowSeconds
     );
     const identity = await service.verify(
@@ -112,23 +121,21 @@ describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
       subject: "test-subject",
     });
     expect(identity).not.toHaveProperty("verifiedEmail");
-    expect(request.mock.calls[0]?.[0]).toBe(
+    expect(tracked.calls[0]?.url).toBe(
       `https://login.microsoftonline.com/${microsoftTenantId}/discovery/v2.0/keys`
     );
   });
 
   it("rejects malformed JWTs without consulting JWKS endpoint", async () => {
-    const request = jest.fn(
-      async (_url: string | URL | Request, _init?: RequestInit) => response()
-    );
+    const tracked = trackRequests();
     const service = new EmailOAuthOidcIdentityService(
-      new EmailOAuthPinnedJwksReader(request),
+      new EmailOAuthPinnedJwksReader(tracked.request),
       () => nowSeconds
     );
     await expect(
       service.verify("not-a-jwt", { provider: "GMAIL", clientId, oidcNonce })
     ).rejects.toThrow("EMAIL_OAUTH_IDENTITY_VERIFICATION_FAILED");
-    expect(request).not.toHaveBeenCalled();
+    expect(tracked.calls).toHaveLength(0);
   });
 
   it("rejects a crossed tenant, provider, audience, and nonce without leaking claims", async () => {
