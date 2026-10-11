@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      # Stacked OAuth PRs target feature branches; validate their head commits.
+      - "feat/f4-3-05*"
   pull_request:
     branches:
       - main
