@@ -1,0 +1,28 @@
+name: Temporary F4.3 formatting diff
+
+on:
+  push:
+    branches:
+      - feat/f4-3-03b1-inbound-source-verification-20261011
+
+permissions:
+  contents: read
+
+jobs:
+  formatting-preview:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Print proposed formatting patch only
+        run: |
+          pnpm exec prettier --write apps/api/src/messaging/email/inbound-source-verifier.ts apps/api/src/messaging/email/inbound-source-verifier.spec.ts
+          git --no-pager diff -- apps/api/src/messaging/email/inbound-source-verifier.ts apps/api/src/messaging/email/inbound-source-verifier.spec.ts
