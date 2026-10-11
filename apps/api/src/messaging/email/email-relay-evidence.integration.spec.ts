@@ -323,10 +323,7 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
       providerCode: "NONE",
       currentConfiguration: true,
     });
-    await provider.update(
-      { version: 0, providerCode: "GMAIL" },
-      context()
-    );
+    await provider.update({ version: 0, providerCode: "GMAIL" }, context());
     await expect(
       service.review(
         { evidenceId: recorded.id, decision: "CHECKED" },
@@ -347,10 +344,7 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
   });
 
   it("invalidates a reviewed reference when its provider changes or reselects", async () => {
-    await provider.update(
-      { version: 0, providerCode: "GMAIL" },
-      context()
-    );
+    await provider.update({ version: 0, providerCode: "GMAIL" }, context());
     const recorded = await service.record(
       { type: "OPERATIONAL_REVIEW", reference: "TICKET-2026-0402" },
       context()
@@ -365,8 +359,9 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
       activationEligible: false,
       sendingEnabled: false,
     });
-    expect((await service.list(context()))[0]?.review?.currentConfiguration)
-      .toBe(true);
+    expect(
+      (await service.list(context()))[0]?.review?.currentConfiguration
+    ).toBe(true);
     await provider.update(
       { version: 1, providerCode: "MICROSOFT_365" },
       context()
@@ -383,12 +378,10 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
         verification: "REVIEWED_NOT_CERTIFIED",
       },
     });
-    await provider.update(
-      { version: 2, providerCode: "GMAIL" },
-      context()
+    await provider.update({ version: 2, providerCode: "GMAIL" }, context());
+    expect((await service.list(context()))[0]?.currentConfiguration).toBe(
+      false
     );
-    expect((await service.list(context()))[0]?.currentConfiguration)
-      .toBe(false);
   });
 
   it("fails closed for legacy evidence with missing provider binding", async () => {
