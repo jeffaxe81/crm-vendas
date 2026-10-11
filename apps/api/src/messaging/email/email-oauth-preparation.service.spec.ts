@@ -32,7 +32,8 @@ function harness(options?: {
   configured?: boolean;
 }) {
   const withTenantCalls: string[] = [];
-  const stageCalls: Array<[EmailOAuthPendingGrant, EmailOAuthGrantContext]> = [];
+  const stageCalls: Array<[EmailOAuthPendingGrant, EmailOAuthGrantContext]> =
+    [];
   const resolverCalls: Array<[string, EmailOAuthProvider]> = [];
   let stageError: Error | null = null;
   let overrideClient: ClientConfig | null = null;
