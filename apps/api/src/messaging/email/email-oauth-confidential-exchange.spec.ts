@@ -68,16 +68,37 @@ describe("F4.3-05B4 confidential token exchange gate", () => {
     const errors: CodeExchangeInput[] = [
       { ...google, client: { ...google.client, clientSecret: "" } },
       { ...google, client: { ...google.client, clientSecret: "short" } },
-      { ...google, client: { ...google.client, clientSecret: "secret\nunsafe" } },
+      {
+        ...google,
+        client: { ...google.client, clientSecret: "secret\nunsafe" },
+      },
       { ...google, code: "\r\nAuthorization: Bearer attacker" },
       { ...google, code: "tiny" },
       { ...google, grant: { ...google.grant, codeVerifier: "unsafe" } },
       { ...google, grant: { ...google.grant, oidcNonce: "unsafe" } },
-      { ...google, grant: { ...google.grant, redirectUri: "http://localhost/callback" } },
-      { ...google, grant: { ...google.grant, redirectUri: google.grant.redirectUri + "?next=evil" } },
+      {
+        ...google,
+        grant: { ...google.grant, redirectUri: "http://localhost/callback" },
+      },
+      {
+        ...google,
+        grant: {
+          ...google.grant,
+          redirectUri: google.grant.redirectUri + "?next=evil",
+        },
+      },
       { ...google, client: { ...google.client, provider: "MICROSOFT_365" } },
-      { ...microsoft, client: { ...microsoft.client, microsoftTenantId: "common" } },
-      { ...microsoft, client: { ...microsoft.client, microsoftTenantId: "00000000-0000-0000-0000-000000000000" } },
+      {
+        ...microsoft,
+        client: { ...microsoft.client, microsoftTenantId: "common" },
+      },
+      {
+        ...microsoft,
+        client: {
+          ...microsoft.client,
+          microsoftTenantId: "00000000-0000-0000-0000-000000000000",
+        },
+      },
     ];
     for (const x of errors)
       expect(() => prepareOAuthCodeExchange(x)).toThrow(
@@ -90,7 +111,9 @@ describe("F4.3-05B4 confidential token exchange gate", () => {
       calls.push([url, init]);
       return reply();
     };
-    const result = await new EmailOAuthConfidentialExchange(request).exchange(google);
+    const result = await new EmailOAuthConfidentialExchange(request).exchange(
+      google
+    );
     expect(result).toEqual({
       idToken: material.id_token,
       accessToken: material.access_token,
@@ -111,9 +134,18 @@ describe("F4.3-05B4 confidential token exchange gate", () => {
   it("rejects provider errors, redirects, non-JSON, missing tokens and bad expiry", async () => {
     const responses = [
       new Response("authorization denied", { status: 400 }),
-      new Response(null, { status: 302, headers: { Location: "https://evil.example" } }),
-      new Response("<html/>", { status: 200, headers: { "content-type": "text/html" } }),
-      new Response("not-json", { status: 200, headers: { "content-type": "application/json" } }),
+      new Response(null, {
+        status: 302,
+        headers: { Location: "https://evil.example" },
+      }),
+      new Response("<html/>", {
+        status: 200,
+        headers: { "content-type": "text/html" },
+      }),
+      new Response("not-json", {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
       reply({ ...material, refresh_token: undefined }),
       reply({ ...material, id_token: undefined }),
       reply({ ...material, token_type: "MAC" }),
@@ -121,7 +153,9 @@ describe("F4.3-05B4 confidential token exchange gate", () => {
     ];
     for (const response of responses) {
       const client = new EmailOAuthConfidentialExchange(async () => response);
-      await expect(client.exchange(google)).rejects.toThrow("EMAIL_OAUTH_EXCHANGE_REJECTED");
+      await expect(client.exchange(google)).rejects.toThrow(
+        "EMAIL_OAUTH_EXCHANGE_REJECTED"
+      );
     }
   });
   it("rejects oversized bodies and never retries failed exchanges", async () => {
@@ -132,11 +166,15 @@ describe("F4.3-05B4 confidential token exchange gate", () => {
         "content-length": "999999",
       },
     });
-    await expect(new EmailOAuthConfidentialExchange(async () => headerOverflow)
-      .exchange(google)).rejects.toThrow("EMAIL_OAUTH_EXCHANGE_REJECTED");
+    await expect(
+      new EmailOAuthConfidentialExchange(async () => headerOverflow).exchange(
+        google
+      )
+    ).rejects.toThrow("EMAIL_OAUTH_EXCHANGE_REJECTED");
     const overflow = reply({ ...material, padding: "X".repeat(65536) });
-    await expect(new EmailOAuthConfidentialExchange(async () => overflow)
-      .exchange(google)).rejects.toThrow("EMAIL_OAUTH_EXCHANGE_REJECTED");
+    await expect(
+      new EmailOAuthConfidentialExchange(async () => overflow).exchange(google)
+    ).rejects.toThrow("EMAIL_OAUTH_EXCHANGE_REJECTED");
     let attempts = 0;
     const badNetwork = new EmailOAuthConfidentialExchange(async () => {
       attempts += 1;
