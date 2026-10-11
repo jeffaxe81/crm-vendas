@@ -159,9 +159,7 @@ export function EmailProviderPreferencePanel({
           </p>
           <button
             type="submit"
-            disabled={
-              busy || loading || selected === preference.providerCode
-            }
+            disabled={busy || loading || selected === preference.providerCode}
           >
             {busy ? "Salvando..." : "Salvar preferência"}
           </button>
