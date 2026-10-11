@@ -13,12 +13,15 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
   let organizationId: string;
   let otherOrganizationId: string;
   let adminId: string;
+  let sessionId: string;
+  let otherSessionId: string;
   let otherAdminId: string;
   let sellerId: string;
 
   const context = () => ({
     organizationId,
     actorUserId: adminId,
+    sessionId,
     requestId: "test-oauth-pending",
   });
   const intent = (provider: "GMAIL" | "MICROSOFT_365" = "GMAIL") =>
@@ -99,6 +102,26 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
         { organizationId: otherOrganizationId, userId: adminId, role: "ADMIN" },
       ],
     });
+    sessionId = (
+      await owner.refreshSession.create({
+        data: {
+          organizationId,
+          userId: adminId,
+          tokenHash: "oauth-pending-refresh-token-A",
+          expiresAt: new Date(Date.now() + 3600000),
+        },
+      })
+    ).id;
+    otherSessionId = (
+      await owner.refreshSession.create({
+        data: {
+          organizationId,
+          userId: adminId,
+          tokenHash: "oauth-pending-refresh-token-B",
+          expiresAt: new Date(Date.now() + 3600000),
+        },
+      })
+    ).id;
   });
 
   afterAll(async () => {
@@ -115,7 +138,7 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     const stored = await app.withTenant(
       organizationId,
       tx =>
-        tx.$queryRaw<{ state_hash: string; encrypted_code_verifier: string }[]>`
+        tx.$queryRaw<{ state_hash: string; encrypted_code_verifier: string; encrypted_nonce: string; session_id: string }[]>`
         SELECT state_hash, encrypted_code_verifier
         FROM public.email_oauth_pending_grants
       `
@@ -126,6 +149,8 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     expect(JSON.stringify(stored)).not.toContain(
       created.pendingGrant.codeVerifier
     );
+    expect(JSON.stringify(stored)).not.toContain(created.pendingGrant.oidcNonce);
+    expect(stored[0]?.session_id).toBe(sessionId);
     expect(
       await app.$queryRaw`SELECT * FROM public.email_oauth_pending_grants`
     ).toEqual([]);
@@ -138,6 +163,7 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     await expect(store.consume(state, context())).resolves.toEqual({
       provider: "GMAIL",
       codeVerifier: created.pendingGrant.codeVerifier,
+      oidcNonce: created.pendingGrant.oidcNonce,
       redirectUri: callbackUrl,
     });
     await expect(store.consume(state, context())).rejects.toThrow();
@@ -178,6 +204,9 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
         ...context(),
         actorUserId: otherAdminId,
       })
+    ).rejects.toThrow();
+    await expect(
+      store.consume(state, { ...context(), sessionId: otherSessionId })
     ).rejects.toThrow();
     await expect(
       store.consume(state, {
@@ -230,6 +259,24 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     await expect(store.consume(state, context())).resolves.toMatchObject({
       provider: "GMAIL",
     });
+  });
+
+  it("rejects revoked or expired sessions without consuming state", async () => {
+    await select();
+    const created = intent();
+    const state = new URL(created.authorizationUrl).searchParams.get("state")!;
+    await store.stage(created.pendingGrant, context());
+    await owner.refreshSession.update({
+      where: { id: sessionId },
+      data: { revokedAt: new Date() },
+    });
+    await expect(store.consume(state, context())).rejects.toThrow();
+    await expect(store.stage(intent().pendingGrant, context())).rejects.toThrow();
+    await owner.refreshSession.update({
+      where: { id: sessionId },
+      data: { revokedAt: null, expiresAt: new Date(Date.now() - 10000) },
+    });
+    await expect(store.consume(state, context())).rejects.toThrow();
   });
 
   it("rejects expiration and invalid state without leaking the verifier", async () => {
@@ -295,6 +342,24 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     ).toHaveLength(1);
   });
 
+  it("rejects tampered OIDC nonce ciphertext without consuming state", async () => {
+    await select();
+    const created = intent();
+    const state = new URL(created.authorizationUrl).searchParams.get("state")!;
+    await store.stage(created.pendingGrant, context());
+    await app.withTenant(organizationId, tx =>
+      tx.$executeRaw`
+        UPDATE public.email_oauth_pending_grants
+        SET encrypted_nonce = 'v1.' || repeat('A', 70)
+      `
+    );
+    await expect(store.consume(state, context())).rejects.toThrow();
+    const rows = await app.withTenant(organizationId, tx =>
+      tx.$queryRaw`SELECT state_hash FROM public.email_oauth_pending_grants`
+    );
+    expect(rows).toHaveLength(1);
+  });
+
   it("fails closed with an absent/invalid encryption key and mismatched binding", async () => {
     expect(() => new EmailOAuthPendingGrantStore(app, "short")).toThrow();
     await select();
@@ -314,6 +379,12 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
           ...created.pendingGrant,
           codeVerifier: "NOT_PKCE",
         },
+        context()
+      )
+    ).rejects.toThrow();
+    await expect(
+      store.stage(
+        { ...created.pendingGrant, oidcNonce: "NOT_NONCE" },
         context()
       )
     ).rejects.toThrow();
