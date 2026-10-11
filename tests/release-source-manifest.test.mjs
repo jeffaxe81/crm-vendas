@@ -41,7 +41,10 @@ test("release source manifest records only a verified main push", () => {
     "https://github.com/jeffaxe81/crm-vendas/actions/runs/38163356312/attempts/1"
   );
   assert.deepEqual(result.filesSha256, fileHashes);
-  assert.doesNotMatch(JSON.stringify(result), /credential|access_token|password/i);
+  assert.doesNotMatch(
+    JSON.stringify(result),
+    /credential|access_token|password/i
+  );
 });
 
 test("release source manifest rejects non-main events and forged HEAD", () => {
