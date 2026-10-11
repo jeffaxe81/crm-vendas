@@ -83,17 +83,20 @@ test("external smoke accepts matching HTTPS origin with explicit CA", () => {
   assert.doesNotMatch(result.stdout, /\[FALHA\]/);
 });
 
-test("external smoke blocks redirect to an attacker-controlled hostname", () => {
+test("external smoke blocks a foreign redirect hostname", () => {
   const result = executeSmoke({
     MOCK_REDIRECT: "https://127.0.0.1.attacker.invalid/",
   });
   assert.equal(result.error, undefined);
   assert.equal(result.status, 1, result.stderr + result.stdout);
   assert.match(result.stdout, /Redirecionamento inesperado/);
-  assert.doesNotMatch(result.stdout, /HTTP redireciona para o CRM HTTPS esperado/);
+  assert.doesNotMatch(
+    result.stdout,
+    /HTTP redireciona para o CRM HTTPS esperado/
+  );
 });
 
-test("external smoke blocks redirect to another port and insecure HTTP origin", () => {
+test("external smoke blocks a different port or HTTP redirect", () => {
   for (const redirect of ["https://127.0.0.1:8443/", "http://127.0.0.1/"]) {
     const result = executeSmoke({ MOCK_REDIRECT: redirect });
     assert.equal(result.error, undefined);
@@ -102,7 +105,7 @@ test("external smoke blocks redirect to another port and insecure HTTP origin", 
   }
 });
 
-test("external smoke rejects an untrusted HTTPS certificate despite 301 redirect", () => {
+test("external smoke rejects an untrusted TLS certificate", () => {
   const result = executeSmoke({ MOCK_TLS_FAILED: "1" });
   assert.equal(result.error, undefined);
   assert.equal(result.status, 1, result.stderr + result.stdout);
