@@ -61,6 +61,8 @@ describe("backup inventory coverage", () => {
     expect(policy("AuditLog").restore).toBe("PRESERVE");
     expect(policy("EmailRelaySettings").export).toBe("EXCLUDE");
     expect(policy("EmailRelaySettings").restore).toBe("PRESERVE");
+    expect(policy("EmailProviderPreference").export).toBe("EXCLUDE");
+    expect(policy("EmailProviderPreference").restore).toBe("PRESERVE");
     expect(policy("InboundMessage").export).toBe("EXCLUDE");
     expect(policy("InboundMessage").restore).toBe("PRESERVE");
     expect(policy("User").fields).toEqual(["id", "email", "displayName"]);
