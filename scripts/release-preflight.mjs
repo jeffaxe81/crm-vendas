@@ -75,7 +75,8 @@ requireEvidence(
 );
 requireEvidence(
   externalSmoke.includes("CRM_BASE_URL") &&
-    externalSmoke.includes("CA_CERT") &&
+    externalSmoke.includes('opts=(--cacert "$CA_CERT")') &&
+    !externalSmoke.includes("--insecure") &&
     externalSmoke.includes("/api/v1/health"),
   "Smoke test externo nao cobre TLS e health"
 );
