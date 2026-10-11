@@ -57,7 +57,7 @@ function response(status = 200) {
 
 describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
   it("resolves Google identity from signed claims using only pinned keys", async () => {
-    const request = jest.fn(async () => response());
+    const request = jest.fn(async (_url: string | URL | Request, _init?: RequestInit) => response());
     const service = new EmailOAuthOidcIdentityService(
       new EmailOAuthPinnedJwksReader(request),
       () => nowSeconds
@@ -87,7 +87,7 @@ describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
   });
 
   it("resolves Microsoft identity without trusting a sender email claim", async () => {
-    const request = jest.fn(async () => response());
+    const request = jest.fn(async (_url: string | URL | Request, _init?: RequestInit) => response());
     const service = new EmailOAuthOidcIdentityService(
       new EmailOAuthPinnedJwksReader(request),
       () => nowSeconds
@@ -109,7 +109,7 @@ describe("F4.3-05B4 pinned JWKS and OIDC identity composition", () => {
   });
 
   it("rejects malformed JWTs without consulting JWKS endpoint", async () => {
-    const request = jest.fn(async () => response());
+    const request = jest.fn(async (_url: string | URL | Request, _init?: RequestInit) => response());
     const service = new EmailOAuthOidcIdentityService(
       new EmailOAuthPinnedJwksReader(request),
       () => nowSeconds
