@@ -111,14 +111,13 @@ const tampering = [
   },
 ];
 
-test.each(tampering)(
-  "RC preflight fails closed when $name",
-  scenario => {
+for (const scenario of tampering) {
+  test(`RC preflight fails closed when ${scenario.name}`, () => {
     const { result, report } = preflight(scenario);
     assert.equal(result.status, 1, scenario.name);
     assert.equal(report.status, "BLOCKED");
     assert.equal(report.productionApproved, false);
     assert.ok(report.errors.length >= 1, scenario.name);
     assert.ok(report.operationalChecksPending.length >= 5);
-  }
-);
+  });
+}
