@@ -98,6 +98,7 @@ jobs:
         run: |
           pnpm exec prettier --write scripts/release-preflight.mjs docs/releases/2026-10-11-crm-rc-fasttrack-go-no-go.md
           git diff --no-color -- scripts/release-preflight.mjs docs/releases/2026-10-11-crm-rc-fasttrack-go-no-go.md
+          exit 1 # temporary: capture formatter diff early
 
       - name: Validate RC code preflight
         run: pnpm release:preflight
