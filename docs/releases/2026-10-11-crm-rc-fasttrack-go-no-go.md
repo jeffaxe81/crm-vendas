@@ -1,6 +1,7 @@
 # CRM-Vendas — corte acelerado / Go-No-Go (11/10/2026)
 
 ## Objetivo
+
 Entregar **o CRM comercial integrado à main** como **preview interno**
 sem condicionar a liberação aos novos provedores OAuth. A antecipação
 de quatro semanas em relação à meta 25/10 cai em 27/09 (data passada):
@@ -62,7 +63,8 @@ preservar a versão instalada.
    ambiente, operações e segurança. A meta não substitui evidências.
 
 ## Situação inicial
-**CÓDIGO: CI PASSOU.  PREVIEW: PENDENTE.  PRODUÇÃO: NÃO HOMOLOGADA.**
+
+**CÓDIGO: CI PASSOU. PREVIEW: PENDENTE. PRODUÇÃO: NÃO HOMOLOGADA.**
 
 Este arquivo é um registro de decisão/auditoria, não uma etiqueta SemVer,
 tag de release ou comprovante de instalação.
