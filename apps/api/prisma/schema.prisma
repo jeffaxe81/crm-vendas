@@ -142,6 +142,7 @@ enum TicketEventType {
 }
 
 model Organization {
+  emailRelaySettings EmailRelaySettings?
   emailOutbox EmailOutbox[]
   webhookSubscriptions WebhookSubscription[]
   webhookDispatches WebhookDispatch[]
@@ -1097,6 +1098,19 @@ model BackupSchedule {
   @@map("backup_schedules")
 }
 
+
+/// F4.3-02D1 — configuration staging only; never enables a sender.
+model EmailRelaySettings {
+  organizationId String @id @map("organization_id") @db.Uuid
+  endpoint String? @db.VarChar(512)
+  encryptedBearerToken String? @map("encrypted_bearer_token") @db.Text
+  mode String @default("DISABLED") @db.VarChar(24)
+  version Int @default(1)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@map("email_relay_settings")
+}
 
 /// F4.3-02 — email outbox; encrypted content never enters backups.
 model EmailOutbox {

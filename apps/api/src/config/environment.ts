@@ -71,6 +71,25 @@ const ApiEnvironmentSchema = z
         }, "EMAIL_OUTBOX_ENCRYPTION_KEY requer 32 bytes em base64 canônico.")
         .optional()
     ),
+    // Control-plane only: never connects email transport automatically.
+    EMAIL_RELAY_SETTINGS_ENCRYPTION_KEY: z.preprocess(
+      blankToUndefined,
+      z
+        .string()
+        .refine(value => {
+          const bytes = Buffer.from(value, "base64");
+          return bytes.length === 32 && bytes.toString("base64") === value;
+        }, "EMAIL_RELAY_SETTINGS_ENCRYPTION_KEY requer 32 bytes em base64 canônico.")
+        .optional()
+    ),
+    EMAIL_RELAY_ALLOWED_HOSTNAME: z.preprocess(
+      blankToUndefined,
+      z
+        .string()
+        .regex(/^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/)
+        .max(253)
+        .optional()
+    ),
     WEBHOOK_ENCRYPTION_KEY: z.preprocess(
       blankToUndefined,
       z
