@@ -103,7 +103,10 @@ export function verifyOfflineOidcIdToken(
   const now = input.nowSeconds === undefined
     ? Math.floor(Date.now() / 1000)
     : timestamp(input.nowSeconds);
-  const [headerRaw, claimsRaw, signatureRaw] = token.split(".");
+  const segments = token.split(".");
+  const headerRaw = segments[0]!;
+  const claimsRaw = segments[1]!;
+  const signatureRaw = segments[2]!;
   const header = jsonPart(headerRaw, 2048);
   const claims = jsonPart(claimsRaw, 8192);
   const signature = part(signatureRaw, 1024);
