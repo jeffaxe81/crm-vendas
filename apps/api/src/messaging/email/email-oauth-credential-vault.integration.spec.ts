@@ -270,7 +270,9 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
         data: { providerCode: "GMAIL", version: { increment: 1 } },
       })
     );
-    await expect(vault.stageVerified(credential(), context())).rejects.toThrow();
+    await expect(
+      vault.stageVerified(credential(), context())
+    ).rejects.toThrow();
     expect(await vault.status("GMAIL", context())).toMatchObject({
       version: 0,
       connectionStatus: "NOT_CONNECTED",
@@ -309,7 +311,9 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
       hasEncryptedCredential: false,
       sendingEnabled: false,
     });
-    await expect(vault.stageVerified(credential(1), context())).rejects.toThrow();
+    await expect(
+      vault.stageVerified(credential(1), context())
+    ).rejects.toThrow();
     expect(
       await vault.stageVerified(
         { ...credential(1), expectedProviderPreferenceVersion: 2 },
@@ -321,8 +325,10 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
   it("fails closed for legacy encrypted credentials without revision binding", async () => {
     await selectProvider();
     await vault.stageVerified(credential(), context());
-    await app.withTenant(organizationId, tx =>
-      tx.$executeRaw`
+    await app.withTenant(
+      organizationId,
+      tx =>
+        tx.$executeRaw`
         UPDATE public.email_oauth_credentials
         SET provider_preference_version = NULL
       `
