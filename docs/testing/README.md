@@ -28,9 +28,13 @@ genérico de cobertura.
 
 ### Execução no GitHub Actions
 
-O mesmo gate `verify` executa em PRs destinadas à `main` e em cada `push`
-na `main` após a integração, com opção de execução manual
-(`workflow_dispatch`). Um CI verde de PR não substitui a verificação do
+O mesmo gate `verify` executa em **todas as PRs** (inclusive PRs
+empilhadas, destinadas a branches de recurso), em cada `push` na `main` após
+a integração e sob execução manual (`workflow_dispatch`). O token do workflow
+continua limitado a `contents: read`; uma PR não recebe credenciais reais.
+Para PRs empilhadas, o CI prova apenas o diff combinado com a branch-base
+selecionada. Após integrar a PR anterior, redirecionar a seguinte para `main`
+e revalidar o SHA exato da PR antes do merge. Um CI verde de PR não substitui a verificação do
 commit de merge, pois o conteúdo final pode diferir dos HEADs validados.
 
 Acompanhar a execução de `push` com `head_sha` igual ao SHA atual da
