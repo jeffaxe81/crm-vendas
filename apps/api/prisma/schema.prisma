@@ -142,6 +142,7 @@ enum TicketEventType {
 }
 
 model Organization {
+  inboundMessages InboundMessage[]
   emailRelaySettings EmailRelaySettings?
   emailOutbox EmailOutbox[]
   webhookSubscriptions WebhookSubscription[]
@@ -1110,6 +1111,25 @@ model EmailRelaySettings {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
 
   @@map("email_relay_settings")
+}
+
+/// F4.3-03A — metadata-only inbound envelope. No raw message or recipient fields.
+/// Content, if ever accepted, needs a separate encrypted-storage design.
+model InboundMessage {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @map("organization_id") @db.Uuid
+  channel String @default("EMAIL") @db.VarChar(16)
+  sourceKey String @map("source_key") @db.VarChar(80)
+  externalIdHash String @map("external_id_hash") @db.VarChar(64)
+  status String @default("QUARANTINED") @db.VarChar(24)
+  receivedAt DateTime @default(now()) @map("received_at") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, channel, sourceKey, externalIdHash], map: "inbound_messages_org_source_external_key")
+  @@index([organizationId, status, receivedAt], map: "inbound_messages_org_status_received_idx")
+  @@map("inbound_messages")
 }
 
 /// F4.3-02 — email outbox; encrypted content never enters backups.
