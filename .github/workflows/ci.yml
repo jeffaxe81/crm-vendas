@@ -93,6 +93,9 @@ jobs:
       - name: Verify foundation
         run: pnpm verify:foundation
 
+      - name: Validate RC code preflight
+        run: pnpm release:preflight
+
       - name: Check formatting
         run: pnpm format:check
 
