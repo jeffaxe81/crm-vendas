@@ -95,7 +95,12 @@ jobs:
         run: pnpm verify:foundation
 
       - name: Check formatting
-        run: pnpm format:check
+        run: |
+          pnpm format:check || {
+            pnpm exec prettier --write apps/api/src/messaging/email/email-oauth-client-registry.ts apps/api/src/messaging/email/email-oauth-client-registry.spec.ts docs/superpowers/plans/2026-10-11-f4-3-04b4-oauth-client-registry.md
+            git diff -- apps/api/src/messaging/email/email-oauth-client-registry.ts apps/api/src/messaging/email/email-oauth-client-registry.spec.ts docs/superpowers/plans/2026-10-11-f4-3-04b4-oauth-client-registry.md
+            exit 1
+          }
 
       - name: Lint source
         run: pnpm lint
