@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Inject,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -47,6 +48,25 @@ export class EmailRelayEvidenceController {
       throw new BadRequestException({ code: "EMAIL_EVIDENCE_INVALID_INPUT" });
     }
     return this.evidence.record(parsed.data, this.context(request));
+  }
+
+  @Post(":evidenceId/review")
+  review(
+    @Param("evidenceId") evidenceId: string,
+    @Body() body: unknown,
+    @Req() request: AuthenticatedRequest
+  ) {
+    const parsed = z
+      .object({ decision: z.enum(["CHECKED", "REJECTED"]) })
+      .strict()
+      .safeParse(body);
+    if (!parsed.success) {
+      throw new BadRequestException({ code: "EMAIL_EVIDENCE_REVIEW_INVALID" });
+    }
+    return this.evidence.review(
+      { evidenceId, decision: parsed.data.decision },
+      this.context(request)
+    );
   }
 
   private context(request: AuthenticatedRequest): EmailRelaySettingsContext {

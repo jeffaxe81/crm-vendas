@@ -50,6 +50,15 @@ type EvidenceRecord = {
   actorUserId: string | null;
   createdAt: string;
   verification: "SUBMITTED_UNVERIFIED";
+  settingsVersion: number | null;
+  review?: {
+    decision: "CHECKED" | "REJECTED";
+    reviewerUserId: string | null;
+    reviewedAt: string;
+    settingsVersion: number;
+    currentConfiguration: boolean;
+    verification: "REVIEWED_NOT_CERTIFIED";
+  };
 };
 
 function describeStatus(status: ReadinessState) {
@@ -65,8 +74,10 @@ function describeStatus(status: ReadinessState) {
 
 export function EmailRelayDiagnosticsPanel({
   accessToken,
+  currentUserId,
 }: {
   accessToken: string;
+  currentUserId: string;
 }) {
   const [readiness, setReadiness] = useState<Readiness | null>(null);
   const [settings, setSettings] = useState<RelaySettings | null>(null);
@@ -153,6 +164,35 @@ export function EmailRelayDiagnosticsPanel({
     }
   }
 
+  async function reviewEvidence(
+    evidenceId: string,
+    decision: "CHECKED" | "REJECTED"
+  ) {
+    if (busy || loading) return;
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      await apiRequest(`/admin/email/relay-evidence/${evidenceId}/review`, {
+        accessToken,
+        method: "POST",
+        body: { decision },
+      });
+      setNotice(
+        "Análise independente registrada. O relay continua sem homologação ou envio."
+      );
+      setReload(value => value + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível registrar a revisão independente."
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <section
       className="activities-view"
@@ -219,7 +259,9 @@ export function EmailRelayDiagnosticsPanel({
           <p>
             Registre somente a referência opaca do chamado ou artefato. Não
             informe URLs, senhas, tokens, documentos ou dados pessoais. O
-            registro fica auditado e permanece não verificado.
+            registro fica auditado e permanece não verificado. Outro
+            administrador poderá analisar ou rejeitar a referência; nenhuma das
+            opções certifica o provedor ou libera o envio.
           </p>
           <form
             className="activity-form"
@@ -276,6 +318,42 @@ export function EmailRelayDiagnosticsPanel({
                   : <code>{item.reference}</code> — Registrada, não verificada
                   {" · "}
                   {new Date(item.createdAt).toLocaleString("pt-BR")}
+                  {" · "}
+                  Versão {item.settingsVersion ?? "legada"}
+                  {item.review ? (
+                    <p>
+                      Revisão independente:{" "}
+                      {item.review.decision === "CHECKED"
+                        ? "Analisada, não certificada"
+                        : "Rejeitada"}
+                      {" · "}
+                      {new Date(item.review.reviewedAt).toLocaleString("pt-BR")}
+                      {!item.review.currentConfiguration
+                        ? " · Configuração modificada após a revisão"
+                        : ""}
+                    </p>
+                  ) : item.actorUserId !== currentUserId &&
+                    item.settingsVersion !== null &&
+                    item.settingsVersion === settings?.version ? (
+                    <div className="support-queues__actions">
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => void reviewEvidence(item.id, "CHECKED")}
+                      >
+                        Registrar análise independente
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => void reviewEvidence(item.id, "REJECTED")}
+                      >
+                        Rejeitar referência
+                      </button>
+                    </div>
+                  ) : (
+                    <p>Revisão requer outro administrador e a versão atual.</p>
+                  )}
                 </li>
               ))}
             </ul>

@@ -203,6 +203,7 @@ export default function Home() {
             session.permissions.includes("integration.read") ? (
             <IntegrationCredentialsView
               accessToken={session.accessToken}
+              currentUserId={session.user.id}
               permissions={session.permissions}
             />
           ) : activeSection === "companies" ? (
