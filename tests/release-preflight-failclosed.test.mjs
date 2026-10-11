@@ -107,8 +107,7 @@ const tampering = [
   {
     name: "browser E2E gate omitted",
     path: ".github/workflows/ci.yml",
-    mutate: code =>
-      code.replace("Run end-to-end test", "Browser test skipped"),
+    mutate: code => code.replace("Run end-to-end test", "Browser test skipped"),
   },
   {
     name: "rollback approval removed from deploy guide",
