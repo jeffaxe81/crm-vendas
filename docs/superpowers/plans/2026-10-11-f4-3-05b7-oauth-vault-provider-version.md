@@ -15,3 +15,7 @@ F4.3-05B6 impede o consumo de um estado OAuth depois da mudança da preferência
 ## Limites operacionais
 
 A alteração é **offline**: sem controller de conexão, sem OAuth em produção, sem envio real e sem exposição de senhas ou refresh tokens. O `EmailModule` continua com `DisabledEmailProvider`. O código depende da cadeia de PRs OAuth até F4.3-05B6 (#158). Revisão humana e CI são obrigatórios antes de integrar a `main`.
+
+## Verificação de segurança adicional
+
+Uma preferência de provedor alterada deve tornar uma credencial previamente cifrada indisponível em consultas de status; apenas nova verificação OIDC e gravação com a versão corrente poderá atualizar o cofre. Uma conta antiga permanece armazenada somente para revogação/limpeza local, nunca para disparo de mensagens.
