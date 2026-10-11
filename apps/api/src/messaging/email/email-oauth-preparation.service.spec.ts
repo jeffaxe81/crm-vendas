@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { EmailOAuthPreparationService } from "./email-oauth-preparation.service";
 import type { EmailOAuthClientResolver } from "./email-oauth-preparation.service";
 import type { EmailOAuthProvider } from "./email-oauth-authorization-intent";
