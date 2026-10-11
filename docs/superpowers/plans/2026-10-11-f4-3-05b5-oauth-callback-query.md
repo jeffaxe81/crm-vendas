@@ -30,5 +30,6 @@ O parse do `state` verifica somente o formato base64url de 43 caracteres. A prov
 - `DisabledEmailProvider` permanece ativo.
 
 Referências oficiais:
+
 - https://developers.google.com/identity/protocols/oauth2/web-server
 - https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow
