@@ -31,14 +31,18 @@ const Resolution = z.discriminatedUnion("decision", [
   z
     .object({
       decision: z.literal("CONFIRMED_ACCEPTED"),
-      evidenceReference: z.string().regex(EMAIL_MANUAL_REVIEW_REFERENCE_PATTERN),
+      evidenceReference: z
+        .string()
+        .regex(EMAIL_MANUAL_REVIEW_REFERENCE_PATTERN),
       providerMessageId: z.string().regex(/^[A-Za-z0-9._:-]{1,200}$/),
     })
     .strict(),
   z
     .object({
       decision: z.literal("CONFIRMED_NOT_ACCEPTED"),
-      evidenceReference: z.string().regex(EMAIL_MANUAL_REVIEW_REFERENCE_PATTERN),
+      evidenceReference: z
+        .string()
+        .regex(EMAIL_MANUAL_REVIEW_REFERENCE_PATTERN),
     })
     .strict(),
 ]);
