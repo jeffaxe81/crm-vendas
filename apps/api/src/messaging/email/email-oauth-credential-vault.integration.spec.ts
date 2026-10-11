@@ -298,8 +298,12 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
         data: { version: { increment: 1 } },
       })
     );
-    await expect(vault.stageVerified(credential(), context())).rejects.toThrow();
-    expect(await vault.status("GMAIL", context())).toMatchObject({ version: 0 });
+    await expect(
+      vault.stageVerified(credential(), context())
+    ).rejects.toThrow();
+    expect(await vault.status("GMAIL", context())).toMatchObject({
+      version: 0,
+    });
   });
 
   it("local deletion purges encrypted credentials and pending grants", async () => {
