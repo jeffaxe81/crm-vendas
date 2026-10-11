@@ -15,3 +15,14 @@ test("repository pins the supported toolchain", async () => {
   assert.equal(nodeVersion, "24.20.0");
   assert.equal(pkg.private, true);
 });
+
+test("CI verifies PRs and merged main commits", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/ci.yml", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(workflow, /^on:\n  push:\n    branches:\n      - main\n/m);
+  assert.match(workflow, /^  pull_request:\n    branches:\n      - main\n/m);
+  assert.match(workflow, /^  workflow_dispatch:\s*$/m);
+});
