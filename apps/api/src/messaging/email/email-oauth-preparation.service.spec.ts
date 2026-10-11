@@ -5,9 +5,7 @@ import type {
   EmailOAuthProvider,
   EmailOAuthStartInput,
 } from "./email-oauth-authorization-intent";
-import type {
-  EmailOAuthGrantContext,
-} from "./email-oauth-pending-grant-store";
+import type { EmailOAuthGrantContext } from "./email-oauth-pending-grant-store";
 import type { PrismaService } from "../../database/prisma.service";
 
 const organizationId = "00000000-0000-4000-8000-000000000001";
