@@ -152,8 +152,11 @@ export function verifyOfflineOidcIdToken(
     denied();
   }
 
+  const claimedIssuer = claims.iss;
+  // Google issues either accepted issuer form; Microsoft uses the exact tenant v2 issuer.
   if (
-    claims.iss !== issuer ||
+    typeof claimedIssuer !== "string" ||
+    !(claimedIssuer === issuer || (input.provider === "GMAIL" && claimedIssuer === "accounts.google.com")) ||
     claims.aud !== input.clientId ||
     (claims.azp !== undefined && claims.azp !== input.clientId) ||
     claims.nonce !== input.oidcNonce ||
@@ -194,7 +197,7 @@ export function verifyOfflineOidcIdToken(
   ) denied();
   return {
     provider: input.provider,
-    issuer,
+    issuer: claimedIssuer,
     audience: input.clientId,
     subject: claims.sub,
     verifiedEmail: claims.email.toLowerCase(),
