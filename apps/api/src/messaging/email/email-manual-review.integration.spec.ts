@@ -165,7 +165,7 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
         {
           decision: "CONFIRMED_ACCEPTED",
           providerMessageId: "relay-2",
-          evidenceReference: "relay/case-123456",
+          evidenceReference: "RELAY-CASE-123456",
         },
         context()
       )
@@ -181,10 +181,43 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
     expect(row.status).toBe("MANUAL_REVIEW");
   });
 
+  it("does not record URL-shaped, email or sensitive-path evidence", async () => {
+    const invalid = [
+      "https://relay.example.test/receipt",
+      "http://relay.example.test/receipt",
+      "relay/private/path",
+      "relay#receipt-2026",
+      "alice@example.test",
+      "RELAY TICKET 001",
+      "RELAY-001\\nsecret",
+      "SHORT",
+    ];
+    for (const evidenceReference of invalid) {
+      await expect(
+        service.resolve(
+          reviewId,
+          { decision: "CONFIRMED_NOT_ACCEPTED", evidenceReference },
+          context()
+        )
+      ).rejects.toThrow("INVALID_EMAIL_REVIEW_INPUT");
+    }
+    const row = await app.withTenant(organizationId, tx =>
+      tx.emailOutbox.findFirstOrThrow({ where: { id: reviewId } })
+    );
+    expect(row.status).toBe("MANUAL_REVIEW");
+    expect(
+      await app.withTenant(organizationId, tx =>
+        tx.auditLog.findMany({
+          where: { action: "email.manual_review.resolve" },
+        })
+      )
+    ).toEqual([]);
+  });
+
   it("records accepted receipt once with audit", async () => {
     const resolution = {
       decision: "CONFIRMED_ACCEPTED" as const,
-      evidenceReference: "relay/acceptance-001",
+      evidenceReference: "RELAY-ACCEPTANCE-001",
       providerMessageId: "relay-message-001",
     };
     expect(await service.resolve(reviewId, resolution, context())).toEqual({
@@ -230,7 +263,7 @@ describe("F4.3-02B2C manual email reconciliation (PostgreSQL RLS)", () => {
         reviewId,
         {
           decision: "CONFIRMED_NOT_ACCEPTED",
-          evidenceReference: "relay/rejected-001",
+          evidenceReference: "RELAY-REJECTED-001",
         },
         context()
       )
