@@ -125,7 +125,9 @@ export class EmailProviderPreferenceService {
         where: { organizationId: context.organizationId },
       });
       if ((previous?.version ?? 0) !== input.version) {
-        throw new ConflictException({ code: "EMAIL_PROVIDER_VERSION_CONFLICT" });
+        throw new ConflictException({
+          code: "EMAIL_PROVIDER_VERSION_CONFLICT",
+        });
       }
       if (!previous) {
         const created = await tx.emailProviderPreference.createMany({
