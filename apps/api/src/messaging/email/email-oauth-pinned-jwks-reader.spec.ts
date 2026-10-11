@@ -17,62 +17,56 @@ function response(body: unknown = { keys: [key] }, status = 200) {
   });
 }
 
-function fakeRequest(
-  handler: (
-    _url: string | URL | Request,
-    _init?: RequestInit
-  ) => Promise<Response>
-) {
-  const calls: Array<[string | URL | Request, RequestInit | undefined]> = [];
-  const oneShot: Array<() => Promise<Response>> = [];
-  const request = async (url: string | URL | Request, init?: RequestInit) => {
-    calls.push([url, init]);
-    const next = oneShot.shift();
-    return next ? next() : handler(url, init);
+type RequestCall = { url: string | URL | Request; init?: RequestInit };
+
+function trackRequests() {
+  const calls: RequestCall[] = [];
+  const queued: Array<() => Response> = [];
+  async function request(
+    url: string | URL | Request,
+    init?: RequestInit
+  ): Promise<Response> {
+    calls.push({ url, init });
+    return (queued.shift() ?? (() => response()))();
+  }
+  return {
+    request,
+    calls,
+    enqueue: (reply: () => Response) => queued.push(reply),
   };
-  return Object.assign(request, {
-    mock: { calls },
-    mockImplementationOnce(next: () => Promise<Response>) {
-      oneShot.push(next);
-    },
-  });
 }
 
 describe("F4.3-05B3 pinned JWKS reader", () => {
   it("pins Google endpoint, disables redirects and caches keys", async () => {
-    const request = fakeRequest(
-      async (_url: string | URL | Request, _init?: RequestInit) => response()
-    );
+    const tracked = trackRequests();
     let now = 1000;
-    const reader = new EmailOAuthPinnedJwksReader(request, () => now);
+    const reader = new EmailOAuthPinnedJwksReader(tracked.request, () => now);
     const first = await reader.getTrustedKeys(google);
     expect(first).toHaveLength(1);
-    expect(request.mock.calls[0]?.[0]).toBe(
+    expect(tracked.calls[0]?.url).toBe(
       "https://www.googleapis.com/oauth2/v3/certs"
     );
-    expect(request.mock.calls[0]?.[1]).toMatchObject({
+    expect(tracked.calls[0]?.init).toMatchObject({
       method: "GET",
       redirect: "manual",
       cache: "no-store",
       credentials: "omit",
     });
     expect(await reader.getTrustedKeys(google)).toBe(first);
-    expect(request.mock.calls).toHaveLength(1);
+    expect(tracked.calls).toHaveLength(1);
     now += 300001;
     await reader.getTrustedKeys(google);
-    expect(request.mock.calls).toHaveLength(2);
+    expect(tracked.calls).toHaveLength(2);
   });
 
   it("pins a tenant-specific Microsoft endpoint and rejects arbitrary tenants", async () => {
-    const request = fakeRequest(
-      async (_url: string | URL | Request, _init?: RequestInit) => response()
-    );
-    const reader = new EmailOAuthPinnedJwksReader(request);
+    const tracked = trackRequests();
+    const reader = new EmailOAuthPinnedJwksReader(tracked.request);
     await reader.getTrustedKeys({
       provider: "MICROSOFT_365",
       microsoftTenantId,
     });
-    expect(request.mock.calls[0]?.[0]).toBe(
+    expect(tracked.calls[0]?.url).toBe(
       "https://login.microsoftonline.com/" +
         microsoftTenantId +
         "/discovery/v2.0/keys"
@@ -89,24 +83,22 @@ describe("F4.3-05B3 pinned JWKS reader", () => {
         microsoftTenantId,
       })
     ).rejects.toThrow("EMAIL_OAUTH_JWKS_UNAVAILABLE");
-    expect(request.mock.calls).toHaveLength(1);
+    expect(tracked.calls).toHaveLength(1);
   });
 
   it("fails closed on unsuccessful rotation, evicting previous keys", async () => {
-    const request = fakeRequest(
-      async (_url: string | URL | Request, _init?: RequestInit) => response()
-    );
-    const reader = new EmailOAuthPinnedJwksReader(request);
+    const tracked = trackRequests();
+    const reader = new EmailOAuthPinnedJwksReader(tracked.request);
     await reader.getTrustedKeys(google);
-    request.mockImplementationOnce(async () => response({}, 503));
+    tracked.enqueue(() => response({}, 503));
     await expect(reader.getTrustedKeys(google, true)).rejects.toThrow(
       "EMAIL_OAUTH_JWKS_UNAVAILABLE"
     );
-    request.mockImplementationOnce(async () => response({ keys: [] }));
+    tracked.enqueue(() => response({ keys: [] }));
     await expect(reader.getTrustedKeys(google)).rejects.toThrow(
       "EMAIL_OAUTH_JWKS_UNAVAILABLE"
     );
-    expect(request.mock.calls).toHaveLength(3);
+    expect(tracked.calls).toHaveLength(3);
   });
 
   it.each([
@@ -126,15 +118,13 @@ describe("F4.3-05B3 pinned JWKS reader", () => {
   });
 
   it("coalesces concurrent HTTPS requests", async () => {
-    const request = fakeRequest(
-      async (_url: string | URL | Request, _init?: RequestInit) => response()
-    );
-    const reader = new EmailOAuthPinnedJwksReader(request);
+    const tracked = trackRequests();
+    const reader = new EmailOAuthPinnedJwksReader(tracked.request);
     const [a, b] = await Promise.all([
       reader.getTrustedKeys(google),
       reader.getTrustedKeys(google),
     ]);
     expect(a).toBe(b);
-    expect(request.mock.calls).toHaveLength(1);
+    expect(tracked.calls).toHaveLength(1);
   });
 });
