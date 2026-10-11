@@ -23,11 +23,11 @@ test("release HTTPS diagnostics have valid Bash syntax without hitting the serve
 
 test("server diagnostics require an accessible CA and never skip HTTPS trust", () => {
   const code = readFileSync(serverScript, "utf8");
-  assert.doesNotMatch(code, /curl\\s+(?:-[a-z]*k\\b|--insecure)/i);
-  assert.match(code, /trusted_code\\(\\)/);
-  assert.match(code, /--cacert "\\$CA"/);
-  assert.match(code, /--resolve "\\$IP:443:127\\.0\\.0\\.1"/);
-  assert.match(code, /-f "\\$CA" && -r "\\$CA"/);
+  assert.doesNotMatch(code, /curl\s+(?:-[a-z]*k\b|--insecure)/i);
+  assert.match(code, /trusted_code\(\)/);
+  assert.match(code, /--cacert "\$CA"/);
+  assert.match(code, /--resolve "\$IP:443:127\.0\.0\.1"/);
+  assert.match(code, /-f "\$CA" && -r "\$CA"/);
   assert.match(code, /FA "CA obrigatória ausente ou ilegível:/);
   assert.match(code, /TLS autenticado/);
   assert.match(code, /HSTS ausente ou TLS não autenticado/);
@@ -36,7 +36,7 @@ test("server diagnostics require an accessible CA and never skip HTTPS trust", (
 test("external smoke and server diagnostics reject insecure TLS bypass", () => {
   const external = readFileSync(externalScript, "utf8");
   const server = readFileSync(serverScript, "utf8");
-  assert.doesNotMatch(external, /--insecure|curl\\s+-[a-z]*k\\b/i);
-  assert.doesNotMatch(server, /--insecure|curl\\s+-[a-z]*k\\b/i);
+  assert.doesNotMatch(external, /--insecure|curl\s+-[a-z]*k\b/i);
+  assert.doesNotMatch(server, /--insecure|curl\s+-[a-z]*k\b/i);
   assert.match(external, /CA_CERT obrigatório/);
 });
