@@ -1,9 +1,14 @@
-import { jest } from "@jest/globals";
 import { EmailOAuthPreparationService } from "./email-oauth-preparation.service";
 import type { EmailOAuthClientResolver } from "./email-oauth-preparation.service";
-import type { EmailOAuthProvider } from "./email-oauth-authorization-intent";
+import type {
+  EmailOAuthPendingGrant,
+  EmailOAuthProvider,
+  EmailOAuthStartInput,
+} from "./email-oauth-authorization-intent";
+import type {
+  EmailOAuthGrantContext,
+} from "./email-oauth-pending-grant-store";
 import type { PrismaService } from "../../database/prisma.service";
-import type { EmailOAuthPendingGrantStore } from "./email-oauth-pending-grant-store";
 
 const organizationId = "00000000-0000-4000-8000-000000000001";
 const actorUserId = "00000000-0000-4000-8000-000000000002";
@@ -17,72 +22,96 @@ const context = {
   authMethod: "session" as const,
 };
 
+type ClientConfig = Pick<
+  EmailOAuthStartInput,
+  "clientId" | "redirectUri" | "microsoftTenantId"
+>;
+
 function harness(options?: {
   admin?: boolean;
   session?: boolean;
   selected?: string;
   configured?: boolean;
 }) {
-  const membership = {
-    findFirst: jest
-      .fn()
-      .mockResolvedValue(
-        options?.admin === false ? null : { id: "membership" }
-      ),
+  const withTenantCalls: string[] = [];
+  const stageCalls: Array<[EmailOAuthPendingGrant, EmailOAuthGrantContext]> = [];
+  const resolverCalls: Array<[string, EmailOAuthProvider]> = [];
+  let stageError: Error | null = null;
+  let overrideClient: ClientConfig | null = null;
+
+  const transaction = {
+    organizationMembership: {
+      findFirst: async () =>
+        options?.admin === false ? null : { id: "membership" },
+    },
+    refreshSession: {
+      findFirst: async () =>
+        options?.session === false ? null : { id: sessionId },
+    },
+    emailProviderPreference: {
+      findFirst: async () => ({
+        providerCode: options?.selected ?? "GMAIL",
+      }),
+    },
   };
-  const session = {
-    findFirst: jest
-      .fn()
-      .mockResolvedValue(options?.session === false ? null : { id: sessionId }),
+  const prisma = {
+    withTenant: async <T>(
+      organization: string,
+      callback: (tx: typeof transaction) => Promise<T>
+    ): Promise<T> => {
+      withTenantCalls.push(organization);
+      return callback(transaction);
+    },
+  } as unknown as PrismaService;
+
+  const grants = {
+    stage: async (
+      grant: EmailOAuthPendingGrant,
+      grantContext: EmailOAuthGrantContext
+    ): Promise<void> => {
+      stageCalls.push([grant, grantContext]);
+      if (stageError) throw stageError;
+    },
   };
-  const preference = {
-    findFirst: jest.fn().mockResolvedValue({
-      providerCode: options?.selected ?? "GMAIL",
-    }),
+
+  const clients: EmailOAuthClientResolver = {
+    resolve: async (organization: string, provider: EmailOAuthProvider) => {
+      resolverCalls.push([organization, provider]);
+      if (options?.configured === false) return undefined;
+      if (overrideClient) return overrideClient;
+      return {
+        clientId:
+          provider === "GMAIL"
+            ? "web-test.apps.googleusercontent.com"
+            : "00000000-0000-4000-8000-000000000005",
+        redirectUri: "https://crm.example.com/admin/email/oauth/callback",
+        ...(provider === "MICROSOFT_365"
+          ? { microsoftTenantId: azureTenant }
+          : {}),
+      };
+    },
   };
-  const withTenant = jest.fn(
-    (_org: string, callback: (tx: unknown) => Promise<unknown>) =>
-      callback({
-        organizationMembership: membership,
-        refreshSession: session,
-        emailProviderPreference: preference,
-      })
-  );
-  const prisma = { withTenant } as unknown as PrismaService;
-  const stage = jest.fn().mockResolvedValue(undefined);
-  const grants = { stage } as unknown as EmailOAuthPendingGrantStore;
-  const resolve = jest.fn(async (_org: string, provider: EmailOAuthProvider) =>
-    options?.configured === false
-      ? undefined
-      : {
-          clientId:
-            provider === "GMAIL"
-              ? "web-test.apps.googleusercontent.com"
-              : "00000000-0000-4000-8000-000000000005",
-          redirectUri: "https://crm.example.com/admin/email/oauth/callback",
-          ...(provider === "MICROSOFT_365"
-            ? { microsoftTenantId: azureTenant }
-            : {}),
-        }
-  );
-  const clients = { resolve } as EmailOAuthClientResolver;
+
   return {
     service: new EmailOAuthPreparationService(prisma, grants, clients),
-    stage,
-    resolve,
-    membership,
-    session,
-    preference,
-    withTenant,
+    withTenantCalls,
+    stageCalls,
+    resolverCalls,
+    failStage(error: Error) {
+      stageError = error;
+    },
+    setClient(value: ClientConfig) {
+      overrideClient = value;
+    },
   };
 }
 
 describe("F4.3-04B3 OAuth preparation remains offline and session-bound", () => {
-  it("stages a Gmail intent without returning plaintext PKCE or tenant identity", async () => {
+  it("stages Gmail without returning plaintext PKCE or tenant identity", async () => {
     const h = harness();
     const result = await h.service.prepare("GMAIL", context);
     const url = new URL(result.authorizationUrl);
-    const staged = h.stage.mock.calls[0]?.[0];
+    const staged = h.stageCalls[0]?.[0];
 
     expect(url.origin).toBe("https://accounts.google.com");
     expect(url.searchParams.get("code_challenge_method")).toBe("S256");
@@ -90,35 +119,37 @@ describe("F4.3-04B3 OAuth preparation remains offline and session-bound", () => 
       connectionStatus: "NOT_CONNECTED",
       sendingEnabled: false,
     });
-    expect(h.withTenant).toHaveBeenCalledWith(
-      organizationId,
-      expect.any(Function)
-    );
-    expect(h.resolve).toHaveBeenCalledWith(organizationId, "GMAIL");
-    expect(h.stage).toHaveBeenCalledTimes(1);
+    expect(h.withTenantCalls).toEqual([organizationId]);
+    expect(h.resolverCalls).toEqual([[organizationId, "GMAIL"]]);
+    expect(h.stageCalls).toHaveLength(1);
     expect(staged).toMatchObject({
       organizationId,
       actorUserId,
       provider: "GMAIL",
     });
-    expect(JSON.stringify(result)).not.toContain(staged.codeVerifier);
+    expect(JSON.stringify(result)).not.toContain(staged!.codeVerifier);
     expect(JSON.stringify(result)).not.toContain(organizationId);
     expect(JSON.stringify(result)).not.toContain(actorUserId);
     expect(JSON.stringify(result)).not.toContain(sessionId);
-    expect(JSON.stringify(result)).not.toContain(staged.stateHash);
+    expect(JSON.stringify(result)).not.toContain(staged!.stateHash);
+    expect(h.stageCalls[0]?.[1]).toEqual({
+      organizationId,
+      actorUserId,
+      requestId: context.requestId,
+    });
   });
 
-  it("uses a distinct Microsoft authority resolved for this tenant", async () => {
+  it("uses the Microsoft authority resolved for that specific company", async () => {
     const h = harness({ selected: "MICROSOFT_365" });
     const result = await h.service.prepare("MICROSOFT_365", context);
     const url = new URL(result.authorizationUrl);
     expect(url.origin).toBe("https://login.microsoftonline.com");
     expect(url.pathname).toBe(`/${azureTenant}/oauth2/v2.0/authorize`);
     expect(url.searchParams.get("scope")).toContain("Mail.Send");
-    expect(h.stage.mock.calls[0]?.[0].provider).toBe("MICROSOFT_365");
+    expect(h.stageCalls[0]?.[0].provider).toBe("MICROSOFT_365");
   });
 
-  it("rejects API keys, invalid sessions, users, tenants and providers", async () => {
+  it("rejects API keys and invalid session, actor, tenant and provider", async () => {
     for (const patch of [
       { authMethod: "api_key" },
       { sessionId: "api_key:fake" },
@@ -129,8 +160,8 @@ describe("F4.3-04B3 OAuth preparation remains offline and session-bound", () => 
       await expect(
         h.service.prepare("GMAIL", { ...context, ...patch } as typeof context)
       ).rejects.toThrow();
-      expect(h.stage).not.toHaveBeenCalled();
-      expect(h.resolve).not.toHaveBeenCalled();
+      expect(h.stageCalls).toHaveLength(0);
+      expect(h.resolverCalls).toHaveLength(0);
     }
     const h = harness();
     await expect(
@@ -138,7 +169,7 @@ describe("F4.3-04B3 OAuth preparation remains offline and session-bound", () => 
     ).rejects.toThrow();
   });
 
-  it("rejects revoked session, revoked admin and unmatched provider", async () => {
+  it("rejects revoked sessions, inactive admins and unmatched providers", async () => {
     for (const variant of [
       { admin: false },
       { session: false },
@@ -147,31 +178,31 @@ describe("F4.3-04B3 OAuth preparation remains offline and session-bound", () => 
     ]) {
       const h = harness(variant);
       await expect(h.service.prepare("GMAIL", context)).rejects.toThrow();
-      expect(h.stage).not.toHaveBeenCalled();
-      expect(h.resolve).not.toHaveBeenCalled();
+      expect(h.stageCalls).toHaveLength(0);
+      expect(h.resolverCalls).toHaveLength(0);
     }
   });
 
-  it("fails closed when a server-owned client is missing or malformed", async () => {
+  it("fails closed when server client configuration is absent or unsafe", async () => {
     const missing = harness({ configured: false });
     await expect(missing.service.prepare("GMAIL", context)).rejects.toThrow();
-    expect(missing.stage).not.toHaveBeenCalled();
+    expect(missing.stageCalls).toHaveLength(0);
 
     const untrusted = harness();
-    untrusted.resolve.mockResolvedValue({
+    untrusted.setClient({
       clientId: "id",
       redirectUri: "http://127.0.0.1/admin/email/oauth/callback",
     });
     await expect(untrusted.service.prepare("GMAIL", context)).rejects.toThrow();
-    expect(untrusted.stage).not.toHaveBeenCalled();
+    expect(untrusted.stageCalls).toHaveLength(0);
   });
 
-  it("never returns a URL when encrypted grant storage rejects", async () => {
+  it("never returns the authorization URL if encrypted storage fails", async () => {
     const h = harness();
-    h.stage.mockRejectedValue(new Error("ENCRYPTION_UNAVAILABLE"));
+    h.failStage(new Error("ENCRYPTION_UNAVAILABLE"));
     await expect(h.service.prepare("GMAIL", context)).rejects.toThrow(
       "ENCRYPTION_UNAVAILABLE"
     );
-    expect(h.stage).toHaveBeenCalledTimes(1);
+    expect(h.stageCalls).toHaveLength(1);
   });
 });
