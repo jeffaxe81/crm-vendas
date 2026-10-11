@@ -16,10 +16,15 @@ CA_CERT=/caminho/ca-confiavel.pem \
 bash scripts/smoke-externo-c12.sh
 ```
 
-O script somente faz requisições HTTP(S) de leitura. Sem `CA_CERT`, testa a resposta
-funcional com `--insecure` e aponta explicitamente que confiança TLS não foi validada.
-O redirecionamento HTTP deve ser 301/308 para HTTPS, o front deve responder 200,
+O script somente faz requisições HTTP(S) de leitura e **exige `CA_CERT`
+existente e legível para iniciar**. A verificação da cadeia TLS e do nome/IP do
+servidor deve passar com `--cacert`; `-k` e `--insecure` são proibidos.
+A ausência de CA confiável é falha de homologação, não um aviso opcional.
+O redirecionamento HTTP deve ser 301/308 **para a origem HTTPS esperada do CRM**
+(sem troca de host ou porta), o front deve responder 200,
 `/api/v1/health` deve responder 200 e os cabeçalhos de segurança devem estar presentes.
+O CI usa respostas simuladas para regressão; essa simulação não substitui
+o smoke efetivo na rede e a conferência do certificado do servidor.
 
 No servidor, após revisão de ambiente e cópias de segurança, executar
 `sudo bash scripts/verificar-deploy.sh` e anexar o resumo. O script verifica
