@@ -131,7 +131,9 @@ describe("F4.3-05B2 isolated OIDC ID token RS256 verification", () => {
 
   it("rejects tampering, untrusted keys, duplicates and malformed tokens", () => {
     const token = mint();
-    const [h, p, s] = token.split(".");
+    const parts = token.split(".");
+    const h = parts[0]!;
+    const s = parts[2]!;
     const changed = Buffer.from(JSON.stringify({
       ...goodClaims, email: "attacker@example.com"
     })).toString("base64url");
