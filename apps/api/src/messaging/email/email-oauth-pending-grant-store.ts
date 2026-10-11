@@ -35,6 +35,8 @@ export type EmailOAuthSessionGrantContext = EmailOAuthGrantContext &
 
 export type ConsumedEmailOAuthGrant = Readonly<{
   provider: EmailOAuthProvider;
+  /** Bind the later token-vault write to the same selected-provider revision. */
+  providerPreferenceVersion: number;
   codeVerifier: string;
   /** Compare with the verified OIDC token nonce; do not send to browsers. */
   oidcNonce: string;
@@ -333,6 +335,7 @@ export class EmailOAuthPendingGrantStore {
       });
       return {
         provider: row.provider_code as EmailOAuthProvider,
+        providerPreferenceVersion: pref.version,
         codeVerifier: verifier,
         oidcNonce,
         redirectUri: row.redirect_uri,
