@@ -65,8 +65,9 @@ function mint(
   ).toString("base64url");
   const p = Buffer.from(JSON.stringify(claims)).toString("base64url");
   const data = h + "." + p;
-  const s = sign("RSA-SHA256", Buffer.from(data, "ascii"), privateKey)
-    .toString("base64url");
+  const s = sign("RSA-SHA256", Buffer.from(data, "ascii"), privateKey).toString(
+    "base64url"
+  );
   return data + "." + s;
 }
 const denied = "EMAIL_OAUTH_ID_TOKEN_REJECTED";
@@ -85,7 +86,8 @@ describe("F4.3-05B2 isolated OIDC ID token RS256 verification", () => {
 
   it("accepts the second documented Google issuer value", () => {
     const identity = verifyOfflineOidcIdToken(
-      mint({ ...goodClaims, iss: "accounts.google.com" }), google
+      mint({ ...goodClaims, iss: "accounts.google.com" }),
+      google
     );
     expect(identity.issuer).toBe("accounts.google.com");
   });
@@ -141,9 +143,12 @@ describe("F4.3-05B2 isolated OIDC ID token RS256 verification", () => {
     const parts = token.split(".");
     const h = parts[0]!;
     const s = parts[2]!;
-    const changed = Buffer.from(JSON.stringify({
-      ...goodClaims, email: "attacker@example.com"
-    })).toString("base64url");
+    const changed = Buffer.from(
+      JSON.stringify({
+        ...goodClaims,
+        email: "attacker@example.com",
+      })
+    ).toString("base64url");
     expect(() =>
       verifyOfflineOidcIdToken(h + "." + changed + "." + s, google)
     ).toThrow(denied);
@@ -153,23 +158,24 @@ describe("F4.3-05B2 isolated OIDC ID token RS256 verification", () => {
     expect(() =>
       verifyOfflineOidcIdToken(token, { ...google, trustedKeys: [key, key] })
     ).toThrow(denied);
-    expect(() =>
-      verifyOfflineOidcIdToken("abc.def.ghi", google)
-    ).toThrow(denied);
+    expect(() => verifyOfflineOidcIdToken("abc.def.ghi", google)).toThrow(
+      denied
+    );
   });
 
   it("rejects Microsoft tenant/issuer mismatch and wrong-provider tokens", () => {
     expect(() =>
       verifyOfflineOidcIdToken(
-        mint({ ...microsoftClaims, tid: "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa" }),
+        mint({
+          ...microsoftClaims,
+          tid: "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa",
+        }),
         microsoft
       )
     ).toThrow(denied);
     expect(() =>
       verifyOfflineOidcIdToken(mint(microsoftClaims), google)
     ).toThrow(denied);
-    expect(() =>
-      verifyOfflineOidcIdToken(mint(), microsoft)
-    ).toThrow(denied);
+    expect(() => verifyOfflineOidcIdToken(mint(), microsoft)).toThrow(denied);
   });
 });
