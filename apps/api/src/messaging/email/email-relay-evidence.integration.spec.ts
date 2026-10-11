@@ -1,12 +1,14 @@
 import { PrismaService } from "../../database/prisma.service";
 import { EmailRelayEvidenceService } from "./email-relay-evidence.service";
 import { EmailRelayReadinessService } from "./email-relay-readiness.service";
+import { EmailProviderPreferenceService } from "./email-provider-preference.service";
 
 describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
   let owner: PrismaService;
   let app: PrismaService;
   let service: EmailRelayEvidenceService;
   let readiness: EmailRelayReadinessService;
+  let provider: EmailProviderPreferenceService;
   let tenantId: string;
   let otherTenantId: string;
   let adminId: string;
@@ -28,6 +30,7 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
     app = new PrismaService(process.env.RLS_DATABASE_URL);
     service = new EmailRelayEvidenceService(app);
     readiness = new EmailRelayReadinessService(app);
+    provider = new EmailProviderPreferenceService(app);
   });
 
   beforeEach(async () => {
@@ -114,6 +117,8 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
       reference: "TICKET-2026-1001",
       verification: "SUBMITTED_UNVERIFIED",
       settingsVersion: 0,
+      providerVersion: 0,
+      providerCode: "NONE",
     });
     const readinessReport = await readiness.inspect(context());
     expect(readinessReport.activationEligible).toBe(false);
@@ -204,6 +209,8 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
       evidenceId: submitted.id,
       reviewerUserId: reviewerId,
       settingsVersion: 0,
+      providerVersion: 0,
+      providerCode: "NONE",
       verification: "REVIEWED_NOT_CERTIFIED",
       sendingEnabled: false,
       activationEligible: false,
@@ -212,6 +219,9 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
     expect(listed).toMatchObject({
       id: submitted.id,
       settingsVersion: 0,
+      providerVersion: 0,
+      providerCode: "NONE",
+      currentConfiguration: true,
       verification: "SUBMITTED_UNVERIFIED",
       review: {
         decision: "CHECKED",
@@ -300,6 +310,118 @@ describe("F4.3-02D3 append-only email evidence under PostgreSQL RLS", () => {
       })
     );
     expect(audits).toHaveLength(1);
+  });
+
+  it("blocks review after provider selection changes, even without relay settings changes", async () => {
+    const recorded = await service.record(
+      { type: "TLS_DNS_POLICY", reference: "TICKET-2026-0401" },
+      context()
+    );
+    expect(recorded).toMatchObject({
+      settingsVersion: 0,
+      providerVersion: 0,
+      providerCode: "NONE",
+      currentConfiguration: true,
+    });
+    await provider.update(
+      { version: 0, providerCode: "GMAIL" },
+      context()
+    );
+    await expect(
+      service.review(
+        { evidenceId: recorded.id, decision: "CHECKED" },
+        { ...context(), actorUserId: reviewerId }
+      )
+    ).rejects.toThrow();
+    const [listed] = await service.list(context());
+    expect(listed).toMatchObject({
+      id: recorded.id,
+      providerCode: "NONE",
+      providerVersion: 0,
+      currentConfiguration: false,
+    });
+    expect(listed.review).toBeUndefined();
+    const report = await readiness.inspect(context());
+    expect(report.activationEligible).toBe(false);
+    expect(report.checks.externalApproval).toBe("NOT_VERIFIED");
+  });
+
+  it("invalidates a reviewed reference when its provider changes or reselects", async () => {
+    await provider.update(
+      { version: 0, providerCode: "GMAIL" },
+      context()
+    );
+    const recorded = await service.record(
+      { type: "OPERATIONAL_REVIEW", reference: "TICKET-2026-0402" },
+      context()
+    );
+    const review = await service.review(
+      { evidenceId: recorded.id, decision: "CHECKED" },
+      { ...context(), actorUserId: reviewerId }
+    );
+    expect(review).toMatchObject({
+      providerCode: "GMAIL",
+      providerVersion: 1,
+      activationEligible: false,
+      sendingEnabled: false,
+    });
+    expect((await service.list(context()))[0]?.review?.currentConfiguration)
+      .toBe(true);
+    await provider.update(
+      { version: 1, providerCode: "MICROSOFT_365" },
+      context()
+    );
+    const [changed] = await service.list(context());
+    expect(changed).toMatchObject({
+      providerCode: "GMAIL",
+      providerVersion: 1,
+      currentConfiguration: false,
+      review: {
+        providerCode: "GMAIL",
+        providerVersion: 1,
+        currentConfiguration: false,
+        verification: "REVIEWED_NOT_CERTIFIED",
+      },
+    });
+    await provider.update(
+      { version: 2, providerCode: "GMAIL" },
+      context()
+    );
+    expect((await service.list(context()))[0]?.currentConfiguration)
+      .toBe(false);
+  });
+
+  it("fails closed for legacy evidence with missing provider binding", async () => {
+    const id = (
+      await owner.auditLog.create({
+        data: {
+          organizationId: tenantId,
+          actorUserId: adminId,
+          requestId: "legacy-email-evidence",
+          action: "email.relay_evidence.recorded",
+          entityType: "EmailRelaySettings",
+          entityId: tenantId,
+          metadata: {
+            type: "EGRESS_POLICY",
+            reference: "TICKET-2026-0403",
+            settingsVersion: 0,
+            verification: "SUBMITTED_UNVERIFIED",
+          },
+        },
+      })
+    ).id;
+    expect((await service.list(context()))[0]).toMatchObject({
+      id,
+      providerVersion: null,
+      providerCode: null,
+      currentConfiguration: false,
+    });
+    await expect(
+      service.review(
+        { evidenceId: id, decision: "CHECKED" },
+        { ...context(), actorUserId: reviewerId }
+      )
+    ).rejects.toThrow();
   });
 
   it("never reviews a malformed or unknown evidence identifier", async () => {
