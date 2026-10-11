@@ -105,8 +105,7 @@ jobs:
           for file in apps/api/src/messaging/email/email-oauth-id-token-verifier.ts \
                       apps/api/src/messaging/email/email-oauth-id-token-verifier.spec.ts \
                       apps/api/src/messaging/email/email-oauth-pinned-jwks-reader.ts \
-                      apps/api/src/messaging/email/email-oauth-pinned-jwks-reader.spec.ts \
-                      apps/api/src/messaging/email/email-oauth-confidential-exchange.spec.ts; do
+                      apps/api/src/messaging/email/email-oauth-pinned-jwks-reader.spec.ts; do
             echo "=== Prettier diff: $file ==="
             pnpm exec prettier "$file" | diff -u "$file" - || true
           done

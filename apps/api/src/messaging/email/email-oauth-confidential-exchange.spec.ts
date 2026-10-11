@@ -100,7 +100,8 @@ describe("F4.3-05B4 confidential token exchange gate", () => {
         ...google,
         client: {
           ...google.client,
-          registeredRedirectUri: "https://other.example.org/admin/email/oauth/callback",
+          registeredRedirectUri:
+            "https://other.example.org/admin/email/oauth/callback",
         },
       },
       { ...google, client: { ...google.client, provider: "MICROSOFT_365" } },
