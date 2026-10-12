@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "candidate": {
+    "sha": "SUBSTITUIR_SHA_INSTALADO",
+    "ciHeadSha": "SUBSTITUIR_SHA_CI",
+    "ciEvent": "push",
+    "ciConclusion": "success",
+    "ciRunUrl": "SUBSTITUIR_URL_CI"
+  },
+  "evidence": {
+    "serverDiagnostics": {
+      "status": "pending",
+      "file": "evidence/diagnostico.txt"
+    },
+    "httpsTrustedCa": {
+      "status": "pending",
+      "file": "evidence/tls.txt"
+    },
+    "loginSession": {
+      "status": "pending",
+      "file": "evidence/login.txt"
+    },
+    "commercialFlow": {
+      "status": "pending",
+      "file": "evidence/comercial.txt"
+    },
+    "tenantIsolation": {
+      "status": "pending",
+      "file": "evidence/rls.txt"
+    },
+    "backupRestore": {
+      "status": "pending",
+      "file": "evidence/restore.txt"
+    },
+    "rollbackDrill": {
+      "status": "pending",
+      "file": "evidence/rollback.txt"
+    },
+    "securityReview": {
+      "status": "pending",
+      "file": "evidence/seguranca.txt"
+    },
+    "operationalApproval": {
+      "status": "pending",
+      "file": "evidence/aceite.txt"
+    }
+  }
+}
