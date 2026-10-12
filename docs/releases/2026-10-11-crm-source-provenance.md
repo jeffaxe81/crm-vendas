@@ -1,8 +1,11 @@
 # CRM 1.0 — Evidência automática do código da main
 
 O workflow `.github/workflows/ci.yml` gera um arquivo JSON de evidências
-**somente em `push` para `main`**, após executar migrações de teste,
-lint, testes, E2E e construção local de imagens Docker.
+**somente em `push` para `main`**, em um job separado que depende do
+sucesso integral de `verify` (migrações de teste, lint, testes, E2E e
+construção local de imagens Docker). Esse job realiza um **novo checkout
+limpo** do SHA exato, sem persistir credenciais Git. Não reutiliza o
+diretório modificado por geração de código, testes ou build.
 
 ## Conteúdo
 
@@ -13,9 +16,10 @@ lint, testes, E2E e construção local de imagens Docker.
   das imagens, digest de registro, implantação ou aceite operacional.
 
 O arquivo é retido como artifact `crm-source-evidence-<SHA>` pelo GitHub
-Actions por 30 dias. A criação do arquivo ocorre **antes** da conclusão final
-do workflow: apenas o status `success` do run no mesmo SHA pode confirmar
-que todos os passos, inclusive o upload, passaram.
+Actions por 30 dias. A criação ocorre **após** o sucesso do job `verify`,
+mas antes da conclusão do workflow. Somente o status `success` do
+run no mesmo SHA prova que a verificação e a publicação do artefato no
+próprio GitHub Actions passaram.
 
 ## Limites e critérios para release
 
