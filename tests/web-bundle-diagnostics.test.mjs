@@ -26,6 +26,7 @@ const mockDocker = [
 function scan({
   bundle = "",
   hasDirectory = true,
+  hasBundleFile = true,
   dockerDown = false,
   grepError = false,
 } = {}) {
@@ -36,7 +37,9 @@ function scan({
     chmodSync(docker, 0o700);
     if (hasDirectory) {
       mkdirSync(join(root, ".next", "static"), { recursive: true });
-      writeFileSync(join(root, ".next", "static", "app.js"), bundle);
+      if (hasBundleFile) {
+        writeFileSync(join(root, ".next", "static", "app.js"), bundle);
+      }
     }
     if (grepError) {
       const grep = join(root, "grep");
@@ -78,6 +81,13 @@ test("bundle inspection fails closed when the web service is not available", () 
 
 test("bundle inspection fails closed when the static directory is missing", () => {
   const result = scan({ hasDirectory: false });
+  assert.equal(result.status, 1, result.stderr);
+  assert.equal(result.stdout, "");
+});
+
+
+test("bundle inspection fails closed when the static directory has no JavaScript bundle", () => {
+  const result = scan({ hasBundleFile: false });
   assert.equal(result.status, 1, result.stderr);
   assert.equal(result.stdout, "");
 });
