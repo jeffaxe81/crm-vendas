@@ -34,10 +34,14 @@ if [[ "$http_code" == 301 || "$http_code" == 308 ]]; then
   # different Location values when a proxy emits the header more than once.
   redirect_headers=$(curl --silent --show-error --head --max-time 12 "$CRM_HTTP_URL" 2>/dev/null) || redirect_headers=""
   redirect_headers=$(printf '%s\n' "$redirect_headers" | tr -d '\r')
+  # The second HEAD response must itself be a redirect. A proxy can change
+  # its response between requests; a 200 with a stale Location must not pass.
+  redirect_status_count=$(awk '/^HTTP\/[0-9.]+ / { count++ } END { print count+0 }' <<< "$redirect_headers")
+  redirect_status=$(awk '/^HTTP\/[0-9.]+ / { print $2; exit }' <<< "$redirect_headers")
   location_count=$(awk 'tolower($1)=="location:" { count++ } END { print count+0 }' <<< "$redirect_headers")
   location=$(awk 'tolower($1)=="location:" { print $2; exit }' <<< "$redirect_headers")
   expected_redirect="${CRM_BASE_URL%/}/"
-  if [[ "$location_count" == 1 && "${location%/}/" == "$expected_redirect" ]]; then
+  if [[ "$redirect_status_count" == 1 && "$redirect_status" == "$http_code" && "$location_count" == 1 && "${location%/}/" == "$expected_redirect" ]]; then
     pass "HTTP redireciona para o CRM HTTPS esperado ($http_code)"
   else
     fail "Redirecionamento inesperado ou ambíguo (origem HTTPS divergente)"
