@@ -13,6 +13,7 @@ const smokeScript = fileURLToPath(
 const mockCurl = [
   "#!/usr/bin/env bash",
   "set -euo pipefail",
+  'if [[ "${1:-}" != "-q" ]]; then exit 99; fi',
   'url=""',
   "head=0",
   "write_status=0",
