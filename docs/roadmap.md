@@ -15,3 +15,13 @@
 O marco atual é entregar um fluxo comercial utilizável de ponta a ponta: cadastrar cliente, criar oportunidade, registrar interação, abrir tarefa e acompanhar o avanço no funil.
 
 > **Delimitação de escopo vigente:** somente a Fase 1 — MVP Comercial está autorizada para implementação. As Fases 2 a 6 permanecem documentadas no roadmap, backlog e Banco de Ideias, sem desenvolvimento neste incremento.
+
+
+## Releases de experiência e adoção
+
+| Release | Objetivo | Situação |
+| --- | --- | --- |
+| 1.1 | Primeiro acesso guiado e tour por funcionalidade | Planejada |
+| 1.2 | Configuração Rápida orientada por perfil, com manuais contextuais | Planejada |
+
+A Release 1.2 será detalhada em `docs/releases/1.2-configuracao-rapida.md` e só deverá entrar em implementação após a base funcional necessária estar integrada.
