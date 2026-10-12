@@ -25,3 +25,17 @@
 ## Delimitação do incremento
 
 Este backlog em desenvolvimento contém somente itens da **Fase 1 — MVP Comercial**. As iniciativas das Fases 2 a 6 estão preservadas no roadmap e no Banco de Ideias como planejamento futuro; não há itens dessas fases em implementação, testes de aceitação ou código neste incremento.
+
+
+## Release 1.2 — Configuração Rápida
+
+| ID | Épico | Título | Prioridade | Situação | Dependências | Esforço |
+| --- | --- | --- | --- | --- | --- | --- |
+| R12-01 | Onboarding | Wizard de configuração rápida retomável | P1 | Planejado | Base funcional do CRM | Alto |
+| R12-02 | Acesso | Etapas condicionadas às permissões da sessão | P0 | Planejado | RBAC | Médio |
+| R12-03 | Administração | Configuração guiada de equipe e perfis | P1 | Planejado | user.manage | Médio |
+| R12-04 | CRM Core | Configuração inicial de tags e campos customizáveis | P1 | Planejado | CRM Core | Médio |
+| R12-05 | Ajuda | Manual contextual por ADMIN, MANAGER, SELLER e VIEWER | P1 | Documentado | RBAC | Baixo |
+| R12-06 | UX | Retomar configuração pendente e reabrir ajuda | P1 | Planejado | R12-01 | Médio |
+
+A implementação da 1.2 deve ocorrer em branch/ciclo próprio; estes itens são planejamento futuro e não ampliam o escopo funcional do Cycle 2.
