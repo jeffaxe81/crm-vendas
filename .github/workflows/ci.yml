@@ -147,7 +147,6 @@ jobs:
       - name: Build application images
         run: docker compose build api web
 
-
   # The quality job runs code generation, tests and builds that may change the
   # tracked worktree. Source provenance must come from a FRESH checkout, never
   # a build workspace. This job runs only when all quality gates succeeded.
