@@ -34,6 +34,7 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
     verifiedSenderEmail: "Admin@Example.com",
     refreshToken: token,
     expectedVersion,
+    expectedProviderPreferenceVersion: 1,
   });
   const selectProvider = async () =>
     app.withTenant(organizationId, tx =>
@@ -250,6 +251,94 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
       1
     );
     expect((await vault.status("GMAIL", context())).version).toBe(2);
+  });
+
+  it("blocks stale token storage after a provider switch and return", async () => {
+    await selectProvider();
+    await app.withTenant(organizationId, tx =>
+      tx.emailProviderPreference.update({
+        where: { organizationId },
+        data: {
+          providerCode: "MICROSOFT_365",
+          version: { increment: 1 },
+        },
+      })
+    );
+    await app.withTenant(organizationId, tx =>
+      tx.emailProviderPreference.update({
+        where: { organizationId },
+        data: { providerCode: "GMAIL", version: { increment: 1 } },
+      })
+    );
+    await expect(
+      vault.stageVerified(credential(), context())
+    ).rejects.toThrow();
+    expect(await vault.status("GMAIL", context())).toMatchObject({
+      version: 0,
+      connectionStatus: "NOT_CONNECTED",
+      hasEncryptedCredential: false,
+    });
+    const result = await vault.stageVerified(
+      { ...credential(), expectedProviderPreferenceVersion: 3 },
+      context()
+    );
+    expect(result).toMatchObject({
+      version: 1,
+      connectionStatus: "STAGED_ONLY",
+      sendingEnabled: false,
+    });
+    await expect(
+      vault.stageVerified(
+        { ...credential(1), expectedProviderPreferenceVersion: 1 },
+        context()
+      )
+    ).rejects.toThrow();
+    expect((await vault.status("GMAIL", context())).version).toBe(1);
+  });
+
+  it("marks existing encrypted tokens stale after any provider revision", async () => {
+    await selectProvider();
+    await vault.stageVerified(credential(), context());
+    await app.withTenant(organizationId, tx =>
+      tx.emailProviderPreference.update({
+        where: { organizationId },
+        data: { version: { increment: 1 } },
+      })
+    );
+    expect(await vault.status("GMAIL", context())).toMatchObject({
+      version: 1,
+      connectionStatus: "NOT_CONNECTED",
+      hasEncryptedCredential: false,
+      sendingEnabled: false,
+    });
+    await expect(
+      vault.stageVerified(credential(1), context())
+    ).rejects.toThrow();
+    expect(
+      await vault.stageVerified(
+        { ...credential(1), expectedProviderPreferenceVersion: 2 },
+        context()
+      )
+    ).toMatchObject({ version: 2, connectionStatus: "STAGED_ONLY" });
+  });
+
+  it("fails closed for legacy encrypted credentials without revision binding", async () => {
+    await selectProvider();
+    await vault.stageVerified(credential(), context());
+    await app.withTenant(
+      organizationId,
+      tx =>
+        tx.$executeRaw`
+        UPDATE public.email_oauth_credentials
+        SET provider_preference_version = NULL
+      `
+    );
+    expect(await vault.status("GMAIL", context())).toMatchObject({
+      version: 1,
+      connectionStatus: "NOT_CONNECTED",
+      hasEncryptedCredential: false,
+      sendingEnabled: false,
+    });
   });
 
   it("local deletion purges encrypted credentials and pending grants", async () => {

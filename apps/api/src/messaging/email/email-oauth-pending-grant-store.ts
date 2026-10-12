@@ -35,6 +35,8 @@ export type EmailOAuthSessionGrantContext = EmailOAuthGrantContext &
 
 export type ConsumedEmailOAuthGrant = Readonly<{
   provider: EmailOAuthProvider;
+  /** Bind the later token-vault write to the same selected-provider revision. */
+  providerPreferenceVersion: number;
   codeVerifier: string;
   /** Compare with the verified OIDC token nonce; do not send to browsers. */
   oidcNonce: string;
@@ -43,6 +45,7 @@ export type ConsumedEmailOAuthGrant = Readonly<{
 
 type StoredGrant = {
   provider_code: string;
+  provider_preference_version: number | null;
   encrypted_code_verifier: string;
   encrypted_nonce: string;
   redirect_uri: string;
@@ -190,19 +193,27 @@ export class EmailOAuthPendingGrantStore {
     await this.prisma.withTenant(context.organizationId, async tx => {
       await this.assertAdmin(tx, context);
       await this.assertSession(tx, context);
-      const pref = await tx.emailProviderPreference.findFirst({
-        where: { organizationId: context.organizationId },
-      });
-      if (pref?.providerCode !== grant.provider) forbidden();
+      // Lock the preference revision while staging: a concurrent provider
+      // switch cannot commit between selecting and persisting this grant.
+      const [pref] = await tx.$queryRaw<
+        { provider_code: string; version: number }[]
+      >`
+        SELECT provider_code, version FROM public.email_provider_preferences
+        WHERE organization_id = ${context.organizationId}::uuid
+        FOR UPDATE
+      `;
+      if (pref?.provider_code !== grant.provider) forbidden();
       await tx.$executeRaw`
         INSERT INTO public.email_oauth_pending_grants
-          (organization_id, actor_user_id, session_id, provider_code, state_hash,
+          (organization_id, actor_user_id, session_id, provider_code,
+           provider_preference_version, state_hash,
            encrypted_code_verifier, encrypted_nonce, redirect_uri, created_at, expires_at)
         VALUES (
           ${context.organizationId}::uuid,
           ${context.actorUserId}::uuid,
           ${context.sessionId}::uuid,
           ${grant.provider},
+          ${pref.version},
           ${grant.stateHash},
           ${encrypted},
           ${encryptedNonce},
@@ -219,7 +230,11 @@ export class EmailOAuthPendingGrantStore {
           action: "email.oauth_intent.staged",
           entityType: "EmailOAuthPendingGrant",
           entityId: context.organizationId,
-          metadata: { provider: grant.provider, sendingEnabled: false },
+          metadata: {
+            provider: grant.provider,
+            providerPreferenceVersion: pref.version,
+            sendingEnabled: false,
+          },
         },
       });
     });
@@ -252,14 +267,27 @@ export class EmailOAuthPendingGrantStore {
           AND session_id = ${context.sessionId}::uuid
           AND state_hash = ${stateHash}
           AND expires_at > CURRENT_TIMESTAMP
-        RETURNING provider_code, encrypted_code_verifier, encrypted_nonce, redirect_uri
+        RETURNING provider_code, provider_preference_version,
+          encrypted_code_verifier, encrypted_nonce, redirect_uri
       `;
       const row = rows[0];
       if (!row || !PROVIDERS.includes(row.provider_code)) forbidden();
-      const pref = await tx.emailProviderPreference.findFirst({
-        where: { organizationId: context.organizationId },
-      });
-      if (pref?.providerCode !== row.provider_code) forbidden();
+      // The same provider name after an intervening change is NOT the same
+      // authorization intent. Lock the revision until the state is consumed.
+      const [pref] = await tx.$queryRaw<
+        { provider_code: string; version: number }[]
+      >`
+        SELECT provider_code, version FROM public.email_provider_preferences
+        WHERE organization_id = ${context.organizationId}::uuid
+        FOR UPDATE
+      `;
+      if (
+        !pref ||
+        pref.provider_code !== row.provider_code ||
+        row.provider_preference_version === null ||
+        pref.version !== row.provider_preference_version
+      )
+        forbidden();
       const grantBinding = {
         organizationId: context.organizationId,
         actorUserId: context.actorUserId,
@@ -298,11 +326,16 @@ export class EmailOAuthPendingGrantStore {
           action: "email.oauth_intent.consumed",
           entityType: "EmailOAuthPendingGrant",
           entityId: context.organizationId,
-          metadata: { provider: row.provider_code, sendingEnabled: false },
+          metadata: {
+            provider: row.provider_code,
+            providerPreferenceVersion: pref.version,
+            sendingEnabled: false,
+          },
         },
       });
       return {
         provider: row.provider_code as EmailOAuthProvider,
+        providerPreferenceVersion: pref.version,
         codeVerifier: verifier,
         oidcNonce,
         redirectUri: row.redirect_uri,
