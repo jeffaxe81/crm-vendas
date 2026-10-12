@@ -20,7 +20,15 @@ fa=0
 OK() { echo "  [ OK ] $*"; ok=$((ok + 1)); }
 AT() { echo "  [ATENÇÃO] $*"; at=$((at + 1)); }
 FA() { echo "  [FALHA] $*"; fa=$((fa + 1)); }
-code() { curl -s -o /dev/null -m 5 -w '%{http_code}' "$1"; }
+# Treat a truncated HTTP response as unavailable even if it printed 200.
+code() {
+  local status
+  if status=$(curl --silent --output /dev/null --max-time 5 --write-out '%{http_code}' "$1" 2>/dev/null); then
+    printf '%s' "$status"
+  else
+    printf '000'
+  fi
+}
 # Usa a identidade HTTPS/IP esperada do servidor, mas conecta ao nginx local.
 # CA ausente, certificado inválido ou hostname/IP divergente resultam em 000.
 trusted_code() {
