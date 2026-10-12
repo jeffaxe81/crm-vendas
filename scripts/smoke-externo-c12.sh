@@ -14,7 +14,7 @@ warn() { printf '[PENDENTE] %s\n' "$*"; warnings=$((warnings+1)); }
 # Never treat an HTTP 200 received before a curl transport failure as success.
 code() {
   local status
-  if status=$(curl --silent --show-error --output /dev/null --max-time 12 --write-out '%{http_code}' "$@" 2>/dev/null); then
+  if status=$(curl -q --silent --show-error --output /dev/null --max-time 12 --write-out '%{http_code}' "$@" 2>/dev/null); then
     printf '%s' "$status"
   else
     printf '000'
@@ -32,7 +32,7 @@ http_code=$(code --head "$CRM_HTTP_URL")
 if [[ "$http_code" == 301 || "$http_code" == 308 ]]; then
   # Reject ambiguous or partial redirect headers. Different clients may choose
   # different Location values when a proxy emits the header more than once.
-  redirect_headers=$(curl --silent --show-error --head --max-time 12 "$CRM_HTTP_URL" 2>/dev/null) || redirect_headers=""
+  redirect_headers=$(curl -q --silent --show-error --head --max-time 12 "$CRM_HTTP_URL" 2>/dev/null) || redirect_headers=""
   redirect_headers=$(printf '%s\n' "$redirect_headers" | tr -d '\r')
   # The second HEAD response must itself be a redirect. A proxy can change
   # its response between requests; a 200 with a stale Location must not pass.
@@ -57,7 +57,7 @@ health_code=$(code "${opts[@]}" "$CRM_BASE_URL/api/v1/health")
 [[ "$health_code" == 200 ]] && pass "API /api/v1/health responde 200" || fail "API /api/v1/health retornou $health_code"
 
 # A nonzero curl exit invalidates headers even if some bytes were received.
-headers=$(curl --silent --head --max-time 12 "${opts[@]}" "$CRM_BASE_URL/" 2>/dev/null) || headers=""
+headers=$(curl -q --silent --head --max-time 12 "${opts[@]}" "$CRM_BASE_URL/" 2>/dev/null) || headers=""
 headers=$(printf '%s\n' "$headers" | tr -d '\r')
 grep -qi '^strict-transport-security:' <<< "$headers" && pass "HSTS presente" || fail "HSTS ausente"
 grep -qi '^x-content-type-options: *nosniff' <<< "$headers" && pass "X-Content-Type-Options presente" || fail "X-Content-Type-Options ausente"
