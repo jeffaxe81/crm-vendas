@@ -30,7 +30,7 @@ const mockCurl = [
   '    printf "%s" "$MOCK_HTTP_STATUS"',
   '    if [[ "${MOCK_HTTP_FAIL_AFTER_STATUS:-0}" == 1 ]]; then exit 18; fi',
   "  else",
-  '    printf "HTTP/1.1 %s Redirect\r\nLocation: %s\r\n" "$MOCK_HTTP_STATUS" "$MOCK_REDIRECT"',
+  '    printf "HTTP/1.1 %s Redirect\r\nLocation: %s\r\n" "${MOCK_SECOND_HTTP_STATUS:-$MOCK_HTTP_STATUS}" "$MOCK_REDIRECT"',
   '    if [[ -n "${MOCK_EXTRA_REDIRECT:-}" ]]; then',
   '      printf "Location: %s\r\n" "$MOCK_EXTRA_REDIRECT"',
   "    fi",
@@ -158,4 +158,12 @@ test("external smoke rejects redirect HTTP status if curl later fails", () => {
   assert.equal(result.error, undefined);
   assert.equal(result.status, 1, result.stderr + result.stdout);
   assert.match(result.stdout, /HTTP retornou 000/);
+});
+
+test("external smoke rejects a changed HTTP status with a matching Location", () => {
+  const result = executeSmoke({ MOCK_SECOND_HTTP_STATUS: "200" });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.match(result.stdout, /Redirecionamento inesperado ou ambíguo/);
+  assert.doesNotMatch(result.stdout, /HTTP redireciona para o CRM HTTPS esperado/);
 });
