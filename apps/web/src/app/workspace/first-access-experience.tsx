@@ -32,6 +32,7 @@ type Props = {
   session: AuthSessionResponse;
   onNavigate: (section: WorkspaceSection) => void;
   replayToken: number;
+  onOrganizationNameChange: (name: string) => void;
 };
 const stageNames = [
   "Identificação da empresa",
@@ -56,6 +57,7 @@ export function FirstAccessExperience({
   session,
   onNavigate,
   replayToken,
+  onOrganizationNameChange,
 }: Props) {
   const [phase, setPhase] = useState<Phase>("loading");
   const [stage, setStage] = useState(1);
@@ -122,6 +124,7 @@ export function FirstAccessExperience({
       });
       const value = OnboardingStateSchema.shape.organization.parse(updated);
       setOrganizationName(value.name);
+      if (stage === 1) onOrganizationNameChange(value.name);
       setStage(value.step);
       if (value.completed) {
         setTourIndex(0);
