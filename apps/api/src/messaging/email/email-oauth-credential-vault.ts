@@ -25,6 +25,8 @@ export type StagedOAuthCredential = Readonly<{
   verifiedSenderEmail: string;
   refreshToken: string;
   expectedVersion: number;
+  /** Revision of the selected provider from the consumed, one-use OAuth state. */
+  expectedProviderPreferenceVersion: number;
 }>;
 
 export type CredentialVaultStatus = Readonly<{
@@ -35,7 +37,10 @@ export type CredentialVaultStatus = Readonly<{
   sendingEnabled: false;
 }>;
 
-type StoredVersion = { version: number };
+type StoredVersion = {
+  version: number;
+  provider_preference_version: number | null;
+};
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const SUBJECT = /^[A-Za-z0-9._:@-]{1,512}$/;
 const SENDER =
@@ -135,6 +140,8 @@ export class EmailOAuthCredentialVault {
     if (
       !Number.isSafeInteger(input.expectedVersion) ||
       input.expectedVersion < 0 ||
+      !Number.isSafeInteger(input.expectedProviderPreferenceVersion) ||
+      input.expectedProviderPreferenceVersion < 1 ||
       !SUBJECT.test(input.providerSubject) ||
       !SENDER.test(input.verifiedSenderEmail) ||
       input.verifiedSenderEmail.length > 254 ||
@@ -159,36 +166,48 @@ export class EmailOAuthCredentialVault {
 
     return this.prisma.withTenant(org, async tx => {
       await this.assertAdmin(tx, context);
-      const pref = await tx.emailProviderPreference.findFirst({
-        where: { organizationId: org },
-        select: { providerCode: true },
-      });
-      if (pref?.providerCode !== provider) denied();
+      // Lock the provider selection through the credential commit. This
+      // closes the gap after one-time state consumption and OIDC exchange.
+      const [pref] = await tx.$queryRaw<
+        { provider_code: string; version: number }[]
+      >`
+        SELECT provider_code, version FROM public.email_provider_preferences
+        WHERE organization_id = ${org}::uuid
+        FOR UPDATE
+      `;
+      if (
+        pref?.provider_code !== provider ||
+        pref?.version !== input.expectedProviderPreferenceVersion
+      )
+        denied();
 
       let updated: StoredVersion[];
       if (input.expectedVersion === 0) {
         updated = await tx.$queryRaw<StoredVersion[]>`
           INSERT INTO public.email_oauth_credentials
-            (organization_id, provider_code, version, subject_hmac,
+            (organization_id, provider_code, version,
+             provider_preference_version, subject_hmac,
              encrypted_sender, encrypted_refresh_token)
           VALUES (
-            ${org}::uuid, ${provider}, ${version}, ${subject},
-            ${sender}, ${refresh}
+            ${org}::uuid, ${provider}, ${version},
+            ${pref.version}, ${subject}, ${sender}, ${refresh}
           )
           ON CONFLICT (organization_id, provider_code) DO NOTHING
-          RETURNING version
+          RETURNING version, provider_preference_version
         `;
       } else {
         updated = await tx.$queryRaw<StoredVersion[]>`
           UPDATE public.email_oauth_credentials
-          SET version = ${version}, subject_hmac = ${subject},
+          SET version = ${version},
+              provider_preference_version = ${pref.version},
+              subject_hmac = ${subject},
               encrypted_sender = ${sender},
               encrypted_refresh_token = ${refresh},
               updated_at = CURRENT_TIMESTAMP
           WHERE organization_id = ${org}::uuid
             AND provider_code = ${provider}
             AND version = ${input.expectedVersion}
-          RETURNING version
+          RETURNING version, provider_preference_version
         `;
       }
       if (updated.length !== 1) versionConflict();
@@ -203,6 +222,7 @@ export class EmailOAuthCredentialVault {
           metadata: {
             provider,
             version,
+            providerPreferenceVersion: pref.version,
             sendingEnabled: false,
             identityVerification: "UPSTREAM_REQUIRED",
           },
@@ -214,13 +234,17 @@ export class EmailOAuthCredentialVault {
 
   private view(
     provider: EmailOAuthProvider,
-    version: number
+    version: number,
+    currentProviderRevision = version > 0
   ): CredentialVaultStatus {
     return {
       provider,
       version,
-      hasEncryptedCredential: version > 0,
-      connectionStatus: version > 0 ? "STAGED_ONLY" : "NOT_CONNECTED",
+      hasEncryptedCredential: version > 0 && currentProviderRevision,
+      connectionStatus:
+        version > 0 && currentProviderRevision
+          ? "STAGED_ONLY"
+          : "NOT_CONNECTED",
       sendingEnabled: false,
     };
   }
@@ -234,11 +258,22 @@ export class EmailOAuthCredentialVault {
     return this.prisma.withTenant(context.organizationId, async tx => {
       await this.assertAdmin(tx, context);
       const rows = await tx.$queryRaw<StoredVersion[]>`
-        SELECT version FROM public.email_oauth_credentials
+        SELECT version, provider_preference_version
+        FROM public.email_oauth_credentials
         WHERE organization_id = ${context.organizationId}::uuid
           AND provider_code = ${provider}
       `;
-      return this.view(provider, rows[0]?.version ?? 0);
+      const pref = await tx.emailProviderPreference.findFirst({
+        where: { organizationId: context.organizationId },
+        select: { providerCode: true, version: true },
+      });
+      return this.view(
+        provider,
+        rows[0]?.version ?? 0,
+        pref?.providerCode === provider &&
+          rows[0]?.provider_preference_version !== null &&
+          rows[0]?.provider_preference_version === pref?.version
+      );
     });
   }
 
@@ -261,7 +296,7 @@ export class EmailOAuthCredentialVault {
         WHERE organization_id = ${context.organizationId}::uuid
           AND provider_code = ${provider}
           AND version = ${expectedVersion}
-        RETURNING version
+        RETURNING version, provider_preference_version
       `;
       if (deleted.length !== 1) versionConflict();
       await tx.$executeRaw`
