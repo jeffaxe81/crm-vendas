@@ -100,7 +100,7 @@ test("onboarding smoke requires a CA file and a pure HTTPS origin", () => {
   }
 });
 
-test("onboarding smoke shell syntax is valid and never disables TLS trust", () => {
+test("onboarding smoke validates Bash syntax and TLS trust", () => {
   const syntax = spawnSync("bash", ["-n", script], {
     timeout: 3000,
     encoding: "utf8",
