@@ -3,8 +3,11 @@
 ## Finalidade
 
 Aprimorar a adoção e a configuração inicial sem atrasar nem confundir a
-homologação da versão 1.0. Esta branch é uma proposta de **release 1.1**,
-não uma versão já implantada ou aprovada para produção.
+homologação da versão 1.0. O código da **release 1.1** foi integrado à
+`main` no commit `e53289c6128f417995ebf49d5139dbb8a337ccd7`,
+com CI e manifesto aprovados. **A versão ainda não foi homologada nem
+comprovadamente implantada no servidor.** O roteiro operacional está em
+`docs/releases/crm-1-1-homologacao.md`.
 
 ### Wizard da empresa — apenas primeiro administrador
 
@@ -50,13 +53,15 @@ não uma versão já implantada ou aprovada para produção.
 
 ## Evidências obrigatórias antes de integrar e publicar
 
-- [ ] CI completo da PR 1.1, com migration deploy, lint, typecheck, testes de
-      repositório, API, frontend, E2E, Compose e imagens.
+- [x] CI completo da PR 1.1 e da `main` no SHA do merge original,
+      com migração de teste, lint, typecheck, testes de repositório,
+      API, frontend, E2E, Compose, imagens e manifesto.
 - [ ] Testes reais de dois tenants, usuário vendedor, usuário VIEWER, dois
       administradores na mesma empresa, refresh/relogin, negação de API Key,
       progresso no wizard e tour que não reaparece automaticamente.
-- [ ] Revisão de segurança independente e testes de acessibilidade do painel,
-      inclusive teclado, foco, leitores de tela e telas pequenas.
+- [ ] Testes de acessibilidade do painel, inclusive teclado, foco,
+      leitores de tela e telas pequenas. **A revisão independente foi
+      dispensada expressamente pelo responsável**; isto não é um review efetuado.
 - [ ] Planejamento de upgrade do servidor 1.0→1.1, backup restaurável,
       migração sem downtime e rollback adequado.
 - [ ] Manifesto da main final e aceite operacional específico da 1.1.
