@@ -23,7 +23,7 @@ FA() { echo "  [FALHA] $*"; fa=$((fa + 1)); }
 # Treat a truncated HTTP response as unavailable even if it printed 200.
 code() {
   local status
-  if status=$(curl --silent --output /dev/null --max-time 5 --write-out '%{http_code}' "$1" 2>/dev/null); then
+  if status=$(curl -q --silent --output /dev/null --max-time 5 --write-out '%{http_code}' "$1" 2>/dev/null); then
     printf '%s' "$status"
   else
     printf '000'
@@ -33,7 +33,7 @@ code() {
 # CA ausente, certificado inválido ou hostname/IP divergente resultam em 000.
 trusted_code() {
   local status
-  if status=$(curl --silent --show-error --output /dev/null --max-time 6 \
+  if status=$(curl -q --silent --show-error --output /dev/null --max-time 6 \
     --write-out '%{http_code}' --cacert "$CA" \
     --resolve "$IP:443:127.0.0.1" "$1" 2>/dev/null); then
     printf '%s' "$status"
@@ -110,7 +110,7 @@ done
 p=$(echo | openssl s_client -connect 127.0.0.1:443 2>/dev/null | awk '/Protocol *:/ {print $3; exit}')
 [[ $p == TLSv1.3 || $p == TLSv1.2 ]] && OK "Protocolo negociado: $p" || FA "Protocolo: ${p:-nenhum}"
 # A partial header response must never pass if curl failed afterwards.
-hsts_headers=$(curl --silent --head --max-time 5 --cacert "$CA" \
+hsts_headers=$(curl -q --silent --head --max-time 5 --cacert "$CA" \
   --resolve "$IP:443:127.0.0.1" "https://$IP/" 2>/dev/null) && \
   grep -qi '^strict-transport-security:' <<< "$hsts_headers" && \
   OK "Cabeçalho HSTS presente com TLS autenticado" || FA "HSTS ausente ou TLS não autenticado"
