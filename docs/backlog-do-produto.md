@@ -56,13 +56,13 @@ Campos personalizados e tags já estão presentes na base atual e não serão du
 
 ## Release 1.2 — configuração rápida (planejada)
 
-| ID | Entrega | Situação | Dependência |
-| --- | --- | --- | --- |
-| R12-01 | Wizard operacional retomável | Planejada | Onboarding 1.1 e persistência segura |
-| R12-02 | Etapas autorizadas por permissões da sessão | Planejada | RBAC backend e RLS |
-| R12-03 | Gestão guiada de equipe e perfis | Planejada | `user.manage` |
-| R12-04 | Configuração inicial de tags, campos e pipeline | Planejada | Permissões e telas existentes |
-| R12-05 | Manuais por ADMIN, MANAGER, SELLER e VIEWER | Documentados | RBAC atual |
-| R12-06 | Retomar configuração e rever ajuda | Planejada | R12-01 e tour 1.1 |
+| ID     | Entrega                                         | Situação     | Dependência                          |
+| ------ | ----------------------------------------------- | ------------ | ------------------------------------ |
+| R12-01 | Wizard operacional retomável                    | Planejada    | Onboarding 1.1 e persistência segura |
+| R12-02 | Etapas autorizadas por permissões da sessão     | Planejada    | RBAC backend e RLS                   |
+| R12-03 | Gestão guiada de equipe e perfis                | Planejada    | `user.manage`                        |
+| R12-04 | Configuração inicial de tags, campos e pipeline | Planejada    | Permissões e telas existentes        |
+| R12-05 | Manuais por ADMIN, MANAGER, SELLER e VIEWER     | Documentados | RBAC atual                           |
+| R12-06 | Retomar configuração e rever ajuda              | Planejada    | R12-01 e tour 1.1                    |
 
 Este registro é de **planejamento da 1.2**. Os manuais já podem ser revisados, mas nenhuma das funcionalidades R12-01/02/03/04/06 foi declarada implementada ou homologada.
