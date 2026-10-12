@@ -147,15 +147,31 @@ jobs:
       - name: Build application images
         run: docker compose build api web
 
-      # Evidence is source-only and does not attest to deployed image digests.
+
+  # The quality job runs code generation, tests and builds that may change the
+  # tracked worktree. Source provenance must come from a FRESH checkout, never
+  # a build workspace. This job runs only when all quality gates succeeded.
+  source_manifest:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact main commit for provenance
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Configure Node for provenance
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+
       - name: Generate main source manifest
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           CRM_SOURCE_MANIFEST_PATH: ${{ runner.temp }}/crm-source-manifest.json
         run: node scripts/release-source-manifest.mjs
 
       - name: Retain main source manifest
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: crm-source-evidence-${{ github.sha }}
