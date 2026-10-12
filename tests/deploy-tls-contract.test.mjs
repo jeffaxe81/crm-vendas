@@ -40,3 +40,38 @@ test("external smoke and server diagnostics reject insecure TLS bypass", () => {
   assert.doesNotMatch(server, /--insecure|curl\s+-[a-z]*k\b/i);
   assert.match(external, /CA_CERT obrigatório/);
 });
+
+test("release diagnostics fail closed on curl transfer errors and ambiguous redirects", () => {
+  const server = readFileSync(serverScript, "utf8");
+  const external = readFileSync(externalScript, "utf8");
+  assert.equal(
+    (server.match(/if status=\$\(curl /g) ?? []).length,
+    2,
+    "both local and TLS server probes must inspect curl exit status"
+  );
+  assert.match(external, /if status=\$\(curl /);
+  assert.match(server, /printf '000'/);
+  assert.match(external, /printf '000'/);
+  assert.match(server, /hsts_headers=\$\(curl /);
+  assert.match(external, /location_count=\$\(awk /);
+});
+
+test("release HTTPS probes ignore ambient curlrc configuration", () => {
+  const server = readFileSync(serverScript, "utf8");
+  const external = readFileSync(externalScript, "utf8");
+  for (const [name, source] of [
+    ["server", server],
+    ["external", external],
+  ]) {
+    assert.equal(
+      (source.match(/curl -q --silent/g) ?? []).length,
+      3,
+      name + " must pass -q first on all three HTTP/TLS probes"
+    );
+    assert.doesNotMatch(
+      source,
+      /curl --silent/,
+      name + " must not inherit .curlrc on any probe"
+    );
+  }
+});

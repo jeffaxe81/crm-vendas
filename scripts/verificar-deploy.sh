@@ -20,13 +20,26 @@ fa=0
 OK() { echo "  [ OK ] $*"; ok=$((ok + 1)); }
 AT() { echo "  [ATENÇÃO] $*"; at=$((at + 1)); }
 FA() { echo "  [FALHA] $*"; fa=$((fa + 1)); }
-code() { curl -s -o /dev/null -m 5 -w '%{http_code}' "$1"; }
+# Treat a truncated HTTP response as unavailable even if it printed 200.
+code() {
+  local status
+  if status=$(curl -q --silent --output /dev/null --max-time 5 --write-out '%{http_code}' "$1" 2>/dev/null); then
+    printf '%s' "$status"
+  else
+    printf '000'
+  fi
+}
 # Usa a identidade HTTPS/IP esperada do servidor, mas conecta ao nginx local.
 # CA ausente, certificado inválido ou hostname/IP divergente resultam em 000.
 trusted_code() {
-  curl --silent --show-error --output /dev/null --max-time 6 \
+  local status
+  if status=$(curl -q --silent --show-error --output /dev/null --max-time 6 \
     --write-out '%{http_code}' --cacert "$CA" \
-    --resolve "$IP:443:127.0.0.1" "$1" 2>/dev/null || true
+    --resolve "$IP:443:127.0.0.1" "$1" 2>/dev/null); then
+    printf '%s' "$status"
+  else
+    printf '000'
+  fi
 }
 exposta() { ss -tln | awk -v p=":$1\$" '$4 ~ p {print $4}' | grep -qvE '^(127\.0\.0\.1|\[::1\]):'; }
 
@@ -96,9 +109,11 @@ for u in "https://$IP" "https://$IP/api/v1/health"; do
 done
 p=$(echo | openssl s_client -connect 127.0.0.1:443 2>/dev/null | awk '/Protocol *:/ {print $3; exit}')
 [[ $p == TLSv1.3 || $p == TLSv1.2 ]] && OK "Protocolo negociado: $p" || FA "Protocolo: ${p:-nenhum}"
-curl --silent --head --max-time 5 --cacert "$CA" \
-  --resolve "$IP:443:127.0.0.1" "https://$IP/" 2>/dev/null | \
-  grep -qi '^strict-transport-security' && OK "Cabeçalho HSTS presente com TLS autenticado" || FA "HSTS ausente ou TLS não autenticado"
+# A partial header response must never pass if curl failed afterwards.
+hsts_headers=$(curl -q --silent --head --max-time 5 --cacert "$CA" \
+  --resolve "$IP:443:127.0.0.1" "https://$IP/" 2>/dev/null) && \
+  grep -qi '^strict-transport-security:' <<< "$hsts_headers" && \
+  OK "Cabeçalho HSTS presente com TLS autenticado" || FA "HSTS ausente ou TLS não autenticado"
 
 echo
 echo "6. Certificado"
