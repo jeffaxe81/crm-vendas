@@ -55,7 +55,8 @@ describe("Workspace start page", () => {
         .filter(
           url =>
             !url.endsWith("auth/refresh") &&
-            !url.endsWith("workspace-preferences")
+            !url.endsWith("workspace-preferences") &&
+            !url.endsWith("/me/onboarding")
         )
     ).toEqual([]);
     await waitFor(() => expect(resolve).toBeTypeOf("function"));
@@ -66,7 +67,7 @@ describe("Workspace start page", () => {
       })
     );
     await screen.findByText("Escolha seus atalhos em Personalizar início.");
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
   it("opens the related report from a home indicator", async () => {
     const summary = {
