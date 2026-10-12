@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { randomUUID } from "node:crypto";
+import { finishInitialExperience } from "./helpers/workspace-navigation";
 
 test("workspace preference syncs between browsers and stays isolated for another account", async ({
   browser,
@@ -25,6 +26,7 @@ test("workspace preference syncs between browsers and stays isolated for another
     expect(registered.ok()).toBeTruthy();
     const page = await first.newPage();
     await page.goto("http://127.0.0.1:3000");
+    await finishInitialExperience(page);
     await page.getByRole("button", { name: "Personalizar início" }).click();
     await expect(page.getByLabel("Seção de abertura")).toBeEnabled();
     await page.getByLabel("Seção de abertura").selectOption("companies");
@@ -41,6 +43,7 @@ test("workspace preference syncs between browsers and stays isolated for another
     await pageTwo.getByLabel("E-mail").fill(email);
     await pageTwo.getByLabel("Senha").fill(password);
     await pageTwo.getByRole("button", { name: "Entrar no CRM" }).click();
+    await finishInitialExperience(pageTwo);
     await expect(
       pageTwo.getByRole("heading", { name: "Empresas", exact: true })
     ).toBeVisible();

@@ -156,6 +156,11 @@ export class AuthService {
           role: "ADMIN",
         },
       });
+      // The wizard belongs to the original administrator of this company.
+      await transaction.organization.update({
+        where: { id: organization.id },
+        data: { onboardingOwnerId: user.id },
+      });
 
       return { organization, user, membership };
     });

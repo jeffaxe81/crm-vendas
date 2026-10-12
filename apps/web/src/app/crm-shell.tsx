@@ -32,6 +32,7 @@ type CrmShellProps = {
   activeSection: CrmSection;
   onNavigate: (section: CrmSection) => void;
   onLogout: () => void;
+  onStartTour?: () => void;
   children: ReactNode;
 };
 
@@ -64,6 +65,7 @@ export function CrmShell({
   activeSection,
   onNavigate,
   onLogout,
+  onStartTour,
   children,
 }: CrmShellProps) {
   const workspace = useWorkspace();
@@ -296,6 +298,17 @@ export function CrmShell({
               <span>{session.membership.role}</span>
             </div>
           </div>
+          {onStartTour ? (
+            <button
+              type="button"
+              onClick={onStartTour}
+              aria-label="Ajuda: rever tour do CRM"
+              title="Rever o tour de funcionalidades"
+            >
+              <ShieldCheck aria-hidden="true" />
+              <span>Ajuda · Rever tour</span>
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={onLogout}

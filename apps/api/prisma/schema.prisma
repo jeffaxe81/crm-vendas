@@ -142,6 +142,9 @@ enum TicketEventType {
 }
 
 model Organization {
+  onboardingOwnerId String? @map("onboarding_owner_id") @db.Uuid
+  onboardingStep Int @default(1) @map("onboarding_step")
+  onboardingCompletedAt DateTime? @map("onboarding_completed_at") @db.Timestamptz(6)
   inboundMessages InboundMessage[]
   emailRelaySettings EmailRelaySettings?
   emailProviderPreference EmailProviderPreference?
@@ -282,6 +285,7 @@ model User {
 }
 
 model OrganizationMembership {
+  tourStatus String @default("PENDING") @map("tour_status") @db.VarChar(16)
   isSuperuser        Boolean        @default(false) @map("is_superuser")
   id                 String         @id @default(uuid()) @db.Uuid
   organizationId     String         @map("organization_id") @db.Uuid

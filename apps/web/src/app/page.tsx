@@ -27,6 +27,7 @@ import { CommunicationView } from "./communication/communication-view";
 import { WorkspaceProvider } from "./workspace/workspace-provider";
 import { WorkspaceHome } from "./workspace/workspace-home";
 import { WorkspaceEditor } from "./workspace/workspace-editor";
+import { FirstAccessExperience } from "./workspace/first-access-experience";
 import { UsersView } from "./admin/users-view";
 import { SupportSettingsView } from "./admin/support-settings-view";
 import { IntegrationCredentialsView } from "./admin/integration-credentials-view";
@@ -34,6 +35,7 @@ import { IntegrationCredentialsView } from "./admin/integration-credentials-view
 export default function Home() {
   const manualNavigation = useRef(false);
   const [reportTab, setReportTab] = useState<ReportTab>("summary");
+  const [tourReplayToken, setTourReplayToken] = useState(0);
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
   const [activeSection, setActiveSection] = useState<CrmSection>("home");
   const [communicationOpened, setCommunicationOpened] = useState(false);
@@ -87,6 +89,7 @@ export default function Home() {
       });
       manualNavigation.current = false;
       setSession(AuthSessionResponseSchema.parse(payload));
+      setTourReplayToken(0);
       setActiveSection("home");
       setPassword("");
     } catch (cause) {
@@ -116,6 +119,7 @@ export default function Home() {
       });
       manualNavigation.current = false;
       setSession(AuthSessionResponseSchema.parse(payload));
+      setTourReplayToken(0);
       setActiveSection("home");
       setAdminPassword("");
       setAdminPasswordConfirm("");
@@ -178,6 +182,7 @@ export default function Home() {
       >
         <CrmShell
           session={session}
+          onStartTour={() => setTourReplayToken(value => value + 1)}
           activeSection={activeSection}
           onNavigate={navigate}
           onLogout={() => void logout()}
@@ -315,6 +320,21 @@ export default function Home() {
               </div>
             </>
           ) : null}
+          <FirstAccessExperience
+            session={session}
+            onNavigate={navigate}
+            replayToken={tourReplayToken}
+            onOrganizationNameChange={name =>
+              setSession(current =>
+                current
+                  ? {
+                      ...current,
+                      organization: { ...current.organization, name },
+                    }
+                  : current
+              )
+            }
+          />
         </CrmShell>
       </WorkspaceProvider>
     );

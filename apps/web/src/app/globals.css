@@ -2513,3 +2513,89 @@ textarea {
     bottom: 8px;
   }
 }
+
+/* CRM 1.1: non-blocking onboarding wizard and permission-aware guided tour */
+.first-access-panel {
+  position: fixed;
+  z-index: 90;
+  top: clamp(12px, 4vh, 48px);
+  right: 16px;
+  width: min(420px, calc(100vw - 32px));
+  max-height: 88vh;
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--crm-border, #d5dce7);
+  border-radius: 16px;
+  background: #fff;
+  color: #172b4d;
+  box-shadow: 0 16px 48px rgb(15 23 42 / 24%);
+}
+.first-access-panel h2 {
+  margin: 6px 0 10px;
+  font-size: 1.3rem;
+}
+.first-access-panel p {
+  line-height: 1.5;
+}
+.first-access-eyebrow {
+  color: #145fa6;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.first-access-panel progress {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  accent-color: var(--crm-primary, #0b63ae);
+}
+.first-access-field {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+.first-access-field input {
+  padding: 10px;
+  border: 1px solid #9ca9bd;
+  border-radius: 8px;
+  width: 100%;
+}
+.first-access-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 18px 0 10px;
+}
+.first-access-actions button,
+.first-access-link {
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid #2d68a6;
+  border-radius: 8px;
+  color: #12487c;
+  background: #fff;
+  cursor: pointer;
+}
+.first-access-actions button:last-child {
+  background: #145fa6;
+  color: #fff;
+}
+.first-access-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.first-access-panel [role="alert"] {
+  color: #a12828;
+}
+@media (max-width: 600px) {
+  .first-access-panel {
+    top: auto;
+    right: 8px;
+    bottom: 8px;
+    width: calc(100vw - 16px);
+    max-height: min(68vh, 600px);
+    padding: 16px;
+  }
+}

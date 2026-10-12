@@ -367,3 +367,12 @@ export {
   type OperationPreviewKind,
 } from "./data-management";
 export * from "./webhooks";
+
+export {
+  OnboardingStateSchema,
+  OrganizationOnboardingInputSchema,
+  TourCompletionInputSchema,
+  type OnboardingState,
+  type OrganizationOnboardingInput,
+  type TourCompletionInput,
+} from "./onboarding";
