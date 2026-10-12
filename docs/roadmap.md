@@ -68,3 +68,9 @@ Motor de regras e automações genéricas pertencem à Fase 5.
 IA/RAG, classificação automática, recomendações e previsões pertencem à Fase 6.
 
 Essa separação evita acoplamento prematuro e mantém a evolução testável por microentregas.
+
+## Release 1.2 — experiência de configuração rápida (planejada)
+
+A versão 1.1 (wizard do primeiro administrador e tour individual) já foi integrada ao código da `main`, mas a homologação no servidor continua pendente.
+
+A futura 1.2 acrescentará configuração inicial retomável por permissões e ajuda por perfil. **Neste incremento foram escritos apenas documentação e critérios de aceite**; nenhuma funcionalidade 1.2 foi habilitada ou publicada. Consulte `docs/releases/1.2-configuracao-rapida.md` e os manuais em `docs/manuals/release-1.2/`.
