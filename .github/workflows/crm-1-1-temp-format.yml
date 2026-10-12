@@ -1,0 +1,47 @@
+name: CRM 1.1 temporary branch formatter
+
+on:
+  push:
+    branches:
+      - feat/crm-1-1-first-access-wizard-tour
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feat/crm-1-1-first-access-wizard-tour
+          persist-credentials: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Apply repository formatter
+        run: |
+          pnpm exec prettier --write \
+            apps/api/src/workspace/first-access.controller.ts \
+            apps/api/src/workspace/first-access.integration.spec.ts \
+            apps/api/src/workspace/first-access.service.ts \
+            apps/web/src/app/globals.css \
+            apps/web/src/app/page.tsx \
+            apps/web/src/app/workspace/first-access-experience.test.tsx \
+            apps/web/src/app/workspace/first-access-experience.tsx \
+            docs/releases/crm-1-1-onboarding-tour.md
+      - name: Commit formatting to feature branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/api/src/workspace apps/web/src/app/globals.css apps/web/src/app/page.tsx apps/web/src/app/workspace docs/releases/crm-1-1-onboarding-tour.md
+          if ! git diff --cached --quiet; then
+            git commit -m "style(1.1): normalize onboarding files using project Prettier"
+            git push origin HEAD:refs/heads/feat/crm-1-1-first-access-wizard-tour
+          fi
