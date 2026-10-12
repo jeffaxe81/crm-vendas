@@ -85,7 +85,6 @@ test("bundle inspection fails closed when the static directory is missing", () =
   assert.equal(result.stdout, "");
 });
 
-
 test("bundle inspection fails closed when the static directory has no JavaScript bundle", () => {
   const result = scan({ hasBundleFile: false });
   assert.equal(result.status, 1, result.stderr);
