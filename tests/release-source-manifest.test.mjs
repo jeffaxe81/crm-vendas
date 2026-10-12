@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { readFileSync } from "node:fs";
 import { buildSourceManifest } from "../scripts/release-source-manifest.mjs";
 
 const sourceSha = "a".repeat(40);
@@ -66,4 +67,28 @@ test("release source manifest rejects non-main events and forged HEAD", () => {
       /RC_SOURCE_MANIFEST_CONTEXT_REJECTED/
     );
   }
+});
+
+test("source provenance runs in a clean checkout only after quality succeeds", () => {
+  const workflow = readFileSync(
+    new URL("../.github/workflows/ci.yml", import.meta.url),
+    "utf8"
+  );
+  const sections = workflow.split(/^  source_manifest:\\s*$/m);
+  assert.equal(sections.length, 2, "Dedicated provenance job is required");
+  const [quality, provenance] = sections;
+  assert.match(quality, /^  verify:\\s*$/m);
+  assert.match(quality, /Run end-to-end test/);
+  assert.match(quality, /Build application images/);
+  assert.doesNotMatch(quality, /Generate main source manifest/);
+  assert.match(provenance, /^    needs: verify$/m);
+  assert.match(
+    provenance,
+    /^    if: github.event_name == 'push' && github.ref == 'refs\\/heads\\/main'$/m
+  );
+  assert.match(provenance, /Checkout exact main commit for provenance/);
+  assert.match(provenance, /persist-credentials: false/);
+  assert.match(provenance, /node scripts\\/release-source-manifest[.]mjs/);
+  assert.match(provenance, /Retain main source manifest/);
+  assert.doesNotMatch(provenance, /pnpm (?:build|test)|docker compose build/);
 });
