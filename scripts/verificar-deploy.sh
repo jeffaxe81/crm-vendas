@@ -136,10 +136,16 @@ echo
 echo "7. Front em HTTPS (sem conteúdo misto)"
 api_url=$(docker compose exec -T web printenv NEXT_PUBLIC_API_BASE_URL 2>/dev/null | tr -d '\r')
 [[ $api_url == https://* ]] && OK "NEXT_PUBLIC_API_BASE_URL=$api_url" || FA "NEXT_PUBLIC_API_BASE_URL=${api_url:-vazio} (use https://$IP/api/v1 e rebuild do web)"
-if docker compose exec -T web sh -c 'grep -rlq "http://localhost:3001" .next/static 2>/dev/null'; then
+bundle_scan=$(bash scripts/verificar-bundle-web.sh 2>/dev/null)
+bundle_rc=$?
+if [[ $bundle_rc -ne 0 ]]; then
+  FA "Bundle do front nao pode ser verificado (Docker ou arquivos inacessiveis)"
+elif [[ "$bundle_scan" == "UNSAFE" ]]; then
   FA "Bundle do front ainda aponta para http://localhost:3001 (rode: docker compose up -d --build web)"
-else
+elif [[ "$bundle_scan" == "CLEAN" ]]; then
   OK "Bundle do front sem http://localhost:3001"
+else
+  FA "Bundle do front retornou resultado inesperado"
 fi
 origin=$(docker compose exec -T api printenv WEB_ORIGIN 2>/dev/null | tr -d '\r')
 [[ $origin == https://* ]] && OK "WEB_ORIGIN=$origin" || FA "WEB_ORIGIN=${origin:-vazio} (use https://$IP)"
