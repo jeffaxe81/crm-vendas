@@ -11,7 +11,10 @@ const groups: Record<string, string> = {
   "Resumo gerencial": "Gestão",
   "Chaves de integração": "Administração",
 };
+const preparedPages = new WeakSet<Page>();
+
 export async function finishInitialExperience(page: Page) {
+  if (preparedPages.has(page)) return;
   // Existing CRM E2E flows complete onboarding via the public UI rather than
   // force-clicking through the overlay or disabling the 1.1 feature.
   await expect(page.getByLabel("Sessão ativa")).toBeVisible();
@@ -42,6 +45,7 @@ export async function finishInitialExperience(page: Page) {
     await tour.getByRole("button", { name: "Pular tour" }).click();
     await expect(tour).toBeHidden();
   }
+  preparedPages.add(page);
 }
 
 export async function openWorkspaceSection(page: Page, label: string) {
