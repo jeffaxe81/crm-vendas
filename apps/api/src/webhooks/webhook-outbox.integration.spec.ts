@@ -347,9 +347,17 @@ describe("webhook transactional outbox and adversarial PostgreSQL leases", () =>
         }),
       ]);
       clearTimeout(gateTimer);
-      maintenance = contender.withMaintenance(org, async () => {
-        maintenanceCompleted = true;
-      });
+      // The exclusive maintenance transaction intentionally waits behind a
+      // separate 5 s marker transaction. Keep only this test's waiting
+      // transaction alive longer than that deadline; production timeouts
+      // and the worker's marker transaction remain unchanged.
+      maintenance = contender.withMaintenance(
+        org,
+        async () => {
+          maintenanceCompleted = true;
+        },
+        { timeout: 12000 }
+      );
       await waitForQueuedLock("ExclusiveLock");
       releaseMarker();
       // This shared lock belongs to the separate Prisma UPDATE's maintenance
