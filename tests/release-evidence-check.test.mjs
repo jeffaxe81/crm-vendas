@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { mkdtemp, mkdir, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import { evaluate } from "../scripts/release-evidence-check.mjs";
 
@@ -97,4 +99,39 @@ test("rejects traversal and symbolic links", async t => {
   assert.equal(result.status, "NO_GO");
   assert.match(result.errors.join(" "), /serverDiagnostics/);
   assert.match(result.errors.join(" "), /rollbackDrill/);
+});
+
+test("the evidence index cannot reuse one report for different controls", async t => {
+  const { path, manifest, save } = await fixture(t);
+  manifest.evidence.httpsTrustedCa.file =
+    "evidence/./" + manifest.evidence.serverDiagnostics.file.split("/").at(-1);
+  await save();
+  const result = await evaluate(path, sha);
+  assert.equal(result.status, "NO_GO");
+  assert.match(result.errors.join(" "), /httpsTrustedCa: arquivo também utilizado por serverDiagnostics/);
+  assert.equal(result.productionApproved, false);
+});
+
+test("the CLI requires an explicit manifest path and exact candidate SHA", async t => {
+  const { path } = await fixture(t);
+  const cli = fileURLToPath(
+    new URL("../scripts/release-evidence-check.mjs", import.meta.url)
+  );
+  for (const args of [[], ["--manifest", path], ["--sha", sha]]) {
+    const result = spawnSync(process.execPath, [cli, ...args], {
+      encoding: "utf8",
+      timeout: 3000,
+    });
+    assert.equal(result.status, 2, result.stderr);
+    assert.match(result.stderr, /--manifest.*--sha/);
+  }
+  const verifiedIndex = spawnSync(
+    process.execPath,
+    [cli, "--manifest", path, "--sha", sha],
+    { encoding: "utf8", timeout: 3000 }
+  );
+  assert.equal(verifiedIndex.status, 0, verifiedIndex.stderr);
+  const output = JSON.parse(verifiedIndex.stdout);
+  assert.equal(output.status, "EVIDENCE_PRESENT_UNVERIFIED");
+  assert.equal(output.productionApproved, false);
 });
