@@ -97,12 +97,7 @@ jobs:
         run: pnpm release:preflight
 
       - name: Check formatting
-        run: |
-          pnpm format:check || {
-            pnpm exec prettier tests/onboarding-1-1-smoke.test.mjs > /tmp/onboarding-smoke-prettier.mjs
-            diff -u tests/onboarding-1-1-smoke.test.mjs /tmp/onboarding-smoke-prettier.mjs || true
-            exit 1
-          }
+        run: pnpm format:check
 
       - name: Lint source
         run: pnpm lint
