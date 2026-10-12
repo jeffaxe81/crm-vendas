@@ -165,5 +165,8 @@ test("external smoke rejects a changed HTTP status with a matching Location", ()
   assert.equal(result.error, undefined);
   assert.equal(result.status, 1, result.stderr + result.stdout);
   assert.match(result.stdout, /Redirecionamento inesperado ou ambíguo/);
-  assert.doesNotMatch(result.stdout, /HTTP redireciona para o CRM HTTPS esperado/);
+  assert.doesNotMatch(
+    result.stdout,
+    /HTTP redireciona para o CRM HTTPS esperado/
+  );
 });
