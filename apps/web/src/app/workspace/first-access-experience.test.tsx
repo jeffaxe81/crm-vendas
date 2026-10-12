@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AuthSessionResponse } from "@axes/contracts";
 import { apiRequest } from "../../lib/api-client";
 import { FirstAccessExperience } from "./first-access-experience";
@@ -49,6 +49,10 @@ beforeEach(() => {
   requestMock.mockReset();
   navigation.mockReset();
   renamed.mockReset();
+});
+
+afterEach(() => {
+  cleanup();
 });
 
 describe("CRM 1.1 first access UX", () => {
@@ -146,7 +150,7 @@ describe("CRM 1.1 first access UX", () => {
         name: "Tour das funcionalidades do CRM",
       })
     ).toBeInTheDocument();
-    expect(screen.getByText("Passo 1 de 3")).toBeInTheDocument();
+    expect(screen.getByText("Passo 1 de 4")).toBeInTheDocument();
     expect(screen.queryByText("Usuários e permissões")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Próximo" }));
     expect(navigation).toHaveBeenCalledWith("companies");
