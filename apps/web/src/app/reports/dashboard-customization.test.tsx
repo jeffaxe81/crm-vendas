@@ -114,9 +114,11 @@ describe("CRM-F003 dashboard", () => {
     );
     fireEvent.click(screen.getByLabelText("Exibir Valor em aberto"));
     expect(screen.queryByText("R$ 12.500,50")).not.toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "não foi possível salvar"
-    );
+    expect(
+      screen.getByText(
+        "Preferências aplicadas nesta sessão; não foi possível salvar no navegador."
+      )
+    ).toBeInTheDocument();
   });
   it("supports an empty layout with an accessible way to restore it", async () => {
     setupFetch();
