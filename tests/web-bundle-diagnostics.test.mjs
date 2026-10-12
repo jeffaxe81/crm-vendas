@@ -23,7 +23,12 @@ const mockDocker = [
   "",
 ].join("\n");
 
-function scan({ bundle = "", hasDirectory = true, dockerDown = false, grepError = false } = {}) {
+function scan({
+  bundle = "",
+  hasDirectory = true,
+  dockerDown = false,
+  grepError = false,
+} = {}) {
   const root = mkdtempSync(join(tmpdir(), "crm-bundle-scan-"));
   try {
     const docker = join(root, "docker");
