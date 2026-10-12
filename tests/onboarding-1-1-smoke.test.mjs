@@ -56,16 +56,22 @@ function run(mode = "", options = {}) {
   }
 }
 
-test("onboarding smoke checks health and three protected routes without credentials", () => {
+test("onboarding smoke probes health and auth guards", () => {
   const result = run();
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /4 aprovacoes, 0 falha\(s\)/);
   assert.match(result.stdout, /GET \/me\/onboarding exige login: HTTP 401/);
-  assert.match(result.stdout, /PUT \/me\/onboarding\/organization exige login: HTTP 401/);
-  assert.match(result.stdout, /POST \/me\/onboarding\/tour exige login: HTTP 401/);
+  assert.match(
+    result.stdout,
+    /PUT \/me\/onboarding\/organization exige login: HTTP 401/
+  );
+  assert.match(
+    result.stdout,
+    /POST \/me\/onboarding\/tour exige login: HTTP 401/
+  );
 });
 
-test("onboarding smoke refuses partial HTTP statuses after curl transport failure", () => {
+test("onboarding smoke rejects failed curl transfers", () => {
   const result = run("transport");
   assert.equal(result.status, 1);
   assert.match(result.stdout, /HTTP 000/);
