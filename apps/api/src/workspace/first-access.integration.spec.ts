@@ -37,12 +37,12 @@ describe("CRM 1.1 first-access onboarding integration", () => {
     request(app.getHttpServer())
       .get("/api/v1/me/onboarding")
       .auth(token, { type: "bearer" });
-  const update = (token: string, data: unknown) =>
+  const update = (token: string, data: Record<string, unknown>) =>
     request(app.getHttpServer())
       .put("/api/v1/me/onboarding/organization")
       .auth(token, { type: "bearer" })
       .send(data);
-  const tour = (token: string, data: unknown) =>
+  const tour = (token: string, data: Record<string, unknown>) =>
     request(app.getHttpServer())
       .post("/api/v1/me/onboarding/tour")
       .auth(token, { type: "bearer" })
