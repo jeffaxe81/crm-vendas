@@ -87,6 +87,7 @@ test("source provenance runs in a clean checkout only after quality succeeds", (
     /^    if: github.event_name == 'push' && github.ref == 'refs\/heads\/main'$/m
   );
   assert.match(provenance, /Checkout exact main commit for provenance/);
+  assert.match(provenance, /ref: \$\{\{ github\.sha \}\}/);
   assert.match(provenance, /persist-credentials: false/);
   assert.match(provenance, /node scripts\/release-source-manifest[.]mjs/);
   assert.match(provenance, /Retain main source manifest/);
