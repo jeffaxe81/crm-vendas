@@ -7,7 +7,6 @@ const google: CodeExchangeInput = {
   code: "4/0AfSyntheticAuthorizationCodeForTests",
   grant: {
     provider: "GMAIL",
-    providerPreferenceVersion: 1,
     codeVerifier: "v".repeat(64),
     oidcNonce: "n".repeat(43),
     redirectUri: "https://crm.example.com/admin/email/oauth/callback",
