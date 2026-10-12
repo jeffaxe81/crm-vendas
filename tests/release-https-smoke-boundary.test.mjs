@@ -28,8 +28,13 @@ const mockCurl = [
   'if [[ "$url" == http://* ]]; then',
   "  if ((write_status)); then",
   '    printf "%s" "$MOCK_HTTP_STATUS"',
+  '    if [[ "${MOCK_HTTP_FAIL_AFTER_STATUS:-0}" == 1 ]]; then exit 18; fi',
   "  else",
-  '    printf "HTTP/1.1 %s Redirect\r\nLocation: %s\r\n\r\n" "$MOCK_HTTP_STATUS" "$MOCK_REDIRECT"',
+  '    printf "HTTP/1.1 %s Redirect\r\nLocation: %s\r\n" "$MOCK_HTTP_STATUS" "$MOCK_REDIRECT"',
+  '    if [[ -n "${MOCK_EXTRA_REDIRECT:-}" ]]; then',
+  '      printf "Location: %s\r\n" "$MOCK_EXTRA_REDIRECT"',
+  "    fi",
+  '    printf "\r\n"',
   "  fi",
   "  exit 0",
   "fi",
@@ -38,8 +43,10 @@ const mockCurl = [
   "fi",
   "if ((write_status)); then",
   "  printf 200",
+  '  if [[ "${MOCK_HTTPS_FAIL_AFTER_STATUS:-0}" == 1 ]]; then exit 18; fi',
   "elif ((head)); then",
   '  printf "HTTP/1.1 200 OK\r\nStrict-Transport-Security: max-age=31536000\r\nX-Content-Type-Options: nosniff\r\n\r\n"',
+  '  if [[ "${MOCK_HTTPS_HEAD_FAIL_AFTER_HEADERS:-0}" == 1 ]]; then exit 18; fi',
   "else",
   "  exit 4",
   "fi",
@@ -118,4 +125,37 @@ test("external smoke rejects plain HTTP 200 without a redirect", () => {
   assert.equal(result.error, undefined);
   assert.equal(result.status, 1, result.stderr + result.stdout);
   assert.match(result.stdout, /esperado 301 ou 308/);
+});
+
+test("external smoke rejects HTTP 200 printed before a curl transport failure", () => {
+  const result = executeSmoke({ MOCK_HTTPS_FAIL_AFTER_STATUS: "1" });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.match(result.stdout, /Frontend HTTPS retornou 000/);
+  assert.match(result.stdout, /API \/api\/v1\/health retornou 000/);
+  assert.match(result.stdout, /Falha de confiança TLS/);
+});
+
+test("external smoke rejects partial security headers after a curl failure", () => {
+  const result = executeSmoke({ MOCK_HTTPS_HEAD_FAIL_AFTER_HEADERS: "1" });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.match(result.stdout, /HSTS ausente/);
+  assert.match(result.stdout, /X-Content-Type-Options ausente/);
+});
+
+test("external smoke rejects duplicate redirect Location headers", () => {
+  const result = executeSmoke({
+    MOCK_EXTRA_REDIRECT: "https://attacker.invalid/",
+  });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.match(result.stdout, /Redirecionamento inesperado ou ambíguo/);
+});
+
+test("external smoke rejects redirect HTTP status if curl later fails", () => {
+  const result = executeSmoke({ MOCK_HTTP_FAIL_AFTER_STATUS: "1" });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.match(result.stdout, /HTTP retornou 000/);
 });
