@@ -2586,7 +2586,9 @@ textarea {
   opacity: 0.6;
   cursor: not-allowed;
 }
-.first-access-panel [role="alert"] { color: #a12828; }
+.first-access-panel [role="alert"] {
+  color: #a12828;
+}
 @media (max-width: 600px) {
   .first-access-panel {
     top: auto;

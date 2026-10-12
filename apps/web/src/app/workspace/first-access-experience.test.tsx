@@ -66,7 +66,11 @@ describe("CRM 1.1 first access UX", () => {
         } as never;
       }
       if (path === "/me/onboarding/organization") {
-        const input = options?.body as { step: number; name?: string; complete?: boolean };
+        const input = options?.body as {
+          step: number;
+          name?: string;
+          complete?: boolean;
+        };
         return {
           eligible: true,
           completed: Boolean(input.complete),
@@ -85,11 +89,16 @@ describe("CRM 1.1 first access UX", () => {
       />
     );
     expect(
-      await screen.findByRole("dialog", { name: "Configuração inicial da empresa" })
+      await screen.findByRole("dialog", {
+        name: "Configuração inicial da empresa",
+      })
     ).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Nome da organização na configuração inicial"), {
-      target: { value: "Empresa Nova" },
-    });
+    fireEvent.change(
+      screen.getByLabelText("Nome da organização na configuração inicial"),
+      {
+        target: { value: "Empresa Nova" },
+      }
+    );
     fireEvent.click(screen.getByRole("button", { name: "Salvar e continuar" }));
     await waitFor(() => expect(renamed).toHaveBeenCalledWith("Empresa Nova"));
     await screen.findByText("Usuários e permissões");
@@ -97,9 +106,15 @@ describe("CRM 1.1 first access UX", () => {
     await screen.findByText("Área comercial e preferências");
     fireEvent.click(screen.getByRole("button", { name: "Salvar e continuar" }));
     await screen.findByText("Integrações e conclusão");
-    fireEvent.click(screen.getByRole("button", { name: "Concluir configuração e iniciar tour" }));
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Concluir configuração e iniciar tour",
+      })
+    );
     expect(
-      await screen.findByRole("dialog", { name: "Tour das funcionalidades do CRM" })
+      await screen.findByRole("dialog", {
+        name: "Tour das funcionalidades do CRM",
+      })
     ).toBeInTheDocument();
     expect(navigation).toHaveBeenCalledWith("home");
   });
@@ -108,7 +123,12 @@ describe("CRM 1.1 first access UX", () => {
     requestMock.mockImplementation(async path =>
       path === "/me/onboarding"
         ? ({
-            organization: { eligible: false, completed: false, step: 1, name: "Empresa Demo" },
+            organization: {
+              eligible: false,
+              completed: false,
+              step: 1,
+              name: "Empresa Demo",
+            },
             tour: { status: "PENDING" },
           } as never)
         : ({ status: "SKIPPED" } as never)
@@ -122,7 +142,9 @@ describe("CRM 1.1 first access UX", () => {
       />
     );
     expect(
-      await screen.findByRole("dialog", { name: "Tour das funcionalidades do CRM" })
+      await screen.findByRole("dialog", {
+        name: "Tour das funcionalidades do CRM",
+      })
     ).toBeInTheDocument();
     expect(screen.getByText("Passo 1 de 3")).toBeInTheDocument();
     expect(screen.queryByText("Usuários e permissões")).not.toBeInTheDocument();
@@ -139,7 +161,12 @@ describe("CRM 1.1 first access UX", () => {
 
   it("does not automatically replay a completed tour but allows explicit replay", async () => {
     requestMock.mockResolvedValue({
-      organization: { eligible: false, completed: true, step: 4, name: "Empresa Demo" },
+      organization: {
+        eligible: false,
+        completed: true,
+        step: 4,
+        name: "Empresa Demo",
+      },
       tour: { status: "COMPLETED" },
     } as never);
     const { rerender } = render(
@@ -161,7 +188,9 @@ describe("CRM 1.1 first access UX", () => {
       />
     );
     expect(
-      await screen.findByRole("dialog", { name: "Tour das funcionalidades do CRM" })
+      await screen.findByRole("dialog", {
+        name: "Tour das funcionalidades do CRM",
+      })
     ).toBeInTheDocument();
   });
 });

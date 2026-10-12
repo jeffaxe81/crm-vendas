@@ -37,7 +37,11 @@ export class FirstAccessService {
         principal.permissions.includes("organization.manage")
       ) {
         const founder = await tx.organizationMembership.findFirst({
-          where: { organizationId: principal.organizationId, role: "ADMIN", isActive: true },
+          where: {
+            organizationId: principal.organizationId,
+            role: "ADMIN",
+            isActive: true,
+          },
           orderBy: [{ createdAt: "asc" }, { id: "asc" }],
         });
         if (founder?.userId === principal.userId) {
@@ -88,26 +92,38 @@ export class FirstAccessService {
   ): Promise<OnboardingState["organization"]> {
     this.requireUser(principal);
     const parsed = OrganizationOnboardingInputSchema.safeParse(body);
-    if (!parsed.success) throw new BadRequestException("Etapa de configuração inválida.");
+    if (!parsed.success)
+      throw new BadRequestException("Etapa de configuração inválida.");
     if (
       principal.role !== "ADMIN" ||
       !principal.permissions.includes("organization.manage")
-    ) throw new ForbiddenException("Somente o administrador inicial pode configurar a empresa.");
+    )
+      throw new ForbiddenException(
+        "Somente o administrador inicial pode configurar a empresa."
+      );
 
     return this.prisma.withTenant(principal.organizationId, async tx => {
       const org = await tx.organization.findUniqueOrThrow({
         where: { id: principal.organizationId },
       });
       if (org.onboardingOwnerId !== principal.userId)
-        throw new ForbiddenException("Configuração inicial reservada ao primeiro administrador.");
+        throw new ForbiddenException(
+          "Configuração inicial reservada ao primeiro administrador."
+        );
       if (org.onboardingCompletedAt) {
-        return { eligible: true, completed: true, step: org.onboardingStep, name: org.name };
+        return {
+          eligible: true,
+          completed: true,
+          step: org.onboardingStep,
+          name: org.name,
+        };
       }
       if (
         parsed.data.step < org.onboardingStep ||
         parsed.data.step > org.onboardingStep + 1 ||
         (parsed.data.complete === true && parsed.data.step !== 4)
-      ) throw new BadRequestException("Sequência inválida do assistente.");
+      )
+        throw new BadRequestException("Sequência inválida do assistente.");
       const updated = await tx.organization.update({
         where: { id: principal.organizationId },
         data: {
@@ -145,7 +161,8 @@ export class FirstAccessService {
   ): Promise<OnboardingState["tour"]> {
     this.requireUser(principal);
     const parsed = TourCompletionInputSchema.safeParse(body);
-    if (!parsed.success) throw new BadRequestException("Estado do tour inválido.");
+    if (!parsed.success)
+      throw new BadRequestException("Estado do tour inválido.");
     return this.prisma.withTenant(principal.organizationId, async tx => {
       // First completion/skip wins: replays cannot erase prior completion.
       const updated = await tx.organizationMembership.updateMany({

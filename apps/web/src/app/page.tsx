@@ -327,7 +327,10 @@ export default function Home() {
             onOrganizationNameChange={name =>
               setSession(current =>
                 current
-                  ? { ...current, organization: { ...current.organization, name } }
+                  ? {
+                      ...current,
+                      organization: { ...current.organization, name },
+                    }
                   : current
               )
             }

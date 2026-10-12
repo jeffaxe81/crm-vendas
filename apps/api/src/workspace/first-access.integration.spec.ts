@@ -70,7 +70,9 @@ describe("CRM 1.1 first-access onboarding integration", () => {
         });
       });
     const other = await get(second.token).expect(200);
-    expect(other.body.organization.name).toBe(second.credentials.organizationName);
+    expect(other.body.organization.name).toBe(
+      second.credentials.organizationName
+    );
     expect(other.body.organization.step).toBe(1);
     await update(first.token, {
       step: 3,
@@ -83,11 +85,15 @@ describe("CRM 1.1 first-access onboarding integration", () => {
         password: first.credentials.adminPassword,
       })
       .expect(200);
-    expect((await get(signedIn.body.accessToken).expect(200)).body.organization.step).toBe(2);
+    expect(
+      (await get(signedIn.body.accessToken).expect(200)).body.organization.step
+    ).toBe(2);
     await update(first.token, { step: 3 }).expect(200);
     await update(first.token, { step: 4 }).expect(200);
     await update(first.token, { step: 4, complete: true }).expect(200);
-    expect((await get(first.token).expect(200)).body.organization.completed).toBe(true);
+    expect(
+      (await get(first.token).expect(200)).body.organization.completed
+    ).toBe(true);
   }, 30000);
 
   it("tour is individual per membership, persists after login, and denies member wizard", async () => {
@@ -109,24 +115,35 @@ describe("CRM 1.1 first-access onboarding integration", () => {
     const before = await get(memberToken).expect(200);
     expect(before.body.organization.eligible).toBe(false);
     expect(before.body.tour.status).toBe("PENDING");
-    await update(memberToken, { step: 2, name: "Privilege escalation" }).expect(403);
-    await tour(memberToken, { status: "COMPLETED", userId: randomUUID() }).expect(400);
+    await update(memberToken, { step: 2, name: "Privilege escalation" }).expect(
+      403
+    );
+    await tour(memberToken, {
+      status: "COMPLETED",
+      userId: randomUUID(),
+    }).expect(400);
     await tour(memberToken, { status: "COMPLETED" }).expect(201);
     await tour(memberToken, { status: "SKIPPED" }).expect(201);
-    expect((await get(memberToken).expect(200)).body.tour.status).toBe("COMPLETED");
-    expect((await get(owner.token).expect(200)).body.tour.status).toBe("PENDING");
-    expect((await get(other.token).expect(200)).body.tour.status).toBe("PENDING");
+    expect((await get(memberToken).expect(200)).body.tour.status).toBe(
+      "COMPLETED"
+    );
+    expect((await get(owner.token).expect(200)).body.tour.status).toBe(
+      "PENDING"
+    );
+    expect((await get(other.token).expect(200)).body.tour.status).toBe(
+      "PENDING"
+    );
     const again = await request(app.getHttpServer())
       .post("/api/v1/auth/login")
       .send({ email, password })
       .expect(200);
-    expect((await get(again.body.accessToken).expect(200)).body.tour.status).toBe("COMPLETED");
+    expect(
+      (await get(again.body.accessToken).expect(200)).body.tour.status
+    ).toBe("COMPLETED");
   }, 30000);
 
   it("requires an authenticated user session", async () => {
-    await request(app.getHttpServer())
-      .get("/api/v1/me/onboarding")
-      .expect(401);
+    await request(app.getHttpServer()).get("/api/v1/me/onboarding").expect(401);
     await request(app.getHttpServer())
       .post("/api/v1/me/onboarding/tour")
       .send({ status: "COMPLETED" })

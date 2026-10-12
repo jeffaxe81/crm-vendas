@@ -28,7 +28,10 @@ export class FirstAccessController {
     return this.service.read(this.principal(request));
   }
   @Put("organization")
-  saveOrganization(@Body() body: unknown, @Req() request: AuthenticatedRequest) {
+  saveOrganization(
+    @Body() body: unknown,
+    @Req() request: AuthenticatedRequest
+  ) {
     return this.service.saveOrganization(
       body,
       this.principal(request),

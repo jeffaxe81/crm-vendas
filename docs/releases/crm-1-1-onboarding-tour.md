@@ -1,11 +1,13 @@
 # AXE CRM — Release 1.1: primeiro acesso e tour guiado
 
 ## Finalidade
+
 Aprimorar a adoção e a configuração inicial sem atrasar nem confundir a
 homologação da versão 1.0. Esta branch é uma proposta de **release 1.1**,
 não uma versão já implantada ou aprovada para produção.
 
 ### Wizard da empresa — apenas primeiro administrador
+
 - A pessoa que registra a empresa é marcada no servidor como responsável pela configuração.
 - Em organizações legadas sem responsável, o **administrador ativo mais antigo**
   pode assumir o wizard uma vez, de forma idempotente.
@@ -19,6 +21,7 @@ não uma versão já implantada ou aprovada para produção.
   o estado sem transferência formal de responsabilidade (futuro recurso).
 
 ### Tour — no primeiro acesso **de cada usuário**
+
 - Exibido em cada membership de empresa ao primeiro login, independentemente
   de o usuário ser ADMIN, MANAGER, SELLER ou VIEWER.
 - Explica cada seção autorizada do menu conforme
@@ -33,6 +36,7 @@ não uma versão já implantada ou aprovada para produção.
   essa experiência.
 
 ## Contratos e segurança
+
 - Endpoints protegidos por `AuthenticationGuard`, exigindo sessão de usuário:
   `GET /api/v1/me/onboarding`,
   `PUT /api/v1/me/onboarding/organization`,
@@ -45,6 +49,7 @@ não uma versão já implantada ou aprovada para produção.
 - A migração é aditiva e mantém o isolamento PostgreSQL existente.
 
 ## Evidências obrigatórias antes de integrar e publicar
+
 - [ ] CI completo da PR 1.1, com migration deploy, lint, typecheck, testes de
       repositório, API, frontend, E2E, Compose e imagens.
 - [ ] Testes reais de dois tenants, usuário vendedor, usuário VIEWER, dois
@@ -57,6 +62,7 @@ não uma versão já implantada ou aprovada para produção.
 - [ ] Manifesto da main final e aceite operacional específico da 1.1.
 
 ## Observações
-A melhoria de primeiro acesso não implica *GO* da 1.0/1.1. O `DisabledEmailProvider`
+
+A melhoria de primeiro acesso não implica _GO_ da 1.0/1.1. O `DisabledEmailProvider`
 permanece ativo até a habilitação homologada por provedores. Não oferecer a
 integração externa como concluída dentro do wizard.

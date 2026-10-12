@@ -18,13 +18,20 @@ const explanations: Record<WorkspaceSection, string> = {
   agenda: "Organize compromissos e visualize as atividades em calendário.",
   activities: "Registre ligações, tarefas, reuniões e próximos passos.",
   tickets: "Gerencie solicitações de atendimento, filas e responsáveis.",
-  communication: "Consulte a área de comunicação integrada; conexões externas precisam ser configuradas e autorizadas.",
-  "management-summary": "Visualize os relatórios e indicadores de desempenho de vendas.",
-  territories: "Organize regiões comerciais, carteiras e distribuição de metas.",
-  "admin-users": "Adicione colaboradores e defina permissões de acesso por perfil.",
-  "support-settings": "Configure filas, políticas e recursos de atendimento disponíveis.",
-  "workspace-settings": "Escolha sua página inicial, seus favoritos e a organização dos painéis.",
-  "integration-credentials": "Gerencie credenciais e integrações autorizadas. E-mails externos não são ativados pelo tour.",
+  communication:
+    "Consulte a área de comunicação integrada; conexões externas precisam ser configuradas e autorizadas.",
+  "management-summary":
+    "Visualize os relatórios e indicadores de desempenho de vendas.",
+  territories:
+    "Organize regiões comerciais, carteiras e distribuição de metas.",
+  "admin-users":
+    "Adicione colaboradores e defina permissões de acesso por perfil.",
+  "support-settings":
+    "Configure filas, políticas e recursos de atendimento disponíveis.",
+  "workspace-settings":
+    "Escolha sua página inicial, seus favoritos e a organização dos painéis.",
+  "integration-credentials":
+    "Gerencie credenciais e integrações autorizadas. E-mails externos não são ativados pelo tour.",
 };
 
 type Phase = "loading" | "wizard" | "tour" | "idle" | "error";
@@ -132,7 +139,9 @@ export function FirstAccessExperience({
         onNavigate("home");
       }
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Falha ao salvar etapa.");
+      setError(
+        cause instanceof Error ? cause.message : "Falha ao salvar etapa."
+      );
     } finally {
       setBusy(false);
     }
@@ -150,7 +159,9 @@ export function FirstAccessExperience({
       });
       setPhase("idle");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Falha ao salvar tour.");
+      setError(
+        cause instanceof Error ? cause.message : "Falha ao salvar tour."
+      );
     } finally {
       setBusy(false);
     }
@@ -161,7 +172,10 @@ export function FirstAccessExperience({
     return (
       <aside className="first-access-panel" role="status">
         <h2>Boas-vindas temporariamente indisponíveis</h2>
-        <p>O progresso não foi alterado. Entre novamente para retomar o assistente.</p>
+        <p>
+          O progresso não foi alterado. Entre novamente para retomar o
+          assistente.
+        </p>
       </aside>
     );
   }
@@ -176,10 +190,16 @@ export function FirstAccessExperience({
         aria-label="Configuração inicial da empresa"
         aria-modal="false"
       >
-        <p className="first-access-eyebrow">AXE CRM 1.1 · Configuração da empresa</p>
+        <p className="first-access-eyebrow">
+          AXE CRM 1.1 · Configuração da empresa
+        </p>
         <h2>{stageNames[stage - 1]}</h2>
         <p>Etapa {stage} de 4 · somente para o primeiro administrador</p>
-        <progress value={stage} max={4} aria-label="Progresso da configuração" />
+        <progress
+          value={stage}
+          max={4}
+          aria-label="Progresso da configuração"
+        />
         <p>{stageDetails[stage - 1]}</p>
         {stage === 1 ? (
           <label className="first-access-field">
@@ -208,12 +228,21 @@ export function FirstAccessExperience({
           <button
             type="button"
             onClick={() => void advanceWizard()}
-            disabled={busy || (stage === 1 && organizationName.trim().length < 2)}
+            disabled={
+              busy || (stage === 1 && organizationName.trim().length < 2)
+            }
           >
-            {busy ? "Salvando..." : stage === 4 ? "Concluir configuração e iniciar tour" : "Salvar e continuar"}
+            {busy
+              ? "Salvando..."
+              : stage === 4
+                ? "Concluir configuração e iniciar tour"
+                : "Salvar e continuar"}
           </button>
         </div>
-        <small>O progresso é salvo por empresa. Você pode continuar no próximo acesso.</small>
+        <small>
+          O progresso é salvo por empresa. Você pode continuar no próximo
+          acesso.
+        </small>
       </aside>
     );
   }
@@ -229,8 +258,14 @@ export function FirstAccessExperience({
     >
       <p className="first-access-eyebrow">AXE CRM 1.1 · Conheça o sistema</p>
       <h2>{step.label}</h2>
-      <p>Passo {tourIndex + 1} de {steps.length}</p>
-      <progress value={tourIndex + 1} max={steps.length} aria-label="Progresso do tour" />
+      <p>
+        Passo {tourIndex + 1} de {steps.length}
+      </p>
+      <progress
+        value={tourIndex + 1}
+        max={steps.length}
+        aria-label="Progresso do tour"
+      />
       <p>{explanations[step.id]}</p>
       <p>Esta seção está aberta no CRM para você explorar.</p>
       {error ? <p role="alert">{error}</p> : null}
@@ -271,7 +306,10 @@ export function FirstAccessExperience({
           {tourIndex + 1 === steps.length ? "Concluir tour" : "Próximo"}
         </button>
       </div>
-      <small>O tour é individual e respeita as permissões do seu perfil. Pode ser reaberto em Ajuda.</small>
+      <small>
+        O tour é individual e respeita as permissões do seu perfil. Pode ser
+        reaberto em Ajuda.
+      </small>
     </aside>
   );
 }
