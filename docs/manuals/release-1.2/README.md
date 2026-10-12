@@ -4,12 +4,12 @@
 
 Os manuais são orientações de uso conforme as permissões do backend em `apps/api/src/authorization/permissions.ts`:
 
-| Perfil | Guia | Destinação |
-| --- | --- | --- |
-| ADMIN | [Administrador](./admin.md) | Organização, usuários e gestão comercial |
-| MANAGER | [Gestor](./manager.md) | Supervisão comercial, pipeline, relatórios e atendimento |
-| SELLER | [Vendedor](./seller.md) | Operação comercial sem administração |
-| VIEWER | [Consulta](./viewer.md) | Leitura sem alteração dos dados |
+| Perfil  | Guia                        | Destinação                                               |
+| ------- | --------------------------- | -------------------------------------------------------- |
+| ADMIN   | [Administrador](./admin.md) | Organização, usuários e gestão comercial                 |
+| MANAGER | [Gestor](./manager.md)      | Supervisão comercial, pipeline, relatórios e atendimento |
+| SELLER  | [Vendedor](./seller.md)     | Operação comercial sem administração                     |
+| VIEWER  | [Consulta](./viewer.md)     | Leitura sem alteração dos dados                          |
 
 Veja a [matriz técnica de permissões](./matriz-de-permissoes.md).
 
