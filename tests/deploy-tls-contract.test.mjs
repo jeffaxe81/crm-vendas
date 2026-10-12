@@ -55,3 +55,23 @@ test("release diagnostics fail closed on curl transfer errors and ambiguous redi
   assert.match(server, /hsts_headers=\$\(curl /);
   assert.match(external, /location_count=\$\(awk /);
 });
+
+test("release HTTPS probes ignore ambient curlrc configuration", () => {
+  const server = readFileSync(serverScript, "utf8");
+  const external = readFileSync(externalScript, "utf8");
+  for (const [name, source] of [
+    ["server", server],
+    ["external", external],
+  ]) {
+    assert.equal(
+      (source.match(/curl -q --silent/g) ?? []).length,
+      3,
+      name + " must pass -q first on all three HTTP/TLS probes"
+    );
+    assert.doesNotMatch(
+      source,
+      /curl --silent/,
+      name + " must not inherit .curlrc on any probe"
+    );
+  }
+});
