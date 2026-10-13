@@ -171,3 +171,41 @@ test("external smoke rejects a changed HTTP status with a matching Location", ()
     /HTTP redireciona para o CRM HTTPS esperado/
   );
 });
+
+test("external smoke rejects a different HTTP and HTTPS target host", () => {
+  const result = executeSmoke({ CRM_HTTP_URL: "http://unrelated.test" });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 2, result.stderr + result.stdout);
+  assert.match(result.stderr, /mesmo host/);
+  assert.doesNotMatch(result.stdout, /Frontend HTTPS responde 200/);
+});
+
+test("external smoke rejects URLs with credentials, paths, queries and fragments", () => {
+  const invalid = [
+    { CRM_BASE_URL: "https://user:password@127.0.0.1" },
+    { CRM_BASE_URL: "https://127.0.0.1/custom-page" },
+    { CRM_BASE_URL: "https://127.0.0.1?test=1" },
+    { CRM_BASE_URL: "https://127.0.0.1/#fragment" },
+    { CRM_HTTP_URL: "http://127.0.0.1/redirect" },
+    { CRM_HTTP_URL: "http://127.0.0.1?fake=1" },
+    { CRM_HTTP_URL: "http://127.0.0.1@other.example" },
+  ];
+  for (const env of invalid) {
+    const result = executeSmoke(env);
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 2, JSON.stringify(env) + result.stderr);
+    assert.match(result.stderr, /deve ser apenas uma origem/);
+    assert.doesNotMatch(result.stdout, /Frontend HTTPS responde 200/);
+  }
+});
+
+test("external smoke supports separate HTTP and HTTPS ports on the same host", () => {
+  const result = executeSmoke({
+    CRM_BASE_URL: "https://127.0.0.1:8443",
+    CRM_HTTP_URL: "http://127.0.0.1:8080",
+    MOCK_REDIRECT: "https://127.0.0.1:8443/",
+  });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0, result.stderr + result.stdout);
+  assert.match(result.stdout, /Certificado TLS validado/);
+});
