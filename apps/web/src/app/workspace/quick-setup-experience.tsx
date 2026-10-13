@@ -74,6 +74,13 @@ export function QuickSetupExperience({
       setState(quickSetup);
       setPhase(forceOpen || !quickSetup.completed ? "open" : "idle");
     } catch (cause) {
+      // Do not interrupt unrelated CRM pages on an automatic background load.
+      // Explicitly opening the setup must still expose failures and retry.
+      if (!forceOpen) {
+        setPhase("idle");
+        return;
+      }
+
       setError(
         cause instanceof Error
           ? cause.message
