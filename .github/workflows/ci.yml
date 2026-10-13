@@ -99,6 +99,14 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
+      - name: Diagnose evidence initializer formatting
+        if: failure()
+        run: |
+          for file in scripts/release-evidence-init.mjs tests/release-evidence-init.test.mjs; do
+            echo "=== Prettier diff: $file ==="
+            pnpm exec prettier "$file" | diff -u "$file" - || true
+          done
+
       - name: Lint source
         run: pnpm lint
 
