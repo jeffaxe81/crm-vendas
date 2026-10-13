@@ -77,19 +77,22 @@ async function main(): Promise<void> {
           },
         });
 
-    await prisma.auditLog.create({
-      data: {
-        organizationId: organization.id,
-        actorUserId: user.id,
-        requestId: "bootstrap-admin",
-        action: "system.bootstrap_admin",
-        entityType: "organization_membership",
-        entityId: membership.id,
-        metadata: {
-          source: "bootstrap-admin",
+    // Audit logs have tenant RLS. Use the normal tenant-scoped transaction.
+    await prisma.withTenant(organization.id, tenant =>
+      tenant.auditLog.create({
+        data: {
+          organizationId: organization.id,
+          actorUserId: user.id,
+          requestId: "bootstrap-admin",
+          action: "system.bootstrap_admin",
+          entityType: "organization_membership",
+          entityId: membership.id,
+          metadata: {
+            source: "bootstrap-admin",
+          },
         },
-      },
-    });
+      })
+    );
 
     console.log(
       JSON.stringify({
