@@ -67,7 +67,19 @@ describe("Workspace start page", () => {
       })
     );
     await screen.findByText("Escolha seus atalhos em Personalizar início.");
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    // Initialization may fetch onboarding/quick setup in addition to preferences;
+    // only hidden home widgets must remain unfetched after preferences load.
+    expect(
+      fetchMock.mock.calls
+        .map(call => String(call[0]))
+        .filter(
+          url =>
+            !url.endsWith("auth/refresh") &&
+            !url.endsWith("workspace-preferences") &&
+            !url.endsWith("/me/onboarding") &&
+            !url.endsWith("/me/quick-setup")
+        )
+    ).toEqual([]);
   });
   it("opens the related report from a home indicator", async () => {
     const summary = {
