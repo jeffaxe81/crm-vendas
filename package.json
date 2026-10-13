@@ -18,7 +18,8 @@
     "test:repo": "node --test tests/*.test.mjs",
     "verify:foundation": "node scripts/verify-foundation.mjs",
     "release:preflight": "node scripts/release-preflight.mjs",
-    "release:evidence:check": "node scripts/release-evidence-check.mjs"
+    "release:evidence:check": "node scripts/release-evidence-check.mjs",
+    "release:evidence:init": "node scripts/release-evidence-init.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1",
