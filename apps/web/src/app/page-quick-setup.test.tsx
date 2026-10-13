@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { ReactNode } from "react";
 
 import Home from "./page";
 
@@ -8,7 +9,7 @@ vi.mock("./crm-shell", () => ({
     children,
     onOpenQuickSetup,
   }: {
-    children: React.ReactNode;
+    children: ReactNode;
     onOpenQuickSetup?: () => void;
   }) => (
     <div>
@@ -21,7 +22,7 @@ vi.mock("./crm-shell", () => ({
 }));
 
 vi.mock("./workspace/workspace-provider", () => ({
-  WorkspaceProvider: ({ children }: { children: React.ReactNode }) => children,
+  WorkspaceProvider: ({ children }: { children: ReactNode }) => children,
   useWorkspace: () => null,
 }));
 
