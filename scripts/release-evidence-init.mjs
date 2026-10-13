@@ -12,11 +12,16 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SHA = /^[a-f0-9]{40}$/;
 const RUN_ID = /^[1-9][0-9]{0,19}$/;
 const repo = "jeffaxe81/crm-vendas";
-const templatePath = resolve(root, "docs/releases/crm-rc-evidence-template.json");
+const templatePath = resolve(
+  root,
+  "docs/releases/crm-rc-evidence-template.json"
+);
 
 function within(parent, child) {
   const rel = relative(parent, child);
-  return rel === "" || (rel !== ".." && !rel.startsWith("../") && !isAbsolute(rel));
+  return (
+    rel === "" || (rel !== ".." && !rel.startsWith("../") && !isAbsolute(rel))
+  );
 }
 
 export function buildPendingManifest(template, sha, runId) {
@@ -121,9 +126,14 @@ function readArguments(argv) {
   };
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
   try {
-    const result = await initializeEvidence(readArguments(process.argv.slice(2)));
+    const result = await initializeEvidence(
+      readArguments(process.argv.slice(2))
+    );
     process.stdout.write(JSON.stringify(result, null, 2) + "\n");
   } catch (error) {
     // Do not echo potentially sensitive paths, CI text, or local environment.
