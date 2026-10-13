@@ -96,17 +96,6 @@ jobs:
       - name: Validate RC code preflight
         run: pnpm release:preflight
 
-      - name: TEMP output formatted inbound files (remove before merge)
-        run: |
-          pnpm exec prettier --write apps/api/src/messaging/email/inbound-source-vault.ts apps/api/src/messaging/email/inbound-source-vault.integration.spec.ts
-          printf 'CRM_FMT_SERVICE_START='
-          base64 -w0 apps/api/src/messaging/email/inbound-source-vault.ts
-          printf '\\n'
-          printf 'CRM_FMT_TEST_START='
-          base64 -w0 apps/api/src/messaging/email/inbound-source-vault.integration.spec.ts
-          printf '\\n'
-          exit 1
-
       - name: Check formatting
         run: pnpm format:check
 
