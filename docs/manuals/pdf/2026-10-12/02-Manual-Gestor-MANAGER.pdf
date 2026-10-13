@@ -1,0 +1,62 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [5 0 R] >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 2508 >>
+stream
+0.14 0.43 0.64 rg 0 826 595 16 re f
+0.13 0.30 0.46 rg
+BT /F2 10 Tf 1 0 0 1 49 782.00 Tm (AXESISTEMAS  /  CRM-VENDAS) Tj ET
+BT /F2 15 Tf 1 0 0 1 49 751.00 Tm (02 Manual Gestor MANAGER) Tj ET
+BT /F1 8 Tf 1 0 0 1 49 729.00 Tm (Base: 5412654ba274 | PDF documental | 12/10/2026) Tj ET
+0.70 0.79 0.86 RG 45 711 m 550 711 l S
+BT /F1 9.5 Tf 1 0 0 1 49 688.00 Tm (Referencia: 02 Manual Gestor MANAGER. Material vinculado às permissões do backend; não comprova) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 674.30 Tm (implantação nem homologação.) Tj ET
+BT /F2 11.5 Tf 1 0 0 1 49 647.60 Tm (Manual de MANAGER - planejamento 1.2) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 625.60 Tm (O MANAGER administra a operação comercial de sua organização, mas não gerencia organização,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 611.90 Tm (usuários, auditoria ou credenciais de integração.) Tj ET
+BT /F2 11.5 Tf 1 0 0 1 49 585.20 Tm (Roteiro de preparação) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 563.20 Tm (1. Revise empresas, contatos e vinculações; verifique duplicidades.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 545.50 Tm (2. Organize as etapas do funil usando pipeline.manage, conforme a interface disponível.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 527.80 Tm (3. Revise oportunidades e distribuição operacional com os controles permitidos.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 510.10 Tm (4. Consulte relatórios \(reports.read\) e padronize o acompanhamento.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 492.40 Tm (5. Organize produtos \(product.write\) e a gestão do atendimento \(support.manage\), quando os módulos) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 478.70 Tm (estiverem disponíveis.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 461.00 Tm (6. Oriente a equipe sobre atividades, históricos, tags e campos comerciais.) Tj ET
+BT /F2 11.5 Tf 1 0 0 1 49 434.30 Tm (Limites de autorização) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 412.30 Tm (MANAGER dispõe das permissões comerciais de SELLER e também pipeline.manage, reports.read,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 398.60 Tm (product.write e support.manage. Não possui organization.manage, user.manage, audit.read,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 384.90 Tm (integration.manage ou integration.read.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 367.20 Tm (É incorreto afirmar que MANAGER e SELLER são equivalentes no backend atual; as diferenças precisam) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 353.50 Tm (ser respeitadas no futuro wizard. Consulte a matriz de permissões.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 335.80 Tm (Estado: roteiro documental; não valida o funcionamento das telas em servidor real.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000320 00000 n 
+0000000456 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3015
+%%EOF

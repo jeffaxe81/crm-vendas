@@ -1,0 +1,70 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [5 0 R] >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 3144 >>
+stream
+0.14 0.43 0.64 rg 0 826 595 16 re f
+0.13 0.30 0.46 rg
+BT /F2 10 Tf 1 0 0 1 49 782.00 Tm (AXESISTEMAS  /  CRM-VENDAS) Tj ET
+BT /F2 15 Tf 1 0 0 1 49 751.00 Tm (01 Manual Administrador ADMIN) Tj ET
+BT /F1 8 Tf 1 0 0 1 49 729.00 Tm (Base: 5412654ba274 | PDF documental | 12/10/2026) Tj ET
+0.70 0.79 0.86 RG 45 711 m 550 711 l S
+BT /F1 9.5 Tf 1 0 0 1 49 688.00 Tm (Referencia: 01 Manual Administrador ADMIN. Material vinculado às permissões do backend; não) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 674.30 Tm (comprova implantação nem homologação.) Tj ET
+BT /F2 11.5 Tf 1 0 0 1 49 647.60 Tm (Manual de ADMIN - planejamento 1.2) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 625.60 Tm (O ADMIN pode administrar a organização e seus usuários, consultar auditoria, parametrizar) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 611.90 Tm (integrações e operar o CRM conforme as permissões do backend.) Tj ET
+BT /F2 11.5 Tf 1 0 0 1 49 585.20 Tm (Roteiro recomendado) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 563.20 Tm (1. Confirme a organização da sessão, para não confundir dados entre empresas.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 545.50 Tm (2. Revise nome e parâmetros organizacionais disponíveis.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 527.80 Tm (3. Crie e revise membros; conceda ADMIN apenas quando necessário e preserve pelo menos um) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 514.10 Tm (administrador válido.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 496.40 Tm (4. Configure etapas do funil, produtos, campos personalizados e tags nas telas realmente) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 482.70 Tm (disponíveis.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 465.00 Tm (5. Revise permissões, auditoria e configurações de integrações. Não habilite envio externo de) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 451.30 Tm (e-mails enquanto permanecer bloqueado pelo ambiente.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 433.60 Tm (6. Teste o cadastro de uma empresa, contato, oportunidade e atividade, e a persistência após nova) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 419.90 Tm (sessão.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 402.20 Tm (7. Oriente cada integrante com seu manual e o tour da versão 1.1 quando já instalado e homologado.) Tj ET
+BT /F2 11.5 Tf 1 0 0 1 49 375.50 Tm (Permissões diferenciadas) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 353.50 Tm (ADMIN inclui organization.manage, user.manage, audit.read, reports.read, pipeline.manage,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 339.80 Tm (support.manage, integration.manage e integration.read, além das permissões comerciais. Consulte a) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 326.10 Tm (matriz para o quadro completo.) Tj ET
+BT /F2 11.5 Tf 1 0 0 1 49 299.40 Tm (Conclusão) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 277.40 Tm (- [ ] organização confirmada;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 259.70 Tm (- [ ] membros e administradores conferidos;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 242.00 Tm (- [ ] funil, produtos e campos essenciais revisados;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 224.30 Tm (- [ ] política de acesso e auditoria conferidas;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 206.60 Tm (- [ ] operação de ponta a ponta verificada no ambiente instalado.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 49 188.90 Tm (Nota: esta sequência não representa execução automática do futuro wizard 1.2.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000320 00000 n 
+0000000456 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3651
+%%EOF
