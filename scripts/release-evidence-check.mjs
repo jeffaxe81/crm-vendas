@@ -95,8 +95,25 @@ export async function evaluate(manifestPath, expectedSha) {
   }
   const evidence = isRecord(manifest?.evidence) ? manifest.evidence : {};
   const root = dirname(resolve(manifestPath));
+  const evidencePaths = new Map();
   for (const field of required) {
-    await checkFile(root, evidence[field], field, errors);
+    const item = evidence[field];
+    if (
+      isRecord(item) &&
+      typeof item.file === "string" &&
+      !isAbsolute(item.file)
+    ) {
+      // One file per gate: never count the same report as nine checks.
+      // Normalize "evidence/./report.txt" before looking for duplicates.
+      const path = resolve(root, item.file);
+      const first = evidencePaths.get(path);
+      if (first) {
+        errors.push(field + ": arquivo também utilizado por " + first);
+      } else {
+        evidencePaths.set(path, field);
+      }
+    }
+    await checkFile(root, item, field, errors);
   }
   return {
     kind: "CRM_RC_EVIDENCE_INDEX_CHECK",
@@ -118,14 +135,19 @@ if (direct) {
   const manifest =
     manifestFlag >= 0 ? process.argv[manifestFlag + 1] : undefined;
   const expected = shaFlag >= 0 ? process.argv[shaFlag + 1] : undefined;
-  if (shaFlag >= 0 && (!expected || !SHA.test(expected))) {
-    process.stderr.write("--sha exige SHA completo de 40 caracteres\n");
+  if (
+    manifestFlag < 0 ||
+    !manifest ||
+    shaFlag < 0 ||
+    !expected ||
+    !SHA.test(expected)
+  ) {
+    process.stderr.write(
+      "--manifest <arquivo.json> e --sha <commit de 40 caracteres> são obrigatórios\n"
+    );
     process.exitCode = 2;
   } else {
-    const result = await evaluate(
-      resolve(manifest || ".missing-rc-evidence.json"),
-      expected
-    );
+    const result = await evaluate(resolve(manifest), expected);
     process.stdout.write(JSON.stringify(result, null, 2) + "\n");
     process.exitCode = result.errors.length ? 1 : 0;
   }
