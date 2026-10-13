@@ -29,7 +29,9 @@ test("Linux setup-server path cannot bypass dry-run validation or pre-migration 
   const checkOnly = deploy.indexOf('if [[ "$CHECK_ONLY" -eq 1 ]]');
   const postgresStart = deploy.indexOf("up -d --wait postgres");
   const backup = deploy.indexOf("pg_dump");
-  const setupServer = deploy.indexOf('if [[ "$SETUP_SERVER" -eq 1 ]]');
+  const setupServer = deploy.indexOf(
+    "exec sudo -E bash deploy/setup-servidor.sh"
+  );
 
   assert.ok(checkOnly >= 0, "check-only gate must exist");
   assert.ok(postgresStart >= 0, "PostgreSQL pre-update start must exist");
