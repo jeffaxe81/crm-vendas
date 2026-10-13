@@ -20,8 +20,28 @@ code() {
     printf '000'
   fi
 }
-case "$CRM_BASE_URL" in https://*) ;; *) echo "CRM_BASE_URL deve começar com https://" >&2; exit 2 ;; esac
-case "$CRM_HTTP_URL" in http://*) ;; *) echo "CRM_HTTP_URL deve começar com http://" >&2; exit 2 ;; esac
+# The two probes must belong to the same host. Reject paths, credentials,
+# queries or fragments that could silently scope diagnostics to another service.
+# Keep optional HTTP/HTTPS ports independent (e.g. 8080 -> 8443).
+origin_pattern='^(\[[[:xdigit:]:.]+\]|[[:alnum:].-]+)(:[0-9]{1,5})?$'
+https_authority="${CRM_BASE_URL#https://}"
+https_authority="${https_authority%/}"
+if [[ "$CRM_BASE_URL" != https://* || ! "$https_authority" =~ $origin_pattern ]]; then
+  echo "[FALHA] CRM_BASE_URL deve ser apenas uma origem HTTPS sem credenciais, path, query ou fragmento" >&2
+  exit 2
+fi
+https_host="${BASH_REMATCH[1]}"
+http_authority="${CRM_HTTP_URL#http://}"
+http_authority="${http_authority%/}"
+if [[ "$CRM_HTTP_URL" != http://* || ! "$http_authority" =~ $origin_pattern ]]; then
+  echo "[FALHA] CRM_HTTP_URL deve ser apenas uma origem HTTP sem credenciais, path, query ou fragmento" >&2
+  exit 2
+fi
+http_host="${BASH_REMATCH[1]}"
+if [[ "$http_host" != "$https_host" ]]; then
+  echo "[FALHA] CRM_HTTP_URL e CRM_BASE_URL precisam apontar para o mesmo host" >&2
+  exit 2
+fi
 # Um teste de homologação não pode passar ignorando a confiança TLS.
 [[ -n "$CA_CERT" ]] || { echo "[FALHA] CA_CERT obrigatório para validar TLS; nenhum teste executado" >&2; exit 2; }
 [[ -f "$CA_CERT" && -r "$CA_CERT" ]] || { echo "[FALHA] CA_CERT ausente ou ilegível" >&2; exit 2; }
