@@ -191,7 +191,7 @@ describe("CRM 1.2 quick setup experience", () => {
     expect(
       await screen.findByRole("dialog", { name: "Configuração rápida do CRM" })
     ).toBeInTheDocument();
-    expect(screen.getByText("Perfil VIEWER")).toBeInTheDocument();
+    expect(screen.getByText(/Perfil\s+VIEWER/)).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Ajuda por perfil" })
     ).toBeVisible();
