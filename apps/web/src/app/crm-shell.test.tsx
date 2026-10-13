@@ -134,3 +134,26 @@ describe("Dispatch navigation in CRM", () => {
     expect(document.body.style.overflow).toBe("");
   });
 });
+
+
+it("reopens the CRM 1.2 quick setup from the authenticated shell", () => {
+  viewport(false);
+  const onOpenQuickSetup = vi.fn();
+
+  render(
+    <CrmShell
+      session={session}
+      activeSection="companies"
+      onNavigate={() => undefined}
+      onLogout={() => undefined}
+      onOpenQuickSetup={onOpenQuickSetup}
+    >
+      <h1>Cadastro de empresas</h1>
+    </CrmShell>
+  );
+
+  fireEvent.click(
+    screen.getByRole("button", { name: "Configuração rápida" })
+  );
+  expect(onOpenQuickSetup).toHaveBeenCalledTimes(1);
+});
