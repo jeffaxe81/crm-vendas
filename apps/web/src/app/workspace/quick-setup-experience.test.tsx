@@ -246,5 +246,4 @@ describe("CRM 1.2 quick setup experience", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
-
 });
