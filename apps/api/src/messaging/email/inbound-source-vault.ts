@@ -110,7 +110,8 @@ export class InboundSourceVault {
       !context ||
       !UUID.test(context.organizationId) ||
       !UUID.test(context.actorUserId)
-    ) forbidden();
+    )
+      forbidden();
   }
 
   private async assertAdmin(
@@ -158,7 +159,8 @@ export class InboundSourceVault {
       !ROUTE.test(input.routeKey) ||
       !ROUTE.test(input.sourceKey) ||
       !KEY.test(input.keyId)
-    ) forbidden();
+    )
+      forbidden();
     const secret = validatedSecret(input.secretBase64);
     const org = context.organizationId;
     const encrypted = encryptWebhookSecret(
@@ -219,7 +221,8 @@ export class InboundSourceVault {
       !KEY.test(input.keyId) ||
       !Number.isSafeInteger(input.expectedVersion) ||
       input.expectedVersion < 1
-    ) forbidden();
+    )
+      forbidden();
     const secret = validatedSecret(input.secretBase64);
     const org = context.organizationId;
     const encrypted = encryptWebhookSecret(
@@ -230,7 +233,10 @@ export class InboundSourceVault {
     return this.prisma.withTenant(org, async tx => {
       await this.assertAdmin(tx, context);
       const route = await this.lockedRoute(
-        tx, context, input.routeKey, input.expectedVersion
+        tx,
+        context,
+        input.routeKey,
+        input.expectedVersion
       );
       const inserted = await tx.$queryRaw<{ key_id: string }[]>`
         INSERT INTO public.inbound_email_source_keys
@@ -247,11 +253,17 @@ export class InboundSourceVault {
       `;
       await tx.auditLog.create({
         data: {
-          organizationId: org, actorUserId: context.actorUserId,
+          organizationId: org,
+          actorUserId: context.actorUserId,
           requestId: context.requestId,
           action: "email.inbound_source.key_rotated",
-          entityType: "InboundEmailSource", entityId: org,
-          metadata: { routeKey: input.routeKey, keyId: input.keyId, enabled: false },
+          entityType: "InboundEmailSource",
+          entityId: org,
+          metadata: {
+            routeKey: input.routeKey,
+            keyId: input.keyId,
+            enabled: false,
+          },
         },
       });
       return this.readOne(tx, org, route.source_key, input.routeKey);
@@ -270,12 +282,16 @@ export class InboundSourceVault {
       !KEY.test(input.keyId) ||
       !Number.isSafeInteger(input.expectedVersion) ||
       input.expectedVersion < 1
-    ) forbidden();
+    )
+      forbidden();
     const org = context.organizationId;
     return this.prisma.withTenant(org, async tx => {
       await this.assertAdmin(tx, context);
       const route = await this.lockedRoute(
-        tx, context, input.routeKey, input.expectedVersion
+        tx,
+        context,
+        input.routeKey,
+        input.expectedVersion
       );
       const revoked = await tx.$queryRaw<{ key_id: string }[]>`
         UPDATE public.inbound_email_source_keys
@@ -293,11 +309,17 @@ export class InboundSourceVault {
       `;
       await tx.auditLog.create({
         data: {
-          organizationId: org, actorUserId: context.actorUserId,
+          organizationId: org,
+          actorUserId: context.actorUserId,
           requestId: context.requestId,
           action: "email.inbound_source.key_revoked",
-          entityType: "InboundEmailSource", entityId: org,
-          metadata: { routeKey: input.routeKey, keyId: input.keyId, enabled: false },
+          entityType: "InboundEmailSource",
+          entityId: org,
+          metadata: {
+            routeKey: input.routeKey,
+            keyId: input.keyId,
+            enabled: false,
+          },
         },
       });
       return this.readOne(tx, org, route.source_key, input.routeKey);
@@ -323,12 +345,16 @@ export class InboundSourceVault {
     `;
     return {
       routeKey: route.route_key,
-      sourceKey, version: route.version, enabled: false,
+      sourceKey,
+      version: route.version,
+      enabled: false,
       keys: keys.map(key => ({ keyId: key.key_id, revoked: key.revoked })),
     };
   }
 
-  async list(context: InboundSourceAdminContext): Promise<InboundSourceMetadata[]> {
+  async list(
+    context: InboundSourceAdminContext
+  ): Promise<InboundSourceMetadata[]> {
     this.validateContext(context);
     const org = context.organizationId;
     return this.prisma.withTenant(org, async tx => {
@@ -341,7 +367,9 @@ export class InboundSourceVault {
       `;
       const result: InboundSourceMetadata[] = [];
       for (const route of routes) {
-        result.push(await this.readOne(tx, org, route.source_key, route.route_key));
+        result.push(
+          await this.readOne(tx, org, route.source_key, route.route_key)
+        );
       }
       return result;
     });
