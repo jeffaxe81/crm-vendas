@@ -1,0 +1,118 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 2 /Kids [5 0 R 7 0 R] >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 3675 >>
+stream
+0.14 0.43 0.64 rg 0 827 595 15 re f
+0.1 0.23 0.37 rg
+BT /F2 10 Tf 1 0 0 1 48 782.00 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 15 Tf 1 0 0 1 48 752.00 Tm (06 Primeiro Acesso Wizard Tour 1 1) Tj ET
+BT /F1 8 Tf 1 0 0 1 48 732.00 Tm (Base: 5412654ba274 | PDF documental | 12/10/2026) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 690.00 Tm (Fonte documental e permissoes do backend; codigo e CI nao atestam implantacao ou aceite.) Tj ET
+BT /F2 12 Tf 1 0 0 1 48 662.00 Tm (AXE CRM - Release 1.1: primeiro acesso e tour guiado) Tj ET
+BT /F2 12 Tf 1 0 0 1 48 630.00 Tm (Finalidade) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 608.00 Tm (Aprimorar a adoção e a configuração inicial sem atrasar nem confundir a) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 590.00 Tm (homologação da versão 1.0. O código da release 1.1 foi integrado à) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 572.00 Tm (main no commit e53289c6128f417995ebf49d5139dbb8a337ccd7,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 554.00 Tm (com CI e manifesto aprovados. A versão ainda não foi homologada nem) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 536.00 Tm (comprovadamente implantada no servidor. O roteiro operacional está em) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 518.00 Tm (docs/releases/crm-1-1-homologacao.md.) Tj ET
+BT /F2 12 Tf 1 0 0 1 48 490.00 Tm (Wizard da empresa - apenas primeiro administrador) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 468.00 Tm (- A pessoa que registra a empresa é marcada no servidor como responsável pela configuração.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 450.00 Tm (- Em organizações legadas sem responsável, o administrador ativo mais antigo) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 432.00 Tm (pode assumir o wizard uma vez, de forma idempotente.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 414.00 Tm (- O assistente exibe quatro etapas com retomada entre sessões: \(1\) nome da) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 396.00 Tm (empresa \(salvo no banco\), \(2\) usuários e perfis, \(3\) preferências e área) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 378.00 Tm (comercial, \(4\) integrações e conclusão.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 360.00 Tm (- As etapas 2 a 4 oferecem atalhos às áreas existentes, sem conceder poderes) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 342.00 Tm (novos, instalar integrações ou criar dados sem consentimento do operador.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 324.00 Tm (- O assistente só desaparece definitivamente quando o administrador o conclui.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 306.00 Tm (Um novo login recupera a etapa salva. Outros administradores não alteram) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 288.00 Tm (o estado sem transferência formal de responsabilidade \(futuro recurso\).) Tj ET
+BT /F2 12 Tf 1 0 0 1 48 260.00 Tm (Tour - no primeiro acesso de cada usuário) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 238.00 Tm (- Exibido em cada membership de empresa ao primeiro login, independentemente) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 220.00 Tm (de o usuário ser ADMIN, MANAGER, SELLER ou VIEWER.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 202.00 Tm (- Explica cada seção autorizada do menu conforme) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 184.00 Tm (availableWorkspaceDestinations\(session.permissions\), abre a tela) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 166.00 Tm (correspondente e permite Próximo, Voltar, Pular e Concluir.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 148.00 Tm (- Conclusão ou pulo são armazenados no PostgreSQL por empresa/usuário;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 130.00 Tm (não dependem de localStorage, sessão ou dispositivo.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 112.00 Tm (- A opção Ajuda · Rever tour permite repetição manual sem limpar a) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 94.00 Tm (evidência do primeiro acesso.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 76.00 Tm (- Módulos não autorizados não aparecem no tour. O tutorial não concede acesso.) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 3292 >>
+stream
+0.14 0.43 0.64 rg 0 827 595 15 re f
+0.1 0.23 0.37 rg
+BT /F2 10 Tf 1 0 0 1 48 782.00 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 15 Tf 1 0 0 1 48 752.00 Tm (06 Primeiro Acesso Wizard Tour 1 1) Tj ET
+BT /F1 8 Tf 1 0 0 1 48 732.00 Tm (Base: 5412654ba274 | PDF documental | 12/10/2026) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 690.00 Tm (- Credenciais OAuth, envio de e-mails e integrações não são ativados por) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 672.00 Tm (essa experiência.) Tj ET
+BT /F2 12 Tf 1 0 0 1 48 644.00 Tm (Contratos e segurança) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 622.00 Tm (- Endpoints protegidos por AuthenticationGuard, exigindo sessão de usuário:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 604.00 Tm (GET /api/v1/me/onboarding,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 586.00 Tm (PUT /api/v1/me/onboarding/organization,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 568.00 Tm (POST /api/v1/me/onboarding/tour.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 550.00 Tm (- Os IDs de usuário/empresa vêm exclusivamente da sessão autenticada; corpos) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 532.00 Tm (de escrita são validados por Zod estrito; o primeiro administrador é) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 514.00 Tm (verificado novamente no backend.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 496.00 Tm (- Todas as operações de dados usam transações com tenant RLS.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 478.00 Tm (- A configuração registra eventos de auditoria sem gravar senhas/tokens.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 460.00 Tm (- A migração é aditiva e mantém o isolamento PostgreSQL existente.) Tj ET
+BT /F2 12 Tf 1 0 0 1 48 432.00 Tm (Evidências obrigatórias antes de integrar e publicar) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 410.00 Tm (- [x] CI completo da PR 1.1 e da main no SHA do merge original,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 392.00 Tm (com migração de teste, lint, typecheck, testes de repositório,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 374.00 Tm (API, frontend, E2E, Compose, imagens e manifesto.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 356.00 Tm (- [ ] Testes reais de dois tenants, usuário vendedor, usuário VIEWER, dois) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 338.00 Tm (administradores na mesma empresa, refresh/relogin, negação de API Key,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 320.00 Tm (progresso no wizard e tour que não reaparece automaticamente.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 302.00 Tm (- [ ] Testes de acessibilidade do painel, inclusive teclado, foco,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 284.00 Tm (leitores de tela e telas pequenas. A revisão independente foi) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 266.00 Tm (dispensada expressamente pelo responsável; isto não é um review efetuado.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 248.00 Tm (- [ ] Planejamento de upgrade do servidor 1.0>1.1, backup restaurável,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 230.00 Tm (migração sem downtime e rollback adequado.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 212.00 Tm (- [ ] Manifesto da main final e aceite operacional específico da 1.1.) Tj ET
+BT /F2 12 Tf 1 0 0 1 48 184.00 Tm (Observações) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 162.00 Tm (A melhoria de primeiro acesso não implica _GO_ da 1.0/1.1. O DisabledEmailProvider) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 144.00 Tm (permanece ativo até a habilitação homologada por provedores. Não oferecer a) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 48 126.00 Tm (integração externa como concluída dentro do wizard.) Tj ET
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000326 00000 n 
+0000000462 00000 n 
+0000004188 00000 n 
+0000004324 00000 n 
+trailer
+<< /Root 1 0 R /Size 9 >>
+startxref
+7667
+%%EOF
