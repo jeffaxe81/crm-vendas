@@ -2,15 +2,19 @@ services:
   postgres:
     image: postgres:18-bookworm
     environment:
-      POSTGRES_DB: axes_crm
-      POSTGRES_USER: axes
-      POSTGRES_PASSWORD: axes
+      POSTGRES_DB: ${POSTGRES_DB:-axes_crm}
+      POSTGRES_USER: ${POSTGRES_USER:-axes}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-axes}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_BIND_ADDRESS:-127.0.0.1}:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U axes -d axes_crm"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER:-axes} -d $${POSTGRES_DB:-axes_crm}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -23,15 +27,15 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-      LOG_LEVEL: info
-      DATABASE_URL: postgresql://axes:axes@postgres:5432/axes_crm
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-axes}:${POSTGRES_PASSWORD:-axes}@postgres:5432/${POSTGRES_DB:-axes_crm}
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
       REFRESH_TOKEN_PEPPER: ${REFRESH_TOKEN_PEPPER}
       AUTH_ACCESS_TTL_SECONDS: ${AUTH_ACCESS_TTL_SECONDS:-900}
       AUTH_REFRESH_TTL_SECONDS: ${AUTH_REFRESH_TTL_SECONDS:-2592000}
     ports:
-      - "3001:3001"
+      - "${API_BIND_ADDRESS:-0.0.0.0}:${API_PORT:-3001}:3001"
     depends_on:
       postgres:
         condition: service_healthy
@@ -52,11 +56,13 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:3001/api/v1}
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:3001/api/v1
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:3001/api/v1}
     ports:
-      - "3000:3000"
+      - "${WEB_BIND_ADDRESS:-0.0.0.0}:${WEB_PORT:-3000}:3000"
     depends_on:
       api:
         condition: service_healthy
