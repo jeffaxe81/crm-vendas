@@ -14,6 +14,10 @@ import { WorkspacePreferencesService } from "./workspace-preferences.service";
     FirstAccessController,
     QuickSetupController,
   ],
-  providers: [WorkspacePreferencesService, FirstAccessService, QuickSetupService],
+  providers: [
+    WorkspacePreferencesService,
+    FirstAccessService,
+    QuickSetupService,
+  ],
 })
 export class WorkspaceModule {}
