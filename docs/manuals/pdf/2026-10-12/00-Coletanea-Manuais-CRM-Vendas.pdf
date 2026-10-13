@@ -1,0 +1,543 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 13 /Kids [5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R 23 0 R 25 0 R 27 0 R 29 0 R] >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 3011 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (ADMIN) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (Fonte: docs/manuals/release-1.2/admin.md) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (Documento de consulta. 1.2 planejada; 1.1 e codigo integrados, homologacao operacional pendente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 644.6 Tm (Manual de ADMIN - planejamento 1.2) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 622.6 Tm (O ADMIN pode administrar a organização e seus usuários, consultar auditoria, parametrizar integrações) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 608.9 Tm (e operar o CRM conforme as permissões do backend.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 582.2 Tm (Roteiro recomendado) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 560.2 Tm (1. Confirme a organização da sessão, para não confundir dados entre empresas.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 542.5 Tm (2. Revise nome e parâmetros organizacionais disponíveis.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 524.8 Tm (3. Crie e revise membros; conceda ADMIN apenas quando necessário e preserve pelo menos um) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 511.1 Tm (administrador válido.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 493.4 Tm (4. Configure etapas do funil, produtos, campos personalizados e tags nas telas realmente disponíveis.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 475.7 Tm (5. Revise permissões, auditoria e configurações de integrações. Não habilite envio externo de e-mails) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 462.0 Tm (enquanto permanecer bloqueado pelo ambiente.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 444.3 Tm (6. Teste o cadastro de uma empresa, contato, oportunidade e atividade, e a persistência após nova) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 430.6 Tm (sessão.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 412.9 Tm (7. Oriente cada integrante com seu manual e o tour da versão 1.1 quando já instalado e homologado.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 386.2 Tm (Permissões diferenciadas) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 364.2 Tm (ADMIN inclui organization.manage, user.manage, audit.read, reports.read, pipeline.manage,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 350.5 Tm (support.manage, integration.manage e integration.read, além das permissões comerciais. Consulte a) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 336.8 Tm (matriz para o quadro completo.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 310.1 Tm (Conclusão) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 288.1 Tm (- [ ] organização confirmada;) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 270.4 Tm (- [ ] membros e administradores conferidos;) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 252.7 Tm (- [ ] funil, produtos e campos essenciais revisados;) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 235.0 Tm (- [ ] política de acesso e auditoria conferidas;) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 217.3 Tm (- [ ] operação de ponta a ponta verificada no ambiente instalado.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 199.6 Tm (Nota: esta sequência não representa execução automática do futuro wizard 1.2.) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 2441 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (MANAGER) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (Fonte: docs/manuals/release-1.2/manager.md) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (Documento de consulta. 1.2 planejada; 1.1 e codigo integrados, homologacao operacional pendente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 644.6 Tm (Manual de MANAGER - planejamento 1.2) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 622.6 Tm (O MANAGER administra a operação comercial de sua organização, mas não gerencia organização, usuários,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 608.9 Tm (auditoria ou credenciais de integração.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 582.2 Tm (Roteiro de preparação) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 560.2 Tm (1. Revise empresas, contatos e vinculações; verifique duplicidades.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 542.5 Tm (2. Organize as etapas do funil usando pipeline.manage, conforme a interface disponível.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 524.8 Tm (3. Revise oportunidades e distribuição operacional com os controles permitidos.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 507.1 Tm (4. Consulte relatórios \(reports.read\) e padronize o acompanhamento.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 489.4 Tm (5. Organize produtos \(product.write\) e a gestão do atendimento \(support.manage\), quando os módulos) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 475.7 Tm (estiverem disponíveis.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 458.0 Tm (6. Oriente a equipe sobre atividades, históricos, tags e campos comerciais.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 431.3 Tm (Limites de autorização) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 409.3 Tm (MANAGER dispõe das permissões comerciais de SELLER e também pipeline.manage, reports.read,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 395.6 Tm (product.write e support.manage. Não possui organization.manage, user.manage, audit.read,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 381.9 Tm (integration.manage ou integration.read.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 364.2 Tm (É incorreto afirmar que MANAGER e SELLER são equivalentes no backend atual; as diferenças precisam ser) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 350.5 Tm (respeitadas no futuro wizard. Consulte a matriz de permissões.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 332.8 Tm (Estado: roteiro documental; não valida o funcionamento das telas em servidor real.) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 10 0 R >>
+endobj
+10 0 obj
+<< /Length 2405 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (SELLER) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (Fonte: docs/manuals/release-1.2/seller.md) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (Documento de consulta. 1.2 planejada; 1.1 e codigo integrados, homologacao operacional pendente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 644.6 Tm (Manual de SELLER - planejamento 1.2) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 622.6 Tm (O SELLER executa cadastros e interações comerciais. Seu acesso de escrita é restrito aos módulos) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 608.9 Tm (autorizados, sem os poderes específicos de gestão do MANAGER e do ADMIN.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 582.2 Tm (Roteiro de uso) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 560.2 Tm (1. Pesquise empresas e contatos antes de inserir registros novos.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 542.5 Tm (2. Cadastre ou atualize informações comerciais seguindo a política da empresa.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 524.8 Tm (3. Vincule contatos às organizações corretas e registre interações e atividades.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 507.1 Tm (4. Trabalhe com oportunidades e movimentação de etapas permitidas.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 489.4 Tm (5. Consulte produtos, territórios, tickets e base de conhecimento, e faça alterações apenas nas) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 475.7 Tm (operações autorizadas e disponíveis.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 458.0 Tm (6. Revise os dados após salvar ou recarregar a página; comunique inconsistências ao gestor.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 431.3 Tm (Permissões) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 409.3 Tm (SELLER possui as leituras comerciais e company.write, contact.write, opportunity.write,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 395.6 Tm (opportunity.move, activity.write, knowledge.write, territory.write e ticket.write.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 377.9 Tm (SELLER não possui pipeline.manage, reports.read, product.write, support.manage, user.manage ou) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 364.2 Tm (administração de integração. Não confiar apenas em rótulos da interface como controle de segurança.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 346.5 Tm (Estado: orientação de uso para a versão instalada; o wizard 1.2 ainda não está implementado.) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 12 0 R >>
+endobj
+12 0 obj
+<< /Length 1990 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (VIEWER) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (Fonte: docs/manuals/release-1.2/viewer.md) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (Documento de consulta. 1.2 planejada; 1.1 e codigo integrados, homologacao operacional pendente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 644.6 Tm (Manual de VIEWER - planejamento 1.2) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 622.6 Tm (VIEWER é o perfil de consulta e não deve executar ações de escrita no CRM.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 595.9 Tm (Operação) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 573.9 Tm (1. Confirme a organização ativa.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 556.2 Tm (2. Pesquise e consulte empresas, contatos, oportunidades, atividades e conhecimento.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 538.5 Tm (3. Consulte produtos, territórios e tickets se a respectiva tela estiver disponível.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 520.8 Tm (4. Encaminhe qualquer correção a um perfil com permissão de escrita.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 503.1 Tm (5. Utilize os recursos de ajuda já disponíveis; a versão 1.2 prevê ampliar a orientação por perfil.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 476.4 Tm (Autorização técnica) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 454.4 Tm (VIEWER possui company.read, contact.read, opportunity.read, activity.read, knowledge.read,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 440.7 Tm (product.read, territory.read e ticket.read.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 423.0 Tm (Não possui permissões de escrita, administração, gestão de pipeline ou relatórios. A Configuração) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 409.3 Tm (Rápida futura não poderá exibir tarefas administrativas ou salvar alterações em nome de VIEWER.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 391.6 Tm (Estado: guia documental; não implica que a versão 1.2 esteja em funcionamento.) Tj ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 14 0 R >>
+endobj
+14 0 obj
+<< /Length 2607 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (MATRIZ DE PERMISSOES) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (Fonte: docs/manuals/release-1.2/matriz-de-permissoes.md) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (Documento de consulta. 1.2 planejada; 1.1 e codigo integrados, homologacao operacional pendente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 644.6 Tm (Matriz de permissões - referência para a Release 1.2) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 622.6 Tm (Fonte de verdade: apps/api/src/authorization/permissions.ts, na main de 12/10/2026. A autorização deve) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 608.9 Tm (consultar a sessão e ser validada pelo backend; este documento não substitui o código.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 582.2 Tm (VIEWER - apenas leitura) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 560.2 Tm (- company.read) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 542.5 Tm (- contact.read) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 524.8 Tm (- opportunity.read) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 507.1 Tm (- activity.read) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 489.4 Tm (- knowledge.read) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 471.7 Tm (- product.read) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 454.0 Tm (- territory.read) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 436.3 Tm (- ticket.read) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 409.6 Tm (SELLER - leitura e operação comercial) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 387.6 Tm (Possui todas as permissões de VIEWER, mais:) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 369.9 Tm (- company.write) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 352.2 Tm (- contact.write) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 334.5 Tm (- opportunity.write) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 316.8 Tm (- opportunity.move) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 299.1 Tm (- activity.write) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 281.4 Tm (- knowledge.write) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 263.7 Tm (- territory.write) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 246.0 Tm (- ticket.write) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 219.3 Tm (MANAGER - gestão comercial) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 197.3 Tm (Possui todas as permissões de SELLER, mais:) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 179.6 Tm (- pipeline.manage) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 161.9 Tm (- reports.read) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 144.2 Tm (- product.write) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 126.5 Tm (- support.manage) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 108.8 Tm (MANAGER e SELLER não são equivalentes no backend atual.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 82.1 Tm (ADMIN - administração completa) Tj ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 16 0 R >>
+endobj
+16 0 obj
+<< /Length 1141 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (MATRIZ DE PERMISSOES \(continua\)) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (Possui todas as permissões de MANAGER, mais:) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (- organization.manage) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 653.6 Tm (- user.manage) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 635.9 Tm (- audit.read) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 618.2 Tm (- integration.manage) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 600.5 Tm (- integration.read) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 573.8 Tm (Interpretação) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 551.8 Tm (Uma permissão do backend não garante que exista tela, integração ativa ou homologação do módulo na) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 538.1 Tm (versão instalada. VIEWER não pode editar dados. A Configuração Rápida 1.2 é planejada; o wizard futuro) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 524.4 Tm (deve derivar etapas da sessão autenticada e não confiar somente no nome do perfil.) Tj ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 18 0 R >>
+endobj
+18 0 obj
+<< /Length 3609 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (PRIMEIRO ACESSO 1.1) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (Fonte: docs/releases/crm-1-1-onboarding-tour.md) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (Documento de consulta. 1.2 planejada; 1.1 e codigo integrados, homologacao operacional pendente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 644.6 Tm (AXE CRM - Release 1.1: primeiro acesso e tour guiado) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 613.6 Tm (Finalidade) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 591.6 Tm (Aprimorar a adoção e a configuração inicial sem atrasar nem confundir a) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 573.9 Tm (homologação da versão 1.0. O código da release 1.1 foi integrado à) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 556.2 Tm (main no commit e53289c6128f417995ebf49d5139dbb8a337ccd7,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 538.5 Tm (com CI e manifesto aprovados. A versão ainda não foi homologada nem) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 520.8 Tm (comprovadamente implantada no servidor. O roteiro operacional está em) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 503.1 Tm (docs/releases/crm-1-1-homologacao.md.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 476.4 Tm (Wizard da empresa - apenas primeiro administrador) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 454.4 Tm (- A pessoa que registra a empresa é marcada no servidor como responsável pela configuração.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 436.7 Tm (- Em organizações legadas sem responsável, o administrador ativo mais antigo) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 419.0 Tm (pode assumir o wizard uma vez, de forma idempotente.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 401.3 Tm (- O assistente exibe quatro etapas com retomada entre sessões: \(1\) nome da) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 383.6 Tm (empresa \(salvo no banco\), \(2\) usuários e perfis, \(3\) preferências e área) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 365.9 Tm (comercial, \(4\) integrações e conclusão.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 348.2 Tm (- As etapas 2 a 4 oferecem atalhos às áreas existentes, sem conceder poderes) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 330.5 Tm (novos, instalar integrações ou criar dados sem consentimento do operador.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 312.8 Tm (- O assistente só desaparece definitivamente quando o administrador o conclui.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 295.1 Tm (Um novo login recupera a etapa salva. Outros administradores não alteram) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 277.4 Tm (o estado sem transferência formal de responsabilidade \(futuro recurso\).) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 250.7 Tm (Tour - no primeiro acesso de cada usuário) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 228.7 Tm (- Exibido em cada membership de empresa ao primeiro login, independentemente) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 211.0 Tm (de o usuário ser ADMIN, MANAGER, SELLER ou VIEWER.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 193.3 Tm (- Explica cada seção autorizada do menu conforme) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 175.6 Tm (availableWorkspaceDestinations\(session.permissions\), abre a tela) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 157.9 Tm (correspondente e permite Próximo, Voltar, Pular e Concluir.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 140.2 Tm (- Conclusão ou pulo são armazenados no PostgreSQL por empresa/usuário;) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 122.5 Tm (não dependem de localStorage, sessão ou dispositivo.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 104.8 Tm (- A opção Ajuda · Rever tour permite repetição manual sem limpar a) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 87.1 Tm (evidência do primeiro acesso.) Tj ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 20 0 R >>
+endobj
+20 0 obj
+<< /Length 3384 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (PRIMEIRO ACESSO 1.1 \(continua\)) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (- Módulos não autorizados não aparecem no tour. O tutorial não concede acesso.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (- Credenciais OAuth, envio de e-mails e integrações não são ativados por) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 653.6 Tm (essa experiência.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 626.9 Tm (Contratos e segurança) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 604.9 Tm (- Endpoints protegidos por AuthenticationGuard, exigindo sessão de usuário:) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 587.2 Tm (GET /api/v1/me/onboarding,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 569.5 Tm (PUT /api/v1/me/onboarding/organization,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 551.8 Tm (POST /api/v1/me/onboarding/tour.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 534.1 Tm (- Os IDs de usuário/empresa vêm exclusivamente da sessão autenticada; corpos) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 516.4 Tm (de escrita são validados por Zod estrito; o primeiro administrador é) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 498.7 Tm (verificado novamente no backend.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 481.0 Tm (- Todas as operações de dados usam transações com tenant RLS.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 463.3 Tm (- A configuração registra eventos de auditoria sem gravar senhas/tokens.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 445.6 Tm (- A migração é aditiva e mantém o isolamento PostgreSQL existente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 418.9 Tm (Evidências obrigatórias antes de integrar e publicar) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 396.9 Tm (- [x] CI completo da PR 1.1 e da main no SHA do merge original,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 379.2 Tm (com migração de teste, lint, typecheck, testes de repositório,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 361.5 Tm (API, frontend, E2E, Compose, imagens e manifesto.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 343.8 Tm (- [ ] Testes reais de dois tenants, usuário vendedor, usuário VIEWER, dois) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 326.1 Tm (administradores na mesma empresa, refresh/relogin, negação de API Key,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 308.4 Tm (progresso no wizard e tour que não reaparece automaticamente.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 290.7 Tm (- [ ] Testes de acessibilidade do painel, inclusive teclado, foco,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 273.0 Tm (leitores de tela e telas pequenas. A revisão independente foi) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 255.3 Tm (dispensada expressamente pelo responsável; isto não é um review efetuado.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 237.6 Tm (- [ ] Planejamento de upgrade do servidor 1.0>1.1, backup restaurável,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 219.9 Tm (migração sem downtime e rollback adequado.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 202.2 Tm (- [ ] Manifesto da main final e aceite operacional específico da 1.1.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 175.5 Tm (Observações) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 153.5 Tm (A melhoria de primeiro acesso não implica _GO_ da 1.0/1.1. O DisabledEmailProvider) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 135.8 Tm (permanece ativo até a habilitação homologada por provedores. Não oferecer a) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 118.1 Tm (integração externa como concluída dentro do wizard.) Tj ET
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 22 0 R >>
+endobj
+22 0 obj
+<< /Length 3962 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (CONFIGURACAO RAPIDA 1.2 - PLANEJAMENTO) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (Fonte: docs/releases/1.2-configuracao-rapida.md) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (Documento de consulta. 1.2 planejada; 1.1 e codigo integrados, homologacao operacional pendente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 644.6 Tm (CRM-Vendas - Release 1.2: Configuração Rápida) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 622.6 Tm (Status: planejada. Este documento define o escopo e os critérios de aceite. Nenhuma implementação) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 608.9 Tm (funcional da Configuração Rápida 1.2 ou homologação no servidor é atestada por estes manuais.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 582.2 Tm (Relação com a 1.1) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 560.2 Tm (O wizard para o primeiro administrador e o tour individual da 1.1 estão integrados ao código da main) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 546.5 Tm (\(ver docs/releases/crm-1-1-onboarding-tour.md\) e ainda exigem homologação operacional. A 1.2) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 532.8 Tm (acrescentará uma configuração rápida operacional e retomável, sem duplicar nem substituir o onboarding) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 519.1 Tm (existente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 492.4 Tm (Objetivos) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 470.4 Tm (- Revisar os dados necessários ao início da operação em etapas curtas.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 452.7 Tm (- Retomar uma configuração interrompida sem alterar dados silenciosamente.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 435.0 Tm (- Exibir somente ações permitidas pela sessão autenticada e módulos existentes.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 417.3 Tm (- Manter rastreabilidade da alteração de configurações administrativas.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 399.6 Tm (- Oferecer orientação contextual por perfil, com possibilidade de abrir o manual novamente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 372.9 Tm (Experiência proposta) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 350.9 Tm (1. Organização e membros: disponível apenas onde organization.manage ou user.manage estiver) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 337.2 Tm (autorizada; para o ADMIN responsável.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 319.5 Tm (2. Pipeline, relatórios e produtos: opções condicionadas a pipeline.manage, reports.read e) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 305.8 Tm (product.write; ADMIN e MANAGER conforme permissões reais.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 288.1 Tm (3. Cadastros comerciais: empresas e contatos com company.write e contact.write; ADMIN, MANAGER e) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 274.4 Tm (SELLER.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 256.7 Tm (4. Consulta e ajuda: orientar todos os perfis apenas com recursos realmente disponíveis; VIEWER não) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 243.0 Tm (modifica dados.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 225.3 Tm (5. Verificação final: resumo de conclusão, itens opcionais pendentes e link para retornar ao CRM.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 207.6 Tm (A autorização deve ocorrer no backend e a UI deve derivar passos das permissões de sessão, nunca) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 193.9 Tm (somente do nome ADMIN/MANAGER/SELLER/VIEWER.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 167.2 Tm (Requisitos de segurança e operação) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 145.2 Tm (- Toda mutação exige sessão válida e autorização no servidor.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 127.5 Tm (- Identidade da organização provém do contexto autenticado; dados de outro tenant não são expostos ou) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 113.8 Tm (alterados.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 96.1 Tm (- Salvar progresso separadamente das operações que alteram dados e permitir retomada idempotente.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 78.4 Tm (- Impedir abandono involuntário do único administrador da empresa.) Tj ET
+endstream
+endobj
+23 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 24 0 R >>
+endobj
+24 0 obj
+<< /Length 2105 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (CONFIGURACAO RAPIDA 1.2 - PLANEJAMENTO \(continua\)) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (- Registros de auditoria não devem conter segredos, tokens ou dados além do necessário.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (- Nenhuma etapa habilita WhatsApp, Gmail/Graph, SMTP ou outras integrações externas sem consentimentos) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 657.6 Tm (e homologação próprios.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 630.9 Tm (Critérios de aceite futuros) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 608.9 Tm (- ADMIN completa e retoma o fluxo preservando dados.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 591.2 Tm (- MANAGER visualiza pipeline/relatórios/produtos sem gestão de usuários.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 573.5 Tm (- SELLER opera contatos/oportunidades sem funções de gestão.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 555.8 Tm (- VIEWER consulta documentação sem realizar escrita.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 538.1 Tm (- Testes de autorização negativos para cada papel, isolamento entre dois tenants e persistência após) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 524.4 Tm (logout/login.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 506.7 Tm (- Regressão do wizard e do tour da 1.1.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 489.0 Tm (- Fluxo responsivo, acessível e com recuperação após falha de rede.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 471.3 Tm (- CI completo, revisão de segurança e testes no servidor antes da publicação de versão.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 444.6 Tm (Manuais e rastreabilidade) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 422.6 Tm (- Índice dos manuais) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 404.9 Tm (- Matriz de permissões) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 387.2 Tm (- Homologação 1.1) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 369.5 Tm (A fonte de verdade RBAC é apps/api/src/authorization/permissions.ts. Mudanças futuras nela exigem) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 355.8 Tm (atualizar os manuais.) Tj ET
+endstream
+endobj
+25 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 26 0 R >>
+endobj
+26 0 obj
+<< /Length 3642 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (HOMOLOGACAO OPERACIONAL) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (Fonte: docs/releases/crm-1-1-homologacao.md) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (Documento de consulta. 1.2 planejada; 1.1 e codigo integrados, homologacao operacional pendente.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 644.6 Tm (AXE CRM 1.1 - Roteiro de homologação do primeiro acesso) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 622.6 Tm (Referência de código: o primeiro merge 1.1 ocorreu no commit) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 604.9 Tm (e53289c6128f417995ebf49d5139dbb8a337ccd7 da main.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 587.2 Tm (O CI #38277499378) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 569.5 Tm (foi aprovado, com manifesto de origem. Commits posteriores exigem nova verificação) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 551.8 Tm (do SHA e do CI. CI não significa deploy ou aceite no servidor.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 525.1 Tm (1. Antes de instalar ou executar alterações) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 503.1 Tm (- Identifique o servidor e o responsável autorizado. Não altere produção sem) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 485.4 Tm (autorização, backup verificado e rollback documentado.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 467.7 Tm (- Registre o SHA instalado com git rev-parse HEAD e compare-o ao SHA da) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 450.0 Tm (execução push/main cujo CI e manifesto foram aprovados.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 432.3 Tm (- Para um upgrade 1.0 > 1.1, planeje a migração aditiva do PostgreSQL:) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 414.6 Tm (organizations.onboarding_owner_id, onboarding_step,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 396.9 Tm (onboarding_completed_at; organization_memberships.tour_status.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 379.2 Tm (Faça antes backup consistente e restaure uma cópia isolada para comprovar) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 361.5 Tm (integridade e reversão. Não restaure diretamente sobre dados de produção.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 343.8 Tm (- Nunca compartilhe .env, senhas, tokens, chaves privadas de CA ou dumps) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 326.1 Tm (reais como evidência. Evite mudanças de DNS, firewall, certificados, banco ou) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 308.4 Tm (serviços durante a mera fase de coleta.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 281.7 Tm (2. Diagnóstico no host autorizado - leitura e verificação) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 259.7 Tm (Na raiz do repositório do servidor já instalado, execute:) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 242.0 Tm (git rev-parse HEAD) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 224.3 Tm (sudo CRM_IP=192.168.40.84 bash scripts/verificar-deploy.sh) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 206.6 Tm (O segundo comando verifica Nginx, Docker, role PostgreSQL, portas, redirecionamentos,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 188.9 Tm (HTTPS com CA, certificado e bundle Web. Critério: 0 falhas. Ele não implanta) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 171.2 Tm (a versão, não atesta login nem comprova restauração.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 153.5 Tm (Em uma outra máquina da mesma rede, com a CA pública legítima disponibilizada) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 135.8 Tm (pelo administrador \(não a chave privada\), execute:) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 118.1 Tm (export CRM_BASE_URL=https://192.168.40.84) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 100.4 Tm (export CRM_HTTP_URL=http://192.168.40.84) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 82.7 Tm (export CA_CERT=/caminho/confiavel/crm-vendas-rootCA.pem) Tj ET
+endstream
+endobj
+27 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 28 0 R >>
+endobj
+28 0 obj
+<< /Length 3947 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (HOMOLOGACAO OPERACIONAL \(continua\)) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (bash scripts/smoke-externo-c12.sh) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (bash scripts/smoke-onboarding-1-1.sh) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 653.6 Tm (A segunda verificação é propositalmente não autenticada e não destrutiva:) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 635.9 Tm (o health deve retornar HTTP 200 e os três endpoints de onboarding devem exigir) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 618.2 Tm (sessão com HTTP 401. Um 401, isoladamente, não prova que a rota existe,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 600.5 Tm (pois um gateway pode responder 401 a todas as rotas. Nunca utilize -k ou) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 582.8 Tm (--insecure; uma CA inválida, rota ausente ou transferência incompleta deve falhar.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 556.1 Tm (3. Evidências autenticadas e funcionais \(testar na interface\)) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 534.1 Tm (Em um ambiente de homologação com usuários de teste, sem utilizar dados reais:) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 516.4 Tm (1. Novo tenant A: registre uma empresa e entre como seu primeiro ADMIN.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 498.7 Tm (Confirme que surge o wizard de quatro etapas, com progresso retomado após) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 481.0 Tm (logout/login. A alteração do nome deve persistir.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 463.3 Tm (2. ADMIN adicional: confirme que não pode alterar o wizard reservado) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 445.6 Tm (ao fundador; a API deve negar alterações não autorizadas.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 427.9 Tm (3. Conclusão: finalize o wizard e inicie o tour. Avance e volte; as seções) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 410.2 Tm (apresentadas devem corresponder apenas às permissões do perfil.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 392.5 Tm (4. Demais usuários: crie um SELLER e um VIEWER de teste. No primeiro login) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 374.8 Tm (de cada um, o tour deve aparecer individualmente. Salve a conclusão para um) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 357.1 Tm (usuário e o pulo para o outro; após novo login, o tour não deve reaparecer) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 339.4 Tm (automaticamente. A opção Ajuda · Rever tour deve continuar disponível.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 321.7 Tm (5. Tenant B: crie empresa e usuários diferentes. Verifique que o progresso) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 304.0 Tm (do tenant A não é acessível ou modificável por usuários do B \(API e UI\).) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 286.3 Tm (Teste também chamadas com API Key para confirmar que o recurso exige sessão.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 268.6 Tm (6. Regressão comercial: realize login/logout, cadastro de empresa, contato,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 250.9 Tm (oportunidade e atividade, mudança de etapa do funil, recarga da página e) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 233.2 Tm (persistência. Nenhum wizard/tour deve impedir cliques nas telas após) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 215.5 Tm (conclusão ou pulo.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 197.8 Tm (7. Dados e segurança: verifique permissões, auditoria de mudança do wizard,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 180.1 Tm (conexões HTTPS, ausência de http://localhost:3001 no bundle, portas) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 162.4 Tm (3000/3001/5432 sem exposição externa, e que envio externo de e-mails continua) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 144.7 Tm (desabilitado.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 127.0 Tm (Registrar apenas PASS, FALHA ou NÃO EXECUTADO por cenário, data, operador,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 109.3 Tm (SHA instalado, ambiente, evidência não sensível e eventual issue de correção.) Tj ET
+BT /F2 11 Tf 1 0 0 1 49 82.6 Tm (4. Go/No-Go e rollback) Tj ET
+endstream
+endobj
+29 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 30 0 R >>
+endobj
+30 0 obj
+<< /Length 1898 >>
+stream
+0.13 0.41 0.63 rg 0 826 595 16 re f
+0.11 0.24 0.38 rg
+BT /F2 9 Tf 1 0 0 1 49 786.0 Tm (AXESISTEMAS / CRM-VENDAS) Tj ET
+BT /F2 14.5 Tf 1 0 0 1 49 750.0 Tm (HOMOLOGACAO OPERACIONAL \(continua\) \(continua\)) Tj ET
+BT /F1 8.1 Tf 1 0 0 1 49 731.0 Tm (Manual PDF - commit base 5412654ba274 - 12/10/2026) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 689.0 Tm (- GO para testes controlados: CI push/main verde no SHA escolhido,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 671.3 Tm (manifesto correspondente, backup restaurável em ambiente isolado,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 653.6 Tm (migração de dados ensaiada e autorização do operador para instalar/testar.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 635.9 Tm (- GO operacional: somente depois de diagnóstico TLS/host, testes) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 618.2 Tm (autenticados, RLS multiempresa, restauração, rollback ensaiado e aceite) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 600.5 Tm (operacional registrado.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 582.8 Tm (- NO-GO: qualquer falha de confiança TLS, login, persistência, isolamento,) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 565.1 Tm (restauração ou perda de acesso deve bloquear liberação. A dispensa de) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 547.4 Tm (revisão independente é uma decisão de governança e não dispensa esses) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 529.7 Tm (controles técnicos.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 512.0 Tm (- Rollback planejado: registrar o commit de origem e a compatibilidade do) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 494.3 Tm (schema antes de migrar; restauração do banco apenas conforme procedimento) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 476.6 Tm (aprovado. O rollback de código não equivale a rollback de dados.) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 458.9 Tm (O envio de e-mails por provedores externos, a incorporação de iframe de) Tj ET
+BT /F1 9.3 Tf 1 0 0 1 49 441.2 Tm (terceiros e uma publicação pública têm critérios de homologação próprios.) Tj ET
+endstream
+endobj
+xref
+0 31
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000204 00000 n 
+0000000301 00000 n 
+0000000403 00000 n 
+0000000539 00000 n 
+0000003601 00000 n 
+0000003737 00000 n 
+0000006229 00000 n 
+0000006366 00000 n 
+0000008823 00000 n 
+0000008961 00000 n 
+0000011003 00000 n 
+0000011141 00000 n 
+0000013800 00000 n 
+0000013938 00000 n 
+0000015131 00000 n 
+0000015269 00000 n 
+0000018930 00000 n 
+0000019068 00000 n 
+0000022504 00000 n 
+0000022642 00000 n 
+0000026656 00000 n 
+0000026794 00000 n 
+0000028951 00000 n 
+0000029089 00000 n 
+0000032783 00000 n 
+0000032921 00000 n 
+0000036920 00000 n 
+0000037058 00000 n 
+trailer
+<< /Root 1 0 R /Size 31 >>
+startxref
+39008
+%%EOF
