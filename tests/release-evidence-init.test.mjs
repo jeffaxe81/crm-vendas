@@ -50,7 +50,11 @@ test("pending initializer refuses missing or malformed inputs before writing", a
 test("generated index is private, bound to checkout, and always NO-GO", async t => {
   const dir = await fixture(t);
   const target = join(dir, "checkpoint");
-  const result = await initializeEvidence({ dir: target, sha, runId: "123456" });
+  const result = await initializeEvidence({
+    dir: target,
+    sha,
+    runId: "123456",
+  });
   const manifest = JSON.parse(await readFile(result.manifestPath, "utf8"));
   assert.equal(manifest.candidate.sha, sha);
   assert.equal(manifest.candidate.ciHeadSha, sha);
@@ -64,7 +68,9 @@ test("generated index is private, bound to checkout, and always NO-GO", async t 
   assert.equal(result.externalChecksExecuted, false);
   assert.equal(result.productionApproved, false);
   assert.equal(result.status, "PENDING_NO_GO");
-  assert.ok(Object.values(manifest.evidence).every(item => item.status === "pending"));
+  assert.ok(
+    Object.values(manifest.evidence).every(item => item.status === "pending")
+  );
   assert.equal((await stat(target)).mode & 0o777, 0o700);
   assert.equal((await stat(result.manifestPath)).mode & 0o777, 0o600);
   const checked = await evaluate(result.manifestPath, sha);
@@ -109,6 +115,10 @@ test("manifest builder never treats the CI claim as real approval", () => {
     ),
   };
   const result = buildPendingManifest(template, sha, "42");
-  assert.ok(Object.values(result.evidence).every(item => item.status === "pending"));
-  assert.ok(Object.values(template.evidence).every(item => item.status === "passed"));
+  assert.ok(
+    Object.values(result.evidence).every(item => item.status === "pending")
+  );
+  assert.ok(
+    Object.values(template.evidence).every(item => item.status === "passed")
+  );
 });
