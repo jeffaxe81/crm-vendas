@@ -230,4 +230,21 @@ describe("CRM 1.2 quick setup experience", () => {
       ).toBeInTheDocument()
     );
   });
+
+  it("keeps automatic background load failures silent", async () => {
+    requestMock.mockRejectedValueOnce(new Error("network unavailable"));
+
+    render(
+      <QuickSetupExperience
+        session={admin}
+        onNavigate={navigate}
+        openToken={0}
+      />
+    );
+
+    await waitFor(() => expect(requestMock).toHaveBeenCalledTimes(1));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
 });
