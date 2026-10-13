@@ -238,7 +238,12 @@ export class QuickSetupService {
         return false;
       }
       return true;
-    }).map(({ requiredAll: _all, requiredAny: _any, ...step }) => step);
+    }).map(step => ({
+      id: step.id,
+      title: step.title,
+      description: step.description,
+      ...(step.destination ? { destination: step.destination } : {}),
+    }));
   }
 
   private stateFromMembership(
