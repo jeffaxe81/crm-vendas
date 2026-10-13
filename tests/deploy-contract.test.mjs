@@ -20,7 +20,6 @@ test("Linux deployment script preserves data before updating the stack", () => {
   assert.match(deploy, /deploy\/setup-servidor\.sh/);
 });
 
-
 test("Linux setup-server path cannot bypass dry-run validation or pre-migration backup", () => {
   const deploy = readFileSync(
     new URL("../scripts/deploy.sh", import.meta.url),
@@ -28,8 +27,8 @@ test("Linux setup-server path cannot bypass dry-run validation or pre-migration 
   );
 
   const checkOnly = deploy.indexOf('if [[ "$CHECK_ONLY" -eq 1 ]]');
-  const postgresStart = deploy.indexOf('up -d --wait postgres');
-  const backup = deploy.indexOf('pg_dump');
+  const postgresStart = deploy.indexOf("up -d --wait postgres");
+  const backup = deploy.indexOf("pg_dump");
   const setupServer = deploy.indexOf('if [[ "$SETUP_SERVER" -eq 1 ]]');
 
   assert.ok(checkOnly >= 0, "check-only gate must exist");
