@@ -96,12 +96,6 @@ done
 command -v docker >/dev/null 2>&1 || die "Docker não está instalado."
 docker compose version >/dev/null 2>&1 || die "Docker Compose v2 não está disponível."
 
-if [[ "$SETUP_SERVER" -eq 1 ]]; then
-  [[ -f deploy/setup-servidor.sh ]] || die "deploy/setup-servidor.sh não encontrado."
-  log "Executando preparação completa do servidor com Nginx/HTTPS..."
-  exec sudo -E bash deploy/setup-servidor.sh
-fi
-
 if [[ ! -f "$ENV_FILE" ]]; then
   cp .env.example "$ENV_FILE"
   chmod 600 "$ENV_FILE" 2>/dev/null || true
@@ -146,6 +140,12 @@ if [[ "$SKIP_BOOTSTRAP" -eq 0 ]]; then
   : "${BOOTSTRAP_ADMIN_PASSWORD:?Defina BOOTSTRAP_ADMIN_PASSWORD em $ENV_FILE ou use --skip-bootstrap}"
 fi
 
+if [[ "$SETUP_SERVER" -eq 1 ]]; then
+  [[ "$ENV_FILE" == ".env" ]] || die "--setup-server usa deploy/setup-servidor.sh e requer --env-file .env."
+  [[ "$SKIP_BACKUP" -eq 0 ]] || die "--setup-server não permite --no-backup."
+  [[ -f deploy/setup-servidor.sh ]] || die "deploy/setup-servidor.sh não encontrado."
+fi
+
 COMPOSE=(docker compose --env-file "$ENV_FILE")
 
 log "Validando Docker Compose..."
@@ -168,6 +168,11 @@ if [[ "$SKIP_BACKUP" -eq 0 ]]; then
   log "Gerando pg_dump pré-migration: $backup_file"
   "${COMPOSE[@]}" exec -T postgres     pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" >"$backup_tmp"
   mv "$backup_tmp" "$backup_file"
+fi
+
+if [[ "$SETUP_SERVER" -eq 1 ]]; then
+  log "Backup pré-migration concluído; executando preparação completa do servidor com Nginx/HTTPS..."
+  exec sudo -E bash deploy/setup-servidor.sh
 fi
 
 log "Construindo e atualizando a stack..."
