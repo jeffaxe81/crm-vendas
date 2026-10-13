@@ -97,6 +97,8 @@ export const TENANT_DATA_REGISTRY: readonly TenantDataPolicy[] = [
       "role",
       "isActive",
       "tourStatus",
+      "quickSetupCompletedSteps",
+      "quickSetupCompletedAt",
       "createdAt",
       "updatedAt",
     ],
