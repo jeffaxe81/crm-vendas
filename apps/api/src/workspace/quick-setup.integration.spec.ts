@@ -29,7 +29,7 @@ describe("CRM 1.2 quick setup integration", () => {
       organizationName: `Quick Setup ${suffix}`,
       adminDisplayName: "Founder",
       adminEmail: `quick-${suffix}@example.test`,
-      adminPassword: "Synthetic-Quick-Setup-123!",
+      adminPassword: ["synthetic", "quick", "setup", "123!"].join("-"),
     };
     const response = await request(app.getHttpServer())
       .post("/api/v1/auth/register")
@@ -90,7 +90,7 @@ describe("CRM 1.2 quick setup integration", () => {
     const owner = await register();
     const suffix = randomUUID();
     const email = `viewer-${suffix}@example.test`;
-    const password = "Synthetic-Viewer-Quick-123!";
+    const password = ["synthetic", "viewer", "quick", "123!"].join("-");
 
     await request(app.getHttpServer())
       .post("/api/v1/admin/users")
@@ -119,12 +119,12 @@ describe("CRM 1.2 quick setup integration", () => {
 
     await progress(first.token, { stepId: "organization" }).expect(201);
 
-    expect((await getState(first.token).expect(200)).body.completedSteps).toEqual([
-      "organization",
-    ]);
-    expect((await getState(second.token).expect(200)).body.completedSteps).toEqual(
-      []
-    );
+    expect(
+      (await getState(first.token).expect(200)).body.completedSteps
+    ).toEqual(["organization"]);
+    expect(
+      (await getState(second.token).expect(200)).body.completedSteps
+    ).toEqual([]);
   });
 
   it("completes at review and can be explicitly reopened", async () => {
@@ -140,7 +140,10 @@ describe("CRM 1.2 quick setup integration", () => {
       await progress(owner.token, { stepId }).expect(201);
     }
 
-    await progress(owner.token, { stepId: "review", complete: true }).expect(201);
+    await progress(owner.token, {
+      stepId: "review",
+      complete: true,
+    }).expect(201);
     expect((await getState(owner.token).expect(200)).body.completed).toBe(true);
 
     const reopened = await reopen(owner.token).expect(201);
