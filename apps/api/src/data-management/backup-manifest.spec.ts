@@ -47,7 +47,7 @@ describe("verified backup manifest", () => {
         role: "ADMIN",
         isActive: true,
         tourStatus: "COMPLETED",
-        quickSetupCompletedSteps: ["help", "review"],
+        quickSetupCompletedSteps: '["help","review"]',
         quickSetupCompletedAt: "2026-10-05T01:00:00.123456Z",
         createdAt: "2026-10-05T01:00:00.123456Z",
         updatedAt: "2026-10-05T01:00:00.123456Z",
