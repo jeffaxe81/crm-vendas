@@ -48,11 +48,28 @@ resultados de segurança e assinar o aceite operacional.
 
 ## 3. Indexar evidências reais
 
-Copiar o modelo
-[`crm-rc-evidence-template.json`](./crm-rc-evidence-template.json)
-para um diretório **privado**, como `manifest.json`.
+**Inicializar um pacote privado sem marcar nenhum teste como aprovado:**
 
-Substituir os três valores `SUBSTITUIR_...` pelos identificadores reais.
+```bash
+SHA=$(git rev-parse HEAD)
+RUN_ID=SUBSTITUIR_ID_DO_PUSH_MAIN_APROVADO
+mkdir -m 700 -p rc-evidence
+pnpm release:evidence:init --dir "rc-evidence/$SHA" \
+  --sha "$SHA" --ci-run-id "$RUN_ID"
+```
+
+O comando rejeita um SHA diferente do checkout, não sobrescreve diretórios
+existentes e cria apenas `rc-evidence/<SHA>/manifest.json` com permissão
+restrita. **Não coleta dados do servidor, não confere GitHub e mantém os nove
+controles `pending`.** A execução `push/main` e seu artefato precisam ser
+confirmados manualmente no GitHub. O SHA do checkout não prova sozinho o SHA
+dos containers efetivamente executados.
+
+Como alternativa, copiar o modelo
+[`crm-rc-evidence-template.json`](./crm-rc-evidence-template.json)
+para outro diretório **privado** e preencher os três campos
+`SUBSTITUIR_...` manualmente.
+
 Cada controle começa com `status: "pending"`. Marcar `passed` apenas
 quando o relatório correspondente for genuíno e estiver no caminho indicado,
 sempre em arquivo distinto. O CLI bloqueia arquivos ausentes, repetidos,
