@@ -1,6 +1,9 @@
 name: Format CRM 1.2 web once
 
 on:
+  push:
+    branches:
+      - release-1.2-configuracao-rapida-v2
   workflow_dispatch:
 
 permissions:
