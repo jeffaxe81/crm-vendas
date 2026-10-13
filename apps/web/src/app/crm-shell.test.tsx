@@ -135,7 +135,6 @@ describe("Dispatch navigation in CRM", () => {
   });
 });
 
-
 it("reopens the CRM 1.2 quick setup from the authenticated shell", () => {
   viewport(false);
   const onOpenQuickSetup = vi.fn();
