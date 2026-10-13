@@ -8,7 +8,7 @@ cd "$ROOT_DIR"
 ENV_FILE=".env"
 BACKUP_DIR="${CRM_BACKUP_DIR:-${HOME:-/tmp}/.local/state/crm-vendas/backups}"
 SKIP_BACKUP=0
-SKIP_BOOTSTRAP=0
+SKIP_BOOTSTRAP=1
 CHECK_ONLY=0
 SETUP_SERVER=0
 VERIFY_HTTPS=0
@@ -24,7 +24,8 @@ Opções:
   --env-file ARQUIVO   Arquivo de ambiente (padrão: .env)
   --backup-dir DIR     Diretório de backups SQL
   --no-backup          Pula o pg_dump pré-migration
-  --skip-bootstrap     Não executa o bootstrap do primeiro administrador
+  --bootstrap-admin    Executa bootstrap do administrador (pode redefinir senha existente)
+  --skip-bootstrap     Não executa o bootstrap do administrador (padrão seguro)
   --check-only         Valida host/.env/Compose e não altera serviços
   --setup-server       Executa o setup completo Nginx/HTTPS (Rocky/RHEL/Alma)
   --verify-https       Executa scripts/verificar-deploy.sh ao final
@@ -33,6 +34,7 @@ Opções:
 Exemplos:
   ./scripts/deploy.sh --check-only
   ./scripts/deploy.sh
+  ./scripts/deploy.sh --bootstrap-admin   # somente inicialização autorizada
   ./scripts/deploy.sh --skip-bootstrap
   CRM_IP=192.168.40.84 ./scripts/deploy.sh --setup-server
 EOF
@@ -65,6 +67,10 @@ while (($# > 0)); do
       ;;
     --no-backup)
       SKIP_BACKUP=1
+      shift
+      ;;
+    --bootstrap-admin)
+      SKIP_BOOTSTRAP=0
       shift
       ;;
     --skip-bootstrap)
@@ -133,6 +139,7 @@ if [[ "$POSTGRES_PASSWORD" == "axes" ]]; then
 fi
 
 if [[ "$SKIP_BOOTSTRAP" -eq 0 ]]; then
+  warn "Bootstrap autorizado explicitamente: o script pode redefinir a senha de um usuário existente."
   : "${BOOTSTRAP_ORG_NAME:?Defina BOOTSTRAP_ORG_NAME em $ENV_FILE}"
   : "${BOOTSTRAP_ORG_SLUG:?Defina BOOTSTRAP_ORG_SLUG em $ENV_FILE}"
   : "${BOOTSTRAP_ADMIN_EMAIL:?Defina BOOTSTRAP_ADMIN_EMAIL em $ENV_FILE}"

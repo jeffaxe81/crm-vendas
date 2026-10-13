@@ -47,3 +47,16 @@ test("Linux setup-server path cannot bypass dry-run validation or pre-migration 
     "setup-server must only run after PostgreSQL is ready and backup is attempted"
   );
 });
+
+test("Linux deployment requires an explicit flag before rotating bootstrap admin credentials", () => {
+  const deploy = readFileSync(
+    new URL("../scripts/deploy.sh", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(deploy, /SKIP_BOOTSTRAP=1/);
+  assert.match(deploy, /--bootstrap-admin\)\s*SKIP_BOOTSTRAP=0/);
+  assert.match(deploy, /--skip-bootstrap\)\s*SKIP_BOOTSTRAP=1/);
+  assert.match(deploy, /if \[\[ "\$SKIP_BOOTSTRAP" -eq 0 \]\]; then/);
+  assert.match(deploy, /run --rm --no-deps/);
+});
