@@ -108,7 +108,10 @@ test("the evidence index cannot reuse one report for different controls", async 
   await save();
   const result = await evaluate(path, sha);
   assert.equal(result.status, "NO_GO");
-  assert.match(result.errors.join(" "), /httpsTrustedCa: arquivo também utilizado por serverDiagnostics/);
+  assert.match(
+    result.errors.join(" "),
+    /httpsTrustedCa: arquivo também utilizado por serverDiagnostics/
+  );
   assert.equal(result.productionApproved, false);
 });
 
