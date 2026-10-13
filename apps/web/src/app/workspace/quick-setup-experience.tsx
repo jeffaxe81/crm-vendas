@@ -161,7 +161,9 @@ export function QuickSetupExperience({
         aria-label="Configuração rápida do CRM"
         aria-modal="false"
       >
-        <p className="first-access-eyebrow">AXE CRM 1.2 · Configuração rápida</p>
+        <p className="first-access-eyebrow">
+          AXE CRM 1.2 · Configuração rápida
+        </p>
         <h2>Configuração temporariamente indisponível</h2>
         <p role="alert">{error}</p>
         <div className="first-access-actions">
@@ -183,7 +185,9 @@ export function QuickSetupExperience({
         aria-label="Configuração rápida do CRM"
         aria-modal="false"
       >
-        <p className="first-access-eyebrow">AXE CRM 1.2 · Configuração rápida</p>
+        <p className="first-access-eyebrow">
+          AXE CRM 1.2 · Configuração rápida
+        </p>
         <h2>Configuração concluída</h2>
         <p>
           Perfil {session.membership.role}. O progresso desta organização e
@@ -253,9 +257,7 @@ export function QuickSetupExperience({
           disabled={busy}
           onClick={() => void completeCurrentStep()}
         >
-          {busy
-            ? "Salvando..."
-            : `Concluir etapa ${currentStep.title}`}
+          {busy ? "Salvando..." : `Concluir etapa ${currentStep.title}`}
         </button>
       </div>
       <small>

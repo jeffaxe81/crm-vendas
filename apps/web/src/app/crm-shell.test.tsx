@@ -151,8 +151,6 @@ it("reopens the CRM 1.2 quick setup from the authenticated shell", () => {
     </CrmShell>
   );
 
-  fireEvent.click(
-    screen.getByRole("button", { name: "Configuração rápida" })
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Configuração rápida" }));
   expect(onOpenQuickSetup).toHaveBeenCalledTimes(1);
 });
