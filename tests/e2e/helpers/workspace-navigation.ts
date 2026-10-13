@@ -45,6 +45,19 @@ export async function finishInitialExperience(page: Page) {
     await tour.getByRole("button", { name: "Pular tour" }).click();
     await expect(tour).toBeHidden();
   }
+
+  // The 1.2 guided setup appears automatically after the 1.1 onboarding.
+  // E2E commercial flows dismiss it through the actual UI instead of
+  // forcing clicks behind the dialog or disabling onboarding.
+  const quickSetup = page.getByRole("dialog", {
+    name: "Configuração rápida do CRM",
+  });
+  await quickSetup.waitFor({ state: "visible", timeout: 2000 }).catch(() => {});
+  if (await quickSetup.isVisible()) {
+    await quickSetup.getByRole("button", { name: "Fechar" }).click();
+    await expect(quickSetup).toBeHidden();
+  }
+
   preparedPages.add(page);
 }
 
