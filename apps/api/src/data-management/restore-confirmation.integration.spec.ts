@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { PasswordService } from "../auth/password.service";
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
+import type { Prisma } from "../generated/prisma/client";
 import { BackupStore } from "./backup-store";
 import { BackupService } from "./backup.service";
 import { DataPreviewService } from "./data-preview.service";
@@ -62,10 +63,11 @@ describe("restore confirmation is session-bound and transactional", () => {
     const org = await owner.organization.create({
       data: { name: "Restore Confirmation", slug: randomUUID() },
     });
+    const email = `restore-${randomUUID()}@example.test`;
     const user = await owner.user.create({
       data: {
-        email: `restore-${randomUUID()}@example.test`,
-        emailNormalized: `restore-${randomUUID()}@example.test`,
+        email,
+        emailNormalized: email,
         displayName: "Restore Superuser",
         passwordHash: await passwords.hash(pass),
       },
@@ -116,22 +118,24 @@ describe("restore confirmation is session-bound and transactional", () => {
       input = proof,
       actor = principal,
       transaction = true
-    ) =>
-      (transaction
-        ? runtime.withMaintenance.bind(runtime)
-        : runtime.withTenant.bind(runtime))(
-        org.id,
-        tx =>
-          consumeRestoreConfirmation(
-            tx,
-            actor,
-            input,
-            verified,
-            passwords,
-            options.maxBytes
-          ),
-        { isolationLevel: "RepeatableRead", timeout: 60_000 }
-      );
+    ) => {
+      const action = (tx: Prisma.TransactionClient) =>
+        consumeRestoreConfirmation(
+          tx,
+          actor,
+          input,
+          verified,
+          passwords,
+          options.maxBytes
+        );
+      const settings = {
+        isolationLevel: "RepeatableRead" as const,
+        timeout: 60_000,
+      };
+      return transaction
+        ? runtime.withMaintenance(org.id, action, settings)
+        : runtime.withTenant(org.id, action, settings);
+    };
     return { org, user, principal, backup, verified, preview, proof, run };
   }
 
