@@ -1,6 +1,4 @@
-import type {
-  AuthenticatedPrincipal,
-} from "../authorization/authenticated-request";
+import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import type { Prisma } from "../generated/prisma/client";
 import { PasswordService } from "../auth/password.service";
 import { BackupError } from "./backup-error";
