@@ -79,9 +79,10 @@ export function BackupAdministrationView({
     setLoading(true);
     setError("");
     void Promise.all([
-      apiRequest<{ configured: boolean; backups: unknown[] }>("/admin/backups", {
-        accessToken,
-      }),
+      apiRequest<{ configured: boolean; backups: unknown[] }>(
+        "/admin/backups",
+        { accessToken }
+      ),
       apiRequest<Operation[]>("/admin/backups/operations", { accessToken }),
       apiRequest<Schedule>("/admin/backups/schedule", { accessToken }),
     ])
@@ -119,10 +120,14 @@ export function BackupAdministrationView({
         accessToken,
         method: "POST",
       });
-      setNotice(`Backup solicitado (operação ${result.id}). Atualize para acompanhar.`);
+      setNotice(
+        `Backup solicitado (operação ${result.id}). Atualize para acompanhar.`
+      );
       setReload(value => value + 1);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Falha ao solicitar backup.");
+      setError(
+        cause instanceof Error ? cause.message : "Falha ao solicitar backup."
+      );
     } finally {
       setBusy(false);
     }
@@ -144,7 +149,9 @@ export function BackupAdministrationView({
       setSchedule(saved);
       setNotice("Agendamento salvo com auditoria.");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Falha ao salvar agendamento.");
+      setError(
+        cause instanceof Error ? cause.message : "Falha ao salvar agendamento."
+      );
     } finally {
       setBusy(false);
     }
@@ -162,7 +169,11 @@ export function BackupAdministrationView({
       });
       setPreview(OperationPreviewSchema.parse(result));
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Não foi possível validar o backup.");
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível validar o backup."
+      );
     } finally {
       setBusy(false);
     }
@@ -187,10 +198,15 @@ export function BackupAdministrationView({
   }
 
   return (
-    <section className="activities-view backup-administration" aria-labelledby="backup-title">
+    <section
+      className="activities-view backup-administration"
+      aria-labelledby="backup-title"
+    >
       <header className="activities-view__header">
         <div>
-          <p className="activities-view__eyebrow">Administração · Superusuário</p>
+          <p className="activities-view__eyebrow">
+            Administração · Superusuário
+          </p>
           <h1 id="backup-title">Backup e recuperação</h1>
           <p>Backups isolados por empresa, criptografados e auditados.</p>
         </div>
@@ -212,12 +228,19 @@ export function BackupAdministrationView({
       <section className="companies-view__card" aria-label="Backup manual">
         <h2>Backup manual</h2>
         <p>A solicitação entra na fila durável e será processada pelo worker.</p>
-        <button type="button" disabled={!configured || busy} onClick={() => void runBackup()}>
+        <button
+          type="button"
+          disabled={!configured || busy}
+          onClick={() => void runBackup()}
+        >
           Criar backup agora
         </button>
       </section>
 
-      <section className="companies-view__card" aria-label="Agendamento de backups">
+      <section
+        className="companies-view__card"
+        aria-label="Agendamento de backups"
+      >
         <h2>Agendamento automático</h2>
         <form onSubmit={saveSchedule}>
           <label>
@@ -226,7 +249,10 @@ export function BackupAdministrationView({
               checked={schedule.enabled}
               disabled={!configured || busy}
               onChange={event =>
-                setSchedule(current => ({ ...current, enabled: event.target.checked }))
+                setSchedule(current => ({
+                  ...current,
+                  enabled: event.target.checked,
+                }))
               }
             />
             Ativar backup automático
@@ -274,7 +300,10 @@ export function BackupAdministrationView({
                   type="time"
                   value={schedule.localTime}
                   onChange={event =>
-                    setSchedule(current => ({ ...current, localTime: event.target.value }))
+                    setSchedule(current => ({
+                      ...current,
+                      localTime: event.target.value,
+                    }))
                   }
                 />
               </label>
@@ -284,14 +313,25 @@ export function BackupAdministrationView({
                   <select
                     value={schedule.weekday}
                     onChange={event =>
-                      setSchedule(current => ({ ...current, weekday: Number(event.target.value) }))
+                      setSchedule(current => ({
+                        ...current,
+                        weekday: Number(event.target.value),
+                      }))
                     }
                   >
-                    {["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map(
-                      (name, index) => (
-                        <option value={index} key={name}>{name}</option>
-                      )
-                    )}
+                    {[
+                      "Domingo",
+                      "Segunda",
+                      "Terça",
+                      "Quarta",
+                      "Quinta",
+                      "Sexta",
+                      "Sábado",
+                    ].map((name, index) => (
+                      <option value={index} key={name}>
+                        {name}
+                      </option>
+                    ))}
                   </select>
                 </label>
               ) : null}
@@ -304,17 +344,24 @@ export function BackupAdministrationView({
               onChange={event =>
                 setSchedule(current => ({
                   ...current,
-                  retentionCount: Number(event.target.value) as Schedule["retentionCount"],
+                  retentionCount: Number(
+                    event.target.value
+                  ) as Schedule["retentionCount"],
                 }))
               }
             >
               {[7, 15, 30, 90].map(value => (
-                <option key={value} value={value}>{value}</option>
+                <option key={value} value={value}>
+                  {value}
+                </option>
               ))}
             </select>
           </label>
           <p>Próxima execução: {date(schedule.nextRunAt)}</p>
-          <button type="submit" disabled={busy || (schedule.enabled && !configured)}>
+          <button
+            type="submit"
+            disabled={busy || (schedule.enabled && !configured)}
+          >
             Salvar agendamento
           </button>
         </form>
@@ -326,7 +373,8 @@ export function BackupAdministrationView({
           <ul>
             {operations.map(item => (
               <li key={item.id}>
-                {date(item.createdAt)} · {states[item.state] ?? item.state} · {item.stage}
+                {date(item.createdAt)} · {states[item.state] ?? item.state} ·{" "}
+                {item.stage}
                 {item.errorCode ? ` · Erro: ${item.errorCode}` : ""}
               </li>
             ))}
@@ -341,16 +389,25 @@ export function BackupAdministrationView({
             {backups.map(item => (
               <li key={item.id}>
                 <strong>{date(item.createdAt)}</strong>{" "}
-                · {states[item.state] ?? item.state} · {item.reason} · {size(item.byteCount)}
+                · {states[item.state] ?? item.state} · {item.reason} ·{" "}
+                {size(item.byteCount)}
                 {item.errorCode ? ` · ${item.errorCode}` : null}
                 {item.state === "COMPLETED" ? (
                   <>
                     {" "}
-                    <button type="button" disabled={busy} onClick={() => void download(item.id)}>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => void download(item.id)}
+                    >
                       Baixar
                     </button>
                     {" "}
-                    <button type="button" disabled={busy} onClick={() => void viewPreview(item.id)}>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => void viewPreview(item.id)}
+                    >
                       Prévia de restauração
                     </button>
                   </>
@@ -362,17 +419,33 @@ export function BackupAdministrationView({
       </section>
 
       {preview ? (
-        <section className="companies-view__card" aria-label="Prévia de restauração">
+        <section
+          className="companies-view__card"
+          aria-label="Prévia de restauração"
+        >
           <h2>Prévia validada — somente consulta</h2>
           <p>Backup: {preview.targetBackupId}</p>
-          <p>Versão: {preview.targetSchemaVersion} · Válida até {date(preview.expiresAt)}</p>
-          <p>Estado atual: {Object.values(preview.currentCounts).reduce((a, b) => a + b, 0)} registros.</p>
-          <p>Estado da cópia: {Object.values(preview.targetCounts).reduce((a, b) => a + b, 0)} registros.</p>
+          <p>
+            Versão: {preview.targetSchemaVersion} · Válida até{" "}
+            {date(preview.expiresAt)}
+          </p>
+          <p>
+            Estado atual:{" "}
+            {Object.values(preview.currentCounts).reduce((a, b) => a + b, 0)}{" "}
+            registros.
+          </p>
+          <p>
+            Estado da cópia:{" "}
+            {Object.values(preview.targetCounts).reduce((a, b) => a + b, 0)}{" "}
+            registros.
+          </p>
           <p>
             A restauração efetiva ainda está bloqueada: exige reautenticação,
             cópia preventiva verificada e substituição transacional homologada.
           </p>
-          <button type="button" onClick={() => setPreview(null)}>Fechar prévia</button>
+          <button type="button" onClick={() => setPreview(null)}>
+            Fechar prévia
+          </button>
         </section>
       ) : null}
     </section>
