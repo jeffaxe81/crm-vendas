@@ -12,6 +12,7 @@ import {
 } from "./backup.service";
 import { exportTenantSnapshot } from "./tenant-snapshot";
 import { validateRestoreReferences } from "./restore-reference-check";
+import { validateRestoreIdentityReferences } from "./restore-identity-check";
 
 export const OPERATION_PREVIEW_TTL_MS = 5 * 60 * 1000;
 
@@ -100,12 +101,20 @@ export class DataPreviewService {
     validateRestoreReferences(verified.data);
     const current = await this.prisma.withTenant(
       principal.organizationId,
-      tx =>
-        exportTenantSnapshot(
+      async tx => {
+        // Projected identities in a backup are references, not credentials.
+        // They must still resolve to the same live users before a preview.
+        await validateRestoreIdentityReferences(
+          tx,
+          principal.organizationId,
+          verified.data
+        );
+        return exportTenantSnapshot(
           tx,
           principal.organizationId,
           this.options.maxBytes
-        ),
+        );
+      },
       {
         isolationLevel: "RepeatableRead",
         timeout: this.options.snapshotTimeoutMs,
