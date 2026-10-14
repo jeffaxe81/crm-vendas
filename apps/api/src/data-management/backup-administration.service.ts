@@ -92,6 +92,11 @@ export class BackupAdministrationService {
   async requestBackup(principal: AuthenticatedPrincipal, requestId: string) {
     this.configured();
     return this.prisma.withTenant(principal.organizationId, async tx => {
+      // Serialize manual enqueue per tenant; a count alone races across requests.
+      await tx.$executeRawUnsafe(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+        `backup-manual:${principal.organizationId}`
+      );
       const pending = await tx.dataOperation.count({
         where: {
           organizationId: principal.organizationId,
