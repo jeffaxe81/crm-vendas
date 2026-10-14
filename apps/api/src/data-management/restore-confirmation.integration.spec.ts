@@ -4,7 +4,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { PasswordService } from "../auth/password.service";
-import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
+import type {
+  AuthenticatedPrincipal,
+} from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
 import type { Prisma } from "../generated/prisma/client";
 import { BackupStore } from "./backup-store";
@@ -52,7 +54,9 @@ describe("restore confirmation is session-bound and transactional", () => {
 
   afterAll(async () => {
     if (owner) {
-      await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
+      await owner.$executeRawUnsafe(
+        'TRUNCATE "organizations", "users" CASCADE'
+      );
       await owner.onModuleDestroy();
     }
     await runtime?.onModuleDestroy();
@@ -158,7 +162,7 @@ describe("restore confirmation is session-bound and transactional", () => {
     await expect(run()).rejects.toThrow("RESTORE_CONFIRMATION_INVALID");
   });
 
-  it("rejects wrong password, altered phrase and API keys without consumption", async () => {
+  it("rejects wrong password, phrase and API-key principal", async () => {
     const { org, principal, preview, proof, run } = await fixture();
     await expect(run({ ...proof, password: "wrong" })).rejects.toThrow(
       "RESTORE_CONFIRMATION_INVALID"
@@ -175,7 +179,7 @@ describe("restore confirmation is session-bound and transactional", () => {
     expect(result.consumedAt).toBeNull();
   });
 
-  it("rejects a changed tenant snapshot, revoked session and wrong transaction", async () => {
+  it("rejects stale preview, revoked session and wrong transaction", async () => {
     const { org, principal, proof, run } = await fixture();
 
     await expect(run(proof, principal, false)).rejects.toThrow(
@@ -194,7 +198,7 @@ describe("restore confirmation is session-bound and transactional", () => {
     await expect(run()).rejects.toThrow("RESTORE_CONFIRMATION_INVALID");
   });
 
-  it("rolls back confirmation when the enclosing transaction fails", async () => {
+  it("rolls back a confirmation when the transaction fails", async () => {
     const { org, preview, principal, proof, verified } = await fixture();
     await expect(
       runtime.withMaintenance(
