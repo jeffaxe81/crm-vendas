@@ -11,6 +11,7 @@ import {
   type BackupOptions,
 } from "./backup.service";
 import { exportTenantSnapshot } from "./tenant-snapshot";
+import { validateRestoreReferences } from "./restore-reference-check";
 
 export const OPERATION_PREVIEW_TTL_MS = 5 * 60 * 1000;
 
@@ -94,6 +95,9 @@ export class DataPreviewService {
       principal.organizationId,
       backupId
     );
+    // Refuse a preview when the verified backup has dangling internal
+    // relationships. No restoration or mutation of business data occurs.
+    validateRestoreReferences(verified.data);
     const current = await this.prisma.withTenant(
       principal.organizationId,
       tx =>
