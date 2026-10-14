@@ -1,4 +1,8 @@
-import { BACKUP_SCHEMA, modelMetadata, SNAPSHOT_POLICIES } from "./backup-models";
+import {
+  BACKUP_SCHEMA,
+  modelMetadata,
+  SNAPSHOT_POLICIES,
+} from "./backup-models";
 import { BackupError } from "./backup-error";
 import type { SnapshotData, SnapshotRow } from "./backup-manifest";
 
@@ -27,7 +31,9 @@ export function validateRestoreReferences(data: SnapshotData): void {
     const model = schema.get(target);
     if (!model) throw new BackupError("BACKUP_SCHEMA_UNSUPPORTED");
     if (
-      model.fields.some(field => field.kind !== "object" && field.name === sourceField)
+      model.fields.some(
+        field => field.kind !== "object" && field.name === sourceField
+      )
     ) {
       return sourceField;
     }
@@ -64,7 +70,11 @@ export function validateRestoreReferences(data: SnapshotData): void {
       const targetSet = new Set(targetRows.map(row => key(row, targetKeys)));
       for (const row of sourceRows) {
         // An optional composite relation is absent when any FK component is null.
-        if (sourceKeys.some(field => row[field] === null || row[field] === undefined))
+        if (
+          sourceKeys.some(
+            field => row[field] === null || row[field] === undefined
+          )
+        )
           continue;
         if (!targetSet.has(key(row, sourceKeys))) {
           throw new BackupError("BACKUP_REFERENCES_INVALID");
