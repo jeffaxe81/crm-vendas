@@ -42,10 +42,7 @@ export async function validateRestoreIdentityReferences(
     select: { id: true, userId: true },
   });
   const memberships = new Map(
-    existingMemberships.map(membership => [
-      membership.id,
-      membership.userId,
-    ])
+    existingMemberships.map(membership => [membership.id, membership.userId])
   );
   for (const row of membershipRows) {
     const id = row.id as string;
