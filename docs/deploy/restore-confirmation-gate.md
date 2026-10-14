@@ -34,6 +34,22 @@ as verificações de integridade, políticas especiais e constraints no banco de
 destino. Referências para modelos preservados/ausentes do snapshot não são
 inferidas; deverão ser checadas pelo restaurador futuro no banco de destino.
 
+## Pré-validação de identidades no banco atual
+
+A prévia também compara os identificadores e e-mails de usuários referenciados
+pelo backup com os usuários reais do banco, dentro de uma transação de leitura
+`RepeatableRead` sob RLS. Falha quando o usuário referenciado não existe
+(`RESTORE_USER_REFERENCE_MISSING`) ou o identificador passou a corresponder
+a outro e-mail (`RESTORE_USER_IDENTITY_CHANGED`). Um ID de associação existente
+não pode passar a representar outro usuário
+(`RESTORE_MEMBERSHIP_IDENTITY_CHANGED`). Não são restaurados senhas, sessões,
+credenciais nem privilégios de Superusuário nessa etapa.
+
+Esta é uma checagem preliminar, não uma garantia de compatibilidade futura.
+O executor deverá repeti-la **sob lock exclusivo**, validar todas as políticas
+de modelos preservados, possíveis conflitos de unicidade e referências externas,
+e somente então aplicar a restauração com rollback integral.
+
 ## Faltam antes de expor um botão RESTAURAR
 
 1. Implementar e testar o restaurador de todos os modelos exportáveis e as
