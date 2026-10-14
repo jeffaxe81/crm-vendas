@@ -215,6 +215,31 @@ describe("session-bound restore previews", () => {
     expect(audit).not.toBeNull();
   });
 
+  it("rejects identity changes without issuing a preview", async () => {
+    const { organization, superuser, principal } = await fixture();
+    const backup = await backups.create(
+      organization.id,
+      superuser.id,
+      "MANUAL"
+    );
+
+    await owner.user.update({
+      where: { id: superuser.id },
+      data: {
+        email: "changed-preview-super@example.test",
+        emailNormalized: "changed-preview-super@example.test",
+      },
+    });
+
+    await expect(previews.previewRestore(principal, backup.id)).rejects.toThrow(
+      "RESTORE_USER_IDENTITY_CHANGED"
+    );
+    const previewsCount = await runtime.withTenant(organization.id, tx =>
+      tx.operationPreview.count({ where: { organizationId: organization.id } })
+    );
+    expect(previewsCount).toBe(0);
+  });
+
   it("changes the current-data fingerprint when tenant business data changes", async () => {
     const { organization, superuser, principal } = await fixture();
     const backup = await backups.create(
