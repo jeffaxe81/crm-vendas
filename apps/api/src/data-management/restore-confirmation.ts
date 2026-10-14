@@ -2,9 +2,8 @@ import type { AuthenticatedPrincipal } from "../authorization/authenticated-requ
 import type { Prisma } from "../generated/prisma/client";
 import { PasswordService } from "../auth/password.service";
 import { BackupError } from "./backup-error";
-import { snapshotDataFingerprint } from "./backup-manifest";
 import type { VerifiedBackup } from "./backup.service";
-import { exportTenantSnapshot } from "./tenant-snapshot";
+import { preflightRestoreExecution } from "./restore-locked-preflight";
 
 export const RESTORE_CONFIRMATION_PHRASE = "RESTAURAR DADOS";
 
@@ -128,14 +127,15 @@ export async function consumeRestoreConfirmation(
     throw new BackupError("RESTORE_CONFIRMATION_INVALID");
   }
 
-  // Current state MUST be read under the exclusive maintenance lock.
-  // Any modification after the five-minute preview invalidates the intent.
-  const current = await exportTenantSnapshot(
+  // Re-run target/reference/identity readiness and current-state fingerprint
+  // under the same exclusive maintenance lock that will guard restoration.
+  const locked = await preflightRestoreExecution(
     tx,
     principal.organizationId,
+    verified,
     maxBytes
   );
-  const fingerprint = snapshotDataFingerprint(current);
+  const fingerprint = locked.currentFingerprint;
   if (fingerprint !== preview.currentFingerprint) {
     throw new BackupError("RESTORE_PREVIEW_STALE");
   }
