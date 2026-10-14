@@ -157,9 +157,7 @@ export default function Home() {
       !availableWorkspaceDestinations(
         session.permissions,
         session.membership.isSuperuser === true
-      ).some(
-        item => item.id === section
-      )
+      ).some(item => item.id === section)
     )
       return;
     manualNavigation.current = true;
