@@ -1,9 +1,6 @@
 import type { Prisma } from "../generated/prisma/client";
 import { BackupError } from "./backup-error";
-import {
-  snapshotDataFingerprint,
-  type SnapshotData,
-} from "./backup-manifest";
+import { snapshotDataFingerprint, type SnapshotData } from "./backup-manifest";
 import type { VerifiedBackup } from "./backup.service";
 import { validateRestoreIdentityReferences } from "./restore-identity-check";
 import { validateRestoreReferences } from "./restore-reference-check";
