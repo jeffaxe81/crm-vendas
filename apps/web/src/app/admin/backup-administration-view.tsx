@@ -227,7 +227,9 @@ export function BackupAdministrationView({
 
       <section className="companies-view__card" aria-label="Backup manual">
         <h2>Backup manual</h2>
-        <p>A solicitação entra na fila durável e será processada pelo worker.</p>
+        <p>
+          A solicitação entra na fila durável e será processada pelo worker.
+        </p>
         <button
           type="button"
           disabled={!configured || busy}
@@ -367,9 +369,14 @@ export function BackupAdministrationView({
         </form>
       </section>
 
-      <section className="companies-view__card" aria-label="Operações de backup">
+      <section
+        className="companies-view__card"
+        aria-label="Operações de backup"
+      >
         <h2>Fila e execução</h2>
-        {operations.length === 0 ? <p>Não há operações registradas.</p> : (
+        {operations.length === 0 ? (
+          <p>Não há operações registradas.</p>
+        ) : (
           <ul>
             {operations.map(item => (
               <li key={item.id}>
@@ -382,14 +389,19 @@ export function BackupAdministrationView({
         )}
       </section>
 
-      <section className="companies-view__card" aria-label="Histórico de backups">
+      <section
+        className="companies-view__card"
+        aria-label="Histórico de backups"
+      >
         <h2>Histórico</h2>
-        {backups.length === 0 ? <p>Nenhum backup no catálogo.</p> : (
+        {backups.length === 0 ? (
+          <p>Nenhum backup no catálogo.</p>
+        ) : (
           <ul>
             {backups.map(item => (
               <li key={item.id}>
-                <strong>{date(item.createdAt)}</strong>{" "}
-                · {states[item.state] ?? item.state} · {item.reason} ·{" "}
+                <strong>{date(item.createdAt)}</strong> ·{" "}
+                {states[item.state] ?? item.state} · {item.reason} ·{" "}
                 {size(item.byteCount)}
                 {item.errorCode ? ` · ${item.errorCode}` : null}
                 {item.state === "COMPLETED" ? (
@@ -401,8 +413,7 @@ export function BackupAdministrationView({
                       onClick={() => void download(item.id)}
                     >
                       Baixar
-                    </button>
-                    {" "}
+                    </button>{" "}
                     <button
                       type="button"
                       disabled={busy}

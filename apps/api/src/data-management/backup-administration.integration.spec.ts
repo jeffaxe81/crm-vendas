@@ -38,10 +38,22 @@ describe("backup administration HTTP authorization", () => {
     const token = registered.body.accessToken as string;
     const server = request(app.getHttpServer());
 
-    await server.get("/api/v1/admin/backups").auth(token, { type: "bearer" }).expect(403);
-    await server.get("/api/v1/admin/backups/operations").auth(token, { type: "bearer" }).expect(403);
-    await server.get("/api/v1/admin/backups/schedule").auth(token, { type: "bearer" }).expect(403);
-    await server.post("/api/v1/admin/backups").auth(token, { type: "bearer" }).expect(403);
+    await server
+      .get("/api/v1/admin/backups")
+      .auth(token, { type: "bearer" })
+      .expect(403);
+    await server
+      .get("/api/v1/admin/backups/operations")
+      .auth(token, { type: "bearer" })
+      .expect(403);
+    await server
+      .get("/api/v1/admin/backups/schedule")
+      .auth(token, { type: "bearer" })
+      .expect(403);
+    await server
+      .post("/api/v1/admin/backups")
+      .auth(token, { type: "bearer" })
+      .expect(403);
     await server
       .put("/api/v1/admin/backups/schedule")
       .auth(token, { type: "bearer" })

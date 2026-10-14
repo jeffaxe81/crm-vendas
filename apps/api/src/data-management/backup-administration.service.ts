@@ -8,9 +8,7 @@ import {
 } from "@nestjs/common";
 import { BackupRecordSchema } from "@axes/contracts";
 
-import type {
-  AuthenticatedPrincipal,
-} from "../authorization/authenticated-request";
+import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
 import { BackupError } from "./backup-error";
 import { nextBackupRun, validateSchedule } from "./backup-schedule";
