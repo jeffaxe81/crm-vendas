@@ -18,7 +18,9 @@ import type { SnapshotData, SnapshotRow } from "./backup-manifest";
  */
 export function validateRestoreReferences(data: SnapshotData): void {
   const exported = new Set(SNAPSHOT_POLICIES.map(policy => policy.model));
-  const schema = new Map(BACKUP_SCHEMA.models.map(model => [model.name, model]));
+  const schema = new Map(
+    BACKUP_SCHEMA.models.map(model => [model.name, model])
+  );
 
   function targetField(target: string, sourceField: string): string {
     if (target === "Organization" || target === "User") return "id";
