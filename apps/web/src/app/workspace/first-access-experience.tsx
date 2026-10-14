@@ -32,6 +32,8 @@ const explanations: Record<WorkspaceSection, string> = {
     "Escolha sua página inicial, seus favoritos e a organização dos painéis.",
   "integration-credentials":
     "Gerencie credenciais e integrações autorizadas. E-mails externos não são ativados pelo tour.",
+  "admin-backups":
+    "Superusuários podem criar backups, agendar cópias e conferir prévias sem executar restaurações destrutivas.",
 };
 
 type Phase = "loading" | "wizard" | "tour" | "idle" | "error";
@@ -74,7 +76,10 @@ export function FirstAccessExperience({
   const [tourIndex, setTourIndex] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const steps = availableWorkspaceDestinations(session.permissions);
+  const steps = availableWorkspaceDestinations(
+    session.permissions,
+    session.membership.isSuperuser === true
+  );
   const token = session.accessToken;
 
   useEffect(() => {

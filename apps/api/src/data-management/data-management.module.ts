@@ -3,6 +3,9 @@ import { hostname } from "node:os";
 
 import { parseApiEnvironment } from "../config/environment";
 import { DatabaseModule } from "../database/database.module";
+import { AuthorizationModule } from "../authorization/authorization.module";
+import { BackupAdministrationController } from "./backup-administration.controller";
+import { BackupAdministrationService } from "./backup-administration.service";
 import { BackupScheduleService } from "./backup-schedule.service";
 import { BackupStore } from "./backup-store";
 import { BackupWorkerRunner } from "./backup-worker.runner";
@@ -12,7 +15,8 @@ import { DataOperationWorker } from "./data-operation.worker";
 import { DataPreviewService } from "./data-preview.service";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthorizationModule],
+  controllers: [BackupAdministrationController],
   providers: [
     {
       provide: BACKUP_OPTIONS,
@@ -38,6 +42,7 @@ import { DataPreviewService } from "./data-preview.service";
       },
     },
     BackupService,
+    BackupAdministrationService,
     BackupScheduleService,
     DataPreviewService,
     DataOperationWorker,

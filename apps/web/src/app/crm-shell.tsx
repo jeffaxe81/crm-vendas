@@ -12,6 +12,7 @@ import {
   CalendarDays,
   ClipboardList,
   DoorOpen,
+  Database,
   Headset,
   KeyRound,
   MapPin,
@@ -51,6 +52,7 @@ const icons: Partial<Record<CrmSection, typeof Building2>> = {
   "support-settings": ShieldCheck,
   "workspace-settings": PanelLeft,
   "integration-credentials": KeyRound,
+  "admin-backups": Database,
 };
 const navigation = workspaceDestinations.map(item => ({
   ...item,
@@ -78,7 +80,10 @@ export function CrmShell({
   const closeRef = useRef<HTMLButtonElement>(null);
   const mobileDrawerOpen = mobile && drawerOpen;
   const items = navigation.filter(
-    item => !item.permission || session.permissions.includes(item.permission)
+    item =>
+      (item.section !== "admin-backups" ||
+        session.membership.isSuperuser === true) &&
+      (!item.permission || session.permissions.includes(item.permission))
   );
   const favorites = (workspace?.saved.favorites ?? []).filter(id =>
     items.some(item => item.section === id)

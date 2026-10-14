@@ -100,3 +100,35 @@ export function authApiRequest<T>(
     credentials: "include",
   });
 }
+
+/** Authorized file transfer. Do not expose bearer tokens in URLs or logs. */
+export async function downloadApiFile(
+  path: string,
+  accessToken: string,
+  filename: string
+): Promise<void> {
+  const response = await fetch(`${apiBaseUrl}${path}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "x-request-id": createRequestId(),
+    },
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => undefined);
+    throw new ApiError(errorMessage(payload, response.status), response.status);
+  }
+
+  const blob = await response.blob();
+  const href = URL.createObjectURL(blob);
+  try {
+    const anchor = document.createElement("a");
+    anchor.href = href;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+  } finally {
+    URL.revokeObjectURL(href);
+  }
+}
