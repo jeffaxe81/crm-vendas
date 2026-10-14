@@ -28,6 +28,8 @@ limpeza de dados NÃO estão habilitadas**. Não interpretar prévia como restor
    cole o valor em chats, tickets, comandos com histórico compartilhado ou logs.
    Guarde cópia cifrada da chave fora do servidor, separada dos backups.
    **Perder a chave inviabiliza a recuperação dos arquivos cifrados.**
+   O download autorizado devolve JSON em texto claro: proteja imediatamente
+   esse arquivo por criptografia própria e controle de acesso.
 
 3. Confirmar que o volume nomeado `backup-data` do Compose está privado,
    pertence ao usuário `node` do container API e permite escrita; não
