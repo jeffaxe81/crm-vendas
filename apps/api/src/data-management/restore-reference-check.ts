@@ -24,10 +24,7 @@ export function validateRestoreReferences(data: SnapshotData): void {
 
   function targetField(target: string, sourceField: string): string {
     if (target === "Organization" || target === "User") return "id";
-    if (
-      target === "OrganizationMembership" &&
-      sourceField.endsWith("UserId")
-    ) {
+    if (target === "OrganizationMembership" && sourceField.endsWith("UserId")) {
       return "userId";
     }
     const model = schema.get(target);
