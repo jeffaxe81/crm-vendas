@@ -39,6 +39,11 @@ RUN apt-get update -y \
     && apt-get install -y --no-install-recommends openssl \
     && rm -rf /var/lib/apt/lists/*
 
+# Private backup directory: copied into a named Docker volume on first use.
+RUN mkdir -p /var/lib/axes-crm/backups \\
+    && chown node:node /var/lib/axes-crm/backups \\
+    && chmod 700 /var/lib/axes-crm/backups
+
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=build --chown=node:node /app/apps/api/package.json ./apps/api/package.json
