@@ -4,9 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { PasswordService } from "../auth/password.service";
-import type {
-  AuthenticatedPrincipal,
-} from "../authorization/authenticated-request";
+import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
 import type { Prisma } from "../generated/prisma/client";
 import { BackupStore } from "./backup-store";
@@ -118,11 +116,7 @@ describe("restore confirmation is session-bound and transactional", () => {
       password: pass,
       confirmation: RESTORE_CONFIRMATION_PHRASE,
     };
-    const run = (
-      input = proof,
-      actor = principal,
-      transaction = true
-    ) => {
+    const run = (input = proof, actor = principal, transaction = true) => {
       const action = (tx: Prisma.TransactionClient) =>
         consumeRestoreConfirmation(
           tx,
