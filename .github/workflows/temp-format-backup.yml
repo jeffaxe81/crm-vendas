@@ -1,0 +1,35 @@
+name: Temporary backup PR formatter
+on:
+  push:
+    branches:
+      - feat/backup-admin-interface-20261013
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feat/backup-admin-interface-20261013
+          persist-credentials: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Install pinned pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+          pnpm install --frozen-lockfile
+      - name: Format only backup branch files
+        run: |
+          pnpm exec prettier --write             apps/api/src/data-management/backup-administration.service.ts             apps/api/src/data-management/backup-administration.integration.spec.ts             apps/web/src/app/admin/backup-administration-view.tsx             apps/web/src/app/page.tsx
+      - name: Commit formatting if needed
+        run: |
+          if ! git diff --quiet; then
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git config user.name 'github-actions[bot]'
+            git add apps/api/src/data-management/backup-administration.service.ts               apps/api/src/data-management/backup-administration.integration.spec.ts               apps/web/src/app/admin/backup-administration-view.tsx               apps/web/src/app/page.tsx
+            git commit -m 'style(backup): apply pinned repository Prettier'
+            git push origin HEAD:feat/backup-admin-interface-20261013
+          fi
