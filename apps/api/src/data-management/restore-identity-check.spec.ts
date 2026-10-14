@@ -9,9 +9,7 @@ const membershipId = "00000000-0000-0000-0000-000000000003";
 function backup(): SnapshotData {
   return {
     User: [{ id: userId, email: "user@example.test" }],
-    OrganizationMembership: [
-      { id: membershipId, organizationId, userId },
-    ],
+    OrganizationMembership: [{ id: membershipId, organizationId, userId }],
   };
 }
 
@@ -44,10 +42,7 @@ describe("restore identity reference readiness", () => {
   });
 
   it("rejects changed email for an existing user ID", async () => {
-    const tx = transaction(
-      [{ id: userId, email: "other@example.test" }],
-      []
-    );
+    const tx = transaction([{ id: userId, email: "other@example.test" }], []);
     await expect(
       validateRestoreIdentityReferences(tx, organizationId, backup())
     ).rejects.toThrow("RESTORE_USER_IDENTITY_CHANGED");
