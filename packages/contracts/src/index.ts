@@ -369,6 +369,17 @@ export {
 export * from "./webhooks";
 
 export {
+  QuickSetupProgressInputSchema,
+  QuickSetupStateSchema,
+  QuickSetupStepIdSchema,
+  QuickSetupStepSchema,
+  type QuickSetupProgressInput,
+  type QuickSetupState,
+  type QuickSetupStep,
+  type QuickSetupStepId,
+} from "./quick-setup";
+
+export {
   OnboardingStateSchema,
   OrganizationOnboardingInputSchema,
   TourCompletionInputSchema,

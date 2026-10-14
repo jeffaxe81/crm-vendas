@@ -34,6 +34,7 @@ type CrmShellProps = {
   onNavigate: (section: CrmSection) => void;
   onLogout: () => void;
   onStartTour?: () => void;
+  onOpenQuickSetup?: () => void;
   children: ReactNode;
 };
 
@@ -68,6 +69,7 @@ export function CrmShell({
   onNavigate,
   onLogout,
   onStartTour,
+  onOpenQuickSetup,
   children,
 }: CrmShellProps) {
   const workspace = useWorkspace();
@@ -303,6 +305,17 @@ export function CrmShell({
               <span>{session.membership.role}</span>
             </div>
           </div>
+          {onOpenQuickSetup ? (
+            <button
+              type="button"
+              onClick={onOpenQuickSetup}
+              aria-label="Configuração rápida"
+              title="Abrir a configuração rápida do CRM"
+            >
+              <ShieldCheck aria-hidden="true" />
+              <span>Configuração rápida</span>
+            </button>
+          ) : null}
           {onStartTour ? (
             <button
               type="button"
