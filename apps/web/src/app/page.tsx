@@ -31,6 +31,7 @@ import { FirstAccessExperience } from "./workspace/first-access-experience";
 import { UsersView } from "./admin/users-view";
 import { SupportSettingsView } from "./admin/support-settings-view";
 import { IntegrationCredentialsView } from "./admin/integration-credentials-view";
+import { BackupAdministrationView } from "./admin/backup-administration-view";
 
 export default function Home() {
   const manualNavigation = useRef(false);
@@ -153,7 +154,10 @@ export default function Home() {
   function navigate(section: CrmSection) {
     if (
       !session ||
-      !availableWorkspaceDestinations(session.permissions).some(
+      !availableWorkspaceDestinations(
+        session.permissions,
+        session.membership.isSuperuser === true
+      ).some(
         item => item.id === section
       )
     )
@@ -211,6 +215,9 @@ export default function Home() {
               currentUserId={session.user.id}
               permissions={session.permissions}
             />
+          ) : activeSection === "admin-backups" &&
+            session.membership.isSuperuser === true ? (
+            <BackupAdministrationView accessToken={session.accessToken} />
           ) : activeSection === "companies" ? (
             <CompaniesView
               accessToken={session.accessToken}
