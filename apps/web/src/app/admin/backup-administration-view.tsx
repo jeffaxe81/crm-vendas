@@ -394,6 +394,10 @@ export function BackupAdministrationView({
         aria-label="Histórico de backups"
       >
         <h2>Histórico</h2>
+        <p>
+          O download gera JSON sem criptografia. Guarde o arquivo em local
+          privado e não o compartilhe por canais não autorizados.
+        </p>
         {backups.length === 0 ? (
           <p>Nenhum backup no catálogo.</p>
         ) : (
