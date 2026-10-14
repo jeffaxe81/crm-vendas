@@ -8,7 +8,9 @@ import {
 } from "@nestjs/common";
 import { BackupRecordSchema } from "@axes/contracts";
 
-import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
+import type {
+  AuthenticatedPrincipal,
+} from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
 import { BackupError } from "./backup-error";
 import { nextBackupRun, validateSchedule } from "./backup-schedule";
@@ -100,7 +102,9 @@ export class BackupAdministrationService {
         },
       });
       if (pending) {
-        throw new ConflictException("Já existe um backup em execução ou na fila.");
+        throw new ConflictException(
+          "Já existe um backup em execução ou na fila."
+        );
       }
       const operation = await tx.dataOperation.create({
         data: {
@@ -223,7 +227,11 @@ export class BackupAdministrationService {
     }
   }
 
-  async download(principal: AuthenticatedPrincipal, id: string, requestId: string) {
+  async download(
+    principal: AuthenticatedPrincipal,
+    id: string,
+    requestId: string
+  ) {
     this.configured();
     let verified;
     try {
