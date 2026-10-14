@@ -1,4 +1,6 @@
-import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
+import type {
+  AuthenticatedPrincipal,
+} from "../authorization/authenticated-request";
 import type { Prisma } from "../generated/prisma/client";
 import { PasswordService } from "../auth/password.service";
 import { BackupError } from "./backup-error";
@@ -44,7 +46,11 @@ export async function consumeRestoreConfirmation(
   }
 
   const [context] = await tx.$queryRawUnsafe<
-    { maintenance: string | null; isolation: string; organization: string | null }[]
+    {
+      maintenance: string | null;
+      isolation: string;
+      organization: string | null;
+    }[]
   >(
     `SELECT current_setting('app.maintenance_authorized',true) AS maintenance,
        current_setting('transaction_isolation') AS isolation,
