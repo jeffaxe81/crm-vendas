@@ -131,10 +131,12 @@ it("polls a running operation and stops after completion", async () => {
   });
   vi.stubGlobal("fetch", fetchMock);
 
-  render(<BackupAdministrationView accessToken="synthetic-token" />);
-  expect(await screen.findByText(/Executando/)).toBeInTheDocument();
-
   vi.useFakeTimers();
+  await act(async () => {
+    render(<BackupAdministrationView accessToken="synthetic-token" />);
+  });
+  expect(screen.getByText(/Executando/)).toBeInTheDocument();
+
   await act(async () => {
     await vi.advanceTimersByTimeAsync(10_000);
   });
