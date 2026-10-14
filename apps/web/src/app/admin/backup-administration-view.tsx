@@ -73,6 +73,16 @@ export function BackupAdministrationView({
   const [notice, setNotice] = useState("");
   const [preview, setPreview] = useState<OperationPreview | null>(null);
   const [reload, setReload] = useState(0);
+  const hasPendingOperations = operations.some(
+    operation => operation.state === "PENDING" || operation.state === "RUNNING"
+  );
+
+  // Refresh active operations automatically, but stop when the queue is idle.
+  useEffect(() => {
+    if (!hasPendingOperations || busy) return;
+    const timer = setInterval(() => setReload(value => value + 1), 10_000);
+    return () => clearInterval(timer);
+  }, [hasPendingOperations, busy]);
 
   useEffect(() => {
     let active = true;
