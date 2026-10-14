@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { BackupAdministrationView } from "./backup-administration-view";
 
@@ -81,9 +81,9 @@ it("creates a queued manual backup using the authenticated API", async () => {
   vi.stubGlobal("fetch", fetchMock);
 
   render(<BackupAdministrationView accessToken="synthetic-token" />);
-  fireEvent.click(
-    await screen.findByRole("button", { name: "Criar backup agora" })
-  );
+  const button = screen.getByRole("button", { name: "Criar backup agora" });
+  await waitFor(() => expect(button).toBeEnabled());
+  fireEvent.click(button);
 
   expect(await screen.findByText(/Backup solicitado/)).toBeInTheDocument();
   expect(await screen.findByText(/Aguardando/)).toBeInTheDocument();
