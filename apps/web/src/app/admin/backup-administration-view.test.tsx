@@ -1,4 +1,11 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { BackupAdministrationView } from "./backup-administration-view";
 
@@ -40,12 +47,15 @@ afterEach(() => {
 
 it("disables backup creation when the encrypted store is not configured", async () => {
   const fetchMock = vi.fn(async (url: string) => {
-    if (url.endsWith("/admin/backups/operations"))
+    if (url.endsWith("/admin/backups/operations")) {
       return jsonResponse([]);
-    if (url.endsWith("/admin/backups/schedule"))
+    }
+    if (url.endsWith("/admin/backups/schedule")) {
       return jsonResponse(schedule);
-    if (url.endsWith("/admin/backups"))
+    }
+    if (url.endsWith("/admin/backups")) {
       return jsonResponse({ configured: false, backups: [] });
+    }
     throw Error(`Unexpected endpoint: ${url}`);
   });
   vi.stubGlobal("fetch", fetchMock);
@@ -66,16 +76,19 @@ it("disables backup creation when the encrypted store is not configured", async 
 it("creates a queued manual backup using the authenticated API", async () => {
   let queued = false;
   const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
-    if (url.endsWith("/admin/backups/operations"))
+    if (url.endsWith("/admin/backups/operations")) {
       return jsonResponse(queued ? [{ ...operation, state: "PENDING" }] : []);
-    if (url.endsWith("/admin/backups/schedule"))
+    }
+    if (url.endsWith("/admin/backups/schedule")) {
       return jsonResponse(schedule);
+    }
     if (url.endsWith("/admin/backups") && init?.method === "POST") {
       queued = true;
       return jsonResponse({ id: operation.id, state: "PENDING" });
     }
-    if (url.endsWith("/admin/backups"))
+    if (url.endsWith("/admin/backups")) {
       return jsonResponse({ configured: true, backups: [] });
+    }
     throw Error(`Unexpected endpoint: ${url}`);
   });
   vi.stubGlobal("fetch", fetchMock);
@@ -88,8 +101,7 @@ it("creates a queued manual backup using the authenticated API", async () => {
   expect(await screen.findByText(/Backup solicitado/)).toBeInTheDocument();
   expect(await screen.findByText(/Aguardando/)).toBeInTheDocument();
   const mutation = fetchMock.mock.calls.find(
-    ([url, init]) =>
-      url.endsWith("/admin/backups") && init?.method === "POST"
+    ([url, init]) => url.endsWith("/admin/backups") && init?.method === "POST"
   );
   expect(mutation).toBeDefined();
   expect(mutation?.[1]?.headers).toEqual(
@@ -109,10 +121,12 @@ it("polls a running operation and stops after completion", async () => {
         },
       ]);
     }
-    if (url.endsWith("/admin/backups/schedule"))
+    if (url.endsWith("/admin/backups/schedule")) {
       return jsonResponse(schedule);
-    if (url.endsWith("/admin/backups"))
+    }
+    if (url.endsWith("/admin/backups")) {
       return jsonResponse({ configured: true, backups: [] });
+    }
     throw Error(`Unexpected endpoint: ${url}`);
   });
   vi.stubGlobal("fetch", fetchMock);
