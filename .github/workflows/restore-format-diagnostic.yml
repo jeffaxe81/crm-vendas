@@ -1,0 +1,25 @@
+name: Restore format diagnostic
+on:
+  pull_request:
+    paths:
+      - "apps/api/src/data-management/restore-confirmation.ts"
+      - "apps/api/src/data-management/restore-confirmation.integration.spec.ts"
+      - ".github/workflows/restore-format-diagnostic.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  format-diff:
+    if: github.event.pull_request.number == 201
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Format only new restore files and show required changes
+        run: |
+          npm install -g prettier@3.9.6
+          prettier --write apps/api/src/data-management/restore-confirmation.ts apps/api/src/data-management/restore-confirmation.integration.spec.ts
+          git diff --no-ext-diff -- apps/api/src/data-management/restore-confirmation.ts apps/api/src/data-management/restore-confirmation.integration.spec.ts
