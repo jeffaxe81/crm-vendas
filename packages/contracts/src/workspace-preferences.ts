@@ -86,6 +86,12 @@ export const workspaceDestinations = [
     group: "Administração",
     permission: "integration.read",
   },
+  {
+    id: "admin-backups",
+    label: "Backup e recuperação",
+    group: "Administração",
+    permission: null,
+  },
 ] as const;
 export type WorkspaceSection = (typeof workspaceDestinations)[number]["id"];
 const section = z.enum(
@@ -140,9 +146,14 @@ export function createDefaultWorkspacePreferences(): WorkspacePreferences {
     dashboardHidden: [],
   };
 }
-export function availableWorkspaceDestinations(permissions: readonly string[]) {
+export function availableWorkspaceDestinations(
+  permissions: readonly string[],
+  isSuperuser = false
+) {
   return workspaceDestinations.filter(
-    item => !item.permission || permissions.includes(item.permission)
+    item =>
+      (item.id !== "admin-backups" || isSuperuser) &&
+      (!item.permission || permissions.includes(item.permission))
   );
 }
 export function sanitizeWorkspacePreferences(

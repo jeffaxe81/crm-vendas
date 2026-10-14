@@ -130,10 +130,26 @@ jobs:
         timeout-minutes: 10
         run: pnpm build
 
-      - name: Bootstrap administrator for E2E
+      # Prove that the account used by the bootstrap is subject to tenant RLS.
+      # Avoid the migration/superuser connection: it would bypass RLS.
+      - name: Verify restricted bootstrap role and audit RLS
         env:
-          APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
+          PGPASSWORD: ${{ env.APP_DB_PASSWORD }}
+        run: |
+          role_safe=$(psql -X -h 127.0.0.1 -U "$APP_DB_USER" -d axes_crm -Atqc "SELECT (NOT rolsuper AND NOT rolbypassrls)::text FROM pg_roles WHERE rolname = current_user")
+          test "$role_safe" = "true"
+          audit_rls=$(psql -X -h 127.0.0.1 -U "$APP_DB_USER" -d axes_crm -Atqc "SELECT relrowsecurity::text FROM pg_class WHERE oid='public.audit_logs'::regclass")
+          test "$audit_rls" = "true"
+
+      - name: Bootstrap administrator for E2E under tenant RLS
         run: pnpm --filter @axes/api bootstrap:admin
+
+      - name: Verify bootstrap audit persisted
+        env:
+          PGPASSWORD: axes
+        run: |
+          audit_count=$(psql -X -h 127.0.0.1 -U axes -d axes_crm -Atqc "SELECT count(*) FROM audit_logs a JOIN organizations o ON o.id=a.organization_id WHERE o.slug='axesistemas' AND a.request_id='bootstrap-admin' AND a.action='system.bootstrap_admin'")
+          test "$audit_count" = "1"
 
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
