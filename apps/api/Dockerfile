@@ -40,8 +40,8 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Private backup directory: copied into a named Docker volume on first use.
-RUN mkdir -p /var/lib/axes-crm/backups \\
-    && chown node:node /var/lib/axes-crm/backups \\
+RUN mkdir -p /var/lib/axes-crm/backups \
+    && chown node:node /var/lib/axes-crm/backups \
     && chmod 700 /var/lib/axes-crm/backups
 
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
