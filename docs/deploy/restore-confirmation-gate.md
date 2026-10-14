@@ -23,6 +23,17 @@ botão ou comando de restauração.** Não autoriza GO de produção.
 - Confirmação consumida e auditoria participam da transação: se a futura
   restauração falhar, ambas devem ser revertidas.
 
+## Pré-validação relacional adicional
+
+A prévia agora verifica, de maneira **somente leitura**, as referências internas
+do snapshot verificado usando o inventário de modelos e relações do Prisma,
+incluindo vínculos compostos com a organização e associações de usuários.
+Referências ausentes retornam `BACKUP_REFERENCES_INVALID` e impedem criar
+uma prévia aparentemente válida. A checagem não modifica dados e não substitui
+as verificações de integridade, políticas especiais e constraints no banco de
+destino. Referências para modelos preservados/ausentes do snapshot não são
+inferidas; deverão ser checadas pelo restaurador futuro no banco de destino.
+
 ## Faltam antes de expor um botão RESTAURAR
 
 1. Implementar e testar o restaurador de todos os modelos exportáveis e as
