@@ -109,6 +109,13 @@ export async function restoreTenantSnapshot(
   data: SnapshotData
 ): Promise<void> {
   await requireMaintenanceContext(tx, organizationId);
+  if (
+    !Array.isArray(data.Organization) ||
+    data.Organization.length !== 1 ||
+    data.Organization[0]?.id !== organizationId
+  ) {
+    fail("RESTORE_TARGET_INVALID");
+  }
   requireImplementedPolicies(data);
 
   const rows = data.Company;
