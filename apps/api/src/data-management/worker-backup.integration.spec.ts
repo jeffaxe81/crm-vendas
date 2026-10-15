@@ -325,6 +325,31 @@ describe("durable backup execution and retention", () => {
     expect(catalog.state).toBe("RUNNING");
   });
 
+  it("rejects a worker whose lease expired before backup execution", async () => {
+    const operation = await queueBackup();
+    const claimed = await worker.claimNext("worker-expired");
+    expect(claimed?.id).toBe(operation.id);
+
+    await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.update({
+        where: { id: operation.id },
+        data: { leaseUntil: new Date(0) },
+      })
+    );
+
+    await expect(
+      service.create(organizationId, null, "SCHEDULED", operation.id, {
+        workerId: "worker-expired",
+        attempts: claimed!.attempts,
+      })
+    ).rejects.toThrow("BACKUP_IN_PROGRESS");
+
+    const records = await runtime.withTenant(organizationId, tx =>
+      tx.backupRecord.count({ where: { id: operation.id } })
+    );
+    expect(records).toBe(0);
+  });
+
   it("rejects an obsolete worker attempt after a new worker claims the operation", async () => {
     const operation = await queueBackup();
     const former = await worker.claimNext("worker-former");
