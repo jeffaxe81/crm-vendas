@@ -37,7 +37,12 @@ falhar. Todos receberam testes que reproduziram a falha antes da correção.
 - RED de interface: ação de exclusão inexistente.
 - RED da revisão: dois testes com arquivos criptografados reais demonstraram
   a remoção indevida da cópia; um teste Web demonstrou polling interrompido.
-- GREEN local: 108 testes de contratos, 295 testes Web e 15 testes de
+- O primeiro CI PostgreSQL expôs o import ausente do runtime Jest no novo
+  teste ESM e um defeito anterior no validador de IDs: a expressão aceitava
+  quatro grupos e recusava UUIDs válidos com cinco grupos. Três testes
+  unitários reproduziram a validação incorreta antes da correção, e a jornada
+  HTTP agora exercita download bem-sucedido antes da exclusão.
+- GREEN local: 108 testes de contratos, 295 testes Web e 18 testes de
   armazenamento, worker e revalidação da exclusão. Tipos da API e Web aprovados.
 - Integração PostgreSQL/RLS, migrações, E2E e imagens: acompanhar o CI do SHA final.
 - O teste local `tests/container-contract.test.mjs` requer Docker, ausente
@@ -50,7 +55,8 @@ Os resultados definitivos do CI serão registrados após conclusão.
 ## Limites desta entrega
 
 Não restaura dados nem apaga dados operacionais. A restauração de contatos
-segue na PR #213. A issue #86 permanece aberta até a restauração integral e
+foi integrada pela PR #213, sem exposição pública do executor. A issue #86
+permanece aberta até a restauração integral e
 a exclusão protegida de dados estarem entregues. Nenhum dado real foi
 excluído, nenhum deploy foi executado e a homologação do servidor permanece
 na issue #159.

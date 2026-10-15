@@ -14,6 +14,8 @@ import { BackupStore } from "./backup-store";
 import { BackupWorkerRunner } from "./backup-worker.runner";
 import { BackupWorkerRuntime } from "./backup-worker.runtime";
 
+let jestRuntime: typeof jest;
+
 describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
   let app: INestApplication;
   let owner: PrismaService;
@@ -27,6 +29,8 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
   let newest: { id: string; checksum: string | null };
 
   beforeAll(async () => {
+    const globalsModule = "@jest/globals";
+    jestRuntime = (await import(globalsModule)).jest;
     if (!process.env.RLS_DATABASE_URL) throw Error("Restricted role required");
     owner = new PrismaService(
       process.env.MIGRATION_DATABASE_URL ?? process.env.DATABASE_URL
@@ -104,7 +108,7 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
 
   afterEach(async () => {
     await clearAuditFailure();
-    jest.restoreAllMocks();
+    jestRuntime.restoreAllMocks();
   });
   afterAll(async () => {
     if (owner) {
@@ -138,6 +142,13 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
   }
 
   it("queues a durable deletion, removes the encrypted file and retains audited metadata", async () => {
+    await request(app.getHttpServer())
+      .get(`/api/v1/admin/backups/${older.id}/download`)
+      .auth(token, { type: "bearer" })
+      .expect(200)
+      .expect(({ body }) =>
+        expect(body.manifest.checksum).toBe(older.checksum)
+      );
     await remove()
       .expect(202)
       .expect(({ body }) =>
@@ -312,7 +323,7 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
 
   it("retries file I/O failure and a crash after unlink before final commit", async () => {
     await remove().expect(202);
-    jest
+    jestRuntime
       .spyOn(store, "remove")
       .mockRejectedValueOnce(Error("synthetic I/O failure"));
     await app.get(BackupWorkerRunner).runCycle();
