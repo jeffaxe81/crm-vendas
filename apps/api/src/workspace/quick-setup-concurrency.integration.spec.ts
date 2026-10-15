@@ -177,6 +177,46 @@ describe("quick setup concurrent progress", () => {
     ).toEqual([{ action: "quick_setup.completed" }]);
   });
 
+  it("does not resurrect stale steps when progress waits behind reopen", async () => {
+    const blocker = new Client({
+      connectionString:
+        process.env.MIGRATION_DATABASE_URL ?? process.env.DATABASE_URL,
+    });
+    const operations: Promise<QuickSetupState>[] = [];
+    await blocker.connect();
+    try {
+      await blocker.query("BEGIN");
+      await blocker.query(
+        "SELECT id FROM organization_memberships WHERE id=$1::uuid FOR UPDATE",
+        [principal.membershipId]
+      );
+
+      operations.push(
+        service.reopen({
+          principal,
+          requestId: "concurrent-reopen",
+        })
+      );
+      await waitForBlockedProgress(1);
+      operations.push(
+        service.progress(
+          { stepId: "team" },
+          { principal, requestId: "progress-after-reopen" }
+        )
+      );
+      await waitForBlockedProgress(2);
+    } finally {
+      await blocker.query("ROLLBACK");
+      await Promise.allSettled(operations);
+      await blocker.end();
+    }
+
+    const results = await Promise.all(operations);
+    expect(results[0]?.completedSteps).toEqual([]);
+    expect(results[1]?.completedSteps).toEqual(["team"]);
+    expect((await service.read(principal)).completedSteps).toEqual(["team"]);
+  });
+
   it("rolls back progress when its audit record cannot be persisted", async () => {
     await expect(
       service.progress(
