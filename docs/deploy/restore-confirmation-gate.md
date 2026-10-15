@@ -74,3 +74,24 @@ e somente então aplicar a restauração com rollback integral.
    de teste ou cópia descartável do ambiente Rocky Linux.
 
 O gate não deve ser invocado isoladamente como sinal de restauração concluída.
+
+## Executor interno de empresas e contatos
+
+O executor transacional interno já substitui `Company`, `Contact`,
+`ContactChannel`, `CompanyContact` e `RelationshipEntry`. Prepara todos os
+registros antes da primeira exclusão, verifica referências e identidades sob
+o lock exclusivo, remove dependências antes dos pais e reinsere os pais antes
+dos vínculos. Falha de constraint reverte a transação inteira. Datas são
+convertidas diretamente pelo PostgreSQL, preservando os seis dígitos de
+microssegundos do snapshot; enums usam o mapeamento do esquema revisado.
+
+Este executor rejeita modelos `REPLACE` ainda não suportados quando há
+registros no backup **ou no estado atual** da organização. Usuários globais,
+senhas, associações, privilégios, sessões, credenciais e auditoria não são
+substituídos por esse incremento. A raiz `Organization` é validada como
+destino, mas sua configuração ainda não é recuperada.
+
+Continua sendo uma função interna sem rota, botão ou operação de worker de
+restauração. A implementação dos demais modelos e políticas especiais, cópia
+preventiva, confirmação, auditoria de sucesso e revogação de sessões ainda
+precisa ser integrada antes de disponibilizar restauração completa ao usuário.
