@@ -5,6 +5,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { BackupAdministrationView } from "./backup-administration-view";
@@ -146,4 +147,105 @@ it("polls a running operation and stops after completion", async () => {
     await vi.advanceTimersByTimeAsync(20_000);
   });
   expect(operationFetches).toBe(2);
+});
+
+const completedBackup = {
+  id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  organizationId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+  actorUserId: null,
+  reason: "MANUAL",
+  state: "COMPLETED",
+  schemaVersion: 1,
+  checksum: "a".repeat(64),
+  byteCount: 1024,
+  counts: {},
+  errorCode: null,
+  createdAt: "2026-10-15T12:00:00.000Z",
+  completedAt: "2026-10-15T12:00:01.000Z",
+};
+
+it("requires explicit confirmation tied to the selected backup and then polls deletion", async () => {
+  let deleted = false;
+  let catalogCalls = 0;
+  const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+    if (
+      url.endsWith(`/admin/backups/${completedBackup.id}`) &&
+      init?.method === "DELETE"
+    ) {
+      expect(JSON.parse(init.body as string)).toEqual({
+        confirmation: "EXCLUIR BACKUP",
+        checksum: completedBackup.checksum,
+      });
+      deleted = true;
+      return jsonResponse({ id: completedBackup.id, state: "DELETING" });
+    }
+    if (url.endsWith("/admin/backups/operations")) return jsonResponse([]);
+    if (url.endsWith("/admin/backups/schedule")) return jsonResponse(schedule);
+    if (url.endsWith("/admin/backups")) {
+      catalogCalls++;
+      return jsonResponse({
+        configured: true,
+        backups: [
+          { ...completedBackup, state: deleted ? "DELETING" : "COMPLETED" },
+        ],
+      });
+    }
+    throw Error(`Unexpected endpoint: ${url}`);
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  render(<BackupAdministrationView accessToken="synthetic-token" />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Excluir backup" })
+  );
+  const confirmation = screen.getByRole("region", { name: "Excluir backup" });
+  expect(
+    within(confirmation).getByText(completedBackup.id)
+  ).toBeInTheDocument();
+  const submit = within(confirmation).getByRole("button", {
+    name: "Confirmar exclusão",
+  });
+  expect(submit).toBeDisabled();
+  fireEvent.change(
+    within(confirmation).getByLabelText(/Digite EXCLUIR BACKUP/),
+    { target: { value: "EXCLUIR BACKUP" } }
+  );
+  fireEvent.click(submit);
+  expect(await screen.findByText(/Exclusão solicitada/)).toBeInTheDocument();
+  expect(await screen.findByText(/Exclusão pendente/)).toBeInTheDocument();
+  expect(
+    screen.queryByRole("region", { name: "Excluir backup" })
+  ).not.toBeInTheDocument();
+  expect(catalogCalls).toBeGreaterThan(1);
+  expect(
+    fetchMock.mock.calls.find(([, init]) => init?.method === "DELETE")?.[1]
+      ?.headers
+  ).toEqual(
+    expect.objectContaining({ Authorization: "Bearer synthetic-token" })
+  );
+});
+
+it("cancels deletion without making a destructive request", async () => {
+  const fetchMock = vi.fn(async (url: string) => {
+    if (url.endsWith("/operations")) return jsonResponse([]);
+    if (url.endsWith("/schedule")) return jsonResponse(schedule);
+    return jsonResponse({ configured: true, backups: [completedBackup] });
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  render(<BackupAdministrationView accessToken="synthetic-token" />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Excluir backup" })
+  );
+  const confirmation = screen.getByRole("region", { name: "Excluir backup" });
+  fireEvent.click(
+    within(confirmation).getByRole("button", { name: "Cancelar" })
+  );
+  expect(
+    screen.queryByRole("region", { name: "Excluir backup" })
+  ).not.toBeInTheDocument();
+  expect(
+    fetchMock.mock.calls.some(
+      (args: unknown[]) =>
+        (args[1] as RequestInit | undefined)?.method === "DELETE"
+    )
+  ).toBe(false);
 });
