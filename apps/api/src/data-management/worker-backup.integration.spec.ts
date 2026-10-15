@@ -321,7 +321,7 @@ describe("durable backup execution and retention", () => {
     );
     expect(live.state).toBe("RUNNING");
     expect(live.workerId).toBe("worker-successor");
-    expect(await store.read(operation.id)).rejects.toThrow();
+    await expect(store.read(operation.id)).rejects.toThrow();
   });
 
   it("retains the newest configured backups while preserving a preventive backup in use", async () => {
