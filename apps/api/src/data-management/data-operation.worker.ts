@@ -92,7 +92,8 @@ export class DataOperationWorker {
         job.organizationId,
         job.actorUserId,
         reason.data,
-        job.id
+        job.id,
+        { workerId, attempts: job.attempts }
       );
       backupId = backup.id;
 
