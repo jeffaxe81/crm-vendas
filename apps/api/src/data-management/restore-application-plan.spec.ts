@@ -23,23 +23,28 @@ describe("restore application plan", () => {
     expect(new Set(planned).size).toBe(planned.length);
   });
 
-  it(\n    "never treats the organization root or referenced users as generic replacement",\n    () => {
-    const plan = buildRestoreApplicationPlan(TENANT_DATA_REGISTRY);
+  it(
+    "never treats the organization root or referenced users as generic replacement",
+    () => {
+      const plan = buildRestoreApplicationPlan(TENANT_DATA_REGISTRY);
 
-    expect(plan.organizationRoot.model).toBe("Organization");
-    expect(plan.organizationRoot.scope).toBe("ORGANIZATION_ROOT");
-    expect(plan.referenceModels.map(policy => policy.model)).toContain("User");
-    expect(plan.replaceModels.map(policy => policy.model)).not.toContain(
-      "Organization"
-    );
-      expect(plan.replaceModels.map(policy => policy.model)).not.toContain(\n        "User"\n      );
-    expect(
-      plan.replaceModels.every(
-        policy =>
-          policy.scope === "ORGANIZATION" && policy.restore === "REPLACE"
-      )
-    ).toBe(true);
-  });
+      expect(plan.organizationRoot.model).toBe("Organization");
+      expect(plan.organizationRoot.scope).toBe("ORGANIZATION_ROOT");
+      expect(plan.referenceModels.map(policy => policy.model)).toContain("User");
+      expect(plan.replaceModels.map(policy => policy.model)).not.toContain(
+        "Organization"
+      );
+      expect(plan.replaceModels.map(policy => policy.model)).not.toContain(
+        "User"
+      );
+      expect(
+        plan.replaceModels.every(
+          policy =>
+            policy.scope === "ORGANIZATION" && policy.restore === "REPLACE"
+        )
+      ).toBe(true);
+    }
+  );
 
   it("fails closed for an unknown exported restore policy", () => {
     const policies = [
