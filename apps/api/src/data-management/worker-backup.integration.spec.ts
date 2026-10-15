@@ -290,6 +290,41 @@ describe("durable backup execution and retention", () => {
     });
   }
 
+  it("does not reclaim a backup owned by a worker with a live lease", async () => {
+    const operation = await queueBackup();
+    const current = await worker.claimNext("worker-live");
+    expect(current?.id).toBe(operation.id);
+
+    await runtime.withTenant(organizationId, tx =>
+      tx.backupRecord.create({
+        data: {
+          id: operation.id,
+          organizationId,
+          actorUserId: null,
+          reason: "SCHEDULED",
+          state: "RUNNING",
+        },
+      })
+    );
+
+    await expect(
+      service.create(organizationId, null, "SCHEDULED", operation.id)
+    ).rejects.toThrow("BACKUP_IN_PROGRESS");
+    expect(await worker.claimNext("worker-racing")).toBeNull();
+
+    const currentOperation = await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.findUniqueOrThrow({ where: { id: operation.id } })
+    );
+    const catalog = await runtime.withTenant(organizationId, tx =>
+      tx.backupRecord.findUniqueOrThrow({
+        where: { id_organizationId: { id: operation.id, organizationId } },
+      })
+    );
+    expect(currentOperation.workerId).toBe("worker-live");
+    expect(currentOperation.attempts).toBe(1);
+    expect(catalog.state).toBe("RUNNING");
+  });
+
   it("rejects an obsolete worker attempt after a new worker claims the operation", async () => {
     const operation = await queueBackup();
     const former = await worker.claimNext("worker-former");
