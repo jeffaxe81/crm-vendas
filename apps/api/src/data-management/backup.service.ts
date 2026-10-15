@@ -24,6 +24,11 @@ import { exportTenantSnapshot } from "./tenant-snapshot";
 export const BACKUP_STORE = Symbol("BACKUP_STORE");
 export const BACKUP_OPTIONS = Symbol("BACKUP_OPTIONS");
 export type BackupOptions = { maxBytes: number; snapshotTimeoutMs: number };
+export type BackupWorkerFence = {
+  workerId: string;
+  attempts: number;
+  signal?: AbortSignal;
+};
 export type VerifiedBackup = {
   bytes: Buffer;
   data: SnapshotData;
@@ -46,6 +51,9 @@ function summary(row: StoredBackup): BackupRecord {
     createdAt: row.createdAt.toISOString(),
     completedAt: row.completedAt?.toISOString() ?? null,
   });
+}
+function requireActive(signal?: AbortSignal): void {
+  if (signal?.aborted) throw new BackupError("BACKUP_IN_PROGRESS");
 }
 
 /** Internal service only; HTTP authorization and durable job orchestration are added separately. */
@@ -108,12 +116,38 @@ export class BackupService {
       },
     });
   }
+  private async requireWorkerFence(
+    tx: Prisma.TransactionClient,
+    organizationId: string,
+    id: string,
+    fence?: BackupWorkerFence
+  ): Promise<void> {
+    requireActive(fence?.signal);
+    if (!fence) return;
+    // Match the write-trigger lock order before locking the operation row.
+    await tx.$executeRawUnsafe(
+      "SELECT pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+      `tenant-maintenance:${organizationId}`
+    );
+    const claims = await tx.$queryRawUnsafe<{ id: string }[]>(
+      `SELECT id FROM public.data_operations
+       WHERE id=$1::uuid AND organization_id=$2::uuid AND state='RUNNING'
+         AND worker_id=$3 AND attempts=$4 AND lease_until > clock_timestamp()
+       FOR UPDATE`,
+      id,
+      organizationId,
+      fence.workerId,
+      fence.attempts
+    );
+    requireActive(fence.signal);
+    if (!claims[0]) throw new BackupError("BACKUP_IN_PROGRESS");
+  }
   async create(
     organizationId: string,
     actorId: string | null,
     reason: BackupReason,
     requestedId?: string,
-    workerFence?: { workerId: string; attempts: number }
+    workerFence?: BackupWorkerFence
   ): Promise<BackupRecord> {
     if (!this.store) throw new BackupError("BACKUP_NOT_CONFIGURED");
     const store = this.store;
@@ -125,20 +159,7 @@ export class BackupService {
     const id = requestedId === undefined ? randomUUID() : uuid(requestedId);
     const existing = await this.prisma.withTenant(organizationId, async tx => {
       await this.authorize(tx, organizationId, actorId, reason);
-      if (workerFence) {
-        const claim = await tx.dataOperation.findFirst({
-          where: {
-            id,
-            organizationId,
-            state: "RUNNING",
-            workerId: workerFence.workerId,
-            attempts: workerFence.attempts,
-            leaseUntil: { gt: new Date() },
-          },
-          select: { id: true },
-        });
-        if (!claim) throw new BackupError("BACKUP_IN_PROGRESS");
-      }
+      await this.requireWorkerFence(tx, organizationId, id, workerFence);
       const row = await tx.backupRecord.findFirst({
         where: { id, organizationId },
       });
@@ -178,6 +199,7 @@ export class BackupService {
           "backup.retry_requested",
           { reason }
         );
+        requireActive(workerFence?.signal);
         return null;
       }
       await tx.backupRecord.create({
@@ -192,84 +214,104 @@ export class BackupService {
       await this.audit(tx, organizationId, actorId, id, "backup.requested", {
         reason,
       });
+      requireActive(workerFence?.signal);
       return null;
     });
     if (existing) {
       await this.verify(organizationId, id);
+      requireActive(workerFence?.signal);
       return existing;
     }
     try {
-      const bytes = await this.prisma.withTenant(
-        organizationId,
-        async tx => {
-          await this.authorize(tx, organizationId, actorId, reason);
-          await tx.$executeRawUnsafe(
-            "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
-            `backup:${organizationId}`
-          );
-          await tx.backupRecord.update({
-            where: { id_organizationId: { id, organizationId } },
-            data: { state: "RUNNING" },
-          });
-          const data = await exportTenantSnapshot(
-            tx,
-            organizationId,
-            this.options.maxBytes
-          );
-          return encodeSnapshot(
-            organizationId,
-            data,
-            new Date(),
-            this.options.maxBytes
-          );
-        },
-        {
-          isolationLevel: "RepeatableRead",
-          timeout: this.options.snapshotTimeoutMs,
+      // Keep ownership locks out of the long snapshot: heartbeat renewals
+      // need to update the same operation row while the export is running.
+      await this.prisma.withTenant(organizationId, async tx => {
+        await this.authorize(tx, organizationId, actorId, reason);
+        await this.requireWorkerFence(tx, organizationId, id, workerFence);
+        await tx.backupRecord.update({
+          where: { id_organizationId: { id, organizationId } },
+          data: { state: "RUNNING" },
+        });
+        requireActive(workerFence?.signal);
+      });
+
+      const readPublished = async () => {
+        requireActive(workerFence?.signal);
+        let bytes: Buffer;
+        try {
+          bytes = await store.read(id);
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+          throw new BackupError("BACKUP_INVALID");
         }
-      );
-      if (workerFence) {
-        const stillOwned = await this.prisma.withTenant(organizationId, tx =>
-          tx.dataOperation.findFirst({
-            where: {
-              id,
+        requireActive(workerFence?.signal);
+        return {
+          bytes,
+          verified: decodeSnapshot(
+            bytes,
+            organizationId,
+            this.options.maxBytes
+          ),
+        };
+      };
+      // A process can die after immutable publication but before the catalog
+      // commit. Adopt only authenticated, tenant-validated snapshot bytes.
+      let published = workerFence ? await readPublished() : null;
+      if (!published) {
+        const bytes = await this.prisma.withTenant(
+          organizationId,
+          async tx => {
+            requireActive(workerFence?.signal);
+            await this.authorize(tx, organizationId, actorId, reason);
+            await tx.$executeRawUnsafe(
+              "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+              `backup:${organizationId}`
+            );
+            const data = await exportTenantSnapshot(
+              tx,
               organizationId,
-              state: "RUNNING",
-              workerId: workerFence.workerId,
-              attempts: workerFence.attempts,
-              leaseUntil: { gt: new Date() },
-            },
-            select: { id: true },
-          })
+              this.options.maxBytes
+            );
+            requireActive(workerFence?.signal);
+            return encodeSnapshot(
+              organizationId,
+              data,
+              new Date(),
+              this.options.maxBytes
+            );
+          },
+          {
+            isolationLevel: "RepeatableRead",
+            timeout: this.options.snapshotTimeoutMs,
+          }
         );
-        if (!stillOwned) throw new BackupError("BACKUP_IN_PROGRESS");
+        await this.prisma.withTenant(organizationId, tx =>
+          this.requireWorkerFence(tx, organizationId, id, workerFence)
+        );
+        requireActive(workerFence?.signal);
+        let adopted = false;
+        try {
+          await store.put(id, bytes);
+        } catch (error) {
+          // Another fenced publisher may win after our pre-publication check.
+          // The immutable object is authoritative only after full validation.
+          if (
+            !workerFence ||
+            (error as NodeJS.ErrnoException).code !== "EEXIST"
+          )
+            throw error;
+          adopted = true;
+        }
+        published = await readPublished();
+        if (!published || (!adopted && !published.bytes.equals(bytes)))
+          throw new BackupError("BACKUP_INVALID");
       }
-      await store.put(id, bytes);
-      const persisted = await store.read(id);
-      const verified = decodeSnapshot(
-        persisted,
-        organizationId,
-        this.options.maxBytes
-      );
-      if (!persisted.equals(bytes)) throw new BackupError("BACKUP_INVALID");
+      const { bytes: persisted, verified } = published;
       const completed = await this.prisma.withTenant(
         organizationId,
         async tx => {
           await this.authorize(tx, organizationId, actorId, reason);
-          if (workerFence) {
-            const claim = await tx.dataOperation.findFirst({
-              where: {
-                id,
-                organizationId,
-                state: "RUNNING",
-                workerId: workerFence.workerId,
-                attempts: workerFence.attempts,
-                leaseUntil: { gt: new Date() },
-              },
-              select: { id: true },
-            });
-            if (!claim) throw new BackupError("BACKUP_IN_PROGRESS");
-          }
+          await this.requireWorkerFence(tx, organizationId, id, workerFence);
           const row = await tx.backupRecord.update({
             where: { id_organizationId: { id, organizationId } },
             data: {
@@ -293,6 +335,7 @@ export class BackupService {
               schemaVersion: verified.manifest.schemaVersion,
             }
           );
+          requireActive(workerFence?.signal);
           return row;
         }
       );
@@ -308,20 +351,12 @@ export class BackupService {
       }
       try {
         await this.prisma.withTenant(organizationId, async tx => {
-          if (workerFence) {
-            const claim = await tx.dataOperation.findFirst({
-              where: {
-                id,
-                organizationId,
-                state: "RUNNING",
-                workerId: workerFence.workerId,
-                attempts: workerFence.attempts,
-                leaseUntil: { gt: new Date() },
-              },
-              select: { id: true },
-            });
-            if (!claim) return;
-          }
+          await this.requireWorkerFence(tx, organizationId, id, workerFence);
+          const current = await tx.backupRecord.findFirst({
+            where: { id, organizationId },
+            select: { state: true },
+          });
+          if (!current || current.state === "COMPLETED") return;
           await tx.backupRecord.update({
             where: { id_organizationId: { id, organizationId } },
             data: { state: "FAILED", errorCode: code },
@@ -329,6 +364,7 @@ export class BackupService {
           await this.audit(tx, organizationId, actorId, id, "backup.failed", {
             errorCode: code,
           });
+          requireActive(workerFence?.signal);
         });
       } catch {
         /* Leave a pending/running row for reconciliation when the database is unavailable. */
@@ -338,13 +374,15 @@ export class BackupService {
   }
   async pruneRetention(
     organizationId: string,
-    retentionCount: 7 | 15 | 30 | 90
+    retentionCount: 7 | 15 | 30 | 90,
+    signal?: AbortSignal
   ): Promise<number> {
     if (!this.store) throw new BackupError("BACKUP_NOT_CONFIGURED");
     if (![7, 15, 30, 90].includes(retentionCount)) {
       throw new BackupError("BACKUP_INVALID");
     }
     organizationId = uuid(organizationId);
+    requireActive(signal);
 
     const candidates = await this.prisma.withTenant(
       organizationId,
@@ -380,7 +418,9 @@ export class BackupService {
 
     let removed = 0;
     for (const id of candidates) {
+      requireActive(signal);
       const deleted = await this.prisma.withTenant(organizationId, async tx => {
+        requireActive(signal);
         const protectedByOperation = await tx.dataOperation.count({
           where: {
             organizationId,
@@ -394,6 +434,7 @@ export class BackupService {
           select: { id: true },
         });
         if (!row) return false;
+        requireActive(signal);
         await this.audit(
           tx,
           organizationId,
@@ -404,9 +445,12 @@ export class BackupService {
         await tx.backupRecord.delete({
           where: { id_organizationId: { id, organizationId } },
         });
+        requireActive(signal);
         return true;
       });
       if (!deleted) continue;
+      // Finish the already-committed deletion even if the lease is now lost;
+      // stopping here would leave a file no catalog-based sweep can discover.
       await this.store.remove(id);
       removed += 1;
     }

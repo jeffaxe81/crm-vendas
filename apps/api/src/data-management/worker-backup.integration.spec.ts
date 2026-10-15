@@ -145,6 +145,136 @@ describe("durable backup execution and retention", () => {
     });
   }
 
+  it("validates and adopts the immutable object that wins a publication race", async () => {
+    const seed = await service.create(organizationId, null, "SCHEDULED");
+    const published = await store.read(seed.id);
+    const raceRoot = await mkdtemp(join(tmpdir(), "axes-publication-race-"));
+    class RacingBackupStore extends BackupStore {
+      override async put(id: string, bytes: Buffer): Promise<void> {
+        await super.put(id, published);
+        await super.put(id, bytes);
+      }
+    }
+    const raceStore = new RacingBackupStore({
+      directory: raceRoot,
+      key: randomBytes(32),
+      maxBytes: options.maxBytes,
+    });
+    const raceService = new BackupService(runtime, raceStore, options);
+    const operation = await queueBackup();
+    const claim = await worker.claimNext("publication-winner");
+    try {
+      await raceService.create(
+        organizationId,
+        null,
+        "SCHEDULED",
+        operation.id,
+        {
+          workerId: "publication-winner",
+          attempts: claim!.attempts,
+        }
+      );
+      const verified = await raceService.verify(organizationId, operation.id);
+      expect(verified.bytes.equals(published)).toBe(true);
+    } finally {
+      await rm(raceRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects an invalid published snapshot without replacing or deleting it", async () => {
+    const operation = await queueBackup();
+    const claim = await worker.claimNext("invalid-publication");
+    const invalid = Buffer.from("authenticated object, invalid snapshot");
+    await store.put(operation.id, invalid);
+
+    await expect(
+      service.create(organizationId, null, "SCHEDULED", operation.id, {
+        workerId: "invalid-publication",
+        attempts: claim!.attempts,
+      })
+    ).rejects.toThrow("BACKUP_INVALID");
+    expect((await store.read(operation.id)).equals(invalid)).toBe(true);
+    expect(
+      (
+        await owner.backupRecord.findUniqueOrThrow({
+          where: { id_organizationId: { id: operation.id, organizationId } },
+        })
+      ).state
+    ).toBe("FAILED");
+  });
+
+  it("stops catalog completion when cancellation arrives during object verification", async () => {
+    const operation = await queueBackup();
+    const claim = await worker.claimNext("cancel-verification");
+    const lease = new AbortController();
+    const originalRead = store.read.bind(store);
+    let published: Buffer | undefined;
+    store.read = async id => {
+      const bytes = await originalRead(id);
+      published = bytes;
+      lease.abort();
+      return bytes;
+    };
+    try {
+      await expect(
+        service.create(organizationId, null, "SCHEDULED", operation.id, {
+          workerId: "cancel-verification",
+          attempts: claim!.attempts,
+          signal: lease.signal,
+        })
+      ).rejects.toThrow("BACKUP_IN_PROGRESS");
+      expect(published).toBeDefined();
+      expect((await originalRead(operation.id)).equals(published!)).toBe(true);
+      const row = await owner.backupRecord.findUniqueOrThrow({
+        where: { id_organizationId: { id: operation.id, organizationId } },
+      });
+      expect(row.state).toBe("RUNNING");
+      expect(row.checksum).toBeNull();
+      expect(
+        await owner.auditLog.count({
+          where: { entityId: operation.id, action: "backup.completed" },
+        })
+      ).toBe(0);
+    } finally {
+      store.read = originalRead;
+    }
+  });
+
+  it("finishes committed retention cleanup when cancellation arrives after catalog deletion", async () => {
+    const records = [];
+    for (let index = 0; index < 8; index += 1) {
+      records.push(await service.create(organizationId, null, "SCHEDULED"));
+    }
+    const oldest = records[0]!;
+    const lease = new AbortController();
+    const original = runtime.withTenant.bind(runtime);
+    runtime.withTenant = async function <T>(
+      tenantId: string,
+      callback: (tx: Prisma.TransactionClient) => Promise<T>,
+      settings?: Parameters<PrismaService["withTenant"]>[2]
+    ): Promise<T> {
+      const result = await original(tenantId, callback, settings);
+      if (result === true) lease.abort();
+      return result;
+    };
+    try {
+      await expect(
+        service.pruneRetention(organizationId, 7, lease.signal)
+      ).resolves.toBe(1);
+      expect(lease.signal.aborted).toBe(true);
+      await expect(store.read(oldest.id)).rejects.toMatchObject({
+        code: "ENOENT",
+      });
+      expect(
+        await owner.backupRecord.count({
+          where: { id: oldest.id, organizationId },
+        })
+      ).toBe(0);
+    } finally {
+      runtime.withTenant = original;
+    }
+  });
+
   it("cannot downgrade a successor's completed backup after an obsolete snapshot resumes", async () => {
     const operation = await queueBackup();
     const former = await worker.claimNext("snapshot-former");

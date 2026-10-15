@@ -66,24 +66,33 @@ export class DataOperationWorker {
 
     // Renew the claim during snapshots and file I/O, not only between jobs.
     // A missed heartbeat is never treated as a successful renewal.
-    let heartbeatPending = false;
-    let leaseLost = false;
+    const lease = new AbortController();
+    let heartbeatPending: Promise<void> | null = null;
+    let stopped = false;
     const renew = (): void => {
-      if (heartbeatPending || leaseLost) return;
-      heartbeatPending = true;
-      void this.heartbeat(job)
-        .then(owned => {
-          if (!owned) leaseLost = true;
-        })
-        .catch(() => {
-          leaseLost = true;
-        })
+      if (stopped || heartbeatPending || lease.signal.aborted) return;
+      heartbeatPending = this.heartbeat(job)
+        .then(
+          owned => {
+            if (!owned) lease.abort();
+          },
+          () => lease.abort()
+        )
         .finally(() => {
-          heartbeatPending = false;
+          heartbeatPending = null;
         });
     };
     const timer = setInterval(renew, 15_000);
     timer.unref?.();
+    const stillOwned = async (): Promise<boolean> => {
+      await heartbeatPending;
+      return !lease.signal.aborted;
+    };
+    const stopHeartbeat = async (): Promise<void> => {
+      stopped = true;
+      clearInterval(timer);
+      await heartbeatPending;
+    };
     try {
       const checkpoint =
         typeof job.checkpoint === "object" &&
@@ -114,14 +123,16 @@ export class DataOperationWorker {
           job.actorUserId,
           reason.data,
           job.id,
-          { workerId, attempts: job.attempts }
+          { workerId, attempts: job.attempts, signal: lease.signal }
         );
         backupId = backup.id;
 
+        if (!(await stillOwned())) return false;
         const checkpointed = await this.prisma.withTenant(
           job.organizationId,
-          tx =>
-            tx.$executeRawUnsafe(
+          async tx => {
+            if (lease.signal.aborted) return 0;
+            return tx.$executeRawUnsafe(
               `
               UPDATE public.data_operations
               SET checkpoint=checkpoint || jsonb_build_object(
@@ -136,11 +147,13 @@ export class DataOperationWorker {
               job.workerId,
               job.attempts,
               backupId
-            )
+            );
+          }
         );
         if (checkpointed !== 1) return false;
       }
 
+      if (!(await stillOwned())) return false;
       const schedule = await this.prisma.withTenant(job.organizationId, tx =>
         tx.backupSchedule.findUnique({
           where: { organizationId: job.organizationId },
@@ -148,16 +161,22 @@ export class DataOperationWorker {
         })
       );
       if (schedule && [7, 15, 30, 90].includes(schedule.retentionCount)) {
+        if (!(await stillOwned())) return false;
         await this.backupService.pruneRetention(
           job.organizationId,
-          schedule.retentionCount as 7 | 15 | 30 | 90
+          schedule.retentionCount as 7 | 15 | 30 | 90,
+          lease.signal
         );
       }
 
-      if (leaseLost) return false;
-      return this.finish(job);
+      await stopHeartbeat();
+      if (lease.signal.aborted) return false;
+      return await this.finish(job);
+    } catch (error) {
+      if (lease.signal.aborted) return false;
+      throw error;
     } finally {
-      clearInterval(timer);
+      await stopHeartbeat();
     }
   }
 
