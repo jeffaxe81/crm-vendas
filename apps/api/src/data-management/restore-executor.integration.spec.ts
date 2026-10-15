@@ -251,6 +251,48 @@ describe("transactional tenant restore executor", () => {
     ).toBe(true);
   });
 
+  it("preserves PostgreSQL microseconds in a company-only snapshot", async () => {
+    const target = await fixture();
+    const company = (await companies(target.organization.id))[0]!;
+    await owner.$executeRawUnsafe(
+      `UPDATE companies SET created_at='2026-10-01T12:00:00.123456Z',
+        updated_at='2026-10-02T12:00:00.654321Z' WHERE id=$1::uuid`,
+      company.id
+    );
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+    const before = await graphSnapshot(target.organization.id);
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
+
+  it("rejects a broken note reference before replacing any graph rows", async () => {
+    const target = await contactGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const broken = structuredClone(target.verified.data);
+    broken.RelationshipEntry![0]!.contactId = randomUUID();
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("BACKUP_REFERENCES_INVALID");
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
+
   it("removes a live contact graph absent from the same-tenant snapshot", async () => {
     const target = await contactGraph();
     const other = await contactGraph();
