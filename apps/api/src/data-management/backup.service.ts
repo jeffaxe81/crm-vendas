@@ -12,7 +12,7 @@ import type {
   BackupRecord as StoredBackup,
   Prisma,
 } from "../generated/prisma/client";
-import { BackupStore } from "./backup-store";
+import { BackupStore, BackupStoreIntegrityError } from "./backup-store";
 import { BackupError } from "./backup-error";
 import {
   canonical,
@@ -242,7 +242,9 @@ export class BackupService {
           bytes = await store.read(id);
         } catch (error) {
           if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
-          throw new BackupError("BACKUP_INVALID");
+          if (error instanceof BackupStoreIntegrityError)
+            throw new BackupError("BACKUP_INVALID");
+          throw error;
         }
         requireActive(workerFence?.signal);
         return {
@@ -473,8 +475,12 @@ export class BackupService {
     let bytes: Buffer;
     try {
       bytes = await this.store.read(backupId);
-    } catch {
-      throw new BackupError("BACKUP_INVALID");
+    } catch (error) {
+      throw new BackupError(
+        error instanceof BackupStoreIntegrityError
+          ? "BACKUP_INVALID"
+          : "BACKUP_FAILED"
+      );
     }
     const verified = decodeSnapshot(
       bytes,

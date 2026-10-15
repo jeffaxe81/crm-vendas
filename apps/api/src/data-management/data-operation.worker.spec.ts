@@ -2,6 +2,7 @@ import type { BackupReason, BackupRecord } from "@axes/contracts";
 import type { PrismaService } from "../database/prisma.service";
 import type { DataOperation } from "../generated/prisma/client";
 import type { BackupService } from "./backup.service";
+import { BackupError } from "./backup-error";
 import { DataOperationWorker } from "./data-operation.worker";
 
 let jestRuntime: typeof jest;
@@ -59,9 +60,13 @@ describe("backup operation heartbeat lifecycle", () => {
     const schedule = jestRuntime
       .fn<Promise<{ retentionCount: number } | null>, []>()
       .mockResolvedValue({ retentionCount: 7 });
+    const audit = jestRuntime
+      .fn<Promise<unknown>, [entry: unknown]>()
+      .mockResolvedValue({});
     const transaction = {
       $executeRawUnsafe: execute,
       backupSchedule: { findUnique: schedule },
+      auditLog: { create: audit },
     };
     const database = {
       async withTenant<T>(
@@ -112,6 +117,7 @@ describe("backup operation heartbeat lifecycle", () => {
       backup,
       creation,
       execute,
+      audit,
       schedule,
       service,
       worker,
@@ -288,4 +294,148 @@ describe("backup operation heartbeat lifecycle", () => {
     expect(test.finish).not.toHaveBeenCalled();
     expect(jestRuntime.getTimerCount()).toBe(0);
   });
+
+  it.each([
+    "BACKUP_INVALID",
+    "BACKUP_SCHEMA_UNSUPPORTED",
+    "BACKUP_VERSION_UNSUPPORTED",
+    "BACKUP_ORGANIZATION_MISMATCH",
+    "BACKUP_TOO_LARGE",
+    "BACKUP_ATTACHMENT_ADAPTER_REQUIRED",
+  ])("terminalizes and audits an owned operation after %s", async errorCode => {
+    const test = setup();
+    test.service.create.mockRejectedValue(new BackupError(errorCode));
+
+    await expect(test.worker.processNext(test.job.workerId!)).resolves.toBe(
+      false
+    );
+    expect(test.execute).toHaveBeenCalledTimes(1);
+    const [sql, ...parameters] = test.execute.mock.calls[0]!;
+    expect(sql).toContain("state='FAILED'");
+    expect(sql).toContain("stage='FAILED'");
+    expect(sql).toContain("error_code=$5");
+    expect(sql).toContain("completed_at=clock_timestamp()");
+    expect(sql).toContain("lease_until=NULL");
+    expect(sql).toContain(
+      "WHERE id=$1::uuid AND organization_id=$2::uuid AND state='RUNNING'"
+    );
+    expect(sql).toContain(
+      "AND worker_id=$3 AND attempts=$4 AND lease_until > clock_timestamp()"
+    );
+    expect(parameters).toEqual([
+      test.job.id,
+      test.job.organizationId,
+      test.job.workerId,
+      test.job.attempts,
+      errorCode,
+    ]);
+    expect(test.audit).toHaveBeenCalledTimes(1);
+    expect(test.audit).toHaveBeenCalledWith({
+      data: {
+        organizationId: test.job.organizationId,
+        actorUserId: test.job.actorUserId,
+        requestId: test.job.id,
+        action: "data_operation.failed",
+        entityType: "data_operation",
+        entityId: test.job.id,
+        metadata: { errorCode, attempts: test.job.attempts },
+      },
+    });
+    expect(test.service.pruneRetention).not.toHaveBeenCalled();
+    expect(test.finish).not.toHaveBeenCalled();
+    expect(jestRuntime.getTimerCount()).toBe(0);
+  });
+
+  it.each([
+    "BACKUP_FAILED",
+    "BACKUP_IN_PROGRESS",
+    "BACKUP_FORBIDDEN",
+    "BACKUP_NOT_CONFIGURED",
+    "BACKUP_INVALID_DETAIL",
+  ])("preserves retry behavior for %s", async errorCode => {
+    const test = setup();
+    const failure = new BackupError(errorCode);
+    test.service.create.mockRejectedValue(failure);
+
+    await expect(test.worker.processNext(test.job.workerId!)).rejects.toBe(
+      failure
+    );
+    expect(test.execute).not.toHaveBeenCalled();
+    expect(test.audit).not.toHaveBeenCalled();
+    expect(test.finish).not.toHaveBeenCalled();
+    expect(jestRuntime.getTimerCount()).toBe(0);
+  });
+
+  it("does not terminalize an untyped error with a deterministic-looking message", async () => {
+    const test = setup();
+    const failure = new Error("BACKUP_INVALID");
+    test.service.create.mockRejectedValue(failure);
+
+    await expect(test.worker.processNext(test.job.workerId!)).rejects.toBe(
+      failure
+    );
+    expect(test.execute).not.toHaveBeenCalled();
+    expect(test.audit).not.toHaveBeenCalled();
+    expect(jestRuntime.getTimerCount()).toBe(0);
+  });
+
+  it("does not audit a terminal failure when the operation fence rejects the update", async () => {
+    const test = setup();
+    test.execute.mockResolvedValue(0);
+    test.service.create.mockRejectedValue(new BackupError("BACKUP_INVALID"));
+
+    await expect(test.worker.processNext(test.job.workerId!)).resolves.toBe(
+      false
+    );
+    expect(test.execute).toHaveBeenCalledTimes(1);
+    expect(test.audit).not.toHaveBeenCalled();
+    expect(test.finish).not.toHaveBeenCalled();
+    expect(jestRuntime.getTimerCount()).toBe(0);
+  });
+
+  it("cancels terminalization if the signal aborts during tenant transaction setup", async () => {
+    const lease = new AbortController();
+    jestRuntime
+      .spyOn(globalThis, "AbortController")
+      .mockImplementation(() => lease);
+    const test = setup(async () => lease.abort());
+    test.service.create.mockRejectedValue(new BackupError("BACKUP_INVALID"));
+
+    await expect(test.worker.processNext(test.job.workerId!)).resolves.toBe(
+      false
+    );
+    expect(test.signal()?.aborted).toBe(true);
+    expect(test.execute).not.toHaveBeenCalled();
+    expect(test.audit).not.toHaveBeenCalled();
+    expect(jestRuntime.getTimerCount()).toBe(0);
+  });
+
+  it.each(["rejected", "unowned"] as const)(
+    "drains a %s in-flight heartbeat before deciding whether to terminalize",
+    async renewalResult => {
+      const test = setup();
+      const renewal = deferred<boolean>();
+      test.heartbeat.mockImplementation(() => renewal.promise);
+      const processing = test.worker.processNext(test.job.workerId!).then(
+        value => ({ value, error: undefined }),
+        (error: Error) => ({ value: undefined, error })
+      );
+      await jestRuntime.advanceTimersByTimeAsync(15_000);
+      test.creation.reject(new BackupError("BACKUP_INVALID"));
+      await jestRuntime.advanceTimersByTimeAsync(0);
+
+      expect(test.execute).not.toHaveBeenCalled();
+      expect(jestRuntime.getTimerCount()).toBe(0);
+      if (renewalResult === "rejected") {
+        renewal.reject(new Error("database unavailable"));
+      } else {
+        renewal.resolve(false);
+      }
+      expect(await processing).toEqual({ value: false, error: undefined });
+      expect(test.signal()?.aborted).toBe(true);
+      expect(test.execute).not.toHaveBeenCalled();
+      expect(test.audit).not.toHaveBeenCalled();
+      expect(test.finish).not.toHaveBeenCalled();
+    }
+  );
 });

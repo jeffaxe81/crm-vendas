@@ -19,6 +19,9 @@ export type BackupStoreOptions = {
   maxBytes: number;
 };
 
+/** Stored bytes fail structural or cryptographic validation, not filesystem I/O. */
+export class BackupStoreIntegrityError extends Error {}
+
 /** Private, immutable encrypted objects. Callers supply generated UUIDs, never paths. */
 export class BackupStore {
   private readonly key: Buffer;
@@ -93,10 +96,15 @@ export class BackupStore {
     try {
       const info = await file.stat();
       if (!info.isFile())
-        throw new Error("Backup object must be a regular file");
+        throw new BackupStoreIntegrityError(
+          "Backup object must be a regular file"
+        );
       if (info.size > this.maxBytes + HEADER_BYTES)
-        throw new Error("Backup exceeds configured size limit");
-      if (info.size < HEADER_BYTES) throw new Error("Invalid backup envelope");
+        throw new BackupStoreIntegrityError(
+          "Backup exceeds configured size limit"
+        );
+      if (info.size < HEADER_BYTES)
+        throw new BackupStoreIntegrityError("Invalid backup envelope");
       // One extra byte detects growth while keeping reads bounded even if the
       // persisted file changes between stat() and read().
       const buffer = Buffer.alloc(info.size + 1);
@@ -112,22 +120,28 @@ export class BackupStore {
         length += result.bytesRead;
       }
       if (length !== info.size)
-        throw new Error("Backup object changed during read");
+        throw new BackupStoreIntegrityError(
+          "Backup object changed during read"
+        );
       envelope = buffer.subarray(0, length);
     } finally {
       await file.close();
     }
     if (!envelope.subarray(0, MAGIC.length).equals(MAGIC))
-      throw new Error("Unsupported backup envelope");
+      throw new BackupStoreIntegrityError("Unsupported backup envelope");
     const iv = envelope.subarray(MAGIC.length, MAGIC.length + IV_BYTES);
     const tag = envelope.subarray(MAGIC.length + IV_BYTES, HEADER_BYTES);
-    const decipher = createDecipheriv("aes-256-gcm", this.key, iv);
-    decipher.setAAD(this.aad(objectId));
-    decipher.setAuthTag(tag);
-    return Buffer.concat([
-      decipher.update(envelope.subarray(HEADER_BYTES)),
-      decipher.final(),
-    ]);
+    try {
+      const decipher = createDecipheriv("aes-256-gcm", this.key, iv);
+      decipher.setAAD(this.aad(objectId));
+      decipher.setAuthTag(tag);
+      return Buffer.concat([
+        decipher.update(envelope.subarray(HEADER_BYTES)),
+        decipher.final(),
+      ]);
+    } catch {
+      throw new BackupStoreIntegrityError("Invalid backup authentication");
+    }
   }
 
   async remove(id: string): Promise<void> {

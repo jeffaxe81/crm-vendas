@@ -203,6 +203,106 @@ describe("durable backup execution and retention", () => {
     ).toBe("FAILED");
   });
 
+  for (const failure of ["invalid", "schema"] as const) {
+    it(`releases the queue after terminal ${failure} snapshot failure and preserves the object`, async () => {
+      const seed = await service.create(organizationId, null, "SCHEDULED");
+      const document = JSON.parse((await store.read(seed.id)).toString());
+      document.manifest.schemaFingerprint = "0".repeat(64);
+      const published =
+        failure === "invalid"
+          ? Buffer.from("invalid snapshot document")
+          : Buffer.from(JSON.stringify(document));
+      const operation = await queueBackup();
+      await store.put(operation.id, published);
+      await runtime.withTenant(organizationId, tx =>
+        tx.backupRecord.create({
+          data: {
+            id: operation.id,
+            organizationId,
+            reason: "SCHEDULED",
+            state: "RUNNING",
+          },
+        })
+      );
+
+      await expect(worker.processNext(`terminal-${failure}`)).resolves.toBe(
+        false
+      );
+      const failed = await owner.dataOperation.findUniqueOrThrow({
+        where: { id: operation.id },
+      });
+      expect(failed.state).toBe("FAILED");
+      expect(failed.errorCode).toBe(
+        failure === "invalid" ? "BACKUP_INVALID" : "BACKUP_SCHEMA_UNSUPPORTED"
+      );
+      expect(failed.leaseUntil).toBeNull();
+      expect(failed.completedAt).not.toBeNull();
+      expect((await store.read(operation.id)).equals(published)).toBe(true);
+      expect(
+        await owner.auditLog.count({
+          where: { entityId: operation.id, action: "data_operation.failed" },
+        })
+      ).toBe(1);
+
+      const successor = await queueBackup();
+      await expect(worker.processNext(`after-${failure}`)).resolves.toBe(true);
+      expect(
+        (await service.verify(organizationId, successor.id)).record.state
+      ).toBe("COMPLETED");
+      expect((await store.read(operation.id)).equals(published)).toBe(true);
+    });
+  }
+
+  for (const checkpointed of [false, true]) {
+    it(`retries transient object-read failures with checkpoint=${checkpointed} without terminalizing the operation`, async () => {
+      const operation = await queueBackup();
+      if (checkpointed) {
+        await service.create(organizationId, null, "SCHEDULED", operation.id);
+        await owner.dataOperation.update({
+          where: { id: operation.id },
+          data: {
+            checkpoint: { businessCommitted: true, backupId: operation.id },
+          },
+        });
+      }
+      const originalRead = store.read.bind(store);
+      let unavailable = true;
+      store.read = async id => {
+        if (unavailable) {
+          unavailable = false;
+          throw Object.assign(new Error("synthetic I/O unavailable"), {
+            code: "EIO",
+          });
+        }
+        return originalRead(id);
+      };
+      try {
+        await expect(worker.processNext("read-unavailable")).rejects.toThrow(
+          "BACKUP_FAILED"
+        );
+        const interrupted = await owner.dataOperation.findUniqueOrThrow({
+          where: { id: operation.id },
+        });
+        expect(interrupted.state).toBe("RUNNING");
+        expect(
+          await owner.auditLog.count({
+            where: { entityId: operation.id, action: "data_operation.failed" },
+          })
+        ).toBe(0);
+        await owner.dataOperation.update({
+          where: { id: operation.id },
+          data: { leaseUntil: new Date(0) },
+        });
+        await expect(worker.processNext("read-recovered")).resolves.toBe(true);
+        expect(
+          (await service.verify(organizationId, operation.id)).record.state
+        ).toBe("COMPLETED");
+      } finally {
+        store.read = originalRead;
+      }
+    });
+  }
+
   it("stops catalog completion when cancellation arrives during object verification", async () => {
     const operation = await queueBackup();
     const claim = await worker.claimNext("cancel-verification");
@@ -270,6 +370,64 @@ describe("durable backup execution and retention", () => {
           where: { id: oldest.id, organizationId },
         })
       ).toBe(0);
+    } finally {
+      runtime.withTenant = original;
+    }
+  });
+
+  it("rolls back catalog completion if cancellation arrives before its transaction commits", async () => {
+    const operation = await queueBackup();
+    const claim = await worker.claimNext("cancel-terminal-write");
+    const lease = new AbortController();
+    const original = runtime.withTenant.bind(runtime);
+    runtime.withTenant = async function <T>(
+      tenantId: string,
+      callback: (tx: Prisma.TransactionClient) => Promise<T>,
+      settings?: Parameters<PrismaService["withTenant"]>[2]
+    ): Promise<T> {
+      return original(
+        tenantId,
+        tx =>
+          callback(
+            new Proxy(tx, {
+              get(target, key) {
+                if (key !== "backupRecord") return Reflect.get(target, key);
+                return new Proxy(target.backupRecord, {
+                  get(delegate, method) {
+                    if (method !== "update")
+                      return Reflect.get(delegate, method);
+                    return async (args: Prisma.BackupRecordUpdateArgs) => {
+                      const row = await delegate.update(args);
+                      if (args.data.state === "COMPLETED") lease.abort();
+                      return row;
+                    };
+                  },
+                });
+              },
+            })
+          ),
+        settings
+      );
+    };
+    try {
+      await expect(
+        service.create(organizationId, null, "SCHEDULED", operation.id, {
+          workerId: "cancel-terminal-write",
+          attempts: claim!.attempts,
+          signal: lease.signal,
+        })
+      ).rejects.toThrow("BACKUP_IN_PROGRESS");
+      const row = await owner.backupRecord.findUniqueOrThrow({
+        where: { id_organizationId: { id: operation.id, organizationId } },
+      });
+      expect(row.state).toBe("RUNNING");
+      expect(row.checksum).toBeNull();
+      expect(
+        await owner.auditLog.count({
+          where: { entityId: operation.id, action: "backup.completed" },
+        })
+      ).toBe(0);
+      expect(await store.read(operation.id)).toBeInstanceOf(Buffer);
     } finally {
       runtime.withTenant = original;
     }

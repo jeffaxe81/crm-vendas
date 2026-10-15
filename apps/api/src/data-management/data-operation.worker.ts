@@ -3,6 +3,16 @@ import { BackupReasonSchema } from "@axes/contracts";
 import { PrismaService } from "../database/prisma.service";
 import type { DataOperation } from "../generated/prisma/client";
 import { BackupService } from "./backup.service";
+import { BackupError } from "./backup-error";
+
+const TERMINAL_BACKUP_ERRORS = new Set([
+  "BACKUP_INVALID",
+  "BACKUP_SCHEMA_UNSUPPORTED",
+  "BACKUP_VERSION_UNSUPPORTED",
+  "BACKUP_ORGANIZATION_MISMATCH",
+  "BACKUP_TOO_LARGE",
+  "BACKUP_ATTACHMENT_ADAPTER_REQUIRED",
+]);
 
 @Injectable()
 export class DataOperationWorker {
@@ -173,11 +183,54 @@ export class DataOperationWorker {
       if (lease.signal.aborted) return false;
       return await this.finish(job);
     } catch (error) {
+      await stopHeartbeat();
       if (lease.signal.aborted) return false;
+      if (
+        error instanceof BackupError &&
+        TERMINAL_BACKUP_ERRORS.has(error.code)
+      ) {
+        await this.fail(job, error.code, lease.signal);
+        return false;
+      }
       throw error;
     } finally {
       await stopHeartbeat();
     }
+  }
+
+  private async fail(
+    job: DataOperation,
+    errorCode: string,
+    signal: AbortSignal
+  ): Promise<boolean> {
+    return this.prisma.withTenant(job.organizationId, async tx => {
+      if (signal.aborted) return false;
+      const count = await tx.$executeRawUnsafe(
+        `
+        UPDATE public.data_operations SET state='FAILED', stage='FAILED', error_code=$5,
+          completed_at=clock_timestamp(),updated_at=clock_timestamp(),lease_until=NULL
+        WHERE id=$1::uuid AND organization_id=$2::uuid AND state='RUNNING'
+          AND worker_id=$3 AND attempts=$4 AND lease_until > clock_timestamp()`,
+        job.id,
+        job.organizationId,
+        job.workerId,
+        job.attempts,
+        errorCode
+      );
+      if (count !== 1) return false;
+      await tx.auditLog.create({
+        data: {
+          organizationId: job.organizationId,
+          actorUserId: job.actorUserId,
+          requestId: job.id,
+          action: "data_operation.failed",
+          entityType: "data_operation",
+          entityId: job.id,
+          metadata: { errorCode, attempts: job.attempts },
+        },
+      });
+      return true;
+    });
   }
 
   async heartbeat(job: DataOperation): Promise<boolean> {
