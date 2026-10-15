@@ -11,7 +11,7 @@ import {
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { BackupStore } from "./backup-store";
+import { BackupStore, BackupStoreIntegrityError } from "./backup-store";
 
 describe("private encrypted backup storage", () => {
   let root: string;
@@ -49,13 +49,25 @@ describe("private encrypted backup storage", () => {
         key: randomBytes(32),
         maxBytes: 1024,
       }).read(id)
-    ).rejects.toThrow();
+    ).rejects.toBeInstanceOf(BackupStoreIntegrityError);
     const encrypted = await readFile(join(root, `${id}.backup`));
     await writeFile(join(root, `${other}.backup`), encrypted);
-    await expect(store.read(other)).rejects.toThrow();
+    await expect(store.read(other)).rejects.toBeInstanceOf(
+      BackupStoreIntegrityError
+    );
     encrypted[encrypted.length - 1] = encrypted[encrypted.length - 1]! ^ 1;
     await writeFile(join(root, `${id}.backup`), encrypted);
-    await expect(store.read(id)).rejects.toThrow();
+    await expect(store.read(id)).rejects.toBeInstanceOf(
+      BackupStoreIntegrityError
+    );
+  });
+  it("preserves filesystem errors for retry instead of treating them as corrupt bytes", async () => {
+    const id = randomUUID();
+    await expect(store.read(id)).rejects.toMatchObject({ code: "ENOENT" });
+    await chmod(root, 0o755);
+    await expect(store.read(id)).rejects.not.toBeInstanceOf(
+      BackupStoreIntegrityError
+    );
   });
   it("rejects paths, invalid keys and oversized input before publication", async () => {
     expect(

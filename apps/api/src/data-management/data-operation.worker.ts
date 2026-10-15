@@ -3,6 +3,17 @@ import { BackupReasonSchema } from "@axes/contracts";
 import { PrismaService } from "../database/prisma.service";
 import type { DataOperation } from "../generated/prisma/client";
 import { BackupService } from "./backup.service";
+import { BackupError } from "./backup-error";
+
+const TERMINAL_BACKUP_ERRORS = new Set([
+  "BACKUP_INVALID",
+  "BACKUP_SCHEMA_UNSUPPORTED",
+  "BACKUP_VERSION_UNSUPPORTED",
+  "BACKUP_ORGANIZATION_MISMATCH",
+  "BACKUP_REFERENCES_INVALID",
+  "BACKUP_TOO_LARGE",
+  "BACKUP_ATTACHMENT_ADAPTER_REQUIRED",
+]);
 
 @Injectable()
 export class DataOperationWorker {
@@ -64,75 +75,163 @@ export class DataOperationWorker {
       throw Error("UNSUPPORTED_DATA_OPERATION");
     }
 
-    const checkpoint =
-      typeof job.checkpoint === "object" &&
-      job.checkpoint !== null &&
-      !Array.isArray(job.checkpoint)
-        ? job.checkpoint
-        : {};
-    let backupId =
-      checkpoint.businessCommitted === true &&
-      typeof checkpoint.backupId === "string"
-        ? checkpoint.backupId
-        : null;
-
-    if (backupId) {
-      await this.backupService.verify(job.organizationId, backupId);
-    } else {
-      const payload =
-        typeof job.payload === "object" &&
-        job.payload !== null &&
-        !Array.isArray(job.payload)
-          ? job.payload
+    // Renew the claim during snapshots and file I/O, not only between jobs.
+    // A missed heartbeat is never treated as a successful renewal.
+    const lease = new AbortController();
+    let heartbeatPending: Promise<void> | null = null;
+    let stopped = false;
+    const renew = (): void => {
+      if (stopped || heartbeatPending || lease.signal.aborted) return;
+      heartbeatPending = this.heartbeat(job)
+        .then(
+          owned => {
+            if (!owned) lease.abort();
+          },
+          () => lease.abort()
+        )
+        .finally(() => {
+          heartbeatPending = null;
+        });
+    };
+    const timer = setInterval(renew, 15_000);
+    timer.unref?.();
+    const stillOwned = async (): Promise<boolean> => {
+      await heartbeatPending;
+      return !lease.signal.aborted;
+    };
+    const stopHeartbeat = async (): Promise<void> => {
+      stopped = true;
+      clearInterval(timer);
+      await heartbeatPending;
+    };
+    try {
+      const checkpoint =
+        typeof job.checkpoint === "object" &&
+        job.checkpoint !== null &&
+        !Array.isArray(job.checkpoint)
+          ? job.checkpoint
           : {};
-      const reason = BackupReasonSchema.safeParse(payload.reason);
-      if (!reason.success) throw Error("INVALID_BACKUP_OPERATION");
+      let backupId =
+        checkpoint.businessCommitted === true &&
+        typeof checkpoint.backupId === "string"
+          ? checkpoint.backupId
+          : null;
 
-      const backup = await this.backupService.create(
-        job.organizationId,
-        job.actorUserId,
-        reason.data,
-        job.id
-      );
-      backupId = backup.id;
+      if (backupId) {
+        await this.backupService.verify(job.organizationId, backupId);
+      } else {
+        const payload =
+          typeof job.payload === "object" &&
+          job.payload !== null &&
+          !Array.isArray(job.payload)
+            ? job.payload
+            : {};
+        const reason = BackupReasonSchema.safeParse(payload.reason);
+        if (!reason.success) throw Error("INVALID_BACKUP_OPERATION");
 
-      const checkpointed = await this.prisma.withTenant(
-        job.organizationId,
-        tx =>
-          tx.$executeRawUnsafe(
-            `
-            UPDATE public.data_operations
-            SET checkpoint=checkpoint || jsonb_build_object(
-                  'businessCommitted',true,'backupId',$5::text
-                ),
-                stage='BACKUP_COMMITTED',updated_at=clock_timestamp()
-            WHERE id=$1::uuid AND organization_id=$2::uuid AND state='RUNNING'
-              AND worker_id=$3 AND attempts=$4 AND lease_until > clock_timestamp()
-            `,
-            job.id,
-            job.organizationId,
-            job.workerId,
-            job.attempts,
-            backupId
-          )
+        const backup = await this.backupService.create(
+          job.organizationId,
+          job.actorUserId,
+          reason.data,
+          job.id,
+          { workerId, attempts: job.attempts, signal: lease.signal }
+        );
+        backupId = backup.id;
+
+        if (!(await stillOwned())) return false;
+        const checkpointed = await this.prisma.withTenant(
+          job.organizationId,
+          async tx => {
+            if (lease.signal.aborted) return 0;
+            return tx.$executeRawUnsafe(
+              `
+              UPDATE public.data_operations
+              SET checkpoint=checkpoint || jsonb_build_object(
+                    'businessCommitted',true,'backupId',$5::text
+                  ),
+                  stage='BACKUP_COMMITTED',updated_at=clock_timestamp()
+              WHERE id=$1::uuid AND organization_id=$2::uuid AND state='RUNNING'
+                AND worker_id=$3 AND attempts=$4 AND lease_until > clock_timestamp()
+              `,
+              job.id,
+              job.organizationId,
+              job.workerId,
+              job.attempts,
+              backupId
+            );
+          }
+        );
+        if (checkpointed !== 1) return false;
+      }
+
+      if (!(await stillOwned())) return false;
+      const schedule = await this.prisma.withTenant(job.organizationId, tx =>
+        tx.backupSchedule.findUnique({
+          where: { organizationId: job.organizationId },
+          select: { retentionCount: true },
+        })
       );
-      if (checkpointed !== 1) return false;
+      if (schedule && [7, 15, 30, 90].includes(schedule.retentionCount)) {
+        if (!(await stillOwned())) return false;
+        await this.backupService.pruneRetention(
+          job.organizationId,
+          schedule.retentionCount as 7 | 15 | 30 | 90,
+          lease.signal
+        );
+      }
+
+      await stopHeartbeat();
+      if (lease.signal.aborted) return false;
+      return await this.finish(job);
+    } catch (error) {
+      await stopHeartbeat();
+      if (lease.signal.aborted) return false;
+      if (
+        error instanceof BackupError &&
+        TERMINAL_BACKUP_ERRORS.has(error.code)
+      ) {
+        await this.fail(job, error.code, lease.signal);
+        return false;
+      }
+      throw error;
+    } finally {
+      await stopHeartbeat();
     }
+  }
 
-    const schedule = await this.prisma.withTenant(job.organizationId, tx =>
-      tx.backupSchedule.findUnique({
-        where: { organizationId: job.organizationId },
-        select: { retentionCount: true },
-      })
-    );
-    if (schedule && [7, 15, 30, 90].includes(schedule.retentionCount)) {
-      await this.backupService.pruneRetention(
+  private async fail(
+    job: DataOperation,
+    errorCode: string,
+    signal: AbortSignal
+  ): Promise<boolean> {
+    return this.prisma.withTenant(job.organizationId, async tx => {
+      if (signal.aborted) return false;
+      const count = await tx.$executeRawUnsafe(
+        `
+        UPDATE public.data_operations SET state='FAILED', stage='FAILED', error_code=$5,
+          completed_at=clock_timestamp(),updated_at=clock_timestamp(),lease_until=NULL
+        WHERE id=$1::uuid AND organization_id=$2::uuid AND state='RUNNING'
+          AND worker_id=$3 AND attempts=$4 AND lease_until > clock_timestamp()`,
+        job.id,
         job.organizationId,
-        schedule.retentionCount as 7 | 15 | 30 | 90
+        job.workerId,
+        job.attempts,
+        errorCode
       );
-    }
-
-    return this.finish(job);
+      if (count !== 1) return false;
+      await tx.auditLog.create({
+        data: {
+          organizationId: job.organizationId,
+          actorUserId: job.actorUserId,
+          requestId: job.id,
+          action: "data_operation.failed",
+          entityType: "data_operation",
+          entityId: job.id,
+          metadata: { errorCode, attempts: job.attempts },
+        },
+      });
+      return true;
+    });
   }
 
   async heartbeat(job: DataOperation): Promise<boolean> {
