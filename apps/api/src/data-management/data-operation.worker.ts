@@ -64,6 +64,27 @@ export class DataOperationWorker {
       throw Error("UNSUPPORTED_DATA_OPERATION");
     }
 
+    // Renew the claim during snapshots and file I/O, not only between jobs.
+    // A missed heartbeat is never treated as a successful renewal.
+    let heartbeatPending = false;
+    let leaseLost = false;
+    const renew = (): void => {
+      if (heartbeatPending || leaseLost) return;
+      heartbeatPending = true;
+      void this.heartbeat(job)
+        .then(owned => {
+          if (!owned) leaseLost = true;
+        })
+        .catch(() => {
+          leaseLost = true;
+        })
+        .finally(() => {
+          heartbeatPending = false;
+        });
+    };
+    const timer = setInterval(renew, 15_000);
+    timer.unref?.();
+    try {
     const checkpoint =
       typeof job.checkpoint === "object" &&
       job.checkpoint !== null &&
@@ -133,7 +154,11 @@ export class DataOperationWorker {
       );
     }
 
+    if (leaseLost) return false;
     return this.finish(job);
+    } finally {
+      clearInterval(timer);
+    }
   }
 
   async heartbeat(job: DataOperation): Promise<boolean> {
