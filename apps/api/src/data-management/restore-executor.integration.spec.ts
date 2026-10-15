@@ -91,17 +91,14 @@ describe("transactional tenant restore executor", () => {
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
 
-    const restored = await runtime.withTenant(
-      organization.id,
-      async tx => ({
-        company: await tx.company.findUniqueOrThrow({
-          where: { id: company.id },
-        }),
-        user: await tx.user.findUniqueOrThrow({
-          where: { id: user.id },
-        }),
-      })
-    );
+    const restored = await runtime.withTenant(organization.id, async tx => ({
+      company: await tx.company.findUniqueOrThrow({
+        where: { id: company.id },
+      }),
+      user: await tx.user.findUniqueOrThrow({
+        where: { id: user.id },
+      }),
+    }));
 
     expect(restored.company.legalName).toBe("Company from backup");
     expect(restored.user.passwordHash).toBe(changedHash);
