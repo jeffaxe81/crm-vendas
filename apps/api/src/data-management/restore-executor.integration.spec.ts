@@ -63,6 +63,15 @@ describe("transactional tenant restore executor", () => {
         passwordHash: await passwords.hash("synthetic-original-password"),
       },
     });
+    await owner.organizationMembership.create({
+      data: {
+        organizationId: organization.id,
+        userId: user.id,
+        role: "ADMIN",
+        isSuperuser: true,
+      },
+    });
+
     const company = await owner.company.create({
       data: {
         organizationId: organization.id,
