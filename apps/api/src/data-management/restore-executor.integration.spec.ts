@@ -72,11 +72,7 @@ describe("transactional tenant restore executor", () => {
       },
     });
 
-    const backup = await backups.create(
-      organization.id,
-      user.id,
-      "MANUAL"
-    );
+    const backup = await backups.create(organization.id, user.id, "MANUAL");
     const verified = await backups.verify(organization.id, backup.id);
 
     const changedHash = await passwords.hash("synthetic-live-password");
