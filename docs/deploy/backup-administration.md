@@ -7,8 +7,36 @@ são exclusivamente para a sessão humana com atributo protegido `isSuperuser`
 na empresa ativa. Administradores comuns e API keys não têm acesso.
 
 Esta entrega disponibiliza catálogo, fila manual, agenda/retenção, download
-autenticado e prévia verificada. **Restauração efetiva, exclusão manual e
-limpeza de dados NÃO estão habilitadas**. Não interpretar prévia como restore.
+autenticado, prévia verificada e exclusão confirmada de cópias antigas.
+**Restauração efetiva e limpeza de dados NÃO estão habilitadas**.
+Não interpretar prévia como restore.
+
+## Exclusão de uma cópia
+
+O Superusuário seleciona **Excluir backup**, confere a cópia e digita
+`EXCLUIR BACKUP`. A API `DELETE /api/v1/admin/backups/:id` recebe somente
+`confirmation` e o `checksum` da cópia selecionada. Administradores comuns,
+API keys e sessões revogadas não têm acesso. A autorização é novamente
+verificada depois de adquirir o bloqueio de manutenção da organização.
+
+- Somente cópias `COMPLETED` podem ser selecionadas. A cópia concluída mais
+  recente fica protegida; seu arquivo é verificado antes de excluir uma
+  cópia anterior. Se estiver indisponível ou corrompido, a exclusão é recusada.
+- Operações `PENDING`/`RUNNING` e prévias de restauração ainda válidas impedem
+  a solicitação. Aguarde sua conclusão ou a expiração da prévia.
+- A resposta `202` registra `DELETING` e a auditoria de solicitação na mesma
+  transação. Ela confirma o recebimento, não a remoção do arquivo.
+- O worker revalida as operações e a cópia protegida sob o bloqueio de
+  manutenção antes de remover o arquivo. Falha de arquivo, auditoria ou
+  commit deixa a exclusão pendente para nova tentativa, inclusive após reinício.
+- `DELETED` aparece somente depois da remoção do arquivo e do commit da
+  auditoria de conclusão. Metadados permanecem no histórico, sem download
+  ou prévia. A exclusão aceita também é concluída se a organização for desativada.
+- A tela acompanha a operação automaticamente, inclusive se a primeira
+  atualização do catálogo falhar. Sair da sessão encerra esse acompanhamento.
+
+A remoção afeta o arquivo de backup escolhido. A restauração e a exclusão
+em massa de dados operacionais são entregas distintas, ainda pendentes.
 
 ## Habilitação no servidor Rocky Linux
 
@@ -51,6 +79,8 @@ limpeza de dados NÃO estão habilitadas**. Não interpretar prévia como restor
   permite leitura. `PENDING`/`RUNNING` ou arquivo isolado não equivalem a sucesso.
 - Backup de empresa A não é listável, baixável nem pré-visualizável pela empresa B.
 - O painel e a API negam acesso a ADMIN comum, VIEWER e API keys.
+- A exclusão de uma cópia antiga preserva a mais recente, requer confirmação,
+  mantém auditoria e retoma uma remoção interrompida sem perder o catálogo.
 - O worker, o volume privado e a persistência após reinício foram verificados.
 - A restauração é exercitada em **cópia descartável** e não em produção,
   somente depois que sua implementação transacional passar todos os testes.

@@ -56,6 +56,8 @@ const states: Record<string, string> = {
   RUNNING: "Executando",
   COMPLETED: "Concluído",
   FAILED: "Falhou",
+  DELETING: "Exclusão pendente",
+  DELETED: "Excluído",
 };
 
 export function BackupAdministrationView({
@@ -73,9 +75,23 @@ export function BackupAdministrationView({
   const [notice, setNotice] = useState("");
   const [preview, setPreview] = useState<OperationPreview | null>(null);
   const [reload, setReload] = useState(0);
-  const hasPendingOperations = operations.some(
-    operation => operation.state === "PENDING" || operation.state === "RUNNING"
+  const [deletionTarget, setDeletionTarget] = useState<BackupRecord | null>(
+    null
   );
+  const [deletionConfirmation, setDeletionConfirmation] = useState("");
+  const [acceptedDeletions, setAcceptedDeletions] = useState<string[]>([]);
+  useEffect(() => {
+    setDeletionTarget(null);
+    setDeletionConfirmation("");
+    setAcceptedDeletions([]);
+  }, [accessToken]);
+  const hasPendingOperations =
+    acceptedDeletions.length > 0 ||
+    backups.some(item => item.state === "DELETING") ||
+    operations.some(
+      operation =>
+        operation.state === "PENDING" || operation.state === "RUNNING"
+    );
 
   // Refresh active operations automatically, but stop when the queue is idle.
   useEffect(() => {
@@ -99,7 +115,18 @@ export function BackupAdministrationView({
       .then(([catalog, activeOperations, settings]) => {
         if (!active) return;
         setConfigured(catalog.configured);
-        setBackups(BackupRecordSchema.array().parse(catalog.backups));
+        const catalogBackups = BackupRecordSchema.array().parse(
+          catalog.backups
+        );
+        setBackups(catalogBackups);
+        setAcceptedDeletions(ids =>
+          ids.filter(
+            id =>
+              !catalogBackups.some(
+                item => item.id === id && item.state === "DELETED"
+              )
+          )
+        );
         setOperations(activeOperations);
         setSchedule(settings);
       })
@@ -202,6 +229,48 @@ export function BackupAdministrationView({
       setNotice("Download do backup verificado iniciado.");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Falha no download.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function deleteBackup(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (
+      !deletionTarget ||
+      deletionConfirmation !== "EXCLUIR BACKUP" ||
+      busy ||
+      loading
+    )
+      return;
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      await apiRequest(`/admin/backups/${deletionTarget.id}`, {
+        accessToken,
+        method: "DELETE",
+        body: {
+          confirmation: deletionConfirmation,
+          checksum: deletionTarget.checksum,
+        },
+      });
+      // Keep polling even if the immediate catalog/schedule refresh fails.
+      // Only a successful terminal catalog response clears this local marker.
+      setAcceptedDeletions(ids =>
+        Array.from(new Set([...ids, deletionTarget.id]))
+      );
+      setNotice("Exclusão solicitada. Acompanhe a conclusão no histórico.");
+      setDeletionTarget(null);
+      setDeletionConfirmation("");
+      setPreview(null);
+      setReload(value => value + 1);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível excluir o backup."
+      );
     } finally {
       setBusy(false);
     }
@@ -417,7 +486,9 @@ export function BackupAdministrationView({
                 <strong>{date(item.createdAt)}</strong> ·{" "}
                 {states[item.state] ?? item.state} · {item.reason} ·{" "}
                 {size(item.byteCount)}
-                {item.errorCode ? ` · ${item.errorCode}` : null}
+                {item.errorCode
+                  ? ` · ${item.errorCode === "BACKUP_DELETE_RETRY" ? "A exclusão será tentada novamente." : item.errorCode}`
+                  : null}
                 {item.state === "COMPLETED" ? (
                   <>
                     {" "}
@@ -434,6 +505,16 @@ export function BackupAdministrationView({
                       onClick={() => void viewPreview(item.id)}
                     >
                       Prévia de restauração
+                    </button>{" "}
+                    <button
+                      type="button"
+                      disabled={busy || loading || !configured}
+                      onClick={() => {
+                        setDeletionTarget(item);
+                        setDeletionConfirmation("");
+                      }}
+                    >
+                      Excluir backup
                     </button>
                   </>
                 ) : null}
@@ -442,6 +523,49 @@ export function BackupAdministrationView({
           </ul>
         )}
       </section>
+
+      {deletionTarget ? (
+        <section className="companies-view__card" aria-label="Excluir backup">
+          <h2>Excluir backup</h2>
+          <p>
+            Cópia de {date(deletionTarget.createdAt)} ·{" "}
+            {size(deletionTarget.byteCount)}
+          </p>
+          <p>{deletionTarget.id}</p>
+          <p>
+            A cópia selecionada será removida do armazenamento. O histórico e a
+            auditoria serão preservados.
+          </p>
+          <form onSubmit={event => void deleteBackup(event)}>
+            <label>
+              Digite EXCLUIR BACKUP para confirmar
+              <input
+                value={deletionConfirmation}
+                autoComplete="off"
+                onChange={event => setDeletionConfirmation(event.target.value)}
+              />
+            </label>
+            <button
+              type="submit"
+              disabled={
+                busy || loading || deletionConfirmation !== "EXCLUIR BACKUP"
+              }
+            >
+              Confirmar exclusão
+            </button>{" "}
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                setDeletionTarget(null);
+                setDeletionConfirmation("");
+              }}
+            >
+              Cancelar
+            </button>
+          </form>
+        </section>
+      ) : null}
 
       {preview ? (
         <section

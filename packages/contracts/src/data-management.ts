@@ -12,6 +12,17 @@ export const DataOperationStateSchema = z.enum([
   "COMPLETED",
   "FAILED",
 ]);
+export const BackupStateSchema = z.enum([
+  ...DataOperationStateSchema.options,
+  "DELETING",
+  "DELETED",
+]);
+export const BackupDeletionRequestSchema = z
+  .object({
+    confirmation: z.literal("EXCLUIR BACKUP"),
+    checksum,
+  })
+  .strict();
 export const BackupManifestSchema = z
   .object({
     schemaVersion: z.literal(1),
@@ -28,7 +39,7 @@ export const BackupRecordSchema = z
     organizationId: z.string().uuid(),
     actorUserId: z.string().uuid().nullable(),
     reason: BackupReasonSchema,
-    state: DataOperationStateSchema,
+    state: BackupStateSchema,
     schemaVersion: z.number().int().positive().nullable(),
     checksum: checksum.nullable(),
     byteCount: z

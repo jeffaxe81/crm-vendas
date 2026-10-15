@@ -17,7 +17,11 @@ import type { BackupStore } from "./backup-store";
 import { DataPreviewService } from "./data-preview.service";
 
 function assertId(value: string): string {
-  if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value)) {
+  if (
+    !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(
+      value
+    )
+  ) {
     throw new BadRequestException("Identificador de backup inválido.");
   }
   return value.toLowerCase();

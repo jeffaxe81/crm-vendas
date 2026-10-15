@@ -354,6 +354,8 @@ export {
 export {
   BackupManifestSchema,
   BackupRecordSchema,
+  BackupStateSchema,
+  BackupDeletionRequestSchema,
   BackupReasonSchema,
   DataOperationKindSchema,
   DataOperationStateSchema,

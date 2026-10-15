@@ -423,6 +423,13 @@ export class BackupService {
       requireActive(signal);
       const deleted = await this.prisma.withTenant(organizationId, async tx => {
         requireActive(signal);
+        // Manual deletion takes the exclusive maintenance lock. Read the
+        // catalog only after acquiring its shared counterpart, so retention
+        // cannot act on a stale COMPLETED row that has become DELETING.
+        await tx.$executeRawUnsafe(
+          "SELECT pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+          `tenant-maintenance:${organizationId}`
+        );
         const protectedByOperation = await tx.dataOperation.count({
           where: {
             organizationId,
