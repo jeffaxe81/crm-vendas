@@ -15,7 +15,8 @@ type IdempotentBackupService = BackupService & {
     organizationId: string,
     actorId: string | null,
     reason: BackupReason,
-    requestedId?: string
+    requestedId?: string,
+    workerFence?: { workerId: string; attempts: number }
   ): Promise<BackupRecord>;
   pruneRetention(
     organizationId: string,
