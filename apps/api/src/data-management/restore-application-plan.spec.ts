@@ -23,7 +23,7 @@ describe("restore application plan", () => {
     expect(new Set(planned).size).toBe(planned.length);
   });
 
-  it("never treats the organization root or referenced users as generic replacement", () => {
+  it(\n    "never treats the organization root or referenced users as generic replacement",\n    () => {
     const plan = buildRestoreApplicationPlan(TENANT_DATA_REGISTRY);
 
     expect(plan.organizationRoot.model).toBe("Organization");
@@ -32,7 +32,7 @@ describe("restore application plan", () => {
     expect(plan.replaceModels.map(policy => policy.model)).not.toContain(
       "Organization"
     );
-    expect(plan.replaceModels.map(policy => policy.model)).not.toContain("User");
+      expect(plan.replaceModels.map(policy => policy.model)).not.toContain(\n        "User"\n      );
     expect(
       plan.replaceModels.every(
         policy =>
