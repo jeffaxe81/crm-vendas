@@ -9,6 +9,7 @@ import { PrismaService } from "../database/prisma.service";
 import { BackupStore } from "./backup-store";
 import { BackupService } from "./backup.service";
 import { DataOperationWorker } from "./data-operation.worker";
+import type { Prisma } from "../generated/prisma/client";
 
 type IdempotentBackupService = BackupService & {
   create(
@@ -109,6 +110,196 @@ describe("durable backup execution and retention", () => {
         },
       })
     );
+  }
+
+  function deferred() {
+    let resolve!: () => void;
+    const promise = new Promise<void>(done => {
+      resolve = done;
+    });
+    return { promise, resolve };
+  }
+
+  for (const interruptedState of ["PENDING", "RUNNING"] as const) {
+    it(`adopts a published object after interruption in ${interruptedState}`, async () => {
+      const operation = await queueBackup();
+      await worker.claimNext("published-before-crash");
+      await service.create(organizationId, null, "SCHEDULED", operation.id);
+      const published = await store.read(operation.id);
+      await runtime.withTenant(organizationId, async tx => {
+        await tx.backupRecord.update({
+          where: { id_organizationId: { id: operation.id, organizationId } },
+          data: { state: interruptedState, checksum: null, completedAt: null },
+        });
+        await tx.dataOperation.update({
+          where: { id: operation.id },
+          data: { leaseUntil: new Date(0) },
+        });
+      });
+
+      await expect(worker.processNext("adopt-after-crash")).resolves.toBe(true);
+      const verified = await service.verify(organizationId, operation.id);
+      expect(verified.bytes.equals(published)).toBe(true);
+      expect((await store.read(operation.id)).equals(published)).toBe(true);
+      expect(verified.record.state).toBe("COMPLETED");
+    });
+  }
+
+  it("cannot downgrade a successor's completed backup after an obsolete snapshot resumes", async () => {
+    const operation = await queueBackup();
+    const former = await worker.claimNext("snapshot-former");
+    const paused = deferred();
+    const release = deferred();
+    const original = runtime.withTenant.bind(runtime);
+    let held = false;
+    runtime.withTenant = async function <T>(
+      tenantId: string,
+      callback: (tx: Prisma.TransactionClient) => Promise<T>,
+      settings?: Parameters<PrismaService["withTenant"]>[2]
+    ): Promise<T> {
+      if (!held && settings?.isolationLevel === "RepeatableRead") {
+        held = true;
+        paused.resolve();
+        await release.promise;
+      }
+      return original(tenantId, callback, settings);
+    };
+    const obsolete = service.create(
+      organizationId,
+      null,
+      "SCHEDULED",
+      operation.id,
+      {
+        workerId: "snapshot-former",
+        attempts: former!.attempts,
+      }
+    );
+    const observed = obsolete.then(
+      () => "unexpected-success",
+      error => (error as Error).message
+    );
+    try {
+      await paused.promise;
+      await owner.dataOperation.update({
+        where: { id: operation.id },
+        data: { leaseUntil: new Date(0) },
+      });
+      expect(await worker.processNext("snapshot-successor")).toBe(true);
+      release.resolve();
+      expect(await observed).toBe("BACKUP_IN_PROGRESS");
+      const verified = await service.verify(organizationId, operation.id);
+      expect(verified.record.state).toBe("COMPLETED");
+      expect(
+        (
+          await owner.dataOperation.findUniqueOrThrow({
+            where: { id: operation.id },
+          })
+        ).state
+      ).toBe("COMPLETED");
+    } finally {
+      release.resolve();
+      await observed;
+      runtime.withTenant = original;
+    }
+  });
+
+  for (const terminalState of ["COMPLETED", "FAILED"] as const) {
+    it(`serializes ${terminalState} catalog writes with operation ownership transfer`, async () => {
+      const operation = await queueBackup();
+      const claim = await worker.claimNext("terminal-owner");
+      const written = deferred();
+      const release = deferred();
+      const original = runtime.withTenant.bind(runtime);
+      let writerPid = 0;
+      runtime.withTenant = async function <T>(
+        tenantId: string,
+        callback: (tx: Prisma.TransactionClient) => Promise<T>,
+        settings?: Parameters<PrismaService["withTenant"]>[2]
+      ): Promise<T> {
+        return original(
+          tenantId,
+          tx =>
+            callback(
+              new Proxy(tx, {
+                get(target, key) {
+                  if (key !== "backupRecord") return Reflect.get(target, key);
+                  return new Proxy(target.backupRecord, {
+                    get(delegate, method) {
+                      if (method !== "update")
+                        return Reflect.get(delegate, method);
+                      return async (args: Prisma.BackupRecordUpdateArgs) => {
+                        const row = await delegate.update(args);
+                        if (args.data.state === terminalState) {
+                          const [backend] = await tx.$queryRawUnsafe<
+                            { pid: number }[]
+                          >("SELECT pg_backend_pid() AS pid");
+                          writerPid = backend!.pid;
+                          written.resolve();
+                          await release.promise;
+                        }
+                        return row;
+                      };
+                    },
+                  });
+                },
+              })
+            ),
+          settings
+        );
+      };
+      const failureRoot = await mkdtemp(join(tmpdir(), "axes-terminal-fence-"));
+      const failureStore = new FailOnceBackupStore({
+        directory: failureRoot,
+        key: randomBytes(32),
+        maxBytes: options.maxBytes,
+      });
+      const targetService =
+        terminalState === "FAILED"
+          ? new BackupService(runtime, failureStore, options)
+          : service;
+      const work = targetService.create(
+        organizationId,
+        null,
+        "SCHEDULED",
+        operation.id,
+        {
+          workerId: "terminal-owner",
+          attempts: claim!.attempts,
+        }
+      );
+      const observed = work.then(
+        () => undefined,
+        () => undefined
+      );
+      let transfer: Promise<unknown> | undefined;
+      try {
+        await written.promise;
+        transfer = owner.dataOperation
+          .update({
+            where: { id: operation.id },
+            data: { leaseUntil: new Date(0) },
+          })
+          .then(row => row);
+        const deadline = Date.now() + 2_000;
+        let blocked = false;
+        do {
+          const rows = await owner.$queryRawUnsafe<{ pid: number }[]>(
+            "SELECT pid FROM pg_stat_activity WHERE wait_event_type='Lock' AND $1::int=ANY(pg_blocking_pids(pid)) AND query ILIKE '%data_operations%'",
+            writerPid
+          );
+          blocked = rows.length > 0;
+          if (blocked) break;
+          await new Promise<void>(resolve => setImmediate(resolve));
+        } while (Date.now() < deadline);
+        expect(blocked).toBe(true);
+      } finally {
+        release.resolve();
+        await observed;
+        await transfer;
+        runtime.withTenant = original;
+        await rm(failureRoot, { recursive: true, force: true });
+      }
+    });
   }
 
   it("uses the operation id as the backup idempotency key and reuses a completed backup", async () => {
