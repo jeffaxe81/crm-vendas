@@ -215,6 +215,27 @@ export class BackupDeletionService {
                 },
               });
               if (!row) return false;
+              // Acceptance and cleanup can be separated by a restart or I/O
+              // failure. Revalidate protection under this lock, not just when
+              // the human request first marked the catalog row DELETING.
+              const active = await tx.dataOperation.count({
+                where: {
+                  organizationId: organization.id,
+                  state: { in: ["PENDING", "RUNNING"] },
+                },
+              });
+              if (active) return false;
+              const keeper = await tx.backupRecord.findFirst({
+                where: { organizationId: organization.id, state: "COMPLETED" },
+                orderBy: [
+                  { completedAt: "desc" },
+                  { createdAt: "desc" },
+                  { id: "desc" },
+                ],
+                select: { id: true },
+              });
+              if (!keeper) throw new Error("NO_REPLACEMENT_BACKUP");
+              await this.backups.verify(organization.id, keeper.id);
               // Unlink is idempotent. If audit/commit fails after unlink, the
               // durable DELETING row survives and the next cycle retries it.
               await store.remove(id);
@@ -236,7 +257,8 @@ export class BackupDeletionService {
                 data: { state: "DELETED", errorCode: null },
               });
               return true;
-            }
+            },
+            { timeout: this.options.snapshotTimeoutMs }
           );
           if (completed) removed++;
         } catch {

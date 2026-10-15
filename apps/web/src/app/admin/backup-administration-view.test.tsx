@@ -329,3 +329,48 @@ it("keeps the confirmation available and reports a rejected deletion", async () 
     screen.queryByRole("region", { name: "Excluir backup" })
   ).not.toBeInTheDocument();
 });
+
+it("keeps polling an accepted deletion after the first refresh fails", async () => {
+  let catalogCalls = 0;
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string, init?: RequestInit) => {
+      if (init?.method === "DELETE")
+        return jsonResponse({ id: completedBackup.id, state: "DELETING" });
+      if (url.endsWith("/operations")) return jsonResponse([]);
+      if (url.endsWith("/schedule")) return jsonResponse(schedule);
+      catalogCalls++;
+      if (catalogCalls === 2) throw Error("synthetic refresh failure");
+      return jsonResponse({
+        configured: true,
+        backups: [
+          {
+            ...completedBackup,
+            state: catalogCalls > 2 ? "DELETED" : "COMPLETED",
+          },
+        ],
+      });
+    })
+  );
+  render(<BackupAdministrationView accessToken="synthetic-token" />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Excluir backup" })
+  );
+  fireEvent.change(screen.getByLabelText(/Digite EXCLUIR BACKUP/), {
+    target: { value: "EXCLUIR BACKUP" },
+  });
+  vi.useFakeTimers();
+  await act(async () => {
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar exclusão" }));
+  });
+  expect(catalogCalls).toBe(2);
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(10_000);
+  });
+  expect(catalogCalls).toBe(3);
+  expect(screen.getByText(/Excluído/)).toBeInTheDocument();
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(20_000);
+  });
+  expect(catalogCalls).toBe(3);
+});

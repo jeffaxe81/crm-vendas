@@ -79,11 +79,14 @@ export function BackupAdministrationView({
     null
   );
   const [deletionConfirmation, setDeletionConfirmation] = useState("");
+  const [acceptedDeletions, setAcceptedDeletions] = useState<string[]>([]);
   useEffect(() => {
     setDeletionTarget(null);
     setDeletionConfirmation("");
+    setAcceptedDeletions([]);
   }, [accessToken]);
   const hasPendingOperations =
+    acceptedDeletions.length > 0 ||
     backups.some(item => item.state === "DELETING") ||
     operations.some(
       operation =>
@@ -112,7 +115,18 @@ export function BackupAdministrationView({
       .then(([catalog, activeOperations, settings]) => {
         if (!active) return;
         setConfigured(catalog.configured);
-        setBackups(BackupRecordSchema.array().parse(catalog.backups));
+        const catalogBackups = BackupRecordSchema.array().parse(
+          catalog.backups
+        );
+        setBackups(catalogBackups);
+        setAcceptedDeletions(ids =>
+          ids.filter(
+            id =>
+              !catalogBackups.some(
+                item => item.id === id && item.state === "DELETED"
+              )
+          )
+        );
         setOperations(activeOperations);
         setSchedule(settings);
       })
@@ -241,6 +255,11 @@ export function BackupAdministrationView({
           checksum: deletionTarget.checksum,
         },
       });
+      // Keep polling even if the immediate catalog/schedule refresh fails.
+      // Only a successful terminal catalog response clears this local marker.
+      setAcceptedDeletions(ids =>
+        Array.from(new Set([...ids, deletionTarget.id]))
+      );
       setNotice("Exclusão solicitada. Acompanhe a conclusão no histórico.");
       setDeletionTarget(null);
       setDeletionConfirmation("");

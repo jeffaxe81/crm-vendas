@@ -222,6 +222,46 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
     await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
   });
 
+  it("rechecks the keeper after a queued deletion waits for a worker", async () => {
+    await remove().expect(202);
+    await writeFile(
+      join(directory, `${newest.id}.backup`),
+      Buffer.from("corrupt after enqueue")
+    );
+    await app.get(BackupWorkerRunner).runCycle();
+    expect((await state()).state).toBe("DELETING");
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+    const count = await runtime.withTenant(organizationId, tx =>
+      tx.auditLog.count({
+        where: { entityId: older.id, action: "backup.deleted" },
+      })
+    );
+    expect(count).toBe(0);
+  });
+
+  it("defers unlink while a newly queued backup is pending", async () => {
+    await remove().expect(202);
+    const queued = await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.create({
+        data: {
+          organizationId,
+          actorUserId: userId,
+          kind: "BACKUP",
+          payload: { reason: "MANUAL" },
+        },
+      })
+    );
+    await app.get(BackupWorkerRunner).runCycle();
+    expect((await state()).state).toBe("DELETING");
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+    const operation = await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.findUniqueOrThrow({ where: { id: queued.id } })
+    );
+    expect(operation.state).toBe("COMPLETED");
+    await app.get(BackupWorkerRunner).runCycle();
+    expect((await state()).state).toBe("DELETED");
+  });
+
   it("finishes a committed deletion even after the organization is disabled", async () => {
     await remove().expect(202);
     await owner.organization.update({
