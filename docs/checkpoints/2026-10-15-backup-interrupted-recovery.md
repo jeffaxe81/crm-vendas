@@ -24,7 +24,8 @@ Arquivo inválido ou incompatível encerra a operação em FAILED sob o mesmo
 fencing, com auditoria `data_operation.failed`, preservando o objeto para análise.
 Isso permite que a próxima solicitação prossiga. Os códigos terminais explícitos
 são BACKUP_INVALID, BACKUP_SCHEMA_UNSUPPORTED, BACKUP_VERSION_UNSUPPORTED,
-BACKUP_ORGANIZATION_MISMATCH, BACKUP_TOO_LARGE e BACKUP_ATTACHMENT_ADAPTER_REQUIRED.
+BACKUP_ORGANIZATION_MISMATCH, BACKUP_REFERENCES_INVALID, BACKUP_TOO_LARGE e
+BACKUP_ATTACHMENT_ADAPTER_REQUIRED.
 Falhas de I/O permanecem transitórias: o catálogo registra FAILED e a operação
 pode ser retomada após expiração do lease. Não converter indisponibilidade de
 disco/permissão em diagnóstico de corrupção.

@@ -300,6 +300,7 @@ describe("backup operation heartbeat lifecycle", () => {
     "BACKUP_SCHEMA_UNSUPPORTED",
     "BACKUP_VERSION_UNSUPPORTED",
     "BACKUP_ORGANIZATION_MISMATCH",
+    "BACKUP_REFERENCES_INVALID",
     "BACKUP_TOO_LARGE",
     "BACKUP_ATTACHMENT_ADAPTER_REQUIRED",
   ])("terminalizes and audits an owned operation after %s", async errorCode => {

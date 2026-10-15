@@ -203,11 +203,19 @@ describe("durable backup execution and retention", () => {
     ).toBe("FAILED");
   });
 
-  for (const failure of ["invalid", "schema"] as const) {
+  for (const failure of ["invalid", "schema", "references"] as const) {
     it(`releases the queue after terminal ${failure} snapshot failure and preserves the object`, async () => {
       const seed = await service.create(organizationId, null, "SCHEDULED");
       const document = JSON.parse((await store.read(seed.id)).toString());
-      document.manifest.schemaFingerprint = "0".repeat(64);
+      if (failure === "schema")
+        document.manifest.schemaFingerprint = "0".repeat(64);
+      if (failure === "references") {
+        document.data.User.push({
+          id: randomUUID(),
+          email: "unreferenced@axes.test",
+          displayName: "Unreferenced fixture",
+        });
+      }
       const published =
         failure === "invalid"
           ? Buffer.from("invalid snapshot document")
@@ -233,7 +241,11 @@ describe("durable backup execution and retention", () => {
       });
       expect(failed.state).toBe("FAILED");
       expect(failed.errorCode).toBe(
-        failure === "invalid" ? "BACKUP_INVALID" : "BACKUP_SCHEMA_UNSUPPORTED"
+        {
+          invalid: "BACKUP_INVALID",
+          schema: "BACKUP_SCHEMA_UNSUPPORTED",
+          references: "BACKUP_REFERENCES_INVALID",
+        }[failure]
       );
       expect(failed.leaseUntil).toBeNull();
       expect(failed.completedAt).not.toBeNull();
