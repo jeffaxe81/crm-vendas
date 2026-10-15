@@ -20,6 +20,11 @@ botão ou comando de restauração.** Não autoriza GO de produção.
   `RepeatableRead` ou `Serializable`. O snapshot atual é lido nesse
   mesmo contexto, sob bloqueio exclusivo das escritas do tenant, e comparado
   com o fingerprint registrado na prévia.
+- `withMaintenance` espera as escritas anteriores usando uma sessão dedicada,
+  antes de iniciar a transação que fixa o snapshot. A transação deve usar o
+  mesmo backend PostgreSQL que possui o lock; troca de conexão aborta a
+  operação. O lock permanece até o commit/rollback e o fechamento da sessão,
+  com espera limitada pelo timeout da operação.
 - Confirmação consumida e auditoria participam da transação: se a futura
   restauração falhar, ambas devem ser revertidas.
 
@@ -55,7 +60,9 @@ e somente então aplicar a restauração com rollback integral.
 1. Implementar e testar o restaurador de todos os modelos exportáveis e as
    políticas especiais (usuários referenciados, associação Superusuário,
    credenciais, tokens de pesquisa e sequenciadores).
-2. Verificar e proteger a cópia preventiva do estado atual antes da transação.
+2. Após adquirir o lock exclusivo e aguardar o commit das escritas anteriores,
+   criar, verificar e proteger a cópia preventiva do estado atual, antes de
+   substituir dados e sem liberar o mesmo lock de manutenção.
 3. Preparar dados e validar todas as dependências antes de apagar/substituir.
 4. Dentro da **mesma** transação exclusiva: revalidar/consumir confirmação,
    aplicar substituição, registrar auditoria de sucesso e revogar sessões.

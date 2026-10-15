@@ -296,19 +296,121 @@ describe("tenant maintenance write lock", () => {
   });
 
   it("allows the internal maintenance transaction to write while holding the exclusive lock", async () => {
-    await maintenance.withMaintenance(organizationId, tx =>
-      tx.company.create({
+    await maintenance.withMaintenance(organizationId, async tx => {
+      const [role] = await tx.$queryRawUnsafe<
+        { rolsuper: boolean; rolbypassrls: boolean }[]
+      >(
+        "SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname=current_user"
+      );
+      expect(role).toEqual({ rolsuper: false, rolbypassrls: false });
+      return tx.company.create({
         data: {
           organizationId,
           legalName: "Internal maintenance write",
           createdBy: userId,
           updatedBy: userId,
         },
-      })
-    );
+      });
+    });
 
     expect(
       await writer.withTenant(organizationId, tx => tx.company.count())
     ).toBe(1);
+  });
+
+  it("rolls back failed maintenance and releases its lock for later writers", async () => {
+    await expect(
+      maintenance.withMaintenance(organizationId, async tx => {
+        await tx.company.create({
+          data: {
+            organizationId,
+            legalName: "Must roll back",
+            createdBy: userId,
+            updatedBy: userId,
+          },
+        });
+        throw Error("SYNTHETIC_MAINTENANCE_FAILURE");
+      })
+    ).rejects.toThrow("SYNTHETIC_MAINTENANCE_FAILURE");
+
+    await writer.withTenant(organizationId, tx =>
+      tx.company.create({
+        data: {
+          organizationId,
+          legalName: "After rollback",
+          createdBy: userId,
+          updatedBy: userId,
+        },
+      })
+    );
+    expect(
+      await writer.withTenant(organizationId, tx =>
+        tx.company.findMany({ select: { legalName: true } })
+      )
+    ).toEqual([{ legalName: "After rollback" }]);
+  });
+
+  it("times out a blocked maintenance request without invoking its callback or retaining its lock", async () => {
+    const held = deferred();
+    const release = deferred();
+    const blocker = writer.withTenant(organizationId, async tx => {
+      await tx.company.create({
+        data: {
+          organizationId,
+          legalName: "Writer holds shared lock",
+          createdBy: userId,
+          updatedBy: userId,
+        },
+      });
+      held.resolve();
+      await release.promise;
+    });
+    await held.promise;
+
+    let invoked = false;
+    try {
+      await expect(
+        maintenance.withMaintenance(
+          organizationId,
+          async () => {
+            invoked = true;
+          },
+          { timeout: 250 }
+        )
+      ).rejects.toThrow("lock timeout");
+      expect(invoked).toBe(false);
+    } finally {
+      release.resolve();
+      await blocker;
+    }
+
+    await maintenance.withMaintenance(organizationId, async () => {});
+  });
+
+  it("rolls back and releases maintenance when its transaction connection is lost", async () => {
+    await expect(
+      maintenance.withMaintenance(organizationId, async tx => {
+        await tx.company.create({
+          data: {
+            organizationId,
+            legalName: "Lost connection must roll back",
+            createdBy: userId,
+            updatedBy: userId,
+          },
+        });
+        const [backend] = await tx.$queryRawUnsafe<{ pid: number }[]>(
+          "SELECT pg_backend_pid() AS pid"
+        );
+        await owner.$queryRawUnsafe(
+          "SELECT pg_terminate_backend($1::int)",
+          backend!.pid
+        );
+      })
+    ).rejects.toThrow();
+
+    expect(
+      await writer.withTenant(organizationId, tx => tx.company.count())
+    ).toBe(0);
+    await maintenance.withMaintenance(organizationId, async () => {});
   });
 });

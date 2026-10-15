@@ -59,10 +59,9 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
   }
 
   /**
-   * Runs a tenant-scoped maintenance transaction under an exclusive advisory
-   * lock. Ordinary tenant writes acquire the matching shared lock from
-   * database triggers, so writes that started earlier finish first and new
-   * writes wait until maintenance commits or rolls back.
+   * Waits for tenant writes on a dedicated session before starting the
+   * maintenance transaction, so its first snapshot includes their commits.
+   * Ordinary writes take the matching shared lock from database triggers.
    *
    * The bypass flag is transaction-local and only set by this internal API.
    */
@@ -71,20 +70,65 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
     callback: (tenant: Prisma.TransactionClient) => Promise<T>,
     options?: TenantTransactionOptions
   ): Promise<T> {
-    return this.$transaction(async tenant => {
-      await tenant.$executeRaw`
-        SELECT set_config('app.current_organization_id', ${organizationId}, true)
-      `;
-      await tenant.$executeRaw`
-        SELECT set_config('app.maintenance_authorized', 'on', true)
-      `;
-      await tenant.$executeRawUnsafe(
-        "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+    // Match Prisma's interactive-transaction defaults and keep the lock wait
+    // inside the same timeout budget as the maintenance work.
+    const timeout = options?.timeout ?? 5_000;
+    const maxWait = options?.maxWait ?? 2_000;
+    if (
+      !Number.isSafeInteger(timeout) ||
+      timeout <= 0 ||
+      timeout > 2_147_483_647 ||
+      !Number.isSafeInteger(maxWait) ||
+      maxWait <= 0
+    ) {
+      throw new Error("INVALID_MAINTENANCE_TIMEOUT");
+    }
+    const maintenance = new PrismaClient({
+      adapter: new PrismaPg({
+        connectionString: this.lockConnectionString,
+        max: 1,
+        idleTimeoutMillis: 0,
+        connectionTimeoutMillis: maxWait,
+        lock_timeout: timeout,
+      }),
+    });
+    const startedAt = Date.now();
+    try {
+      // This autocommit statement waits outside the RepeatableRead snapshot.
+      // The private one-connection pool retains its session lock across BEGIN.
+      const [locked] = await maintenance.$queryRawUnsafe<{ pid: number }[]>(
+        "SELECT pg_backend_pid() AS pid FROM pg_advisory_lock(hashtextextended($1,0))",
         `tenant-maintenance:${organizationId}`
       );
+      const remaining = timeout - (Date.now() - startedAt);
+      if (remaining <= 0) throw new Error("MAINTENANCE_TIMEOUT");
 
-      return callback(tenant);
-    }, options);
+      return await maintenance.$transaction(
+        async tenant => {
+          const [backend] = await tenant.$queryRawUnsafe<{ pid: number }[]>(
+            "SELECT pg_backend_pid() AS pid"
+          );
+          // A replacement connection cannot inherit the session lock. Never
+          // invoke maintenance on it or reacquire the lock after its snapshot.
+          if (!locked || backend?.pid !== locked.pid) {
+            throw new Error("MAINTENANCE_CONNECTION_CHANGED");
+          }
+          await tenant.$executeRaw`
+            SELECT set_config('app.current_organization_id', ${organizationId}, true)
+          `;
+          await tenant.$executeRaw`
+            SELECT set_config('app.maintenance_authorized', 'on', true)
+          `;
+
+          return callback(tenant);
+        },
+        { ...options, timeout: remaining }
+      );
+    } finally {
+      // Session locks survive rollback: closing this exact private pool releases
+      // the lock after both success and failure, including acquisition errors.
+      await maintenance.$disconnect();
+    }
   }
 
   async onModuleDestroy(): Promise<void> {
