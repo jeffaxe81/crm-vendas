@@ -228,6 +228,22 @@ export class BackupService {
           timeout: this.options.snapshotTimeoutMs,
         }
       );
+      if (workerFence) {
+        const stillOwned = await this.prisma.withTenant(organizationId, tx =>
+          tx.dataOperation.findFirst({
+            where: {
+              id,
+              organizationId,
+              state: "RUNNING",
+              workerId: workerFence.workerId,
+              attempts: workerFence.attempts,
+              leaseUntil: { gt: new Date() },
+            },
+            select: { id: true },
+          })
+        );
+        if (!stillOwned) throw new BackupError("BACKUP_IN_PROGRESS");
+      }
       await store.put(id, bytes);
       const persisted = await store.read(id);
       const verified = decodeSnapshot(
