@@ -247,7 +247,6 @@ describe("durable backup execution and retention", () => {
     }
   });
 
-
   for (const interruptedState of ["PENDING", "RUNNING"] as const) {
     it(`recovers an interrupted ${interruptedState} backup after the previous lease expires`, async () => {
       const operation = await queueBackup();
