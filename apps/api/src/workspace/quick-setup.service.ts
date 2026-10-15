@@ -15,6 +15,7 @@ import {
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import type { Permission } from "../authorization/permissions";
 import { PrismaService } from "../database/prisma.service";
+import type { Prisma } from "../generated/prisma/client";
 
 type QuickSetupContext = {
   principal: AuthenticatedPrincipal;
@@ -117,15 +118,10 @@ export class QuickSetupService {
     return this.prisma.withTenant(
       context.principal.organizationId,
       async tenant => {
-        const membership =
-          await tenant.organizationMembership.findUniqueOrThrow({
-            where: {
-              organizationId_userId: {
-                organizationId: context.principal.organizationId,
-                userId: context.principal.userId,
-              },
-            },
-          });
+        const membership = await this.lockMembershipForWrite(
+          tenant,
+          context.principal
+        );
 
         if (membership.quickSetupCompletedAt) {
           return this.stateFromMembership(context.principal, membership);
@@ -191,6 +187,8 @@ export class QuickSetupService {
     return this.prisma.withTenant(
       context.principal.organizationId,
       async tenant => {
+        await this.lockMembershipForWrite(tenant, context.principal);
+
         const updated = await tenant.organizationMembership.update({
           where: {
             organizationId_userId: {
@@ -220,6 +218,35 @@ export class QuickSetupService {
         return this.stateFromMembership(context.principal, updated);
       }
     );
+  }
+
+  private async lockMembershipForWrite(
+    tenant: Prisma.TransactionClient,
+    principal: AuthenticatedPrincipal
+  ) {
+    await tenant.$executeRawUnsafe(
+      "SELECT pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+      `tenant-maintenance:${principal.organizationId}`
+    );
+
+    await tenant.$queryRawUnsafe(
+      `SELECT id
+       FROM "organization_memberships"
+       WHERE "organization_id" = $1::uuid
+         AND "user_id" = $2::uuid
+       FOR UPDATE`,
+      principal.organizationId,
+      principal.userId
+    );
+
+    return tenant.organizationMembership.findUniqueOrThrow({
+      where: {
+        organizationId_userId: {
+          organizationId: principal.organizationId,
+          userId: principal.userId,
+        },
+      },
+    });
   }
 
   private availableSteps(principal: AuthenticatedPrincipal): QuickSetupStep[] {
