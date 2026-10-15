@@ -289,6 +289,40 @@ describe("durable backup execution and retention", () => {
     });
   }
 
+  it("rejects an obsolete worker attempt after a new worker claims the operation", async () => {
+    const operation = await queueBackup();
+    const former = await worker.claimNext("worker-former");
+    expect(former?.id).toBe(operation.id);
+
+    await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.update({
+        where: { id: operation.id },
+        data: { leaseUntil: new Date(0) },
+      })
+    );
+
+    const successor = await worker.claimNext("worker-successor");
+    expect(successor?.id).toBe(operation.id);
+    expect(successor?.attempts).toBe(2);
+
+    await expect(
+      service.create(organizationId, null, "SCHEDULED", operation.id, {
+        workerId: "worker-former",
+        attempts: 1,
+      })
+    ).rejects.toThrow("BACKUP_IN_PROGRESS");
+
+    expect(await worker.finish(former!)).toBe(false);
+    expect(await worker.heartbeat(former!)).toBe(false);
+
+    const live = await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.findUniqueOrThrow({ where: { id: operation.id } })
+    );
+    expect(live.state).toBe("RUNNING");
+    expect(live.workerId).toBe("worker-successor");
+    expect(await store.read(operation.id)).rejects.toThrow();
+  });
+
   it("retains the newest configured backups while preserving a preventive backup in use", async () => {
     const previous: BackupRecord[] = [];
 
