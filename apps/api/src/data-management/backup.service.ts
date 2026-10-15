@@ -112,7 +112,8 @@ export class BackupService {
     organizationId: string,
     actorId: string | null,
     reason: BackupReason,
-    requestedId?: string
+    requestedId?: string,
+    workerFence?: { workerId: string; attempts: number }
   ): Promise<BackupRecord> {
     if (!this.store) throw new BackupError("BACKUP_NOT_CONFIGURED");
     const store = this.store;
@@ -124,6 +125,20 @@ export class BackupService {
     const id = requestedId === undefined ? randomUUID() : uuid(requestedId);
     const existing = await this.prisma.withTenant(organizationId, async tx => {
       await this.authorize(tx, organizationId, actorId, reason);
+      if (workerFence) {
+        const claim = await tx.dataOperation.findFirst({
+          where: {
+            id,
+            organizationId,
+            state: "RUNNING",
+            workerId: workerFence.workerId,
+            attempts: workerFence.attempts,
+            leaseUntil: { gt: new Date() },
+          },
+          select: { id: true },
+        });
+        if (!claim) throw new BackupError("BACKUP_IN_PROGRESS");
+      }
       const row = await tx.backupRecord.findFirst({
         where: { id, organizationId },
       });
@@ -135,14 +150,16 @@ export class BackupService {
           return summary(row);
         }
         if (row.state !== "FAILED") {
-          throw new BackupError("BACKUP_IN_PROGRESS");
+          if (!workerFence || !["PENDING", "RUNNING"].includes(row.state)) {
+            throw new BackupError("BACKUP_IN_PROGRESS");
+          }
         }
 
         const retried = await tx.backupRecord.updateMany({
           where: {
             id,
             organizationId,
-            state: "FAILED",
+            state: row.state,
           },
           data: {
             state: "PENDING",
