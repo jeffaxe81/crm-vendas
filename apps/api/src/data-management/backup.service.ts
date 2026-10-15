@@ -256,6 +256,20 @@ export class BackupService {
         organizationId,
         async tx => {
           await this.authorize(tx, organizationId, actorId, reason);
+          if (workerFence) {
+            const claim = await tx.dataOperation.findFirst({
+              where: {
+                id,
+                organizationId,
+                state: "RUNNING",
+                workerId: workerFence.workerId,
+                attempts: workerFence.attempts,
+                leaseUntil: { gt: new Date() },
+              },
+              select: { id: true },
+            });
+            if (!claim) throw new BackupError("BACKUP_IN_PROGRESS");
+          }
           const row = await tx.backupRecord.update({
             where: { id_organizationId: { id, organizationId } },
             data: {
@@ -285,13 +299,29 @@ export class BackupService {
       return summary(completed);
     } catch (error) {
       const code = error instanceof BackupError ? error.code : "BACKUP_FAILED";
-      try {
-        await store.remove(id);
-      } catch {
-        /* Worker reconciliation must handle leftover private objects. */
+      if (!workerFence) {
+        try {
+          await store.remove(id);
+        } catch {
+          /* Worker reconciliation must handle leftover private objects. */
+        }
       }
       try {
         await this.prisma.withTenant(organizationId, async tx => {
+          if (workerFence) {
+            const claim = await tx.dataOperation.findFirst({
+              where: {
+                id,
+                organizationId,
+                state: "RUNNING",
+                workerId: workerFence.workerId,
+                attempts: workerFence.attempts,
+                leaseUntil: { gt: new Date() },
+              },
+              select: { id: true },
+            });
+            if (!claim) return;
+          }
           await tx.backupRecord.update({
             where: { id_organizationId: { id, organizationId } },
             data: { state: "FAILED", errorCode: code },
