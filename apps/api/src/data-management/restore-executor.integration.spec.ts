@@ -8,6 +8,7 @@ import { PrismaService } from "../database/prisma.service";
 import { BackupStore } from "./backup-store";
 import { BackupService } from "./backup.service";
 import { restoreTenantSnapshot } from "./restore-executor";
+import { exportTenantSnapshot } from "./tenant-snapshot";
 
 describe("transactional tenant restore executor", () => {
   let owner: PrismaService;
@@ -92,6 +93,330 @@ describe("transactional tenant restore executor", () => {
       tx.company.findMany({ where: { organizationId }, orderBy: { id: "asc" } })
     );
   }
+
+  async function contactGraph() {
+    const target = await fixture();
+    const company = (await companies(target.organization.id))[0]!;
+    const contact = await owner.contact.create({
+      data: {
+        organizationId: target.organization.id,
+        fullName: "Contato de homologação",
+        jobTitle: "Enfermagem",
+        notes: "Dados sintéticos: 'aspas', ç e 漢字",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+        version: 7,
+        deletedAt: new Date("2026-10-01T10:00:00Z"),
+        deletedBy: target.user.id,
+      },
+    });
+    await owner.contactChannel.createMany({
+      data: [
+        {
+          organizationId: target.organization.id,
+          contactId: contact.id,
+          type: "EMAIL",
+          value: "synthetic@example.test",
+          label: "Trabalho",
+          isPrimary: true,
+        },
+        {
+          organizationId: target.organization.id,
+          contactId: contact.id,
+          type: "PHONE",
+          value: "+55 48 0000-0000",
+          label: null,
+          isPrimary: false,
+        },
+      ],
+    });
+    await owner.companyContact.create({
+      data: {
+        organizationId: target.organization.id,
+        companyId: company.id,
+        contactId: contact.id,
+        relationshipLabel: "Responsável técnico",
+        isPrimary: true,
+      },
+    });
+    await owner.relationshipEntry.createMany({
+      data: [
+        {
+          organizationId: target.organization.id,
+          companyId: company.id,
+          contactId: contact.id,
+          authorUserId: target.user.id,
+          kind: "CALL_NOTE",
+          content: "Ligação de teste",
+          occurredAt: new Date("2026-10-02T15:00:00Z"),
+        },
+        {
+          organizationId: target.organization.id,
+          contactId: contact.id,
+          authorUserId: target.user.id,
+          kind: "NOTE",
+          content: "Anotação sem empresa",
+          occurredAt: new Date("2026-10-03T15:00:00Z"),
+        },
+      ],
+    });
+    await owner.$executeRawUnsafe(
+      `UPDATE companies SET created_at='2026-10-01T12:00:00.123456Z',
+        updated_at='2026-10-02T12:00:00.654321Z' WHERE id=$1::uuid`,
+      company.id
+    );
+    await owner.$executeRawUnsafe(
+      `UPDATE contacts SET created_at='2026-10-01T12:00:00.234567Z',
+        updated_at='2026-10-02T12:00:00.765432Z' WHERE id=$1::uuid`,
+      contact.id
+    );
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    return {
+      ...target,
+      company,
+      contact,
+      verified: await backups.verify(target.organization.id, backup.id),
+    };
+  }
+
+  async function graphSnapshot(organizationId: string) {
+    const data = await runtime.withTenant(
+      organizationId,
+      tx => exportTenantSnapshot(tx, organizationId, options.maxBytes),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+    return Object.fromEntries(
+      [
+        "Company",
+        "Contact",
+        "ContactChannel",
+        "CompanyContact",
+        "RelationshipEntry",
+      ].map(model => [model, data[model]])
+    );
+  }
+
+  it("round-trips contacts, channels, company links and notes with exact timestamp precision", async () => {
+    const target = await contactGraph();
+    const other = await contactGraph();
+    const expected = await graphSnapshot(target.organization.id);
+    const otherBefore = await graphSnapshot(other.organization.id);
+    await owner.contact.update({
+      where: { id: target.contact.id },
+      data: { fullName: "Alterado depois do backup", notes: null },
+    });
+    await owner.contactChannel.updateMany({
+      where: { organizationId: target.organization.id },
+      data: { label: "Alterado" },
+    });
+    await owner.companyContact.updateMany({
+      where: { organizationId: target.organization.id },
+      data: { relationshipLabel: "Alterado" },
+    });
+    await owner.relationshipEntry.deleteMany({
+      where: { organizationId: target.organization.id },
+    });
+    const hash = "synthetic-password-changed-after-snapshot";
+    await owner.user.update({
+      where: { id: target.user.id },
+      data: { passwordHash: hash },
+    });
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(expected);
+    expect(await graphSnapshot(other.organization.id)).toEqual(otherBefore);
+    expect(
+      (await owner.user.findUniqueOrThrow({ where: { id: target.user.id } }))
+        .passwordHash
+    ).toBe(hash);
+    expect(
+      (
+        await owner.organizationMembership.findFirstOrThrow({
+          where: {
+            organizationId: target.organization.id,
+            userId: target.user.id,
+          },
+        })
+      ).isSuperuser
+    ).toBe(true);
+  });
+
+  it("preserves PostgreSQL microseconds in a company-only snapshot", async () => {
+    const target = await fixture();
+    const company = (await companies(target.organization.id))[0]!;
+    await owner.$executeRawUnsafe(
+      `UPDATE companies SET created_at='2026-10-01T12:00:00.123456Z',
+        updated_at='2026-10-02T12:00:00.654321Z' WHERE id=$1::uuid`,
+      company.id
+    );
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+    const before = await graphSnapshot(target.organization.id);
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
+
+  it("rejects a broken note reference before replacing any graph rows", async () => {
+    const target = await contactGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const broken = structuredClone(target.verified.data);
+    broken.RelationshipEntry![0]!.contactId = randomUUID();
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("BACKUP_REFERENCES_INVALID");
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
+
+  it("removes a live contact graph absent from the same-tenant snapshot", async () => {
+    const target = await contactGraph();
+    const other = await contactGraph();
+    const otherBefore = await graphSnapshot(other.organization.id);
+    const empty = structuredClone(target.verified.data);
+    for (const model of [
+      "Company",
+      "Contact",
+      "ContactChannel",
+      "CompanyContact",
+      "RelationshipEntry",
+    ])
+      empty[model] = [];
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx => restoreTenantSnapshot(tx, target.organization.id, empty),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+
+    expect(
+      Object.values(await graphSnapshot(target.organization.id)).every(
+        rows => rows?.length === 0
+      )
+    ).toBe(true);
+    expect(await graphSnapshot(other.organization.id)).toEqual(otherBefore);
+  });
+
+  it("rolls back all graph deletions and inserts when a late channel constraint fails", async () => {
+    const target = await contactGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const broken = structuredClone(target.verified.data);
+    broken.Company![0]!.legalName = "Must roll back";
+    broken.Contact![0]!.fullName = "Must roll back";
+    broken.ContactChannel!.push({
+      ...broken.ContactChannel!.find(row => row.isPrimary === true)!,
+      id: randomUUID(),
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow(/23505|Unique constraint|duplicate key/);
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
+
+  it("rejects live unsupported models created after the snapshot before replacing data", async () => {
+    const target = await fixture();
+    const before = await companies(target.organization.id);
+    await owner.tag.create({
+      data: {
+        organizationId: target.organization.id,
+        name: "After snapshot",
+        normalizedName: "after-snapshot",
+      },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx =>
+          restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            target.verified.data
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+    expect(await companies(target.organization.id)).toEqual(before);
+    expect(
+      await owner.tag.count({
+        where: { organizationId: target.organization.id },
+      })
+    ).toBe(1);
+  });
+
+  it("rejects a contact row from another tenant before replacing data", async () => {
+    const target = await contactGraph();
+    const other = await fixture();
+    const before = await graphSnapshot(target.organization.id);
+    const broken = structuredClone(target.verified.data);
+    broken.Contact![0]!.organizationId = other.organization.id;
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
+
+  it("rechecks live user identities under the maintenance lock", async () => {
+    const target = await contactGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const email = `changed-${randomUUID()}@example.test`;
+    await owner.user.update({
+      where: { id: target.user.id },
+      data: { email, emailNormalized: email },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx =>
+          restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            target.verified.data
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_USER_IDENTITY_CHANGED");
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
 
   it("restores tenant business data while preserving live user credentials", async () => {
     const organization = await owner.organization.create({

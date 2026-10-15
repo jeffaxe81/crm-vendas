@@ -23,6 +23,37 @@ function maintenanceTransaction(): Prisma.TransactionClient {
 
 describe("restore executor target binding", () => {
   it.each([
+    "Company",
+    "Contact",
+    "ContactChannel",
+    "CompanyContact",
+    "RelationshipEntry",
+  ])(
+    "rejects a missing %s collection before mutating tenant data",
+    async model => {
+      const data = {
+        Organization: [{ id: organizationId }],
+        Company: [],
+        Contact: [],
+        ContactChannel: [],
+        CompanyContact: [],
+        RelationshipEntry: [],
+      };
+      const incomplete = Object.fromEntries(
+        Object.entries(data).filter(([name]) => name !== model)
+      );
+
+      await expect(
+        restoreTenantSnapshot(
+          maintenanceTransaction(),
+          organizationId,
+          incomplete
+        )
+      ).rejects.toThrow("RESTORE_TARGET_INVALID");
+    }
+  );
+
+  it.each([
     ["another organization", [{ id: otherOrganizationId }]],
     ["missing organization", undefined],
     ["empty organization root", []],
