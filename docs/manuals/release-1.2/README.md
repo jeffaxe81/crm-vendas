@@ -1,6 +1,6 @@
-# Guias por perfil — planejamento da Release 1.2
+# Guias por perfil — Release 1.2
 
-**Estado: documentação de planejamento, não funcionalidade publicada.** O wizard e o tour **1.1** já estão no código da `main`, mas aguardam homologação operacional no servidor. A **Configuração Rápida 1.2** é uma evolução futura.
+**Estado: funcionalidade implementada no código, com homologação operacional pendente.** O wizard e o tour **1.1** e a **Configuração Rápida 1.2** possuem implementação no repositório. Estes guias não atestam implantação, publicação nem aceite no servidor.
 
 Os manuais são orientações de uso conforme as permissões do backend em `apps/api/src/authorization/permissions.ts`:
 
