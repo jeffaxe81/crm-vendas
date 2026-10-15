@@ -247,6 +247,49 @@ describe("durable backup execution and retention", () => {
     }
   });
 
+
+  for (const interruptedState of ["PENDING", "RUNNING"] as const) {
+    it(`recovers an interrupted ${interruptedState} backup after the previous lease expires`, async () => {
+      const operation = await queueBackup();
+      const oldWorker = await worker.claimNext("worker-interrupted");
+      expect(oldWorker?.id).toBe(operation.id);
+
+      // Simulate a process crash after catalog persistence, without invoking
+      // graceful catch/finally cleanup. No running worker remains.
+      await runtime.withTenant(organizationId, async tx => {
+        await tx.backupRecord.create({
+          data: {
+            id: operation.id,
+            organizationId,
+            actorUserId: null,
+            reason: "SCHEDULED",
+            state: interruptedState,
+          },
+        });
+        await tx.dataOperation.update({
+          where: { id: operation.id },
+          data: { leaseUntil: new Date(0) },
+        });
+      });
+
+      expect(await worker.processNext("worker-after-crash")).toBe(true);
+
+      await runtime.withTenant(organizationId, async tx => {
+        const backup = await tx.backupRecord.findUniqueOrThrow({
+          where: { id_organizationId: { id: operation.id, organizationId } },
+        });
+        const recovered = await tx.dataOperation.findUniqueOrThrow({
+          where: { id: operation.id },
+        });
+        expect(backup.state).toBe("COMPLETED");
+        expect(recovered.state).toBe("COMPLETED");
+        expect(recovered.attempts).toBe(2);
+        expect(await tx.backupRecord.count()).toBe(1);
+      });
+      await expect(store.read(operation.id)).resolves.toBeInstanceOf(Buffer);
+    });
+  }
+
   it("retains the newest configured backups while preserving a preventive backup in use", async () => {
     const previous: BackupRecord[] = [];
 
