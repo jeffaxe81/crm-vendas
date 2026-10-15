@@ -192,6 +192,39 @@ describe("restore confirmation is session-bound and transactional", () => {
     await expect(run()).rejects.toThrow("RESTORE_CONFIRMATION_INVALID");
   });
 
+  it("revalidates target references under the maintenance lock", async () => {
+    const { org, principal, proof, verified } = await fixture();
+    const broken = {
+      ...verified,
+      data: structuredClone(verified.data),
+    };
+    broken.data.RelationshipEntry = [
+      {
+        id: randomUUID(),
+        organizationId: org.id,
+        companyId: randomUUID(),
+        contactId: null,
+        authorUserId: principal.userId,
+      },
+    ];
+
+    await expect(
+      runtime.withMaintenance(
+        org.id,
+        tx =>
+          consumeRestoreConfirmation(
+            tx,
+            principal,
+            proof,
+            broken,
+            passwords,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("BACKUP_REFERENCES_INVALID");
+  });
+
   it("rolls back a confirmation when the transaction fails", async () => {
     const { org, preview, principal, proof, verified } = await fixture();
     await expect(
