@@ -1,5 +1,6 @@
 import type { BackupScheduleService } from "./backup-schedule.service";
 import type { DataOperationWorker } from "./data-operation.worker";
+import type { BackupDeletionService } from "./backup-deletion.service";
 
 type ScheduleRunner = Pick<BackupScheduleService, "enqueueDue">;
 type OperationRunner = Pick<DataOperationWorker, "processNext">;
@@ -15,7 +16,8 @@ export class BackupWorkerRunner {
   constructor(
     private readonly schedule: ScheduleRunner,
     private readonly worker: OperationRunner,
-    private readonly workerId: string
+    private readonly workerId: string,
+    private readonly deletions?: Pick<BackupDeletionService, "reconcile">
   ) {}
 
   async runCycle(
@@ -25,6 +27,7 @@ export class BackupWorkerRunner {
 
     this.running = true;
     try {
+      await this.deletions?.reconcile();
       const enqueued = await this.schedule.enqueueDue(now);
       let processed = 0;
 

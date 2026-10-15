@@ -1,7 +1,9 @@
 import {
   Controller,
+  Delete,
   Get,
   Header,
+  HttpCode,
   Inject,
   Param,
   Post,
@@ -17,13 +19,16 @@ import { AuthenticationGuard } from "../authorization/authentication.guard";
 import { SuperuserGuard } from "../authorization/superuser.guard";
 import type { AuthenticatedRequest } from "../authorization/authenticated-request";
 import { BackupAdministrationService } from "./backup-administration.service";
+import { BackupDeletionService } from "./backup-deletion.service";
 
 @Controller("admin/backups")
 @UseGuards(AuthenticationGuard, SuperuserGuard)
 export class BackupAdministrationController {
   constructor(
     @Inject(BackupAdministrationService)
-    private readonly backups: BackupAdministrationService
+    private readonly backups: BackupAdministrationService,
+    @Inject(BackupDeletionService)
+    private readonly deletions: BackupDeletionService
   ) {}
 
   private principal(request: AuthenticatedRequest) {
@@ -69,6 +74,22 @@ export class BackupAdministrationController {
   @Post(":id/preview")
   preview(@Param("id") id: string, @Req() request: AuthenticatedRequest) {
     return this.backups.previewRestore(this.principal(request), id);
+  }
+
+  @Delete(":id")
+  @HttpCode(202)
+  @Header("Cache-Control", "no-store")
+  deleteBackup(
+    @Param("id") id: string,
+    @Body() body: unknown,
+    @Req() request: AuthenticatedRequest
+  ) {
+    return this.deletions.requestDeletion(
+      this.principal(request),
+      id,
+      body,
+      request.requestId ?? ""
+    );
   }
 
   @Get(":id/download")

@@ -6,6 +6,7 @@ import { DatabaseModule } from "../database/database.module";
 import { AuthorizationModule } from "../authorization/authorization.module";
 import { BackupAdministrationController } from "./backup-administration.controller";
 import { BackupAdministrationService } from "./backup-administration.service";
+import { BackupDeletionService } from "./backup-deletion.service";
 import { BackupScheduleService } from "./backup-schedule.service";
 import { BackupStore } from "./backup-store";
 import { BackupWorkerRunner } from "./backup-worker.runner";
@@ -43,20 +44,27 @@ import { DataPreviewService } from "./data-preview.service";
     },
     BackupService,
     BackupAdministrationService,
+    BackupDeletionService,
     BackupScheduleService,
     DataPreviewService,
     DataOperationWorker,
     {
       provide: BackupWorkerRunner,
-      inject: [BackupScheduleService, DataOperationWorker],
+      inject: [
+        BackupScheduleService,
+        DataOperationWorker,
+        BackupDeletionService,
+      ],
       useFactory: (
         schedule: BackupScheduleService,
-        worker: DataOperationWorker
+        worker: DataOperationWorker,
+        deletions: BackupDeletionService
       ) =>
         new BackupWorkerRunner(
           schedule,
           worker,
-          `backup-worker:${hostname()}:${process.pid}`
+          `backup-worker:${hostname()}:${process.pid}`,
+          deletions
         ),
     },
     {

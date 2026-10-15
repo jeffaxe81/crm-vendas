@@ -129,6 +129,23 @@ export class DataPreviewService {
     const row = await this.prisma.withTenant(
       principal.organizationId,
       async tx => {
+        // Serialize publication of the preview with manual backup deletion.
+        // A verification performed before waiting cannot authorize a preview
+        // of a copy that another request has since marked for deletion.
+        await tx.$executeRawUnsafe(
+          "SELECT pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+          `tenant-maintenance:${principal.organizationId}`
+        );
+        const target = await tx.backupRecord.findFirst({
+          where: {
+            id: verified.record.id,
+            organizationId: principal.organizationId,
+            state: "COMPLETED",
+            checksum: verified.manifest.checksum,
+          },
+          select: { id: true },
+        });
+        if (!target) throw new BackupError("BACKUP_NOT_FOUND");
         const now = new Date();
         const [membership, session] = await Promise.all([
           tx.organizationMembership.findFirst({

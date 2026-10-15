@@ -1,7 +1,7 @@
 import type { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { randomBytes, randomUUID } from "node:crypto";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import request from "supertest";
@@ -120,7 +120,7 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
 
   function remove(
     backup = older,
-    body: unknown = {
+    body: Record<string, unknown> = {
       confirmation: "EXCLUIR BACKUP",
       checksum: backup.checksum,
     }
@@ -210,6 +210,26 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
       .auth(token, { type: "bearer" })
       .expect(201);
     await remove().expect(409);
+  });
+
+  it("retains an older valid copy if the newest completed file is corrupt", async () => {
+    await writeFile(
+      join(directory, `${newest.id}.backup`),
+      Buffer.from("corrupt")
+    );
+    await remove().expect(409);
+    expect((await state()).state).toBe("COMPLETED");
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+  });
+
+  it("finishes a committed deletion even after the organization is disabled", async () => {
+    await remove().expect(202);
+    await owner.organization.update({
+      where: { id: organizationId },
+      data: { isActive: false },
+    });
+    await app.get(BackupWorkerRunner).runCycle();
+    expect((await state()).state).toBe("DELETED");
   });
 
   it("rejects IDs belonging to another tenant and ordinary administrators", async () => {

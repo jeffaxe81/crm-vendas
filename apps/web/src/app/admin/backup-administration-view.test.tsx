@@ -249,3 +249,83 @@ it("cancels deletion without making a destructive request", async () => {
     )
   ).toBe(false);
 });
+
+it("polls a pending deletion and stops after the file is removed", async () => {
+  let catalogCalls = 0;
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string) => {
+      if (url.endsWith("/operations")) return jsonResponse([]);
+      if (url.endsWith("/schedule")) return jsonResponse(schedule);
+      catalogCalls++;
+      return jsonResponse({
+        configured: true,
+        backups: [
+          {
+            ...completedBackup,
+            state: catalogCalls === 1 ? "DELETING" : "DELETED",
+          },
+        ],
+      });
+    })
+  );
+  vi.useFakeTimers();
+  await act(async () => {
+    render(<BackupAdministrationView accessToken="synthetic-token" />);
+  });
+  expect(screen.getByText(/Exclusão pendente/)).toBeInTheDocument();
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(10_000);
+  });
+  expect(catalogCalls).toBe(2);
+  expect(screen.getByText(/Excluído/)).toBeInTheDocument();
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(20_000);
+  });
+  expect(catalogCalls).toBe(2);
+  expect(
+    screen.queryByRole("button", { name: "Baixar" })
+  ).not.toBeInTheDocument();
+});
+
+it("keeps the confirmation available and reports a rejected deletion", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string, init?: RequestInit) => {
+      if (init?.method === "DELETE")
+        return {
+          ok: false,
+          status: 409,
+          json: async () => ({
+            message: "O backup mais recente está protegido.",
+          }),
+        } as Response;
+      if (url.endsWith("/operations")) return jsonResponse([]);
+      if (url.endsWith("/schedule")) return jsonResponse(schedule);
+      return jsonResponse({ configured: true, backups: [completedBackup] });
+    })
+  );
+  const { rerender } = render(
+    <BackupAdministrationView accessToken="synthetic-token" />
+  );
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Excluir backup" })
+  );
+  fireEvent.change(screen.getByLabelText(/Digite EXCLUIR BACKUP/), {
+    target: { value: "EXCLUIR BACKUP" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar exclusão" }));
+  expect(
+    await screen.findByText("O backup mais recente está protegido.")
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("region", { name: "Excluir backup" })
+  ).toBeInTheDocument();
+  expect(screen.queryByText(/Exclusão solicitada/)).not.toBeInTheDocument();
+  rerender(
+    <BackupAdministrationView accessToken="another-organization-token" />
+  );
+  expect(
+    screen.queryByRole("region", { name: "Excluir backup" })
+  ).not.toBeInTheDocument();
+});
