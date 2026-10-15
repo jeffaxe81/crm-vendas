@@ -12,18 +12,18 @@ A autorização expressa do responsável permite prosseguir no desenvolvimento e
 
 ## Checklist de rastreabilidade
 
-| Critério | Estado | Evidência ou requisito de fechamento |
-|---|---|---|
-| Aprovação condicional do desenvolvimento | APROVADO / REGISTRADO | PR #211, integrada na main |
-| CI pós-merge do baseline | APROVADO | Actions run #38740669781: verify e source_manifest SUCCESS, no SHA acima |
-| Homologação HTTPS/TLS e cadeia do certificado no endereço real | PENDENTE | URL, emissão/cadeia do certificado, evidência de conexão |
-| Login/logout, criação de usuário, recuperação de acesso e RBAC | PENDENTE | Roteiro executado com contas de teste |
-| Fluxo comercial completo e Quick Setup/tour no primeiro acesso | PENDENTE | Roteiro executado |
-| Isolamento multiempresa / RLS e auditoria | PENDENTE | Testes positivos e negativos com duas organizações |
-| Backup agendado, interrompido, retomado, retenção e integridade | PENDENTE | Execução no destino configurado; acompanhar PR #210 |
-| Restauração isolada, aprovação explícita de operação destrutiva e rollback | PENDENTE | Execução segura, dados reconciliados e resultado do rollback |
-| Observabilidade, operação Docker/Nginx, persistência e recursos | PENDENTE | Logs/healthcheck e verificação operacional |
-| Aceite para produção / GO operacional | NÃO CONCEDIDO | Preencher evidências e obter decisão explícita posterior |
+| Critério                                                                   | Estado                | Evidência ou requisito de fechamento                                     |
+| -------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------ |
+| Aprovação condicional do desenvolvimento                                   | APROVADO / REGISTRADO | PR #211, integrada na main                                               |
+| CI pós-merge do baseline                                                   | APROVADO              | Actions run #38740669781: verify e source_manifest SUCCESS, no SHA acima |
+| Homologação HTTPS/TLS e cadeia do certificado no endereço real             | PENDENTE              | URL, emissão/cadeia do certificado, evidência de conexão                 |
+| Login/logout, criação de usuário, recuperação de acesso e RBAC             | PENDENTE              | Roteiro executado com contas de teste                                    |
+| Fluxo comercial completo e Quick Setup/tour no primeiro acesso             | PENDENTE              | Roteiro executado                                                        |
+| Isolamento multiempresa / RLS e auditoria                                  | PENDENTE              | Testes positivos e negativos com duas organizações                       |
+| Backup agendado, interrompido, retomado, retenção e integridade            | PENDENTE              | Execução no destino configurado; acompanhar PR #210                      |
+| Restauração isolada, aprovação explícita de operação destrutiva e rollback | PENDENTE              | Execução segura, dados reconciliados e resultado do rollback             |
+| Observabilidade, operação Docker/Nginx, persistência e recursos            | PENDENTE              | Logs/healthcheck e verificação operacional                               |
+| Aceite para produção / GO operacional                                      | NÃO CONCEDIDO         | Preencher evidências e obter decisão explícita posterior                 |
 
 ## Procedimento de homologação posterior
 
