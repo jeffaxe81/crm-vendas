@@ -13,6 +13,7 @@ independentes. O vínculo nunca copia permissões ou privilégios de outra empre
   se o vínculo está inativo. Reative o vínculo existente pela administração.
 - No login, informe o identificador da empresa (`organization.slug`) quando houver
   mais de um vínculo ativo. Nenhuma empresa é escolhida silenciosamente.
+  O identificador aparece junto ao nome da organização ativa na navegação.
   Com apenas um vínculo ativo, o identificador continua opcional.
 - O login valida a senha e o estado da conta antes de verificar a empresa.
   Empresas e vínculos inativos não autorizam login.

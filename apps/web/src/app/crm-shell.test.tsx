@@ -67,6 +67,12 @@ afterEach(() => {
 });
 
 describe("Dispatch navigation in CRM", () => {
+  it("shows the company identifier required for multi-company login", () => {
+    viewport(false);
+    mount();
+    expect(screen.getByText("Identificador: axesistemas")).toBeVisible();
+  });
+
   it("collapses the desktop navigation and remembers the preference", () => {
     viewport(false);
     mount();
