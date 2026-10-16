@@ -7,7 +7,7 @@ import {
   type RegisterOrganizationInput,
 } from "@axes/contracts";
 import {
-  ConflictException,
+  BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -63,7 +63,7 @@ export class AuthService {
     }
 
     const organizationSlug = input.organizationSlug?.trim().toLowerCase();
-    const membership = await this.prisma.organizationMembership.findFirst({
+    const memberships = await this.prisma.organizationMembership.findMany({
       where: {
         userId: user.id,
         isActive: true,
@@ -74,8 +74,17 @@ export class AuthService {
       },
       include: { organization: true },
       orderBy: { createdAt: "asc" },
+      take: 2,
     });
 
+    if (memberships.length > 1 && !organizationSlug) {
+      throw new BadRequestException({
+        code: "ORGANIZATION_REQUIRED",
+        message: "Informe o identificador da empresa para acessar esta conta.",
+      });
+    }
+
+    const membership = memberships[0];
     if (!membership) {
       throw new ForbiddenException({
         code: "ORGANIZATION_ACCESS_DENIED",
@@ -126,28 +135,35 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException({
-        code: "USER_EMAIL_ALREADY_EXISTS",
-        message: "Já existe uma conta com este e-mail.",
-      });
+      const passwordMatches = await this.passwords.verify(
+        existingUser.passwordHash,
+        input.adminPassword
+      );
+      if (!passwordMatches || !existingUser.isActive) {
+        this.throwInvalidCredentials();
+      }
     }
 
     const slug = await this.uniqueOrganizationSlug(input.organizationName);
-    const passwordHash = await this.passwords.hash(input.adminPassword);
+    const passwordHash = existingUser
+      ? existingUser.passwordHash
+      : await this.passwords.hash(input.adminPassword);
 
     const created = await this.prisma.$transaction(async transaction => {
       const organization = await transaction.organization.create({
         data: { name: input.organizationName, slug },
       });
 
-      const user = await transaction.user.create({
-        data: {
-          email: input.adminEmail,
-          emailNormalized,
-          displayName: input.adminDisplayName,
-          passwordHash,
-        },
-      });
+      const user =
+        existingUser ??
+        (await transaction.user.create({
+          data: {
+            email: input.adminEmail,
+            emailNormalized,
+            displayName: input.adminDisplayName,
+            passwordHash,
+          },
+        }));
 
       const membership = await transaction.organizationMembership.create({
         data: {

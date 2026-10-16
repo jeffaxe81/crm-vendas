@@ -240,6 +240,7 @@ export function CrmShell({
         <div className="crm-shell__organization">
           <span>Organização ativa</span>
           <strong>{session.organization.name}</strong>
+          <span>Identificador: {session.organization.slug}</span>
         </div>
 
         <nav className="crm-shell__nav" aria-label="Navegação principal">

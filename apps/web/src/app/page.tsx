@@ -46,6 +46,7 @@ export default function Home() {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [organizationSlug, setOrganizationSlug] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [adminDisplayName, setAdminDisplayName] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
@@ -88,7 +89,13 @@ export default function Home() {
     try {
       const payload = await authApiRequest<unknown>("/auth/login", {
         method: "POST",
-        body: { email, password },
+        body: {
+          email,
+          password,
+          ...(organizationSlug.trim()
+            ? { organizationSlug: organizationSlug.trim() }
+            : {}),
+        },
       });
       manualNavigation.current = false;
       setSession(AuthSessionResponseSchema.parse(payload));
@@ -405,6 +412,22 @@ export default function Home() {
                 />
               </label>
 
+              <label>
+                <span>Identificador da empresa (opcional)</span>
+                <input
+                  name="organizationSlug"
+                  value={organizationSlug}
+                  onChange={event => setOrganizationSlug(event.target.value)}
+                  maxLength={80}
+                  autoCapitalize="none"
+                  aria-describedby="organization-login-help"
+                />
+              </label>
+              <p id="organization-login-help" className="login-card__help">
+                Obrigatório se sua conta tem acesso a mais de uma empresa. Use o
+                identificador informado pelo administrador.
+              </p>
+
               {error ? (
                 <p className="login-form__error" role="alert">
                   {error}
@@ -438,7 +461,9 @@ export default function Home() {
             <h2>Cadastrar organização</h2>
             <p className="login-card__help">
               Crie sua organização e o primeiro usuário administrador. Depois é
-              possível adicionar outras pessoas com permissões menores.
+              possível adicionar outras pessoas com permissões menores. Se o
+              e-mail já possui uma conta, use a senha atual para vincular a nova
+              empresa.
             </p>
 
             <form className="login-form" onSubmit={register}>

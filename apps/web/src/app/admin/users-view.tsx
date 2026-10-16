@@ -130,7 +130,7 @@ export function UsersView({ accessToken }: { accessToken: string }) {
       });
       form.reset();
       setVersion(value => value + 1);
-      setNotice("Usuário criado.");
+      setNotice("Usuário vinculado à empresa.");
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -146,7 +146,9 @@ export function UsersView({ accessToken }: { accessToken: string }) {
       <h1 id="admin-users-title">Usuários e perfis</h1>
       <p>
         Gerencie os usuários desta organização. As regras de acesso são
-        aplicadas pela API.
+        aplicadas pela API. Se o e-mail já possui uma conta, ela será vinculada
+        a esta empresa mantendo o nome e a senha existentes. A senha inicial
+        informada será usada somente para contas novas.
       </p>
       {error ? <p role="alert">{error}</p> : null}
       {notice ? <p role="status">{notice}</p> : null}
