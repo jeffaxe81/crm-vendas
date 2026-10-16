@@ -26,9 +26,13 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { defaultBranding, type TenantBranding } from "@axes/contracts";
+import { brandingStyle } from "./branding/use-tenant-branding";
+
 export type CrmSection = WorkspaceSection;
 
 type CrmShellProps = {
+  branding?: TenantBranding;
   session: AuthSessionResponse;
   activeSection: CrmSection;
   onNavigate: (section: CrmSection) => void;
@@ -64,6 +68,7 @@ const navigation = workspaceDestinations.map(item => ({
 const sidebarPreferenceKey = "axes-crm-sidebar-collapsed";
 
 export function CrmShell({
+  branding = defaultBranding,
   session,
   activeSection,
   onNavigate,
@@ -195,7 +200,8 @@ export function CrmShell({
 
   return (
     <div
-      className={`crm-shell${collapsed ? " crm-shell--collapsed" : ""}${mobileDrawerOpen ? " crm-shell--drawer-open" : ""}`}
+      style={brandingStyle(branding)}
+      className={`tenant-branded crm-shell${collapsed ? " crm-shell--collapsed" : ""}${mobileDrawerOpen ? " crm-shell--drawer-open" : ""}`}
     >
       <a className="crm-shell__skip" href="#crm-content">
         Ir para o conteúdo
@@ -228,9 +234,17 @@ export function CrmShell({
               <X aria-hidden="true" />
             </button>
           ) : null}
-          <span className="crm-shell__brand-mark" aria-hidden="true">
-            <ShieldCheck />
-          </span>
+          {branding.logo ? (
+            <img
+              className="tenant-logo"
+              src={branding.logo}
+              alt="Logo da empresa"
+            />
+          ) : (
+            <span className="crm-shell__brand-mark" aria-hidden="true">
+              <ShieldCheck />
+            </span>
+          )}
           <div className="crm-shell__brand-copy">
             <p className="crm-shell__brand-eyebrow">AXE Sistemas</p>
             <p className="crm-shell__brand-title">AXE CRM</p>

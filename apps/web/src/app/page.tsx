@@ -34,12 +34,19 @@ import { SupportSettingsView } from "./admin/support-settings-view";
 import { IntegrationCredentialsView } from "./admin/integration-credentials-view";
 import { BackupAdministrationView } from "./admin/backup-administration-view";
 
+import {
+  useTenantBranding,
+  brandingStyle,
+} from "./branding/use-tenant-branding";
+import { BrandingEditor } from "./branding/branding-editor";
+
 export default function Home() {
   const manualNavigation = useRef(false);
   const [reportTab, setReportTab] = useState<ReportTab>("summary");
   const [tourReplayToken, setTourReplayToken] = useState(0);
   const [quickSetupOpenToken, setQuickSetupOpenToken] = useState(0);
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
+  const tenantBranding = useTenantBranding(session);
   const [activeSection, setActiveSection] = useState<CrmSection>("home");
   const [communicationOpened, setCommunicationOpened] = useState(false);
   const [communicationDockOpen, setCommunicationDockOpen] = useState(false);
@@ -195,6 +202,7 @@ export default function Home() {
         }}
       >
         <CrmShell
+          branding={tenantBranding.branding}
           session={session}
           onStartTour={() => setTourReplayToken(value => value + 1)}
           onOpenQuickSetup={() => setQuickSetupOpenToken(value => value + 1)}
@@ -212,7 +220,20 @@ export default function Home() {
               }}
             />
           ) : activeSection === "workspace-settings" ? (
-            <WorkspaceEditor session={session} />
+            <>
+              {session.membership.role === "ADMIN" &&
+              session.permissions.includes("organization.manage") ? (
+                <BrandingEditor
+                  branding={tenantBranding.branding}
+                  save={tenantBranding.save}
+                  loading={tenantBranding.loading}
+                />
+              ) : null}
+              {tenantBranding.error ? (
+                <p role="alert">{tenantBranding.error}</p>
+              ) : null}
+              <WorkspaceEditor session={session} />
+            </>
           ) : activeSection === "admin-users" &&
             session.permissions.includes("user.manage") ? (
             <UsersView accessToken={session.accessToken} />
@@ -364,9 +385,20 @@ export default function Home() {
   }
 
   return (
-    <main className="login-shell">
+    <main
+      className="login-shell tenant-branded"
+      style={brandingStyle(tenantBranding.branding)}
+    >
       <section className="login-brand" aria-labelledby="crm-title">
-        <p className="login-brand__eyebrow">Axesistemas</p>
+        {tenantBranding.branding.logo ? (
+          <img
+            className="tenant-logo tenant-logo--login"
+            src={tenantBranding.branding.logo}
+            alt="Logo da empresa"
+          />
+        ) : (
+          <p className="login-brand__eyebrow">Axesistemas</p>
+        )}
         <h1 id="crm-title">CRM Axesistemas</h1>
         <p className="login-brand__lead">
           Relacionamento e vendas em uma base segura, preparada para
