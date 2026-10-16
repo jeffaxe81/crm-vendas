@@ -1,6 +1,6 @@
 # Assistente de Qualidade do CRM — especificação V1
 Data: 16/10/2026
-Status: desenho conversacional aprovado; especificação escrita para revisão.
+Status: especificação aprovada pelo usuário em 16/10/2026, com criação antes do login.
 
 ## Objetivo
 Simular a jornada de um usuário comum, começando pela criação de empresa e usuário, observar front-end, APIs e back-end e pedir uma decisão humana quando ocorrer comportamento inesperado. Não prometer detecção de todos os bugs.
@@ -12,11 +12,12 @@ Execução manual, por administrador autorizado, exclusivamente em homologação
 ## Jornada ordenada
 1. Criar empresa/tenant pela interface existente, validando campos obrigatórios e duplicidade segundo as regras atuais.
 2. Criar o usuário vinculado à empresa. Se o cadastro atual criar o administrador junto da empresa, verificar esse resultado antes de criar o usuário padrão; não inventar um cadastro separado.
-3. Entrar com o usuário padrão, confirmar tenant e sessão.
+3. Encerrar a sessão aberta automaticamente pelo cadastro e realizar login explícito com o usuário padrão, confirmando tenant e sessão. O login nunca é a primeira etapa do roteiro.
 4. Verificar permissões de usuário comum e isolamento usando duas empresas sintéticas pertencentes à execução. O mesmo e-mail em empresas diferentes deve funcionar; duplicidade dentro da mesma empresa segue a regra vigente.
 5. Cadastrar, pesquisar e editar contatos e clientes conforme funcionalidades realmente existentes.
 6. Criar oportunidade, movimentar pelo funil e confirmar persistência após recarregar.
 7. Exercitar filtros e operações disponíveis no roteiro versionado.
+O cadastro existente cria empresa e administrador juntos e abre uma sessão automaticamente. Usar essa sessão apenas para criar o usuário padrão; depois sair e testar o login explicitamente. Não exigir login prévio de uma conta existente para começar o roteiro.
 A preparação administrativa fica separada da sessão de usuário padrão. Privilégios administrativos não podem mascarar falhas de permissão no roteiro comum.
 
 ## Componentes
