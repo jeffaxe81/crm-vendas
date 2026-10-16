@@ -53,8 +53,11 @@ requireEvidence(
   "Webhooks nao estao desabilitados por padrao"
 );
 requireEvidence(
-  (compose.match(/\$\{BIND_ADDRESS:-127\.0\.0\.1\}:(?:3000|3001|5432):/g) ?? [])
-    .length === 3,
+  [
+    "${WEB_BIND_ADDRESS:-${BIND_ADDRESS:-127.0.0.1}}:3000:3000",
+    "${API_BIND_ADDRESS:-${BIND_ADDRESS:-127.0.0.1}}:3001:3001",
+    "${BIND_ADDRESS:-127.0.0.1}:5432:5432",
+  ].every(binding => compose.includes(`"${binding}"`)),
   "Portas de front, API e banco devem ficar ligadas a 127.0.0.1 por padrao"
 );
 // Extract only the API's depends_on block. A completed migration in

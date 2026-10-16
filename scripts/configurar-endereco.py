@@ -62,6 +62,17 @@ def run(*args):
     subprocess.run(args, cwd=ROOT, check=True)
 
 
+def validate_certificate(cert, host):
+    flag = '-checkip' if re.fullmatch(r'[0-9.]+', host) else '-checkhost'
+    # OpenSSL x509 can return zero even when the hostname does NOT match.
+    result = subprocess.run(['openssl', 'x509', '-in', cert, '-noout', flag, host],
+                            check=True, capture_output=True, text=True,
+                            env={**os.environ, 'LC_ALL': 'C'})
+    if ' does match certificate' not in result.stdout or 'NOT match' in result.stdout:
+        raise ValueError('O certificado TLS nao cobre o novo endereco.')
+    run('openssl', 'x509', '-in', cert, '-noout', '-checkend', '0')
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('address', help='http://127.0.0.1, http://IP ou https://dominio')
@@ -90,9 +101,7 @@ def main():
             match = re.search(r'(?m)^\s*ssl_certificate\s+([^;]+);', nginx_text)
             if not match:
                 raise ValueError('Certificado TLS nao encontrado.')
-            flag = '-checkip' if re.fullmatch(r'[0-9.]+', host) else '-checkhost'
-            run('openssl', 'x509', '-in', match[1].strip(), '-noout', flag, host)
-            run('openssl', 'x509', '-in', match[1].strip(), '-noout', '-checkend', '0')
+            validate_certificate(match[1].strip(), host)
     print('Modo:', mode)
     for k, v in values.items():
         print(f'{k}={v}')
@@ -100,39 +109,39 @@ def main():
     if args.check_only:
         return
     run('docker', 'compose', 'version')
-    lock = open(ROOT / '.git' / 'configurar-endereco.lock', 'w')
-    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    backup = Path(tempfile.mkdtemp(prefix='crm-endereco-', dir=env.parent))
-    os.chmod(backup, 0o700)
-    shutil.copy2(env, backup / 'env')
-    if nginx_text is not None:
-        shutil.copy2(args.nginx_conf, backup / 'nginx.conf')
-    print('Backup privado:', backup, flush=True)
-    compose = ('docker', 'compose', '--env-file', str(env))
-    try:
-        write_atomic(env, update_env(env.read_text(), values), 0o600)
-        run(*compose, 'config', '--quiet')
+    with open(ROOT / '.git' / 'configurar-endereco.lock', 'w') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        backup = Path(tempfile.mkdtemp(prefix='crm-endereco-', dir=env.parent))
+        os.chmod(backup, 0o700)
+        shutil.copy2(env, backup / 'env')
         if nginx_text is not None:
-            write_atomic(args.nginx_conf, nginx_text, 0o644)
-            run('nginx', '-t')
-        # Do not run migrations or recreate the database for an address-only change.
-        run(*compose, 'up', '-d', '--build', '--no-deps', '--force-recreate', '--wait', '--wait-timeout', '180', 'api', 'web')
-        if nginx_text is not None:
-            run('systemctl', 'reload', 'nginx')
-        print('Endereco atualizado; health checks da API e web passaram:', values['WEB_ORIGIN'])
-    except (subprocess.CalledProcessError, OSError):
-        shutil.copy2(backup / 'env', env)
-        if nginx_text is not None:
-            shutil.copy2(backup / 'nginx.conf', args.nginx_conf)
-        print('Falha: configuracoes restauradas. Tentando recuperar os servicos anteriores.', flush=True)
+            shutil.copy2(args.nginx_conf, backup / 'nginx.conf')
+        print('Backup privado:', backup, flush=True)
+        compose = ('docker', 'compose', '--env-file', str(env))
         try:
+            write_atomic(env, update_env(env.read_text(), values), 0o600)
+            run(*compose, 'config', '--quiet')
+            if nginx_text is not None:
+                write_atomic(args.nginx_conf, nginx_text, 0o644)
+                run('nginx', '-t')
+            # Do not run migrations or recreate the database for an address-only change.
             run(*compose, 'up', '-d', '--build', '--no-deps', '--force-recreate', '--wait', '--wait-timeout', '180', 'api', 'web')
             if nginx_text is not None:
-                run('nginx', '-t')
                 run('systemctl', 'reload', 'nginx')
+            print('Endereco atualizado; health checks da API e web passaram:', values['WEB_ORIGIN'])
         except (subprocess.CalledProcessError, OSError):
-            print('Recuperacao automatica falhou; consulte docker compose logs. Backup:', backup)
-        raise
+            shutil.copy2(backup / 'env', env)
+            if nginx_text is not None:
+                shutil.copy2(backup / 'nginx.conf', args.nginx_conf)
+            print('Falha: configuracoes restauradas. Tentando recuperar os servicos anteriores.', flush=True)
+            try:
+                run(*compose, 'up', '-d', '--build', '--no-deps', '--force-recreate', '--wait', '--wait-timeout', '180', 'api', 'web')
+                if nginx_text is not None:
+                    run('nginx', '-t')
+                    run('systemctl', 'reload', 'nginx')
+            except (subprocess.CalledProcessError, OSError):
+                print('Recuperacao automatica falhou; consulte docker compose logs. Backup:', backup)
+            raise
 
 
 if __name__ == '__main__':

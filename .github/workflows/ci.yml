@@ -108,6 +108,9 @@ jobs:
       - name: Build contracts for tests
         run: pnpm --filter @axes/contracts build
 
+      - name: Test address configuration and rollback
+        run: python3 -m unittest discover -s scripts/tests
+
       - name: Run repository tests
         run: pnpm test:repo
 

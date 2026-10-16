@@ -63,6 +63,15 @@ test("RC preflight accepts code safeguards but never authorizes production", () 
 });
 
 const tampering = [
+  ...["WEB", "API"].map(service => ({
+    name: `${service} exposed on all interfaces by default`,
+    path: "compose.yaml",
+    mutate: code =>
+      code.replace(
+        "${" + service + "_BIND_ADDRESS:-${BIND_ADDRESS:-127.0.0.1}}",
+        "${" + service + "_BIND_ADDRESS:-0.0.0.0}"
+      ),
+  })),
   {
     name: "external email transport activated",
     path: "apps/api/src/messaging/email/email.module.ts",
