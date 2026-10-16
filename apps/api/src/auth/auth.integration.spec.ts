@@ -43,6 +43,95 @@ describe("Cycle 1 authentication and tenant isolation", () => {
     );
   }
 
+  it("reuses an email across registered tenants and scopes login and roles", async () => {
+    const adminPassword = "Shared-tenant-password-2026!";
+    const adminEmail = "shared-tenant@example.test";
+    const register = (organizationName: string, password = adminPassword) =>
+      request(app.getHttpServer()).post("/api/v1/auth/register").send({
+        organizationName,
+        adminEmail,
+        adminPassword: password,
+        adminDisplayName: "Shared administrator",
+      });
+    const first = await register("Shared first").expect(201);
+    await register("Denied company", "Wrong-password-2026!").expect(401);
+    expect(
+      await prisma.organization.count({ where: { name: "Denied company" } })
+    ).toBe(0);
+    const second = await register("Shared second").expect(201);
+    expect(second.body.user.id).toBe(first.body.user.id);
+    expect(second.body.organization.id).not.toBe(first.body.organization.id);
+    expect(
+      await prisma.user.count({ where: { emailNormalized: adminEmail } })
+    ).toBe(1);
+
+    const ambiguous = await request(app.getHttpServer())
+      .post("/api/v1/auth/login")
+      .send({ email: adminEmail, password: adminPassword })
+      .expect(400);
+    expect(ambiguous.body.code).toBe("ORGANIZATION_REQUIRED");
+    const login = await request(app.getHttpServer())
+      .post("/api/v1/auth/login")
+      .send({
+        email: adminEmail,
+        password: adminPassword,
+        organizationSlug: second.body.organization.slug,
+      })
+      .expect(200);
+    expect(login.body.organization.id).toBe(second.body.organization.id);
+    await request(app.getHttpServer())
+      .post("/api/v1/auth/login")
+      .send({
+        email: adminEmail,
+        password: adminPassword,
+        organizationSlug: "unrelated-company",
+      })
+      .expect(403);
+
+    // An administrator can link an existing identity but cannot reset its password.
+    const link = await request(app.getHttpServer())
+      .post("/api/v1/admin/users")
+      .set("Authorization", `Bearer ${second.body.accessToken}`)
+      .send({
+        email: "shared-member@example.test",
+        displayName: "Original user",
+        password: "Original-password-2026!",
+        role: "VIEWER",
+      })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post("/api/v1/admin/users")
+      .set("Authorization", `Bearer ${first.body.accessToken}`)
+      .send({
+        email: "SHARED-MEMBER@example.test",
+        displayName: "Do not overwrite",
+        password: "Different-password-2026!",
+        role: "SELLER",
+      })
+      .expect(201);
+    const linkedLogin = await request(app.getHttpServer())
+      .post("/api/v1/auth/login")
+      .send({
+        email: "shared-member@example.test",
+        password: "Original-password-2026!",
+        organizationSlug: first.body.organization.slug,
+      })
+      .expect(200);
+    expect(linkedLogin.body.user.id).toBe(link.body.user.id);
+    expect(linkedLogin.body.user.displayName).toBe("Original user");
+    expect(linkedLogin.body.membership.role).toBe("SELLER");
+    await request(app.getHttpServer())
+      .post("/api/v1/admin/users")
+      .set("Authorization", `Bearer ${first.body.accessToken}`)
+      .send({
+        email: "shared-member@example.test",
+        displayName: "Duplicate",
+        password: adminPassword,
+        role: "ADMIN",
+      })
+      .expect(409);
+  });
+
   it("isolates organizations and invalidates disabled or logged-out sessions", async () => {
     const [organizationA, organizationB] = await Promise.all([
       prisma.organization.create({

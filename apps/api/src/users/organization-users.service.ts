@@ -57,29 +57,39 @@ export class OrganizationUsersService {
     input: CreateOrganizationUserInput,
     context: UserAdministrationContext
   ): Promise<OrganizationUserResponse> {
-    const emailNormalized = input.email.toLowerCase();
+    const emailNormalized = input.email.trim().toLowerCase();
     const existing = await this.prisma.user.findUnique({
       where: { emailNormalized },
     });
 
     if (existing) {
-      throw new ConflictException({
-        code: "USER_EMAIL_ALREADY_EXISTS",
-        message:
-          "Já existe uma conta com este e-mail. O vínculo entre organizações será tratado por fluxo específico.",
+      const membership = await this.prisma.organizationMembership.findFirst({
+        where: { organizationId: context.organizationId, userId: existing.id },
       });
+      if (membership) {
+        throw new ConflictException({
+          code: "USER_EMAIL_ALREADY_EXISTS",
+          message: "Já existe um usuário com este e-mail nesta empresa.",
+        });
+      }
     }
 
-    const passwordHash = await this.passwords.hash(input.password);
+    // Credentials belong to the identity; tenant administrators only add a
+    // membership and must never replace another organization's user's password.
+    const passwordHash = existing
+      ? existing.passwordHash
+      : await this.passwords.hash(input.password);
     const result = await this.prisma.$transaction(async transaction => {
-      const user = await transaction.user.create({
-        data: {
-          email: input.email,
-          emailNormalized,
-          displayName: input.displayName,
-          passwordHash,
-        },
-      });
+      const user =
+        existing ??
+        (await transaction.user.create({
+          data: {
+            email: input.email,
+            emailNormalized,
+            displayName: input.displayName,
+            passwordHash,
+          },
+        }));
 
       const membership = await transaction.organizationMembership.create({
         data: {

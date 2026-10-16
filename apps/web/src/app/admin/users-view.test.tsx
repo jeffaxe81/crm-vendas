@@ -60,6 +60,8 @@ it("creates a user with an explicit profile and confirms completion", async () =
   });
   expect(screen.getByLabelText("Papel")).toHaveValue("VIEWER");
   fireEvent.click(screen.getByRole("button", { name: "Criar usuário" }));
-  expect(await screen.findByText("Usuário criado.")).toBeInTheDocument();
+  expect(
+    await screen.findByText("Usuário vinculado à empresa.")
+  ).toBeInTheDocument();
   expect(screen.getByLabelText("Senha inicial")).toHaveValue("");
 });
