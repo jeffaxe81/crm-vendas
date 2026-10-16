@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type Pipeline = { id: string; name: string };
 type Health = {
@@ -49,6 +50,7 @@ export function PipelineAnalyticsView({
 }
 
 function TenantPipelineAnalytics({ accessToken }: { accessToken: string }) {
+  const { t } = useTranslation();
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [selection, setSelection] = useState<{ token: string; id: string }>({
     token: accessToken,
@@ -140,13 +142,14 @@ function TenantPipelineAnalytics({ accessToken }: { accessToken: string }) {
       className="sales-report"
       aria-labelledby="pipeline-analytics-title"
     >
-      <h2 id="pipeline-analytics-title">Saúde comercial · Ciclo 6</h2>
+      <h2 id="pipeline-analytics-title">{t("Saúde comercial · Ciclo 6")}</h2>
       <p className="activities-view__status">
-        Indicadores descritivos do funil, sem previsão por inteligência
-        artificial. A idade é calculada desde a criação das oportunidades.
+        {t(
+          "Indicadores descritivos do funil, sem previsão por inteligência artificial. A idade é calculada desde a criação das oportunidades."
+        )}
       </p>
       <label>
-        <span>Funil comercial </span>
+        <span>{t("Funil comercial ")}</span>
         <select
           value={pipelineId}
           onChange={event =>
@@ -160,27 +163,27 @@ function TenantPipelineAnalytics({ accessToken }: { accessToken: string }) {
           ))}
         </select>
       </label>
-      {loading ? <p role="status">Carregando indicadores...</p> : null}
+      {loading ? <p role="status">{t("Carregando indicadores...")}</p> : null}
       {error ? (
         <p role="alert" className="activities-view__error">
-          {error}
+          {t(error)}
         </p>
       ) : null}
       {!loading && !error && pipelines.length === 0 ? (
-        <p>Nenhum funil disponível.</p>
+        <p>{t("Nenhum funil disponível.")}</p>
       ) : null}
       {!loading && health && aging && risk ? (
         <>
           <div
             className="companies-view__grid"
-            aria-label="Indicadores de saúde"
+            aria-label={t("Indicadores de saúde")}
           >
             <article className="companies-view__card">
-              <span>Oportunidades abertas</span>
+              <span>{t("Oportunidades abertas")}</span>
               <strong>{health.totalOpenOpportunities}</strong>
             </article>
             <article className="companies-view__card">
-              <span>Valor em aberto</span>
+              <span>{t("Valor em aberto")}</span>
               <strong>
                 {new Intl.NumberFormat("pt-BR", {
                   style: "currency",
@@ -189,33 +192,37 @@ function TenantPipelineAnalytics({ accessToken }: { accessToken: string }) {
               </strong>
             </article>
             <article className="companies-view__card">
-              <span>Concentração na etapa</span>
+              <span>{t("Concentração na etapa")}</span>
               <strong>
                 {health.stageConcentration.percentage.toLocaleString("pt-BR")}%
               </strong>
               <span>
-                {health.stageConcentration.stageName ?? "Sem oportunidades"}
+                {health.stageConcentration.stageName ?? t("Sem oportunidades")}
                 {health.stageConcentration.exceeded
                   ? " · Acima do limite de 50%"
                   : ""}
               </span>
             </article>
             <article className="companies-view__card">
-              <span>Oportunidades com sinais de risco</span>
+              <span>{t("Oportunidades com sinais de risco")}</span>
               <strong>{risk.risks.length}</strong>
-              <span>De {risk.evaluated} oportunidades avaliadas</span>
+              <span>
+                {t("De ")}
+                {risk.evaluated}
+                {t(" oportunidades avaliadas")}
+              </span>
             </article>
           </div>
-          <h3>Idade das oportunidades por etapa</h3>
+          <h3>{t("Idade das oportunidades por etapa")}</h3>
           {aging.stages.length ? (
             <div className="sales-report__table">
               <table>
                 <thead>
                   <tr>
-                    <th>Etapa</th>
-                    <th>Oportunidades</th>
-                    <th>Idade média (dias)</th>
-                    <th>Mais antiga (dias)</th>
+                    <th>{t("Etapa")}</th>
+                    <th>{t("Oportunidades")}</th>
+                    <th>{t("Idade média (dias)")}</th>
+                    <th>{t("Mais antiga (dias)")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -231,13 +238,14 @@ function TenantPipelineAnalytics({ accessToken }: { accessToken: string }) {
               </table>
             </div>
           ) : (
-            <p>Nenhuma oportunidade aberta.</p>
+            <p>{t("Nenhuma oportunidade aberta.")}</p>
           )}
-          <h3>Sinais de risco comercial</h3>
+          <h3>{t("Sinais de risco comercial")}</h3>
           {risk.truncated ? (
             <p role="status">
-              Exibindo uma amostra de até 200 oportunidades. O resultado não
-              representa todo o funil.
+              {t(
+                "Exibindo uma amostra de até 200 oportunidades. O resultado não representa todo o funil."
+              )}
             </p>
           ) : null}
           {risk.risks.length ? (
@@ -245,17 +253,19 @@ function TenantPipelineAnalytics({ accessToken }: { accessToken: string }) {
               <table>
                 <thead>
                   <tr>
-                    <th>Oportunidade</th>
-                    <th>Gravidade</th>
-                    <th>Sem atividade (dias)</th>
-                    <th>Sem atualização (dias)</th>
+                    <th>{t("Oportunidade")}</th>
+                    <th>{t("Gravidade")}</th>
+                    <th>{t("Sem atividade (dias)")}</th>
+                    <th>{t("Sem atualização (dias)")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {risk.risks.map(item => (
                     <tr key={item.opportunityId}>
                       <td>{item.title}</td>
-                      <td>{item.severity === "HIGH" ? "Alta" : "Média"}</td>
+                      <td>
+                        {item.severity === "HIGH" ? t("Alta") : t("Média")}
+                      </td>
                       <td>{item.daysWithoutActivity}</td>
                       <td>{item.daysWithoutUpdate}</td>
                     </tr>
@@ -264,11 +274,12 @@ function TenantPipelineAnalytics({ accessToken }: { accessToken: string }) {
               </table>
             </div>
           ) : (
-            <p>Nenhum sinal de risco identificado na amostra.</p>
+            <p>{t("Nenhum sinal de risco identificado na amostra.")}</p>
           )}
           <p className="activities-view__status">
-            Atividade registrada no CRM não comprova contato efetivo com o
-            cliente. Os riscos apresentados não são notificações automáticas.
+            {t(
+              "Atividade registrada no CRM não comprova contato efetivo com o cliente. Os riscos apresentados não são notificações automáticas."
+            )}
           </p>
         </>
       ) : null}

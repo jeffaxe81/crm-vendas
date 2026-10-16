@@ -121,6 +121,11 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 });
 
 exports.Prisma.OrganizationScalarFieldEnum = {
+  defaultLanguage: 'defaultLanguage',
+  detectBrowserLanguage: 'detectBrowserLanguage',
+  onboardingOwnerId: 'onboardingOwnerId',
+  onboardingStep: 'onboardingStep',
+  onboardingCompletedAt: 'onboardingCompletedAt',
   id: 'id',
   name: 'name',
   slug: 'slug',
@@ -159,6 +164,9 @@ exports.Prisma.UserScalarFieldEnum = {
 };
 
 exports.Prisma.OrganizationMembershipScalarFieldEnum = {
+  tourStatus: 'tourStatus',
+  quickSetupCompletedSteps: 'quickSetupCompletedSteps',
+  quickSetupCompletedAt: 'quickSetupCompletedAt',
   isSuperuser: 'isSuperuser',
   id: 'id',
   organizationId: 'organizationId',
@@ -235,6 +243,7 @@ exports.Prisma.TerritoryQuotaScalarFieldEnum = {
   territoryId: 'territoryId',
   period: 'period',
   year: 'year',
+  periodIndex: 'periodIndex',
   amount: 'amount',
   actual: 'actual',
   createdAt: 'createdAt',
@@ -602,6 +611,21 @@ exports.Prisma.BackupRecordScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.OperationPreviewScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  actorUserId: 'actorUserId',
+  sessionId: 'sessionId',
+  kind: 'kind',
+  targetBackupId: 'targetBackupId',
+  targetChecksum: 'targetChecksum',
+  currentFingerprint: 'currentFingerprint',
+  payload: 'payload',
+  expiresAt: 'expiresAt',
+  consumedAt: 'consumedAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.DataOperationScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -639,17 +663,111 @@ exports.Prisma.BackupScheduleScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.EmailRelaySettingsScalarFieldEnum = {
+  organizationId: 'organizationId',
+  endpoint: 'endpoint',
+  encryptedBearerToken: 'encryptedBearerToken',
+  mode: 'mode',
+  version: 'version',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EmailProviderPreferenceScalarFieldEnum = {
+  organizationId: 'organizationId',
+  providerCode: 'providerCode',
+  version: 'version',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InboundMessageScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  channel: 'channel',
+  sourceKey: 'sourceKey',
+  externalIdHash: 'externalIdHash',
+  status: 'status',
+  receivedAt: 'receivedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EmailOutboxScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  ticketId: 'ticketId',
+  idempotencyHash: 'idempotencyHash',
+  purpose: 'purpose',
+  encryptedEmail: 'encryptedEmail',
+  status: 'status',
+  attemptCount: 'attemptCount',
+  nextAttemptAt: 'nextAttemptAt',
+  leaseToken: 'leaseToken',
+  leasedUntil: 'leasedUntil',
+  providerMessageId: 'providerMessageId',
+  lastErrorCode: 'lastErrorCode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WebhookSubscriptionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  name: 'name',
+  targetUrl: 'targetUrl',
+  eventTypes: 'eventTypes',
+  encryptedSecret: 'encryptedSecret',
+  isActive: 'isActive',
+  version: 'version',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WebhookDispatchScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  subscriptionId: 'subscriptionId',
+  subscriptionVersion: 'subscriptionVersion',
+  eventId: 'eventId',
+  eventType: 'eventType',
+  payload: 'payload',
+  targetUrl: 'targetUrl',
+  encryptedSecret: 'encryptedSecret',
+  status: 'status',
+  attemptCount: 'attemptCount',
+  nextAttemptAt: 'nextAttemptAt',
+  leaseToken: 'leaseToken',
+  lockedUntil: 'lockedUntil',
+  requestStartedAt: 'requestStartedAt',
+  requestId: 'requestId',
+  lastErrorCode: 'lastErrorCode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WebhookDeliveryScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  subscriptionId: 'subscriptionId',
+  dispatchId: 'dispatchId',
+  attempt: 'attempt',
+  status: 'status',
+  responseStatus: 'responseStatus',
+  errorCode: 'errorCode',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
 
-exports.Prisma.NullableJsonNullValueInput = {
-  DbNull: Prisma.DbNull,
+exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
-exports.Prisma.JsonNullValueInput = {
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull
 };
 
@@ -810,8 +928,16 @@ exports.Prisma.ModelName = {
   IntegrationCredential: 'IntegrationCredential',
   UserWorkspacePreference: 'UserWorkspacePreference',
   BackupRecord: 'BackupRecord',
+  OperationPreview: 'OperationPreview',
   DataOperation: 'DataOperation',
-  BackupSchedule: 'BackupSchedule'
+  BackupSchedule: 'BackupSchedule',
+  EmailRelaySettings: 'EmailRelaySettings',
+  EmailProviderPreference: 'EmailProviderPreference',
+  InboundMessage: 'InboundMessage',
+  EmailOutbox: 'EmailOutbox',
+  WebhookSubscription: 'WebhookSubscription',
+  WebhookDispatch: 'WebhookDispatch',
+  WebhookDelivery: 'WebhookDelivery'
 };
 
 /**

@@ -9,6 +9,8 @@ import {
   type MembershipRole,
 } from "@axes/contracts";
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
+
 function UserRow({
   user,
   accessToken,
@@ -18,6 +20,7 @@ function UserRow({
   accessToken: string;
   onChanged: () => void;
 }) {
+  const { t } = useTranslation();
   const [role, setRole] = useState(user.role);
   const [active, setActive] = useState(user.isActive);
   const [busy, setBusy] = useState(false);
@@ -49,9 +52,12 @@ function UserRow({
       <strong>{user.user.displayName}</strong>
       <p>{user.user.email}</p>
       <fieldset disabled={busy}>
-        <legend>Perfil de {user.user.displayName}</legend>
+        <legend>
+          {t("Perfil de ")}
+          {user.user.displayName}
+        </legend>
         <label>
-          Papel
+          {t("Papel")}
           <select
             value={role}
             onChange={event => setRole(event.target.value as MembershipRole)}
@@ -67,17 +73,19 @@ function UserRow({
             checked={active}
             onChange={event => setActive(event.target.checked)}
           />
-          Vínculo ativo
+          {t("Vínculo ativo")}
         </label>
         <button type="button" onClick={() => void save()}>
-          Salvar perfil de {user.user.displayName}
+          {t("Salvar perfil de ")}
+          {user.user.displayName}
         </button>
       </fieldset>
-      {error ? <p role="alert">{error}</p> : null}
+      {error ? <p role="alert">{t(error)}</p> : null}
     </li>
   );
 }
 export function UsersView({ accessToken }: { accessToken: string }) {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<OrganizationUserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -130,7 +138,7 @@ export function UsersView({ accessToken }: { accessToken: string }) {
       });
       form.reset();
       setVersion(value => value + 1);
-      setNotice("Usuário vinculado à empresa.");
+      setNotice(t("Usuário vinculado à empresa."));
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -143,29 +151,28 @@ export function UsersView({ accessToken }: { accessToken: string }) {
   }
   return (
     <section className="activities-view" aria-labelledby="admin-users-title">
-      <h1 id="admin-users-title">Usuários e perfis</h1>
+      <h1 id="admin-users-title">{t("Usuários e perfis")}</h1>
       <p>
-        Gerencie os usuários desta organização. As regras de acesso são
-        aplicadas pela API. Se o e-mail já possui uma conta, ela será vinculada
-        a esta empresa mantendo o nome e a senha existentes. A senha inicial
-        informada será usada somente para contas novas.
+        {t(
+          "Gerencie os usuários desta organização. As regras de acesso são aplicadas pela API. Se o e-mail já possui uma conta, ela será vinculada a esta empresa mantendo o nome e a senha existentes. A senha inicial informada será usada somente para contas novas."
+        )}
       </p>
-      {error ? <p role="alert">{error}</p> : null}
-      {notice ? <p role="status">{notice}</p> : null}
+      {error ? <p role="alert">{t(error)}</p> : null}
+      {notice ? <p role="status">{t(notice)}</p> : null}
       <form onSubmit={event => void create(event)}>
         <fieldset disabled={busy}>
-          <legend>Novo usuário</legend>
+          <legend>{t("Novo usuário")}</legend>
           <div className="activity-form__fields">
             <label>
-              Nome
+              {t("Nome")}
               <input name="displayName" required maxLength={160} />
             </label>
             <label>
-              E-mail
+              {t("E-mail")}
               <input name="email" type="email" required autoComplete="off" />
             </label>
             <label>
-              Senha inicial
+              {t("Senha inicial")}
               <input
                 name="password"
                 type="password"
@@ -175,7 +182,7 @@ export function UsersView({ accessToken }: { accessToken: string }) {
               />
             </label>
             <label>
-              Papel
+              {t("Papel")}
               <select name="role" defaultValue="VIEWER">
                 {MembershipRoleSchema.options.map(role => (
                   <option key={role}>{role}</option>
@@ -183,7 +190,7 @@ export function UsersView({ accessToken }: { accessToken: string }) {
               </select>
             </label>
           </div>
-          <button type="submit">Criar usuário</button>
+          <button type="submit">{t("Criar usuário")}</button>
         </fieldset>
       </form>
       <button
@@ -191,10 +198,10 @@ export function UsersView({ accessToken }: { accessToken: string }) {
         disabled={loading}
         onClick={() => setVersion(value => value + 1)}
       >
-        Atualizar usuários
+        {t("Atualizar usuários")}
       </button>
       {loading ? (
-        <p>Carregando usuários...</p>
+        <p>{t("Carregando usuários...")}</p>
       ) : (
         <ul className="companies-view__grid">
           {users.map(user => (

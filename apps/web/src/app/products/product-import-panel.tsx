@@ -8,6 +8,7 @@ import { type ChangeEvent, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { formatMoney } from "../opportunities/opportunity-items-panel";
+import { useTranslation } from "../../i18n/language-provider";
 
 type ProductImportPanelProps = {
   accessToken: string;
@@ -21,6 +22,7 @@ export function ProductImportPanel({
   onClose,
   onImported,
 }: ProductImportPanelProps) {
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<ProductImportPreview | null>(null);
   const [result, setResult] = useState<ProductImportResult | null>(null);
@@ -89,29 +91,36 @@ export function ProductImportPanel({
   }
 
   return (
-    <section className="company-import" aria-label="Importar produtos por CSV">
+    <section
+      className="company-import"
+      aria-label={t("Importar produtos por CSV")}
+    >
       <div className="company-form__heading">
         <div>
-          <p>Importação</p>
-          <h2>Importar produtos por CSV</h2>
+          <p>{t("Importação")}</p>
+          <h2>{t("Importar produtos por CSV")}</h2>
         </div>
         <button type="button" onClick={onClose}>
-          Fechar
+          {t("Fechar")}
         </button>
       </div>
 
       <p>
-        Colunas aceitas: <code>code</code>, <code>name</code> e{" "}
-        <code>unitPrice</code> (obrigatórias), <code>description</code> e{" "}
-        <code>isActive</code> (true/false, sim/não ou 1/0; padrão ativo). Preço
-        com ponto ou vírgula decimal. Até 500 linhas; códigos já cadastrados são
-        rejeitados.
+        {t("Colunas aceitas: ")}
+        <code>{t("code")}</code>, <code>{t("name")}</code>
+        {t(" e")} <code>{t("unitPrice")}</code>
+        {t(" (obrigatórias), ")}
+        <code>{t("description")}</code>
+        {t(" e")} <code>{t("isActive")}</code>
+        {t(
+          " (true/false, sim/não ou 1/0; padrão ativo). Preço com ponto ou vírgula decimal. Até 500 linhas; códigos já cadastrados são rejeitados."
+        )}
       </p>
 
       <label>
-        <span>Arquivo CSV</span>
+        <span>{t("Arquivo CSV")}</span>
         <input
-          aria-label="Arquivo CSV de produtos"
+          aria-label={t("Arquivo CSV de produtos")}
           type="file"
           accept=".csv,text/csv"
           disabled={busy}
@@ -121,33 +130,36 @@ export function ProductImportPanel({
 
       {error ? (
         <p className="companies-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
-      {busy && !preview ? <p>Validando arquivo...</p> : null}
+      {busy && !preview ? <p>{t("Validando arquivo...")}</p> : null}
 
       {preview && !result ? (
         <>
           <p>
-            {preview.valid} válida(s) · {preview.invalid} inválida(s)
+            {preview.valid}
+            {t(" válida(s) · ")}
+            {preview.invalid}
+            {t(" inválida(s)")}
           </p>
           <div
             className="company-import__table-wrapper"
             role="region"
-            aria-label="Tabela: Prévia de produtos"
+            aria-label={t("Tabela: Prévia de produtos")}
             tabIndex={0}
           >
             <table>
               <thead>
                 <tr>
-                  <th>Linha</th>
-                  <th>Código</th>
-                  <th>Nome</th>
-                  <th>Preço</th>
-                  <th>Situação</th>
-                  <th>Status</th>
-                  <th>Erros</th>
+                  <th>{t("Linha")}</th>
+                  <th>{t("Código")}</th>
+                  <th>{t("Nome")}</th>
+                  <th>{t("Preço")}</th>
+                  <th>{t("Situação")}</th>
+                  <th>{t("Status")}</th>
+                  <th>{t("Erros")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,11 +176,13 @@ export function ProductImportPanel({
                     <td>
                       {row.product
                         ? row.product.isActive
-                          ? "Ativo"
-                          : "Inativo"
+                          ? t("Ativo")
+                          : t("Inativo")
                         : "—"}
                     </td>
-                    <td>{row.status === "VALID" ? "Válida" : "Inválida"}</td>
+                    <td>
+                      {row.status === "VALID" ? t("Válida") : t("Inválida")}
+                    </td>
                     <td>{row.errors.join(" · ") || "—"}</td>
                   </tr>
                 ))}
@@ -181,14 +195,17 @@ export function ProductImportPanel({
             disabled={busy || preview.valid === 0}
             onClick={() => void confirmImport()}
           >
-            {busy ? "Importando..." : "Confirmar importação"}
+            {busy ? t("Importando...") : t("Confirmar importação")}
           </button>
         </>
       ) : null}
 
       {result ? (
         <p role="status">
-          {result.imported} importado(s) · {result.rejected} rejeitado(s)
+          {result.imported}
+          {t(" importado(s) · ")}
+          {result.rejected}
+          {t(" rejeitado(s)")}
         </p>
       ) : null}
     </section>

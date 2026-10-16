@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslation } from "../../i18n/language-provider";
+
 
 export type TagEditorItem = {
   id: string;
@@ -20,6 +22,7 @@ export function TagEditor({
   onLink,
   onUnlink,
 }: TagEditorProps) {
+  const { t } = useTranslation();
   const [selectedTagId, setSelectedTagId] = useState("");
   const linkedIds = useMemo(() => new Set(linkedTagIds), [linkedTagIds]);
   const linkedTags = availableTags.filter(tag => linkedIds.has(tag.id));
@@ -28,32 +31,30 @@ export function TagEditor({
   return (
     <div className="tag-editor">
       {linkedTags.length > 0 ? (
-        <ul className="tag-editor__linked" aria-label="Tags vinculadas">
+        <ul className="tag-editor__linked" aria-label={t("Tags vinculadas")}>
           {linkedTags.map(tag => (
             <li key={tag.id}>
               <span>{tag.name}</span>
               <button
                 type="button"
-                aria-label={`Remover tag ${tag.name}`}
+                aria-label={t("Remover tag {0}", {0: tag.name})}
                 onClick={() => onUnlink(tag.id)}
-              >
-                Remover
-              </button>
+              >{t("Remover")}</button>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="tag-editor__empty">Nenhuma tag vinculada.</p>
+        <p className="tag-editor__empty">{t("Nenhuma tag vinculada.")}</p>
       )}
 
       <div className="tag-editor__add">
         <label>
-          <span>Adicionar tag</span>
+          <span>{t("Adicionar tag")}</span>
           <select
             value={selectedTagId}
             onChange={event => setSelectedTagId(event.target.value)}
           >
-            <option value="">Selecione</option>
+            <option value="">{t("Selecione")}</option>
             {unlinkedTags.map(tag => (
               <option key={tag.id} value={tag.id}>
                 {tag.name}
@@ -71,9 +72,7 @@ export function TagEditor({
             onLink(selectedTagId);
             setSelectedTagId("");
           }}
-        >
-          Vincular tag
-        </button>
+        >{t("Vincular tag")}</button>
       </div>
     </div>
   );

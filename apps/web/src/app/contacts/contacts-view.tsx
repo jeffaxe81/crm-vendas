@@ -14,6 +14,7 @@ import {
   type CustomFieldDefinitionView,
 } from "../shared/custom-fields-editor";
 import { TagEditor, type TagEditorItem } from "../shared/tag-editor";
+import { useTranslation } from "../../i18n/language-provider";
 
 type ContactChannelRecord = {
   id: string;
@@ -104,6 +105,7 @@ export function ContactsView({
   accessToken,
   canWrite = true,
 }: ContactsViewProps) {
+  const { t } = useTranslation();
   const [contacts, setContacts] = useState<ContactRecord[]>([]);
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
   const [history, setHistory] = useState<RelationshipEntryRecord[]>([]);
@@ -213,7 +215,7 @@ export function ContactsView({
 
     const fullName = contactForm.fullName.trim();
     if (!fullName) {
-      setError("Informe o nome completo.");
+      setError(t("Informe o nome completo."));
       return;
     }
 
@@ -493,9 +495,9 @@ export function ContactsView({
     <section className="contacts-view" aria-labelledby="contacts-title">
       <header className="contacts-view__header">
         <div>
-          <p className="contacts-view__eyebrow">Relacionamento</p>
-          <h1 id="contacts-title">Contatos</h1>
-          <p>Gerencie pessoas, canais e vínculos comerciais.</p>
+          <p className="contacts-view__eyebrow">{t("Relacionamento")}</p>
+          <h1 id="contacts-title">{t("Contatos")}</h1>
+          <p>{t("Gerencie pessoas, canais e vínculos comerciais.")}</p>
         </div>
         <div className="companies-view__header-actions">
           {canWrite ? (
@@ -506,7 +508,7 @@ export function ContactsView({
                 setImportOpen(true);
               }}
             >
-              Importar CSV
+              {t("Importar CSV")}
             </button>
           ) : null}
           <button
@@ -517,7 +519,7 @@ export function ContactsView({
               setContactFormOpen(true);
             }}
           >
-            Novo contato
+            {t("Novo contato")}
           </button>
         </div>
       </header>
@@ -542,18 +544,18 @@ export function ContactsView({
 
       {error ? (
         <p className="contacts-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
       {contactFormOpen ? (
         <form
           className="contact-form"
-          aria-label="Novo contato"
+          aria-label={t("Novo contato")}
           onSubmit={createContact}
         >
           <label>
-            <span>Nome completo</span>
+            <span>{t("Nome completo")}</span>
             <input
               value={contactForm.fullName}
               onChange={event =>
@@ -566,7 +568,7 @@ export function ContactsView({
             />
           </label>
           <label>
-            <span>Cargo</span>
+            <span>{t("Cargo")}</span>
             <input
               value={contactForm.jobTitle}
               onChange={event =>
@@ -578,18 +580,18 @@ export function ContactsView({
             />
           </label>
           <button className="button" type="submit">
-            Salvar contato
+            {t("Salvar contato")}
           </button>
         </form>
       ) : null}
 
-      {loading ? <p>Carregando contatos...</p> : null}
+      {loading ? <p>{t("Carregando contatos...")}</p> : null}
 
       <div className="contacts-view__grid">
         {contacts.map(contact => (
           <article className="contact-card" key={contact.id}>
             <div>
-              <p className="contact-card__eyebrow">Contato</p>
+              <p className="contact-card__eyebrow">{t("Contato")}</p>
               <h2>{contact.fullName}</h2>
               {contact.jobTitle ? <p>{contact.jobTitle}</p> : null}
             </div>
@@ -620,7 +622,7 @@ export function ContactsView({
                   setChannelForm(emptyChannelForm);
                 }}
               >
-                Adicionar canal
+                {t("Adicionar canal")}
               </button>
               <button
                 type="button"
@@ -629,7 +631,7 @@ export function ContactsView({
                   setSelectedCompanyId("");
                 }}
               >
-                Vincular empresa
+                {t("Vincular empresa")}
               </button>
               <button
                 type="button"
@@ -639,19 +641,19 @@ export function ContactsView({
                   setHistoryContent("");
                 }}
               >
-                Registrar histórico
+                {t("Registrar histórico")}
               </button>
               <button
                 type="button"
                 onClick={() => void openTagEditor(contact.id)}
               >
-                Gerenciar tags
+                {t("Gerenciar tags")}
               </button>
               <button
                 type="button"
                 onClick={() => void openCustomFields(contact.id)}
               >
-                Campos customizados
+                {t("Campos customizados")}
               </button>
             </div>
           </article>
@@ -661,7 +663,7 @@ export function ContactsView({
       {taggedContact ? (
         <section
           className="contact-tags"
-          aria-label={`Tags do contato ${taggedContact.fullName}`}
+          aria-label={t("Tags do contato {0}", { 0: taggedContact.fullName })}
         >
           <TagEditor
             availableTags={availableTags}
@@ -675,7 +677,9 @@ export function ContactsView({
       {customFieldsContact ? (
         <section
           className="contact-custom-fields"
-          aria-label={`Campos customizados do contato ${customFieldsContact.fullName}`}
+          aria-label={t("Campos customizados do contato {0}", {
+            0: customFieldsContact.fullName,
+          })}
         >
           <CustomFieldsEditor
             definitions={customFieldDefinitions}
@@ -692,7 +696,7 @@ export function ContactsView({
             className="button"
             onClick={() => void saveCustomFields()}
           >
-            Salvar campos customizados
+            {t("Salvar campos customizados")}
           </button>
         </section>
       ) : null}
@@ -700,11 +704,11 @@ export function ContactsView({
       {channelContactId ? (
         <form
           className="contact-form"
-          aria-label="Novo canal"
+          aria-label={t("Novo canal")}
           onSubmit={createChannel}
         >
           <label>
-            <span>Tipo</span>
+            <span>{t("Tipo")}</span>
             <select
               value={channelForm.type}
               onChange={event =>
@@ -714,15 +718,15 @@ export function ContactsView({
                 }))
               }
             >
-              <option value="EMAIL">E-mail</option>
-              <option value="PHONE">Telefone</option>
-              <option value="MOBILE">Celular</option>
-              <option value="WHATSAPP">WhatsApp</option>
-              <option value="OTHER">Outro</option>
+              <option value="EMAIL">{t("E-mail")}</option>
+              <option value="PHONE">{t("Telefone")}</option>
+              <option value="MOBILE">{t("Celular")}</option>
+              <option value="WHATSAPP">{t("WhatsApp")}</option>
+              <option value="OTHER">{t("Outro")}</option>
             </select>
           </label>
           <label>
-            <span>Valor</span>
+            <span>{t("Valor")}</span>
             <input
               value={channelForm.value}
               onChange={event =>
@@ -735,7 +739,7 @@ export function ContactsView({
             />
           </label>
           <label>
-            <span>Rótulo</span>
+            <span>{t("Rótulo")}</span>
             <input
               value={channelForm.label}
               onChange={event =>
@@ -757,10 +761,10 @@ export function ContactsView({
                 }))
               }
             />
-            <span>Canal principal</span>
+            <span>{t("Canal principal")}</span>
           </label>
           <button className="button" type="submit">
-            Salvar canal
+            {t("Salvar canal")}
           </button>
         </form>
       ) : null}
@@ -768,17 +772,17 @@ export function ContactsView({
       {linkContactId ? (
         <form
           className="contact-form"
-          aria-label="Vincular empresa"
+          aria-label={t("Vincular empresa")}
           onSubmit={linkCompany}
         >
           <label>
-            <span>Empresa</span>
+            <span>{t("Empresa")}</span>
             <select
               value={selectedCompanyId}
               onChange={event => setSelectedCompanyId(event.target.value)}
               required
             >
-              <option value="">Selecione</option>
+              <option value="">{t("Selecione")}</option>
               {companies.map(company => (
                 <option key={company.id} value={company.id}>
                   {company.tradeName || company.legalName}
@@ -787,7 +791,7 @@ export function ContactsView({
             </select>
           </label>
           <button className="button" type="submit">
-            Confirmar vínculo
+            {t("Confirmar vínculo")}
           </button>
         </form>
       ) : null}
@@ -795,26 +799,26 @@ export function ContactsView({
       {historyContactId ? (
         <form
           className="contact-form"
-          aria-label="Registrar histórico"
+          aria-label={t("Registrar histórico")}
           onSubmit={createHistory}
         >
           <label>
-            <span>Tipo</span>
+            <span>{t("Tipo")}</span>
             <select
               value={historyKind}
               onChange={event =>
                 setHistoryKind(event.target.value as RelationshipEntryKind)
               }
             >
-              <option value="NOTE">Nota</option>
-              <option value="CALL_NOTE">Ligação</option>
-              <option value="EMAIL_NOTE">E-mail</option>
-              <option value="MEETING_NOTE">Reunião</option>
-              <option value="OTHER">Outro</option>
+              <option value="NOTE">{t("Nota")}</option>
+              <option value="CALL_NOTE">{t("Ligação")}</option>
+              <option value="EMAIL_NOTE">{t("E-mail")}</option>
+              <option value="MEETING_NOTE">{t("Reunião")}</option>
+              <option value="OTHER">{t("Outro")}</option>
             </select>
           </label>
           <label>
-            <span>Registro</span>
+            <span>{t("Registro")}</span>
             <textarea
               value={historyContent}
               onChange={event => setHistoryContent(event.target.value)}
@@ -822,7 +826,7 @@ export function ContactsView({
             />
           </label>
           <button className="button" type="submit">
-            Salvar histórico
+            {t("Salvar histórico")}
           </button>
         </form>
       ) : null}

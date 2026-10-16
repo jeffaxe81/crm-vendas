@@ -10,8 +10,10 @@ import {
 import type { NeoSettings } from "../admin/neo-communication-settings-view";
 import { EmbeddedFrame } from "./embedded-frame";
 import { useCommunicationConfiguration } from "./communication-provider";
+import { useTranslation } from "../../i18n/language-provider";
 
 export function CommunicationView({ accessToken }: { accessToken?: string }) {
+  const { t } = useTranslation();
   const environmentConfiguration = useCommunicationConfiguration();
   const [tenantConfiguration, setTenantConfiguration] =
     useState<CommunicationConfiguration | null>(null);
@@ -57,12 +59,14 @@ export function CommunicationView({ accessToken }: { accessToken?: string }) {
     >
       <header className="activities-view__header">
         <div>
-          <p className="activities-view__eyebrow">Atendimento omnichannel</p>
+          <p className="activities-view__eyebrow">
+            {t("Atendimento omnichannel")}
+          </p>
           <h1 id="communication-title">
             <Headset aria-hidden="true" />
-            Comunicação integrada
+            {t("Comunicação integrada")}
           </h1>
-          <p>Acesse o NEO Interact para realizar seu atendimento.</p>
+          <p>{t("Acesse o NEO Interact para realizar seu atendimento.")}</p>
         </div>
         {configuration.status === "ready" ? (
           <a
@@ -72,28 +76,31 @@ export function CommunicationView({ accessToken }: { accessToken?: string }) {
             rel="noopener noreferrer"
           >
             <ExternalLink aria-hidden="true" />
-            Abrir em outra aba
+            {t("Abrir em outra aba")}
           </a>
         ) : null}
       </header>
       {loading ? (
-        <p role="status">Consultando configuração de comunicação...</p>
+        <p role="status">{t("Consultando configuração de comunicação...")}</p>
       ) : configuration.status === "ready" ? (
         <>
           {configuration.mode === "tab" ? (
             <div className="companies-view__empty" role="status">
-              <strong>Comunicação configurada para abrir em outra aba</strong>
+              <strong>
+                {t("Comunicação configurada para abrir em outra aba")}
+              </strong>
               <span>
-                Use “Abrir em outra aba” e entre com suas credenciais do NEO
-                Interact. A aba de atendimento permanece aberta enquanto você
-                navega pelo CRM.
+                {t(
+                  "Use “Abrir em outra aba” e entre com suas credenciais do NEO Interact. A aba de atendimento permanece aberta enquanto você navega pelo CRM."
+                )}
               </span>
             </div>
           ) : (
             <>
               <p className="communication-view__notice">
-                Entre com suas credenciais do NEO Interact. Se o navegador ou o
-                serviço impedir a abertura integrada, use “Abrir em outra aba”.
+                {t(
+                  "Entre com suas credenciais do NEO Interact. Se o navegador ou o serviço impedir a abertura integrada, use “Abrir em outra aba”."
+                )}
               </p>
               <EmbeddedFrame
                 key={configuration.application.src}
@@ -106,12 +113,13 @@ export function CommunicationView({ accessToken }: { accessToken?: string }) {
         <div className="companies-view__empty" role="status">
           <strong>
             {configuration.status === "disabled"
-              ? "Comunicação ainda não configurada"
-              : "Configuração de comunicação indisponível"}
+              ? t("Comunicação ainda não configurada")
+              : t("Configuração de comunicação indisponível")}
           </strong>
           <span>
-            Solicite ao administrador a configuração do endereço do NEO Interact
-            para este ambiente.
+            {t(
+              "Solicite ao administrador a configuração do endereço do NEO Interact para este ambiente."
+            )}
           </span>
         </div>
       )}

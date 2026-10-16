@@ -9,6 +9,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { OpportunityItemsPanel, formatMoney } from "./opportunity-items-panel";
+import { useTranslation } from "../../i18n/language-provider";
 
 type OpportunityRecord = {
   id: string;
@@ -139,6 +140,7 @@ export function OpportunitiesView({
   canWrite,
   canMove = false,
 }: OpportunitiesViewProps) {
+  const { t } = useTranslation();
   const [opportunities, setOpportunities] = useState<OpportunityRecord[]>([]);
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
@@ -313,7 +315,7 @@ export function OpportunitiesView({
       !form.stageId ||
       !estimatedValue
     ) {
-      setError("Preencha os campos obrigatórios da oportunidade.");
+      setError(t("Preencha os campos obrigatórios da oportunidade."));
       return;
     }
 
@@ -365,7 +367,7 @@ export function OpportunitiesView({
       stage => stage.id === opportunity.stageId
     );
     if ((currentStage?.kind ?? "OPEN") !== "OPEN") {
-      setError("Oportunidades ganhas ou perdidas não podem ser reabertas.");
+      setError(t("Oportunidades ganhas ou perdidas não podem ser reabertas."));
       return;
     }
 
@@ -486,7 +488,7 @@ export function OpportunitiesView({
     const [customerType, customerId] = editForm.customer.split(":", 2);
 
     if (!title || !estimatedValue || !customerId) {
-      setError("Preencha os campos obrigatórios da oportunidade.");
+      setError(t("Preencha os campos obrigatórios da oportunidade."));
       return;
     }
 
@@ -531,7 +533,7 @@ export function OpportunitiesView({
     }
 
     if (Object.keys(payload).length === 1) {
-      setError("Altere pelo menos um campo antes de salvar.");
+      setError(t("Altere pelo menos um campo antes de salvar."));
       return;
     }
 
@@ -570,9 +572,13 @@ export function OpportunitiesView({
     >
       <header className="opportunities-view__header">
         <div>
-          <p className="opportunities-view__eyebrow">Pipeline comercial</p>
-          <h1 id="opportunities-title">Oportunidades</h1>
-          <p>Acompanhe as negociações comerciais em uma visão objetiva.</p>
+          <p className="opportunities-view__eyebrow">
+            {t("Pipeline comercial")}
+          </p>
+          <h1 id="opportunities-title">{t("Oportunidades")}</h1>
+          <p>
+            {t("Acompanhe as negociações comerciais em uma visão objetiva.")}
+          </p>
         </div>
         {canWrite ? (
           <button
@@ -580,7 +586,7 @@ export function OpportunitiesView({
             type="button"
             onClick={() => void openCreate()}
           >
-            Nova oportunidade
+            {t("Nova oportunidade")}
           </button>
         ) : null}
       </header>
@@ -588,11 +594,11 @@ export function OpportunitiesView({
       {canWrite && createOpen ? (
         <form
           className="opportunities-view__create"
-          aria-label="Nova oportunidade"
+          aria-label={t("Nova oportunidade")}
           onSubmit={event => void submitOpportunity(event)}
         >
           <label>
-            <span>Título</span>
+            <span>{t("Título")}</span>
             <input
               name="title"
               type="text"
@@ -604,7 +610,7 @@ export function OpportunitiesView({
             />
           </label>
           <label>
-            <span>Cliente</span>
+            <span>{t("Cliente")}</span>
             <select
               name="customer"
               value={form.customer}
@@ -616,9 +622,9 @@ export function OpportunitiesView({
               }
               required
             >
-              <option value="">Selecione o cliente</option>
+              <option value="">{t("Selecione o cliente")}</option>
               {companies.length > 0 ? (
-                <optgroup label="Empresas">
+                <optgroup label={t("Empresas")}>
                   {companies.map(company => (
                     <option key={company.id} value={`company:${company.id}`}>
                       {company.tradeName || company.legalName}
@@ -627,7 +633,7 @@ export function OpportunitiesView({
                 </optgroup>
               ) : null}
               {contacts.length > 0 ? (
-                <optgroup label="Contatos">
+                <optgroup label={t("Contatos")}>
                   {contacts.map(contact => (
                     <option key={contact.id} value={`contact:${contact.id}`}>
                       {contact.fullName}
@@ -638,7 +644,7 @@ export function OpportunitiesView({
             </select>
           </label>
           <label>
-            <span>Funil</span>
+            <span>{t("Funil")}</span>
             <select
               name="pipelineId"
               value={form.pipelineId}
@@ -651,7 +657,7 @@ export function OpportunitiesView({
               }
               required
             >
-              <option value="">Selecione o funil</option>
+              <option value="">{t("Selecione o funil")}</option>
               {pipelines.map(pipeline => (
                 <option key={pipeline.id} value={pipeline.id}>
                   {pipeline.name}
@@ -660,7 +666,7 @@ export function OpportunitiesView({
             </select>
           </label>
           <label>
-            <span>Etapa</span>
+            <span>{t("Etapa")}</span>
             <select
               name="stageId"
               value={form.stageId}
@@ -672,7 +678,7 @@ export function OpportunitiesView({
               }
               required
             >
-              <option value="">Selecione a etapa</option>
+              <option value="">{t("Selecione a etapa")}</option>
               {selectedPipeline?.stages.map(stage => (
                 <option key={stage.id} value={stage.id}>
                   {stage.name}
@@ -681,7 +687,7 @@ export function OpportunitiesView({
             </select>
           </label>
           <label>
-            <span>Valor estimado</span>
+            <span>{t("Valor estimado")}</span>
             <input
               name="estimatedValue"
               inputMode="decimal"
@@ -696,7 +702,7 @@ export function OpportunitiesView({
             />
           </label>
           <label>
-            <span>Previsão de fechamento</span>
+            <span>{t("Previsão de fechamento")}</span>
             <input
               name="expectedCloseAt"
               type="datetime-local"
@@ -710,7 +716,7 @@ export function OpportunitiesView({
             />
           </label>
           <label>
-            <span>Observações</span>
+            <span>{t("Observações")}</span>
             <textarea
               name="notes"
               value={form.notes}
@@ -721,14 +727,14 @@ export function OpportunitiesView({
           </label>
           <div className="opportunities-view__create-actions">
             <button className="button" type="submit" disabled={submitting}>
-              {submitting ? "Salvando..." : "Salvar oportunidade"}
+              {submitting ? t("Salvando...") : t("Salvar oportunidade")}
             </button>
             <button
               type="button"
               disabled={submitting}
               onClick={() => setCreateOpen(false)}
             >
-              Cancelar
+              {t("Cancelar")}
             </button>
           </div>
         </form>
@@ -739,7 +745,9 @@ export function OpportunitiesView({
         role="search"
         onSubmit={submitSearch}
       >
-        <label htmlFor="opportunities-search">Buscar oportunidades</label>
+        <label htmlFor="opportunities-search">
+          {t("Buscar oportunidades")}
+        </label>
         <div>
           <input
             id="opportunities-search"
@@ -747,46 +755,48 @@ export function OpportunitiesView({
             value={queryInput}
             onChange={event => setQueryInput(event.target.value)}
           />
-          <button type="submit">Buscar</button>
+          <button type="submit">{t("Buscar")}</button>
         </div>
       </form>
 
       <div
         className="opportunities-view__mode"
-        aria-label="Visualização de oportunidades"
+        aria-label={t("Visualização de oportunidades")}
       >
         <button
           type="button"
           aria-pressed={viewMode === "list"}
           onClick={() => setViewMode("list")}
         >
-          Lista
+          {t("Lista")}
         </button>
         <button
           type="button"
           aria-pressed={viewMode === "kanban"}
           onClick={() => setViewMode("kanban")}
         >
-          Funil
+          {t("Funil")}
         </button>
       </div>
 
       {error ? (
         <p className="opportunities-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
       {loading ? (
         <p className="opportunities-view__status">
-          Carregando oportunidades...
+          {t("Carregando oportunidades...")}
         </p>
       ) : null}
 
       {!loading && !error && opportunities.length === 0 ? (
         <div className="opportunities-view__empty">
-          <strong>Nenhuma oportunidade encontrada.</strong>
-          <span>Ajuste a busca ou aguarde novos registros comerciais.</span>
+          <strong>{t("Nenhuma oportunidade encontrada.")}</strong>
+          <span>
+            {t("Ajuste a busca ou aguarde novos registros comerciais.")}
+          </span>
         </div>
       ) : null}
 
@@ -820,7 +830,9 @@ export function OpportunitiesView({
                 <article>
                   <div className="opportunity-card__heading">
                     <div>
-                      <p className="opportunity-card__eyebrow">Oportunidade</p>
+                      <p className="opportunity-card__eyebrow">
+                        {t("Oportunidade")}
+                      </p>
                       <h2>{opportunity.title}</h2>
                     </div>
                     <span
@@ -833,26 +845,28 @@ export function OpportunitiesView({
                   </div>
                   <dl>
                     <div>
-                      <dt>Valor estimado</dt>
+                      <dt>{t("Valor estimado")}</dt>
                       <dd>{formatMoney(opportunity.estimatedValue)}</dd>
                     </div>
                     <div>
-                      <dt>Previsão de fechamento</dt>
+                      <dt>{t("Previsão de fechamento")}</dt>
                       <dd>
                         {opportunity.expectedCloseAt
                           ? dateFormatter.format(
                               new Date(opportunity.expectedCloseAt)
                             )
-                          : "Não informada"}
+                          : t("Não informada")}
                       </dd>
                     </div>
                   </dl>
                   {canMove && opportunityPipeline && !isTerminal ? (
                     <div className="opportunity-card__stage">
                       <label>
-                        <span>Etapa</span>
+                        <span>{t("Etapa")}</span>
                         <select
-                          aria-label={`Etapa de ${opportunity.title}`}
+                          aria-label={t("Etapa de {0}", {
+                            0: opportunity.title,
+                          })}
                           value={selectedStageId}
                           disabled={isMoving}
                           onChange={event =>
@@ -876,13 +890,14 @@ export function OpportunitiesView({
                         }
                         onClick={() => void moveOpportunity(opportunity)}
                       >
-                        {isMoving ? "Movendo..." : "Mover etapa"}
+                        {isMoving ? t("Movendo...") : t("Mover etapa")}
                       </button>
                     </div>
                   ) : null}
                   {isTerminal ? (
                     <p className="opportunity-card__terminal-note">
-                      Oportunidade encerrada em {currentStage?.name}.
+                      {t("Oportunidade encerrada em ")}
+                      {currentStage?.name}.
                     </p>
                   ) : null}
 
@@ -893,8 +908,8 @@ export function OpportunitiesView({
                       onClick={() => void toggleDetails(opportunity)}
                     >
                       {selectedOpportunityId === opportunity.id
-                        ? "Ocultar detalhes"
-                        : "Ver detalhes"}
+                        ? t("Ocultar detalhes")
+                        : t("Ver detalhes")}
                     </button>
                     {canWrite ? (
                       <button
@@ -903,8 +918,8 @@ export function OpportunitiesView({
                         onClick={() => void openEdit(opportunity)}
                       >
                         {editingOpportunityId === opportunity.id
-                          ? "Editando"
-                          : "Editar"}
+                          ? t("Editando")
+                          : t("Editar")}
                       </button>
                     ) : null}
                     <button
@@ -917,41 +932,43 @@ export function OpportunitiesView({
                       }
                     >
                       {itemsOpportunityId === opportunity.id
-                        ? "Ocultar itens"
-                        : "Itens"}
+                        ? t("Ocultar itens")
+                        : t("Itens")}
                     </button>
                   </div>
 
                   {selectedOpportunityId === opportunity.id ? (
                     <section
                       className="opportunity-card__details"
-                      aria-label={`Detalhes de ${opportunity.title}`}
+                      aria-label={t("Detalhes de {0}", {
+                        0: opportunity.title,
+                      })}
                     >
                       <dl>
                         <div>
-                          <dt>Cliente</dt>
+                          <dt>{t("Cliente")}</dt>
                           <dd>{customerName}</dd>
                         </div>
                         <div>
-                          <dt>Funil</dt>
+                          <dt>{t("Funil")}</dt>
                           <dd>
-                            {opportunityPipeline?.name ?? "Não identificado"}
+                            {opportunityPipeline?.name ?? t("Não identificado")}
                           </dd>
                         </div>
                         <div>
-                          <dt>Etapa</dt>
-                          <dd>{currentStage?.name ?? "Não identificada"}</dd>
+                          <dt>{t("Etapa")}</dt>
+                          <dd>{currentStage?.name ?? t("Não identificada")}</dd>
                         </div>
                         <div>
-                          <dt>Responsável</dt>
+                          <dt>{t("Responsável")}</dt>
                           <dd>
                             {opportunity.ownerUserId === ownerUserId
-                              ? "Você"
-                              : "Outro usuário"}
+                              ? t("Você")
+                              : t("Outro usuário")}
                           </dd>
                         </div>
                         <div>
-                          <dt>Atualizada em</dt>
+                          <dt>{t("Atualizada em")}</dt>
                           <dd>
                             {dateFormatter.format(
                               new Date(opportunity.updatedAt)
@@ -960,8 +977,8 @@ export function OpportunitiesView({
                         </div>
                       </dl>
                       <div>
-                        <strong>Observações</strong>
-                        <p>{opportunity.notes || "Sem observações."}</p>
+                        <strong>{t("Observações")}</strong>
+                        <p>{opportunity.notes || t("Sem observações.")}</p>
                       </div>
                     </section>
                   ) : null}
@@ -969,11 +986,11 @@ export function OpportunitiesView({
                   {canWrite && editingOpportunityId === opportunity.id ? (
                     <form
                       className="opportunity-card__edit"
-                      aria-label={`Editar ${opportunity.title}`}
+                      aria-label={t("Editar {0}", { 0: opportunity.title })}
                       onSubmit={event => void submitEdit(event, opportunity)}
                     >
                       <label>
-                        <span>Título</span>
+                        <span>{t("Título")}</span>
                         <input
                           type="text"
                           value={editForm.title}
@@ -987,7 +1004,7 @@ export function OpportunitiesView({
                         />
                       </label>
                       <label>
-                        <span>Cliente</span>
+                        <span>{t("Cliente")}</span>
                         <select
                           value={editForm.customer}
                           onChange={event =>
@@ -998,9 +1015,9 @@ export function OpportunitiesView({
                           }
                           required
                         >
-                          <option value="">Selecione o cliente</option>
+                          <option value="">{t("Selecione o cliente")}</option>
                           {companies.length > 0 ? (
-                            <optgroup label="Empresas">
+                            <optgroup label={t("Empresas")}>
                               {companies.map(item => (
                                 <option
                                   key={item.id}
@@ -1012,7 +1029,7 @@ export function OpportunitiesView({
                             </optgroup>
                           ) : null}
                           {contacts.length > 0 ? (
-                            <optgroup label="Contatos">
+                            <optgroup label={t("Contatos")}>
                               {contacts.map(item => (
                                 <option
                                   key={item.id}
@@ -1026,7 +1043,7 @@ export function OpportunitiesView({
                         </select>
                       </label>
                       <label>
-                        <span>Valor estimado</span>
+                        <span>{t("Valor estimado")}</span>
                         <input
                           inputMode="decimal"
                           value={editForm.estimatedValue}
@@ -1040,7 +1057,7 @@ export function OpportunitiesView({
                         />
                       </label>
                       <label>
-                        <span>Previsão de fechamento</span>
+                        <span>{t("Previsão de fechamento")}</span>
                         <input
                           type="datetime-local"
                           value={editForm.expectedCloseAt}
@@ -1053,7 +1070,7 @@ export function OpportunitiesView({
                         />
                       </label>
                       <label>
-                        <span>Observações</span>
+                        <span>{t("Observações")}</span>
                         <textarea
                           value={editForm.notes}
                           onChange={event =>
@@ -1070,7 +1087,9 @@ export function OpportunitiesView({
                           type="submit"
                           disabled={submitting}
                         >
-                          {submitting ? "Salvando..." : "Salvar alterações"}
+                          {submitting
+                            ? t("Salvando...")
+                            : t("Salvar alterações")}
                         </button>
                         <button
                           type="button"
@@ -1080,7 +1099,7 @@ export function OpportunitiesView({
                             setEditForm(emptyEditForm);
                           }}
                         >
-                          Cancelar
+                          {t("Cancelar")}
                         </button>
                       </div>
                     </form>
@@ -1110,11 +1129,11 @@ export function OpportunitiesView({
       {!loading && !error && viewMode === "kanban" ? (
         <section
           className="opportunities-view__kanban"
-          aria-label="Funil de vendas"
+          aria-label={t("Funil de vendas")}
         >
           {pipelines.length > 1 ? (
             <label className="opportunities-view__pipeline-selector">
-              <span>Funil</span>
+              <span>{t("Funil")}</span>
               <select
                 value={resolvedBoardPipelineId}
                 onChange={event => setBoardPipelineId(event.target.value)}
@@ -1153,7 +1172,7 @@ export function OpportunitiesView({
                     </header>
 
                     {stageOpportunities.length === 0 ? (
-                      <p>Nenhuma oportunidade nesta etapa.</p>
+                      <p>{t("Nenhuma oportunidade nesta etapa.")}</p>
                     ) : (
                       <ul>
                         {stageOpportunities.map(opportunity => {
@@ -1175,7 +1194,7 @@ export function OpportunitiesView({
                                     ? dateFormatter.format(
                                         new Date(opportunity.expectedCloseAt)
                                       )
-                                    : "Sem previsão"}
+                                    : t("Sem previsão")}
                                 </span>
 
                                 <span
@@ -1187,9 +1206,11 @@ export function OpportunitiesView({
                                 {canMove && stageKind === "OPEN" ? (
                                   <div className="opportunity-card__stage">
                                     <label>
-                                      <span>Etapa</span>
+                                      <span>{t("Etapa")}</span>
                                       <select
-                                        aria-label={`Etapa de ${opportunity.title}`}
+                                        aria-label={t("Etapa de {0}", {
+                                          0: opportunity.title,
+                                        })}
                                         value={selectedStageId}
                                         disabled={isMoving}
                                         onChange={event =>
@@ -1220,7 +1241,9 @@ export function OpportunitiesView({
                                         void moveOpportunity(opportunity)
                                       }
                                     >
-                                      {isMoving ? "Movendo..." : "Mover etapa"}
+                                      {isMoving
+                                        ? t("Movendo...")
+                                        : t("Mover etapa")}
                                     </button>
                                   </div>
                                 ) : null}
@@ -1236,7 +1259,7 @@ export function OpportunitiesView({
             </div>
           ) : (
             <p className="opportunities-view__status">
-              Carregando etapas do funil...
+              {t("Carregando etapas do funil...")}
             </p>
           )}
         </section>

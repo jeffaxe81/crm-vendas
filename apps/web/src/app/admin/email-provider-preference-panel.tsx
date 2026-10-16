@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type ProviderCode =
   | "NONE"
@@ -35,6 +36,7 @@ export function EmailProviderPreferencePanel({
 }: {
   accessToken: string;
 }) {
+  const { t } = useTranslation();
   const [preference, setPreference] = useState<Preference | null>(null);
   const [selected, setSelected] = useState<ProviderCode>("NONE");
   const [loading, setLoading] = useState(true);
@@ -103,7 +105,9 @@ export function EmailProviderPreferencePanel({
       );
       setPreference(data);
       setSelected(data.providerCode);
-      setNotice("Preferência salva. Conta não conectada e envio desativado.");
+      setNotice(
+        t("Preferência salva. Conta não conectada e envio desativado.")
+      );
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -117,51 +121,52 @@ export function EmailProviderPreferencePanel({
 
   return (
     <div className="companies-view__card">
-      <h3>Provedor de e-mail da empresa</h3>
+      <h3>{t("Provedor de e-mail da empresa")}</h3>
       <p>
-        Selecione o serviço que será configurado futuramente. Esta escolha não
-        conecta contas, não solicita senhas e não autoriza envio real.
+        {t(
+          "Selecione o serviço que será configurado futuramente. Esta escolha não conecta contas, não solicita senhas e não autoriza envio real."
+        )}
       </p>
-      {loading ? <p role="status">Carregando provedores...</p> : null}
+      {loading ? <p role="status">{t("Carregando provedores...")}</p> : null}
       {error ? (
         <p role="alert">
-          {error}{" "}
+          {t(error)}{" "}
           <button type="button" onClick={() => void reload()} disabled={busy}>
-            Atualizar
+            {t("Atualizar")}
           </button>
         </p>
       ) : null}
-      {notice ? <p role="status">{notice}</p> : null}
+      {notice ? <p role="status">{t(notice)}</p> : null}
       {preference ? (
         <form onSubmit={event => void save(event)}>
-          <label htmlFor="email-provider-choice">Provedor</label>
+          <label htmlFor="email-provider-choice">{t("Provedor")}</label>
           <select
             id="email-provider-choice"
             disabled={busy || loading}
             value={selected}
             onChange={event => setSelected(event.target.value as ProviderCode)}
           >
-            <option value="NONE">Nenhum provedor selecionado</option>
+            <option value="NONE">{t("Nenhum provedor selecionado")}</option>
             {preference.providers.map(provider => (
               <option value={provider.code} key={provider.code}>
-                {provider.label}
+                {t(provider.label)}
               </option>
             ))}
           </select>
           <p>
-            Autorização:{" "}
+            {t("Autorização:")}{" "}
             {preference.providers.find(item => item.code === selected)
-              ?.authMethod ?? "Não aplicável"}
+              ?.authMethod ?? t("Não aplicável")}
           </p>
           <p>
-            Conexão: Não conectada · Envio: Desativado · Versão:{" "}
+            {t("Conexão: Não conectada · Envio: Desativado · Versão:")}{" "}
             {preference.version}
           </p>
           <button
             type="submit"
             disabled={busy || loading || selected === preference.providerCode}
           >
-            {busy ? "Salvando..." : "Salvar preferência"}
+            {busy ? t("Salvando...") : t("Salvar preferência")}
           </button>
         </form>
       ) : null}

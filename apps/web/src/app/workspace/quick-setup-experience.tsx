@@ -11,6 +11,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type Props = {
   session: AuthSessionResponse;
@@ -36,6 +37,7 @@ export function QuickSetupExperience({
   onNavigate,
   openToken,
 }: Props) {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>("loading");
   const [state, setState] = useState<QuickSetupState | null>(null);
   const [busy, setBusy] = useState(false);
@@ -165,17 +167,17 @@ export function QuickSetupExperience({
       <aside
         className="first-access-panel"
         role="dialog"
-        aria-label="Configuração rápida do CRM"
+        aria-label={t("Configuração rápida do CRM")}
         aria-modal="false"
       >
         <p className="first-access-eyebrow">
-          AXE CRM 1.2 · Configuração rápida
+          {t("AXE CRM 1.2 · Configuração rápida")}
         </p>
-        <h2>Configuração temporariamente indisponível</h2>
-        <p role="alert">{error}</p>
+        <h2>{t("Configuração temporariamente indisponível")}</h2>
+        <p role="alert">{t(error)}</p>
         <div className="first-access-actions">
           <button type="button" onClick={() => void load(true)}>
-            Tentar novamente
+            {t("Tentar novamente")}
           </button>
         </div>
       </aside>
@@ -189,24 +191,25 @@ export function QuickSetupExperience({
       <aside
         className="first-access-panel"
         role="dialog"
-        aria-label="Configuração rápida do CRM"
+        aria-label={t("Configuração rápida do CRM")}
         aria-modal="false"
       >
         <p className="first-access-eyebrow">
-          AXE CRM 1.2 · Configuração rápida
+          {t("AXE CRM 1.2 · Configuração rápida")}
         </p>
-        <h2>Configuração concluída</h2>
+        <h2>{t("Configuração concluída")}</h2>
         <p>
-          Perfil {session.membership.role}. O progresso desta organização e
-          usuário está concluído.
+          {t("Perfil ")}
+          {session.membership.role}
+          {t(". O progresso desta organização e usuário está concluído.")}
         </p>
-        {error ? <p role="alert">{error}</p> : null}
+        {error ? <p role="alert">{t(error)}</p> : null}
         <div className="first-access-actions">
           <button type="button" onClick={() => setPhase("idle")}>
-            Fechar
+            {t("Fechar")}
           </button>
           <button type="button" disabled={busy} onClick={() => void reopen()}>
-            Refazer configuração
+            {t("Refazer configuração")}
           </button>
         </div>
       </aside>
@@ -226,21 +229,26 @@ export function QuickSetupExperience({
     <aside
       className="first-access-panel"
       role="dialog"
-      aria-label="Configuração rápida do CRM"
+      aria-label={t("Configuração rápida do CRM")}
       aria-modal="false"
     >
-      <p className="first-access-eyebrow">AXE CRM 1.2 · Configuração rápida</p>
-      <h2>{currentStep.title}</h2>
+      <p className="first-access-eyebrow">
+        {t("AXE CRM 1.2 · Configuração rápida")}
+      </p>
+      <h2>{t(currentStep.title)}</h2>
       <p>
-        Passo {stepIndex + 1} de {state.steps.length} · Perfil{" "}
-        {session.membership.role}
+        {t("Passo ")}
+        {stepIndex + 1}
+        {t(" de ")}
+        {state.steps.length}
+        {t(" · Perfil")} {session.membership.role}
       </p>
       <progress
         value={state.completedSteps.length}
         max={state.steps.length}
-        aria-label="Progresso da configuração rápida"
+        aria-label={t("Progresso da configuração rápida")}
       />
-      <p>{currentStep.description}</p>
+      <p>{t(currentStep.description)}</p>
       <p>{guidance[session.membership.role]}</p>
 
       {destination ? (
@@ -249,27 +257,31 @@ export function QuickSetupExperience({
           className="first-access-link"
           onClick={() => onNavigate(destination)}
         >
-          Abrir {currentStep.title}
+          {t("Abrir ")}
+          {t(currentStep.title)}
         </button>
       ) : null}
 
-      {error ? <p role="alert">{error}</p> : null}
+      {error ? <p role="alert">{t(error)}</p> : null}
 
       <div className="first-access-actions">
         <button type="button" onClick={() => setPhase("idle")}>
-          Fechar
+          {t("Fechar")}
         </button>
         <button
           type="button"
           disabled={busy}
           onClick={() => void completeCurrentStep()}
         >
-          {busy ? "Salvando..." : `Concluir etapa ${currentStep.title}`}
+          {busy
+            ? t("Salvando...")
+            : t("Concluir etapa {0}", { 0: t(currentStep.title) })}
         </button>
       </div>
       <small>
-        O progresso é salvo separadamente das alterações de negócio e pode ser
-        retomado em outro acesso.
+        {t(
+          "O progresso é salvo separadamente das alterações de negócio e pode ser retomado em outro acesso."
+        )}
       </small>
     </aside>
   );

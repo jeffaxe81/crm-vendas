@@ -6,6 +6,8 @@ import {
 } from "@axes/contracts";
 import { useEffect, useState } from "react";
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
+
 const money = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
@@ -32,6 +34,7 @@ export function MonthlySalesChart({
   accessToken: string;
   refreshVersion: number;
 }) {
+  const { t } = useTranslation();
   const [year, setYear] = useState(new Date().getUTCFullYear());
   const [report, setReport] = useState<SalesByMonthReport | null>(null);
   const [error, setError] = useState("");
@@ -68,9 +71,9 @@ export function MonthlySalesChart({
   );
   return (
     <section aria-labelledby="dashboard-sales-title">
-      <h2 id="dashboard-sales-title">Vendas ganhas por mês</h2>
+      <h2 id="dashboard-sales-title">{t("Vendas ganhas por mês")}</h2>
       <label>
-        Ano do gráfico de vendas
+        {t("Ano do gráfico de vendas")}
         <select
           value={year}
           onChange={event => setYear(Number(event.target.value))}
@@ -86,19 +89,20 @@ export function MonthlySalesChart({
         </select>
       </label>
       <p>
-        Valor estimado de oportunidades ganhas por mês da previsão de fechamento
-        (UTC). O ano aplica-se apenas a este gráfico.
+        {t(
+          "Valor estimado de oportunidades ganhas por mês da previsão de fechamento (UTC). O ano aplica-se apenas a este gráfico."
+        )}
       </p>
       {loading ? (
-        <p role="status">Carregando vendas...</p>
+        <p role="status">{t("Carregando vendas...")}</p>
       ) : error ? (
-        <p role="alert">{error}</p>
+        <p role="alert">{t(error)}</p>
       ) : report ? (
         <>
           <ul className="dashboard-bars">
             {report.items.map(item => (
               <li key={item.month}>
-                <span>{months[item.month - 1]}</span>
+                <span>{t(months[item.month - 1])}</span>
                 <strong>
                   {money
                     .format(Number(item.won.value))
@@ -108,12 +112,15 @@ export function MonthlySalesChart({
                   min={0}
                   max={maximum}
                   value={Number(item.won.value)}
-                  aria-label={`${months[item.month - 1]}: ${money.format(Number(item.won.value))}`}
+                  aria-label={`${t(months[item.month - 1])}: ${money.format(Number(item.won.value))}`}
                 />
               </li>
             ))}
           </ul>
-          <p>Dados em {new Date(report.asOf).toLocaleString("pt-BR")}</p>
+          <p>
+            {t("Dados em ")}
+            {new Date(report.asOf).toLocaleString("pt-BR")}
+          </p>
         </>
       ) : null}
     </section>

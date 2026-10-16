@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { dateTime } from "./ticket-labels";
+import { useTranslation } from "../../i18n/language-provider";
 
 type TicketSatisfactionPanelProps = {
   accessToken: string;
@@ -39,6 +40,7 @@ export function TicketSatisfactionPanel({
   canWrite,
   freshLink,
 }: TicketSatisfactionPanelProps) {
+  const { t } = useTranslation();
   const [survey, setSurvey] = useState<TicketSatisfactionSurvey | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [readFailed, setReadFailed] = useState(false);
@@ -121,7 +123,7 @@ export function TicketSatisfactionPanel({
       setCopied(true);
     } catch {
       setError(
-        "Não foi possível copiar; selecione o link e copie manualmente."
+        t("Não foi possível copiar; selecione o link e copie manualmente.")
       );
     }
   }
@@ -139,42 +141,42 @@ export function TicketSatisfactionPanel({
       className="ticket-satisfaction"
       aria-labelledby={`ticket-satisfaction-${ticketId}`}
     >
-      <h3 id={`ticket-satisfaction-${ticketId}`}>Satisfação</h3>
+      <h3 id={`ticket-satisfaction-${ticketId}`}>{t("Satisfação")}</h3>
 
       {error ? (
         <p className="companies-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
       {!loaded || readFailed ? null : survey === null ? (
         <p className="activities-view__status">
-          A pesquisa é criada quando a solicitação é resolvida.
+          {t("A pesquisa é criada quando a solicitação é resolvida.")}
         </p>
       ) : (
         <dl className="ticket-detail__facts">
           <div>
-            <dt>Situação</dt>
-            <dd>{satisfactionStateLabels[survey.state]}</dd>
+            <dt>{t("Situação")}</dt>
+            <dd>{t(satisfactionStateLabels[survey.state])}</dd>
           </div>
           <div>
-            <dt>Nota</dt>
+            <dt>{t("Nota")}</dt>
             <dd>{survey.rating === null ? "—" : `${survey.rating}/5`}</dd>
           </div>
           {survey.respondedAt ? (
             <div>
-              <dt>Respondida em</dt>
+              <dt>{t("Respondida em")}</dt>
               <dd>{dateTime.format(new Date(survey.respondedAt))}</dd>
             </div>
           ) : (
             <div>
-              <dt>Link válido até</dt>
+              <dt>{t("Link válido até")}</dt>
               <dd>{dateTime.format(new Date(survey.expiresAt))}</dd>
             </div>
           )}
           {survey.comment ? (
             <div>
-              <dt>Comentário</dt>
+              <dt>{t("Comentário")}</dt>
               <dd>{survey.comment}</dd>
             </div>
           ) : null}
@@ -184,7 +186,7 @@ export function TicketSatisfactionPanel({
       {link ? (
         <div className="ticket-satisfaction__link">
           <label>
-            <span>Link para o cliente</span>
+            <span>{t("Link para o cliente")}</span>
             <input
               readOnly
               value={link.url}
@@ -192,11 +194,12 @@ export function TicketSatisfactionPanel({
             />
           </label>
           <button type="button" onClick={() => void copyLink()}>
-            {copied ? "Copiado" : "Copiar link"}
+            {copied ? t("Copiado") : t("Copiar link")}
           </button>
           <p className="activities-view__status">
-            Este link é exibido somente agora. Envie ao cliente; gerar um novo
-            invalida o anterior.
+            {t(
+              "Este link é exibido somente agora. Envie ao cliente; gerar um novo invalida o anterior."
+            )}
           </p>
         </div>
       ) : null}
@@ -211,7 +214,7 @@ export function TicketSatisfactionPanel({
             setRefreshVersion(value => value + 1);
           }}
         >
-          Atualizar pesquisa
+          {t("Atualizar pesquisa")}
         </button>
       ) : null}
 
@@ -222,7 +225,7 @@ export function TicketSatisfactionPanel({
           disabled={busy}
           onClick={() => void generateLink()}
         >
-          Gerar link
+          {t("Gerar link")}
         </button>
       ) : null}
     </section>

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
 type ActivityType = "TASK" | "APPOINTMENT";
@@ -101,6 +102,7 @@ export function AgendaView({
   ownerUserId,
   initialFocus = "WEEK",
 }: AgendaViewProps) {
+  const { t } = useTranslation();
   const [refreshVersion, setRefreshVersion] = useState(0);
   const [focus, setFocus] = useState<"WEEK" | "TODAY" | "OVERDUE">(
     initialFocus
@@ -217,16 +219,22 @@ export function AgendaView({
     <section className="activities-view" aria-labelledby="agenda-title">
       <header className="activities-view__header">
         <div>
-          <p className="activities-view__eyebrow">Produtividade comercial</p>
-          <h1 id="agenda-title">Agenda Comercial</h1>
+          <p className="activities-view__eyebrow">
+            {t("Produtividade comercial")}
+          </p>
+          <h1 id="agenda-title">{t("Agenda Comercial")}</h1>
           <p>
-            Acompanhe suas tarefas e compromissos da semana em ordem
-            cronológica.
+            {t(
+              "Acompanhe suas tarefas e compromissos da semana em ordem cronológica."
+            )}
           </p>
         </div>
       </header>
 
-      <nav className="activities-view__status-tabs" aria-label="Foco da agenda">
+      <nav
+        className="activities-view__status-tabs"
+        aria-label={t("Foco da agenda")}
+      >
         {(
           [
             ["WEEK", "Semana"],
@@ -244,7 +252,7 @@ export function AgendaView({
               setPage(1);
             }}
           >
-            {label}
+            {t(label)}
           </button>
         ))}
         <button
@@ -255,14 +263,14 @@ export function AgendaView({
             setRefreshVersion(value => value + 1);
           }}
         >
-          Atualizar agenda
+          {t("Atualizar agenda")}
         </button>
       </nav>
 
       {focus === "WEEK" ? (
         <nav
           className="activities-view__status-tabs"
-          aria-label="Período da agenda"
+          aria-label={t("Período da agenda")}
         >
           <button
             type="button"
@@ -271,7 +279,7 @@ export function AgendaView({
               setPage(1);
             }}
           >
-            Anterior
+            {t("Anterior")}
           </button>
           <button
             type="button"
@@ -280,7 +288,7 @@ export function AgendaView({
               setPage(1);
             }}
           >
-            Hoje
+            {t("Hoje")}
           </button>
           <button
             type="button"
@@ -289,22 +297,27 @@ export function AgendaView({
               setPage(1);
             }}
           >
-            Próximo
+            {t("Próximo")}
           </button>
         </nav>
       ) : null}
 
       <p className="activities-view__status">
         {focus === "OVERDUE"
-          ? "Pendências com prazo anterior a hoje."
+          ? t("Pendências com prazo anterior a hoje.")
           : focus === "TODAY"
-            ? `Pendências de ${periodFormatter.format(period.from!)}`
+            ? t("Pendências de {0}", {
+                0: periodFormatter.format(period.from!),
+              })
             : `${periodFormatter.format(period.from!)} a ${periodFormatter.format(period.to)}`}
       </p>
 
-      <div className="activity-form__fields" aria-label="Filtros da agenda">
+      <div
+        className="activity-form__fields"
+        aria-label={t("Filtros da agenda")}
+      >
         <label htmlFor="agenda-type">
-          <span>Tipo</span>
+          <span>{t("Tipo")}</span>
           <select
             id="agenda-type"
             value={type}
@@ -313,14 +326,14 @@ export function AgendaView({
               setPage(1);
             }}
           >
-            <option value="ALL">Todos</option>
-            <option value="TASK">Tarefa</option>
-            <option value="APPOINTMENT">Compromisso</option>
+            <option value="ALL">{t("Todos")}</option>
+            <option value="TASK">{t("Tarefa")}</option>
+            <option value="APPOINTMENT">{t("Compromisso")}</option>
           </select>
         </label>
 
         <label htmlFor="agenda-status">
-          <span>Status</span>
+          <span>{t("Status")}</span>
           <select
             id="agenda-status"
             disabled={focus !== "WEEK"}
@@ -330,15 +343,15 @@ export function AgendaView({
               setPage(1);
             }}
           >
-            <option value="ALL">Todos</option>
-            <option value="PENDING">Pendente</option>
-            <option value="COMPLETED">Concluída</option>
-            <option value="CANCELLED">Cancelada</option>
+            <option value="ALL">{t("Todos")}</option>
+            <option value="PENDING">{t("Pendente")}</option>
+            <option value="COMPLETED">{t("Concluída")}</option>
+            <option value="CANCELLED">{t("Cancelada")}</option>
           </select>
         </label>
 
         <label htmlFor="agenda-priority">
-          <span>Prioridade</span>
+          <span>{t("Prioridade")}</span>
           <select
             id="agenda-priority"
             value={priority}
@@ -347,31 +360,31 @@ export function AgendaView({
               setPage(1);
             }}
           >
-            <option value="ALL">Todas</option>
-            <option value="LOW">Baixa</option>
-            <option value="MEDIUM">Média</option>
-            <option value="HIGH">Alta</option>
+            <option value="ALL">{t("Todas")}</option>
+            <option value="LOW">{t("Baixa")}</option>
+            <option value="MEDIUM">{t("Média")}</option>
+            <option value="HIGH">{t("Alta")}</option>
           </select>
         </label>
       </div>
 
       {error ? (
         <p className="activities-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
       {loading ? (
-        <p className="activities-view__status">Carregando agenda...</p>
+        <p className="activities-view__status">{t("Carregando agenda...")}</p>
       ) : null}
 
       {!loading && !error && grouped.length === 0 ? (
         <p className="activities-view__status">
           {focus === "OVERDUE"
-            ? "Nenhuma atividade pendente atrasada."
+            ? t("Nenhuma atividade pendente atrasada.")
             : focus === "TODAY"
-              ? "Nenhuma atividade pendente para hoje."
-              : "Nenhuma atividade com prazo nesta semana."}
+              ? t("Nenhuma atividade pendente para hoje.")
+              : t("Nenhuma atividade com prazo nesta semana.")}
         </p>
       ) : null}
 
@@ -396,13 +409,13 @@ export function AgendaView({
                         <p>
                           {activity.dueAt
                             ? timeFormatter.format(new Date(activity.dueAt))
-                            : "Sem horário"}
+                            : t("Sem horário")}
                         </p>
                       </div>
                       <div>
-                        <span>{typeLabels[activity.type]}</span>
-                        <span>{priorityLabels[activity.priority]}</span>
-                        <span>{statusLabels[activity.status]}</span>
+                        <span>{t(typeLabels[activity.type])}</span>
+                        <span>{t(priorityLabels[activity.priority])}</span>
+                        <span>{t(statusLabels[activity.status])}</span>
                       </div>
                     </li>
                   ))}
@@ -415,24 +428,28 @@ export function AgendaView({
       {!loading && !error && total > 100 ? (
         <nav
           className="activities-view__status-tabs"
-          aria-label="Páginas da agenda"
+          aria-label={t("Páginas da agenda")}
         >
           <button
             type="button"
             disabled={page === 1}
             onClick={() => setPage(value => value - 1)}
           >
-            Página anterior
+            {t("Página anterior")}
           </button>
           <span role="status">
-            Página {page} de {Math.ceil(total / 100)} · {total} atividades
+            {t("Página ")}
+            {page}
+            {t(" de ")}
+            {Math.ceil(total / 100)} · {total}
+            {t(" atividades")}
           </span>
           <button
             type="button"
             disabled={page * 100 >= total}
             onClick={() => setPage(value => value + 1)}
           >
-            Próxima página
+            {t("Próxima página")}
           </button>
         </nav>
       ) : null}

@@ -4,6 +4,7 @@ import type { ActivityCreateInput, ActivityUpdateInput } from "@axes/contracts";
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
 type ActivityType = "TASK" | "APPOINTMENT";
@@ -105,6 +106,7 @@ export function ActivitiesView({
   ownerUserId,
   canWrite,
 }: ActivitiesViewProps) {
+  const { t } = useTranslation();
   const [activities, setActivities] = useState<ActivityRecord[]>([]);
   const [status, setStatus] = useState<ActivityStatus>("PENDING");
   const [queryInput, setQueryInput] = useState("");
@@ -208,7 +210,7 @@ export function ActivitiesView({
     setError("");
     const title = form.title.trim();
     if (!title) {
-      setError("Informe o título da atividade.");
+      setError(t("Informe o título da atividade."));
       return;
     }
 
@@ -355,16 +357,18 @@ export function ActivitiesView({
     <section className="activities-view" aria-labelledby="activities-title">
       <header className="activities-view__header">
         <div>
-          <p className="activities-view__eyebrow">Rotina comercial</p>
-          <h1 id="activities-title">Atividades e compromissos</h1>
-          <p>Organize tarefas e próximos passos da operação comercial.</p>
+          <p className="activities-view__eyebrow">{t("Rotina comercial")}</p>
+          <h1 id="activities-title">{t("Atividades e compromissos")}</h1>
+          <p>
+            {t("Organize tarefas e próximos passos da operação comercial.")}
+          </p>
         </div>
         {canWrite ? (
           <button
             className="button activities-view__primary"
             onClick={openCreate}
           >
-            Nova atividade
+            {t("Nova atividade")}
           </button>
         ) : null}
       </header>
@@ -377,7 +381,7 @@ export function ActivitiesView({
           setQuery(queryInput.trim());
         }}
       >
-        <label htmlFor="activities-search">Buscar atividades</label>
+        <label htmlFor="activities-search">{t("Buscar atividades")}</label>
         <div>
           <input
             id="activities-search"
@@ -385,13 +389,13 @@ export function ActivitiesView({
             value={queryInput}
             onChange={event => setQueryInput(event.target.value)}
           />
-          <button type="submit">Buscar</button>
+          <button type="submit">{t("Buscar")}</button>
         </div>
       </form>
 
       <nav
         className="activities-view__status-tabs"
-        aria-label="Status das atividades"
+        aria-label={t("Status das atividades")}
       >
         {(Object.keys(statusLabels) as ActivityStatus[]).map(option => (
           <button
@@ -401,36 +405,36 @@ export function ActivitiesView({
             aria-pressed={status === option}
             onClick={() => setStatus(option)}
           >
-            {statusLabels[option]}
+            {t(statusLabels[option])}
           </button>
         ))}
       </nav>
 
       {error ? (
         <p className="activities-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
       {canWrite && formOpen ? (
         <form
           className="activity-form"
-          aria-label="Nova atividade"
+          aria-label={t("Nova atividade")}
           onSubmit={submitActivity}
         >
           <div className="activity-form__heading">
             <div>
-              <p>Novo registro</p>
-              <h2>Nova atividade</h2>
+              <p>{t("Novo registro")}</p>
+              <h2>{t("Nova atividade")}</h2>
             </div>
             <button type="button" onClick={closeForm}>
-              Cancelar
+              {t("Cancelar")}
             </button>
           </div>
 
           <div className="activity-form__fields">
             <label htmlFor="activity-title">
-              <span>Título</span>
+              <span>{t("Título")}</span>
               <input
                 id="activity-title"
                 value={form.title}
@@ -445,7 +449,7 @@ export function ActivitiesView({
             </label>
 
             <label htmlFor="activity-type">
-              <span>Tipo</span>
+              <span>{t("Tipo")}</span>
               <select
                 id="activity-type"
                 value={form.type}
@@ -456,13 +460,13 @@ export function ActivitiesView({
                   }))
                 }
               >
-                <option value="TASK">Tarefa</option>
-                <option value="APPOINTMENT">Compromisso</option>
+                <option value="TASK">{t("Tarefa")}</option>
+                <option value="APPOINTMENT">{t("Compromisso")}</option>
               </select>
             </label>
 
             <label htmlFor="activity-priority">
-              <span>Prioridade</span>
+              <span>{t("Prioridade")}</span>
               <select
                 id="activity-priority"
                 value={form.priority}
@@ -473,14 +477,14 @@ export function ActivitiesView({
                   }))
                 }
               >
-                <option value="LOW">Baixa</option>
-                <option value="MEDIUM">Média</option>
-                <option value="HIGH">Alta</option>
+                <option value="LOW">{t("Baixa")}</option>
+                <option value="MEDIUM">{t("Média")}</option>
+                <option value="HIGH">{t("Alta")}</option>
               </select>
             </label>
 
             <label htmlFor="activity-due-at">
-              <span>Prazo</span>
+              <span>{t("Prazo")}</span>
               <input
                 id="activity-due-at"
                 type="datetime-local"
@@ -495,7 +499,7 @@ export function ActivitiesView({
             </label>
 
             <label htmlFor="activity-company">
-              <span>Empresa</span>
+              <span>{t("Empresa")}</span>
               <select
                 id="activity-company"
                 value={form.companyId}
@@ -506,7 +510,7 @@ export function ActivitiesView({
                   }))
                 }
               >
-                <option value="">Sem empresa</option>
+                <option value="">{t("Sem empresa")}</option>
                 {companies.map(company => (
                   <option key={company.id} value={company.id}>
                     {company.tradeName || company.legalName}
@@ -516,7 +520,7 @@ export function ActivitiesView({
             </label>
 
             <label htmlFor="activity-contact">
-              <span>Contato</span>
+              <span>{t("Contato")}</span>
               <select
                 id="activity-contact"
                 value={form.contactId}
@@ -527,7 +531,7 @@ export function ActivitiesView({
                   }))
                 }
               >
-                <option value="">Sem contato</option>
+                <option value="">{t("Sem contato")}</option>
                 {contacts.map(contact => (
                   <option key={contact.id} value={contact.id}>
                     {contact.fullName}
@@ -540,7 +544,7 @@ export function ActivitiesView({
               className="activity-form__description"
               htmlFor="activity-description"
             >
-              <span>Descrição</span>
+              <span>{t("Descrição")}</span>
               <textarea
                 id="activity-description"
                 rows={4}
@@ -560,13 +564,15 @@ export function ActivitiesView({
             type="submit"
             disabled={submitting}
           >
-            {submitting ? "Salvando..." : "Salvar atividade"}
+            {submitting ? t("Salvando...") : t("Salvar atividade")}
           </button>
         </form>
       ) : null}
 
       {loading ? (
-        <p className="activities-view__status">Carregando atividades...</p>
+        <p className="activities-view__status">
+          {t("Carregando atividades...")}
+        </p>
       ) : null}
 
       {!loading && !error && activities.length > 0 ? (
@@ -584,22 +590,27 @@ export function ActivitiesView({
                 }
               >
                 <div className="activities-view__item-heading">
-                  <span>{typeLabels[activity.type]}</span>
+                  <span>{t(typeLabels[activity.type])}</span>
                   {overdue ? (
-                    <span className="activities-view__overdue">Atrasada</span>
+                    <span className="activities-view__overdue">
+                      {t("Atrasada")}
+                    </span>
                   ) : null}
                 </div>
                 <strong>{activity.title}</strong>
                 {activity.description ? <p>{activity.description}</p> : null}
                 <div className="activities-view__item-meta">
-                  <span>Prioridade: {priorityLabels[activity.priority]}</span>
+                  <span>
+                    {t("Prioridade: ")}
+                    {t(priorityLabels[activity.priority])}
+                  </span>
                   {activity.dueAt ? (
                     <span>
-                      Prazo:{" "}
+                      {t("Prazo:")}{" "}
                       {dateTimeFormatter.format(new Date(activity.dueAt))}
                     </span>
                   ) : (
-                    <span>Sem prazo</span>
+                    <span>{t("Sem prazo")}</span>
                   )}
                 </div>
                 {canWrite && activity.status === "PENDING" ? (
@@ -610,8 +621,8 @@ export function ActivitiesView({
                       onClick={() => void completeActivity(activity.id)}
                     >
                       {transitioningActivityId === activity.id
-                        ? "Concluindo..."
-                        : "Concluir"}
+                        ? t("Concluindo...")
+                        : t("Concluir")}
                     </button>
                     <button
                       type="button"
@@ -619,8 +630,8 @@ export function ActivitiesView({
                       onClick={() => void cancelActivity(activity.id)}
                     >
                       {transitioningActivityId === activity.id
-                        ? "Cancelando..."
-                        : "Cancelar atividade"}
+                        ? t("Cancelando...")
+                        : t("Cancelar atividade")}
                     </button>
                     <button
                       type="button"
@@ -628,8 +639,8 @@ export function ActivitiesView({
                       onClick={() => void inactivateActivity(activity.id)}
                     >
                       {transitioningActivityId === activity.id
-                        ? "Inativando..."
-                        : "Inativar"}
+                        ? t("Inativando...")
+                        : t("Inativar")}
                     </button>
                   </div>
                 ) : null}
@@ -641,8 +652,8 @@ export function ActivitiesView({
                       onClick={() => void reopenActivity(activity.id)}
                     >
                       {transitioningActivityId === activity.id
-                        ? "Reabrindo..."
-                        : "Reabrir"}
+                        ? t("Reabrindo...")
+                        : t("Reabrir")}
                     </button>
                     <button
                       type="button"
@@ -650,8 +661,8 @@ export function ActivitiesView({
                       onClick={() => void inactivateActivity(activity.id)}
                     >
                       {transitioningActivityId === activity.id
-                        ? "Inativando..."
-                        : "Inativar"}
+                        ? t("Inativando...")
+                        : t("Inativar")}
                     </button>
                   </div>
                 ) : null}
@@ -664,9 +675,10 @@ export function ActivitiesView({
       {!loading && !error && activities.length === 0 ? (
         <div className="activities-view__empty">
           <strong>
-            Nenhuma atividade em {statusLabels[status].toLowerCase()}.
+            {t("Nenhuma atividade em ")}
+            {t(statusLabels[status].toLowerCase())}.
           </strong>
-          <span>As atividades deste status aparecerão aqui.</span>
+          <span>{t("As atividades deste status aparecerão aqui.")}</span>
         </div>
       ) : null}
     </section>

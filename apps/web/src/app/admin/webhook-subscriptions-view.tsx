@@ -10,6 +10,7 @@ import {
   type WebhookSubscriptionSummary,
 } from "@axes/contracts";
 import { ApiError, apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 const events: Array<{ value: WebhookEventType; label: string }> = [
   { value: "company.created", label: "Empresa criada" },
@@ -46,6 +47,7 @@ function TenantWebhooks({
   accessToken: string;
   canManage: boolean;
 }) {
+  const { t } = useTranslation();
   const [items, setItems] = useState<WebhookSubscriptionSummary[]>([]);
   const [name, setName] = useState("");
   const [targetUrl, setTargetUrl] = useState("");
@@ -144,7 +146,7 @@ function TenantWebhooks({
       setName("");
       setTargetUrl("");
       setEventTypes([]);
-      setNotice("Webhook criado. Guarde o segredo de assinatura.");
+      setNotice(t("Webhook criado. Guarde o segredo de assinatura."));
     } catch (cause) {
       setError(message(cause, "Falha ao criar webhook."));
     } finally {
@@ -181,14 +183,16 @@ function TenantWebhooks({
       setEditingId(null);
       setConfirmId(null);
       setHistoryId(null);
-      setNotice("Webhook atualizado.");
+      setNotice(t("Webhook atualizado."));
     } catch (cause) {
       if (cause instanceof ApiError && cause.status === 409) {
         setEditingId(null);
         setConfirmId(null);
         setReload(current => current + 1);
         setError(
-          "Webhook alterado por outra sessão. Lista atualizada; revise e tente novamente."
+          t(
+            "Webhook alterado por outra sessão. Lista atualizada; revise e tente novamente."
+          )
         );
       } else {
         setError(message(cause, "Falha ao atualizar webhook."));
@@ -210,7 +214,7 @@ function TenantWebhooks({
       );
       WebhookDispatchSummarySchema.parse(payload);
       setNotice(
-        "Teste enfileirado. Consulte o histórico para conferir a entrega."
+        t("Teste enfileirado. Consulte o histórico para conferir a entrega.")
       );
       setHistoryId(null);
     } catch (cause) {
@@ -222,26 +226,30 @@ function TenantWebhooks({
 
   return (
     <section className="companies-view__card" aria-labelledby="webhooks-title">
-      <h2 id="webhooks-title">Webhooks de saída</h2>
+      <h2 id="webhooks-title">{t("Webhooks de saída")}</h2>
       <p>
-        Notificações HTTPS assinadas para sistemas externos desta organização.
+        {t(
+          "Notificações HTTPS assinadas para sistemas externos desta organização."
+        )}
       </p>
-      {error ? <p role="alert">{error}</p> : null}
-      {notice ? <p role="status">{notice}</p> : null}
+      {error ? <p role="alert">{t(error)}</p> : null}
+      {notice ? <p role="status">{t(notice)}</p> : null}
       {secret ? (
-        <div role="region" aria-label="Segredo do webhook criado">
-          <p>Guarde este segredo agora. Ele não será exibido novamente.</p>
-          <output aria-label="Segredo de assinatura">{secret}</output>
+        <div role="region" aria-label={t("Segredo do webhook criado")}>
+          <p>
+            {t("Guarde este segredo agora. Ele não será exibido novamente.")}
+          </p>
+          <output aria-label={t("Segredo de assinatura")}>{secret}</output>
           <button type="button" onClick={() => setSecret("")}>
-            Já guardei o segredo
+            {t("Já guardei o segredo")}
           </button>
         </div>
       ) : canManage ? (
         <form onSubmit={event => void create(event)}>
           <fieldset disabled={busy || loading}>
-            <legend>Novo webhook</legend>
+            <legend>{t("Novo webhook")}</legend>
             <label>
-              Nome
+              {t("Nome")}
               <input
                 required
                 maxLength={160}
@@ -250,7 +258,7 @@ function TenantWebhooks({
               />
             </label>
             <label>
-              Destino HTTPS
+              {t("Destino HTTPS")}
               <input
                 required
                 type="url"
@@ -261,7 +269,7 @@ function TenantWebhooks({
               />
             </label>
             <fieldset>
-              <legend>Eventos</legend>
+              <legend>{t("Eventos")}</legend>
               {events.map(option => (
                 <label key={option.value} className="workspace-checkbox">
                   <input
@@ -275,12 +283,12 @@ function TenantWebhooks({
                       )
                     }
                   />
-                  {option.label}
+                  {t(option.label)}
                 </label>
               ))}
             </fieldset>
             <button type="submit" disabled={busy || eventTypes.length === 0}>
-              Criar webhook
+              {t("Criar webhook")}
             </button>
           </fieldset>
         </form>
@@ -294,18 +302,18 @@ function TenantWebhooks({
           setReload(value => value + 1);
         }}
       >
-        Atualizar webhooks
+        {t("Atualizar webhooks")}
       </button>
-      {loading ? <p role="status">Carregando webhooks...</p> : null}
+      {loading ? <p role="status">{t("Carregando webhooks...")}</p> : null}
       {!loading && items.length === 0 ? (
-        <p>Nenhum webhook cadastrado.</p>
+        <p>{t("Nenhum webhook cadastrado.")}</p>
       ) : null}
       {!loading && items.length > 0 ? (
         <ul>
           {items.map(item => (
             <li key={item.id}>
               <strong>{item.name}</strong> —{" "}
-              {item.isActive ? "Ativo" : "Inativo"}
+              {item.isActive ? t("Ativo") : t("Inativo")}
               <p>{item.targetUrl}</p>
               <p>{item.eventTypes.join(", ")}</p>
               {canManage && !secret ? (
@@ -314,9 +322,9 @@ function TenantWebhooks({
                     type="button"
                     disabled={busy}
                     onClick={() => beginEdit(item)}
-                    aria-label={`Editar webhook ${item.name}`}
+                    aria-label={t("Editar webhook {0}", { 0: item.name })}
                   >
-                    Editar
+                    {t("Editar")}
                   </button>
                   <button
                     type="button"
@@ -325,17 +333,17 @@ function TenantWebhooks({
                       setEditingId(null);
                       setConfirmId(item.id);
                     }}
-                    aria-label={`${item.isActive ? "Desativar" : "Ativar"} webhook ${item.name}`}
+                    aria-label={`${item.isActive ? t("Desativar") : t("Ativar")} webhook ${item.name}`}
                   >
-                    {item.isActive ? "Desativar" : "Ativar"}
+                    {item.isActive ? t("Desativar") : t("Ativar")}
                   </button>
                   <button
                     type="button"
                     disabled={busy || !item.isActive}
                     onClick={() => void requestTest(item)}
-                    aria-label={`Testar webhook ${item.name}`}
+                    aria-label={t("Testar webhook {0}", { 0: item.name })}
                   >
-                    Testar envio
+                    {t("Testar envio")}
                   </button>
                 </div>
               ) : null}
@@ -347,13 +355,15 @@ function TenantWebhooks({
                     current === item.id ? null : item.id
                   )
                 }
-                aria-label={`Histórico webhook ${item.name}`}
+                aria-label={t("Histórico webhook {0}", { 0: item.name })}
               >
-                {historyId === item.id ? "Ocultar histórico" : "Ver histórico"}
+                {historyId === item.id
+                  ? t("Ocultar histórico")
+                  : t("Ver histórico")}
               </button>
               {canManage && editingId === item.id ? (
                 <form
-                  aria-label={`Editar webhook ${item.name}`}
+                  aria-label={t("Editar webhook {0}", { 0: item.name })}
                   onSubmit={event => {
                     event.preventDefault();
                     if (!editEvents.length) return;
@@ -365,9 +375,9 @@ function TenantWebhooks({
                   }}
                 >
                   <fieldset disabled={busy}>
-                    <legend>Editar assinatura</legend>
+                    <legend>{t("Editar assinatura")}</legend>
                     <label>
-                      Nome da assinatura
+                      {t("Nome da assinatura")}
                       <input
                         required
                         maxLength={160}
@@ -376,7 +386,7 @@ function TenantWebhooks({
                       />
                     </label>
                     <label>
-                      URL da assinatura
+                      {t("URL da assinatura")}
                       <input
                         required
                         type="url"
@@ -386,7 +396,7 @@ function TenantWebhooks({
                       />
                     </label>
                     <fieldset>
-                      <legend>Eventos da assinatura</legend>
+                      <legend>{t("Eventos da assinatura")}</legend>
                       {events.map(option => (
                         <label
                           key={option.value}
@@ -405,15 +415,15 @@ function TenantWebhooks({
                               )
                             }
                           />
-                          {option.label}
+                          {t(option.label)}
                         </label>
                       ))}
                     </fieldset>
                     <button type="submit" disabled={busy || !editEvents.length}>
-                      Salvar alterações
+                      {t("Salvar alterações")}
                     </button>
                     <button type="button" onClick={() => setEditingId(null)}>
-                      Cancelar edição
+                      {t("Cancelar edição")}
                     </button>
                   </fieldset>
                 </form>
@@ -421,12 +431,12 @@ function TenantWebhooks({
               {canManage && confirmId === item.id ? (
                 <div
                   role="group"
-                  aria-label={`Confirmar status de ${item.name}`}
+                  aria-label={t("Confirmar status de {0}", { 0: item.name })}
                 >
                   <p>
                     {item.isActive
-                      ? "Desativar a assinatura e cancelar envios pendentes?"
-                      : "Reativar a assinatura para novos eventos?"}
+                      ? t("Desativar a assinatura e cancelar envios pendentes?")
+                      : t("Reativar a assinatura para novos eventos?")}
                   </p>
                   <button
                     type="button"
@@ -436,27 +446,27 @@ function TenantWebhooks({
                     }
                   >
                     {item.isActive
-                      ? "Confirmar desativação"
-                      : "Confirmar ativação"}
+                      ? t("Confirmar desativação")
+                      : t("Confirmar ativação")}
                   </button>
                   <button
                     type="button"
                     disabled={busy}
                     onClick={() => setConfirmId(null)}
                   >
-                    Cancelar
+                    {t("Cancelar")}
                   </button>
                 </div>
               ) : null}
               {historyId === item.id ? (
-                <section aria-label={`Histórico de ${item.name}`}>
-                  <h3>Últimos envios</h3>
+                <section aria-label={t("Histórico de {0}", { 0: item.name })}>
+                  <h3>{t("Últimos envios")}</h3>
                   {historyLoading ? (
-                    <p role="status">Consultando entregas...</p>
+                    <p role="status">{t("Consultando entregas...")}</p>
                   ) : null}
                   {historyError ? <p role="alert">{historyError}</p> : null}
                   {!historyLoading && history?.length === 0 ? (
-                    <p>Nenhuma entrega registrada.</p>
+                    <p>{t("Nenhuma entrega registrada.")}</p>
                   ) : null}
                   {!historyLoading && history ? (
                     <ul>
@@ -464,11 +474,16 @@ function TenantWebhooks({
                         <li key={dispatch.id}>
                           <strong>{dispatch.eventType}</strong> —{" "}
                           {dispatch.status}
-                          <p>Tentativas: {dispatch.attemptCount}</p>
+                          <p>
+                            {t("Tentativas: ")}
+                            {dispatch.attemptCount}
+                          </p>
                           {dispatch.deliveries.map(delivery => (
                             <p key={delivery.id}>
-                              Tentativa {delivery.attempt}: {delivery.status} —
-                              HTTP {delivery.responseStatus ?? "sem resposta"}
+                              {t("Tentativa ")}
+                              {delivery.attempt}: {delivery.status}
+                              {t(" — HTTP ")}
+                              {delivery.responseStatus ?? "sem resposta"}
                               {delivery.errorCode
                                 ? ` — ${delivery.errorCode}`
                                 : ""}

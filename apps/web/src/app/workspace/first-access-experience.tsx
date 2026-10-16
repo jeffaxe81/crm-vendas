@@ -8,8 +8,11 @@ import {
 } from "@axes/contracts";
 import { useEffect, useState } from "react";
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 const explanations: Record<WorkspaceSection, string> = {
+  "language-settings":
+    "Defina o idioma da empresa e a detecção pelo navegador.",
   home: "Acompanhe seus atalhos, atividades do dia e indicadores mais relevantes.",
   companies: "Cadastre empresas clientes, organize dados e vincule contatos.",
   contacts: "Registre pessoas, telefones, e-mails e vínculos comerciais.",
@@ -68,6 +71,7 @@ export function FirstAccessExperience({
   replayToken,
   onOrganizationNameChange,
 }: Props) {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>("loading");
   const [stage, setStage] = useState(1);
   const [organizationName, setOrganizationName] = useState(
@@ -176,10 +180,11 @@ export function FirstAccessExperience({
   if (phase === "error") {
     return (
       <aside className="first-access-panel" role="status">
-        <h2>Boas-vindas temporariamente indisponíveis</h2>
+        <h2>{t("Boas-vindas temporariamente indisponíveis")}</h2>
         <p>
-          O progresso não foi alterado. Entre novamente para retomar o
-          assistente.
+          {t(
+            "O progresso não foi alterado. Entre novamente para retomar o assistente."
+          )}
         </p>
       </aside>
     );
@@ -192,25 +197,29 @@ export function FirstAccessExperience({
       <aside
         className="first-access-panel"
         role="dialog"
-        aria-label="Configuração inicial da empresa"
+        aria-label={t("Configuração inicial da empresa")}
         aria-modal="false"
       >
         <p className="first-access-eyebrow">
-          AXE CRM 1.1 · Configuração da empresa
+          {t("AXE CRM 1.1 · Configuração da empresa")}
         </p>
-        <h2>{stageNames[stage - 1]}</h2>
-        <p>Etapa {stage} de 4 · somente para o primeiro administrador</p>
+        <h2>{t(stageNames[stage - 1])}</h2>
+        <p>
+          {t("Etapa ")}
+          {stage}
+          {t(" de 4 · somente para o primeiro administrador")}
+        </p>
         <progress
           value={stage}
           max={4}
-          aria-label="Progresso da configuração"
+          aria-label={t("Progresso da configuração")}
         />
-        <p>{stageDetails[stage - 1]}</p>
+        <p>{t(stageDetails[stage - 1])}</p>
         {stage === 1 ? (
           <label className="first-access-field">
-            Nome da organização
+            {t("Nome da organização")}
             <input
-              aria-label="Nome da organização na configuração inicial"
+              aria-label={t("Nome da organização na configuração inicial")}
               value={organizationName}
               onChange={event => setOrganizationName(event.target.value)}
               maxLength={160}
@@ -225,10 +234,11 @@ export function FirstAccessExperience({
             className="first-access-link"
             onClick={() => onNavigate(destination)}
           >
-            Abrir {steps.find(item => item.id === destination)?.label}
+            {t("Abrir ")}
+            {t(steps.find(item => item.id === destination)?.label ?? "")}
           </button>
         ) : null}
-        {error ? <p role="alert">{error}</p> : null}
+        {error ? <p role="alert">{t(error)}</p> : null}
         <div className="first-access-actions">
           <button
             type="button"
@@ -238,15 +248,16 @@ export function FirstAccessExperience({
             }
           >
             {busy
-              ? "Salvando..."
+              ? t("Salvando...")
               : stage === 4
-                ? "Concluir configuração e iniciar tour"
-                : "Salvar e continuar"}
+                ? t("Concluir configuração e iniciar tour")
+                : t("Salvar e continuar")}
           </button>
         </div>
         <small>
-          O progresso é salvo por empresa. Você pode continuar no próximo
-          acesso.
+          {t(
+            "O progresso é salvo por empresa. Você pode continuar no próximo acesso."
+          )}
         </small>
       </aside>
     );
@@ -258,29 +269,34 @@ export function FirstAccessExperience({
     <aside
       className="first-access-panel"
       role="dialog"
-      aria-label="Tour das funcionalidades do CRM"
+      aria-label={t("Tour das funcionalidades do CRM")}
       aria-modal="false"
     >
-      <p className="first-access-eyebrow">AXE CRM 1.1 · Conheça o sistema</p>
-      <h2>{step.label}</h2>
+      <p className="first-access-eyebrow">
+        {t("AXE CRM 1.1 · Conheça o sistema")}
+      </p>
+      <h2>{t(step.label)}</h2>
       <p>
-        Passo {tourIndex + 1} de {steps.length}
+        {t("Passo ")}
+        {tourIndex + 1}
+        {t(" de ")}
+        {steps.length}
       </p>
       <progress
         value={tourIndex + 1}
         max={steps.length}
-        aria-label="Progresso do tour"
+        aria-label={t("Progresso do tour")}
       />
-      <p>{explanations[step.id]}</p>
-      <p>Esta seção está aberta no CRM para você explorar.</p>
-      {error ? <p role="alert">{error}</p> : null}
+      <p>{t(explanations[step.id])}</p>
+      <p>{t("Esta seção está aberta no CRM para você explorar.")}</p>
+      {error ? <p role="alert">{t(error)}</p> : null}
       <div className="first-access-actions">
         <button
           type="button"
           disabled={busy}
           onClick={() => void closeTour("SKIPPED")}
         >
-          Pular tour
+          {t("Pular tour")}
         </button>
         {tourIndex > 0 ? (
           <button
@@ -292,7 +308,7 @@ export function FirstAccessExperience({
               onNavigate(steps[previous]!.id);
             }}
           >
-            Voltar
+            {t("Voltar")}
           </button>
         ) : null}
         <button
@@ -308,12 +324,13 @@ export function FirstAccessExperience({
             }
           }}
         >
-          {tourIndex + 1 === steps.length ? "Concluir tour" : "Próximo"}
+          {tourIndex + 1 === steps.length ? t("Concluir tour") : t("Próximo")}
         </button>
       </div>
       <small>
-        O tour é individual e respeita as permissões do seu perfil. Pode ser
-        reaberto em Ajuda.
+        {t(
+          "O tour é individual e respeita as permissões do seu perfil. Pode ser reaberto em Ajuda."
+        )}
       </small>
     </aside>
   );

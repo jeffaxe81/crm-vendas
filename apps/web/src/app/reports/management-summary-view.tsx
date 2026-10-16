@@ -17,6 +17,7 @@ import { PipelineAnalyticsView } from "./pipeline-analytics-view";
 import { SalesByMonthView } from "./sales-by-month-view";
 import { CsatView } from "./csat-view";
 import { SlaReportView } from "./sla-report-view";
+import { useTranslation } from "../../i18n/language-provider";
 
 export type ReportTab =
   | "summary"
@@ -57,6 +58,7 @@ export function ManagementSummaryView({
   preferenceScope,
   initialTab = "summary",
 }: ManagementSummaryViewProps) {
+  const { t } = useTranslation();
   const workspace = useWorkspace();
   const [refreshVersion, setRefreshVersion] = useState(0);
   const [summary, setSummary] = useState<ManagementSummary | null>(null);
@@ -109,11 +111,12 @@ export function ManagementSummaryView({
     >
       <header className="activities-view__header">
         <div>
-          <p className="activities-view__eyebrow">Visão executiva</p>
-          <h1 id="management-summary-title">Resumo gerencial</h1>
+          <p className="activities-view__eyebrow">{t("Visão executiva")}</p>
+          <h1 id="management-summary-title">{t("Resumo gerencial")}</h1>
           <p>
-            Indicadores consolidados do funil comercial e das atividades da
-            organização.
+            {t(
+              "Indicadores consolidados do funil comercial e das atividades da organização."
+            )}
           </p>
         </div>
       </header>
@@ -123,13 +126,13 @@ export function ManagementSummaryView({
         disabled={loading}
         onClick={() => setRefreshVersion(value => value + 1)}
       >
-        Atualizar painel
+        {t("Atualizar painel")}
       </button>
 
       <div
         className="activities-view__status-tabs"
         role="tablist"
-        aria-label="Relatórios"
+        aria-label={t("Relatórios")}
       >
         {reportTabs.map(option => (
           <button
@@ -141,7 +144,7 @@ export function ManagementSummaryView({
             className={tab === option.id ? "is-active" : undefined}
             onClick={() => setTab(option.id)}
           >
-            {option.label}
+            {t(option.label)}
           </button>
         ))}
       </div>
@@ -212,23 +215,26 @@ export function ManagementSummaryView({
         </div>
       ) : loading && !summary ? (
         <p className="activities-view__status">
-          Carregando resumo gerencial...
+          {t("Carregando resumo gerencial...")}
         </p>
       ) : error && !summary ? (
         <p className="login-form__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : summary ? (
         <>
-          {loading ? <p role="status">Atualizando painel...</p> : null}
+          {loading ? <p role="status">{t("Atualizando painel...")}</p> : null}
           {error ? (
             <p role="alert">
-              {error}. Exibindo o último resumo carregado; tente Atualizar
-              painel novamente.
+              {t(error)}
+              {t(
+                ". Exibindo o último resumo carregado; tente Atualizar painel novamente."
+              )}
             </p>
           ) : null}
           <p className="activities-view__status">
-            Atualizado em {dateTimeFormatter.format(new Date(summary.asOf))}
+            {t("Atualizado em ")}
+            {dateTimeFormatter.format(new Date(summary.asOf))}
           </p>
 
           {workspace ? (
@@ -242,7 +248,7 @@ export function ManagementSummaryView({
                 disabled={workspace.loading || workspace.saving}
                 onClick={() => void workspace.save()}
               >
-                Salvar preferências
+                {t("Salvar preferências")}
               </button>
             </div>
           ) : null}

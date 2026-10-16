@@ -8,6 +8,7 @@ import {
 import { FormEvent, useEffect, useState } from "react";
 
 import { ApiError, apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type PublicSatisfactionFormProps = {
   token: string;
@@ -44,6 +45,7 @@ type Phase = "loading" | "ready" | "done" | "unavailable";
 
 /** C5.4 — formulário público de avaliação (sem login). */
 export function PublicSatisfactionForm({ token }: PublicSatisfactionFormProps) {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>("loading");
   const [info, setInfo] = useState<PublicTicketSatisfaction | null>(null);
   const [rating, setRating] = useState<number | null>(null);
@@ -73,7 +75,7 @@ export function PublicSatisfactionForm({ token }: PublicSatisfactionFormProps) {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (rating === null) {
-      setMessage("Escolha uma nota de 1 a 5.");
+      setMessage(t("Escolha uma nota de 1 a 5."));
       return;
     }
     setBusy(true);
@@ -101,31 +103,32 @@ export function PublicSatisfactionForm({ token }: PublicSatisfactionFormProps) {
     <main className="login-shell">
       <section className="login-card" aria-labelledby="satisfaction-title">
         <p className="login-card__eyebrow">
-          {info ? info.organizationName : "Pesquisa de satisfação"}
+          {info ? info.organizationName : t("Pesquisa de satisfação")}
         </p>
-        <h1 id="satisfaction-title">Avalie o atendimento</h1>
+        <h1 id="satisfaction-title">{t("Avalie o atendimento")}</h1>
 
         {phase === "loading" ? (
-          <p className="login-card__help">Carregando...</p>
+          <p className="login-card__help">{t("Carregando...")}</p>
         ) : phase === "unavailable" ? (
           <p className="login-form__error" role="alert">
-            {message}
+            {t(message)}
           </p>
         ) : phase === "done" ? (
           <p className="login-card__help" role="status">
-            Obrigado! Sua avaliação foi registrada.
+            {t("Obrigado! Sua avaliação foi registrada.")}
           </p>
         ) : info ? (
           <form
             className="login-form"
-            aria-label="Avaliação do atendimento"
+            aria-label={t("Avaliação do atendimento")}
             onSubmit={submit}
           >
             <p className="login-card__help">
-              Protocolo <strong>{info.protocol}</strong> — {info.subject}
+              {t("Protocolo ")}
+              <strong>{info.protocol}</strong> — {info.subject}
             </p>
             <fieldset>
-              <legend>Como você avalia o atendimento?</legend>
+              <legend>{t("Como você avalia o atendimento?")}</legend>
               {ratingOptions.map(option => (
                 <label key={option.value}>
                   <input
@@ -137,13 +140,13 @@ export function PublicSatisfactionForm({ token }: PublicSatisfactionFormProps) {
                     onChange={() => setRating(option.value)}
                   />
                   <span>
-                    {option.value} — {option.label}
+                    {option.value} — {t(option.label)}
                   </span>
                 </label>
               ))}
             </fieldset>
             <label>
-              <span>Comentário (opcional)</span>
+              <span>{t("Comentário (opcional)")}</span>
               <textarea
                 value={comment}
                 maxLength={TICKET_SATISFACTION_COMMENT_MAX}
@@ -153,11 +156,11 @@ export function PublicSatisfactionForm({ token }: PublicSatisfactionFormProps) {
             </label>
             {message ? (
               <p className="login-form__error" role="alert">
-                {message}
+                {t(message)}
               </p>
             ) : null}
             <button type="submit" className="button" disabled={busy}>
-              Enviar avaliação
+              {t("Enviar avaliação")}
             </button>
           </form>
         ) : null}

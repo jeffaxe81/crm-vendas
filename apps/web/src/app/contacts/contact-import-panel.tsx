@@ -7,6 +7,7 @@ import type {
 import { type ChangeEvent, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type ContactImportPanelProps = {
   accessToken: string;
@@ -20,6 +21,7 @@ export function ContactImportPanel({
   onClose,
   onImported,
 }: ContactImportPanelProps) {
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<ContactImportPreview | null>(null);
   const [result, setResult] = useState<ContactImportResult | null>(null);
@@ -88,29 +90,37 @@ export function ContactImportPanel({
   }
 
   return (
-    <section className="company-import" aria-label="Importar contatos por CSV">
+    <section
+      className="company-import"
+      aria-label={t("Importar contatos por CSV")}
+    >
       <div className="company-form__heading">
         <div>
-          <p>Importação</p>
-          <h2>Importar contatos por CSV</h2>
+          <p>{t("Importação")}</p>
+          <h2>{t("Importar contatos por CSV")}</h2>
         </div>
         <button type="button" onClick={onClose}>
-          Fechar
+          {t("Fechar")}
         </button>
       </div>
 
       <p>
-        Colunas aceitas: <code>fullName</code> (obrigatória),{" "}
-        <code>jobTitle</code>, <code>email</code>, <code>phone</code>,{" "}
-        <code>mobile</code>, <code>whatsapp</code>, <code>notes</code> e{" "}
-        <code>companyDocument</code> (documento de uma empresa já cadastrada
-        para vincular o contato). Até 500 linhas.
+        {t("Colunas aceitas: ")}
+        <code>{t("fullName")}</code>
+        {t(" (obrigatória),")} <code>{t("jobTitle")}</code>,{" "}
+        <code>{t("email")}</code>, <code>{t("phone")}</code>,{" "}
+        <code>{t("mobile")}</code>, <code>{t("whatsapp")}</code>,{" "}
+        <code>{t("notes")}</code>
+        {t(" e")} <code>{t("companyDocument")}</code>
+        {t(
+          " (documento de uma empresa já cadastrada para vincular o contato). Até 500 linhas."
+        )}
       </p>
 
       <label>
-        <span>Arquivo CSV</span>
+        <span>{t("Arquivo CSV")}</span>
         <input
-          aria-label="Arquivo CSV de contatos"
+          aria-label={t("Arquivo CSV de contatos")}
           type="file"
           accept=".csv,text/csv"
           disabled={busy}
@@ -120,32 +130,35 @@ export function ContactImportPanel({
 
       {error ? (
         <p className="contacts-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
-      {busy && !preview ? <p>Validando arquivo...</p> : null}
+      {busy && !preview ? <p>{t("Validando arquivo...")}</p> : null}
 
       {preview && !result ? (
         <>
           <p>
-            {preview.valid} válida(s) · {preview.invalid} inválida(s)
+            {preview.valid}
+            {t(" válida(s) · ")}
+            {preview.invalid}
+            {t(" inválida(s)")}
           </p>
           <div
             className="company-import__table-wrapper"
             role="region"
-            aria-label="Tabela: Prévia de contatos"
+            aria-label={t("Tabela: Prévia de contatos")}
             tabIndex={0}
           >
             <table>
               <thead>
                 <tr>
-                  <th>Linha</th>
-                  <th>Contato</th>
-                  <th>E-mail</th>
-                  <th>Empresa</th>
-                  <th>Status</th>
-                  <th>Erros</th>
+                  <th>{t("Linha")}</th>
+                  <th>{t("Contato")}</th>
+                  <th>{t("E-mail")}</th>
+                  <th>{t("Empresa")}</th>
+                  <th>{t("Status")}</th>
+                  <th>{t("Erros")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -159,7 +172,9 @@ export function ContactImportPanel({
                         row.data.companyDocument ??
                         "—"}
                     </td>
-                    <td>{row.status === "VALID" ? "Válida" : "Inválida"}</td>
+                    <td>
+                      {row.status === "VALID" ? t("Válida") : t("Inválida")}
+                    </td>
                     <td>{row.errors.join(" · ") || "—"}</td>
                   </tr>
                 ))}
@@ -172,14 +187,17 @@ export function ContactImportPanel({
             disabled={busy || preview.valid === 0}
             onClick={() => void confirmImport()}
           >
-            {busy ? "Importando..." : "Confirmar importação"}
+            {busy ? t("Importando...") : t("Confirmar importação")}
           </button>
         </>
       ) : null}
 
       {result ? (
         <p role="status">
-          {result.imported} importado(s) · {result.rejected} rejeitado(s)
+          {result.imported}
+          {t(" importado(s) · ")}
+          {result.rejected}
+          {t(" rejeitado(s)")}
         </p>
       ) : null}
     </section>

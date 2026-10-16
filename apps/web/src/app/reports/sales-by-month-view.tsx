@@ -9,6 +9,7 @@ import {
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type SalesByMonthViewProps = {
   accessToken: string;
@@ -115,6 +116,7 @@ function BucketCell({ bucket }: { bucket: SalesByMonthBucket }) {
 }
 
 export function SalesByMonthView({ accessToken }: SalesByMonthViewProps) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState<SalesByMonthFilters>({
     year: defaultYear(),
     pipelineId: "",
@@ -201,19 +203,20 @@ export function SalesByMonthView({ accessToken }: SalesByMonthViewProps) {
 
   return (
     <section className="sales-report" aria-labelledby="sales-by-month-title">
-      <h2 id="sales-by-month-title">Vendas por período mensal</h2>
+      <h2 id="sales-by-month-title">{t("Vendas por período mensal")}</h2>
       <p className="activities-view__status">
-        Oportunidades por mês de previsão de fechamento e situação da etapa,
-        pelo valor estimado.
+        {t(
+          "Oportunidades por mês de previsão de fechamento e situação da etapa, pelo valor estimado."
+        )}
       </p>
 
       <form
         className="sales-report__filters"
-        aria-label="Filtros de vendas por período mensal"
+        aria-label={t("Filtros de vendas por período mensal")}
         onSubmit={applyFilters}
       >
         <label>
-          <span>Ano</span>
+          <span>{t("Ano")}</span>
           <input
             type="number"
             min={2000}
@@ -228,7 +231,7 @@ export function SalesByMonthView({ accessToken }: SalesByMonthViewProps) {
           />
         </label>
         <label>
-          <span>Funil</span>
+          <span>{t("Funil")}</span>
           <select
             value={draft.pipelineId}
             onChange={event =>
@@ -238,7 +241,7 @@ export function SalesByMonthView({ accessToken }: SalesByMonthViewProps) {
               }))
             }
           >
-            <option value="">Todos os funis</option>
+            <option value="">{t("Todos os funis")}</option>
             {pipelines.map(pipeline => (
               <option key={pipeline.id} value={pipeline.id}>
                 {pipeline.name}
@@ -246,9 +249,9 @@ export function SalesByMonthView({ accessToken }: SalesByMonthViewProps) {
             ))}
           </select>
         </label>
-        <button type="submit">Aplicar</button>
+        <button type="submit">{t("Aplicar")}</button>
         <button type="button" onClick={clearFilters}>
-          Limpar
+          {t("Limpar")}
         </button>
       </form>
       {optionsError ? (
@@ -257,11 +260,11 @@ export function SalesByMonthView({ accessToken }: SalesByMonthViewProps) {
 
       {loading ? (
         <p className="activities-view__status">
-          Carregando vendas por período...
+          {t("Carregando vendas por período...")}
         </p>
       ) : error ? (
         <p className="login-form__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : report ? (
         <div className="sales-report__table">
@@ -275,18 +278,18 @@ export function SalesByMonthView({ accessToken }: SalesByMonthViewProps) {
                 )
               }
             >
-              Exportar CSV
+              {t("Exportar CSV")}
             </button>
           </div>
           <table>
             <thead>
               <tr>
-                <th scope="col">Mês</th>
-                <th scope="col">Em aberto</th>
-                <th scope="col">Ganho</th>
-                <th scope="col">Perdido</th>
-                <th scope="col">Total</th>
-                <th scope="col">Conversão</th>
+                <th scope="col">{t("Mês")}</th>
+                <th scope="col">{t("Em aberto")}</th>
+                <th scope="col">{t("Ganho")}</th>
+                <th scope="col">{t("Perdido")}</th>
+                <th scope="col">{t("Total")}</th>
+                <th scope="col">{t("Conversão")}</th>
               </tr>
             </thead>
             <tbody>
@@ -303,7 +306,7 @@ export function SalesByMonthView({ accessToken }: SalesByMonthViewProps) {
             </tbody>
             <tfoot>
               <tr>
-                <th scope="row">Total do ano</th>
+                <th scope="row">{t("Total do ano")}</th>
                 <BucketCell bucket={report.totals.open} />
                 <BucketCell bucket={report.totals.won} />
                 <BucketCell bucket={report.totals.lost} />

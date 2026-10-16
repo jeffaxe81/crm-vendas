@@ -1,4 +1,6 @@
+"use client";
 import type { SlaState, TicketSla } from "@axes/contracts";
+import { useTranslation } from "../../i18n/language-provider";
 
 export const slaStateLabels: Record<SlaState, string> = {
   OK: "No prazo",
@@ -31,12 +33,13 @@ export function worstSlaState(sla: TicketSla | undefined): SlaState | null {
 
 /** C5.3 — indicador visual de SLA; destaca "Em risco" e "Vencido". */
 export function SlaBadge({ state }: { state: SlaState | null }) {
+  const { t } = useTranslation();
   if (state === null) {
-    return <span className="sla-badge sla-badge--none">Sem SLA</span>;
+    return <span className="sla-badge sla-badge--none">{t("Sem SLA")}</span>;
   }
   return (
     <span className={`sla-badge sla-badge--${state.toLowerCase()}`}>
-      {slaStateLabels[state]}
+      {t(slaStateLabels[state])}
     </span>
   );
 }

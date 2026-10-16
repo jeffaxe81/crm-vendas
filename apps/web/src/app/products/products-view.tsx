@@ -8,6 +8,7 @@ import {
   normalizeDecimal,
 } from "../opportunities/opportunity-items-panel";
 import { ProductImportPanel } from "./product-import-panel";
+import { useTranslation } from "../../i18n/language-provider";
 
 type ProductRecord = {
   id: string;
@@ -51,6 +52,7 @@ type ProductListResponse = {
 
 /** C4.3 — catálogo de produtos. */
 export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<ProductRecord[]>([]);
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
@@ -138,7 +140,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
     const name = form.name.trim();
     const unitPrice = normalizeDecimal(form.unitPrice);
     if (!code || !name || !unitPrice) {
-      setError("Informe código, nome e preço.");
+      setError(t("Informe código, nome e preço."));
       return;
     }
 
@@ -209,9 +211,9 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
     <section className="companies-view" aria-labelledby="products-title">
       <header className="companies-view__header">
         <div>
-          <p className="companies-view__eyebrow">Catálogo</p>
-          <h1 id="products-title">Produtos</h1>
-          <p>Produtos e serviços usados para compor oportunidades.</p>
+          <p className="companies-view__eyebrow">{t("Catálogo")}</p>
+          <h1 id="products-title">{t("Produtos")}</h1>
+          <p>{t("Produtos e serviços usados para compor oportunidades.")}</p>
         </div>
         {canWrite ? (
           <div className="companies-view__header-actions">
@@ -222,14 +224,14 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
                 setImportOpen(true);
               }}
             >
-              Importar CSV
+              {t("Importar CSV")}
             </button>
             <button
               type="button"
               className="button companies-view__primary"
               onClick={openCreate}
             >
-              Novo produto
+              {t("Novo produto")}
             </button>
           </div>
         ) : null}
@@ -245,21 +247,21 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
         }}
       >
         <label>
-          <span>Buscar produtos</span>
+          <span>{t("Buscar produtos")}</span>
           <input
             type="search"
-            aria-label="Buscar produtos"
-            placeholder="Código ou nome"
+            aria-label={t("Buscar produtos")}
+            placeholder={t("Código ou nome")}
             value={queryInput}
             onChange={event => setQueryInput(event.target.value)}
           />
         </label>
-        <button type="submit">Buscar</button>
+        <button type="submit">{t("Buscar")}</button>
       </form>
 
       {error ? (
         <p className="companies-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
@@ -274,23 +276,27 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
       {formMode ? (
         <form
           className="company-form"
-          aria-label={formMode === "create" ? "Novo produto" : "Editar produto"}
+          aria-label={
+            formMode === "create" ? t("Novo produto") : t("Editar produto")
+          }
           onSubmit={submit}
         >
           <div className="company-form__heading">
             <div>
-              <p>{formMode === "create" ? "Novo cadastro" : "Edição"}</p>
+              <p>{formMode === "create" ? t("Novo cadastro") : t("Edição")}</p>
               <h2>
-                {formMode === "create" ? "Novo produto" : "Editar produto"}
+                {formMode === "create"
+                  ? t("Novo produto")
+                  : t("Editar produto")}
               </h2>
             </div>
             <button type="button" onClick={closeForm}>
-              Cancelar
+              {t("Cancelar")}
             </button>
           </div>
           <div className="company-form__fields">
             <label>
-              <span>Código</span>
+              <span>{t("Código")}</span>
               <input
                 value={form.code}
                 onChange={event =>
@@ -299,7 +305,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
               />
             </label>
             <label>
-              <span>Nome</span>
+              <span>{t("Nome")}</span>
               <input
                 value={form.name}
                 onChange={event =>
@@ -308,7 +314,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
               />
             </label>
             <label>
-              <span>Preço unitário</span>
+              <span>{t("Preço unitário")}</span>
               <input
                 inputMode="decimal"
                 value={form.unitPrice}
@@ -321,7 +327,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
               />
             </label>
             <label>
-              <span>Descrição</span>
+              <span>{t("Descrição")}</span>
               <input
                 value={form.description}
                 onChange={event =>
@@ -333,7 +339,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
               />
             </label>
             <label>
-              <span>Ativo</span>
+              <span>{t("Ativo")}</span>
               <input
                 type="checkbox"
                 checked={form.isActive}
@@ -347,15 +353,15 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
             </label>
           </div>
           <button className="button" type="submit" disabled={submitting}>
-            {submitting ? "Salvando..." : "Salvar produto"}
+            {submitting ? t("Salvando...") : t("Salvar produto")}
           </button>
         </form>
       ) : null}
 
-      {loading ? <p>Carregando produtos...</p> : null}
+      {loading ? <p>{t("Carregando produtos...")}</p> : null}
 
       {!loading && products.length === 0 ? (
-        <p>Nenhum produto encontrado.</p>
+        <p>{t("Nenhum produto encontrado.")}</p>
       ) : null}
 
       {!loading && products.length > 0 ? (
@@ -363,17 +369,17 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
           <div
             className="company-import__table-wrapper"
             role="region"
-            aria-label="Tabela: Produtos"
+            aria-label={t("Tabela: Produtos")}
             tabIndex={0}
           >
             <table>
               <thead>
                 <tr>
-                  <th>Código</th>
-                  <th>Nome</th>
-                  <th>Preço</th>
-                  <th>Situação</th>
-                  {canWrite ? <th aria-label="Ações" /> : null}
+                  <th>{t("Código")}</th>
+                  <th>{t("Nome")}</th>
+                  <th>{t("Preço")}</th>
+                  <th>{t("Situação")}</th>
+                  {canWrite ? <th aria-label={t("Ações")} /> : null}
                 </tr>
               </thead>
               <tbody>
@@ -382,22 +388,22 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
                     <td>{product.code}</td>
                     <td>{product.name}</td>
                     <td>{formatMoney(product.unitPrice)}</td>
-                    <td>{product.isActive ? "Ativo" : "Inativo"}</td>
+                    <td>{product.isActive ? t("Ativo") : t("Inativo")}</td>
                     {canWrite ? (
                       <td>
                         <button
                           type="button"
                           onClick={() => openEdit(product)}
-                          aria-label={`Editar ${product.name}`}
+                          aria-label={t("Editar {0}", { 0: product.name })}
                         >
-                          Editar
+                          {t("Editar")}
                         </button>
                         <button
                           type="button"
                           onClick={() => void remove(product)}
-                          aria-label={`Excluir ${product.name}`}
+                          aria-label={t("Excluir {0}", { 0: product.name })}
                         >
-                          Excluir
+                          {t("Excluir")}
                         </button>
                       </td>
                     ) : null}
@@ -406,24 +412,30 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
               </tbody>
             </table>
           </div>
-          <nav className="crm-pagination" aria-label="Paginação de produtos">
+          <nav
+            className="crm-pagination"
+            aria-label={t("Paginação de produtos")}
+          >
             <button
               type="button"
               disabled={page <= 1 || loading}
               onClick={() => setPage(current => Math.max(1, current - 1))}
             >
-              Anterior
+              {t("Anterior")}
             </button>
             <span>
-              Página {page} de {Math.max(1, Math.ceil(total / PAGE_SIZE))} ·{" "}
-              {total} produto(s)
+              {t("Página ")}
+              {page}
+              {t(" de ")}
+              {Math.max(1, Math.ceil(total / PAGE_SIZE))} · {total}
+              {t(" produto(s)")}
             </span>
             <button
               type="button"
               disabled={page * PAGE_SIZE >= total || loading}
               onClick={() => setPage(current => current + 1)}
             >
-              Próxima
+              {t("Próxima")}
             </button>
           </nav>
         </>

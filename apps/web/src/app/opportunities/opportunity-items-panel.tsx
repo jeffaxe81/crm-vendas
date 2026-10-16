@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 
 import { ApiError, apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 export type OpportunityItemRecord = {
   id: string;
@@ -84,6 +85,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
   canWrite,
   onOpportunityChange,
 }: OpportunityItemsPanelProps<T>) {
+  const { t } = useTranslation();
   const [items, setItems] = useState<OpportunityItemRecord[]>([]);
   const [products, setProducts] = useState<ProductOption[]>([]);
   const [productQuery, setProductQuery] = useState("");
@@ -187,7 +189,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
   async function addItem(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!productId) {
-      setError("Selecione um produto.");
+      setError(t("Selecione um produto."));
       return;
     }
 
@@ -256,7 +258,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
     const nextUnitPrice = normalizeDecimal(draft.unitPrice);
     const nextDiscount = normalizeDecimal(draft.discountPercent);
     if (!nextQuantity || !nextUnitPrice || !nextDiscount) {
-      setError("Informe quantidade, preço unitário e desconto.");
+      setError(t("Informe quantidade, preço unitário e desconto."));
       return;
     }
 
@@ -291,35 +293,35 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
   return (
     <section
       className="opportunity-items"
-      aria-label={`Itens de ${opportunity.title}`}
+      aria-label={t("Itens de {0}", { 0: opportunity.title })}
     >
-      {loading ? <p>Carregando itens...</p> : null}
+      {loading ? <p>{t("Carregando itens...")}</p> : null}
       {error ? (
         <p className="opportunities-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
       {!loading && items.length === 0 ? (
-        <p>Nenhum item. O valor estimado é informado manualmente.</p>
+        <p>{t("Nenhum item. O valor estimado é informado manualmente.")}</p>
       ) : null}
 
       {items.length > 0 ? (
         <div
           className="crm-table-scroll"
           role="region"
-          aria-label="Itens da oportunidade"
+          aria-label={t("Itens da oportunidade")}
           tabIndex={0}
         >
           <table>
             <thead>
               <tr>
-                <th>Produto</th>
-                <th>Qtd.</th>
-                <th>Preço unit.</th>
-                <th>Desc. %</th>
-                <th>Total</th>
-                {canWrite ? <th aria-label="Ações" /> : null}
+                <th>{t("Produto")}</th>
+                <th>{t("Qtd.")}</th>
+                <th>{t("Preço unit.")}</th>
+                <th>{t("Desc. %")}</th>
+                <th>{t("Total")}</th>
+                {canWrite ? <th aria-label={t("Ações")} /> : null}
               </tr>
             </thead>
             <tbody>
@@ -330,7 +332,9 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
                     <td>
                       <input
                         inputMode="decimal"
-                        aria-label={`Quantidade de ${item.description}`}
+                        aria-label={t("Quantidade de {0}", {
+                          0: item.description,
+                        })}
                         value={draft.quantity}
                         disabled={busy}
                         onChange={event =>
@@ -344,7 +348,9 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
                     <td>
                       <input
                         inputMode="decimal"
-                        aria-label={`Preço unitário de ${item.description}`}
+                        aria-label={t("Preço unitário de {0}", {
+                          0: item.description,
+                        })}
                         value={draft.unitPrice}
                         disabled={busy}
                         onChange={event =>
@@ -358,7 +364,9 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
                     <td>
                       <input
                         inputMode="decimal"
-                        aria-label={`Desconto (%) de ${item.description}`}
+                        aria-label={t("Desconto (%) de {0}", {
+                          0: item.description,
+                        })}
                         value={draft.discountPercent}
                         disabled={busy}
                         onChange={event =>
@@ -375,17 +383,19 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
                         type="button"
                         disabled={busy}
                         onClick={() => void saveItem(item)}
-                        aria-label={`Salvar ${item.description}`}
+                        aria-label={t("Salvar {0}", { 0: item.description })}
                       >
-                        {busy ? "Salvando..." : "Salvar"}
+                        {busy ? t("Salvando...") : t("Salvar")}
                       </button>
                       <button
                         type="button"
                         disabled={busy}
                         onClick={cancelEdit}
-                        aria-label={`Cancelar edição de ${item.description}`}
+                        aria-label={t("Cancelar edição de {0}", {
+                          0: item.description,
+                        })}
                       >
-                        Cancelar
+                        {t("Cancelar")}
                       </button>
                     </td>
                   </tr>
@@ -404,17 +414,17 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
                           type="button"
                           disabled={busy || editingItemId !== null}
                           onClick={() => startEdit(item)}
-                          aria-label={`Editar ${item.description}`}
+                          aria-label={t("Editar {0}", { 0: item.description })}
                         >
-                          Editar
+                          {t("Editar")}
                         </button>
                         <button
                           type="button"
                           disabled={busy || editingItemId !== null}
                           onClick={() => void removeItem(item)}
-                          aria-label={`Remover ${item.description}`}
+                          aria-label={t("Remover {0}", { 0: item.description })}
                         >
-                          Remover
+                          {t("Remover")}
                         </button>
                       </td>
                     ) : null}
@@ -424,7 +434,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
             </tbody>
             <tfoot>
               <tr>
-                <th colSpan={4}>Total da oportunidade</th>
+                <th colSpan={4}>{t("Total da oportunidade")}</th>
                 <td>{formatMoney(opportunity.estimatedValue)}</td>
                 {canWrite ? <td /> : null}
               </tr>
@@ -436,16 +446,16 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
       {canWrite ? (
         <form
           className="opportunity-items__form"
-          aria-label={`Adicionar item em ${opportunity.title}`}
+          aria-label={t("Adicionar item em {0}", { 0: opportunity.title })}
           onSubmit={addItem}
         >
           <label>
-            <span>Buscar produto</span>
+            <span>{t("Buscar produto")}</span>
             <input
               type="search"
               value={productQuery}
               disabled={busy || productSearching}
-              placeholder="Código ou nome"
+              placeholder={t("Código ou nome")}
               onChange={event => setProductQuery(event.target.value)}
             />
           </label>
@@ -454,16 +464,16 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
             disabled={busy || productSearching}
             onClick={() => void searchProducts()}
           >
-            {productSearching ? "Buscando..." : "Buscar produtos"}
+            {productSearching ? t("Buscando...") : t("Buscar produtos")}
           </button>
           <label>
-            <span>Produto</span>
+            <span>{t("Produto")}</span>
             <select
               value={productId}
               disabled={busy || productSearching}
               onChange={event => setProductId(event.target.value)}
             >
-              <option value="">Selecione</option>
+              <option value="">{t("Selecione")}</option>
               {products.map(product => (
                 <option key={product.id} value={product.id}>
                   {product.code} — {product.name} (
@@ -473,7 +483,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
             </select>
           </label>
           <label>
-            <span>Quantidade</span>
+            <span>{t("Quantidade")}</span>
             <input
               inputMode="decimal"
               value={quantity}
@@ -482,7 +492,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
             />
           </label>
           <label>
-            <span>Desconto (%)</span>
+            <span>{t("Desconto (%)")}</span>
             <input
               inputMode="decimal"
               value={discountPercent}
@@ -491,7 +501,7 @@ export function OpportunityItemsPanel<T extends OpportunitySnapshot>({
             />
           </label>
           <button type="submit" className="button" disabled={busy}>
-            {busy ? "Salvando..." : "Adicionar item"}
+            {busy ? t("Salvando...") : t("Adicionar item")}
           </button>
         </form>
       ) : null}

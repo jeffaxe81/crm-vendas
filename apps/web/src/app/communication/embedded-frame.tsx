@@ -9,6 +9,7 @@ import {
   type EmbeddedApplication,
   type FrameSize,
 } from "./embedded-application";
+import { useTranslation } from "../../i18n/language-provider";
 
 export function EmbeddedFrame({
   application,
@@ -17,6 +18,7 @@ export function EmbeddedFrame({
   application: EmbeddedApplication;
   timeoutMs?: number;
 }) {
+  const { t } = useTranslation();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -86,12 +88,20 @@ export function EmbeddedFrame({
           {status === "loading" && `Carregando ${application.name}...`}
           {status === "loaded" &&
             (protocolConfirmed
-              ? "Documento carregado e comunicação de dimensionamento recebida do NEO. Isso não confirma autenticação ou atendimento ativo."
-              : "Documento do iframe carregado; autenticação e funcionamento do NEO ainda não foram confirmados.")}
+              ? t(
+                  "Documento carregado e comunicação de dimensionamento recebida do NEO. Isso não confirma autenticação ou atendimento ativo."
+                )
+              : t(
+                  "Documento do iframe carregado; autenticação e funcionamento do NEO ainda não foram confirmados."
+                ))}
           {status === "timeout" &&
-            "O documento do iframe não informou conclusão de carregamento no prazo. Tente novamente ou abra em outra aba."}
+            t(
+              "O documento do iframe não informou conclusão de carregamento no prazo. Tente novamente ou abra em outra aba."
+            )}
           {status === "error" &&
-            "Não foi possível carregar o NEO Interact. Tente novamente ou abra em outra aba."}
+            t(
+              "Não foi possível carregar o NEO Interact. Tente novamente ou abra em outra aba."
+            )}
         </p>
         <Button
           variant="outline"
@@ -99,14 +109,14 @@ export function EmbeddedFrame({
           onClick={retry}
           aria-label={
             status === "timeout" || status === "error"
-              ? "Tentar novamente"
-              : "Recarregar comunicação"
+              ? t("Tentar novamente")
+              : t("Recarregar comunicação")
           }
         >
           <RefreshCw aria-hidden="true" />
           {status === "timeout" || status === "error"
-            ? "Tentar novamente"
-            : "Recarregar"}
+            ? t("Tentar novamente")
+            : t("Recarregar")}
         </Button>
       </div>
       <div className="communication-frame__viewport">

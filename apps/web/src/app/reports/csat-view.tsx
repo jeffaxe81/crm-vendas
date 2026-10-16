@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { periodBoundary } from "./sales-by-product-view";
+import { useTranslation } from "../../i18n/language-provider";
 
 type CsatViewProps = {
   accessToken: string;
@@ -50,6 +51,7 @@ const RATINGS = ["5", "4", "3", "2", "1"] as const;
 
 /** C5.4 — aba "Satisfação" do Resumo gerencial. */
 export function CsatView({ accessToken }: CsatViewProps) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState<Filters>(emptyFilters);
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [report, setReport] = useState<CsatReport | null>(null);
@@ -100,20 +102,20 @@ export function CsatView({ accessToken }: CsatViewProps) {
 
   return (
     <section className="sales-report" aria-labelledby="csat-title">
-      <h2 id="csat-title">Satisfação do atendimento</h2>
+      <h2 id="csat-title">{t("Satisfação do atendimento")}</h2>
       <p className="activities-view__status">
-        Pesquisas geradas na resolução das solicitações. O período considera a
-        data da primeira resolução; CSAT é o percentual de notas 4 e 5 entre as
-        respondidas.
+        {t(
+          "Pesquisas geradas na resolução das solicitações. O período considera a data da primeira resolução; CSAT é o percentual de notas 4 e 5 entre as respondidas."
+        )}
       </p>
 
       <form
         className="sales-report__filters"
-        aria-label="Filtros de satisfação"
+        aria-label={t("Filtros de satisfação")}
         onSubmit={applyFilters}
       >
         <label>
-          <span>De</span>
+          <span>{t("De")}</span>
           <input
             type="date"
             value={draft.from}
@@ -123,7 +125,7 @@ export function CsatView({ accessToken }: CsatViewProps) {
           />
         </label>
         <label>
-          <span>Até</span>
+          <span>{t("Até")}</span>
           <input
             type="date"
             value={draft.to}
@@ -132,9 +134,9 @@ export function CsatView({ accessToken }: CsatViewProps) {
             }
           />
         </label>
-        <button type="submit">Aplicar</button>
+        <button type="submit">{t("Aplicar")}</button>
         <button type="button" onClick={clearFilters}>
-          Limpar
+          {t("Limpar")}
         </button>
       </form>
       {filterError ? (
@@ -144,51 +146,53 @@ export function CsatView({ accessToken }: CsatViewProps) {
       ) : null}
 
       {loading ? (
-        <p className="activities-view__status">Carregando satisfação...</p>
+        <p className="activities-view__status">
+          {t("Carregando satisfação...")}
+        </p>
       ) : error ? (
         <p className="login-form__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : report && report.sent === 0 ? (
         <p className="activities-view__status">
-          Nenhuma pesquisa de satisfação no período.
+          {t("Nenhuma pesquisa de satisfação no período.")}
         </p>
       ) : report ? (
         <>
           <div
             className="companies-view__grid"
-            aria-label="Indicadores de satisfação"
+            aria-label={t("Indicadores de satisfação")}
           >
             <article className="companies-view__card">
-              <span>CSAT</span>
+              <span>{t("CSAT")}</span>
               <strong>{formatCsatPercent(report.csat)}</strong>
             </article>
             <article className="companies-view__card">
-              <span>Nota média</span>
+              <span>{t("Nota média")}</span>
               <strong>{formatCsatAverage(report.averageRating)}</strong>
             </article>
             <article className="companies-view__card">
-              <span>Enviadas</span>
+              <span>{t("Enviadas")}</span>
               <strong>{report.sent}</strong>
             </article>
             <article className="companies-view__card">
-              <span>Respondidas</span>
+              <span>{t("Respondidas")}</span>
               <strong>{report.responded}</strong>
             </article>
             <article className="companies-view__card">
-              <span>Taxa de resposta</span>
+              <span>{t("Taxa de resposta")}</span>
               <strong>{formatCsatPercent(report.responseRate)}</strong>
             </article>
           </div>
 
           <div className="sales-report__table">
             <table>
-              <caption>Distribuição das notas</caption>
+              <caption>{t("Distribuição das notas")}</caption>
               <thead>
                 <tr>
-                  <th scope="col">Nota</th>
-                  <th scope="col">Respostas</th>
-                  <th scope="col">Participação</th>
+                  <th scope="col">{t("Nota")}</th>
+                  <th scope="col">{t("Respostas")}</th>
+                  <th scope="col">{t("Participação")}</th>
                 </tr>
               </thead>
               <tbody>

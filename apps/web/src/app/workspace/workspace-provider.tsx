@@ -15,6 +15,8 @@ import {
   type AuthSessionResponse,
 } from "@axes/contracts";
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
+
 type WorkspaceState = {
   saved: WorkspacePreferences;
   draft: WorkspacePreferences;
@@ -39,6 +41,7 @@ export function WorkspaceProvider({
   onInitialPreferences?: (value: WorkspacePreferences) => void;
   children: ReactNode;
 }) {
+  const { t } = useTranslation();
   const [saved, setSaved] = useState(createDefaultWorkspacePreferences);
   const [draft, setDraft] = useState(createDefaultWorkspacePreferences);
   const [loading, setLoading] = useState(true);
@@ -72,7 +75,12 @@ export function WorkspaceProvider({
       .catch(cause => {
         if (generation.current === current)
           setError(
-            `Preferências indisponíveis; usando padrão. ${cause instanceof Error ? cause.message : "Tente novamente mais tarde."}`
+            t("Preferências indisponíveis; usando padrão. {0}", {
+              0:
+                cause instanceof Error
+                  ? cause.message
+                  : "Tente novamente mais tarde.",
+            })
           );
       })
       .finally(() => {
@@ -109,7 +117,7 @@ export function WorkspaceProvider({
       if (generation.current === current) {
         setSaved(value);
         setDraft(value);
-        setMessage("Preferências salvas para este usuário e organização.");
+        setMessage(t("Preferências salvas para este usuário e organização."));
       }
     } catch (cause) {
       if (generation.current === current)
@@ -137,7 +145,7 @@ export function WorkspaceProvider({
         restoreDefaults: () => {
           setDraft(createDefaultWorkspacePreferences());
           setMessage(
-            "Padrão restaurado no rascunho; clique Salvar preferências."
+            t("Padrão restaurado no rascunho; clique Salvar preferências.")
           );
         },
       }}

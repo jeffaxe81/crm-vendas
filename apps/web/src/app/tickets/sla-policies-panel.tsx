@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../../lib/api-client";
 import { formatSlaMinutes } from "./sla-labels";
 import { priorityLabels } from "./ticket-labels";
+import { useTranslation } from "../../i18n/language-provider";
 
 type SlaPoliciesPanelProps = {
   accessToken: string;
@@ -47,6 +48,7 @@ export function SlaPoliciesPanel({
   accessToken,
   onClose,
 }: SlaPoliciesPanelProps) {
+  const { t } = useTranslation();
   const [policies, setPolicies] = useState<
     Partial<Record<TicketPriority, SlaPolicy>>
   >({});
@@ -109,12 +111,14 @@ export function SlaPoliciesPanel({
     const resolutionMinutes = positiveInteger(draft.resolutionMinutes);
     setMessage("");
     if (firstResponseMinutes === null || resolutionMinutes === null) {
-      setError("Informe prazos em minutos inteiros maiores que zero.");
+      setError(t("Informe prazos em minutos inteiros maiores que zero."));
       return;
     }
     if (resolutionMinutes < firstResponseMinutes) {
       setError(
-        "O prazo de resolução deve ser maior ou igual ao de primeira resposta."
+        t(
+          "O prazo de resolução deve ser maior ou igual ao de primeira resposta."
+        )
       );
       return;
     }
@@ -134,7 +138,7 @@ export function SlaPoliciesPanel({
       });
       setPolicies(current => ({ ...current, [priority]: saved }));
       setDrafts(current => ({ ...current, [priority]: draftFrom(saved) }));
-      setMessage(`Política ${priorityLabels[priority]} salva.`);
+      setMessage(t("Política {0} salva.", { 0: t(priorityLabels[priority]) }));
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -147,44 +151,44 @@ export function SlaPoliciesPanel({
   }
 
   return (
-    <section className="company-form" aria-label="Políticas de SLA">
+    <section className="company-form" aria-label={t("Políticas de SLA")}>
       <div className="company-form__heading">
         <div>
-          <p>Configuração</p>
-          <h2>Políticas de SLA</h2>
+          <p>{t("Configuração")}</p>
+          <h2>{t("Políticas de SLA")}</h2>
         </div>
         <button type="button" onClick={onClose}>
-          Fechar
+          {t("Fechar")}
         </button>
       </div>
       <p className="activities-view__status">
-        Prazos em minutos corridos (24x7), contados a partir da abertura da
-        solicitação. Alterações valem para novas solicitações e para mudanças de
-        prioridade.
+        {t(
+          "Prazos em minutos corridos (24x7), contados a partir da abertura da solicitação. Alterações valem para novas solicitações e para mudanças de prioridade."
+        )}
       </p>
       {error ? (
         <p className="companies-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
-      {message ? <p role="status">{message}</p> : null}
+      {message ? <p role="status">{t(message)}</p> : null}
       {loading ? (
-        <p>Carregando políticas...</p>
+        <p>{t("Carregando políticas...")}</p>
       ) : (
         <div
           className="company-import__table-wrapper"
           role="region"
-          aria-label="Tabela: Políticas de SLA"
+          aria-label={t("Tabela: Políticas de SLA")}
           tabIndex={0}
         >
           <table>
             <thead>
               <tr>
-                <th scope="col">Prioridade</th>
-                <th scope="col">1ª resposta (min)</th>
-                <th scope="col">Resolução (min)</th>
-                <th scope="col">Ativa</th>
-                <th scope="col">Ação</th>
+                <th scope="col">{t("Prioridade")}</th>
+                <th scope="col">{t("1ª resposta (min)")}</th>
+                <th scope="col">{t("Resolução (min)")}</th>
+                <th scope="col">{t("Ativa")}</th>
+                <th scope="col">{t("Ação")}</th>
               </tr>
             </thead>
             <tbody>
@@ -195,13 +199,15 @@ export function SlaPoliciesPanel({
                 const resolution = positiveInteger(draft.resolutionMinutes);
                 return (
                   <tr key={priority}>
-                    <th scope="row">{label}</th>
+                    <th scope="row">{t(label)}</th>
                     <td>
                       <input
                         type="number"
                         min={1}
                         step={1}
-                        aria-label={`Primeira resposta ${label} (minutos)`}
+                        aria-label={t("Primeira resposta {0} (minutos)", {
+                          0: t(label),
+                        })}
                         value={draft.firstResponseMinutes}
                         onChange={event =>
                           updateDraft(priority, {
@@ -216,7 +222,9 @@ export function SlaPoliciesPanel({
                         type="number"
                         min={1}
                         step={1}
-                        aria-label={`Resolução ${label} (minutos)`}
+                        aria-label={t("Resolução {0} (minutos)", {
+                          0: t(label),
+                        })}
                         value={draft.resolutionMinutes}
                         onChange={event =>
                           updateDraft(priority, {
@@ -231,7 +239,7 @@ export function SlaPoliciesPanel({
                     <td>
                       <input
                         type="checkbox"
-                        aria-label={`Política ${label} ativa`}
+                        aria-label={t("Política {0} ativa", { 0: t(label) })}
                         checked={draft.isActive}
                         onChange={event =>
                           updateDraft(priority, {
@@ -248,8 +256,8 @@ export function SlaPoliciesPanel({
                         onClick={() => void save(priority)}
                       >
                         {saving === priority
-                          ? "Salvando..."
-                          : `Salvar ${label}`}
+                          ? t("Salvando...")
+                          : t("Salvar {0}", { 0: t(label) })}
                       </button>
                     </td>
                   </tr>

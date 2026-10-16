@@ -4,7 +4,10 @@ import { apiRequest } from "../../lib/api-client";
 import { SupportQueuesPanel } from "../tickets/support-queues-panel";
 import { SlaPoliciesPanel } from "../tickets/sla-policies-panel";
 import type { SupportQueueRecord } from "../tickets/ticket-labels";
+import { useTranslation } from "../../i18n/language-provider";
+
 export function SupportSettingsView({ accessToken }: { accessToken: string }) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<"queues" | "sla" | null>(null);
   const [queues, setQueues] = useState<SupportQueueRecord[]>([]);
   const [error, setError] = useState("");
@@ -37,26 +40,26 @@ export function SupportSettingsView({ accessToken }: { accessToken: string }) {
   }, [accessToken, tab, version]);
   return (
     <section className="activities-view">
-      <h1>Configuração de atendimento</h1>
+      <h1>{t("Configuração de atendimento")}</h1>
       <div className="activities-view__status-tabs">
         <button type="button" onClick={() => setTab("queues")}>
-          Filas
+          {t("Filas")}
         </button>
         <button type="button" onClick={() => setTab("sla")}>
-          Políticas de SLA
+          {t("Políticas de SLA")}
         </button>
       </div>
       {error ? (
         <p role="alert">
-          {error}
+          {t(error)}
           <button type="button" onClick={() => setVersion(value => value + 1)}>
-            Tentar novamente
+            {t("Tentar novamente")}
           </button>
         </p>
       ) : null}
       {tab === "queues" && !error ? (
         loading ? (
-          <p>Carregando filas...</p>
+          <p>{t("Carregando filas...")}</p>
         ) : (
           <SupportQueuesPanel
             accessToken={accessToken}

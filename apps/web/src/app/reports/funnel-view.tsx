@@ -9,6 +9,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { periodBoundary } from "./sales-by-product-view";
+import { useTranslation } from "../../i18n/language-provider";
 
 type FunnelViewProps = {
   accessToken: string;
@@ -68,6 +69,7 @@ export function barWidth(opportunities: number, max: number): string {
 }
 
 export function FunnelView({ accessToken }: FunnelViewProps) {
+  const { t } = useTranslation();
   const [pipelines, setPipelines] = useState<PipelineOption[]>([]);
   const [pipelinesLoading, setPipelinesLoading] = useState(true);
   const [pipelineId, setPipelineId] = useState("");
@@ -177,19 +179,20 @@ export function FunnelView({ accessToken }: FunnelViewProps) {
 
   return (
     <section className="sales-report" aria-labelledby="funnel-report-title">
-      <h2 id="funnel-report-title">Funil e conversão</h2>
+      <h2 id="funnel-report-title">{t("Funil e conversão")}</h2>
       <p className="activities-view__status">
-        Oportunidades de cada etapa ativa do funil, na etapa em que estão hoje.
-        O período considera a data de criação da oportunidade.
+        {t(
+          "Oportunidades de cada etapa ativa do funil, na etapa em que estão hoje. O período considera a data de criação da oportunidade."
+        )}
       </p>
 
       <form
         className="sales-report__filters"
-        aria-label="Filtros do funil"
+        aria-label={t("Filtros do funil")}
         onSubmit={applyFilters}
       >
         <label>
-          <span>Funil</span>
+          <span>{t("Funil")}</span>
           <select
             value={pipelineId}
             disabled={pipelinesLoading || pipelines.length === 0}
@@ -203,7 +206,7 @@ export function FunnelView({ accessToken }: FunnelViewProps) {
           </select>
         </label>
         <label>
-          <span>De</span>
+          <span>{t("De")}</span>
           <input
             type="date"
             value={draft.from}
@@ -213,7 +216,7 @@ export function FunnelView({ accessToken }: FunnelViewProps) {
           />
         </label>
         <label>
-          <span>Até</span>
+          <span>{t("Até")}</span>
           <input
             type="date"
             value={draft.to}
@@ -222,9 +225,9 @@ export function FunnelView({ accessToken }: FunnelViewProps) {
             }
           />
         </label>
-        <button type="submit">Aplicar</button>
+        <button type="submit">{t("Aplicar")}</button>
         <button type="button" onClick={clearFilters}>
-          Limpar
+          {t("Limpar")}
         </button>
       </form>
       {filterError ? (
@@ -234,41 +237,41 @@ export function FunnelView({ accessToken }: FunnelViewProps) {
       ) : null}
 
       {pipelinesLoading ? (
-        <p className="activities-view__status">Carregando funis...</p>
+        <p className="activities-view__status">{t("Carregando funis...")}</p>
       ) : error ? (
         <p className="login-form__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : pipelines.length === 0 ? (
         <p className="activities-view__status">
-          Nenhum funil ativo encontrado.
+          {t("Nenhum funil ativo encontrado.")}
         </p>
       ) : loading || !report ? (
-        <p className="activities-view__status">Carregando funil...</p>
+        <p className="activities-view__status">{t("Carregando funil...")}</p>
       ) : (
         <>
           <div
             className="companies-view__grid"
-            aria-label="Indicadores de conversão"
+            aria-label={t("Indicadores de conversão")}
           >
             <article className="companies-view__card">
-              <span>Taxa de ganho</span>
+              <span>{t("Taxa de ganho")}</span>
               <strong>{formatPercent(report.indicators.winRate)}</strong>
             </article>
             <article className="companies-view__card">
-              <span>Valor ganho</span>
+              <span>{t("Valor ganho")}</span>
               <strong>{formatCurrency(report.indicators.wonValue)}</strong>
             </article>
             <article className="companies-view__card">
-              <span>Valor perdido</span>
+              <span>{t("Valor perdido")}</span>
               <strong>{formatCurrency(report.indicators.lostValue)}</strong>
             </article>
             <article className="companies-view__card">
-              <span>Valor em aberto</span>
+              <span>{t("Valor em aberto")}</span>
               <strong>{formatCurrency(report.indicators.openValue)}</strong>
             </article>
             <article className="companies-view__card">
-              <span>Ticket médio ganho</span>
+              <span>{t("Ticket médio ganho")}</span>
               <strong>
                 {formatCurrency(report.indicators.averageWonTicket)}
               </strong>
@@ -277,25 +280,25 @@ export function FunnelView({ accessToken }: FunnelViewProps) {
 
           {report.stages.length === 0 ? (
             <p className="activities-view__status">
-              Este funil não tem etapas ativas.
+              {t("Este funil não tem etapas ativas.")}
             </p>
           ) : (
             <div className="sales-report__table">
               <table>
                 <thead>
                   <tr>
-                    <th scope="col">Etapa</th>
-                    <th scope="col">Tipo</th>
-                    <th scope="col">Oportunidades</th>
-                    <th scope="col">Valor estimado</th>
-                    <th scope="col">Distribuição</th>
+                    <th scope="col">{t("Etapa")}</th>
+                    <th scope="col">{t("Tipo")}</th>
+                    <th scope="col">{t("Oportunidades")}</th>
+                    <th scope="col">{t("Valor estimado")}</th>
+                    <th scope="col">{t("Distribuição")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {report.stages.map(stage => (
                     <tr key={stage.stageId}>
                       <th scope="row">{stage.name}</th>
-                      <td>{stageKindLabels[stage.kind]}</td>
+                      <td>{t(stageKindLabels[stage.kind])}</td>
                       <td>{stage.opportunities}</td>
                       <td>{formatCurrency(stage.value)}</td>
                       <td>
@@ -315,7 +318,7 @@ export function FunnelView({ accessToken }: FunnelViewProps) {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th scope="row">Total</th>
+                    <th scope="row">{t("Total")}</th>
                     <td />
                     <td>{report.totals.opportunities}</td>
                     <td>{formatCurrency(report.totals.value)}</td>
@@ -327,11 +330,12 @@ export function FunnelView({ accessToken }: FunnelViewProps) {
           )}
           {report.inactiveStages.opportunities > 0 ? (
             <p className="activities-view__status">
-              O total inclui {report.inactiveStages.opportunities}{" "}
+              {t("O total inclui ")}
+              {report.inactiveStages.opportunities}{" "}
               {report.inactiveStages.opportunities === 1
                 ? "oportunidade"
                 : "oportunidades"}{" "}
-              em etapas desativadas (
+              {t("em etapas desativadas (")}
               {formatCurrency(report.inactiveStages.value)}).
             </p>
           ) : null}
