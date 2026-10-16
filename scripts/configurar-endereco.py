@@ -66,7 +66,8 @@ def validate_certificate(cert, host):
     flag = '-checkip' if re.fullmatch(r'[0-9.]+', host) else '-checkhost'
     # OpenSSL x509 can return zero even when the hostname does NOT match.
     result = subprocess.run(['openssl', 'x509', '-in', cert, '-noout', flag, host],
-                            check=True, capture_output=True, text=True,
+                            check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            universal_newlines=True,
                             env={**os.environ, 'LC_ALL': 'C'})
     if ' does match certificate' not in result.stdout or 'NOT match' in result.stdout:
         raise ValueError('O certificado TLS nao cobre o novo endereco.')
