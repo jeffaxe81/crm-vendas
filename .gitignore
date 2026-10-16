@@ -131,3 +131,6 @@ backend/.env
 
 # Local, potentially sensitive release validation evidence
 rc-evidence/
+
+# Private address-change configuration backups
+crm-endereco-*/
