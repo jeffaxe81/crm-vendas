@@ -1,4 +1,4 @@
-import { parseApiEnvironment } from "./environment";
+import { buildCorsOrigins, parseApiEnvironment } from "./environment";
 
 const secureEnvironment = {
   NODE_ENV: "test",
@@ -199,5 +199,47 @@ describe("OAuth client registry deployment settings", () => {
       registrations
     );
     expect(environment).not.toHaveProperty("EMAIL_SENDING_ENABLED");
+  });
+});
+
+describe("buildCorsOrigins", () => {
+  const webOrigin = "https://crm.example.com";
+
+  it("uses WEB_ORIGIN when CORS_ORIGINS is undefined", () => {
+    expect(buildCorsOrigins({ WEB_ORIGIN: webOrigin })).toEqual([webOrigin]);
+  });
+
+  it("splits configured origins, trims whitespace and removes empty entries", () => {
+    const environment = parseApiEnvironment({
+      ...secureEnvironment,
+      WEB_ORIGIN: webOrigin,
+      CORS_ORIGINS: " http://localhost:3000, ,http://127.0.0.1:3000, ",
+    });
+    expect(buildCorsOrigins(environment)).toEqual([
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+    ]);
+    expect(environment.WEB_ORIGIN).toBe(webOrigin);
+  });
+
+  it("keeps an explicitly empty list empty", () => {
+    expect(
+      buildCorsOrigins({ WEB_ORIGIN: webOrigin, CORS_ORIGINS: " , " })
+    ).toEqual([]);
+  });
+
+  it("accepts a single production origin", () => {
+    expect(
+      buildCorsOrigins({ WEB_ORIGIN: webOrigin, CORS_ORIGINS: webOrigin })
+    ).toEqual([webOrigin]);
+  });
+
+  it("continues to reject a list in WEB_ORIGIN", () => {
+    expect(() =>
+      parseApiEnvironment({
+        ...secureEnvironment,
+        WEB_ORIGIN: "http://localhost:3000,http://127.0.0.1:3000",
+      })
+    ).toThrow("WEB_ORIGIN");
   });
 });
