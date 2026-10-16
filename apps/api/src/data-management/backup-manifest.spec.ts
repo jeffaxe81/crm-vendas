@@ -19,6 +19,7 @@ function emptySnapshot(organizationId: string): SnapshotData {
     {
       id: organizationId,
       name: "Synthetic A",
+      branding: null,
       slug: "synthetic-a",
       isActive: true,
       onboardingOwnerId: null,

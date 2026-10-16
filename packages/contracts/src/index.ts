@@ -389,3 +389,10 @@ export {
   type OrganizationOnboardingInput,
   type TourCompletionInput,
 } from "./onboarding";
+
+export {
+  TenantBrandingSchema,
+  BrandingLogoSchema,
+  defaultBranding,
+  type TenantBranding,
+} from "./branding";
