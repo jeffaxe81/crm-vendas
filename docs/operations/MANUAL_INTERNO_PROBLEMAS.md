@@ -10,26 +10,26 @@ Registro central dos incidentes relatados pelo responsável, problemas descritos
 
 ## Índice de problemas
 
-| ID | Problema | Estado |
-| --- | --- | --- |
-| CRM-P001 | [CORS bloqueia localhost/127.0.0.1](#crm-p001) | Correção proposta na PR #219; implantação e homologação pendentes. |
-| CRM-P002 | [ZodError após colocar uma lista em WEB_ORIGIN](#crm-p002) | Erro observado; campo exato do ZodError não foi apresentado integralmente. |
-| CRM-P003 | [Failed to fetch com API saudável e URL pública incorreta](#crm-p003) | Ocorrências documentadas; confirmação final no navegador pendente. |
-| CRM-P004 | [Diagnóstico usa rota de saúde incorreta ou roda durante startup](#crm-p004) | Limitação do diagnóstico identificada. |
-| CRM-P005 | [Permissão negada ao ler .env](#crm-p005) | Execução com sudo comprovada; leitura sem sudo não confirmada. |
-| CRM-P006 | [APP_DB_PASSWORD ausente na interpolação do Compose](#crm-p006) | Erro de configuração observado; encerramento não comprovado neste registro. |
-| CRM-P007 | [Bootstrap de administrador bloqueado pelo RLS da auditoria](#crm-p007) | Correção integrada no código; execução no servidor a confirmar. |
-| CRM-P008 | [502 no Nginx por senha divergente da role axes_app](#crm-p008) | Correção de deploy integrada; homologação operacional permanece separada. |
-| CRM-P009 | [Ambiguidade de Compose e possíveis finais CRLF](#crm-p009) | Ambiguidade tratada no repositório; CRLF era agravante possível. |
-| CRM-P010 | [Downloads npm lentos durante build Docker](#crm-p010) | Lentidão observada; causa de rede não encerrada. |
-| CRM-P011 | [Mesmo e-mail impedido em outra empresa](#crm-p011) | Correção integrada na main pela PR #216. |
-| CRM-P012 | [Backup sem operação ou arquivo visível](#crm-p012) | Em investigação no ambiente do responsável. |
-| CRM-P013 | [Recuperação de backups interrompidos e workers obsoletos](#crm-p013) | Correções integradas na main; validação do servidor pendente. |
-| CRM-P014 | [Restauração incompleta e perda de microssegundos](#crm-p014) | Correção interna integrada na PR #213; restauração integral pública não entregue por esse incremento. |
-| CRM-P015 | [Exclusão de backup com proteção desatualizada, polling e UUID](#crm-p015) | Correções integradas na main pela PR #214. |
-| CRM-P016 | [Diagnósticos de deploy com falsos positivos](#crm-p016) | Correções presentes no histórico; não substituem aceite real. |
-| CRM-P017 | [Ambiente de desenvolvimento sem pré-requisitos para testes integrais](#crm-p017) | Limitação registrada; nenhuma nova execução autorizada agora. |
-| CRM-P018 | [Outras regressões e correções técnicas ao longo do projeto](#crm-p018) | Inventariadas por commit; validação operacional não presumida. |
+| ID       | Problema                                                                          | Estado                                                                                                |
+| -------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| CRM-P001 | [CORS bloqueia localhost/127.0.0.1](#crm-p001)                                    | Correção proposta na PR #219; implantação e homologação pendentes.                                    |
+| CRM-P002 | [ZodError após colocar uma lista em WEB_ORIGIN](#crm-p002)                        | Erro observado; campo exato do ZodError não foi apresentado integralmente.                            |
+| CRM-P003 | [Failed to fetch com API saudável e URL pública incorreta](#crm-p003)             | Ocorrências documentadas; confirmação final no navegador pendente.                                    |
+| CRM-P004 | [Diagnóstico usa rota de saúde incorreta ou roda durante startup](#crm-p004)      | Limitação do diagnóstico identificada.                                                                |
+| CRM-P005 | [Permissão negada ao ler .env](#crm-p005)                                         | Execução com sudo comprovada; leitura sem sudo não confirmada.                                        |
+| CRM-P006 | [APP_DB_PASSWORD ausente na interpolação do Compose](#crm-p006)                   | Erro de configuração observado; encerramento não comprovado neste registro.                           |
+| CRM-P007 | [Bootstrap de administrador bloqueado pelo RLS da auditoria](#crm-p007)           | Correção integrada no código; execução no servidor a confirmar.                                       |
+| CRM-P008 | [502 no Nginx por senha divergente da role axes_app](#crm-p008)                   | Correção de deploy integrada; homologação operacional permanece separada.                             |
+| CRM-P009 | [Ambiguidade de Compose e possíveis finais CRLF](#crm-p009)                       | Ambiguidade tratada no repositório; CRLF era agravante possível.                                      |
+| CRM-P010 | [Downloads npm lentos durante build Docker](#crm-p010)                            | Lentidão observada; causa de rede não encerrada.                                                      |
+| CRM-P011 | [Mesmo e-mail impedido em outra empresa](#crm-p011)                               | Correção integrada na main pela PR #216.                                                              |
+| CRM-P012 | [Backup sem operação ou arquivo visível](#crm-p012)                               | Em investigação no ambiente do responsável.                                                           |
+| CRM-P013 | [Recuperação de backups interrompidos e workers obsoletos](#crm-p013)             | Correções integradas na main; validação do servidor pendente.                                         |
+| CRM-P014 | [Restauração incompleta e perda de microssegundos](#crm-p014)                     | Correção interna integrada na PR #213; restauração integral pública não entregue por esse incremento. |
+| CRM-P015 | [Exclusão de backup com proteção desatualizada, polling e UUID](#crm-p015)        | Correções integradas na main pela PR #214.                                                            |
+| CRM-P016 | [Diagnósticos de deploy com falsos positivos](#crm-p016)                          | Correções presentes no histórico; não substituem aceite real.                                         |
+| CRM-P017 | [Ambiente de desenvolvimento sem pré-requisitos para testes integrais](#crm-p017) | Limitação registrada; nenhuma nova execução autorizada agora.                                         |
+| CRM-P018 | [Outras regressões e correções técnicas ao longo do projeto](#crm-p018)           | Inventariadas por commit; validação operacional não presumida.                                        |
 
 <a id="crm-p001"></a>
 

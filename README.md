@@ -315,7 +315,6 @@ Refer to:
 
 _For detailed project status, see [`PROJECT_SUMMARY_DOCUMENTATION_INDEX.md`](./PROJECT_SUMMARY_DOCUMENTATION_INDEX.md)_
 
-
 ## Manual interno de problemas
 
 - [Incidentes, causas, tratamentos e pendências](docs/operations/MANUAL_INTERNO_PROBLEMAS.md).
