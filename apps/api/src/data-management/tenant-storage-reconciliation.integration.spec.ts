@@ -134,7 +134,7 @@ describe("read-only tenant backup object reconciliation", () => {
     expect(await store.read(mismatch.id)).toEqual(Buffer.alloc(20));
   });
 
-  it("paginates every catalog record in bounded batches without crossing tenants", async () => {
+  it("paginates backup records with tenant-scoped cursors", async () => {
     const foreign = await catalogBackup(orgB, 10);
     await owner.backupRecord.createMany({
       data: Array.from({ length: 53 }, (_, index) => ({
@@ -172,15 +172,11 @@ describe("read-only tenant backup object reconciliation", () => {
     expect(new Set(examined).size).toBe(53);
     expect(examined).not.toContain(foreign.id);
 
-    await expect(service.scan(principal(orgA), foreign.id)).rejects.toThrow(
-      "Cursor de conferência inválido."
-    );
-    await expect(
-      service.scan(principal(orgA), "../outside")
-    ).rejects.toThrow("Cursor de conferência inválido.");
-    await expect(
-      service.scan(principal(orgA), randomUUID())
-    ).rejects.toThrow("Cursor de conferência inválido.");
+    for (const invalidCursor of [foreign.id, "../outside", randomUUID()]) {
+      await expect(
+        service.scan(principal(orgA), invalidCursor)
+      ).rejects.toThrow("Cursor de conferência inválido.");
+    }
   });
 
   it("does not imply successful inspection when storage is not configured", async () => {
