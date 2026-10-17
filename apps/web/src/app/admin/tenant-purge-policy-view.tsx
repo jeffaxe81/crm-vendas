@@ -57,11 +57,19 @@ export function TenantPurgePolicyView({
     };
   }, [accessToken]);
 
-  const validRetention = Number.isInteger(retentionDays) && retentionDays >= 30 && retentionDays <= 3650;
+  const validRetention =
+    Number.isInteger(retentionDays) &&
+    retentionDays >= 30 &&
+    retentionDays <= 3650;
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!policy || busy || !validRetention || (enabled && confirmation !== "ATIVAR EXPURGO"))
+    if (
+      !policy ||
+      busy ||
+      !validRetention ||
+      (enabled && confirmation !== "ATIVAR EXPURGO")
+    )
       return;
     const generation = generationRef.current;
     setBusy(true);
@@ -164,7 +172,11 @@ export function TenantPurgePolicyView({
             </p>
             <button
               type="submit"
-              disabled={busy || !validRetention || (enabled && confirmation !== "ATIVAR EXPURGO")}
+              disabled={
+                busy ||
+                !validRetention ||
+                (enabled && confirmation !== "ATIVAR EXPURGO")
+              }
             >
               Salvar política de expurgo
             </button>
