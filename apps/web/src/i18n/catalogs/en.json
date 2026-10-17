@@ -822,6 +822,7 @@
   "O diagnóstico é apenas informativo; bloqueios externos não são resolvidos pelo registro de documentos.": "Diagnostics are informational only; recording documents does not resolve external blockers.",
   "O documento do iframe não informou conclusão de carregamento no prazo. Tente novamente ou abra em outra aba.": "The iframe document did not report loading completion in time. Try again or open in another tab.",
   "O download gera JSON sem criptografia. Guarde o arquivo em local privado e não o compartilhe por canais não autorizados.": "The download creates unencrypted JSON. Store it privately and do not share it through unauthorized channels.",
+  "O painel Backup e recuperação fica em Administração e requer perfil de Superusuário. A restauração efetiva ainda não está disponível.": "The Backup and recovery panel is under Administration and requires Superuser access. Actual restoration is not yet available.",
   "O prazo de resolução deve ser maior ou igual ao de primeira resposta.": "The resolution deadline must be greater than or equal to the first-response deadline.",
   "O progresso é salvo por empresa. Você pode continuar no próximo acesso.": "Progress is saved per company. You can continue next time you sign in.",
   "O progresso é salvo separadamente das alterações de negócio e pode ser retomado em outro acesso.": "Progress is saved separately from business changes and can be resumed next time you sign in.",

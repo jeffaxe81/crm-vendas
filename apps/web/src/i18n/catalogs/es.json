@@ -822,6 +822,7 @@
   "O diagnóstico é apenas informativo; bloqueios externos não são resolvidos pelo registro de documentos.": "El diagnóstico es solo informativo; registrar documentos no resuelve bloqueos externos.",
   "O documento do iframe não informou conclusão de carregamento no prazo. Tente novamente ou abra em outra aba.": "El documento del iframe no informó de la finalización de carga a tiempo. Vuelva a intentarlo o abra otra pestaña.",
   "O download gera JSON sem criptografia. Guarde o arquivo em local privado e não o compartilhe por canais não autorizados.": "La descarga genera JSON sin cifrar. Guárdelo en un lugar privado y no lo comparta por canales no autorizados.",
+  "O painel Backup e recuperação fica em Administração e requer perfil de Superusuário. A restauração efetiva ainda não está disponível.": "El panel Copia de seguridad y recuperación está en Administración y requiere acceso de Superusuario. La restauración efectiva aún no está disponible.",
   "O prazo de resolução deve ser maior ou igual ao de primeira resposta.": "El plazo de resolución debe ser mayor o igual al de primera respuesta.",
   "O progresso é salvo por empresa. Você pode continuar no próximo acesso.": "El progreso se guarda por empresa. Puede continuar en el próximo acceso.",
   "O progresso é salvo separadamente das alterações de negócio e pode ser retomado em outro acesso.": "El progreso se guarda por separado de los cambios de negocio y puede retomarse en otro acceso.",
