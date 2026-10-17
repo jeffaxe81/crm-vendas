@@ -6,7 +6,13 @@ import {
   type DashboardMetricId,
   type DashboardVolume,
 } from "@axes/contracts";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import {
+  compareDashboardVolumes,
+  downloadDashboardVolumeCsv,
+  type DashboardComparison,
+} from "./dashboard-volume-insights";
 
 import { apiRequest } from "../../lib/api-client";
 import { useTranslation } from "../../i18n/language-provider";
@@ -28,6 +34,7 @@ type VolumeState =
       status: "ready";
       catalog: ReturnType<typeof DashboardCatalogSchema.parse>;
       volume: DashboardVolume;
+      comparison: DashboardComparison | null;
     };
 
 /**
@@ -60,6 +67,7 @@ function TenantDashboardVolume({
   const { t } = useTranslation();
   const [revision, setRevision] = useState(0);
   const [state, setState] = useState<VolumeState>({ status: "loading" });
+  const lastSuccessful = useRef<DashboardVolume | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -86,14 +94,21 @@ function TenantDashboardVolume({
         if (parsedVolume.totalActiveRecords !== total) {
           throw new Error("A API retornou totais inconsistentes.");
         }
+        const previous = lastSuccessful.current;
+        const comparison = previous
+          ? compareDashboardVolumes(previous, parsedVolume)
+          : null;
+        lastSuccessful.current = parsedVolume;
         setState({
           status: "ready",
           catalog: parsedCatalog,
           volume: parsedVolume,
+          comparison,
         });
       })
       .catch(cause => {
         if (active) {
+          lastSuccessful.current = null;
           setState({
             status: "error",
             message:
@@ -156,6 +171,43 @@ function TenantDashboardVolume({
               {state.volume.totalActiveRecords.toLocaleString("pt-BR")}
             </strong>
           </p>
+          <button
+            type="button"
+            onClick={() => downloadDashboardVolumeCsv(state.volume)}
+          >
+            {t("Exportar CSV de indicadores")}
+          </button>
+          {state.comparison ? (
+            <section
+              aria-label={t("Comparação com a última consulta da sessão")}
+            >
+              <h3>{t("Variação desde a consulta anterior")}</h3>
+              <p className="activities-view__status">
+                {t("Variação total: ")}
+                <strong>
+                  {state.comparison.totalDelta > 0 ? "+" : ""}
+                  {state.comparison.totalDelta.toLocaleString("pt-BR")}
+                </strong>
+              </p>
+              <ul>
+                {state.catalog.metrics.map(metric => {
+                  const delta =
+                    state.comparison!.delta[metricCountKeys[metric.id]];
+                  return (
+                    <li key={metric.id}>
+                      {t(metric.label)}: {delta > 0 ? "+" : ""}
+                      {delta.toLocaleString("pt-BR")}
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="activities-view__status">
+                {t(
+                  "Comparação apenas entre consultas desta sessão; não constitui série histórica."
+                )}
+              </p>
+            </section>
+          ) : null}
           {state.volume.level !== "normal" ? (
             <p role="status" className="activities-view__status">
               {state.volume.level === "critical"
