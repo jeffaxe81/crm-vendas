@@ -80,14 +80,11 @@ export function TenantStorageAllocationView({
     setError("");
     setNotice("");
     try {
-      const result = await apiRequest<Allocation>(
-        "/admin/storage/allocation",
-        {
-          accessToken,
-          method: "PUT",
-          body: { allocatedGiB: amount, confirmation },
-        }
-      );
+      const result = await apiRequest<Allocation>("/admin/storage/allocation", {
+        accessToken,
+        method: "PUT",
+        body: { allocatedGiB: amount, confirmation },
+      });
       if (generationRef.current !== generation) return;
       setAllocation(result);
       setDesired(result.allocatedGiB?.toString() ?? "");
@@ -132,7 +129,8 @@ export function TenantStorageAllocationView({
               {allocation.allocatedGiB === null
                 ? "não definida"
                 : `${allocation.allocatedGiB} GiB`}
-            </strong>.
+            </strong>
+            .
             {allocation.usagePercent === null
               ? ""
               : ` Utilização: ${allocation.usagePercent}%.`}
@@ -142,8 +140,8 @@ export function TenantStorageAllocationView({
           ) : null}
           {allocation.alertLevel === "EXCEEDED" ? (
             <p role="status">
-              Capacidade de referência atingida ou ultrapassada. Verifique
-              a capacidade física do servidor.
+              Capacidade de referência atingida ou ultrapassada. Verifique a
+              capacidade física do servidor.
             </p>
           ) : null}
           <form onSubmit={event => void save(event)}>
@@ -180,8 +178,8 @@ export function TenantStorageAllocationView({
           </form>
           <p>
             O consumo considera exclusivamente backups concluídos ou aguardando
-            exclusão. Arquivos órfãos, dados do PostgreSQL e outros anexos
-            não estão incluídos.
+            exclusão. Arquivos órfãos, dados do PostgreSQL e outros anexos não
+            estão incluídos.
           </p>
         </>
       )}
