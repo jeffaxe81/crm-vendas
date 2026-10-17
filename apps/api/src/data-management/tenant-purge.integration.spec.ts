@@ -68,14 +68,21 @@ describe("tenant-specific purge policy and isolated execution", () => {
 
   afterAll(async () => {
     if (owner) {
-      await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
+      await owner.$executeRawUnsafe(
+        'TRUNCATE "organizations", "users" CASCADE'
+      );
       await owner.onModuleDestroy();
     }
     await restricted?.onModuleDestroy();
   });
 
   const principal = (organizationId: string) =>
-    ({ organizationId, userId, authMethod: "session", isSuperuser: true }) as AuthenticatedPrincipal;
+    ({
+      organizationId,
+      userId,
+      authMethod: "session",
+      isSuperuser: true,
+    }) as AuthenticatedPrincipal;
 
   async function makePreview(
     organizationId: string,
