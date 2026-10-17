@@ -19,6 +19,7 @@ import { TenantPurgeService } from "./tenant-purge.service";
 import { TenantPurgeRuntime } from "./tenant-purge.runtime";
 import { TenantStorageAllocationController } from "./tenant-storage-allocation.controller";
 import { TenantStorageAllocationService } from "./tenant-storage-allocation.service";
+import { TenantStorageReconciliationService } from "./tenant-storage-reconciliation.service";
 
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
@@ -58,6 +59,7 @@ import { TenantStorageAllocationService } from "./tenant-storage-allocation.serv
     DataPreviewService,
     TenantPurgeService,
     TenantStorageAllocationService,
+    TenantStorageReconciliationService,
     {
       provide: TenantPurgeRuntime,
       inject: [TenantPurgeService],
