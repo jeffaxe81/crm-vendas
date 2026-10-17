@@ -72,6 +72,11 @@ export const TENANT_DATA_REGISTRY: readonly TenantDataPolicy[] = [
     restore: "PRESERVE",
   },
   {
+    ...full("PurgePolicy", "purge_policies", "SECURITY"),
+    export: "EXCLUDE",
+    restore: "PRESERVE",
+  },
+  {
     ...full("Organization", "organizations", "CONFIGURATION"),
     scope: "ORGANIZATION_ROOT",
   },
