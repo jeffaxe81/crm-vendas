@@ -1,6 +1,7 @@
 import "reflect-metadata";
 
 import { NestFactory } from "@nestjs/core";
+import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Logger } from "nestjs-pino";
 
 import { AppModule } from "./app.module";
@@ -9,7 +10,7 @@ import { ApiErrorFilter } from "./errors/api-error.filter";
 
 async function bootstrap() {
   const environment = parseApiEnvironment(process.env);
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
 
