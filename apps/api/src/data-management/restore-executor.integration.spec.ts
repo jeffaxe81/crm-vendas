@@ -558,6 +558,7 @@ describe("transactional tenant restore executor", () => {
         organizationId: target.organization.id,
         pipelineId: target.pipeline.id,
         stageId: target.first.id,
+        companyId: (await companies(target.organization.id))[0]!.id,
         ownerUserId: target.user.id,
         title: "Criada depois do backup",
         estimatedValue: "200.00",
