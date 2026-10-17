@@ -23,7 +23,7 @@ export type TenantPurgePolicyView = {
   enabled: boolean;
   retentionDays: number;
   lastRunAt: string | null;
-  target: "WEBHOOK_DELIVERIES";
+  target: "EXPIRED_OPERATION_PREVIEWS";
   estimatedRecords: number;
   cutoff: string;
 };
@@ -36,8 +36,8 @@ function cutoffDate(now: Date, days: number): Date {
   return new Date(now.getTime() - days * INTERVAL_MS);
 }
 
-/** Tenant-scoped, strictly limited deletion of historical delivery-attempt logs.
- * Does not touch subscriptions, dispatch queue, CRM entities, audit logs or backups.
+/** Tenant-scoped purge of expired operation previews, not business data.
+ * Does not touch active previews, queued jobs, CRM entities, audit logs or backups.
  */
 @Injectable()
 export class TenantPurgeService {
@@ -55,12 +55,10 @@ export class TenantPurgeService {
     const estimatedRecords = await this.prisma.withTenant(
       principal.organizationId,
       tx =>
-        tx.webhookDelivery.count({
+        tx.operationPreview.count({
           where: {
             organizationId: principal.organizationId,
-            createdAt: { lt: cutoff },
-            status: { in: ["DELIVERED", "FAILED"] },
-            dispatch: { status: { in: ["DELIVERED", "EXHAUSTED"] } },
+            expiresAt: { lt: cutoff },
           },
         })
     );
@@ -68,7 +66,7 @@ export class TenantPurgeService {
       enabled: policy?.enabled ?? false,
       retentionDays,
       lastRunAt: policy?.lastRunAt?.toISOString() ?? null,
-      target: "WEBHOOK_DELIVERIES",
+      target: "EXPIRED_OPERATION_PREVIEWS",
       estimatedRecords,
       cutoff: cutoff.toISOString(),
     };
@@ -107,7 +105,7 @@ export class TenantPurgeService {
           metadata: {
             enabled: updated.enabled,
             retentionDays: updated.retentionDays,
-            target: "WEBHOOK_DELIVERIES",
+            target: "EXPIRED_OPERATION_PREVIEWS",
           },
         },
       });
@@ -145,20 +143,18 @@ export class TenantPurgeService {
         )
           return 0;
         const cutoff = cutoffDate(now, policy.retentionDays);
-        const candidates = await tx.webhookDelivery.findMany({
+        const candidates = await tx.operationPreview.findMany({
           where: {
             organizationId: organization.id,
-            status: { in: ["DELIVERED", "FAILED"] },
-            dispatch: { status: { in: ["DELIVERED", "EXHAUSTED"] } },
-            createdAt: { lt: cutoff },
+            expiresAt: { lt: cutoff },
           },
           select: { id: true },
-          orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+          orderBy: [{ expiresAt: "asc" }, { id: "asc" }],
           take: BATCH_SIZE,
         });
         let count = 0;
         if (candidates.length > 0) {
-          const deleted = await tx.webhookDelivery.deleteMany({
+          const deleted = await tx.operationPreview.deleteMany({
             where: {
               organizationId: organization.id,
               id: { in: candidates.map(item => item.id) },
@@ -178,11 +174,11 @@ export class TenantPurgeService {
             organizationId: organization.id,
             actorUserId: null,
             requestId: randomUUID(),
-            action: "purge.technical_logs_completed",
+            action: "purge.expired_previews_completed",
             entityType: "purge_policy",
             entityId: organization.id,
             metadata: {
-              target: "WEBHOOK_DELIVERIES",
+              target: "EXPIRED_OPERATION_PREVIEWS",
               retentionDays: policy.retentionDays,
               cutoff: cutoff.toISOString(),
               recordsDeleted: count,
