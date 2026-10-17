@@ -33,6 +33,7 @@ import { EmailModule } from "./messaging/email/email.module";
 import { IntegrationsModule } from "./integrations/integrations.module";
 
 import { DataManagementModule } from "./data-management/data-management.module";
+import { DashboardsModule } from "./dashboards/dashboards.module";
 
 import { WorkspaceModule } from "./workspace/workspace.module";
 
@@ -40,6 +41,7 @@ import { WorkspaceModule } from "./workspace/workspace.module";
   imports: [
     WorkspaceModule,
     DataManagementModule,
+    DashboardsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ["../../.env", ".env"],
