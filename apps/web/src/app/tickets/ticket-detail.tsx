@@ -23,6 +23,7 @@ import {
   type TicketRecord,
 } from "./ticket-labels";
 import { TicketSatisfactionPanel } from "./ticket-satisfaction-panel";
+import { useTranslation } from "../../i18n/language-provider";
 
 type TicketDetailProps = {
   accessToken: string;
@@ -88,6 +89,7 @@ export function TicketDetail({
   onChange,
   onClose,
 }: TicketDetailProps) {
+  const { t } = useTranslation();
   const [events, setEvents] = useState<TicketEventRecord[]>([]);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -159,7 +161,7 @@ export function TicketDetail({
     event.preventDefault();
     const subject = editForm.subject.trim();
     if (!subject) {
-      setError("Informe o assunto.");
+      setError(t("Informe o assunto."));
       return;
     }
 
@@ -285,17 +287,20 @@ export function TicketDetail({
   return (
     <section
       className="company-form"
-      aria-label={`Solicitação ${ticket.protocol}`}
+      aria-label={t("Solicitação {0}", { 0: ticket.protocol })}
     >
       <div className="company-form__heading">
         <div>
-          <p>Protocolo {ticket.protocol}</p>
+          <p>
+            {t("Protocolo ")}
+            {ticket.protocol}
+          </p>
           <h2>{ticket.subject}</h2>
         </div>
         <div className="support-queues__actions">
           {canWrite && !TICKET_FINAL_STATUSES.includes(ticket.status) ? (
             <button type="button" disabled={busy} onClick={openEdit}>
-              Editar solicitação
+              {t("Editar solicitação")}
             </button>
           ) : null}
           {canTakeOver ? (
@@ -305,19 +310,19 @@ export function TicketDetail({
               disabled={busy}
               onClick={() => void assignToMe()}
             >
-              Assumir
+              {t("Assumir")}
             </button>
           ) : null}
           <button type="button" onClick={onClose}>
-            Fechar
+            {t("Fechar")}
           </button>
         </div>
       </div>
 
       {editOpen ? (
-        <form aria-label="Editar solicitação" onSubmit={submitEdit}>
+        <form aria-label={t("Editar solicitação")} onSubmit={submitEdit}>
           <label>
-            <span>Assunto</span>
+            <span>{t("Assunto")}</span>
             <input
               value={editForm.subject}
               disabled={busy}
@@ -331,7 +336,7 @@ export function TicketDetail({
             />
           </label>
           <label>
-            <span>Descrição</span>
+            <span>{t("Descrição")}</span>
             <textarea
               value={editForm.description}
               disabled={busy}
@@ -344,7 +349,7 @@ export function TicketDetail({
             />
           </label>
           <label>
-            <span>Prioridade</span>
+            <span>{t("Prioridade")}</span>
             <select
               value={editForm.priority}
               disabled={busy}
@@ -357,13 +362,13 @@ export function TicketDetail({
             >
               {TicketPrioritySchema.options.map(priority => (
                 <option key={priority} value={priority}>
-                  {priorityLabels[priority]}
+                  {t(priorityLabels[priority])}
                 </option>
               ))}
             </select>
           </label>
           <label>
-            <span>Canal</span>
+            <span>{t("Canal")}</span>
             <select
               value={editForm.channel}
               disabled={busy}
@@ -376,13 +381,13 @@ export function TicketDetail({
             >
               {TicketChannelSchema.options.map(channel => (
                 <option key={channel} value={channel}>
-                  {channelLabels[channel]}
+                  {t(channelLabels[channel])}
                 </option>
               ))}
             </select>
           </label>
           <label>
-            <span>Fila</span>
+            <span>{t("Fila")}</span>
             <select
               value={editForm.queueId}
               disabled={busy}
@@ -393,7 +398,7 @@ export function TicketDetail({
                 }))
               }
             >
-              <option value="">Sem fila</option>
+              <option value="">{t("Sem fila")}</option>
               {Array.from(queueNames.entries()).map(([id, name]) => (
                 <option key={id} value={id}>
                   {name}
@@ -403,14 +408,14 @@ export function TicketDetail({
           </label>
           <div className="support-queues__actions">
             <button type="submit" className="button" disabled={busy}>
-              Salvar alterações
+              {t("Salvar alterações")}
             </button>
             <button
               type="button"
               disabled={busy}
               onClick={() => setEditOpen(false)}
             >
-              Cancelar edição
+              {t("Cancelar edição")}
             </button>
           </div>
         </form>
@@ -418,37 +423,37 @@ export function TicketDetail({
 
       <dl className="ticket-detail__facts">
         <div>
-          <dt>Status</dt>
-          <dd>{statusLabels[ticket.status]}</dd>
+          <dt>{t("Status")}</dt>
+          <dd>{t(statusLabels[ticket.status])}</dd>
         </div>
         <div>
-          <dt>Prioridade</dt>
-          <dd>{priorityLabels[ticket.priority]}</dd>
+          <dt>{t("Prioridade")}</dt>
+          <dd>{t(priorityLabels[ticket.priority])}</dd>
         </div>
         <div>
-          <dt>Canal</dt>
-          <dd>{channelLabels[ticket.channel]}</dd>
+          <dt>{t("Canal")}</dt>
+          <dd>{t(channelLabels[ticket.channel])}</dd>
         </div>
         <div>
-          <dt>Fila</dt>
-          <dd>{queueName ?? "Sem fila"}</dd>
+          <dt>{t("Fila")}</dt>
+          <dd>{queueName ?? t("Sem fila")}</dd>
         </div>
         <div>
-          <dt>Responsável</dt>
+          <dt>{t("Responsável")}</dt>
           <dd>
             {isMine
-              ? "Você"
+              ? t("Você")
               : ticket.assigneeUserId
-                ? "Outro membro"
-                : "Sem responsável"}
+                ? t("Outro membro")
+                : t("Sem responsável")}
           </dd>
         </div>
         <div>
-          <dt>Aberta em</dt>
+          <dt>{t("Aberta em")}</dt>
           <dd>{dateTime.format(new Date(ticket.openedAt))}</dd>
         </div>
         <div>
-          <dt>1ª resposta até</dt>
+          <dt>{t("1ª resposta até")}</dt>
           <dd>
             {ticket.firstResponseDueAt
               ? dateTime.format(new Date(ticket.firstResponseDueAt))
@@ -457,7 +462,7 @@ export function TicketDetail({
           </dd>
         </div>
         <div>
-          <dt>Resolução até</dt>
+          <dt>{t("Resolução até")}</dt>
           <dd>
             {ticket.resolutionDueAt
               ? dateTime.format(new Date(ticket.resolutionDueAt))
@@ -470,11 +475,11 @@ export function TicketDetail({
 
       {error ? (
         <p className="companies-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
-      <ol className="ticket-detail__timeline" aria-label="Linha do tempo">
+      <ol className="ticket-detail__timeline" aria-label={t("Linha do tempo")}>
         {events.map(event => (
           <li
             key={event.id}
@@ -496,9 +501,9 @@ export function TicketDetail({
       />
 
       {canWrite && transitions.length > 0 ? (
-        <form aria-label="Alterar status" onSubmit={submitStatus}>
+        <form aria-label={t("Alterar status")} onSubmit={submitStatus}>
           <label>
-            <span>Novo status</span>
+            <span>{t("Novo status")}</span>
             <select
               value={nextStatus}
               disabled={busy}
@@ -506,16 +511,16 @@ export function TicketDetail({
                 setNextStatus(event.target.value as TicketStatus | "")
               }
             >
-              <option value="">Selecione</option>
+              <option value="">{t("Selecione")}</option>
               {transitions.map(status => (
                 <option key={status} value={status}>
-                  {statusLabels[status]}
+                  {t(statusLabels[status])}
                 </option>
               ))}
             </select>
           </label>
           <label>
-            <span>Observação</span>
+            <span>{t("Observação")}</span>
             <input
               value={note}
               disabled={busy}
@@ -527,15 +532,15 @@ export function TicketDetail({
             className="button"
             disabled={busy || !nextStatus}
           >
-            Aplicar status
+            {t("Aplicar status")}
           </button>
         </form>
       ) : null}
 
       {canWrite ? (
-        <form aria-label="Comentar" onSubmit={submitComment}>
+        <form aria-label={t("Comentar")} onSubmit={submitComment}>
           <label>
-            <span>Comentário</span>
+            <span>{t("Comentário")}</span>
             <textarea
               value={comment}
               disabled={busy}
@@ -549,10 +554,10 @@ export function TicketDetail({
               disabled={busy}
               onChange={event => setInternal(event.target.checked)}
             />
-            <span>Comentário interno</span>
+            <span>{t("Comentário interno")}</span>
           </label>
           <button type="submit" className="button" disabled={busy}>
-            Comentar
+            {t("Comentar")}
           </button>
         </form>
       ) : null}

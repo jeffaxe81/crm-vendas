@@ -3,6 +3,7 @@
 import type { ManagementSummary } from "@axes/contracts";
 import { useEffect, useState } from "react";
 import { MonthlySalesChart } from "./monthly-sales-chart";
+import { useTranslation } from "../../i18n/language-provider";
 
 type ReportTarget = "funnel" | "activities-by-owner" | "sales-by-month";
 const widgets = [
@@ -75,6 +76,7 @@ export function DashboardWidgets({
   refreshVersion: number;
   onOpenReport: (target: ReportTarget) => void;
 }) {
+  const { t } = useTranslation();
   const [localLayout, setLayout] = useState<Layout>(defaults);
   const layout = controlledLayout ?? localLayout;
   const [editing, setEditing] = useState(false);
@@ -97,17 +99,19 @@ export function DashboardWidgets({
   function update(next: Layout) {
     if (controlledLayout) {
       onLayoutChange?.(next);
-      setNotice("Layout alterado no rascunho; salve suas preferências.");
+      setNotice(t("Layout alterado no rascunho; salve suas preferências."));
       return;
     }
     setLayout(next);
     if (!storageKey) return;
     try {
       localStorage.setItem(storageKey, JSON.stringify(next));
-      setNotice("Preferências salvas neste navegador.");
+      setNotice(t("Preferências salvas neste navegador."));
     } catch {
       setNotice(
-        "Preferências aplicadas nesta sessão; não foi possível salvar no navegador."
+        t(
+          "Preferências aplicadas nesta sessão; não foi possível salvar no navegador."
+        )
       );
     }
   }
@@ -139,21 +143,23 @@ export function DashboardWidgets({
           aria-controls="dashboard-settings"
           onClick={() => setEditing(value => !value)}
         >
-          Personalizar painel
+          {t("Personalizar painel")}
         </button>
       ) : null}
       {editing ? (
         <fieldset
           disabled={customizationDisabled}
           id="dashboard-settings"
-          aria-label="Personalização do painel"
+          aria-label={t("Personalização do painel")}
           className="dashboard-settings"
         >
           <p>
-            Escolha os componentes e sua ordem.{" "}
+            {t("Escolha os componentes e sua ordem.")}{" "}
             {controlledLayout
-              ? "Clique Salvar preferências para aplicar ao seu usuário e organização."
-              : "Preferências por usuário e organização neste navegador."}
+              ? t(
+                  "Clique Salvar preferências para aplicar ao seu usuário e organização."
+                )
+              : t("Preferências por usuário e organização neste navegador.")}
           </p>
           <ul>
             {layout.order.map((id, index) => {
@@ -173,12 +179,15 @@ export function DashboardWidgets({
                         })
                       }
                     />
-                    Exibir {widget.label}
+                    {t("Exibir ")}
+                    {t(widget.label)}
                   </label>
                   <div>
                     <button
                       type="button"
-                      aria-label={`Mover ${widget.label} para cima`}
+                      aria-label={t("Mover {0} para cima", {
+                        0: t(widget.label),
+                      })}
                       disabled={index === 0}
                       onClick={() => move(id, -1)}
                     >
@@ -186,7 +195,9 @@ export function DashboardWidgets({
                     </button>
                     <button
                       type="button"
-                      aria-label={`Mover ${widget.label} para baixo`}
+                      aria-label={t("Mover {0} para baixo", {
+                        0: t(widget.label),
+                      })}
                       disabled={index === layout.order.length - 1}
                       onClick={() => move(id, 1)}
                     >
@@ -198,12 +209,15 @@ export function DashboardWidgets({
             })}
           </ul>
           <button type="button" onClick={() => update(defaults())}>
-            Restaurar padrão
+            {t("Restaurar padrão")}
           </button>
         </fieldset>
       ) : null}
-      {notice ? <p role="status">{notice}</p> : null}
-      <div className="dashboard-widgets" aria-label="Componentes do dashboard">
+      {notice ? <p role="status">{t(notice)}</p> : null}
+      <div
+        className="dashboard-widgets"
+        aria-label={t("Componentes do dashboard")}
+      >
         {layout.order
           .filter(id => !layout.hidden.includes(id))
           .map(id => {
@@ -212,7 +226,7 @@ export function DashboardWidgets({
               <article
                 key={id}
                 className={`companies-view__card dashboard-widget ${id === "sales" || id === "stages" ? "dashboard-widget--wide" : ""}`}
-                aria-label={widget.label}
+                aria-label={t(widget.label)}
               >
                 {id === "sales" ? (
                   <MonthlySalesChart
@@ -221,13 +235,14 @@ export function DashboardWidgets({
                   />
                 ) : id === "stages" ? (
                   <>
-                    <h2>Oportunidades por etapa</h2>
+                    <h2>{t("Oportunidades por etapa")}</h2>
                     <p>
-                      Distribuição atual por funil e etapa; não representa taxa
-                      de conversão.
+                      {t(
+                        "Distribuição atual por funil e etapa; não representa taxa de conversão."
+                      )}
                     </p>
                     {summary.opportunitiesByStage.length === 0 ? (
-                      <p>Nenhuma oportunidade ativa encontrada.</p>
+                      <p>{t("Nenhuma oportunidade ativa encontrada.")}</p>
                     ) : (
                       <ul className="dashboard-bars">
                         {summary.opportunitiesByStage.map(stage => (
@@ -250,7 +265,7 @@ export function DashboardWidgets({
                   </>
                 ) : (
                   <>
-                    <span>{widget.label}</span>
+                    <span>{t(widget.label)}</span>
                     <strong className="dashboard-metric">
                       {metricValues[id]}
                     </strong>
@@ -258,10 +273,10 @@ export function DashboardWidgets({
                 )}
                 <button
                   type="button"
-                  aria-label={`Ver relatório de ${widget.label}`}
+                  aria-label={t("Ver relatório de {0}", { 0: t(widget.label) })}
                   onClick={() => onOpenReport(widget.report)}
                 >
-                  Ver relatório
+                  {t("Ver relatório")}
                 </button>
               </article>
             );
@@ -269,9 +284,11 @@ export function DashboardWidgets({
       </div>
       {layout.hidden.length === widgets.length ? (
         <p>
-          Nenhum componente selecionado. Use{" "}
-          {allowCustomization ? "Personalizar painel" : "Personalizar início"}{" "}
-          para exibir indicadores.
+          {t("Nenhum componente selecionado. Use")}{" "}
+          {allowCustomization
+            ? t("Personalizar painel")
+            : t("Personalizar início")}{" "}
+          {t("para exibir indicadores.")}
         </p>
       ) : null}
     </>

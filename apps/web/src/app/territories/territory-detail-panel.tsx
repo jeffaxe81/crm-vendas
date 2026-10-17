@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type CoverageStatus = "UNCOVERED" | "PARTIAL" | "COVERED";
 
@@ -101,6 +102,7 @@ export function TerritoryDetailPanel({
   territoryId,
   canWrite,
 }: TerritoryDetailPanelProps) {
+  const { t } = useTranslation();
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [coverage, setCoverage] = useState<CoverageTarget[]>([]);
   const [quotas, setQuotas] = useState<Quota[]>([]);
@@ -310,66 +312,69 @@ export function TerritoryDetailPanel({
   }
 
   if (loading) {
-    return <p>Carregando detalhes do território...</p>;
+    return <p>{t("Carregando detalhes do território...")}</p>;
   }
 
   if (error) {
     return (
       <p className="companies-view__error" role="alert">
-        {error}
+        {t(error)}
       </p>
     );
   }
 
   return (
-    <div className="territory-detail" aria-label="Detalhes do território">
+    <div className="territory-detail" aria-label={t("Detalhes do território")}>
       {metrics ? (
-        <div className="companies-view__grid" aria-label="Métricas">
+        <div className="companies-view__grid" aria-label={t("Métricas")}>
           <article className="companies-view__card">
-            <span>Cobertura</span>
+            <span>{t("Cobertura")}</span>
             <strong>{metrics.coveragePercentage}%</strong>
             <small>
-              {metrics.coveredCount}/{metrics.targetCount} empresas
+              {metrics.coveredCount}/{metrics.targetCount}
+              {t(" empresas")}
             </small>
           </article>
           <article className="companies-view__card">
-            <span>Cota atingida</span>
+            <span>{t("Cota atingida")}</span>
             <strong>{metrics.quotaPercentage}%</strong>
             {metrics.quotaYear && metrics.quotaPeriod ? (
               <small>
                 {metrics.quotaPeriod === "MONTH"
-                  ? "Mensal"
+                  ? t("Mensal")
                   : metrics.quotaPeriod === "QUARTER"
-                    ? "Trimestral"
-                    : "Anual"}{" "}
+                    ? t("Trimestral")
+                    : t("Anual")}{" "}
                 · {metrics.quotaYear}
               </small>
             ) : null}
           </article>
           <article className="companies-view__card">
-            <span>Receita realizada</span>
+            <span>{t("Receita realizada")}</span>
             <strong>{formatCurrency(metrics.actualRevenue)}</strong>
           </article>
         </div>
       ) : null}
 
       <section aria-labelledby={`coverage-${territoryId}-title`}>
-        <h3 id={`coverage-${territoryId}-title`}>Cobertura de empresas</h3>
+        <h3 id={`coverage-${territoryId}-title`}>
+          {t("Cobertura de empresas")}
+        </h3>
         {coverage.length === 0 ? (
-          <p>Nenhuma empresa-alvo cadastrada.</p>
+          <p>{t("Nenhuma empresa-alvo cadastrada.")}</p>
         ) : (
           <div
             className="crm-table-scroll"
             role="region"
-            aria-label="Dados do território"
+            aria-label={t("Dados do território")}
             tabIndex={0}
           >
             <table>
               <thead>
                 <tr>
-                  <th>Empresa</th>
-                  <th>Situação</th>
-                  {canWrite ? <th aria-label="Ações" /> : null}
+                  <th>{t("Empresa")}</th>
+                  <th>{t("Situação")}</th>
+                  {canWrite ? <th aria-label={t("Ações")} /> : null}
                 </tr>
               </thead>
               <tbody>
@@ -379,7 +384,9 @@ export function TerritoryDetailPanel({
                     <td>
                       {canWrite ? (
                         <select
-                          aria-label={`Situação de cobertura de ${target.company.legalName}`}
+                          aria-label={t("Situação de cobertura de {0}", {
+                            0: target.company.legalName,
+                          })}
                           value={target.coverageStatus}
                           onChange={event =>
                             void updateCoverageStatus(
@@ -405,9 +412,11 @@ export function TerritoryDetailPanel({
                         <button
                           type="button"
                           onClick={() => void removeCoverage(target)}
-                          aria-label={`Remover ${target.company.legalName}`}
+                          aria-label={t("Remover {0}", {
+                            0: target.company.legalName,
+                          })}
                         >
-                          Remover
+                          {t("Remover")}
                         </button>
                       </td>
                     ) : null}
@@ -419,16 +428,16 @@ export function TerritoryDetailPanel({
         )}
         {canWrite ? (
           <form
-            aria-label="Adicionar empresa-alvo"
+            aria-label={t("Adicionar empresa-alvo")}
             onSubmit={addCoverage}
             className="sales-report__filters"
           >
             <label>
-              <span>Buscar empresa</span>
+              <span>{t("Buscar empresa")}</span>
               <input
                 type="search"
                 value={companyQuery}
-                placeholder="Razão social, nome fantasia ou documento"
+                placeholder={t("Razão social, nome fantasia ou documento")}
                 onChange={event => setCompanyQuery(event.target.value)}
               />
             </label>
@@ -437,16 +446,16 @@ export function TerritoryDetailPanel({
               disabled={companyLoading}
               onClick={() => void searchCompanies()}
             >
-              {companyLoading ? "Buscando..." : "Buscar"}
+              {companyLoading ? t("Buscando...") : t("Buscar")}
             </button>
             <label>
-              <span>Empresa-alvo</span>
+              <span>{t("Empresa-alvo")}</span>
               <select
-                aria-label="Empresa-alvo"
+                aria-label={t("Empresa-alvo")}
                 value={companyId}
                 onChange={event => setCompanyId(event.target.value)}
               >
-                <option value="">Selecione uma empresa</option>
+                <option value="">{t("Selecione uma empresa")}</option>
                 {companyOptions.map(company => (
                   <option key={company.id} value={company.id}>
                     {company.tradeName
@@ -456,7 +465,7 @@ export function TerritoryDetailPanel({
                 ))}
               </select>
             </label>
-            <button type="submit">Adicionar</button>
+            <button type="submit">{t("Adicionar")}</button>
           </form>
         ) : null}
         {coverageError ? (
@@ -467,23 +476,23 @@ export function TerritoryDetailPanel({
       </section>
 
       <section aria-labelledby={`quotas-${territoryId}-title`}>
-        <h3 id={`quotas-${territoryId}-title`}>Cotas</h3>
+        <h3 id={`quotas-${territoryId}-title`}>{t("Cotas")}</h3>
         {quotas.length === 0 ? (
-          <p>Nenhuma cota cadastrada.</p>
+          <p>{t("Nenhuma cota cadastrada.")}</p>
         ) : (
           <div
             className="crm-table-scroll"
             role="region"
-            aria-label="Dados do território"
+            aria-label={t("Dados do território")}
             tabIndex={0}
           >
             <table>
               <thead>
                 <tr>
-                  <th>Período</th>
-                  <th>Ano</th>
-                  <th>Meta</th>
-                  <th>Realizado</th>
+                  <th>{t("Período")}</th>
+                  <th>{t("Ano")}</th>
+                  <th>{t("Meta")}</th>
+                  <th>{t("Realizado")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -501,12 +510,12 @@ export function TerritoryDetailPanel({
         )}
         {canWrite ? (
           <form
-            aria-label="Definir cota"
+            aria-label={t("Definir cota")}
             onSubmit={submitQuota}
             className="sales-report__filters"
           >
             <label>
-              <span>Período</span>
+              <span>{t("Período")}</span>
               <select
                 value={quotaPeriod}
                 onChange={event => {
@@ -515,21 +524,21 @@ export function TerritoryDetailPanel({
                   setQuotaPeriodIndex(next === "YEAR" ? "0" : "1");
                 }}
               >
-                <option value="MONTH">Mensal</option>
-                <option value="QUARTER">Trimestral</option>
-                <option value="YEAR">Anual</option>
+                <option value="MONTH">{t("Mensal")}</option>
+                <option value="QUARTER">{t("Trimestral")}</option>
+                <option value="YEAR">{t("Anual")}</option>
               </select>
             </label>
             {quotaPeriod === "MONTH" ? (
               <label>
-                <span>Mês</span>
+                <span>{t("Mês")}</span>
                 <select
                   value={quotaPeriodIndex}
                   onChange={event => setQuotaPeriodIndex(event.target.value)}
                 >
                   {MONTH_LABELS.map((label, index) => (
-                    <option key={label} value={String(index + 1)}>
-                      {label}
+                    <option key={t(label)} value={String(index + 1)}>
+                      {t(label)}
                     </option>
                   ))}
                 </select>
@@ -537,21 +546,22 @@ export function TerritoryDetailPanel({
             ) : null}
             {quotaPeriod === "QUARTER" ? (
               <label>
-                <span>Trimestre</span>
+                <span>{t("Trimestre")}</span>
                 <select
                   value={quotaPeriodIndex}
                   onChange={event => setQuotaPeriodIndex(event.target.value)}
                 >
                   {[1, 2, 3, 4].map(index => (
                     <option key={index} value={String(index)}>
-                      {index}º trimestre
+                      {index}
+                      {t("º trimestre")}
                     </option>
                   ))}
                 </select>
               </label>
             ) : null}
             <label>
-              <span>Ano</span>
+              <span>{t("Ano")}</span>
               <input
                 type="number"
                 value={quotaYear}
@@ -559,7 +569,7 @@ export function TerritoryDetailPanel({
               />
             </label>
             <label>
-              <span>Meta</span>
+              <span>{t("Meta")}</span>
               <input
                 inputMode="decimal"
                 value={quotaAmount}
@@ -567,14 +577,14 @@ export function TerritoryDetailPanel({
               />
             </label>
             <label>
-              <span>Realizado</span>
+              <span>{t("Realizado")}</span>
               <input
                 inputMode="decimal"
                 value={quotaActual}
                 onChange={event => setQuotaActual(event.target.value)}
               />
             </label>
-            <button type="submit">Salvar cota</button>
+            <button type="submit">{t("Salvar cota")}</button>
           </form>
         ) : null}
         {quotaError ? (

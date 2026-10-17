@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { useTranslation } from "../../i18n/language-provider";
+
 type Position = { x: number; y: number };
 
 export function FloatingTourPanel({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const panel = useRef<HTMLElement>(null);
   const drag = useRef<{ id: number; x: number; y: number } | null>(null);
   const [position, setPosition] = useState<Position | null>(null);
@@ -48,7 +51,7 @@ export function FloatingTourPanel({ children }: { children: ReactNode }) {
       ref={panel}
       className="first-access-panel floating-tour-panel"
       role="dialog"
-      aria-label="Tour das funcionalidades do CRM"
+      aria-label={t("Tour das funcionalidades do CRM")}
       aria-modal="false"
       style={
         position
@@ -59,7 +62,7 @@ export function FloatingTourPanel({ children }: { children: ReactNode }) {
       <button
         type="button"
         className="floating-tour-handle"
-        aria-label="Mover painel do tour"
+        aria-label={t("Mover painel do tour")}
         aria-describedby="tour-move-help"
         onPointerDown={event => {
           if (!event.isPrimary || event.button !== 0) return;
@@ -103,10 +106,12 @@ export function FloatingTourPanel({ children }: { children: ReactNode }) {
           }
         }}
       >
-        <span aria-hidden="true">⠿</span> Mover tour
+        <span aria-hidden="true">⠿</span> {t("Mover tour")}
       </button>
       <small id="tour-move-help" className="floating-tour-help">
-        Arraste pelo cabeçalho ou use as setas com o botão Mover tour em foco.
+        {t(
+          "Arraste pelo cabeçalho ou use as setas com o botão Mover tour em foco."
+        )}
       </small>
       {children}
     </aside>

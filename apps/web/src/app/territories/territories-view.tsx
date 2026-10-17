@@ -4,6 +4,7 @@ import { Fragment, FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { TerritoryDetailPanel } from "./territory-detail-panel";
+import { useTranslation } from "../../i18n/language-provider";
 
 export type TerritoryRecord = {
   id: string;
@@ -48,6 +49,7 @@ export function TerritoriesView({
   accessToken,
   canWrite,
 }: TerritoriesViewProps) {
+  const { t } = useTranslation();
   const [territories, setTerritories] = useState<TerritoryRecord[]>([]);
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
@@ -135,7 +137,7 @@ export function TerritoriesView({
     const name = form.name.trim();
     const region = form.region.trim();
     if (!name || !region) {
-      setError("Informe nome e região.");
+      setError(t("Informe nome e região."));
       return;
     }
 
@@ -257,11 +259,12 @@ export function TerritoriesView({
     <section className="companies-view" aria-labelledby="territories-title">
       <header className="companies-view__header">
         <div>
-          <p className="companies-view__eyebrow">Comercial</p>
-          <h1 id="territories-title">Territórios</h1>
+          <p className="companies-view__eyebrow">{t("Comercial")}</p>
+          <h1 id="territories-title">{t("Territórios")}</h1>
           <p>
-            Territórios de venda, cobertura de empresas-alvo e cotas por
-            período.
+            {t(
+              "Territórios de venda, cobertura de empresas-alvo e cotas por período."
+            )}
           </p>
         </div>
         {canWrite ? (
@@ -271,7 +274,7 @@ export function TerritoriesView({
               className="button companies-view__primary"
               onClick={openCreate}
             >
-              Novo território
+              {t("Novo território")}
             </button>
           </div>
         ) : null}
@@ -287,21 +290,21 @@ export function TerritoriesView({
         }}
       >
         <label>
-          <span>Buscar territórios</span>
+          <span>{t("Buscar territórios")}</span>
           <input
             type="search"
-            aria-label="Buscar territórios"
-            placeholder="Nome do território"
+            aria-label={t("Buscar territórios")}
+            placeholder={t("Nome do território")}
             value={queryInput}
             onChange={event => setQueryInput(event.target.value)}
           />
         </label>
-        <button type="submit">Buscar</button>
+        <button type="submit">{t("Buscar")}</button>
       </form>
 
       {error ? (
         <p className="companies-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
@@ -309,26 +312,28 @@ export function TerritoriesView({
         <form
           className="company-form"
           aria-label={
-            formMode === "create" ? "Novo território" : "Editar território"
+            formMode === "create"
+              ? t("Novo território")
+              : t("Editar território")
           }
           onSubmit={submit}
         >
           <div className="company-form__heading">
             <div>
-              <p>{formMode === "create" ? "Novo cadastro" : "Edição"}</p>
+              <p>{formMode === "create" ? t("Novo cadastro") : t("Edição")}</p>
               <h2>
                 {formMode === "create"
-                  ? "Novo território"
-                  : "Editar território"}
+                  ? t("Novo território")
+                  : t("Editar território")}
               </h2>
             </div>
             <button type="button" onClick={closeForm}>
-              Cancelar
+              {t("Cancelar")}
             </button>
           </div>
           <div className="company-form__fields">
             <label>
-              <span>Nome</span>
+              <span>{t("Nome")}</span>
               <input
                 value={form.name}
                 onChange={event =>
@@ -337,7 +342,7 @@ export function TerritoriesView({
               />
             </label>
             <label>
-              <span>Região</span>
+              <span>{t("Região")}</span>
               <input
                 value={form.region}
                 onChange={event =>
@@ -349,7 +354,7 @@ export function TerritoriesView({
               />
             </label>
             <label>
-              <span>Descrição</span>
+              <span>{t("Descrição")}</span>
               <input
                 value={form.description}
                 onChange={event =>
@@ -362,7 +367,7 @@ export function TerritoriesView({
             </label>
           </div>
           <button className="button" type="submit" disabled={submitting}>
-            {submitting ? "Salvando..." : "Salvar território"}
+            {submitting ? t("Salvando...") : t("Salvar território")}
           </button>
         </form>
       ) : null}
@@ -370,31 +375,34 @@ export function TerritoriesView({
       {reassigning ? (
         <form
           className="company-form"
-          aria-label={`Atribuir vendedor a ${reassigning.name}`}
+          aria-label={t("Atribuir vendedor a {0}", { 0: reassigning.name })}
           onSubmit={submitReassign}
         >
           <div className="company-form__heading">
             <div>
-              <p>Reatribuição</p>
-              <h2>Atribuir vendedor — {reassigning.name}</h2>
+              <p>{t("Reatribuição")}</p>
+              <h2>
+                {t("Atribuir vendedor — ")}
+                {reassigning.name}
+              </h2>
             </div>
             <button type="button" onClick={() => setReassigning(null)}>
-              Cancelar
+              {t("Cancelar")}
             </button>
           </div>
           <div className="company-form__fields">
             <label>
-              <span>Vendedor</span>
+              <span>{t("Vendedor")}</span>
               <select
-                aria-label="Vendedor"
+                aria-label={t("Vendedor")}
                 value={reassignValue}
                 disabled={loadingSalesReps}
                 onChange={event => setReassignValue(event.target.value)}
               >
                 <option value="">
                   {loadingSalesReps
-                    ? "Carregando vendedores..."
-                    : "Selecione um vendedor"}
+                    ? t("Carregando vendedores...")
+                    : t("Selecione um vendedor")}
                 </option>
                 {salesRepOptions.map(option => (
                   <option key={option.id} value={option.id}>
@@ -410,15 +418,15 @@ export function TerritoriesView({
             </p>
           ) : null}
           <button className="button" type="submit">
-            Confirmar atribuição
+            {t("Confirmar atribuição")}
           </button>
         </form>
       ) : null}
 
-      {loading ? <p>Carregando territórios...</p> : null}
+      {loading ? <p>{t("Carregando territórios...")}</p> : null}
 
       {!loading && territories.length === 0 ? (
-        <p>Nenhum território encontrado.</p>
+        <p>{t("Nenhum território encontrado.")}</p>
       ) : null}
 
       {!loading && territories.length > 0 ? (
@@ -426,16 +434,16 @@ export function TerritoriesView({
           <div
             className="company-import__table-wrapper"
             role="region"
-            aria-label="Tabela: Territórios"
+            aria-label={t("Tabela: Territórios")}
             tabIndex={0}
           >
             <table>
               <thead>
                 <tr>
-                  <th>Nome</th>
-                  <th>Região</th>
-                  <th>Vendedor</th>
-                  {canWrite ? <th aria-label="Ações" /> : null}
+                  <th>{t("Nome")}</th>
+                  <th>{t("Região")}</th>
+                  <th>{t("Vendedor")}</th>
+                  {canWrite ? <th aria-label={t("Ações")} /> : null}
                 </tr>
               </thead>
               <tbody>
@@ -459,7 +467,7 @@ export function TerritoriesView({
                       <td>
                         {territory.salesRep?.displayName ??
                           (territory.salesRepId
-                            ? "Vendedor indisponível"
+                            ? t("Vendedor indisponível")
                             : "—")}
                       </td>
                       {canWrite ? (
@@ -467,23 +475,25 @@ export function TerritoriesView({
                           <button
                             type="button"
                             onClick={() => openEdit(territory)}
-                            aria-label={`Editar ${territory.name}`}
+                            aria-label={t("Editar {0}", { 0: territory.name })}
                           >
-                            Editar
+                            {t("Editar")}
                           </button>
                           <button
                             type="button"
                             onClick={() => openReassign(territory)}
-                            aria-label={`Atribuir vendedor a ${territory.name}`}
+                            aria-label={t("Atribuir vendedor a {0}", {
+                              0: territory.name,
+                            })}
                           >
-                            Atribuir vendedor
+                            {t("Atribuir vendedor")}
                           </button>
                           <button
                             type="button"
                             onClick={() => void remove(territory)}
-                            aria-label={`Excluir ${territory.name}`}
+                            aria-label={t("Excluir {0}", { 0: territory.name })}
                           >
-                            Excluir
+                            {t("Excluir")}
                           </button>
                         </td>
                       ) : null}
@@ -504,7 +514,10 @@ export function TerritoriesView({
               </tbody>
             </table>
           </div>
-          <nav className="crm-pagination" aria-label="Paginação de territórios">
+          <nav
+            className="crm-pagination"
+            aria-label={t("Paginação de territórios")}
+          >
             <button
               type="button"
               disabled={page <= 1 || loading}
@@ -513,11 +526,14 @@ export function TerritoriesView({
                 setPage(current => Math.max(1, current - 1));
               }}
             >
-              Anterior
+              {t("Anterior")}
             </button>
             <span>
-              Página {page} de {Math.max(1, Math.ceil(total / PAGE_SIZE))} ·{" "}
-              {total} território(s)
+              {t("Página ")}
+              {page}
+              {t(" de ")}
+              {Math.max(1, Math.ceil(total / PAGE_SIZE))} · {total}
+              {t(" território(s)")}
             </span>
             <button
               type="button"
@@ -527,7 +543,7 @@ export function TerritoriesView({
                 setPage(current => current + 1);
               }}
             >
-              Próxima
+              {t("Próxima")}
             </button>
           </nav>
         </>

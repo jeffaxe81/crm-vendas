@@ -10,6 +10,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { periodBoundary } from "./sales-by-product-view";
+import { useTranslation } from "../../i18n/language-provider";
 
 type ActivitiesByOwnerViewProps = {
   accessToken: string;
@@ -46,6 +47,7 @@ export function activitiesByOwnerPath(filters: Filters): string {
 }
 
 function CountCells({ counts }: { counts: ActivitiesByOwnerCounts }) {
+  const { t } = useTranslation();
   return (
     <>
       <td>{counts.total}</td>
@@ -59,7 +61,7 @@ function CountCells({ counts }: { counts: ActivitiesByOwnerCounts }) {
         {counts.overdue > 0 ? (
           <strong>
             {counts.overdue}
-            <span className="activities-report__badge">atrasadas</span>
+            <span className="activities-report__badge">{t("atrasadas")}</span>
           </strong>
         ) : (
           counts.overdue
@@ -77,6 +79,7 @@ function CountCells({ counts }: { counts: ActivitiesByOwnerCounts }) {
 export function ActivitiesByOwnerView({
   accessToken,
 }: ActivitiesByOwnerViewProps) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState<Filters>(emptyFilters);
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [report, setReport] = useState<ActivitiesByOwnerReport | null>(null);
@@ -144,19 +147,20 @@ export function ActivitiesByOwnerView({
       className="sales-report"
       aria-labelledby="activities-by-owner-title"
     >
-      <h2 id="activities-by-owner-title">Atividades por responsável</h2>
+      <h2 id="activities-by-owner-title">{t("Atividades por responsável")}</h2>
       <p className="activities-view__status">
-        Produtividade comercial por responsável. O período considera o prazo da
-        atividade; com período informado, atividades sem prazo ficam de fora.
+        {t(
+          "Produtividade comercial por responsável. O período considera o prazo da atividade; com período informado, atividades sem prazo ficam de fora."
+        )}
       </p>
 
       <form
         className="sales-report__filters"
-        aria-label="Filtros de atividades por responsável"
+        aria-label={t("Filtros de atividades por responsável")}
         onSubmit={applyFilters}
       >
         <label>
-          <span>De</span>
+          <span>{t("De")}</span>
           <input
             type="date"
             value={draft.from}
@@ -166,7 +170,7 @@ export function ActivitiesByOwnerView({
           />
         </label>
         <label>
-          <span>Até</span>
+          <span>{t("Até")}</span>
           <input
             type="date"
             value={draft.to}
@@ -176,7 +180,7 @@ export function ActivitiesByOwnerView({
           />
         </label>
         <label>
-          <span>Tipo</span>
+          <span>{t("Tipo")}</span>
           <select
             value={draft.type}
             onChange={event =>
@@ -186,14 +190,14 @@ export function ActivitiesByOwnerView({
               }))
             }
           >
-            <option value="">Todos</option>
-            <option value="TASK">Tarefa</option>
-            <option value="APPOINTMENT">Compromisso</option>
+            <option value="">{t("Todos")}</option>
+            <option value="TASK">{t("Tarefa")}</option>
+            <option value="APPOINTMENT">{t("Compromisso")}</option>
           </select>
         </label>
-        <button type="submit">Aplicar</button>
+        <button type="submit">{t("Aplicar")}</button>
         <button type="button" onClick={clearFilters}>
-          Limpar
+          {t("Limpar")}
         </button>
       </form>
       {filterError ? (
@@ -204,29 +208,29 @@ export function ActivitiesByOwnerView({
 
       {loading ? (
         <p className="activities-view__status">
-          Carregando atividades por responsável...
+          {t("Carregando atividades por responsável...")}
         </p>
       ) : error ? (
         <p className="login-form__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : report && report.items.length === 0 ? (
         <p className="activities-view__status">
-          Nenhuma atividade encontrada no período.
+          {t("Nenhuma atividade encontrada no período.")}
         </p>
       ) : report ? (
         <div className="sales-report__table">
           <table>
             <thead>
               <tr>
-                <th scope="col">Responsável</th>
-                <th scope="col">Total</th>
-                <th scope="col">Concluídas</th>
-                <th scope="col">Pendentes</th>
-                <th scope="col">Atrasadas</th>
-                <th scope="col">No prazo</th>
-                <th scope="col">Taxa de conclusão</th>
-                <th scope="col">Tarefas / Compromissos</th>
+                <th scope="col">{t("Responsável")}</th>
+                <th scope="col">{t("Total")}</th>
+                <th scope="col">{t("Concluídas")}</th>
+                <th scope="col">{t("Pendentes")}</th>
+                <th scope="col">{t("Atrasadas")}</th>
+                <th scope="col">{t("No prazo")}</th>
+                <th scope="col">{t("Taxa de conclusão")}</th>
+                <th scope="col">{t("Tarefas / Compromissos")}</th>
               </tr>
             </thead>
             <tbody>
@@ -241,7 +245,9 @@ export function ActivitiesByOwnerView({
                 >
                   <th scope="row">
                     {item.ownerDisplayName}
-                    {!item.ownerActive ? <small> (inativo)</small> : null}
+                    {!item.ownerActive ? (
+                      <small>{t(" (inativo)")}</small>
+                    ) : null}
                   </th>
                   <CountCells counts={item} />
                 </tr>
@@ -249,7 +255,7 @@ export function ActivitiesByOwnerView({
             </tbody>
             <tfoot>
               <tr>
-                <th scope="row">Total geral</th>
+                <th scope="row">{t("Total geral")}</th>
                 <CountCells counts={report.totals} />
               </tr>
             </tfoot>

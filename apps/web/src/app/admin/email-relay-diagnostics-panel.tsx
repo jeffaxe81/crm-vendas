@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { apiRequest } from "../../lib/api-client";
 import { EmailProviderPreferencePanel } from "./email-provider-preference-panel";
+import { useTranslation } from "../../i18n/language-provider";
 
 const checks = [
   ["relayConfigured", "Configuração da organização"],
@@ -85,6 +86,7 @@ export function EmailRelayDiagnosticsPanel({
   accessToken: string;
   currentUserId: string;
 }) {
+  const { t } = useTranslation();
   const [readiness, setReadiness] = useState<Readiness | null>(null);
   const [settings, setSettings] = useState<RelaySettings | null>(null);
   const [evidence, setEvidence] = useState<EvidenceRecord[]>([]);
@@ -143,7 +145,9 @@ export function EmailRelayDiagnosticsPanel({
     setNotice("");
     if (!/^[A-Za-z0-9][A-Za-z0-9._-]{7,95}$/.test(reference)) {
       setError(
-        "Use um identificador de 8 a 96 caracteres, sem URL, e-mail ou dados pessoais."
+        t(
+          "Use um identificador de 8 a 96 caracteres, sem URL, e-mail ou dados pessoais."
+        )
       );
       return;
     }
@@ -156,7 +160,9 @@ export function EmailRelayDiagnosticsPanel({
       });
       setReference("");
       setNotice(
-        "Referência registrada para análise. Isso não representa homologação."
+        t(
+          "Referência registrada para análise. Isso não representa homologação."
+        )
       );
       setReload(value => value + 1);
     } catch (cause) {
@@ -185,7 +191,9 @@ export function EmailRelayDiagnosticsPanel({
         body: { decision },
       });
       setNotice(
-        "Análise independente registrada. O relay continua sem homologação ou envio."
+        t(
+          "Análise independente registrada. O relay continua sem homologação ou envio."
+        )
       );
       setReload(value => value + 1);
     } catch (cause) {
@@ -206,11 +214,16 @@ export function EmailRelayDiagnosticsPanel({
     >
       <header className="activities-view__header">
         <div>
-          <p className="activities-view__eyebrow">Integrações · Diagnóstico</p>
-          <h2 id="email-relay-diagnostics-title">Notificações por e-mail</h2>
+          <p className="activities-view__eyebrow">
+            {t("Integrações · Diagnóstico")}
+          </p>
+          <h2 id="email-relay-diagnostics-title">
+            {t("Notificações por e-mail")}
+          </h2>
           <p>
-            Painel de pré-validação. Não realiza envio, ativação ou testes de
-            conexão com serviços externos.
+            {t(
+              "Painel de pré-validação. Não realiza envio, ativação ou testes de conexão com serviços externos."
+            )}
           </p>
         </div>
         <button
@@ -218,34 +231,46 @@ export function EmailRelayDiagnosticsPanel({
           disabled={loading || busy}
           onClick={() => setReload(value => value + 1)}
         >
-          Atualizar diagnóstico
+          {t("Atualizar diagnóstico")}
         </button>
       </header>
 
       <EmailProviderPreferencePanel accessToken={accessToken} />
 
       <div className="companies-view__card">
-        <h3>Envio externo desativado</h3>
+        <h3>{t("Envio externo desativado")}</h3>
         <p role="status">
-          Nenhuma configuração, evidência registrada ou verificação local
-          habilita o envio de mensagens. É necessária homologação externa e
-          aprovação operacional independente.
+          {t(
+            "Nenhuma configuração, evidência registrada ou verificação local habilita o envio de mensagens. É necessária homologação externa e aprovação operacional independente."
+          )}
         </p>
       </div>
 
-      {error ? <p role="alert">{error}</p> : null}
-      {notice ? <p role="status">{notice}</p> : null}
-      {loading ? <p role="status">Consultando diagnóstico...</p> : null}
+      {error ? <p role="alert">{t(error)}</p> : null}
+      {notice ? <p role="status">{t(notice)}</p> : null}
+      {loading ? <p role="status">{t("Consultando diagnóstico...")}</p> : null}
 
       {settings && readiness ? (
         <div className="companies-view__card">
-          <h3>Configuração preparada</h3>
-          <p>Modo: {settings.mode}</p>
-          <p>Versão: {settings.version}</p>
-          <p>Endpoint: {settings.endpoint ?? "Não configurado"}</p>
-          <p>Credencial cadastrada: {settings.hasCredential ? "Sim" : "Não"}</p>
-          <p>Envio permitido: Não</p>
-          <h3>Verificações</h3>
+          <h3>{t("Configuração preparada")}</h3>
+          <p>
+            {t("Modo: ")}
+            {settings.mode}
+          </p>
+          <p>
+            {t("Versão: ")}
+            {settings.version}
+          </p>
+          <p>
+            {t("Endpoint: ")}
+            {settings.endpoint ?? t("Não configurado")}
+          </p>
+          <p>
+            {t("Credencial cadastrada: ")}
+            {settings.hasCredential ? t("Sim") : t("Não")}
+          </p>
+          <p>{t("Envio permitido: Não")}</p>
+          <h3>{t("Verificações")}</h3>
           <ul>
             {checks.map(([code, label]) => (
               <li key={code}>
@@ -255,32 +280,30 @@ export function EmailRelayDiagnosticsPanel({
             ))}
           </ul>
           <p>
-            O diagnóstico é apenas informativo; bloqueios externos não são
-            resolvidos pelo registro de documentos.
+            {t(
+              "O diagnóstico é apenas informativo; bloqueios externos não são resolvidos pelo registro de documentos."
+            )}
           </p>
         </div>
       ) : null}
 
       {!loading && !error ? (
         <div className="companies-view__card">
-          <h3>Evidências de homologação</h3>
+          <h3>{t("Evidências de homologação")}</h3>
           <p>
-            Registre somente a referência opaca do chamado ou artefato. Não
-            informe URLs, senhas, tokens, documentos ou dados pessoais. O
-            registro fica auditado e permanece não verificado. Outro
-            administrador poderá analisar ou rejeitar a referência; nenhuma das
-            opções certifica o provedor ou libera o envio. Trocar o provedor
-            invalida evidências de versões anteriores.
+            {t(
+              "Registre somente a referência opaca do chamado ou artefato. Não informe URLs, senhas, tokens, documentos ou dados pessoais. O registro fica auditado e permanece não verificado. Outro administrador poderá analisar ou rejeitar a referência; nenhuma das opções certifica o provedor ou libera o envio. Trocar o provedor invalida evidências de versões anteriores."
+            )}
           </p>
           <form
             className="activity-form"
             onSubmit={event => void submit(event)}
           >
             <fieldset disabled={busy}>
-              <legend>Registrar referência</legend>
+              <legend>{t("Registrar referência")}</legend>
               <div className="activity-form__fields">
                 <label>
-                  Categoria
+                  {t("Categoria")}
                   <select
                     value={type}
                     onChange={event =>
@@ -295,7 +318,7 @@ export function EmailRelayDiagnosticsPanel({
                   </select>
                 </label>
                 <label>
-                  Identificador de evidência
+                  {t("Identificador de evidência")}
                   <input
                     value={reference}
                     onChange={event => setReference(event.target.value)}
@@ -309,13 +332,13 @@ export function EmailRelayDiagnosticsPanel({
                 </label>
               </div>
               <button type="submit" disabled={busy}>
-                Registrar para análise
+                {t("Registrar para análise")}
               </button>
             </fieldset>
           </form>
-          <h3>Referências registradas</h3>
+          <h3>{t("Referências registradas")}</h3>
           {!evidence.length ? (
-            <p>Nenhuma referência registrada nesta organização.</p>
+            <p>{t("Nenhuma referência registrada nesta organização.")}</p>
           ) : (
             <ul>
               {evidence.map(item => (
@@ -324,27 +347,33 @@ export function EmailRelayDiagnosticsPanel({
                     {evidenceTypes.find(([id]) => id === item.type)?.[1] ??
                       item.type}
                   </strong>
-                  : <code>{item.reference}</code> — Registrada, não verificada
+                  : <code>{item.reference}</code>
+                  {t(" — Registrada, não verificada")}
                   {" · "}
                   {new Date(item.createdAt).toLocaleString("pt-BR")}
                   {" · "}
-                  Relay v{item.settingsVersion ?? "legada"}
+                  {t("Relay v")}
+                  {item.settingsVersion ?? "legada"}
                   {" · "}
-                  Provedor {item.providerCode ?? "legado"} v
+                  {t("Provedor ")}
+                  {item.providerCode ?? "legado"}
+                  {t(" v")}
                   {item.providerVersion ?? "legada"}
                   {!item.currentConfiguration
-                    ? " · Evidência desatualizada — registre nova referência"
+                    ? t(" · Evidência desatualizada — registre nova referência")
                     : ""}
                   {item.review ? (
                     <p>
-                      Revisão independente:{" "}
+                      {t("Revisão independente:")}{" "}
                       {item.review.decision === "CHECKED"
-                        ? "Analisada, não certificada"
-                        : "Rejeitada"}
+                        ? t("Analisada, não certificada")
+                        : t("Rejeitada")}
                       {" · "}
                       {new Date(item.review.reviewedAt).toLocaleString("pt-BR")}
                       {!item.review.currentConfiguration
-                        ? " · Provedor ou configuração alterados após a revisão"
+                        ? t(
+                            " · Provedor ou configuração alterados após a revisão"
+                          )
                         : ""}
                     </p>
                   ) : item.actorUserId !== currentUserId &&
@@ -355,18 +384,22 @@ export function EmailRelayDiagnosticsPanel({
                         disabled={busy}
                         onClick={() => void reviewEvidence(item.id, "CHECKED")}
                       >
-                        Registrar análise independente
+                        {t("Registrar análise independente")}
                       </button>
                       <button
                         type="button"
                         disabled={busy}
                         onClick={() => void reviewEvidence(item.id, "REJECTED")}
                       >
-                        Rejeitar referência
+                        {t("Rejeitar referência")}
                       </button>
                     </div>
                   ) : (
-                    <p>Revisão requer outro administrador e a versão atual.</p>
+                    <p>
+                      {t(
+                        "Revisão requer outro administrador e a versão atual."
+                      )}
+                    </p>
                   )}
                 </li>
               ))}

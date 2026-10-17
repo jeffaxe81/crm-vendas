@@ -8,6 +8,7 @@ import {
 
 import { useEffect, useState, type FormEvent } from "react";
 import { apiRequest } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 export type NeoSettings = {
   enabled: boolean;
@@ -32,12 +33,12 @@ export function NeoCommunicationSettingsView({
   accessToken: string;
   canManage: boolean;
 }) {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState<NeoSettings>(defaultNeoSettings);
   const [loading, setLoading] = useState(true);
   const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -49,7 +50,8 @@ export function NeoCommunicationSettingsView({
         if (active) setSettings(result);
       })
       .catch(() => {
-        if (active) setError("Não foi possível consultar a configuração NEO.");
+        if (active)
+          setError(t("Não foi possível consultar a configuração NEO."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -63,7 +65,6 @@ export function NeoCommunicationSettingsView({
     event.preventDefault();
     if (!canManage || busy) return;
     setError("");
-    setNotice("");
     setBusy(true);
     if (!saveFeedback.start()) return;
     try {
@@ -73,7 +74,6 @@ export function NeoCommunicationSettingsView({
         body: settings,
       });
       saveFeedback.saved();
-      setNotice("Configuração NEO salva para esta organização.");
     } catch (cause) {
       saveFeedback.failed();
       setError(
@@ -91,19 +91,19 @@ export function NeoCommunicationSettingsView({
       className="companies-view__card"
       aria-labelledby="neo-settings-title"
     >
-      <h2 id="neo-settings-title">Comunicação — NEO Interact</h2>
+      <h2 id="neo-settings-title">{t("Comunicação — NEO Interact")}</h2>
       <p>
-        Configuração por organização. A incorporação por iframe exige
-        autorização no ambiente NEO.
+        {t(
+          "Configuração por organização. A incorporação por iframe exige autorização no ambiente NEO."
+        )}
       </p>
-      {error ? <p role="alert">{error}</p> : null}
-      {notice ? <p role="status">{notice}</p> : null}
+      {error ? <p role="alert">{t(error)}</p> : null}
       {loading ? (
-        <p role="status">Carregando configuração NEO...</p>
+        <p role="status">{t("Carregando configuração NEO...")}</p>
       ) : (
         <form className="activity-form" onSubmit={event => void save(event)}>
           <fieldset disabled={!canManage || busy}>
-            <legend>Configuração da integração</legend>
+            <legend>{t("Configuração da integração")}</legend>
             <label className="workspace-checkbox">
               <input
                 type="checkbox"
@@ -115,10 +115,10 @@ export function NeoCommunicationSettingsView({
                   }))
                 }
               />
-              Habilitar NEO Interact
+              {t("Habilitar NEO Interact")}
             </label>
             <label>
-              URL HTTPS do NEO
+              {t("URL HTTPS do NEO")}
               <input
                 type="url"
                 value={settings.url}
@@ -130,7 +130,7 @@ export function NeoCommunicationSettingsView({
               />
             </label>
             <label>
-              Modo de abertura
+              {t("Modo de abertura")}
               <select
                 value={settings.mode}
                 onChange={event =>
@@ -140,12 +140,12 @@ export function NeoCommunicationSettingsView({
                   }))
                 }
               >
-                <option value="iframe">Painel integrado (iframe)</option>
-                <option value="tab">Nova aba</option>
+                <option value="iframe">{t("Painel integrado (iframe)")}</option>
+                <option value="tab">{t("Nova aba")}</option>
               </select>
             </label>
             <label>
-              Altura do iframe (320 a 1600 px)
+              {t("Altura do iframe (320 a 1600 px)")}
               <input
                 type="number"
                 min={320}
@@ -160,7 +160,7 @@ export function NeoCommunicationSettingsView({
               />
             </label>
             <label>
-              Largura máxima (320 a 1600 px)
+              {t("Largura máxima (320 a 1600 px)")}
               <input
                 type="number"
                 min={320}
@@ -178,17 +178,17 @@ export function NeoCommunicationSettingsView({
               type="submit"
               disabled={busy}
               status={saveFeedback.status}
-              label="Salvar configuração"
+              label={t("Salvar configuração")}
             />
           </fieldset>
         </form>
       )}
       <SaveNotice
         status={saveFeedback.status}
-        label="Configuração NEO salva."
+        label={t("Configuração NEO salva para esta organização.")}
       />
       {!canManage ? (
-        <p>Seu perfil possui acesso de leitura à configuração.</p>
+        <p>{t("Seu perfil possui acesso de leitura à configuração.")}</p>
       ) : null}
     </section>
   );

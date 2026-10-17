@@ -1,6 +1,8 @@
 "use client";
 
 import type { CustomFieldType } from "@axes/contracts";
+import { useTranslation } from "../../i18n/language-provider";
+
 
 export type CustomFieldDefinitionView = {
   id: string;
@@ -24,6 +26,7 @@ export function CustomFieldsEditor({
   values,
   onChange,
 }: CustomFieldsEditorProps) {
+  const { t } = useTranslation();
   const activeDefinitions = definitions.filter(definition => definition.isActive);
 
   return (
@@ -53,7 +56,7 @@ export function CustomFieldsEditor({
                 required={definition.isRequired}
                 onChange={event => onChange(definition.id, event.target.value)}
               >
-                <option value="">Selecione</option>
+                <option value="">{t("Selecione")}</option>
                 {(definition.options ?? []).map(option => (
                   <option key={option} value={option}>
                     {option}

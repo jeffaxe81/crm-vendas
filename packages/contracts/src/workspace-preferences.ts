@@ -69,6 +69,12 @@ export const workspaceDestinations = [
     permission: "user.manage",
   },
   {
+    id: "language-settings",
+    label: "Idioma da aplicação",
+    group: "Administração",
+    permission: "organization.manage",
+  },
+  {
     id: "support-settings",
     label: "Configuração de atendimento",
     group: "Administração",

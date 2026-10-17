@@ -57,6 +57,7 @@ describe("Workspace start page", () => {
             !url.endsWith("auth/refresh") &&
             !url.endsWith("workspace-preferences") &&
             !url.endsWith("/organization/branding") &&
+            !url.endsWith("/organization/language-settings") &&
             !url.endsWith("/me/onboarding")
         )
     ).toEqual([]);
@@ -78,6 +79,7 @@ describe("Workspace start page", () => {
             !url.endsWith("auth/refresh") &&
             !url.endsWith("workspace-preferences") &&
             !url.endsWith("/organization/branding") &&
+            !url.endsWith("/organization/language-settings") &&
             !url.endsWith("/me/onboarding") &&
             !url.endsWith("/me/quick-setup")
         )

@@ -1,5 +1,5 @@
 {
-  "schemaSha256": "f58cca8b37d28794a43c5ddcffdeeaaf186ed3efee9d8291bb5188cf4f7fe855",
+  "schemaSha256": "ccb02228dff6378c909872b055531f487a63670ff1008f4a2fc2115bff7a79aa",
   "models": [
     {
       "name": "Organization",
@@ -7,10 +7,164 @@
       "primaryKey": ["id"],
       "fields": [
         {
+          "name": "defaultLanguage",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "default_language",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(5)",
+          "relationFromFields": []
+        },
+        {
+          "name": "detectBrowserLanguage",
+          "type": "Boolean",
+          "kind": "scalar",
+          "dbName": "detect_browser_language",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "branding",
+          "type": "Json",
+          "kind": "scalar",
+          "dbName": "branding",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "JsonB",
+          "relationFromFields": []
+        },
+        {
+          "name": "onboardingOwnerId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "onboarding_owner_id",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "onboardingStep",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "onboarding_step",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "onboardingCompletedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "onboarding_completed_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "inboundMessages",
+          "type": "InboundMessage",
+          "kind": "object",
+          "dbName": "inboundMessages",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "emailRelaySettings",
+          "type": "EmailRelaySettings",
+          "kind": "object",
+          "dbName": "emailRelaySettings",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "emailProviderPreference",
+          "type": "EmailProviderPreference",
+          "kind": "object",
+          "dbName": "emailProviderPreference",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "emailOutbox",
+          "type": "EmailOutbox",
+          "kind": "object",
+          "dbName": "emailOutbox",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "webhookSubscriptions",
+          "type": "WebhookSubscription",
+          "kind": "object",
+          "dbName": "webhookSubscriptions",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "webhookDispatches",
+          "type": "WebhookDispatch",
+          "kind": "object",
+          "dbName": "webhookDispatches",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "webhookDeliveries",
+          "type": "WebhookDelivery",
+          "kind": "object",
+          "dbName": "webhookDeliveries",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
           "name": "backups",
           "type": "BackupRecord",
           "kind": "object",
           "dbName": "backups",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "operationPreviews",
+          "type": "OperationPreview",
+          "kind": "object",
+          "dbName": "operationPreviews",
           "isRequired": true,
           "isList": true,
           "isId": false,
@@ -633,10 +787,32 @@
       "primaryKey": ["id"],
       "fields": [
         {
+          "name": "webhookSubscriptionsCreated",
+          "type": "WebhookSubscription",
+          "kind": "object",
+          "dbName": "webhookSubscriptionsCreated",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
           "name": "backupsCreated",
           "type": "BackupRecord",
           "kind": "object",
           "dbName": "backupsCreated",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "operationPreviewsCreated",
+          "type": "OperationPreview",
+          "kind": "object",
+          "dbName": "operationPreviewsCreated",
           "isRequired": true,
           "isList": true,
           "isId": false,
@@ -1201,6 +1377,39 @@
       "primaryKey": ["id"],
       "fields": [
         {
+          "name": "tourStatus",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "tour_status",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(16)",
+          "relationFromFields": []
+        },
+        {
+          "name": "quickSetupCompletedSteps",
+          "type": "Json",
+          "kind": "scalar",
+          "dbName": "quick_setup_completed_steps",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "JsonB",
+          "relationFromFields": []
+        },
+        {
+          "name": "quickSetupCompletedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "quick_setup_completed_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
           "name": "isSuperuser",
           "type": "Boolean",
           "kind": "scalar",
@@ -1470,6 +1679,17 @@
           "isId": false,
           "nativeType": null,
           "relationFromFields": ["userId"]
+        },
+        {
+          "name": "operationPreviews",
+          "type": "OperationPreview",
+          "kind": "object",
+          "dbName": "operationPreviews",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
         }
       ]
     },
@@ -2219,6 +2439,17 @@
           "type": "Int",
           "kind": "scalar",
           "dbName": "year",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "periodIndex",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "period_index",
           "isRequired": true,
           "isList": false,
           "isId": false,
@@ -5208,6 +5439,17 @@
       "primaryKey": ["id"],
       "fields": [
         {
+          "name": "emailOutbox",
+          "type": "EmailOutbox",
+          "kind": "object",
+          "dbName": "emailOutbox",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
           "name": "id",
           "type": "String",
           "kind": "scalar",
@@ -6782,6 +7024,17 @@
           "relationFromFields": ["actorUserId"]
         },
         {
+          "name": "operationPreviews",
+          "type": "OperationPreview",
+          "kind": "object",
+          "dbName": "operationPreviews",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
           "name": "protectedByOperations",
           "type": "DataOperation",
           "kind": "object",
@@ -6791,6 +7044,189 @@
           "isId": false,
           "nativeType": null,
           "relationFromFields": []
+        }
+      ]
+    },
+    {
+      "name": "OperationPreview",
+      "dbName": "operation_previews",
+      "primaryKey": ["id"],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "actorUserId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "actor_user_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "sessionId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "session_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "kind",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "kind",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(16)",
+          "relationFromFields": []
+        },
+        {
+          "name": "targetBackupId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "target_backup_id",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "targetChecksum",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "target_checksum",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(64)",
+          "relationFromFields": []
+        },
+        {
+          "name": "currentFingerprint",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "current_fingerprint",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(64)",
+          "relationFromFields": []
+        },
+        {
+          "name": "payload",
+          "type": "Json",
+          "kind": "scalar",
+          "dbName": "payload",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "JsonB",
+          "relationFromFields": []
+        },
+        {
+          "name": "expiresAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "expires_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "consumedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "consumed_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "createdAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "created_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        },
+        {
+          "name": "actor",
+          "type": "User",
+          "kind": "object",
+          "dbName": "actor",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["actorUserId"]
+        },
+        {
+          "name": "session",
+          "type": "RefreshSession",
+          "kind": "object",
+          "dbName": "session",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["sessionId"]
+        },
+        {
+          "name": "targetBackup",
+          "type": "BackupRecord",
+          "kind": "object",
+          "dbName": "targetBackup",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["targetBackupId", "organizationId"]
         }
       ]
     },
@@ -7201,6 +7637,1027 @@
           "isId": false,
           "nativeType": null,
           "relationFromFields": ["updatedBy"]
+        }
+      ]
+    },
+    {
+      "name": "EmailRelaySettings",
+      "dbName": "email_relay_settings",
+      "primaryKey": ["organizationId"],
+      "fields": [
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "endpoint",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "endpoint",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(512)",
+          "relationFromFields": []
+        },
+        {
+          "name": "encryptedBearerToken",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "encrypted_bearer_token",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Text",
+          "relationFromFields": []
+        },
+        {
+          "name": "mode",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "mode",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(24)",
+          "relationFromFields": []
+        },
+        {
+          "name": "version",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "version",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "updated_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        }
+      ]
+    },
+    {
+      "name": "EmailProviderPreference",
+      "dbName": "email_provider_preferences",
+      "primaryKey": ["organizationId"],
+      "fields": [
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "providerCode",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "provider_code",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(32)",
+          "relationFromFields": []
+        },
+        {
+          "name": "version",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "version",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "updated_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        }
+      ]
+    },
+    {
+      "name": "InboundMessage",
+      "dbName": "inbound_messages",
+      "primaryKey": ["id"],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "channel",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "channel",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(16)",
+          "relationFromFields": []
+        },
+        {
+          "name": "sourceKey",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "source_key",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(80)",
+          "relationFromFields": []
+        },
+        {
+          "name": "externalIdHash",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "external_id_hash",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(64)",
+          "relationFromFields": []
+        },
+        {
+          "name": "status",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "status",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(24)",
+          "relationFromFields": []
+        },
+        {
+          "name": "receivedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "received_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "createdAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "created_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "updated_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        }
+      ]
+    },
+    {
+      "name": "EmailOutbox",
+      "dbName": "email_outbox",
+      "primaryKey": ["id"],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "ticketId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "ticket_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "idempotencyHash",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "idempotency_hash",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(64)",
+          "relationFromFields": []
+        },
+        {
+          "name": "purpose",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "purpose",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(32)",
+          "relationFromFields": []
+        },
+        {
+          "name": "encryptedEmail",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "encrypted_email",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Text",
+          "relationFromFields": []
+        },
+        {
+          "name": "status",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "status",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(24)",
+          "relationFromFields": []
+        },
+        {
+          "name": "attemptCount",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "attempt_count",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "nextAttemptAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "next_attempt_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "leaseToken",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "lease_token",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "leasedUntil",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "leased_until",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "providerMessageId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "provider_message_id",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(200)",
+          "relationFromFields": []
+        },
+        {
+          "name": "lastErrorCode",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "last_error_code",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(80)",
+          "relationFromFields": []
+        },
+        {
+          "name": "createdAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "created_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "updated_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        },
+        {
+          "name": "ticket",
+          "type": "Ticket",
+          "kind": "object",
+          "dbName": "ticket",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["ticketId", "organizationId"]
+        }
+      ]
+    },
+    {
+      "name": "WebhookSubscription",
+      "dbName": "webhook_subscriptions",
+      "primaryKey": ["id"],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "name",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(160)",
+          "relationFromFields": []
+        },
+        {
+          "name": "targetUrl",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "target_url",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(2048)",
+          "relationFromFields": []
+        },
+        {
+          "name": "eventTypes",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "event_types",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": "VarChar(64)",
+          "relationFromFields": []
+        },
+        {
+          "name": "encryptedSecret",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "encrypted_secret",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Text",
+          "relationFromFields": []
+        },
+        {
+          "name": "isActive",
+          "type": "Boolean",
+          "kind": "scalar",
+          "dbName": "is_active",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "version",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "version",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "createdBy",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "created_by",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "createdAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "created_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "updated_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        },
+        {
+          "name": "creator",
+          "type": "User",
+          "kind": "object",
+          "dbName": "creator",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["createdBy"]
+        },
+        {
+          "name": "dispatches",
+          "type": "WebhookDispatch",
+          "kind": "object",
+          "dbName": "dispatches",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "deliveries",
+          "type": "WebhookDelivery",
+          "kind": "object",
+          "dbName": "deliveries",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        }
+      ]
+    },
+    {
+      "name": "WebhookDispatch",
+      "dbName": "webhook_dispatches",
+      "primaryKey": ["id"],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "subscriptionId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "subscription_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "subscriptionVersion",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "subscription_version",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "eventId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "event_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "eventType",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "event_type",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(64)",
+          "relationFromFields": []
+        },
+        {
+          "name": "payload",
+          "type": "Json",
+          "kind": "scalar",
+          "dbName": "payload",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "JsonB",
+          "relationFromFields": []
+        },
+        {
+          "name": "targetUrl",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "target_url",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(2048)",
+          "relationFromFields": []
+        },
+        {
+          "name": "encryptedSecret",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "encrypted_secret",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Text",
+          "relationFromFields": []
+        },
+        {
+          "name": "status",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "status",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(24)",
+          "relationFromFields": []
+        },
+        {
+          "name": "attemptCount",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "attempt_count",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "nextAttemptAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "next_attempt_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "leaseToken",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "lease_token",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "lockedUntil",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "locked_until",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "requestStartedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "request_started_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "requestId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "request_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(160)",
+          "relationFromFields": []
+        },
+        {
+          "name": "lastErrorCode",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "last_error_code",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(80)",
+          "relationFromFields": []
+        },
+        {
+          "name": "createdAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "created_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "updated_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        },
+        {
+          "name": "subscription",
+          "type": "WebhookSubscription",
+          "kind": "object",
+          "dbName": "subscription",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["subscriptionId", "organizationId"]
+        },
+        {
+          "name": "deliveries",
+          "type": "WebhookDelivery",
+          "kind": "object",
+          "dbName": "deliveries",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        }
+      ]
+    },
+    {
+      "name": "WebhookDelivery",
+      "dbName": "webhook_deliveries",
+      "primaryKey": ["id"],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "subscriptionId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "subscription_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "dispatchId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "dispatch_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "attempt",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "attempt",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "status",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "status",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(16)",
+          "relationFromFields": []
+        },
+        {
+          "name": "responseStatus",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "response_status",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "errorCode",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "error_code",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "VarChar(80)",
+          "relationFromFields": []
+        },
+        {
+          "name": "createdAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "created_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        },
+        {
+          "name": "subscription",
+          "type": "WebhookSubscription",
+          "kind": "object",
+          "dbName": "subscription",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["subscriptionId", "organizationId"]
+        },
+        {
+          "name": "dispatch",
+          "type": "WebhookDispatch",
+          "kind": "object",
+          "dbName": "dispatch",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": [
+            "dispatchId",
+            "subscriptionId",
+            "organizationId"
+          ]
         }
       ]
     }

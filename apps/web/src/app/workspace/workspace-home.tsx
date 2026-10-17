@@ -12,6 +12,7 @@ import { AgendaView } from "../agenda/agenda-view";
 import type { ReportTab } from "../reports/management-summary-view";
 import { DashboardWidgets } from "../reports/dashboard-widgets";
 import { useWorkspace } from "./workspace-provider";
+import { useTranslation } from "../../i18n/language-provider";
 
 function HomeIndicators({
   accessToken,
@@ -22,6 +23,7 @@ function HomeIndicators({
   onOpenReport: (target: ReportTab) => void;
   onNavigate: (section: WorkspaceSection) => void;
 }) {
+  const { t } = useTranslation();
   const w = useWorkspace()!;
   const [summary, setSummary] = useState<ManagementSummary | null>(null);
   const [error, setError] = useState("");
@@ -47,20 +49,23 @@ function HomeIndicators({
     };
   }, [accessToken, refresh]);
   return (
-    <section aria-label="Indicadores comerciais">
-      <h2>Indicadores comerciais</h2>
+    <section aria-label={t("Indicadores comerciais")}>
+      <h2>{t("Indicadores comerciais")}</h2>
       <button type="button" onClick={() => setRefresh(value => value + 1)}>
-        Atualizar indicadores
+        {t("Atualizar indicadores")}
       </button>
       {error ? (
         <p role="alert">
-          {error}
-          {summary ? " Exibindo últimos dados carregados." : ""}
+          {t(error)}
+          {summary ? t(" Exibindo últimos dados carregados.") : ""}
         </p>
       ) : null}
       {summary ? (
         <>
-          <p>Resumo em {new Date(summary.asOf).toLocaleString("pt-BR")}</p>
+          <p>
+            {t("Resumo em ")}
+            {new Date(summary.asOf).toLocaleString("pt-BR")}
+          </p>
           <DashboardWidgets
             summary={summary}
             accessToken={accessToken}
@@ -74,7 +79,7 @@ function HomeIndicators({
           />
         </>
       ) : !error ? (
-        <p>Carregando indicadores...</p>
+        <p>{t("Carregando indicadores...")}</p>
       ) : null}
     </section>
   );
@@ -88,6 +93,7 @@ export function WorkspaceHome({
   onOpenReport: (target: ReportTab) => void;
   onNavigate: (section: WorkspaceSection) => void;
 }) {
+  const { t } = useTranslation();
   const w = useWorkspace()!;
   const allowed = availableWorkspaceDestinations(session.permissions);
   const visible = w.saved.homeOrder.filter(
@@ -100,24 +106,29 @@ export function WorkspaceHome({
     <section className="activities-view" aria-labelledby="workspace-home-title">
       <header className="activities-view__header">
         <div>
-          <p className="activities-view__eyebrow">Seu espaço de trabalho</p>
-          <h1 id="workspace-home-title">Olá, {session.user.displayName}</h1>
+          <p className="activities-view__eyebrow">
+            {t("Seu espaço de trabalho")}
+          </p>
+          <h1 id="workspace-home-title">
+            {t("Olá, ")}
+            {session.user.displayName}
+          </h1>
           <p>{new Date().toLocaleDateString("pt-BR", { dateStyle: "full" })}</p>
         </div>
         <button type="button" onClick={() => onNavigate("workspace-settings")}>
-          Personalizar início
+          {t("Personalizar início")}
         </button>
       </header>
       {w.error ? <p role="alert">{w.error}</p> : null}
       <div className="workspace-home-widgets">
         {w.loading ? (
-          <p role="status">Carregando preferências...</p>
+          <p role="status">{t("Carregando preferências...")}</p>
         ) : (
           visible.map(id => (
             <div key={id}>
               {id === "favorites" ? (
-                <section aria-label="Atalhos favoritos">
-                  <h2>Favoritos</h2>
+                <section aria-label={t("Atalhos favoritos")}>
+                  <h2>{t("Favoritos")}</h2>
                   {w.saved.favorites.length ? (
                     <div className="workspace-favorites">
                       {w.saved.favorites.map(section => {
@@ -130,13 +141,13 @@ export function WorkspaceHome({
                             key={section}
                             onClick={() => onNavigate(section)}
                           >
-                            {item.label}
+                            {t(item.label)}
                           </button>
                         ) : null;
                       })}
                     </div>
                   ) : (
-                    <p>Escolha seus atalhos em Personalizar início.</p>
+                    <p>{t("Escolha seus atalhos em Personalizar início.")}</p>
                   )}
                 </section>
               ) : id === "today" ? (
@@ -158,8 +169,9 @@ export function WorkspaceHome({
       </div>
       {!w.loading && !visible.length ? (
         <p>
-          Nenhum componente disponível. Use Personalizar início para configurar
-          sua tela.
+          {t(
+            "Nenhum componente disponível. Use Personalizar início para configurar sua tela."
+          )}
         </p>
       ) : null}
     </section>

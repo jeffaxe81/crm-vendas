@@ -15,6 +15,7 @@ import {
 } from "@axes/contracts";
 
 import { apiRequest, downloadApiFile } from "../../lib/api-client";
+import { useTranslation } from "../../i18n/language-provider";
 
 type Operation = {
   id: string;
@@ -71,6 +72,7 @@ export function BackupAdministrationView({
 }: {
   accessToken: string;
 }) {
+  const { t } = useTranslation();
   const [backups, setBackups] = useState<BackupRecord[]>([]);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [schedule, setSchedule] = useState<Schedule>(defaults);
@@ -165,7 +167,9 @@ export function BackupAdministrationView({
         method: "POST",
       });
       setNotice(
-        `Backup solicitado (operação ${result.id}). Atualize para acompanhar.`
+        t("Backup solicitado (operação {0}). Atualize para acompanhar.", {
+          0: result.id,
+        })
       );
       setReload(value => value + 1);
     } catch (cause) {
@@ -193,7 +197,6 @@ export function BackupAdministrationView({
       });
       saveFeedback.saved();
       setSchedule(saved);
-      setNotice("Agendamento salvo com auditoria.");
     } catch (cause) {
       saveFeedback.failed();
       setError(
@@ -236,7 +239,7 @@ export function BackupAdministrationView({
         accessToken,
         `crm-backup-${id}.json`
       );
-      setNotice("Download do backup verificado iniciado.");
+      setNotice(t("Download do backup verificado iniciado."));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Falha no download.");
     } finally {
@@ -270,7 +273,7 @@ export function BackupAdministrationView({
       setAcceptedDeletions(ids =>
         Array.from(new Set([...ids, deletionTarget.id]))
       );
-      setNotice("Exclusão solicitada. Acompanhe a conclusão no histórico.");
+      setNotice(t("Exclusão solicitada. Acompanhe a conclusão no histórico."));
       setDeletionTarget(null);
       setDeletionConfirmation("");
       setPreview(null);
@@ -294,45 +297,50 @@ export function BackupAdministrationView({
       <header className="activities-view__header">
         <div>
           <p className="activities-view__eyebrow">
-            Administração · Superusuário
+            {t("Administração · Superusuário")}
           </p>
-          <h1 id="backup-title">Backup e recuperação</h1>
-          <p>Backups isolados por empresa, criptografados e auditados.</p>
+          <h1 id="backup-title">{t("Backup e recuperação")}</h1>
+          <p>
+            {t("Backups isolados por empresa, criptografados e auditados.")}
+          </p>
         </div>
         <button type="button" onClick={() => setReload(value => value + 1)}>
-          Atualizar informações
+          {t("Atualizar informações")}
         </button>
       </header>
 
       {!configured && !loading ? (
         <p role="status">
-          Armazenamento ainda não habilitado. Configure BACKUP_DIRECTORY e
-          BACKUP_ENCRYPTION_KEY no servidor para ativar as operações.
+          {t(
+            "Armazenamento ainda não habilitado. Configure BACKUP_DIRECTORY e BACKUP_ENCRYPTION_KEY no servidor para ativar as operações."
+          )}
         </p>
       ) : null}
-      {loading ? <p>Carregando histórico...</p> : null}
-      {error ? <p role="alert">{error}</p> : null}
-      {notice ? <p role="status">{notice}</p> : null}
+      {loading ? <p>{t("Carregando histórico...")}</p> : null}
+      {error ? <p role="alert">{t(error)}</p> : null}
+      {notice ? <p role="status">{t(notice)}</p> : null}
 
-      <section className="companies-view__card" aria-label="Backup manual">
-        <h2>Backup manual</h2>
+      <section className="companies-view__card" aria-label={t("Backup manual")}>
+        <h2>{t("Backup manual")}</h2>
         <p>
-          A solicitação entra na fila durável e será processada pelo worker.
+          {t(
+            "A solicitação entra na fila durável e será processada pelo worker."
+          )}
         </p>
         <button
           type="button"
           disabled={!configured || busy}
           onClick={() => void runBackup()}
         >
-          Criar backup agora
+          {t("Criar backup agora")}
         </button>
       </section>
 
       <section
         className="companies-view__card"
-        aria-label="Agendamento de backups"
+        aria-label={t("Agendamento de backups")}
       >
-        <h2>Agendamento automático</h2>
+        <h2>{t("Agendamento automático")}</h2>
         <form onSubmit={saveSchedule}>
           <label>
             <input
@@ -346,10 +354,10 @@ export function BackupAdministrationView({
                 }))
               }
             />
-            Ativar backup automático
+            {t("Ativar backup automático")}
           </label>
           <label>
-            Frequência
+            {t("Frequência")}
             <select
               value={schedule.frequency}
               disabled={busy}
@@ -362,14 +370,14 @@ export function BackupAdministrationView({
                 }))
               }
             >
-              <option value="DAILY">Diário</option>
-              <option value="WEEKLY">Semanal</option>
-              <option value="INTERVAL">Intervalo</option>
+              <option value="DAILY">{t("Diário")}</option>
+              <option value="WEEKLY">{t("Semanal")}</option>
+              <option value="INTERVAL">{t("Intervalo")}</option>
             </select>
           </label>
           {schedule.frequency === "INTERVAL" ? (
             <label>
-              Intervalo (minutos)
+              {t("Intervalo (minutos)")}
               <input
                 type="number"
                 min={1}
@@ -386,7 +394,7 @@ export function BackupAdministrationView({
           ) : (
             <>
               <label>
-                Horário (São Paulo)
+                {t("Horário (São Paulo)")}
                 <input
                   type="time"
                   value={schedule.localTime}
@@ -400,7 +408,7 @@ export function BackupAdministrationView({
               </label>
               {schedule.frequency === "WEEKLY" ? (
                 <label>
-                  Dia da semana
+                  {t("Dia da semana")}
                   <select
                     value={schedule.weekday}
                     onChange={event =>
@@ -429,7 +437,7 @@ export function BackupAdministrationView({
             </>
           )}
           <label>
-            Retenção (quantidade de backups)
+            {t("Retenção (quantidade de backups)")}
             <select
               value={schedule.retentionCount}
               onChange={event =>
@@ -448,24 +456,30 @@ export function BackupAdministrationView({
               ))}
             </select>
           </label>
-          <p>Próxima execução: {date(schedule.nextRunAt)}</p>
+          <p>
+            {t("Próxima execução: ")}
+            {date(schedule.nextRunAt)}
+          </p>
           <SaveButton
             type="submit"
             disabled={busy || (schedule.enabled && !configured)}
             status={saveFeedback.status}
-            label="Salvar agendamento"
+            label={t("Salvar agendamento")}
           />
-          <SaveNotice status={saveFeedback.status} label="Agendamento salvo." />
+          <SaveNotice
+            status={saveFeedback.status}
+            label={t("Agendamento salvo com auditoria.")}
+          />
         </form>
       </section>
 
       <section
         className="companies-view__card"
-        aria-label="Operações de backup"
+        aria-label={t("Operações de backup")}
       >
-        <h2>Fila e execução</h2>
+        <h2>{t("Fila e execução")}</h2>
         {operations.length === 0 ? (
-          <p>Não há operações registradas.</p>
+          <p>{t("Não há operações registradas.")}</p>
         ) : (
           <ul>
             {operations.map(item => (
@@ -481,15 +495,16 @@ export function BackupAdministrationView({
 
       <section
         className="companies-view__card"
-        aria-label="Histórico de backups"
+        aria-label={t("Histórico de backups")}
       >
-        <h2>Histórico</h2>
+        <h2>{t("Histórico")}</h2>
         <p>
-          O download gera JSON sem criptografia. Guarde o arquivo em local
-          privado e não o compartilhe por canais não autorizados.
+          {t(
+            "O download gera JSON sem criptografia. Guarde o arquivo em local privado e não o compartilhe por canais não autorizados."
+          )}
         </p>
         {backups.length === 0 ? (
-          <p>Nenhum backup no catálogo.</p>
+          <p>{t("Nenhum backup no catálogo.")}</p>
         ) : (
           <ul>
             {backups.map(item => (
@@ -498,7 +513,7 @@ export function BackupAdministrationView({
                 {states[item.state] ?? item.state} · {item.reason} ·{" "}
                 {size(item.byteCount)}
                 {item.errorCode
-                  ? ` · ${item.errorCode === "BACKUP_DELETE_RETRY" ? "A exclusão será tentada novamente." : item.errorCode}`
+                  ? ` · ${item.errorCode === "BACKUP_DELETE_RETRY" ? t("A exclusão será tentada novamente.") : item.errorCode}`
                   : null}
                 {item.state === "COMPLETED" ? (
                   <>
@@ -508,14 +523,14 @@ export function BackupAdministrationView({
                       disabled={busy}
                       onClick={() => void download(item.id)}
                     >
-                      Baixar
+                      {t("Baixar")}
                     </button>{" "}
                     <button
                       type="button"
                       disabled={busy}
                       onClick={() => void viewPreview(item.id)}
                     >
-                      Prévia de restauração
+                      {t("Prévia de restauração")}
                     </button>{" "}
                     <button
                       type="button"
@@ -525,7 +540,7 @@ export function BackupAdministrationView({
                         setDeletionConfirmation("");
                       }}
                     >
-                      Excluir backup
+                      {t("Excluir backup")}
                     </button>
                   </>
                 ) : null}
@@ -536,20 +551,24 @@ export function BackupAdministrationView({
       </section>
 
       {deletionTarget ? (
-        <section className="companies-view__card" aria-label="Excluir backup">
-          <h2>Excluir backup</h2>
+        <section
+          className="companies-view__card"
+          aria-label={t("Excluir backup")}
+        >
+          <h2>{t("Excluir backup")}</h2>
           <p>
-            Cópia de {date(deletionTarget.createdAt)} ·{" "}
-            {size(deletionTarget.byteCount)}
+            {t("Cópia de ")}
+            {date(deletionTarget.createdAt)} · {size(deletionTarget.byteCount)}
           </p>
           <p>{deletionTarget.id}</p>
           <p>
-            A cópia selecionada será removida do armazenamento. O histórico e a
-            auditoria serão preservados.
+            {t(
+              "A cópia selecionada será removida do armazenamento. O histórico e a auditoria serão preservados."
+            )}
           </p>
           <form onSubmit={event => void deleteBackup(event)}>
             <label>
-              Digite EXCLUIR BACKUP para confirmar
+              {t("Digite EXCLUIR BACKUP para confirmar")}
               <input
                 value={deletionConfirmation}
                 autoComplete="off"
@@ -562,7 +581,7 @@ export function BackupAdministrationView({
                 busy || loading || deletionConfirmation !== "EXCLUIR BACKUP"
               }
             >
-              Confirmar exclusão
+              {t("Confirmar exclusão")}
             </button>{" "}
             <button
               type="button"
@@ -572,7 +591,7 @@ export function BackupAdministrationView({
                 setDeletionConfirmation("");
               }}
             >
-              Cancelar
+              {t("Cancelar")}
             </button>
           </form>
         </section>
@@ -581,30 +600,35 @@ export function BackupAdministrationView({
       {preview ? (
         <section
           className="companies-view__card"
-          aria-label="Prévia de restauração"
+          aria-label={t("Prévia de restauração")}
         >
-          <h2>Prévia validada — somente consulta</h2>
-          <p>Backup: {preview.targetBackupId}</p>
+          <h2>{t("Prévia validada — somente consulta")}</h2>
           <p>
-            Versão: {preview.targetSchemaVersion} · Válida até{" "}
-            {date(preview.expiresAt)}
+            {t("Backup: ")}
+            {preview.targetBackupId}
           </p>
           <p>
-            Estado atual:{" "}
+            {t("Versão: ")}
+            {preview.targetSchemaVersion}
+            {t(" · Válida até")} {date(preview.expiresAt)}
+          </p>
+          <p>
+            {t("Estado atual:")}{" "}
             {Object.values(preview.currentCounts).reduce((a, b) => a + b, 0)}{" "}
-            registros.
+            {t("registros.")}
           </p>
           <p>
-            Estado da cópia:{" "}
+            {t("Estado da cópia:")}{" "}
             {Object.values(preview.targetCounts).reduce((a, b) => a + b, 0)}{" "}
-            registros.
+            {t("registros.")}
           </p>
           <p>
-            A restauração efetiva ainda está bloqueada: exige reautenticação,
-            cópia preventiva verificada e substituição transacional homologada.
+            {t(
+              "A restauração efetiva ainda está bloqueada: exige reautenticação, cópia preventiva verificada e substituição transacional homologada."
+            )}
           </p>
           <button type="button" onClick={() => setPreview(null)}>
-            Fechar prévia
+            {t("Fechar prévia")}
           </button>
         </section>
       ) : null}

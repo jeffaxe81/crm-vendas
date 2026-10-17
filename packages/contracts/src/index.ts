@@ -389,6 +389,14 @@ export {
   type OrganizationOnboardingInput,
   type TourCompletionInput,
 } from "./onboarding";
+export {
+  LanguageSchema,
+  LanguageSettingsSchema,
+  defaultLanguageSettings,
+  resolveLanguage,
+  type Language,
+  type LanguageSettings,
+} from "./language-settings";
 
 export {
   TenantBrandingSchema,

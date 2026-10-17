@@ -23,6 +23,7 @@ import {
 import { Button } from "../../components/ui/button";
 import { apiRequest } from "../../lib/api-client";
 import { FileUp, Pencil, Plus, X } from "lucide-react";
+import { useTranslation } from "../../i18n/language-provider";
 
 type CompanyRecord = {
   id: string;
@@ -73,6 +74,7 @@ export function CompaniesView({
   accessToken,
   canWrite = true,
 }: CompaniesViewProps) {
+  const { t } = useTranslation();
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -261,7 +263,7 @@ export function CompaniesView({
 
     const legalName = form.legalName.trim();
     if (!legalName) {
-      setError("Informe a razão social.");
+      setError(t("Informe a razão social."));
       return;
     }
 
@@ -327,64 +329,69 @@ export function CompaniesView({
     <section className="companies-view" aria-labelledby="companies-title">
       <header className="companies-view__header">
         <div>
-          <p className="companies-view__eyebrow">Relacionamento</p>
-          <h1 id="companies-title">Empresas</h1>
-          <p>Cadastre e mantenha as organizações da sua base comercial.</p>
+          <p className="companies-view__eyebrow">{t("Relacionamento")}</p>
+          <h1 id="companies-title">{t("Empresas")}</h1>
+          <p>
+            {t("Cadastre e mantenha as organizações da sua base comercial.")}
+          </p>
         </div>
         <div className="companies-view__header-actions">
           {canWrite ? (
             <Button variant="outline" onClick={openImport}>
               <FileUp aria-hidden="true" />
-              Importar CSV
+              {t("Importar CSV")}
             </Button>
           ) : null}
           <Button className="companies-view__primary" onClick={openCreate}>
             <Plus aria-hidden="true" />
-            Nova empresa
+            {t("Nova empresa")}
           </Button>
         </div>
       </header>
 
       <div className="companies-view__toolbar">
         <label>
-          <span>Buscar empresas</span>
+          <span>{t("Buscar empresas")}</span>
           <input
             type="search"
-            aria-label="Buscar empresas"
-            placeholder="Razão social ou nome fantasia"
+            aria-label={t("Buscar empresas")}
+            placeholder={t("Razão social ou nome fantasia")}
             value={query}
             onChange={event => setQuery(event.target.value)}
           />
         </label>
-        <span>{companies.length} empresa(s)</span>
+        <span>
+          {companies.length}
+          {t(" empresa(s)")}
+        </span>
       </div>
 
       {error ? (
         <p className="companies-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
       {importOpen ? (
         <section
           className="company-import"
-          aria-label="Importar empresas por CSV"
+          aria-label={t("Importar empresas por CSV")}
         >
           <div className="company-form__heading">
             <div>
-              <p>Importação</p>
-              <h2>Importar empresas por CSV</h2>
+              <p>{t("Importação")}</p>
+              <h2>{t("Importar empresas por CSV")}</h2>
             </div>
             <Button variant="outline" size="sm" onClick={closeImport}>
               <X aria-hidden="true" />
-              Fechar
+              {t("Fechar")}
             </Button>
           </div>
 
           <label>
-            <span>Arquivo CSV</span>
+            <span>{t("Arquivo CSV")}</span>
             <input
-              aria-label="Arquivo CSV"
+              aria-label={t("Arquivo CSV")}
               type="file"
               accept=".csv,text/csv"
               disabled={importing}
@@ -392,27 +399,30 @@ export function CompaniesView({
             />
           </label>
 
-          {importing && !importPreview ? <p>Validando arquivo...</p> : null}
+          {importing && !importPreview ? (
+            <p>{t("Validando arquivo...")}</p>
+          ) : null}
 
           {importPreview && !importResult ? (
             <>
               <p>
-                {importPreview.valid} válida(s) · {importPreview.invalid}{" "}
-                inválida(s)
+                {importPreview.valid}
+                {t(" válida(s) · ")}
+                {importPreview.invalid} {t("inválida(s)")}
               </p>
               <div
                 className="company-import__table-wrapper"
                 role="region"
-                aria-label="Tabela: Prévia de empresas"
+                aria-label={t("Tabela: Prévia de empresas")}
                 tabIndex={0}
               >
                 <table>
                   <thead>
                     <tr>
-                      <th>Linha</th>
-                      <th>Empresa</th>
-                      <th>Status</th>
-                      <th>Erros</th>
+                      <th>{t("Linha")}</th>
+                      <th>{t("Empresa")}</th>
+                      <th>{t("Status")}</th>
+                      <th>{t("Erros")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -421,7 +431,7 @@ export function CompaniesView({
                         <td>{row.rowNumber}</td>
                         <td>{row.data.legalName ?? "—"}</td>
                         <td>
-                          {row.status === "VALID" ? "Válida" : "Inválida"}
+                          {row.status === "VALID" ? t("Válida") : t("Inválida")}
                         </td>
                         <td>{row.errors.join(" · ") || "—"}</td>
                       </tr>
@@ -434,15 +444,16 @@ export function CompaniesView({
                 disabled={importing || importPreview.valid === 0}
                 onClick={() => void confirmImport()}
               >
-                {importing ? "Importando..." : "Confirmar importação"}
+                {importing ? t("Importando...") : t("Confirmar importação")}
               </Button>
             </>
           ) : null}
 
           {importResult ? (
             <p>
-              {importResult.imported} importada(s) · {importResult.rejected}{" "}
-              rejeitada(s)
+              {importResult.imported}
+              {t(" importada(s) · ")}
+              {importResult.rejected} {t("rejeitada(s)")}
             </p>
           ) : null}
         </section>
@@ -451,25 +462,29 @@ export function CompaniesView({
       {formMode ? (
         <form
           className="company-form"
-          aria-label={formMode === "create" ? "Nova empresa" : "Editar empresa"}
+          aria-label={
+            formMode === "create" ? t("Nova empresa") : t("Editar empresa")
+          }
           onSubmit={submitCompany}
         >
           <div className="company-form__heading">
             <div>
-              <p>{formMode === "create" ? "Novo cadastro" : "Edição"}</p>
+              <p>{formMode === "create" ? t("Novo cadastro") : t("Edição")}</p>
               <h2>
-                {formMode === "create" ? "Nova empresa" : "Editar empresa"}
+                {formMode === "create"
+                  ? t("Nova empresa")
+                  : t("Editar empresa")}
               </h2>
             </div>
             <Button variant="outline" size="sm" onClick={closeForm}>
               <X aria-hidden="true" />
-              Cancelar
+              {t("Cancelar")}
             </Button>
           </div>
 
           <div className="company-form__fields">
             <label>
-              <span>Razão social</span>
+              <span>{t("Razão social")}</span>
               <input
                 value={form.legalName}
                 onChange={event =>
@@ -482,7 +497,7 @@ export function CompaniesView({
               />
             </label>
             <label>
-              <span>Nome fantasia</span>
+              <span>{t("Nome fantasia")}</span>
               <input
                 value={form.tradeName}
                 onChange={event =>
@@ -501,21 +516,23 @@ export function CompaniesView({
             disabled={submitting}
             status={saveFeedback.status}
             label={
-              formMode === "create" ? "Salvar empresa" : "Salvar alterações"
+              formMode === "create"
+                ? t("Salvar empresa")
+                : t("Salvar alterações")
             }
           />
         </form>
       ) : null}
 
-      <SaveNotice status={saveFeedback.status} label="Empresa salva." />
+      <SaveNotice status={saveFeedback.status} label={t("Empresa salva.")} />
       {loading ? (
-        <p className="companies-view__status">Carregando empresas...</p>
+        <p className="companies-view__status">{t("Carregando empresas...")}</p>
       ) : null}
 
       {!loading && visibleCompanies.length === 0 ? (
         <div className="companies-view__empty">
-          <strong>Nenhuma empresa encontrada.</strong>
-          <span>Ajuste a busca ou crie um novo cadastro.</span>
+          <strong>{t("Nenhuma empresa encontrada.")}</strong>
+          <span>{t("Ajuste a busca ou crie um novo cadastro.")}</span>
         </div>
       ) : null}
 
@@ -523,7 +540,7 @@ export function CompaniesView({
         {visibleCompanies.map(company => (
           <article className="company-card" key={company.id}>
             <div>
-              <p className="company-card__eyebrow">Empresa</p>
+              <p className="company-card__eyebrow">{t("Empresa")}</p>
               <h2>{company.legalName}</h2>
               {company.tradeName ? <p>{company.tradeName}</p> : null}
             </div>
@@ -533,7 +550,7 @@ export function CompaniesView({
               onClick={() => openEdit(company)}
             >
               <Pencil aria-hidden="true" />
-              Editar
+              {t("Editar")}
             </Button>
           </article>
         ))}

@@ -23,6 +23,7 @@ import {
   type SupportQueueRecord,
   type TicketRecord,
 } from "./ticket-labels";
+import { useTranslation } from "../../i18n/language-provider";
 
 type TicketsViewProps = {
   accessToken: string;
@@ -64,6 +65,7 @@ export function TicketsView({
   canManageQueues = false,
   canManageSla = false,
 }: TicketsViewProps) {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [tickets, setTickets] = useState<TicketRecord[]>([]);
@@ -148,7 +150,7 @@ export function TicketsView({
     event.preventDefault();
     const subject = form.subject.trim();
     if (!subject) {
-      setError("Informe o assunto.");
+      setError(t("Informe o assunto."));
       return;
     }
     setSubmitting(true);
@@ -190,20 +192,24 @@ export function TicketsView({
     <section className="companies-view" aria-labelledby="tickets-title">
       <header className="companies-view__header">
         <div>
-          <p className="companies-view__eyebrow">Atendimento</p>
-          <h1 id="tickets-title">Solicitações</h1>
-          <p>Protocolos, andamento e histórico do atendimento aos clientes.</p>
+          <p className="companies-view__eyebrow">{t("Atendimento")}</p>
+          <h1 id="tickets-title">{t("Solicitações")}</h1>
+          <p>
+            {t(
+              "Protocolos, andamento e histórico do atendimento aos clientes."
+            )}
+          </p>
         </div>
         {canWrite || canManageQueues || canManageSla ? (
           <div className="companies-view__header-actions">
             {canManageQueues ? (
               <button type="button" onClick={() => setQueuesOpen(true)}>
-                Gerenciar filas
+                {t("Gerenciar filas")}
               </button>
             ) : null}
             {canManageSla ? (
               <button type="button" onClick={() => setSlaOpen(true)}>
-                Políticas de SLA
+                {t("Políticas de SLA")}
               </button>
             ) : null}
             {canWrite ? (
@@ -212,7 +218,7 @@ export function TicketsView({
                 className="button companies-view__primary"
                 onClick={() => setFormOpen(true)}
               >
-                Nova solicitação
+                {t("Nova solicitação")}
               </button>
             ) : null}
           </div>
@@ -230,19 +236,19 @@ export function TicketsView({
         }}
       >
         <label>
-          <span>Buscar solicitações</span>
+          <span>{t("Buscar solicitações")}</span>
           <input
             type="search"
-            aria-label="Buscar solicitações"
-            placeholder="Protocolo ou assunto"
+            aria-label={t("Buscar solicitações")}
+            placeholder={t("Protocolo ou assunto")}
             value={queryInput}
             onChange={event => setQueryInput(event.target.value)}
           />
         </label>
         <label>
-          <span>Status</span>
+          <span>{t("Status")}</span>
           <select
-            aria-label="Filtrar por status"
+            aria-label={t("Filtrar por status")}
             value={status}
             onChange={event => {
               setStatus(event.target.value as TicketStatus | "");
@@ -250,18 +256,18 @@ export function TicketsView({
               setSelectedId(null);
             }}
           >
-            <option value="">Todos</option>
+            <option value="">{t("Todos")}</option>
             {TicketStatusSchema.options.map(option => (
               <option key={option} value={option}>
-                {statusLabels[option]}
+                {t(statusLabels[option])}
               </option>
             ))}
           </select>
         </label>
         <label>
-          <span>Fila</span>
+          <span>{t("Fila")}</span>
           <select
-            aria-label="Filtrar por fila"
+            aria-label={t("Filtrar por fila")}
             value={queueFilter}
             onChange={event => {
               setQueueFilter(event.target.value);
@@ -269,7 +275,7 @@ export function TicketsView({
               setSelectedId(null);
             }}
           >
-            <option value="">Todas</option>
+            <option value="">{t("Todas")}</option>
             {queues.map(queue => (
               <option key={queue.id} value={queue.id}>
                 {queue.name}
@@ -277,7 +283,7 @@ export function TicketsView({
             ))}
           </select>
         </label>
-        <button type="submit">Buscar</button>
+        <button type="submit">{t("Buscar")}</button>
         <button
           type="button"
           aria-pressed={onlyMine}
@@ -287,7 +293,7 @@ export function TicketsView({
             setSelectedId(null);
           }}
         >
-          Minhas solicitações
+          {t("Minhas solicitações")}
         </button>
       </form>
 
@@ -302,7 +308,7 @@ export function TicketsView({
 
       {error ? (
         <p className="companies-view__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : null}
 
@@ -319,21 +325,21 @@ export function TicketsView({
       {formOpen ? (
         <form
           className="company-form"
-          aria-label="Nova solicitação"
+          aria-label={t("Nova solicitação")}
           onSubmit={submit}
         >
           <div className="company-form__heading">
             <div>
-              <p>Abertura</p>
-              <h2>Nova solicitação</h2>
+              <p>{t("Abertura")}</p>
+              <h2>{t("Nova solicitação")}</h2>
             </div>
             <button type="button" onClick={() => setFormOpen(false)}>
-              Cancelar
+              {t("Cancelar")}
             </button>
           </div>
           <div className="company-form__fields">
             <label>
-              <span>Assunto</span>
+              <span>{t("Assunto")}</span>
               <input
                 value={form.subject}
                 onChange={event =>
@@ -345,7 +351,7 @@ export function TicketsView({
               />
             </label>
             <label>
-              <span>Descrição</span>
+              <span>{t("Descrição")}</span>
               <textarea
                 value={form.description}
                 onChange={event =>
@@ -357,7 +363,7 @@ export function TicketsView({
               />
             </label>
             <label>
-              <span>Prioridade</span>
+              <span>{t("Prioridade")}</span>
               <select
                 value={form.priority}
                 onChange={event =>
@@ -369,13 +375,13 @@ export function TicketsView({
               >
                 {TicketPrioritySchema.options.map(option => (
                   <option key={option} value={option}>
-                    {priorityLabels[option]}
+                    {t(priorityLabels[option])}
                   </option>
                 ))}
               </select>
             </label>
             <label>
-              <span>Canal</span>
+              <span>{t("Canal")}</span>
               <select
                 value={form.channel}
                 onChange={event =>
@@ -387,13 +393,13 @@ export function TicketsView({
               >
                 {TicketChannelSchema.options.map(option => (
                   <option key={option} value={option}>
-                    {channelLabels[option]}
+                    {t(channelLabels[option])}
                   </option>
                 ))}
               </select>
             </label>
             <label>
-              <span>Fila de atendimento</span>
+              <span>{t("Fila de atendimento")}</span>
               <select
                 value={form.queueId}
                 onChange={event =>
@@ -403,18 +409,18 @@ export function TicketsView({
                   }))
                 }
               >
-                <option value="">Sem fila</option>
+                <option value="">{t("Sem fila")}</option>
                 {activeQueues.map(queue => (
                   <option key={queue.id} value={queue.id}>
                     {queue.name}
-                    {queue.autoAssign ? " (distribuição automática)" : ""}
+                    {queue.autoAssign ? t(" (distribuição automática)") : ""}
                   </option>
                 ))}
               </select>
             </label>
           </div>
           <button className="button" type="submit" disabled={submitting}>
-            {submitting ? "Abrindo..." : "Abrir solicitação"}
+            {submitting ? t("Abrindo...") : t("Abrir solicitação")}
           </button>
         </form>
       ) : null}
@@ -441,28 +447,28 @@ export function TicketsView({
         />
       ) : null}
 
-      {loading ? <p>Carregando solicitações...</p> : null}
+      {loading ? <p>{t("Carregando solicitações...")}</p> : null}
       {!loading && tickets.length === 0 ? (
-        <p>Nenhuma solicitação encontrada.</p>
+        <p>{t("Nenhuma solicitação encontrada.")}</p>
       ) : null}
 
       {!loading && tickets.length > 0 ? (
         <div
           className="company-import__table-wrapper"
           role="region"
-          aria-label="Tabela: Atendimentos"
+          aria-label={t("Tabela: Atendimentos")}
           tabIndex={0}
         >
           <table>
             <thead>
               <tr>
-                <th>Protocolo</th>
-                <th>Assunto</th>
-                <th>Status</th>
-                <th>Prioridade</th>
-                <th>Fila</th>
-                <th>Aberta em</th>
-                <th>SLA</th>
+                <th>{t("Protocolo")}</th>
+                <th>{t("Assunto")}</th>
+                <th>{t("Status")}</th>
+                <th>{t("Prioridade")}</th>
+                <th>{t("Fila")}</th>
+                <th>{t("Aberta em")}</th>
+                <th>{t("SLA")}</th>
               </tr>
             </thead>
             <tbody>
@@ -472,14 +478,14 @@ export function TicketsView({
                     <button
                       type="button"
                       onClick={() => setSelectedId(ticket.id)}
-                      aria-label={`Abrir ${ticket.protocol}`}
+                      aria-label={t("Abrir {0}", { 0: ticket.protocol })}
                     >
                       {ticket.protocol}
                     </button>
                   </td>
                   <td>{ticket.subject}</td>
-                  <td>{statusLabels[ticket.status]}</td>
-                  <td>{priorityLabels[ticket.priority]}</td>
+                  <td>{t(statusLabels[ticket.status])}</td>
+                  <td>{t(priorityLabels[ticket.priority])}</td>
                   <td>
                     {ticket.queueId
                       ? (queueNames.get(ticket.queueId) ?? "—")
@@ -498,7 +504,7 @@ export function TicketsView({
       {!loading && !error && (total > 0 || page > 1) ? (
         <nav
           className="companies-view__pagination"
-          aria-label="Paginação de solicitações"
+          aria-label={t("Paginação de solicitações")}
         >
           <button
             type="button"
@@ -508,11 +514,13 @@ export function TicketsView({
               setSelectedId(null);
             }}
           >
-            Anterior
+            {t("Anterior")}
           </button>
           <span>
-            Página {page} de {Math.max(1, Math.ceil(total / 50))} · {total}{" "}
-            solicitações
+            {t("Página ")}
+            {page}
+            {t(" de ")}
+            {Math.max(1, Math.ceil(total / 50))} · {total} {t("solicitações")}
           </span>
           <button
             type="button"
@@ -522,7 +530,7 @@ export function TicketsView({
               setSelectedId(null);
             }}
           >
-            Próxima
+            {t("Próxima")}
           </button>
         </nav>
       ) : null}

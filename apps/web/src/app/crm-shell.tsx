@@ -25,6 +25,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useTranslation } from "../i18n/language-provider";
 
 import { defaultBranding, type TenantBranding } from "@axes/contracts";
 import { brandingStyle } from "./branding/use-tenant-branding";
@@ -77,6 +78,7 @@ export function CrmShell({
   onOpenQuickSetup,
   children,
 }: CrmShellProps) {
+  const { t } = useTranslation();
   const workspace = useWorkspace();
   const [openGroups, setOpenGroups] = useState<string[]>([]);
   const [collapsed, setCollapsed] = useState(false);
@@ -108,8 +110,8 @@ export function CrmShell({
       <button
         key={item.section}
         type="button"
-        aria-label={item.label}
-        title={collapsed && !mobile ? item.label : undefined}
+        aria-label={t(item.label)}
+        title={collapsed && !mobile ? t(item.label) : undefined}
         className={activeSection === item.section ? "is-active" : undefined}
         aria-current={activeSection === item.section ? "page" : undefined}
         onClick={() => {
@@ -118,7 +120,7 @@ export function CrmShell({
         }}
       >
         <Icon aria-hidden="true" />
-        <span>{item.label}</span>
+        <span>{t(item.label)}</span>
       </button>
     );
   }
@@ -204,7 +206,7 @@ export function CrmShell({
       className={`tenant-branded crm-shell${collapsed ? " crm-shell--collapsed" : ""}${mobileDrawerOpen ? " crm-shell--drawer-open" : ""}`}
     >
       <a className="crm-shell__skip" href="#crm-content">
-        Ir para o conteúdo
+        {t("Ir para o conteúdo")}
       </a>
       {mobileDrawerOpen ? (
         <div
@@ -218,7 +220,7 @@ export function CrmShell({
         ref={sidebarRef}
         className="crm-shell__sidebar"
         role={mobileDrawerOpen ? "dialog" : undefined}
-        aria-label="Navegação do CRM"
+        aria-label={t("Navegação do CRM")}
         aria-modal={mobileDrawerOpen ? true : undefined}
         inert={mobile && !drawerOpen ? true : undefined}
       >
@@ -228,7 +230,7 @@ export function CrmShell({
               ref={closeRef}
               type="button"
               className="crm-shell__icon-button"
-              aria-label="Fechar navegação"
+              aria-label={t("Fechar navegação")}
               onClick={() => setDrawerOpen(false)}
             >
               <X aria-hidden="true" />
@@ -246,22 +248,25 @@ export function CrmShell({
             </span>
           )}
           <div className="crm-shell__brand-copy">
-            <p className="crm-shell__brand-eyebrow">AXE Sistemas</p>
-            <p className="crm-shell__brand-title">AXE CRM</p>
+            <p className="crm-shell__brand-eyebrow">{t("AXE Sistemas")}</p>
+            <p className="crm-shell__brand-title">{t("AXE CRM")}</p>
           </div>
         </div>
 
         <div className="crm-shell__organization">
-          <span>Organização ativa</span>
+          <span>{t("Organização ativa")}</span>
           <strong>{session.organization.name}</strong>
-          <span>Identificador: {session.organization.slug}</span>
+          <span>
+            {t("Identificador: ")}
+            {session.organization.slug}
+          </span>
         </div>
 
-        <nav className="crm-shell__nav" aria-label="Navegação principal">
+        <nav className="crm-shell__nav" aria-label={t("Navegação principal")}>
           {renderItem(items.find(item => item.section === "home")!)}
           {favorites.length ? (
-            <div aria-label="Favoritos">
-              <p className="crm-shell__nav-caption">Favoritos</p>
+            <div aria-label={t("Favoritos")}>
+              <p className="crm-shell__nav-caption">{t("Favoritos")}</p>
               {favorites.map(id =>
                 renderItem(items.find(item => item.section === id)!)
               )}
@@ -282,12 +287,12 @@ export function CrmShell({
             if (!entries.length) return null;
             const open = openGroups.includes(group);
             return (
-              <div key={group} className="workspace-nav-group">
+              <div key={t(group)} className="workspace-nav-group">
                 <button
                   type="button"
-                  aria-label={`Grupo ${group}`}
+                  aria-label={t("Grupo {0}", { 0: t(group) })}
                   aria-expanded={open}
-                  title={group}
+                  title={t(group)}
                   onClick={() =>
                     setOpenGroups(current =>
                       current.includes(group)
@@ -297,7 +302,7 @@ export function CrmShell({
                   }
                 >
                   <Menu aria-hidden="true" />
-                  <span>{group}</span>
+                  <span>{t(group)}</span>
                 </button>
                 {open ? (
                   <div className="workspace-nav-group__items">
@@ -309,7 +314,7 @@ export function CrmShell({
           })}
         </nav>
 
-        <section className="crm-shell__session" aria-label="Sessão ativa">
+        <section className="crm-shell__session" aria-label={t("Sessão ativa")}>
           <div className="crm-shell__user">
             <span className="crm-shell__avatar" aria-hidden="true">
               {initials}
@@ -324,32 +329,32 @@ export function CrmShell({
             <button
               type="button"
               onClick={onOpenQuickSetup}
-              aria-label="Configuração rápida"
-              title="Abrir a configuração rápida do CRM"
+              aria-label={t("Configuração rápida")}
+              title={t("Abrir a configuração rápida do CRM")}
             >
               <ShieldCheck aria-hidden="true" />
-              <span>Configuração rápida</span>
+              <span>{t("Configuração rápida")}</span>
             </button>
           ) : null}
           {onStartTour ? (
             <button
               type="button"
               onClick={onStartTour}
-              aria-label="Ajuda: rever tour do CRM"
-              title="Rever o tour de funcionalidades"
+              aria-label={t("Ajuda: rever tour do CRM")}
+              title={t("Rever o tour de funcionalidades")}
             >
               <ShieldCheck aria-hidden="true" />
-              <span>Ajuda · Rever tour</span>
+              <span>{t("Ajuda · Rever tour")}</span>
             </button>
           ) : null}
           <button
             type="button"
             onClick={onLogout}
-            aria-label="Sair com segurança"
-            title="Sair com segurança"
+            aria-label={t("Sair com segurança")}
+            title={t("Sair com segurança")}
           >
             <DoorOpen aria-hidden="true" />
-            <span>Sair com segurança</span>
+            <span>{t("Sair com segurança")}</span>
           </button>
         </section>
       </aside>
@@ -366,10 +371,10 @@ export function CrmShell({
               className="crm-shell__icon-button"
               aria-label={
                 mobile
-                  ? "Abrir navegação"
+                  ? t("Abrir navegação")
                   : collapsed
-                    ? "Expandir navegação"
-                    : "Recolher navegação"
+                    ? t("Expandir navegação")
+                    : t("Recolher navegação")
               }
               aria-controls="crm-navigation"
               aria-expanded={mobile ? drawerOpen : !collapsed}
@@ -382,18 +387,19 @@ export function CrmShell({
               )}
             </button>
             <div className="crm-shell__page-context">
-              <p>Portal comercial · AXE CRM</p>
-              <strong>{currentLabel}</strong>
+              <p>{t("Portal comercial · AXE CRM")}</p>
+              <strong>{t(currentLabel)}</strong>
             </div>
           </div>
           <span className="crm-shell__profile">
-            Perfil {session.membership.role}
+            {t("Perfil ")}
+            {session.membership.role}
           </span>
         </header>
         <main
           id="crm-content"
           className="crm-shell__content"
-          aria-label="Acesso ao CRM"
+          aria-label={t("Acesso ao CRM")}
           tabIndex={-1}
         >
           {children}

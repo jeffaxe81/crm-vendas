@@ -1,6 +1,7 @@
 import { TenantBrandingService } from "./tenant-branding.service";
 import { TenantBrandingController } from "./tenant-branding.controller";
 import { Module } from "@nestjs/common";
+import { LanguageSettingsController } from "../localization/language-settings.controller";
 import { FirstAccessService } from "./first-access.service";
 import { FirstAccessController } from "./first-access.controller";
 import { QuickSetupController } from "./quick-setup.controller";
@@ -12,6 +13,7 @@ import { WorkspacePreferencesService } from "./workspace-preferences.service";
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
   controllers: [
+    LanguageSettingsController,
     TenantBrandingController,
     WorkspacePreferencesController,
     FirstAccessController,

@@ -5,7 +5,14 @@ import {
   availableWorkspaceDestinations,
   type AuthSessionResponse,
 } from "@axes/contracts";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import {
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { Headset, PanelRightClose, PanelRightOpen } from "lucide-react";
 
 import { authApiRequest, SESSION_UNAUTHORIZED_EVENT } from "../lib/api-client";
@@ -33,6 +40,9 @@ import { UsersView } from "./admin/users-view";
 import { SupportSettingsView } from "./admin/support-settings-view";
 import { IntegrationCredentialsView } from "./admin/integration-credentials-view";
 import { BackupAdministrationView } from "./admin/backup-administration-view";
+import { LanguageSettingsView } from "./admin/language-settings-view";
+import { LanguageProvider } from "../i18n/language-provider";
+import { useTranslation } from "../i18n/language-provider";
 
 import {
   useTenantBranding,
@@ -41,11 +51,36 @@ import {
 import { BrandingEditor } from "./branding/branding-editor";
 
 export default function Home() {
+  const [session, setSession] = useState<AuthSessionResponse | null>(null);
+  const [organizationSlug, setOrganizationSlug] = useState("");
+  return (
+    <LanguageProvider session={session} loginSlug={organizationSlug}>
+      <HomeContent
+        session={session}
+        setSession={setSession}
+        organizationSlug={organizationSlug}
+        setOrganizationSlug={setOrganizationSlug}
+      />
+    </LanguageProvider>
+  );
+}
+
+function HomeContent({
+  session,
+  setSession,
+  organizationSlug,
+  setOrganizationSlug,
+}: {
+  session: AuthSessionResponse | null;
+  setSession: Dispatch<SetStateAction<AuthSessionResponse | null>>;
+  organizationSlug: string;
+  setOrganizationSlug: (value: string) => void;
+}) {
+  const { t } = useTranslation();
   const manualNavigation = useRef(false);
   const [reportTab, setReportTab] = useState<ReportTab>("summary");
   const [tourReplayToken, setTourReplayToken] = useState(0);
   const [quickSetupOpenToken, setQuickSetupOpenToken] = useState(0);
-  const [session, setSession] = useState<AuthSessionResponse | null>(null);
   const tenantBranding = useTenantBranding(session);
   const [activeSection, setActiveSection] = useState<CrmSection>("home");
   const [communicationOpened, setCommunicationOpened] = useState(false);
@@ -53,7 +88,6 @@ export default function Home() {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [organizationSlug, setOrganizationSlug] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [adminDisplayName, setAdminDisplayName] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
@@ -183,7 +217,7 @@ export default function Home() {
     setError("");
 
     if (adminPassword !== adminPasswordConfirm) {
-      setError("As senhas não coincidem.");
+      setError(t("As senhas não coincidem."));
       return;
     }
 
@@ -293,6 +327,9 @@ export default function Home() {
               ) : null}
               <WorkspaceEditor session={session} />
             </>
+          ) : activeSection === "language-settings" &&
+            session.permissions.includes("organization.manage") ? (
+            <LanguageSettingsView />
           ) : activeSection === "admin-users" &&
             session.permissions.includes("user.manage") ? (
             <UsersView accessToken={session.accessToken} />
@@ -376,8 +413,8 @@ export default function Home() {
                 >
                   <Headset aria-hidden="true" />
                   {communicationDockOpen
-                    ? "Recolher comunicação"
-                    : "Abrir comunicação"}
+                    ? t("Recolher comunicação")
+                    : t("Abrir comunicação")}
                 </button>
               ) : null}
               <div
@@ -395,22 +432,22 @@ export default function Home() {
               >
                 {activeSection !== "communication" && communicationDockOpen ? (
                   <div className="communication-dock__toolbar">
-                    <strong>NEO Interact</strong>
+                    <strong>{t("NEO Interact")}</strong>
                     <button
                       type="button"
                       onClick={() => setCommunicationDockOpen(false)}
-                      aria-label="Recolher painel NEO Interact"
+                      aria-label={t("Recolher painel NEO Interact")}
                     >
                       <PanelRightClose aria-hidden="true" />
-                      Recolher
+                      {t("Recolher")}
                     </button>
                     <button
                       type="button"
                       onClick={() => navigate("communication")}
-                      aria-label="Abrir comunicação em tela inteira"
+                      aria-label={t("Abrir comunicação em tela inteira")}
                     >
                       <PanelRightOpen aria-hidden="true" />
-                      Expandir
+                      {t("Expandir")}
                     </button>
                   </div>
                 ) : null}
@@ -453,34 +490,35 @@ export default function Home() {
           <img
             className="tenant-logo tenant-logo--login"
             src={tenantBranding.branding.logo}
-            alt="Logo da empresa"
+            alt={t("Logo da empresa")}
           />
         ) : (
-          <p className="login-brand__eyebrow">Axesistemas</p>
+          <p className="login-brand__eyebrow">{t("Axesistemas")}</p>
         )}
-        <h1 id="crm-title">CRM Axesistemas</h1>
+        <h1 id="crm-title">{t("CRM Axesistemas")}</h1>
         <p className="login-brand__lead">
-          Relacionamento e vendas em uma base segura, preparada para
-          organizações independentes.
+          {t(
+            "Relacionamento e vendas em uma base segura, preparada para organizações independentes."
+          )}
         </p>
         <div className="login-brand__status">
           <span aria-hidden="true">●</span>
-          Ciclo 2 — CRM Core
+          {t("Ciclo 2 — CRM Core")}
         </div>
       </section>
 
-      <section className="login-card" aria-label="Acesso ao CRM">
+      <section className="login-card" aria-label={t("Acesso ao CRM")}>
         {mode === "login" ? (
           <>
-            <p className="login-card__eyebrow">Acesso seguro</p>
-            <h2>Entrar</h2>
+            <p className="login-card__eyebrow">{t("Acesso seguro")}</p>
+            <h2>{t("Entrar")}</h2>
             <p className="login-card__help">
-              Use seu e-mail e senha cadastrados na organização.
+              {t("Use seu e-mail e senha cadastrados na organização.")}
             </p>
 
             <form className="login-form" onSubmit={login}>
               <label>
-                <span>E-mail</span>
+                <span>{t("E-mail")}</span>
                 <input
                   type="email"
                   name="email"
@@ -492,7 +530,7 @@ export default function Home() {
               </label>
 
               <label>
-                <span>Senha</span>
+                <span>{t("Senha")}</span>
                 <input
                   type="password"
                   name="password"
@@ -504,7 +542,7 @@ export default function Home() {
               </label>
 
               <label>
-                <span>Identificador da empresa (opcional)</span>
+                <span>{t("Identificador da empresa (opcional)")}</span>
                 <input
                   name="organizationSlug"
                   value={organizationSlug}
@@ -515,51 +553,52 @@ export default function Home() {
                 />
               </label>
               <p id="organization-login-help" className="login-card__help">
-                Obrigatório se sua conta tem acesso a mais de uma empresa. Use o
-                identificador informado pelo administrador.
+                {t(
+                  "Obrigatório se sua conta tem acesso a mais de uma empresa. Use o identificador informado pelo administrador."
+                )}
               </p>
 
               {error ? (
                 <p className="login-form__error" role="alert">
-                  {error}
+                  {t(error)}
                 </p>
               ) : null}
 
               <button className="button" type="submit" disabled={submitting}>
-                {submitting ? "Autenticando..." : "Entrar no CRM"}
+                {submitting ? t("Autenticando...") : t("Entrar no CRM")}
               </button>
             </form>
 
             <p className="login-card__security">
-              O refresh token permanece protegido em cookie HttpOnly e não é
-              armazenado pela interface.
+              {t(
+                "O refresh token permanece protegido em cookie HttpOnly e não é armazenado pela interface."
+              )}
             </p>
 
             <p className="login-card__switch">
-              Ainda não tem uma organização cadastrada?{" "}
+              {t("Ainda não tem uma organização cadastrada?")}{" "}
               <button
                 type="button"
                 className="login-card__link"
                 onClick={() => switchMode("register")}
               >
-                Cadastre-se
+                {t("Cadastre-se")}
               </button>
             </p>
           </>
         ) : (
           <>
-            <p className="login-card__eyebrow">Primeiro acesso</p>
-            <h2>Cadastrar organização</h2>
+            <p className="login-card__eyebrow">{t("Primeiro acesso")}</p>
+            <h2>{t("Cadastrar organização")}</h2>
             <p className="login-card__help">
-              Crie sua organização e o primeiro usuário administrador. Depois é
-              possível adicionar outras pessoas com permissões menores. Se o
-              e-mail já possui uma conta, use a senha atual para vincular a nova
-              empresa.
+              {t(
+                "Crie sua organização e o primeiro usuário administrador. Depois é possível adicionar outras pessoas com permissões menores. Se o e-mail já possui uma conta, use a senha atual para vincular a nova empresa."
+              )}
             </p>
 
             <form className="login-form" onSubmit={register}>
               <label>
-                <span>Nome da organização</span>
+                <span>{t("Nome da organização")}</span>
                 <input
                   type="text"
                   name="organizationName"
@@ -572,7 +611,7 @@ export default function Home() {
               </label>
 
               <label>
-                <span>Seu nome</span>
+                <span>{t("Seu nome")}</span>
                 <input
                   type="text"
                   name="adminDisplayName"
@@ -584,7 +623,7 @@ export default function Home() {
               </label>
 
               <label>
-                <span>E-mail</span>
+                <span>{t("E-mail")}</span>
                 <input
                   type="email"
                   name="adminEmail"
@@ -596,7 +635,7 @@ export default function Home() {
               </label>
 
               <label>
-                <span>Senha</span>
+                <span>{t("Senha")}</span>
                 <input
                   type="password"
                   name="adminPassword"
@@ -609,7 +648,7 @@ export default function Home() {
               </label>
 
               <label>
-                <span>Confirmar senha</span>
+                <span>{t("Confirmar senha")}</span>
                 <input
                   type="password"
                   name="adminPasswordConfirm"
@@ -625,23 +664,23 @@ export default function Home() {
 
               {error ? (
                 <p className="login-form__error" role="alert">
-                  {error}
+                  {t(error)}
                 </p>
               ) : null}
 
               <button className="button" type="submit" disabled={submitting}>
-                {submitting ? "Cadastrando..." : "Criar organização"}
+                {submitting ? t("Cadastrando...") : t("Criar organização")}
               </button>
             </form>
 
             <p className="login-card__switch">
-              Já tem uma conta?{" "}
+              {t("Já tem uma conta?")}{" "}
               <button
                 type="button"
                 className="login-card__link"
                 onClick={() => switchMode("login")}
               >
-                Entrar
+                {t("Entrar")}
               </button>
             </p>
           </>

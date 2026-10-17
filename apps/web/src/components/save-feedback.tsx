@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ButtonHTMLAttributes } from "react";
+import { useTranslation } from "../i18n/language-provider";
 
 export type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -63,6 +64,7 @@ export function SaveButton({
   status: SaveStatus;
   label: string;
 }) {
+  const { t } = useTranslation();
   return (
     <button
       {...props}
@@ -75,10 +77,10 @@ export function SaveButton({
       {status === "saving" ? (
         <>
           <span className="save-feedback-spinner" aria-hidden="true" />{" "}
-          Salvando…
+          {t("Salvando…")}
         </>
       ) : status === "success" ? (
-        "✓ Salvo!"
+        `✓ ${t("Salvo!")}`
       ) : (
         label
       )}
@@ -94,6 +96,7 @@ export function SaveNotice({
   status: SaveStatus;
   label?: string;
 }) {
+  const { t } = useTranslation();
   return (
     <p
       className="save-feedback-notice"
@@ -103,11 +106,13 @@ export function SaveNotice({
       aria-atomic="true"
     >
       {status === "saving"
-        ? "Salvando…"
+        ? t("Salvando…")
         : status === "success"
-          ? `✓ ${label}`
+          ? `✓ ${t(label)}`
           : status === "error"
-            ? "Não foi possível salvar. Confira a mensagem de erro e tente novamente."
+            ? t(
+                "Não foi possível salvar. Confira a mensagem de erro e tente novamente."
+              )
             : ""}
     </p>
   );

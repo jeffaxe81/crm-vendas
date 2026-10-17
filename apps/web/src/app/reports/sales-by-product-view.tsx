@@ -11,6 +11,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { downloadAuthenticatedFile } from "../../lib/api-download";
+import { useTranslation } from "../../i18n/language-provider";
 
 type SalesByProductViewProps = {
   accessToken: string;
@@ -110,12 +111,14 @@ function parsePipelines(payload: unknown): PipelineOption[] {
 }
 
 function BucketCell({ bucket }: { bucket: SalesByProductBucket }) {
+  const { t } = useTranslation();
   return (
     <td>
       <strong>{formatCurrency(bucket.value)}</strong>
       <br />
       <small>
-        Qtd. {formatQuantity(bucket.quantity)} · {bucket.opportunities}{" "}
+        {t("Qtd. ")}
+        {formatQuantity(bucket.quantity)} · {bucket.opportunities}{" "}
         {bucket.opportunities === 1 ? "oportunidade" : "oportunidades"}
       </small>
     </td>
@@ -123,6 +126,7 @@ function BucketCell({ bucket }: { bucket: SalesByProductBucket }) {
 }
 
 export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState<SalesByProductFilters>(EMPTY_FILTERS);
   const [filters, setFilters] = useState<SalesByProductFilters>(EMPTY_FILTERS);
   const [report, setReport] = useState<SalesByProductReport | null>(null);
@@ -247,19 +251,20 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
 
   return (
     <section className="sales-report" aria-labelledby="sales-by-product-title">
-      <h2 id="sales-by-product-title">Vendas por produto</h2>
+      <h2 id="sales-by-product-title">{t("Vendas por produto")}</h2>
       <p className="activities-view__status">
-        Itens das oportunidades por situação da etapa. O período considera a
-        previsão de fechamento; o responsável é o dono da oportunidade.
+        {t(
+          "Itens das oportunidades por situação da etapa. O período considera a previsão de fechamento; o responsável é o dono da oportunidade."
+        )}
       </p>
 
       <form
         className="sales-report__filters"
-        aria-label="Filtros de vendas por produto"
+        aria-label={t("Filtros de vendas por produto")}
         onSubmit={applyFilters}
       >
         <label>
-          <span>De</span>
+          <span>{t("De")}</span>
           <input
             type="date"
             value={draft.from}
@@ -269,7 +274,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
           />
         </label>
         <label>
-          <span>Até</span>
+          <span>{t("Até")}</span>
           <input
             type="date"
             value={draft.to}
@@ -279,7 +284,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
           />
         </label>
         <label>
-          <span>Funil</span>
+          <span>{t("Funil")}</span>
           <select
             value={draft.pipelineId}
             onChange={event =>
@@ -289,7 +294,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
               }))
             }
           >
-            <option value="">Todos os funis</option>
+            <option value="">{t("Todos os funis")}</option>
             {pipelines.map(pipeline => (
               <option key={pipeline.id} value={pipeline.id}>
                 {pipeline.name}
@@ -298,7 +303,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
           </select>
         </label>
         <label>
-          <span>Responsável</span>
+          <span>{t("Responsável")}</span>
           <select
             value={draft.ownerUserId}
             onChange={event =>
@@ -308,7 +313,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
               }))
             }
           >
-            <option value="">Todos os responsáveis</option>
+            <option value="">{t("Todos os responsáveis")}</option>
             {owners.map(owner => (
               <option key={owner.userId} value={owner.userId}>
                 {owner.displayName}
@@ -317,16 +322,16 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
             ))}
           </select>
         </label>
-        <button type="submit">Aplicar</button>
+        <button type="submit">{t("Aplicar")}</button>
         <button type="button" onClick={clearFilters}>
-          Limpar
+          {t("Limpar")}
         </button>
         <button
           type="button"
           onClick={() => void exportCsv()}
           disabled={exporting || loading || Boolean(error)}
         >
-          {exporting ? "Exportando..." : "Exportar CSV"}
+          {exporting ? t("Exportando...") : t("Exportar CSV")}
         </button>
       </form>
       {filterError ? (
@@ -345,26 +350,28 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
 
       {loading ? (
         <p className="activities-view__status">
-          Carregando vendas por produto...
+          {t("Carregando vendas por produto...")}
         </p>
       ) : error ? (
         <p className="login-form__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : report && report.items.length === 0 ? (
         <p className="activities-view__status">
-          Nenhum item de oportunidade encontrado com os filtros aplicados.
+          {t(
+            "Nenhum item de oportunidade encontrado com os filtros aplicados."
+          )}
         </p>
       ) : report ? (
         <div className="sales-report__table">
           <table>
             <thead>
               <tr>
-                <th scope="col">Produto</th>
-                <th scope="col">Em aberto</th>
-                <th scope="col">Ganho</th>
-                <th scope="col">Perdido</th>
-                <th scope="col">Total</th>
+                <th scope="col">{t("Produto")}</th>
+                <th scope="col">{t("Em aberto")}</th>
+                <th scope="col">{t("Ganho")}</th>
+                <th scope="col">{t("Perdido")}</th>
+                <th scope="col">{t("Total")}</th>
               </tr>
             </thead>
             <tbody>
@@ -373,9 +380,9 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
                   <th scope="row">
                     {item.productCode} — {item.productName}
                     {item.productDeleted ? (
-                      <small> (excluído)</small>
+                      <small>{t(" (excluído)")}</small>
                     ) : !item.productActive ? (
-                      <small> (inativo)</small>
+                      <small>{t(" (inativo)")}</small>
                     ) : null}
                   </th>
                   <BucketCell bucket={item.open} />
@@ -387,7 +394,7 @@ export function SalesByProductView({ accessToken }: SalesByProductViewProps) {
             </tbody>
             <tfoot>
               <tr>
-                <th scope="row">Total geral</th>
+                <th scope="row">{t("Total geral")}</th>
                 <BucketCell bucket={report.totals.open} />
                 <BucketCell bucket={report.totals.won} />
                 <BucketCell bucket={report.totals.lost} />

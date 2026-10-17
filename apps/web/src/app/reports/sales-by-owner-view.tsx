@@ -10,6 +10,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { periodBoundary } from "./sales-by-product-view";
+import { useTranslation } from "../../i18n/language-provider";
 
 export { periodBoundary };
 
@@ -116,6 +117,7 @@ function BucketCell({ bucket }: { bucket: SalesByOwnerBucket }) {
 }
 
 export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState<SalesByOwnerFilters>(EMPTY_FILTERS);
   const [filters, setFilters] = useState<SalesByOwnerFilters>(EMPTY_FILTERS);
   const [report, setReport] = useState<SalesByOwnerReport | null>(null);
@@ -202,19 +204,20 @@ export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
 
   return (
     <section className="sales-report" aria-labelledby="sales-by-owner-title">
-      <h2 id="sales-by-owner-title">Vendas por vendedor</h2>
+      <h2 id="sales-by-owner-title">{t("Vendas por vendedor")}</h2>
       <p className="activities-view__status">
-        Oportunidades por responsável e situação da etapa, pelo valor estimado.
-        A conversão considera ganhas sobre ganhas e perdidas.
+        {t(
+          "Oportunidades por responsável e situação da etapa, pelo valor estimado. A conversão considera ganhas sobre ganhas e perdidas."
+        )}
       </p>
 
       <form
         className="sales-report__filters"
-        aria-label="Filtros de vendas por vendedor"
+        aria-label={t("Filtros de vendas por vendedor")}
         onSubmit={applyFilters}
       >
         <label>
-          <span>De</span>
+          <span>{t("De")}</span>
           <input
             type="date"
             value={draft.from}
@@ -224,7 +227,7 @@ export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
           />
         </label>
         <label>
-          <span>Até</span>
+          <span>{t("Até")}</span>
           <input
             type="date"
             value={draft.to}
@@ -234,7 +237,7 @@ export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
           />
         </label>
         <label>
-          <span>Funil</span>
+          <span>{t("Funil")}</span>
           <select
             value={draft.pipelineId}
             onChange={event =>
@@ -244,7 +247,7 @@ export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
               }))
             }
           >
-            <option value="">Todos os funis</option>
+            <option value="">{t("Todos os funis")}</option>
             {pipelines.map(pipeline => (
               <option key={pipeline.id} value={pipeline.id}>
                 {pipeline.name}
@@ -252,9 +255,9 @@ export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
             ))}
           </select>
         </label>
-        <button type="submit">Aplicar</button>
+        <button type="submit">{t("Aplicar")}</button>
         <button type="button" onClick={clearFilters}>
-          Limpar
+          {t("Limpar")}
         </button>
       </form>
       {filterError ? (
@@ -268,15 +271,15 @@ export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
 
       {loading ? (
         <p className="activities-view__status">
-          Carregando vendas por vendedor...
+          {t("Carregando vendas por vendedor...")}
         </p>
       ) : error ? (
         <p className="login-form__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : report && report.items.length === 0 ? (
         <p className="activities-view__status">
-          Nenhuma oportunidade encontrada no período.
+          {t("Nenhuma oportunidade encontrada no período.")}
         </p>
       ) : report ? (
         <div className="sales-report__table">
@@ -290,18 +293,18 @@ export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
                 )
               }
             >
-              Exportar CSV
+              {t("Exportar CSV")}
             </button>
           </div>
           <table>
             <thead>
               <tr>
-                <th scope="col">Vendedor</th>
-                <th scope="col">Em aberto</th>
-                <th scope="col">Ganho</th>
-                <th scope="col">Perdido</th>
-                <th scope="col">Total</th>
-                <th scope="col">Conversão</th>
+                <th scope="col">{t("Vendedor")}</th>
+                <th scope="col">{t("Em aberto")}</th>
+                <th scope="col">{t("Ganho")}</th>
+                <th scope="col">{t("Perdido")}</th>
+                <th scope="col">{t("Total")}</th>
+                <th scope="col">{t("Conversão")}</th>
               </tr>
             </thead>
             <tbody>
@@ -309,7 +312,7 @@ export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
                 <tr key={item.ownerUserId}>
                   <th scope="row">
                     {item.ownerName}
-                    {item.ownerActive ? null : <small> (inativo)</small>}
+                    {item.ownerActive ? null : <small>{t(" (inativo)")}</small>}
                   </th>
                   <BucketCell bucket={item.open} />
                   <BucketCell bucket={item.won} />
@@ -321,7 +324,7 @@ export function SalesByOwnerView({ accessToken }: SalesByOwnerViewProps) {
             </tbody>
             <tfoot>
               <tr>
-                <th scope="row">Total geral</th>
+                <th scope="row">{t("Total geral")}</th>
                 <BucketCell bucket={report.totals.open} />
                 <BucketCell bucket={report.totals.won} />
                 <BucketCell bucket={report.totals.lost} />

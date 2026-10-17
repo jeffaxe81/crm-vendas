@@ -11,6 +11,7 @@ import { apiRequest } from "../../lib/api-client";
 import { priorityLabels } from "../tickets/ticket-labels";
 import { formatCompletionRate } from "./activities-by-owner-view";
 import { periodBoundary } from "./sales-by-product-view";
+import { useTranslation } from "../../i18n/language-provider";
 
 type SlaReportViewProps = {
   accessToken: string;
@@ -33,6 +34,7 @@ export function slaReportPath(filters: Filters): string {
 }
 
 function CountCells({ counts }: { counts: SlaReportCounts }) {
+  const { t } = useTranslation();
   return (
     <>
       <td>{counts.opened}</td>
@@ -58,7 +60,7 @@ function CountCells({ counts }: { counts: SlaReportCounts }) {
         {counts.breachedOpen > 0 ? (
           <strong>
             {counts.breachedOpen}
-            <span className="activities-report__badge">vencidas</span>
+            <span className="activities-report__badge">{t("vencidas")}</span>
           </strong>
         ) : (
           counts.breachedOpen
@@ -70,6 +72,7 @@ function CountCells({ counts }: { counts: SlaReportCounts }) {
 
 /** C5.3 — relatório de SLA por prioridade (aba "SLA" do Resumo gerencial). */
 export function SlaReportView({ accessToken }: SlaReportViewProps) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState<Filters>(emptyFilters);
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [report, setReport] = useState<SlaReport | null>(null);
@@ -131,20 +134,20 @@ export function SlaReportView({ accessToken }: SlaReportViewProps) {
 
   return (
     <section className="sales-report" aria-labelledby="sla-report-title">
-      <h2 id="sla-report-title">SLA de atendimento</h2>
+      <h2 id="sla-report-title">{t("SLA de atendimento")}</h2>
       <p className="activities-view__status">
-        Cumprimento dos prazos por prioridade, para solicitações abertas no
-        período. Os percentuais consideram prazos já cumpridos ou vencidos; a
-        coluna de vencidas mostra as solicitações em aberto agora.
+        {t(
+          "Cumprimento dos prazos por prioridade, para solicitações abertas no período. Os percentuais consideram prazos já cumpridos ou vencidos; a coluna de vencidas mostra as solicitações em aberto agora."
+        )}
       </p>
 
       <form
         className="sales-report__filters"
-        aria-label="Filtros do relatório de SLA"
+        aria-label={t("Filtros do relatório de SLA")}
         onSubmit={applyFilters}
       >
         <label>
-          <span>De</span>
+          <span>{t("De")}</span>
           <input
             type="date"
             value={draft.from}
@@ -154,7 +157,7 @@ export function SlaReportView({ accessToken }: SlaReportViewProps) {
           />
         </label>
         <label>
-          <span>Até</span>
+          <span>{t("Até")}</span>
           <input
             type="date"
             value={draft.to}
@@ -163,9 +166,9 @@ export function SlaReportView({ accessToken }: SlaReportViewProps) {
             }
           />
         </label>
-        <button type="submit">Aplicar</button>
+        <button type="submit">{t("Aplicar")}</button>
         <button type="button" onClick={clearFilters}>
-          Limpar
+          {t("Limpar")}
         </button>
       </form>
       {filterError ? (
@@ -176,35 +179,35 @@ export function SlaReportView({ accessToken }: SlaReportViewProps) {
 
       {loading ? (
         <p className="activities-view__status">
-          Carregando relatório de SLA...
+          {t("Carregando relatório de SLA...")}
         </p>
       ) : error ? (
         <p className="login-form__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       ) : report ? (
         <div className="sales-report__table">
           <table>
             <thead>
               <tr>
-                <th scope="col">Prioridade</th>
-                <th scope="col">Abertas no período</th>
-                <th scope="col">1ª resposta no prazo</th>
-                <th scope="col">Resolução no prazo</th>
-                <th scope="col">Vencidas em aberto agora</th>
+                <th scope="col">{t("Prioridade")}</th>
+                <th scope="col">{t("Abertas no período")}</th>
+                <th scope="col">{t("1ª resposta no prazo")}</th>
+                <th scope="col">{t("Resolução no prazo")}</th>
+                <th scope="col">{t("Vencidas em aberto agora")}</th>
               </tr>
             </thead>
             <tbody>
               {report.items.map(item => (
                 <tr key={item.priority}>
-                  <th scope="row">{priorityLabels[item.priority]}</th>
+                  <th scope="row">{t(priorityLabels[item.priority])}</th>
                   <CountCells counts={item} />
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr>
-                <th scope="row">Total geral</th>
+                <th scope="row">{t("Total geral")}</th>
                 <CountCells counts={report.totals} />
               </tr>
             </tfoot>

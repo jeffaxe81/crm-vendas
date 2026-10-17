@@ -11,6 +11,7 @@ import { apiRequest } from "../../lib/api-client";
 import { NeoCommunicationSettingsView } from "./neo-communication-settings-view";
 import { WebhookSubscriptionsView } from "./webhook-subscriptions-view";
 import { EmailRelayDiagnosticsPanel } from "./email-relay-diagnostics-panel";
+import { useTranslation } from "../../i18n/language-provider";
 
 // Escopos dos domínios publicados na fundação F4.1. Administração e
 // Superusuário não são delegados por esta tela.
@@ -47,6 +48,7 @@ export function IntegrationCredentialsView({
   currentUserId: string;
   permissions: readonly string[];
 }) {
+  const { t } = useTranslation();
   const canRead = permissions.includes("integration.read");
   const canManage = permissions.includes("integration.manage");
   const allowedScopes = publicScopes.filter(scope =>
@@ -103,14 +105,14 @@ export function IntegrationCredentialsView({
     setError("");
     setNotice("");
     if (!name.trim()) {
-      setError("Informe o nome da integração.");
+      setError(t("Informe o nome da integração."));
       return;
     }
     const selectedScopes = allowedScopes
       .filter(scope => scopes.includes(scope.id))
       .map(scope => scope.id);
     if (!selectedScopes.length) {
-      setError("Selecione ao menos uma permissão.");
+      setError(t("Selecione ao menos uma permissão."));
       return;
     }
     const expiration = expiresAt ? new Date(expiresAt) : null;
@@ -119,7 +121,7 @@ export function IntegrationCredentialsView({
       (!Number.isFinite(expiration.getTime()) ||
         expiration.getTime() <= Date.now())
     ) {
-      setError("Informe uma data de expiração futura.");
+      setError(t("Informe uma data de expiração futura."));
       return;
     }
     setBusy(true);
@@ -159,10 +161,10 @@ export function IntegrationCredentialsView({
     setError("");
     try {
       await navigator.clipboard.writeText(created.plainKey);
-      setNotice("Chave copiada.");
+      setNotice(t("Chave copiada."));
     } catch {
       setError(
-        "Não foi possível copiar. Selecione a chave e copie manualmente."
+        t("Não foi possível copiar. Selecione a chave e copie manualmente.")
       );
     }
   }
@@ -186,7 +188,7 @@ export function IntegrationCredentialsView({
       );
       if (created?.id === credential.id) setCreated(null);
       setConfirmingId(null);
-      setNotice(`Chave de ${credential.name} revogada.`);
+      setNotice(t("Chave de {0} revogada.", { 0: credential.name }));
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -220,8 +222,8 @@ export function IntegrationCredentialsView({
             onClick={() => setShowEmailDiagnostics(open => !open)}
           >
             {showEmailDiagnostics
-              ? "Fechar diagnóstico de e-mail"
-              : "Abrir diagnóstico de e-mail"}
+              ? t("Fechar diagnóstico de e-mail")
+              : t("Abrir diagnóstico de e-mail")}
           </button>
           {showEmailDiagnostics ? (
             <EmailRelayDiagnosticsPanel
@@ -233,10 +235,14 @@ export function IntegrationCredentialsView({
       ) : null}
       <header className="activities-view__header">
         <div>
-          <p className="activities-view__eyebrow">Integrações</p>
-          <h1 id="integration-credentials-title">Chaves de integração</h1>
+          <p className="activities-view__eyebrow">{t("Integrações")}</p>
+          <h1 id="integration-credentials-title">
+            {t("Chaves de integração")}
+          </h1>
           <p>
-            Gerencie o acesso de sistemas externos aos dados desta organização.
+            {t(
+              "Gerencie o acesso de sistemas externos aos dados desta organização."
+            )}
           </p>
         </div>
         <button
@@ -244,26 +250,30 @@ export function IntegrationCredentialsView({
           disabled={busy || loading}
           onClick={() => setReload(value => value + 1)}
         >
-          Atualizar lista
+          {t("Atualizar lista")}
         </button>
       </header>
-      {error ? <p role="alert">{error}</p> : null}
-      {notice ? <p role="status">{notice}</p> : null}
+      {error ? <p role="alert">{t(error)}</p> : null}
+      {notice ? <p role="status">{t(notice)}</p> : null}
       {created ? (
         <div
           className="companies-view__card integration-credentials__secret"
           role="region"
-          aria-label="Nova chave de integração"
+          aria-label={t("Nova chave de integração")}
         >
-          <h2>Chave criada para {created.name}</h2>
+          <h2>
+            {t("Chave criada para ")}
+            {created.name}
+          </h2>
           <p>
-            Guarde esta chave em um local seguro. Ela aparece somente agora e
-            não poderá ser consultada novamente.
+            {t(
+              "Guarde esta chave em um local seguro. Ela aparece somente agora e não poderá ser consultada novamente."
+            )}
           </p>
-          <output aria-label="Chave de API">{created.plainKey}</output>
+          <output aria-label={t("Chave de API")}>{created.plainKey}</output>
           <div className="support-queues__actions">
             <button type="button" onClick={() => void copyKey()}>
-              Copiar chave
+              {t("Copiar chave")}
             </button>
             <button
               type="button"
@@ -273,21 +283,21 @@ export function IntegrationCredentialsView({
                 setNotice("");
               }}
             >
-              Já guardei a chave
+              {t("Já guardei a chave")}
             </button>
           </div>
         </div>
       ) : canManage ? (
         <form
           className="activity-form"
-          aria-label="Criar chave de integração"
+          aria-label={t("Criar chave de integração")}
           onSubmit={event => void create(event)}
         >
           <fieldset disabled={busy || loading || Boolean(listError)}>
-            <legend>Nova chave</legend>
+            <legend>{t("Nova chave")}</legend>
             <div className="activity-form__fields">
               <label>
-                Nome da integração
+                {t("Nome da integração")}
                 <input
                   value={name}
                   onChange={event => setName(event.target.value)}
@@ -298,7 +308,7 @@ export function IntegrationCredentialsView({
               </label>
               <div>
                 <label>
-                  Expiração (opcional)
+                  {t("Expiração (opcional)")}
                   <input
                     type="datetime-local"
                     value={expiresAt}
@@ -307,14 +317,17 @@ export function IntegrationCredentialsView({
                   />
                 </label>
                 <small id="integration-expiry-help">
-                  Horário local deste navegador. Vazio: sem expiração
-                  automática.
+                  {t(
+                    "Horário local deste navegador. Vazio: sem expiração automática."
+                  )}
                 </small>
               </div>
             </div>
             <fieldset className="integration-credentials__scopes">
-              <legend>Permissões da chave</legend>
-              <p>Selecione apenas os acessos necessários à integração.</p>
+              <legend>{t("Permissões da chave")}</legend>
+              <p>
+                {t("Selecione apenas os acessos necessários à integração.")}
+              </p>
               {allowedScopes.map(scope => (
                 <label key={scope.id} className="workspace-checkbox">
                   <input
@@ -328,13 +341,14 @@ export function IntegrationCredentialsView({
                       )
                     }
                   />
-                  {scope.label}
+                  {t(scope.label)}
                 </label>
               ))}
               {!allowedScopes.length ? (
                 <p>
-                  Seu perfil não possui permissões delegáveis para a API
-                  pública.
+                  {t(
+                    "Seu perfil não possui permissões delegáveis para a API pública."
+                  )}
                 </p>
               ) : null}
             </fieldset>
@@ -343,7 +357,7 @@ export function IntegrationCredentialsView({
               type="submit"
               disabled={!allowedScopes.length}
             >
-              Criar chave
+              {t("Criar chave")}
             </button>
           </fieldset>
         </form>
@@ -356,21 +370,21 @@ export function IntegrationCredentialsView({
             disabled={busy}
             onClick={() => setReload(value => value + 1)}
           >
-            Tentar novamente
+            {t("Tentar novamente")}
           </button>
         </p>
       ) : loading ? (
-        <p role="status">Carregando chaves...</p>
+        <p role="status">{t("Carregando chaves...")}</p>
       ) : (
         <div className="integration-credentials__list">
           {!credentials.length ? (
-            <p>Nenhuma chave cadastrada.</p>
+            <p>{t("Nenhuma chave cadastrada.")}</p>
           ) : (
             credentials.map(credential => (
               <article
                 key={credential.id}
                 className="companies-view__card"
-                aria-label={`Chave ${credential.name}`}
+                aria-label={t("Chave {0}", { 0: credential.name })}
               >
                 <h2>{credential.name}</h2>
                 <p>
@@ -378,7 +392,7 @@ export function IntegrationCredentialsView({
                   <code>{credential.keyPrefix}</code>
                 </p>
                 <p>
-                  Permissões:{" "}
+                  {t("Permissões:")}{" "}
                   {credential.scopes
                     .map(
                       id =>
@@ -387,21 +401,27 @@ export function IntegrationCredentialsView({
                     .join(", ")}
                 </p>
                 <p>
-                  Último uso:{" "}
+                  {t("Último uso:")}{" "}
                   {formatDate(credential.lastUsedAt, "Ainda não utilizada")}
                 </p>
                 <p>
-                  Expiração: {formatDate(credential.expiresAt, "Sem expiração")}
+                  {t("Expiração: ")}
+                  {formatDate(credential.expiresAt, "Sem expiração")}
                 </p>
                 {canManage && credential.isActive && !credential.revokedAt ? (
                   confirmingId === credential.id ? (
                     <div
                       role="group"
-                      aria-label={`Confirmar revogação de ${credential.name}`}
+                      aria-label={t("Confirmar revogação de {0}", {
+                        0: credential.name,
+                      })}
                     >
                       <p>
-                        Revogar {credential.name}? As aplicações que usam esta
-                        chave perderão acesso.
+                        {t("Revogar ")}
+                        {credential.name}
+                        {t(
+                          "? As aplicações que usam esta chave perderão acesso."
+                        )}
                       </p>
                       <div className="support-queues__actions">
                         <button
@@ -409,14 +429,14 @@ export function IntegrationCredentialsView({
                           disabled={busy}
                           onClick={() => void revoke(credential)}
                         >
-                          Confirmar revogação
+                          {t("Confirmar revogação")}
                         </button>
                         <button
                           type="button"
                           disabled={busy}
                           onClick={() => setConfirmingId(null)}
                         >
-                          Cancelar revogação
+                          {t("Cancelar revogação")}
                         </button>
                       </div>
                     </div>
@@ -424,13 +444,13 @@ export function IntegrationCredentialsView({
                     <button
                       type="button"
                       disabled={busy}
-                      aria-label={`Revogar ${credential.name}`}
+                      aria-label={t("Revogar {0}", { 0: credential.name })}
                       onClick={() => {
                         setError("");
                         setConfirmingId(credential.id);
                       }}
                     >
-                      Revogar
+                      {t("Revogar")}
                     </button>
                   )
                 ) : null}

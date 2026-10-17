@@ -14,6 +14,8 @@ import {
   type WorkspaceSection,
 } from "@axes/contracts";
 import { useWorkspace } from "./workspace-provider";
+import { useTranslation } from "../../i18n/language-provider";
+
 const labels: Record<string, string> = {
   favorites: "Favoritos",
   today: "Pendentes de hoje",
@@ -26,6 +28,7 @@ const labels: Record<string, string> = {
   sales: "Vendas ganhas por mês",
 };
 export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
+  const { t } = useTranslation();
   const saveFeedback = useSaveFeedback();
   const w = useWorkspace();
   const [importNotice, setImportNotice] = useState("");
@@ -73,18 +76,22 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
       className="activities-view"
       aria-labelledby="workspace-editor-title"
     >
-      <h1 id="workspace-editor-title">Preferências pessoais</h1>
+      <h1 id="workspace-editor-title">{t("Preferências pessoais")}</h1>
       <p>
-        Configure sua tela inicial e seus atalhos. Salvar aplica a configuração
-        a este usuário nesta organização, inclusive em outros dispositivos.
+        {t(
+          "Configure sua tela inicial e seus atalhos. Salvar aplica a configuração a este usuário nesta organização, inclusive em outros dispositivos."
+        )}
       </p>
-      <SaveNotice status={saveFeedback.status} label="Preferências salvas." />
+      <SaveNotice
+        status={saveFeedback.status}
+        label={t("Preferências salvas.")}
+      />
       {w.error ? <p role="alert">{w.error}</p> : null}
       {w.message ? <p role="status">{w.message}</p> : null}
       <fieldset disabled={w.loading || w.saving} className="workspace-editor">
-        <legend>Tela e navegação</legend>
+        <legend>{t("Tela e navegação")}</legend>
         <label>
-          Seção de abertura
+          {t("Seção de abertura")}
           <select
             value={w.draft.defaultSection}
             onChange={event =>
@@ -96,20 +103,20 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
           >
             {destinations.map(item => (
               <option key={item.id} value={item.id}>
-                {item.label}
+                {t(item.label)}
               </option>
             ))}
           </select>
         </label>
         <fieldset>
-          <legend>Favoritos (até seis)</legend>
+          <legend>{t("Favoritos (até seis)")}</legend>
           {destinations
             .filter(item => item.id !== "home")
             .map(item => (
               <label key={item.id} className="workspace-checkbox">
                 <input
                   type="checkbox"
-                  aria-label={`Favorito ${item.label}`}
+                  aria-label={t("Favorito {0}", { 0: t(item.label) })}
                   checked={w.draft.favorites.includes(item.id)}
                   disabled={
                     !w.draft.favorites.includes(item.id) &&
@@ -124,7 +131,7 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
                     })
                   }
                 />
-                {item.label}
+                {t(item.label)}
               </label>
             ))}
         </fieldset>
@@ -137,8 +144,8 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
             <fieldset key={area}>
               <legend>
                 {area === "home"
-                  ? "Componentes do início"
-                  : "Componentes do dashboard"}
+                  ? t("Componentes do início")
+                  : t("Componentes do dashboard")}
               </legend>
               <ul className="workspace-order-list">
                 {order.map((id, index) => (
@@ -159,13 +166,16 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
                           } as WorkspacePreferences);
                         }}
                       />
-                      Exibir {labels[id]}
+                      {t("Exibir ")}
+                      {t(labels[id])}
                     </label>
                     <div>
                       <button
                         type="button"
                         disabled={index === 0}
-                        aria-label={`Mover ${labels[id]} para cima`}
+                        aria-label={t("Mover {0} para cima", {
+                          0: t(labels[id]),
+                        })}
                         onClick={() =>
                           move(
                             area === "home" ? "homeOrder" : "dashboardOrder",
@@ -179,7 +189,9 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
                       <button
                         type="button"
                         disabled={index === order.length - 1}
-                        aria-label={`Mover ${labels[id]} para baixo`}
+                        aria-label={t("Mover {0} para baixo", {
+                          0: t(labels[id]),
+                        })}
                         onClick={() =>
                           move(
                             area === "home" ? "homeOrder" : "dashboardOrder",
@@ -198,15 +210,15 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
           );
         })}
         <button type="button" onClick={importLocal}>
-          Importar layout deste navegador
+          {t("Importar layout deste navegador")}
         </button>
         <button type="button" onClick={w.restoreDefaults}>
-          Restaurar padrão
+          {t("Restaurar padrão")}
         </button>
         <SaveButton
           type="button"
           status={saveFeedback.status}
-          label="Salvar preferências"
+          label={t("Salvar preferências")}
           onClick={async () => {
             if (!saveFeedback.start()) return;
             try {
@@ -218,7 +230,9 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
           }}
         />
       </fieldset>
-      {w.loading ? <p role="status">Carregando preferências...</p> : null}
+      {w.loading ? (
+        <p role="status">{t("Carregando preferências...")}</p>
+      ) : null}
       {importNotice ? <p role="status">{importNotice}</p> : null}
     </section>
   );
