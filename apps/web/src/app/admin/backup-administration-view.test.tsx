@@ -10,6 +10,10 @@ import {
 import { afterEach, expect, it, vi } from "vitest";
 import { BackupAdministrationView } from "./backup-administration-view";
 
+vi.mock("./tenant-storage-allocation-view", () => ({
+  TenantStorageAllocationView: () => null,
+}));
+
 vi.mock("./tenant-purge-policy-view", () => ({
   TenantPurgePolicyView: () => null,
 }));
