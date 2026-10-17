@@ -2,10 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
-import {
-  BackupStore,
-  BACKUP_ENVELOPE_OVERHEAD_BYTES,
-} from "./backup-store";
+import { BackupStore, BACKUP_ENVELOPE_OVERHEAD_BYTES } from "./backup-store";
 import { BACKUP_STORE } from "./backup.service";
 
 const MAX_OBJECTS_PER_SCAN = 50;
