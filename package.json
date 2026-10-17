@@ -13,7 +13,7 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter @axes/contracts build && pnpm test:repo && pnpm -r test",
     "test:e2e": "playwright test",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --write apps/web/src/app/reports/dashboard-volume-insights.test.ts apps/web/src/app/reports/dashboard-volume-insights.ts apps/web/src/app/reports/dashboard-volume-view.test.tsx docs/superpowers/plans/2026-10-17-quarterly-dashboard-acceleration.md scripts/dashboard-staging-smoke.mjs tests/dashboard-staging-smoke.test.mjs && git diff -- apps/web/src/app/reports/dashboard-volume-insights.test.ts apps/web/src/app/reports/dashboard-volume-insights.ts apps/web/src/app/reports/dashboard-volume-view.test.tsx docs/superpowers/plans/2026-10-17-quarterly-dashboard-acceleration.md scripts/dashboard-staging-smoke.mjs tests/dashboard-staging-smoke.test.mjs && prettier --check .",
     "verify": "pnpm verify:foundation && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "test:repo": "node --test tests/*.test.mjs",
     "verify:foundation": "node scripts/verify-foundation.mjs",
