@@ -31,6 +31,7 @@ Registro central dos incidentes relatados pelo responsável, problemas descritos
 | CRM-P017 | [Ambiente de desenvolvimento sem pré-requisitos para testes integrais](#crm-p017) | Limitação registrada; nenhuma nova execução autorizada agora.                                         |
 | CRM-P018 | [Outras regressões e correções técnicas ao longo do projeto](#crm-p018)           | Inventariadas por commit; validação operacional não presumida.                                        |
 | CRM-P019 | [Configuração Rápida indisponível por sessão rejeitada](#crm-p019) | Correção proposta na PR #222; validação pendente. |
+| CRM-P020 | [Confirmações duplicadas após padronizar salvamentos](#crm-p020) | Correção e validação no PR #225; merge pendente. |
 
 
 <a id="crm-p001"></a>
@@ -241,6 +242,18 @@ Registro central dos incidentes relatados pelo responsável, problemas descritos
 - **Causa/evidência:** O log anexado mostra rejeição de autenticação após acessos bem-sucedidos, mas não distingue expiração de revogação. A interface só renovava sessão no carregamento inicial e não encerrava a área autenticada após bearer 401. Front em 127.0.0.1 e API em localhost constituem sites diferentes para o cookie SameSite=Strict; o refresh registrado retorna 401 sem Cookie no cabeçalho.
 - **Tratamento e prevenção:** Renovação em 80% de expiresIn, mantendo organização/usuário/vínculo; retorno ao login com mensagem clara se sessão rejeitada; alinhamento de hostname somente entre endereços loopback. Não repetir escritas automaticamente nem relaxar a proteção do cookie. Contorno local: abrir http://localhost:3000 e entrar novamente.
 - **Referências:** Arquivo fornecido Texto colado(20261017-013100).txt; PR #222 e seu checkpoint docs/checkpoints/2026-10-16-quick-setup-session.md. A confirmação no servidor permanece pendente.
+
+<a id="crm-p020"></a>
+
+## CRM-P020 — Confirmações duplicadas após padronizar salvamentos
+
+- **Data:** 16/10/2026.
+- **Estado:** Correções no [PR #225](https://github.com/jeffaxe81/crm-vendas/pull/225), ainda sem merge.
+- **Sintoma:** Dois testes existentes falharam na regressão do feedback da PR #224: preferência de e-mail apresentava duas confirmações de sucesso; identidade visual omitia o contexto “para esta empresa” na nova mensagem e mantinha a anterior.
+- **Causa:** O componente comum de confirmação foi acrescentado sem consolidar as mensagens de sucesso já existentes nos dois painéis.
+- **Tratamento:** Usar uma única confirmação comum; preservar o contexto de empresa e a informação de conta não conectada/envio desativado. As expectativas dos testes existentes foram preservadas.
+- **Evidência:** 300/300 casos dirigidos inicialmente aprovados; regressão inicial 608/610. Após correção, quatro testes dos painéis e regressão completa 610/610 aprovados; TypeScript Web aprovado.
+- **Limites:** 100 casos parametrizados por PR #222/#223/#224, executados em Vitest/JSDOM. Não são jornadas manuais em navegador; sem build de produção, E2E real, banco ou deploy. Relatório e código no PR #225. Homologação do servidor pendente.
 
 ## Registro de novos problemas
 
