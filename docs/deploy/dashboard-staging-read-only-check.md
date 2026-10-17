@@ -53,3 +53,14 @@ Encerre/revogue as três sessões após concluir. Não desative a validação TL
 - [ ] Registrar responsável, ambiente, versão/commit, data e resultado.
 
 **Não realizar merge ou deploy em produção apenas com resultado verde do script.**
+
+## Provas opcionais de bloqueio privilegiado
+
+Somente no staging, configure a variável
+`DASHBOARD_STAGING_FORBIDDEN_JSON` com até duas credenciais de teste distintas:
+`[{"label":"API_KEY","token":"<TEST_API_KEY>"},{"label":"SUPERUSER","token":"<TEST_SUPERUSER>"}]`.
+
+A rotina faz dois GETs por credencial e exige HTTP 403 em
+`catalog` e `volume`. Não utilize chaves/sessões reais de produção.
+Na ausência de credenciais, **essas provas não são executadas**, e a
+evidência correspondente permanece pendente.

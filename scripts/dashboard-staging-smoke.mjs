@@ -80,6 +80,25 @@ function validateConfiguration(config) {
     "TENANT_CREDENTIALS_MUST_BE_DISTINCT"
   );
   requireCondition(fingerprints.size === 3, "DISTINCT_TEST_FIXTURES_REQUIRED");
+  const forbidden = config.forbidden ?? [];
+  requireCondition(
+    Array.isArray(forbidden) &&
+      forbidden.length <= 2 &&
+      forbidden.every(
+        item =>
+          item &&
+          ["API_KEY", "SUPERUSER"].includes(item.label) &&
+          typeof item.token === "string" &&
+          item.token.length >= 8
+      ),
+    "INVALID_FORBIDDEN_CREDENTIALS"
+  );
+  requireCondition(
+    new Set(forbidden.map(item => item.label)).size === forbidden.length &&
+      new Set([...config.tenants, ...forbidden].map(item => item.token)).size ===
+        3 + forbidden.length,
+    "FORBIDDEN_CREDENTIALS_MUST_BE_DISTINCT"
+  );
   return target.href.replace(/\/$/, "");
 }
 
@@ -191,7 +210,24 @@ export async function runDashboardStagingSmoke(config, fetchImpl = fetch) {
     override.status === 400,
     "DASHBOARD_TENANT_OVERRIDE_ALLOWED"
   );
-  return { ok: true, tenantsChecked: 3, requests: 10 };
+  for (const forbidden of config.forbidden ?? []) {
+    for (const endpoint of ["catalog", "volume"]) {
+      const response = await get(
+        fetchImpl,
+        baseUrl + "/dashboards/" + endpoint,
+        forbidden.token
+      );
+      requireCondition(
+        response.status === 403,
+        "DASHBOARD_PRIVILEGED_CREDENTIAL_ALLOWED"
+      );
+    }
+  }
+  return {
+    ok: true,
+    tenantsChecked: 3,
+    requests: 10 + (config.forbidden?.length ?? 0) * 2,
+  };
 }
 
 if (
@@ -207,10 +243,19 @@ if (
     } catch {
       throw new Error("INVALID_STAGING_INPUT");
     }
+    let forbidden;
+    try {
+      forbidden = JSON.parse(
+        process.env.DASHBOARD_STAGING_FORBIDDEN_JSON ?? "[]"
+      );
+    } catch {
+      throw new Error("INVALID_STAGING_FORBIDDEN_INPUT");
+    }
     const result = await runDashboardStagingSmoke({
       baseUrl: process.env.DASHBOARD_STAGING_BASE_URL,
       acknowledgment: process.env.DASHBOARD_STAGING_ACK,
       tenants,
+      forbidden,
     });
     console.log(
       "Dashboard staging: approved " +

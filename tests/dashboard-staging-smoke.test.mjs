@@ -118,3 +118,49 @@ test("staging smoke rejects production-like or ambiguous input", async () => {
     /TENANT_CREDENTIALS_MUST_BE_DISTINCT/
   );
 });
+
+test("staging smoke checks that API keys and superusers are denied", async () => {
+  const conf = config();
+  conf.forbidden = [
+    { label: "API_KEY", token: "opaque-api-key" },
+    { label: "SUPERUSER", token: "opaque-superuser" },
+  ];
+  const { fetchStub, calls } = fakeFetch();
+  const result = await runDashboardStagingSmoke(conf, async (url, request) => {
+    const token = request.headers?.Authorization ?? "";
+    if (
+      token === "Bearer opaque-api-key" ||
+      token === "Bearer opaque-superuser"
+    ) {
+      calls.push({ url, request });
+      return response({}, 403);
+    }
+    return fetchStub(url, request);
+  });
+  assert.equal(result.requests, 14);
+  assert.equal(
+    calls.filter(call =>
+      call.request.headers?.Authorization === "Bearer opaque-api-key"
+    ).length, 2
+  );
+  assert.equal(
+    calls.filter(call =>
+      call.request.headers?.Authorization === "Bearer opaque-superuser"
+    ).length, 2
+  );
+});
+
+test("staging smoke fails closed when a privileged credential is accepted", async () => {
+  const conf = config();
+  conf.forbidden = [{ label: "API_KEY", token: "opaque-api-key" }];
+  const { fetchStub } = fakeFetch();
+  await assert.rejects(
+    runDashboardStagingSmoke(conf, async (url, request) => {
+      if (request.headers?.Authorization === "Bearer opaque-api-key") {
+        return response({}, 200);
+      }
+      return fetchStub(url, request);
+    }),
+    /DASHBOARD_PRIVILEGED_CREDENTIAL_ALLOWED/
+  );
+});
