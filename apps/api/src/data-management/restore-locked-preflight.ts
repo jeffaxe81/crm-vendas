@@ -3,6 +3,7 @@ import { BackupError } from "./backup-error";
 import { snapshotDataFingerprint, type SnapshotData } from "./backup-manifest";
 import type { VerifiedBackup } from "./backup.service";
 import { validateRestoreIdentityReferences } from "./restore-identity-check";
+import { unsupportedRestoreModels } from "./restore-executor";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { exportTenantSnapshot } from "./tenant-snapshot";
 
@@ -64,11 +65,17 @@ export async function preflightRestoreExecution(
   await validateRestoreIdentityReferences(tx, organizationId, verified.data);
 
   const current = await exportTenantSnapshot(tx, organizationId, maxBytes);
+  const currentCounts = counts(current);
+  // Fail closed before consuming the one-time confirmation. A model in either
+  // state must not be silently omitted by the current partial restore executor.
+  if (unsupportedRestoreModels(currentCounts, verified.manifest.counts).length) {
+    throw new BackupError("RESTORE_POLICY_UNSUPPORTED");
+  }
 
   return {
     currentFingerprint: snapshotDataFingerprint(current),
     targetChecksum: verified.manifest.checksum,
-    currentCounts: counts(current),
+    currentCounts,
     targetCounts: { ...verified.manifest.counts },
   };
 }
