@@ -119,6 +119,9 @@ async function writeJourneys() {
     await check("TEN-03", "Isolamento cruzado de empresas em leitura", async () => {
       await call("/companies/" + companyA.id, { token: tb }, 404, "B não deve ler A");
       await call("/companies/" + companyB.id, { token: ta }, 404, "A não deve ler B");
+      await call("/companies/" + companyA.id, { method: "PATCH", token: tb, body: { legalName: "QA-NEGADO" } }, 404, "B não deve alterar A");
+      const unchanged = await call("/companies/" + companyA.id, { token: ta }, 200, "A lê seu próprio registro");
+      if (unchanged?.legalName !== companyA.legalName) throw new Error("Empresa A alterada após tentativa cruzada.");
     });
   } else blocked("TEN-03", "Isolamento cruzado de empresas", "CAD-01/CAD-02");
 
@@ -140,6 +143,9 @@ async function writeJourneys() {
     await check("TEN-04", "Isolamento cruzado de contatos", async () => {
       await call("/contacts/" + contactB.id, { token: ta }, 404, "A não deve ler contato B");
       await call("/contacts/" + contactA.id, { token: tb }, 404, "B não deve ler contato A");
+      await call("/contacts/" + contactA.id, { method: "PATCH", token: tb, body: { fullName: "QA-NEGADO" } }, 404, "B não deve alterar contato A");
+      const unchanged = await call("/contacts/" + contactA.id, { token: ta }, 200, "A lê seu contato");
+      if (unchanged?.fullName !== contactA.fullName) throw new Error("Contato A alterado após tentativa cruzada.");
     });
   } else blocked("TEN-04", "Isolamento de contatos", "CON-01/CON-02");
   if (contactA) {
@@ -180,6 +186,7 @@ async function writeJourneys() {
     });
     await check("TEN-05", "Isolamento cruzado de oportunidades", async () => {
       await call("/opportunities/" + opportunity.id, { token: tb }, 404, "B não deve ler oportunidade A");
+      await call("/opportunities/" + opportunity.id, { method: "PATCH", token: tb, body: { title: "QA-NEGADO", version: opportunity.version } }, 404, "B não deve alterar oportunidade A");
     });
   } else {
     blocked("COM-03", "Movimentação de etapa", "COM-02");
@@ -223,6 +230,7 @@ async function writeJourneys() {
     });
     await check("TEN-06", "Isolamento cruzado de chamados", async () => {
       await call("/tickets/" + ticket.id, { token: tb }, 404, "B não deve ler chamado A");
+      await call("/tickets/" + ticket.id, { method: "PATCH", token: tb, body: { subject: "QA-NEGADO", version: ticket.version } }, 404, "B não deve alterar chamado A");
     });
   } else {
     blocked("SUP-02", "Avançar chamado", "SUP-01");
