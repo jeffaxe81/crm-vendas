@@ -218,6 +218,47 @@ describe("transactional tenant restore executor", () => {
     };
   }
 
+  async function pipelineGraph() {
+    const target = await fixture();
+    const pipeline = await owner.pipeline.create({
+      data: {
+        organizationId: target.organization.id,
+        name: "Funil comercial",
+        normalizedName: "funil-comercial",
+      },
+    });
+    const first = await owner.pipelineStage.create({
+      data: {
+        organizationId: target.organization.id,
+        pipelineId: pipeline.id,
+        name: "Em contato",
+        position: 1,
+        kind: "OPEN",
+      },
+    });
+    const second = await owner.pipelineStage.create({
+      data: {
+        organizationId: target.organization.id,
+        pipelineId: pipeline.id,
+        name: "Concluído",
+        position: 2,
+        kind: "WON",
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    return {
+      ...target,
+      pipeline,
+      first,
+      second,
+      verified: await backups.verify(target.organization.id, backup.id),
+    };
+  }
+
   async function graphSnapshot(organizationId: string) {
     const data = await runtime.withTenant(
       organizationId,
@@ -234,6 +275,8 @@ describe("transactional tenant restore executor", () => {
         "Tag",
         "CompanyTag",
         "ContactTag",
+        "Pipeline",
+        "PipelineStage",
       ].map(model => [model, data[model]])
     );
   }
@@ -400,6 +443,142 @@ describe("transactional tenant restore executor", () => {
     expect(after.Tag).toEqual([]);
     expect(after.CompanyTag).toEqual([]);
     expect(after.ContactTag).toEqual([]);
+  });
+
+  it("round-trips two pipeline stages and isolates other tenants", async () => {
+    const target = await pipelineGraph();
+    const other = await pipelineGraph();
+    const expected = await graphSnapshot(target.organization.id);
+    const otherBefore = await graphSnapshot(other.organization.id);
+
+    await owner.pipeline.update({
+      where: { id: target.pipeline.id },
+      data: { name: "Funil modificado" },
+    });
+    await owner.pipelineStage.update({
+      where: { id: target.first.id },
+      data: { name: "Etapa modificada" },
+    });
+    await owner.pipelineStage.delete({ where: { id: target.second.id } });
+    await owner.pipelineStage.create({
+      data: {
+        organizationId: target.organization.id,
+        pipelineId: target.pipeline.id,
+        name: "Criada após backup",
+        position: 3,
+        kind: "LOST",
+      },
+    });
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(expected);
+    expect(await graphSnapshot(other.organization.id)).toEqual(otherBefore);
+  });
+
+  it("rejects a stage pointing to a missing pipeline before replacement", async () => {
+    const target = await pipelineGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const broken = structuredClone(target.verified.data);
+    broken.PipelineStage![0]!.pipelineId = randomUUID();
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("BACKUP_REFERENCES_INVALID");
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
+
+  it("rolls back all pipeline replacements on a late duplicate stage position", async () => {
+    const target = await pipelineGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const broken = structuredClone(target.verified.data);
+    broken.Pipeline![0]!.name = "Não persistir";
+    broken.PipelineStage!.push({
+      ...broken.PipelineStage![0]!,
+      id: randomUUID(),
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow(/23505|Unique constraint|duplicate key/);
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
+
+  it("deletes newer pipeline and stages missing from a same-tenant backup", async () => {
+    const target = await fixture();
+    const pipeline = await owner.pipeline.create({
+      data: {
+        organizationId: target.organization.id,
+        name: "Novo funil",
+        normalizedName: "novo-funil",
+      },
+    });
+    await owner.pipelineStage.create({
+      data: {
+        organizationId: target.organization.id,
+        pipelineId: pipeline.id,
+        name: "Nova etapa",
+        position: 1,
+        kind: "OPEN",
+      },
+    });
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+
+    const restored = await graphSnapshot(target.organization.id);
+    expect(restored.Pipeline).toEqual([]);
+    expect(restored.PipelineStage).toEqual([]);
+  });
+
+  it("keeps a live opportunity and its stage when opportunity restore is unsupported", async () => {
+    const target = await pipelineGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const opportunity = await owner.opportunity.create({
+      data: {
+        organizationId: target.organization.id,
+        pipelineId: target.pipeline.id,
+        stageId: target.first.id,
+        ownerUserId: target.user.id,
+        title: "Criada depois do backup",
+        estimatedValue: "200.00",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx =>
+          restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+    expect(
+      await owner.opportunity.findUnique({ where: { id: opportunity.id } })
+    ).not.toBeNull();
   });
 
   it("preserves PostgreSQL microseconds in a company-only snapshot", async () => {
