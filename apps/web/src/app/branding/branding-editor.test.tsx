@@ -60,7 +60,11 @@ it("uploads a raster logo, permits removal and restores defaults only on save", 
   fireEvent.click(
     screen.getByRole("button", { name: "Restaurar identidade padrão" })
   );
-  expect(save).not.toHaveBeenCalled();
+  expect(save).toHaveBeenCalledWith({
+    ...defaultBranding,
+    menuColor: "#123456",
+    logo: expect.stringContaining("data:image/png;base64,"),
+  });
   fireEvent.click(
     screen.getByRole("button", { name: "Salvar identidade visual" })
   );
