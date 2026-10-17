@@ -38,6 +38,39 @@ verificada depois de adquirir o bloqueio de manutenção da organização.
 A remoção afeta o arquivo de backup escolhido. A restauração e a exclusão
 em massa de dados operacionais são entregas distintas, ainda pendentes.
 
+## Ativação assistida em Docker Compose
+
+A partir da raiz do projeto, em um servidor com a API em execução, o operador
+pode preparar as duas variáveis com uma única chamada:
+
+```bash
+sudo python3 scripts/ativar-backup.py
+```
+
+O utilitário altera apenas `BACKUP_DIRECTORY` e `BACKUP_ENCRYPTION_KEY` em
+`.env`, mantém a chave já configurada e grava o arquivo com permissão `0600`.
+Se precisar criar uma chave, verifica primeiro se o contêiner API não apresenta
+chave ativa ou arquivos anteriores no volume privado. Se não conseguir
+confirmar esse estado, interrompe a operação sem gerar chave nova.
+
+Após a configuração, reinicie o serviço API para carregar as variáveis:
+
+```bash
+sudo docker compose config --quiet && sudo docker compose up -d --force-recreate --wait api
+```
+
+Valide a configuração no contêiner sem imprimir a chave:
+
+```bash
+sudo docker compose exec -T api node -e 'const fs=require("node:fs");if(process.env.BACKUP_DIRECTORY!=="/var/lib/axes-crm/backups"||Buffer.from(process.env.BACKUP_ENCRYPTION_KEY||"","base64").length!==32)process.exit(1);fs.accessSync(process.env.BACKUP_DIRECTORY,fs.constants.W_OK);console.log("BACKUP CONFIGURADO")'
+```
+
+Guarde a chave em cofre externo ao servidor, com acesso restrito. Ela é
+essencial para descriptografar backups existentes. Não copie `.env` para o
+repositório, não imprima a chave em terminais compartilhados e não a regenere.
+Essa configuração **não ativa restauração efetiva**; somente o preview de
+restore é disponibilizado até a conclusão e homologação do executor completo.
+
 ## Habilitação no servidor Rocky Linux
 
 1. Confirmar o SHA da `main`, CI do mesmo SHA e gerar backup externo
