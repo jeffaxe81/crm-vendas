@@ -2599,3 +2599,162 @@ textarea {
     padding: 16px;
   }
 }
+
+/* Per-tenant variables are scoped to the current screen, including the login. */
+.tenant-logo {
+  display: block;
+  max-width: 150px;
+  max-height: 52px;
+  object-fit: contain;
+}
+.tenant-logo--login {
+  max-width: 280px;
+  max-height: 120px;
+  margin-bottom: 24px;
+}
+.tenant-branded .crm-shell__sidebar,
+.branding-preview {
+  background: var(--branding-menu);
+  color: var(--branding-menu-text);
+}
+.tenant-branded .crm-shell__sidebar p,
+.tenant-branded .crm-shell__sidebar strong,
+.tenant-branded .crm-shell__sidebar span,
+.tenant-branded .crm-shell__sidebar button {
+  color: inherit;
+}
+.tenant-branded .crm-shell__nav button.is-active,
+.tenant-branded .crm-shell__brand-mark,
+.branding-preview__primary {
+  background: var(--crm-primary);
+  color: var(--branding-primary-text);
+}
+.tenant-branded button[type="submit"],
+.tenant-branded .crm-button--default {
+  color: var(--branding-primary-text);
+}
+.tenant-branded .login-brand__eyebrow,
+.tenant-branded .login-card__eyebrow {
+  color: var(--crm-primary);
+}
+.branding-editor {
+  padding: 24px;
+  background: white;
+  border: 1px solid var(--crm-border);
+  border-radius: var(--crm-radius);
+  margin-bottom: 24px;
+}
+.branding-editor fieldset {
+  display: grid;
+  gap: 16px;
+}
+.branding-editor label {
+  display: grid;
+  gap: 8px;
+}
+.branding-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  border-radius: var(--crm-radius);
+}
+.branding-preview__primary {
+  padding: 12px 20px;
+  border-radius: var(--crm-radius);
+}
+
+.tenant-branded .crm-shell__nav button:hover:not(.is-active) {
+  background: color-mix(
+    in srgb,
+    var(--branding-menu-text) 14%,
+    var(--branding-menu)
+  );
+  color: var(--branding-menu-text);
+}
+.tenant-branded .crm-shell__sidebar button:focus-visible {
+  outline: 2px solid var(--branding-menu-text);
+  outline-offset: 2px;
+}
+.crm-shell--collapsed .tenant-logo {
+  max-width: 38px;
+}
+
+/* Movable, non-modal tour; drag is limited to its dedicated handle. */
+.floating-tour-handle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--crm-border, #d5dce7);
+  border-radius: 8px;
+  background: #eef5fc;
+  color: #12487c;
+  font: inherit;
+  font-weight: 600;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.floating-tour-handle:active {
+  cursor: grabbing;
+}
+.floating-tour-handle:focus-visible {
+  outline: 3px solid var(--crm-primary, #0b63ae);
+  outline-offset: 2px;
+}
+.floating-tour-help {
+  display: block;
+  margin-top: 6px;
+  color: #42526e;
+}
+
+/* Shared save confirmation: text and icon accompany every color state. */
+button.save-feedback-button[data-save-status="saving"] {
+  background: #52657a;
+  border-color: #52657a;
+  color: #fff;
+  cursor: wait;
+}
+button.save-feedback-button[data-save-status="success"] {
+  background: #166534;
+  border-color: #166534;
+  color: #fff;
+  opacity: 1;
+}
+button.save-feedback-button[data-save-status="error"] {
+  border-color: #b42318;
+}
+.save-feedback-spinner {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  vertical-align: middle;
+  animation: save-feedback-spin 0.8s linear infinite;
+}
+.save-feedback-notice:empty {
+  margin: 0;
+}
+.save-feedback-notice[data-save-status="success"] {
+  color: #166534;
+  font-weight: 600;
+}
+.save-feedback-notice[data-save-status="error"] {
+  color: #b42318;
+}
+@keyframes save-feedback-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .save-feedback-spinner {
+    animation: none;
+  }
+}

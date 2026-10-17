@@ -1,4 +1,10 @@
 "use client";
+
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
 import { useState } from "react";
 import {
   availableWorkspaceDestinations,
@@ -23,6 +29,7 @@ const labels: Record<string, string> = {
 };
 export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
   const { t } = useTranslation();
+  const saveFeedback = useSaveFeedback();
   const w = useWorkspace();
   const [importNotice, setImportNotice] = useState("");
   if (!w) return null;
@@ -75,6 +82,10 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
           "Configure sua tela inicial e seus atalhos. Salvar aplica a configuração a este usuário nesta organização, inclusive em outros dispositivos."
         )}
       </p>
+      <SaveNotice
+        status={saveFeedback.status}
+        label={t("Preferências salvas.")}
+      />
       {w.error ? <p role="alert">{w.error}</p> : null}
       {w.message ? <p role="status">{w.message}</p> : null}
       <fieldset disabled={w.loading || w.saving} className="workspace-editor">
@@ -204,9 +215,20 @@ export function WorkspaceEditor({ session }: { session: AuthSessionResponse }) {
         <button type="button" onClick={w.restoreDefaults}>
           {t("Restaurar padrão")}
         </button>
-        <button type="button" onClick={() => void w.save()}>
-          {t("Salvar preferências")}
-        </button>
+        <SaveButton
+          type="button"
+          status={saveFeedback.status}
+          label={t("Salvar preferências")}
+          onClick={async () => {
+            if (!saveFeedback.start()) return;
+            try {
+              if (await w.save()) saveFeedback.saved();
+              else saveFeedback.failed();
+            } catch {
+              saveFeedback.failed();
+            }
+          }}
+        />
       </fieldset>
       {w.loading ? (
         <p role="status">{t("Carregando preferências...")}</p>

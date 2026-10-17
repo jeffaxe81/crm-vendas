@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
+import {
   OnboardingStateSchema,
   QuickSetupStateSchema,
   availableWorkspaceDestinations,
@@ -40,6 +46,7 @@ export function QuickSetupExperience({
   const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>("loading");
   const [state, setState] = useState<QuickSetupState | null>(null);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const token = session.accessToken;
@@ -112,6 +119,7 @@ export function QuickSetupExperience({
     setBusy(true);
     setError("");
 
+    if (!saveFeedback.start()) return;
     try {
       const updated = QuickSetupStateSchema.parse(
         await apiRequest<unknown>("/me/quick-setup/progress", {
@@ -123,8 +131,10 @@ export function QuickSetupExperience({
           },
         })
       );
+      saveFeedback.saved();
       setState(updated);
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -198,6 +208,10 @@ export function QuickSetupExperience({
           {t("AXE CRM 1.2 · Configuração rápida")}
         </p>
         <h2>{t("Configuração concluída")}</h2>
+        <SaveNotice
+          status={saveFeedback.status}
+          label={t("Configuração concluída e salva.")}
+        />
         <p>
           {t("Perfil ")}
           {session.membership.role}
@@ -262,21 +276,20 @@ export function QuickSetupExperience({
         </button>
       ) : null}
 
+      <SaveNotice status={saveFeedback.status} label={t("Etapa salva.")} />
       {error ? <p role="alert">{t(error)}</p> : null}
 
       <div className="first-access-actions">
         <button type="button" onClick={() => setPhase("idle")}>
           {t("Fechar")}
         </button>
-        <button
+        <SaveButton
           type="button"
           disabled={busy}
           onClick={() => void completeCurrentStep()}
-        >
-          {busy
-            ? t("Salvando...")
-            : t("Concluir etapa {0}", { 0: t(currentStep.title) })}
-        </button>
+          status={saveFeedback.status}
+          label={t("Concluir etapa {0}", { 0: t(currentStep.title) })}
+        />
       </div>
       <small>
         {t(

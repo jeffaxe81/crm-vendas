@@ -1,5 +1,5 @@
 {
-  "schemaSha256": "8ddbe865c0c97905830632d547ef3d30f9c256c62709cd5042073bdfde9ca8f3",
+  "schemaSha256": "ccb02228dff6378c909872b055531f487a63670ff1008f4a2fc2115bff7a79aa",
   "models": [
     {
       "name": "Organization",
@@ -26,6 +26,17 @@
           "isList": false,
           "isId": false,
           "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "branding",
+          "type": "Json",
+          "kind": "scalar",
+          "dbName": "branding",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "JsonB",
           "relationFromFields": []
         },
         {

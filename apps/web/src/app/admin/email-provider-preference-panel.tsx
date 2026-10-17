@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
 import { useEffect, useState, type FormEvent } from "react";
 import { apiRequest } from "../../lib/api-client";
 import { useTranslation } from "../../i18n/language-provider";
@@ -40,9 +46,9 @@ export function EmailProviderPreferencePanel({
   const [preference, setPreference] = useState<Preference | null>(null);
   const [selected, setSelected] = useState<ProviderCode>("NONE");
   const [loading, setLoading] = useState(true);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
 
   async function reload() {
     setLoading(true);
@@ -93,7 +99,7 @@ export function EmailProviderPreferencePanel({
     if (!preference || busy || loading) return;
     setBusy(true);
     setError("");
-    setNotice("");
+    if (!saveFeedback.start()) return;
     try {
       const data = await apiRequest<Preference>(
         "/admin/email/provider-preference",
@@ -103,12 +109,11 @@ export function EmailProviderPreferencePanel({
           body: { version: preference.version, providerCode: selected },
         }
       );
+      saveFeedback.saved();
       setPreference(data);
       setSelected(data.providerCode);
-      setNotice(
-        t("Preferência salva. Conta não conectada e envio desativado.")
-      );
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -136,7 +141,6 @@ export function EmailProviderPreferencePanel({
           </button>
         </p>
       ) : null}
-      {notice ? <p role="status">{t(notice)}</p> : null}
       {preference ? (
         <form onSubmit={event => void save(event)}>
           <label htmlFor="email-provider-choice">{t("Provedor")}</label>
@@ -162,12 +166,18 @@ export function EmailProviderPreferencePanel({
             {t("Conexão: Não conectada · Envio: Desativado · Versão:")}{" "}
             {preference.version}
           </p>
-          <button
+          <SaveButton
             type="submit"
             disabled={busy || loading || selected === preference.providerCode}
-          >
-            {busy ? t("Salvando...") : t("Salvar preferência")}
-          </button>
+            status={saveFeedback.status}
+            label={t("Salvar preferência")}
+          />
+          <SaveNotice
+            status={saveFeedback.status}
+            label={t(
+              "Preferência salva. Conta não conectada e envio desativado."
+            )}
+          />
         </form>
       ) : null}
     </div>

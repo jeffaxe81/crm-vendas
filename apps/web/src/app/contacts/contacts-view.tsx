@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
 import type {
   ContactChannelInput,
   ContactCreateInput,
@@ -109,6 +115,10 @@ export function ContactsView({
   const [contacts, setContacts] = useState<ContactRecord[]>([]);
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
   const [history, setHistory] = useState<RelationshipEntryRecord[]>([]);
+  const contactSave = useSaveFeedback();
+  const channelSave = useSaveFeedback();
+  const historySave = useSaveFeedback();
+  const fieldsSave = useSaveFeedback();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [contactFormOpen, setContactFormOpen] = useState(false);
@@ -219,6 +229,7 @@ export function ContactsView({
       return;
     }
 
+    if (!contactSave.start()) return;
     try {
       const payload: ContactCreateInput = {
         fullName,
@@ -231,10 +242,12 @@ export function ContactsView({
         method: "POST",
         body: payload,
       });
+      contactSave.saved();
       setContacts(current => [...current, { ...created, channels: [] }]);
       setContactForm(emptyContactForm);
       setContactFormOpen(false);
     } catch (cause) {
+      contactSave.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -250,6 +263,7 @@ export function ContactsView({
     }
 
     setError("");
+    if (!channelSave.start()) return;
     try {
       const payload: ContactChannelInput = {
         type: channelForm.type,
@@ -267,6 +281,7 @@ export function ContactsView({
           body: payload,
         }
       );
+      channelSave.saved();
       setContacts(current =>
         current.map(contact =>
           contact.id === channelContactId
@@ -280,6 +295,7 @@ export function ContactsView({
       setChannelForm(emptyChannelForm);
       setChannelContactId(null);
     } catch (cause) {
+      channelSave.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -326,6 +342,7 @@ export function ContactsView({
     }
 
     setError("");
+    if (!historySave.start()) return;
     try {
       const companyId = linkedCompanies[historyContactId];
       const created = await apiRequest<RelationshipEntryRecord>(
@@ -342,10 +359,12 @@ export function ContactsView({
           },
         }
       );
+      historySave.saved();
       setHistory(current => [...current, created]);
       setHistoryKind("NOTE");
       setHistoryContent("");
     } catch (cause) {
+      historySave.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -462,6 +481,7 @@ export function ContactsView({
     }
 
     setError("");
+    if (!fieldsSave.start()) return;
     try {
       await Promise.all(
         Object.entries(customFieldValues).map(([definitionId, value]) =>
@@ -475,7 +495,9 @@ export function ContactsView({
           )
         )
       );
+      fieldsSave.saved();
     } catch (cause) {
+      fieldsSave.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -493,6 +515,13 @@ export function ContactsView({
 
   return (
     <section className="contacts-view" aria-labelledby="contacts-title">
+      <SaveNotice status={contactSave.status} label={t("Contato salvo.")} />
+      <SaveNotice status={channelSave.status} label={t("Canal salvo.")} />
+      <SaveNotice status={historySave.status} label={t("Histórico salvo.")} />
+      <SaveNotice
+        status={fieldsSave.status}
+        label={t("Campos customizados salvos.")}
+      />
       <header className="contacts-view__header">
         <div>
           <p className="contacts-view__eyebrow">{t("Relacionamento")}</p>
@@ -516,6 +545,7 @@ export function ContactsView({
             className="button contacts-view__primary"
             onClick={() => {
               setImportOpen(false);
+              contactSave.reset();
               setContactFormOpen(true);
             }}
           >
@@ -579,9 +609,11 @@ export function ContactsView({
               }
             />
           </label>
-          <button className="button" type="submit">
-            {t("Salvar contato")}
-          </button>
+          <SaveButton
+            type="submit"
+            status={contactSave.status}
+            label={t("Salvar contato")}
+          />
         </form>
       ) : null}
 
@@ -618,6 +650,7 @@ export function ContactsView({
               <button
                 type="button"
                 onClick={() => {
+                  channelSave.reset();
                   setChannelContactId(contact.id);
                   setChannelForm(emptyChannelForm);
                 }}
@@ -636,6 +669,7 @@ export function ContactsView({
               <button
                 type="button"
                 onClick={() => {
+                  historySave.reset();
                   setHistoryContactId(contact.id);
                   setHistoryKind("NOTE");
                   setHistoryContent("");
@@ -691,13 +725,12 @@ export function ContactsView({
               }))
             }
           />
-          <button
+          <SaveButton
             type="button"
-            className="button"
             onClick={() => void saveCustomFields()}
-          >
-            {t("Salvar campos customizados")}
-          </button>
+            status={fieldsSave.status}
+            label={t("Salvar campos customizados")}
+          />
         </section>
       ) : null}
 
@@ -763,9 +796,11 @@ export function ContactsView({
             />
             <span>{t("Canal principal")}</span>
           </label>
-          <button className="button" type="submit">
-            {t("Salvar canal")}
-          </button>
+          <SaveButton
+            type="submit"
+            status={channelSave.status}
+            label={t("Salvar canal")}
+          />
         </form>
       ) : null}
 
@@ -825,9 +860,11 @@ export function ContactsView({
               required
             />
           </label>
-          <button className="button" type="submit">
-            {t("Salvar histórico")}
-          </button>
+          <SaveButton
+            type="submit"
+            status={historySave.status}
+            label={t("Salvar histórico")}
+          />
         </form>
       ) : null}
     </section>

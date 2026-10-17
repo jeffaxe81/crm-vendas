@@ -144,6 +144,7 @@ enum TicketEventType {
 model Organization {
   defaultLanguage String @default("pt-BR") @map("default_language") @db.VarChar(5)
   detectBrowserLanguage Boolean @default(false) @map("detect_browser_language")
+  branding Json? @db.JsonB
   onboardingOwnerId String? @map("onboarding_owner_id") @db.Uuid
   onboardingStep Int @default(1) @map("onboarding_step")
   onboardingCompletedAt DateTime? @map("onboarding_completed_at") @db.Timestamptz(6)

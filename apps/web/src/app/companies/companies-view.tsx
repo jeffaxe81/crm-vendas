@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
 import type {
   CompanyCreateInput,
   CompanyImportPreview,
@@ -76,6 +82,7 @@ export function CompaniesView({
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<CompanyFormState>(emptyForm);
+  const saveFeedback = useSaveFeedback();
   const [submitting, setSubmitting] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -153,6 +160,7 @@ export function CompaniesView({
   }
 
   function openCreate() {
+    saveFeedback.reset();
     setError("");
     closeImport();
     setForm(emptyForm);
@@ -161,6 +169,7 @@ export function CompaniesView({
   }
 
   function openEdit(company: CompanyRecord) {
+    saveFeedback.reset();
     setError("");
     closeImport();
     setForm({
@@ -260,6 +269,7 @@ export function CompaniesView({
 
     setSubmitting(true);
 
+    if (!saveFeedback.start()) return;
     try {
       if (formMode === "create") {
         const payload: CompanyCreateInput = {
@@ -275,6 +285,7 @@ export function CompaniesView({
         });
         setCompanies(current => [...current, created]);
         setQuery("");
+        saveFeedback.saved();
         closeForm();
         return;
       }
@@ -299,9 +310,11 @@ export function CompaniesView({
             company.id === updated.id ? updated : company
           )
         );
+        saveFeedback.saved();
         closeForm();
       }
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -497,20 +510,21 @@ export function CompaniesView({
             </label>
           </div>
 
-          <Button
-            className="company-form__submit"
+          <SaveButton
+            className="crm-button crm-button--default company-form__submit"
             type="submit"
             disabled={submitting}
-          >
-            {submitting
-              ? t("Salvando...")
-              : formMode === "create"
+            status={saveFeedback.status}
+            label={
+              formMode === "create"
                 ? t("Salvar empresa")
-                : t("Salvar alterações")}
-          </Button>
+                : t("Salvar alterações")
+            }
+          />
         </form>
       ) : null}
 
+      <SaveNotice status={saveFeedback.status} label={t("Empresa salva.")} />
       {loading ? (
         <p className="companies-view__status">{t("Carregando empresas...")}</p>
       ) : null}

@@ -15,7 +15,7 @@ import {
 } from "react";
 import { Headset, PanelRightClose, PanelRightOpen } from "lucide-react";
 
-import { authApiRequest } from "../lib/api-client";
+import { authApiRequest, SESSION_UNAUTHORIZED_EVENT } from "../lib/api-client";
 import { ActivitiesView } from "./activities/activities-view";
 import { AgendaView } from "./agenda/agenda-view";
 import { CompaniesView } from "./companies/companies-view";
@@ -43,6 +43,12 @@ import { BackupAdministrationView } from "./admin/backup-administration-view";
 import { LanguageSettingsView } from "./admin/language-settings-view";
 import { LanguageProvider } from "../i18n/language-provider";
 import { useTranslation } from "../i18n/language-provider";
+
+import {
+  useTenantBranding,
+  brandingStyle,
+} from "./branding/use-tenant-branding";
+import { BrandingEditor } from "./branding/branding-editor";
 
 export default function Home() {
   const [session, setSession] = useState<AuthSessionResponse | null>(null);
@@ -75,6 +81,7 @@ function HomeContent({
   const [reportTab, setReportTab] = useState<ReportTab>("summary");
   const [tourReplayToken, setTourReplayToken] = useState(0);
   const [quickSetupOpenToken, setQuickSetupOpenToken] = useState(0);
+  const tenantBranding = useTenantBranding(session);
   const [activeSection, setActiveSection] = useState<CrmSection>("home");
   const [communicationOpened, setCommunicationOpened] = useState(false);
   const [communicationDockOpen, setCommunicationDockOpen] = useState(false);
@@ -114,6 +121,65 @@ function HomeContent({
       active = false;
     };
   }, []);
+
+  const accessToken = session?.accessToken;
+  const expiresIn = session?.expiresIn;
+  const organizationId = session?.organization.id;
+  const userId = session?.user.id;
+  const membershipId = session?.membership.id;
+
+  useEffect(() => {
+    if (!accessToken || !expiresIn) return;
+    let active = true;
+
+    function expireSession() {
+      if (!active) return;
+      active = false;
+      manualNavigation.current = false;
+      setSession(null);
+      setQuickSetupOpenToken(0);
+      setCommunicationOpened(false);
+      setCommunicationDockOpen(false);
+      setPassword("");
+      setError(
+        "Sua sessão expirou ou foi invalidada. Entre novamente para continuar."
+      );
+    }
+
+    function onUnauthorized(event: Event) {
+      // A late response from an old session must not close a newer login.
+      if ((event as CustomEvent<string>).detail === accessToken)
+        expireSession();
+    }
+
+    window.addEventListener(SESSION_UNAUTHORIZED_EVENT, onUnauthorized);
+    const timer = window.setTimeout(
+      () => {
+        void authApiRequest<unknown>("/auth/refresh", { method: "POST" })
+          .then(payload => {
+            const refreshed = AuthSessionResponseSchema.parse(payload);
+            // Never switch the active tenant/account because another tab changed its cookie.
+            if (
+              refreshed.organization.id !== organizationId ||
+              refreshed.user.id !== userId ||
+              refreshed.membership.id !== membershipId
+            ) {
+              expireSession();
+              return;
+            }
+            if (active) setSession(refreshed);
+          })
+          .catch(() => expireSession());
+      },
+      Math.max(1000, Math.floor(expiresIn * 800))
+    );
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+      window.removeEventListener(SESSION_UNAUTHORIZED_EVENT, onUnauthorized);
+    };
+  }, [accessToken, expiresIn, organizationId, userId, membershipId]);
 
   async function login(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -229,6 +295,7 @@ function HomeContent({
         }}
       >
         <CrmShell
+          branding={tenantBranding.branding}
           session={session}
           onStartTour={() => setTourReplayToken(value => value + 1)}
           onOpenQuickSetup={() => setQuickSetupOpenToken(value => value + 1)}
@@ -246,7 +313,20 @@ function HomeContent({
               }}
             />
           ) : activeSection === "workspace-settings" ? (
-            <WorkspaceEditor session={session} />
+            <>
+              {session.membership.role === "ADMIN" &&
+              session.permissions.includes("organization.manage") ? (
+                <BrandingEditor
+                  branding={tenantBranding.branding}
+                  save={tenantBranding.save}
+                  loading={tenantBranding.loading}
+                />
+              ) : null}
+              {tenantBranding.error ? (
+                <p role="alert">{tenantBranding.error}</p>
+              ) : null}
+              <WorkspaceEditor session={session} />
+            </>
           ) : activeSection === "language-settings" &&
             session.permissions.includes("organization.manage") ? (
             <LanguageSettingsView />
@@ -401,9 +481,20 @@ function HomeContent({
   }
 
   return (
-    <main className="login-shell">
+    <main
+      className="login-shell tenant-branded"
+      style={brandingStyle(tenantBranding.branding)}
+    >
       <section className="login-brand" aria-labelledby="crm-title">
-        <p className="login-brand__eyebrow">{t("Axesistemas")}</p>
+        {tenantBranding.branding.logo ? (
+          <img
+            className="tenant-logo tenant-logo--login"
+            src={tenantBranding.branding.logo}
+            alt={t("Logo da empresa")}
+          />
+        ) : (
+          <p className="login-brand__eyebrow">{t("Axesistemas")}</p>
+        )}
         <h1 id="crm-title">{t("CRM Axesistemas")}</h1>
         <p className="login-brand__lead">
           {t(

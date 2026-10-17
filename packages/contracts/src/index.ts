@@ -397,3 +397,10 @@ export {
   type Language,
   type LanguageSettings,
 } from "./language-settings";
+
+export {
+  TenantBrandingSchema,
+  BrandingLogoSchema,
+  defaultBranding,
+  type TenantBranding,
+} from "./branding";

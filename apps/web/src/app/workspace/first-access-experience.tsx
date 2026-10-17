@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
+import {
   OnboardingStateSchema,
   availableWorkspaceDestinations,
   type AuthSessionResponse,
@@ -9,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import { apiRequest } from "../../lib/api-client";
 import { useTranslation } from "../../i18n/language-provider";
+import { FloatingTourPanel } from "./floating-tour-panel";
 
 const explanations: Record<WorkspaceSection, string> = {
   "language-settings":
@@ -78,6 +85,7 @@ export function FirstAccessExperience({
     session.organization.name
   );
   const [tourIndex, setTourIndex] = useState(0);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const steps = availableWorkspaceDestinations(
@@ -127,6 +135,7 @@ export function FirstAccessExperience({
     if (busy) return;
     setBusy(true);
     setError("");
+    if (!saveFeedback.start()) return;
     try {
       const next = stage === 4 ? 4 : stage + 1;
       const updated = await apiRequest<unknown>("/me/onboarding/organization", {
@@ -139,6 +148,7 @@ export function FirstAccessExperience({
         },
       });
       const value = OnboardingStateSchema.shape.organization.parse(updated);
+      saveFeedback.saved();
       setOrganizationName(value.name);
       if (stage === 1) onOrganizationNameChange(value.name);
       setStage(value.step);
@@ -148,6 +158,7 @@ export function FirstAccessExperience({
         onNavigate("home");
       }
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error ? cause.message : "Falha ao salvar etapa."
       );
@@ -238,21 +249,22 @@ export function FirstAccessExperience({
             {t(steps.find(item => item.id === destination)?.label ?? "")}
           </button>
         ) : null}
+        <SaveNotice status={saveFeedback.status} label={t("Etapa salva.")} />
         {error ? <p role="alert">{t(error)}</p> : null}
         <div className="first-access-actions">
-          <button
+          <SaveButton
             type="button"
             onClick={() => void advanceWizard()}
             disabled={
               busy || (stage === 1 && organizationName.trim().length < 2)
             }
-          >
-            {busy
-              ? t("Salvando...")
-              : stage === 4
+            status={saveFeedback.status}
+            label={
+              stage === 4
                 ? t("Concluir configuração e iniciar tour")
-                : t("Salvar e continuar")}
-          </button>
+                : t("Salvar e continuar")
+            }
+          />
         </div>
         <small>
           {t(
@@ -266,15 +278,14 @@ export function FirstAccessExperience({
   const step = steps[tourIndex];
   if (!step) return null;
   return (
-    <aside
-      className="first-access-panel"
-      role="dialog"
-      aria-label={t("Tour das funcionalidades do CRM")}
-      aria-modal="false"
-    >
+    <FloatingTourPanel>
       <p className="first-access-eyebrow">
         {t("AXE CRM 1.1 · Conheça o sistema")}
       </p>
+      <SaveNotice
+        status={saveFeedback.status}
+        label={t("Configuração salva.")}
+      />
       <h2>{t(step.label)}</h2>
       <p>
         {t("Passo ")}
@@ -332,6 +343,6 @@ export function FirstAccessExperience({
           "O tour é individual e respeita as permissões do seu perfil. Pode ser reaberto em Ajuda."
         )}
       </small>
-    </aside>
+    </FloatingTourPanel>
   );
 }

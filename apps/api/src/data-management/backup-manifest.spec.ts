@@ -19,6 +19,9 @@ function emptySnapshot(organizationId: string): SnapshotData {
     {
       id: organizationId,
       name: "Synthetic A",
+      branding: null,
+      defaultLanguage: "pt-BR",
+      detectBrowserLanguage: false,
       slug: "synthetic-a",
       isActive: true,
       onboardingOwnerId: null,

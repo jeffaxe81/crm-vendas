@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
 import { useEffect, useState, type FormEvent } from "react";
 import { apiRequest } from "../../lib/api-client";
 import { useTranslation } from "../../i18n/language-provider";
@@ -30,9 +36,9 @@ export function NeoCommunicationSettingsView({
   const { t } = useTranslation();
   const [settings, setSettings] = useState<NeoSettings>(defaultNeoSettings);
   const [loading, setLoading] = useState(true);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -59,16 +65,17 @@ export function NeoCommunicationSettingsView({
     event.preventDefault();
     if (!canManage || busy) return;
     setError("");
-    setNotice("");
     setBusy(true);
+    if (!saveFeedback.start()) return;
     try {
       await apiRequest("/integrations/neo-communication", {
         accessToken,
         method: "PUT",
         body: settings,
       });
-      setNotice(t("Configuração NEO salva para esta organização."));
+      saveFeedback.saved();
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -91,7 +98,6 @@ export function NeoCommunicationSettingsView({
         )}
       </p>
       {error ? <p role="alert">{t(error)}</p> : null}
-      {notice ? <p role="status">{t(notice)}</p> : null}
       {loading ? (
         <p role="status">{t("Carregando configuração NEO...")}</p>
       ) : (
@@ -168,12 +174,19 @@ export function NeoCommunicationSettingsView({
                 }
               />
             </label>
-            <button className="button" type="submit" disabled={busy}>
-              {t("Salvar configuração")}
-            </button>
+            <SaveButton
+              type="submit"
+              disabled={busy}
+              status={saveFeedback.status}
+              label={t("Salvar configuração")}
+            />
           </fieldset>
         </form>
       )}
+      <SaveNotice
+        status={saveFeedback.status}
+        label={t("Configuração NEO salva para esta organização.")}
+      />
       {!canManage ? (
         <p>{t("Seu perfil possui acesso de leitura à configuração.")}</p>
       ) : null}

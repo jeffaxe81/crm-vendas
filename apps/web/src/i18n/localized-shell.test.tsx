@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AuthSessionResponse } from "@axes/contracts";
 import { LanguageProvider } from "./language-provider";
@@ -18,11 +18,11 @@ const session = {
 } as AuthSessionResponse;
 describe("translated CRM shell", () => {
   it.each([
-    ["en", "Companies", "Application language"],
-    ["es", "Empresas", "Idioma de la aplicación"],
+    ["en", "Companies", "Application language", "Group Sales"],
+    ["es", "Empresas", "Idioma de la aplicación", "Grupo Comercial"],
   ])(
     "renders navigation in %s without translating customer names",
-    async (language, companies, settings) => {
+    async (language, companies, settings, group) => {
       vi.mocked(apiRequest).mockResolvedValue({
         defaultLanguage: language,
         detectBrowserLanguage: false,
@@ -40,10 +40,11 @@ describe("translated CRM shell", () => {
         </LanguageProvider>
       );
       expect(
-        await screen.findByRole("button", { name: companies })
-      ).toBeInTheDocument();
-      expect(
         await screen.findByRole("button", { name: settings })
+      ).toBeInTheDocument();
+      fireEvent.click(screen.getByRole("button", { name: group }));
+      expect(
+        screen.getByRole("button", { name: companies })
       ).toBeInTheDocument();
       expect(screen.getByText("Salvar")).toBeInTheDocument();
       expect(

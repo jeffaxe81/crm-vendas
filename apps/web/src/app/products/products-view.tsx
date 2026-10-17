@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
@@ -63,6 +69,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
   const [editing, setEditing] = useState<ProductRecord | null>(null);
   const [form, setForm] = useState<ProductForm>(emptyForm);
+  const saveFeedback = useSaveFeedback();
   const [submitting, setSubmitting] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [importOpen, setImportOpen] = useState(false);
@@ -107,6 +114,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
   }, [accessToken, page, query, refresh]);
 
   function openCreate() {
+    saveFeedback.reset();
     setError("");
     setImportOpen(false);
     setEditing(null);
@@ -115,6 +123,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
   }
 
   function openEdit(product: ProductRecord) {
+    saveFeedback.reset();
     setError("");
     setImportOpen(false);
     setEditing(product);
@@ -146,6 +155,7 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
 
     setSubmitting(true);
     setError("");
+    if (!saveFeedback.start()) return;
     try {
       const description = form.description.trim();
       if (formMode === "edit" && editing) {
@@ -174,9 +184,11 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
           },
         });
       }
+      saveFeedback.saved();
       closeForm();
       setRefresh(current => current + 1);
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -352,12 +364,16 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
               />
             </label>
           </div>
-          <button className="button" type="submit" disabled={submitting}>
-            {submitting ? t("Salvando...") : t("Salvar produto")}
-          </button>
+          <SaveButton
+            type="submit"
+            disabled={submitting}
+            status={saveFeedback.status}
+            label={t("Salvar produto")}
+          />
         </form>
       ) : null}
 
+      <SaveNotice status={saveFeedback.status} label={t("Produto salvo.")} />
       {loading ? <p>{t("Carregando produtos...")}</p> : null}
 
       {!loading && products.length === 0 ? (

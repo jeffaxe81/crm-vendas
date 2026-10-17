@@ -6883,6 +6883,7 @@ export namespace Prisma {
   export type OrganizationCountAggregateOutputType = {
     defaultLanguage: number
     detectBrowserLanguage: number
+    branding: number
     onboardingOwnerId: number
     onboardingStep: number
     onboardingCompletedAt: number
@@ -6935,6 +6936,7 @@ export namespace Prisma {
   export type OrganizationCountAggregateInputType = {
     defaultLanguage?: true
     detectBrowserLanguage?: true
+    branding?: true
     onboardingOwnerId?: true
     onboardingStep?: true
     onboardingCompletedAt?: true
@@ -7036,6 +7038,7 @@ export namespace Prisma {
   export type OrganizationGroupByOutputType = {
     defaultLanguage: string
     detectBrowserLanguage: boolean
+    branding: JsonValue | null
     onboardingOwnerId: string | null
     onboardingStep: number
     onboardingCompletedAt: Date | null
@@ -7069,6 +7072,7 @@ export namespace Prisma {
   export type OrganizationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     defaultLanguage?: boolean
     detectBrowserLanguage?: boolean
+    branding?: boolean
     onboardingOwnerId?: boolean
     onboardingStep?: boolean
     onboardingCompletedAt?: boolean
@@ -7126,6 +7130,7 @@ export namespace Prisma {
   export type OrganizationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     defaultLanguage?: boolean
     detectBrowserLanguage?: boolean
+    branding?: boolean
     onboardingOwnerId?: boolean
     onboardingStep?: boolean
     onboardingCompletedAt?: boolean
@@ -7140,6 +7145,7 @@ export namespace Prisma {
   export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     defaultLanguage?: boolean
     detectBrowserLanguage?: boolean
+    branding?: boolean
     onboardingOwnerId?: boolean
     onboardingStep?: boolean
     onboardingCompletedAt?: boolean
@@ -7154,6 +7160,7 @@ export namespace Prisma {
   export type OrganizationSelectScalar = {
     defaultLanguage?: boolean
     detectBrowserLanguage?: boolean
+    branding?: boolean
     onboardingOwnerId?: boolean
     onboardingStep?: boolean
     onboardingCompletedAt?: boolean
@@ -7165,7 +7172,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"defaultLanguage" | "detectBrowserLanguage" | "onboardingOwnerId" | "onboardingStep" | "onboardingCompletedAt" | "id" | "name" | "slug" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"defaultLanguage" | "detectBrowserLanguage" | "branding" | "onboardingOwnerId" | "onboardingStep" | "onboardingCompletedAt" | "id" | "name" | "slug" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     inboundMessages?: boolean | Organization$inboundMessagesArgs<ExtArgs>
     emailRelaySettings?: boolean | Organization$emailRelaySettingsArgs<ExtArgs>
@@ -7263,6 +7270,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       defaultLanguage: string
       detectBrowserLanguage: boolean
+      branding: Prisma.JsonValue | null
       onboardingOwnerId: string | null
       onboardingStep: number
       onboardingCompletedAt: Date | null
@@ -7739,6 +7747,7 @@ export namespace Prisma {
   interface OrganizationFieldRefs {
     readonly defaultLanguage: FieldRef<"Organization", 'String'>
     readonly detectBrowserLanguage: FieldRef<"Organization", 'Boolean'>
+    readonly branding: FieldRef<"Organization", 'Json'>
     readonly onboardingOwnerId: FieldRef<"Organization", 'String'>
     readonly onboardingStep: FieldRef<"Organization", 'Int'>
     readonly onboardingCompletedAt: FieldRef<"Organization", 'DateTime'>
@@ -65852,6 +65861,7 @@ export namespace Prisma {
   export const OrganizationScalarFieldEnum: {
     defaultLanguage: 'defaultLanguage',
     detectBrowserLanguage: 'detectBrowserLanguage',
+    branding: 'branding',
     onboardingOwnerId: 'onboardingOwnerId',
     onboardingStep: 'onboardingStep',
     onboardingCompletedAt: 'onboardingCompletedAt',
@@ -66635,19 +66645,19 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-  export const JsonNullValueInput: {
-    JsonNull: typeof JsonNull
-  };
-
-  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
-
-
   export const NullableJsonNullValueInput: {
     DbNull: typeof DbNull,
     JsonNull: typeof JsonNull
   };
 
   export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
   export const QueryMode: {
@@ -66658,14 +66668,6 @@ export namespace Prisma {
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
-  export const NullsOrder: {
-    first: 'first',
-    last: 'last'
-  };
-
-  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
   export const JsonNullValueFilter: {
     DbNull: typeof DbNull,
     JsonNull: typeof JsonNull,
@@ -66673,6 +66675,14 @@ export namespace Prisma {
   };
 
   export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
   /**
@@ -66702,6 +66712,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -66726,20 +66750,6 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
-   * Reference to a field of type 'QueryMode'
-   */
-  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -67004,6 +67014,7 @@ export namespace Prisma {
     NOT?: OrganizationWhereInput | OrganizationWhereInput[]
     defaultLanguage?: StringFilter<"Organization"> | string
     detectBrowserLanguage?: BoolFilter<"Organization"> | boolean
+    branding?: JsonNullableFilter<"Organization">
     onboardingOwnerId?: UuidNullableFilter<"Organization"> | string | null
     onboardingStep?: IntFilter<"Organization"> | number
     onboardingCompletedAt?: DateTimeNullableFilter<"Organization"> | Date | string | null
@@ -67060,6 +67071,7 @@ export namespace Prisma {
   export type OrganizationOrderByWithRelationInput = {
     defaultLanguage?: SortOrder
     detectBrowserLanguage?: SortOrder
+    branding?: SortOrderInput | SortOrder
     onboardingOwnerId?: SortOrderInput | SortOrder
     onboardingStep?: SortOrder
     onboardingCompletedAt?: SortOrderInput | SortOrder
@@ -67121,6 +67133,7 @@ export namespace Prisma {
     NOT?: OrganizationWhereInput | OrganizationWhereInput[]
     defaultLanguage?: StringFilter<"Organization"> | string
     detectBrowserLanguage?: BoolFilter<"Organization"> | boolean
+    branding?: JsonNullableFilter<"Organization">
     onboardingOwnerId?: UuidNullableFilter<"Organization"> | string | null
     onboardingStep?: IntFilter<"Organization"> | number
     onboardingCompletedAt?: DateTimeNullableFilter<"Organization"> | Date | string | null
@@ -67175,6 +67188,7 @@ export namespace Prisma {
   export type OrganizationOrderByWithAggregationInput = {
     defaultLanguage?: SortOrder
     detectBrowserLanguage?: SortOrder
+    branding?: SortOrderInput | SortOrder
     onboardingOwnerId?: SortOrderInput | SortOrder
     onboardingStep?: SortOrder
     onboardingCompletedAt?: SortOrderInput | SortOrder
@@ -67197,6 +67211,7 @@ export namespace Prisma {
     NOT?: OrganizationScalarWhereWithAggregatesInput | OrganizationScalarWhereWithAggregatesInput[]
     defaultLanguage?: StringWithAggregatesFilter<"Organization"> | string
     detectBrowserLanguage?: BoolWithAggregatesFilter<"Organization"> | boolean
+    branding?: JsonNullableWithAggregatesFilter<"Organization">
     onboardingOwnerId?: UuidNullableWithAggregatesFilter<"Organization"> | string | null
     onboardingStep?: IntWithAggregatesFilter<"Organization"> | number
     onboardingCompletedAt?: DateTimeNullableWithAggregatesFilter<"Organization"> | Date | string | null
@@ -71616,6 +71631,7 @@ export namespace Prisma {
   export type OrganizationCreateInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -71672,6 +71688,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -71728,6 +71745,7 @@ export namespace Prisma {
   export type OrganizationUpdateInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -71784,6 +71802,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -71840,6 +71859,7 @@ export namespace Prisma {
   export type OrganizationCreateManyInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -71854,6 +71874,7 @@ export namespace Prisma {
   export type OrganizationUpdateManyMutationInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -71868,6 +71889,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateManyInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -76478,6 +76500,29 @@ export namespace Prisma {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type UuidNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
@@ -76949,6 +76994,7 @@ export namespace Prisma {
   export type OrganizationCountOrderByAggregateInput = {
     defaultLanguage?: SortOrder
     detectBrowserLanguage?: SortOrder
+    branding?: SortOrder
     onboardingOwnerId?: SortOrder
     onboardingStep?: SortOrder
     onboardingCompletedAt?: SortOrder
@@ -77020,6 +77066,32 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -77394,29 +77466,6 @@ export namespace Prisma {
     mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
-  export type JsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
 
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
@@ -77478,32 +77527,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type CompanyIdOrganizationIdCompoundUniqueInput = {
@@ -87531,6 +87554,40 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
   export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -87543,17 +87600,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -87694,29 +87740,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-  export type NestedJsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedEnumTerritoryQuotaPeriodFilter<$PrismaModel = never> = {
@@ -91015,6 +91038,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutRolesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -91070,6 +91094,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutRolesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -91165,6 +91190,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutRolesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -91220,6 +91246,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutRolesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -94224,6 +94251,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutMembershipsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -94279,6 +94307,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutMembershipsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -94605,6 +94634,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutMembershipsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -94660,6 +94690,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -94891,6 +94922,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutRefreshSessionsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -94946,6 +94978,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutRefreshSessionsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -95170,6 +95203,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutRefreshSessionsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -95225,6 +95259,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutRefreshSessionsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -95417,6 +95452,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutAuditLogsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -95472,6 +95508,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -95658,6 +95695,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutAuditLogsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -95713,6 +95751,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -95889,6 +95928,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutCompaniesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -95944,6 +95984,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutCompaniesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -96675,6 +96716,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutCompaniesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -96730,6 +96772,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutCompaniesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -97276,6 +97319,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutTerritoriesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -97331,6 +97375,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutTerritoriesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -97948,6 +97993,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutTerritoriesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -98003,6 +98049,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutTerritoriesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -98606,6 +98653,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutTerritoryQuotasInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -98661,6 +98709,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutTerritoryQuotasInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -98773,6 +98822,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutTerritoryQuotasInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -98828,6 +98878,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutTerritoryQuotasInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -98930,6 +98981,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutTerritoryTargetsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -98985,6 +99037,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutTerritoryTargetsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -99150,6 +99203,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutTerritoryTargetsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -99205,6 +99259,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutTerritoryTargetsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -99366,6 +99421,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutTerritoryMetricsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -99421,6 +99477,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutTerritoryMetricsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -99533,6 +99590,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutTerritoryMetricsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -99588,6 +99646,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutTerritoryMetricsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -99690,6 +99749,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutContactsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -99745,6 +99805,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutContactsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -100481,6 +100542,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutContactsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -100536,6 +100598,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutContactsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -101082,6 +101145,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutContactChannelsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -101137,6 +101201,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutContactChannelsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -101257,6 +101322,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutContactChannelsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -101312,6 +101378,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutContactChannelsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -101422,6 +101489,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutCompanyContactsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -101477,6 +101545,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutCompanyContactsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -101650,6 +101719,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutCompanyContactsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -101705,6 +101775,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutCompanyContactsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -101874,6 +101945,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutRelationshipEntriesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -101929,6 +102001,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutRelationshipEntriesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -102217,6 +102290,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutRelationshipEntriesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -102272,6 +102346,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutRelationshipEntriesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -102562,6 +102637,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutTagsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -102617,6 +102693,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutTagsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -102736,6 +102813,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutTagsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -102791,6 +102869,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutTagsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -102878,6 +102957,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutCompanyTagsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -102933,6 +103013,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutCompanyTagsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -103080,6 +103161,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutCompanyTagsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -103135,6 +103217,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutCompanyTagsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -103278,6 +103361,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutContactTagsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -103333,6 +103417,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutContactTagsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -103476,6 +103561,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutContactTagsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -103531,6 +103617,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutContactTagsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -103670,6 +103757,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutCustomFieldDefinitionsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -103725,6 +103813,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -103852,6 +103941,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutCustomFieldDefinitionsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -103907,6 +103997,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -103994,6 +104085,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutCompanyCustomFieldValuesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -104049,6 +104141,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutCompanyCustomFieldValuesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -104208,6 +104301,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutCompanyCustomFieldValuesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -104263,6 +104357,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutCompanyCustomFieldValuesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -104418,6 +104513,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutContactCustomFieldValuesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -104473,6 +104569,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutContactCustomFieldValuesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -104628,6 +104725,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutContactCustomFieldValuesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -104683,6 +104781,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutContactCustomFieldValuesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -104834,6 +104933,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutPipelinesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -104889,6 +104989,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutPipelinesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -105046,6 +105147,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutPipelinesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -105101,6 +105203,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutPipelinesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -105332,6 +105435,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutActivitiesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -105387,6 +105491,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutActivitiesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -106070,6 +106175,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutActivitiesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -106125,6 +106231,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutActivitiesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -106834,6 +106941,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutOpportunitiesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -106889,6 +106997,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutOpportunitiesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -107706,6 +107815,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutOpportunitiesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -107761,6 +107871,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutOpportunitiesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -108556,6 +108667,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutProductsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -108611,6 +108723,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutProductsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -109066,6 +109179,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutProductsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -109121,6 +109235,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutProductsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -109555,6 +109670,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutOpportunityItemsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -109610,6 +109726,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutOpportunityItemsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -110000,6 +110117,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutOpportunityItemsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -110055,6 +110173,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutOpportunityItemsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -110496,6 +110615,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutTicketsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -110551,6 +110671,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutTicketsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -111228,6 +111349,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutTicketsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -111283,6 +111405,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutTicketsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -111957,6 +112080,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutTicketEventsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -112012,6 +112136,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutTicketEventsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -112263,6 +112388,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutTicketEventsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -112318,6 +112444,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutTicketEventsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -112565,6 +112692,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutTicketProtocolCountersInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -112620,6 +112748,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutTicketProtocolCountersInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -112691,6 +112820,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutTicketProtocolCountersInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -112746,6 +112876,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutTicketProtocolCountersInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -112801,6 +112932,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutSupportQueuesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -112856,6 +112988,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutSupportQueuesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -113341,6 +113474,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutSupportQueuesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -113396,6 +113530,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutSupportQueuesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -113830,6 +113965,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutSlaPoliciesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -113885,6 +114021,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutSlaPoliciesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -114186,6 +114323,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutSlaPoliciesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -114241,6 +114379,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutSlaPoliciesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -114538,6 +114677,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutTicketSatisfactionsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -114593,6 +114733,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutTicketSatisfactionsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -114959,6 +115100,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutTicketSatisfactionsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -115014,6 +115156,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutTicketSatisfactionsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -115382,6 +115525,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutIntegrationCredentialsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -115437,6 +115581,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutIntegrationCredentialsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -115738,6 +115883,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutIntegrationCredentialsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -115793,6 +115939,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutIntegrationCredentialsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -116170,6 +116317,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutBackupsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -116225,6 +116373,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutBackupsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -116499,6 +116648,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutBackupsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -116554,6 +116704,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutBackupsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -116762,6 +116913,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutOperationPreviewsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -116817,6 +116969,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutOperationPreviewsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -117069,6 +117222,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutOperationPreviewsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -117124,6 +117278,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutOperationPreviewsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -117378,6 +117533,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutDataOperationsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -117433,6 +117589,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutDataOperationsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -117656,6 +117813,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutDataOperationsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -117711,6 +117869,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutDataOperationsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -117930,6 +118089,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutBackupScheduleInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -117985,6 +118145,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutBackupScheduleInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -118171,6 +118332,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutBackupScheduleInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -118226,6 +118388,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutBackupScheduleInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -118402,6 +118565,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutEmailRelaySettingsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -118457,6 +118621,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutEmailRelaySettingsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -118528,6 +118693,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutEmailRelaySettingsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -118583,6 +118749,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutEmailRelaySettingsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -118638,6 +118805,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutEmailProviderPreferenceInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -118693,6 +118861,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutEmailProviderPreferenceInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -118764,6 +118933,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutEmailProviderPreferenceInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -118819,6 +118989,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutEmailProviderPreferenceInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -118874,6 +119045,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutInboundMessagesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -118929,6 +119101,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutInboundMessagesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -119000,6 +119173,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutInboundMessagesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -119055,6 +119229,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutInboundMessagesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -119110,6 +119285,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutEmailOutboxInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -119165,6 +119341,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutEmailOutboxInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -119301,6 +119478,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutEmailOutboxInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -119356,6 +119534,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutEmailOutboxInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -119482,6 +119661,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutWebhookSubscriptionsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -119537,6 +119717,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutWebhookSubscriptionsInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -119807,6 +119988,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutWebhookSubscriptionsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -119862,6 +120044,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutWebhookSubscriptionsInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -120070,6 +120253,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutWebhookDispatchesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -120125,6 +120309,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutWebhookDispatchesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -120261,6 +120446,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutWebhookDispatchesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -120316,6 +120502,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutWebhookDispatchesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -120428,6 +120615,7 @@ export namespace Prisma {
   export type OrganizationCreateWithoutWebhookDeliveriesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -120483,6 +120671,7 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutWebhookDeliveriesInput = {
     defaultLanguage?: string
     detectBrowserLanguage?: boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: string | null
     onboardingStep?: number
     onboardingCompletedAt?: Date | string | null
@@ -120638,6 +120827,7 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutWebhookDeliveriesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -120693,6 +120883,7 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutWebhookDeliveriesInput = {
     defaultLanguage?: StringFieldUpdateOperationsInput | string
     detectBrowserLanguage?: BoolFieldUpdateOperationsInput | boolean
+    branding?: NullableJsonNullValueInput | InputJsonValue
     onboardingOwnerId?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStep?: IntFieldUpdateOperationsInput | number
     onboardingCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
