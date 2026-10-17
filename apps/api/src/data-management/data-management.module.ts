@@ -17,10 +17,16 @@ import { DataPreviewService } from "./data-preview.service";
 import { TenantPurgeController } from "./tenant-purge.controller";
 import { TenantPurgeService } from "./tenant-purge.service";
 import { TenantPurgeRuntime } from "./tenant-purge.runtime";
+import { TenantStorageAllocationController } from "./tenant-storage-allocation.controller";
+import { TenantStorageAllocationService } from "./tenant-storage-allocation.service";
 
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
-  controllers: [BackupAdministrationController, TenantPurgeController],
+  controllers: [
+    BackupAdministrationController,
+    TenantPurgeController,
+    TenantStorageAllocationController,
+  ],
   providers: [
     {
       provide: BACKUP_OPTIONS,
@@ -51,6 +57,7 @@ import { TenantPurgeRuntime } from "./tenant-purge.runtime";
     BackupScheduleService,
     DataPreviewService,
     TenantPurgeService,
+    TenantStorageAllocationService,
     {
       provide: TenantPurgeRuntime,
       inject: [TenantPurgeService],
