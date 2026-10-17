@@ -270,6 +270,25 @@ async function main() {
         action: input.action,
       };
     });
+    if (outcome.organizationCreated) {
+      console.log(
+        `SUCESSO: Organização "${outcome.organization}" criada com sucesso!`
+      );
+    }
+    if (outcome.action === "grant") {
+      console.log(
+        `SUCESSO: Superusuário "${outcome.user}" habilitado na organização "${outcome.organization}".`
+      );
+    } else if (outcome.action === "revoke") {
+      console.log(
+        `SUCESSO: Privilégio de Superusuário revogado para "${outcome.user}" na organização "${outcome.organization}".`
+      );
+    } else if (outcome.action === "password") {
+      console.log(
+        `SUCESSO: Senha do usuário "${outcome.user}" alterada com sucesso.`
+      );
+    }
+    console.log("Log técnico:");
     console.log(JSON.stringify({ ok: true, ...outcome }));
   } finally {
     await prisma.$disconnect();
