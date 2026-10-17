@@ -79,13 +79,11 @@ function TenantDashboardVolume({
         const parsedCatalog = DashboardCatalogSchema.parse(catalog);
         const parsedVolume = DashboardVolumeSchema.parse(volume);
         if (!active) return;
-        if (
-          parsedVolume.totalActiveRecords !==
-          Object.values(parsedVolume.counts).reduce(
-            (sum, value) => sum + value,
-            0
-          )
-        ) {
+        const total = Object.values(parsedVolume.counts).reduce(
+          (sum, value) => sum + value,
+          0
+        );
+        if (parsedVolume.totalActiveRecords !== total) {
           throw new Error("A API retornou totais inconsistentes.");
         }
         setState({
@@ -112,10 +110,7 @@ function TenantDashboardVolume({
   }, [accessToken, refreshVersion, revision]);
 
   return (
-    <section
-      className="sales-report"
-      aria-labelledby="dashboard-volume-title"
-    >
+    <section className="sales-report" aria-labelledby="dashboard-volume-title">
       <h2 id="dashboard-volume-title">{t("Volume de registros do CRM")}</h2>
       <p className="activities-view__status">
         {t(
@@ -145,16 +140,15 @@ function TenantDashboardVolume({
             className="companies-view__grid"
             aria-label={t("Contagens de registros por categoria")}
           >
-            {state.catalog.metrics.map(metric => (
-              <article key={metric.id} className="companies-view__card">
-                <span>{t(metric.label)}</span>
-                <strong>
-                  {state.volume.counts[
-                    metricCountKeys[metric.id]
-                  ].toLocaleString("pt-BR")}
-                </strong>
-              </article>
-            ))}
+            {state.catalog.metrics.map(metric => {
+              const count = state.volume.counts[metricCountKeys[metric.id]];
+              return (
+                <article key={metric.id} className="companies-view__card">
+                  <span>{t(metric.label)}</span>
+                  <strong>{count.toLocaleString("pt-BR")}</strong>
+                </article>
+              );
+            })}
           </div>
           <p className="activities-view__status">
             {t("Total de registros ativos: ")}

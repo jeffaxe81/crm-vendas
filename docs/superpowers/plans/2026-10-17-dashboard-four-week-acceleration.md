@@ -1,39 +1,45 @@
-# CRM dashboard — four-week roadmap acceleration (2026-10-17)
+# Dashboard do CRM — antecipação de quatro semanas
 
-This pull request advances the next **four planned weekly workstreams** as a bounded, reviewable increment. It does **not** represent four elapsed weeks of work or production approval.
+Data de referência: 17/10/2026. PR empilhada sobre a #245.
 
-## Dependency
+A antecipação reúne quatro frentes de trabalho planejadas em um único
+incremento revisável. Não significa quatro semanas decorridas nem
+liberação para produção.
 
-Stacked on PR #245 (dashboard API foundation and three-tenant RLS tests), which remains draft. Do not deploy or merge this PR independently of that reviewed foundation.
+## Escopo antecipado
 
-## Incremental weekly scope
+- Semana 1: contratos tipados Zod para catálogo e volume, com rejeição
+  de respostas malformadas.
+- Semana 2: painel de Volume de dados na área de relatórios, com quatro
+  indicadores, atualização manual e estados de carregamento/erro/vazio.
+- Semana 3: isolamento visual ao trocar tenant ou token, requisições
+  `no-store` e respostas HTTP sem cache.
+- Semana 4: testes de interface, regressão multi-tenant e checklist de
+  homologação operacional.
 
-| Workstream | Deliverable | Evidence |
-| --- | --- | --- |
-| Week 1 — typed data contract | Validate closed metric catalog and volume response, reject malformed data | Contracts schemas + contract tests |
-| Week 2 — read-only UX | Expose a dedicated `Volume de dados` tab inside existing management reporting | Responsive four-metric cards, manual refresh, empty/error/loading states |
-| Week 3 — tenant and cache security | Never display stale numbers after credential changes; disable HTTP/browser cache | Keyed tenant remount, request cancellation guard, no-store HTTP headers, simulated delayed-response tests |
-| Week 4 — hardening and release handoff | Verify role restriction, RLS, HTTP E2E, browser test and Docker builds | PR CI evidence and manual QA checklist |
+## Critérios de segurança
 
-## Acceptance criteria
+- Apenas a sessão humana com `reports.read` pode usar a API.
+- API keys e superusuários globais permanecem bloqueados por padrão.
+- A organização vem exclusivamente da sessão autenticada.
+- O catálogo só permite as quatro métricas predefinidas.
+- Alertas de 800 e 1.000 registros são indicativos, não cotas.
+- Nenhuma informação individual, SQL dinâmico ou exportação foi incluída.
+- Erro de atualização não mantém o último resultado como atualizado.
+- Nenhuma alteração em backup, expurgo ou retenção.
 
-1. Only a human session with effective `reports.read` can read API data; API keys and global superusers denied until an approved break-glass process exists.
-2. Requests never take tenant from URL/query, and persisted UI cannot leak another organization's counts.
-3. Catalog is fixed to four active-record metrics; no arbitrary SQL, filters or custom calculations.
-4. `800` / `1000` thresholds are **informational**, not storage allocations, quotas, billing or automatic deletion triggers.
-5. Refresh failures do not silently show the old snapshot as current. No personally identifying rows in dashboard payloads.
-6. Test output and deployment checklist do not contain credentials or tenant personal data.
+## Homologação pendente
 
-## Manual operational QA, still pending after CI
+- [ ] Validar Docker staging isolado, não produção.
+- [ ] Confirmar papel PostgreSQL restrito e isolamento de três tenants.
+- [ ] Exercitar desktop, mobile, teclado e mensagens de falha.
+- [ ] Alternar organizações sem exibir resultados de tenant anterior.
+- [ ] Confirmar `Cache-Control: private, no-store` também no proxy.
+- [ ] Verificar alertas sem bloqueio de criação de registros.
+- [ ] Conferir fluxos de backup, expurgo e retenção inalterados.
+- [ ] Registrar aprovação de QA, segurança, jurídico e Gate 0.
 
-- [ ] Test on an isolated Docker staging server, not production; validate restricted PostgreSQL role and three independent tenants
-- [ ] Verify mobile/desktop layout, keyboard accessibility, loading/error/offline behavior, retry and refresh
-- [ ] Sign in as different organizations in consecutive sessions; confirm no flash of the preceding tenant's counts
-- [ ] Verify API responses contain `Cache-Control: private, no-store` with a proxy in front of the server
-- [ ] Verify 800 and 1000 count thresholds are not presented as hard caps and do not affect record creation
-- [ ] Verify automatic backups, tenant retention, tenant capacity and expurgo flows remain unchanged
-- [ ] Record owner/QA/security approvals, retention/legal review and Gate 0 break-glass/MFA/dual authorization decisions
+## Liberação
 
-## Release decision
-
-CI success alone is not Gate 0 approval. Both PR #245 and this stacked PR remain drafts until security and operational evidence is signed off. No automatic production deployment or merge is authorized by this plan.
+Esta PR depende de #245 e deve permanecer draft. CI aprovada não
+substitui homologação real nem autorização de segurança e retenção.

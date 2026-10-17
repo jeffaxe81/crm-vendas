@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { DashboardVolumeView } from "./dashboard-volume-view";
@@ -6,11 +12,16 @@ import { DashboardVolumeView } from "./dashboard-volume-view";
 const catalog = {
   version: 1,
   metrics: [
-    { id: "crm.companies.active", label: "Empresas ativas", unit: "records", permission: "reports.read" },
-    { id: "crm.contacts.active", label: "Contatos ativos", unit: "records", permission: "reports.read" },
-    { id: "crm.opportunities.active", label: "Oportunidades ativas", unit: "records", permission: "reports.read" },
-    { id: "crm.activities.active", label: "Atividades ativas", unit: "records", permission: "reports.read" },
-  ],
+    ["crm.companies.active", "Empresas ativas"],
+    ["crm.contacts.active", "Contatos ativos"],
+    ["crm.opportunities.active", "Oportunidades ativas"],
+    ["crm.activities.active", "Atividades ativas"],
+  ].map(([id, label]) => ({
+    id,
+    label,
+    unit: "records",
+    permission: "reports.read",
+  })),
 };
 const volume = {
   asOf: "2026-10-17T14:00:00.000Z",
@@ -28,7 +39,7 @@ function response(body: unknown, status = 200): Response {
   } as Response;
 }
 function stubRequests(nextVolume: unknown = volume) {
-  const fn = vi.fn(async (url: string) =>
+  const fn = vi.fn(async (url: string, _options?: RequestInit) =>
     response(url.endsWith("/dashboards/catalog") ? catalog : nextVolume)
   );
   vi.stubGlobal("fetch", fn);
@@ -48,13 +59,19 @@ describe("Tenant dashboard volume", () => {
     expect(screen.getByText("Contatos ativos")).toBeInTheDocument();
     expect(screen.getByText("Oportunidades ativas")).toBeInTheDocument();
     expect(screen.getByText("Atividades ativas")).toBeInTheDocument();
-    expect(screen.getByText("Total de registros ativos: ").parentElement).toHaveTextContent("10");
-    expect(screen.queryByText("Atenção: volume acima do limiar de observação.")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Total de registros ativos: ").parentElement
+    ).toHaveTextContent("10");
+    expect(
+      screen.queryByText("Atenção: volume acima do limiar de observação.")
+    ).not.toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(2);
     for (const [url, options] of fetchMock.mock.calls) {
       expect(String(url)).not.toContain("tenant-a");
       expect(options?.cache).toBe("no-store");
-      expect(new Headers(options?.headers).get("Authorization")).toBe("Bearer tenant-a");
+      expect(new Headers(options?.headers).get("Authorization")).toBe(
+        "Bearer tenant-a"
+      );
     }
   });
 
@@ -66,7 +83,11 @@ describe("Tenant dashboard volume", () => {
       level: "warning",
     });
     render(<DashboardVolumeView accessToken="tenant-a" />);
-    expect(await screen.findByText("Atenção: volume acima do limiar de observação.")).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        "Atenção: volume acima do limiar de observação."
+      )
+    ).toBeInTheDocument();
     expect(screen.getByText(/não bloqueiam cadastros/)).toBeInTheDocument();
     fetchMock.mockImplementation(async (url: string) =>
       response(
@@ -74,14 +95,23 @@ describe("Tenant dashboard volume", () => {
           ? catalog
           : {
               ...volume,
-              counts: { companies: 1000, contacts: 0, opportunities: 0, activities: 0 },
+              counts: {
+                companies: 1000,
+                contacts: 0,
+                opportunities: 0,
+                activities: 0,
+              },
               totalActiveRecords: 1000,
               level: "critical",
             }
       )
     );
     fireEvent.click(screen.getByRole("button", { name: "Atualizar volume" }));
-    expect(await screen.findByText("Atenção: volume acima do limiar crítico de observação.")).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        "Atenção: volume acima do limiar crítico de observação."
+      )
+    ).toBeInTheDocument();
   });
 
   it("clears previous snapshot on refresh failure and allows retry", async () => {
@@ -94,7 +124,9 @@ describe("Tenant dashboard volume", () => {
         : response({ message: "Falha simulada" }, 500)
     );
     fireEvent.click(screen.getByRole("button", { name: "Atualizar volume" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("Falha simulada");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Falha simulada"
+    );
     expect(screen.queryByText("Empresas ativas")).not.toBeInTheDocument();
     fetchMock.mockImplementation(async (url: string) =>
       response(url.endsWith("/dashboards/catalog") ? catalog : volume)
@@ -106,7 +138,9 @@ describe("Tenant dashboard volume", () => {
   it("rejects inconsistent server totals rather than showing false counts", async () => {
     stubRequests({ ...volume, totalActiveRecords: 999 });
     render(<DashboardVolumeView accessToken="tenant-a" />);
-    expect(await screen.findByRole("alert")).toHaveTextContent("totais inconsistentes");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "totais inconsistentes"
+    );
     expect(screen.queryByText("Empresas ativas")).not.toBeInTheDocument();
   });
 
@@ -114,12 +148,19 @@ describe("Tenant dashboard volume", () => {
     let resolveOld: ((value: Response) => void) | undefined;
     const mock = vi.fn((url: string, options?: RequestInit) => {
       const token = new Headers(options?.headers).get("Authorization");
-      if (url.endsWith("/dashboards/catalog")) return Promise.resolve(response(catalog));
+      if (url.endsWith("/dashboards/catalog")) {
+        return Promise.resolve(response(catalog));
+      }
       if (token === "Bearer tenant-b") {
         return Promise.resolve(
           response({
             ...volume,
-            counts: { companies: 9, contacts: 0, opportunities: 0, activities: 0 },
+            counts: {
+              companies: 9,
+              contacts: 0,
+              opportunities: 0,
+              activities: 0,
+            },
             totalActiveRecords: 9,
           })
         );
@@ -133,8 +174,21 @@ describe("Tenant dashboard volume", () => {
     await waitFor(() => expect(resolveOld).toBeDefined());
     rerender(<DashboardVolumeView accessToken="tenant-b" />);
     expect(await screen.findByText("9")).toBeInTheDocument();
-    resolveOld?.(response({ ...volume, counts: { companies: 777, contacts: 0, opportunities: 0, activities: 0 }, totalActiveRecords: 777 }));
-    await waitFor(() => expect(screen.queryByText("777")).not.toBeInTheDocument());
+    resolveOld?.(
+      response({
+        ...volume,
+        counts: {
+          companies: 777,
+          contacts: 0,
+          opportunities: 0,
+          activities: 0,
+        },
+        totalActiveRecords: 777,
+      })
+    );
+    await waitFor(() =>
+      expect(screen.queryByText("777")).not.toBeInTheDocument()
+    );
     expect(screen.getByText("9")).toBeInTheDocument();
   });
 });
