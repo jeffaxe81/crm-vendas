@@ -196,9 +196,14 @@ if (
   pathToFileURL(resolve(process.argv[1])).href === import.meta.url
 ) {
   try {
-    const tenants = JSON.parse(
-      process.env.DASHBOARD_STAGING_TENANTS_JSON ?? "null"
-    );
+    let tenants;
+    try {
+      tenants = JSON.parse(
+        process.env.DASHBOARD_STAGING_TENANTS_JSON ?? "null"
+      );
+    } catch {
+      throw new Error("INVALID_STAGING_INPUT");
+    }
     const result = await runDashboardStagingSmoke({
       baseUrl: process.env.DASHBOARD_STAGING_BASE_URL,
       acknowledgment: process.env.DASHBOARD_STAGING_ACK,
