@@ -99,7 +99,12 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
 
   async function seed(
     tenant: TenantFixture,
-    counts: { companies: number; contacts: number; opportunities: number; activities: number }
+    counts: {
+      companies: number;
+      contacts: number;
+      opportunities: number;
+      activities: number;
+    }
   ): Promise<void> {
     await restricted.withTenant(tenant.organizationId, async database => {
       const organizationId = tenant.organizationId;
@@ -204,7 +209,9 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
       .expect(200);
   }
 
-  it("isolates 3 real tenants, excludes deleted rows, and rejects cross-tenant reads", async () => {
+  it(
+    "isolates 3 real tenants, excludes deleted rows, and rejects cross-tenant reads",
+    async () => {
     const role = await restricted.$queryRaw<
       Array<{ rolsuper: boolean; rolbypassrls: boolean }>
     >`SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname = current_user`;
@@ -214,9 +221,24 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
     const second = await createTenant(2);
     const third = await createTenant(3);
 
-    await seed(first, { companies: 1, contacts: 1, opportunities: 0, activities: 0 });
-    await seed(second, { companies: 2, contacts: 1, opportunities: 1, activities: 0 });
-    await seed(third, { companies: 3, contacts: 2, opportunities: 1, activities: 2 });
+    await seed(first, {
+      companies: 1,
+      contacts: 1,
+      opportunities: 0,
+      activities: 0,
+    });
+    await seed(second, {
+      companies: 2,
+      contacts: 1,
+      opportunities: 1,
+      activities: 0,
+    });
+    await seed(third, {
+      companies: 3,
+      contacts: 2,
+      opportunities: 1,
+      activities: 2,
+    });
 
     const expected = [
       { companies: 1, contacts: 1, opportunities: 0, activities: 0 },
@@ -255,13 +277,17 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
     }
 
     await restricted.withTenant(first.organizationId, async database => {
-      expect(await database.company.count({
-        where: { organizationId: first.organizationId, deletedAt: null },
-      })).toBe(1);
+      expect(
+        await database.company.count({
+          where: { organizationId: first.organizationId, deletedAt: null },
+        })
+      ).toBe(1);
     });
 
     await expect(
-      restricted.company.count({ where: { organizationId: first.organizationId } })
+      restricted.company.count({
+        where: { organizationId: first.organizationId },
+      })
     ).resolves.toBe(0);
 
     await request(app.getHttpServer())
@@ -285,5 +311,6 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
       .get("/api/v1/dashboards/volume")
       .set("Authorization", `Bearer ${third.token}`)
       .expect(403);
-  });
+    }
+  );
 });
