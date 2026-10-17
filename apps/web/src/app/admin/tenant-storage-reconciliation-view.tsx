@@ -19,6 +19,7 @@ type Report = {
   catalogCount: number;
   checkedCount: number;
   complete: boolean;
+  nextCursor: string | null;
   matchingCount: number;
   missingCount: number;
   sizeMismatchCount: number;
@@ -53,20 +54,40 @@ export function TenantStorageReconciliationView({
     };
   }, [accessToken]);
 
-  async function scan() {
+  async function scan(cursor?: string) {
     if (busy) return;
     const generation = generationRef.current;
     setBusy(true);
     setError("");
-    setReport(null);
+    if (!cursor) setReport(null);
     try {
       const response = await apiRequest<Report>(
-        "/admin/storage/reconciliation",
+        `/admin/storage/reconciliation${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`,
         {
           accessToken,
         }
       );
-      if (generationRef.current === generation) setReport(response);
+      if (generationRef.current === generation) {
+        setReport(previous =>
+          cursor && previous
+            ? {
+                ...response,
+                checkedCount: previous.checkedCount + response.checkedCount,
+                matchingCount: previous.matchingCount + response.matchingCount,
+                missingCount: previous.missingCount + response.missingCount,
+                sizeMismatchCount:
+                  previous.sizeMismatchCount + response.sizeMismatchCount,
+                unreadableCount:
+                  previous.unreadableCount + response.unreadableCount,
+                scannedFilesystemBytes: (
+                  BigInt(previous.scannedFilesystemBytes) +
+                  BigInt(response.scannedFilesystemBytes)
+                ).toString(),
+                findings: [...previous.findings, ...response.findings],
+              }
+            : response
+        );
+      }
     } catch (cause) {
       if (generationRef.current === generation)
         setError(
@@ -86,9 +107,9 @@ export function TenantStorageReconciliationView({
     >
       <h2>Conferência dos arquivos de backup</h2>
       <p>
-        Verificação manual e somente leitura de até 50 backups concluídos desta
-        empresa. Compara tamanho físico e catálogo, sem examinar conteúdo ou
-        excluir arquivos.
+        Verificação manual, em lotes de até 50 backups concluídos desta empresa.
+        Compara tamanho físico e catálogo, sem examinar conteúdo ou excluir
+        arquivos.
       </p>
       <button type="button" onClick={() => void scan()} disabled={busy}>
         {busy ? "Verificando..." : "Conferir arquivos desta empresa"}
@@ -112,9 +133,21 @@ export function TenantStorageReconciliationView({
             </p>
             {!report.complete ? (
               <p>
-                Amostra parcial: existem mais arquivos no catálogo. Esta
-                conferência não verifica objetos órfãos.
+                Conferência parcial. Continue com o próximo lote para examinar
+                os demais registros. Não identifica objetos órfãos.
               </p>
+            ) : null}
+            {report.nextCursor ? (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void scan(report.nextCursor!)}
+              >
+                {busy ? "Verificando..." : "Conferir próximo lote"}
+              </button>
+            ) : null}
+            {report.complete ? (
+              <p>Todos os lotes disponíveis foram conferidos nesta sessão.</p>
             ) : null}
             {report.findings.length > 0 ? (
               <ul>
@@ -127,7 +160,9 @@ export function TenantStorageReconciliationView({
             ) : null}
             <p>
               Esta comparação de metadados não confirma integridade
-              criptográfica nem disponibilidade de restauração.
+              criptográfica nem disponibilidade de restauração. Alterações no
+              catálogo durante a conferência podem alterar a quantidade de
+              registros; reinicie a consulta para nova conferência.
             </p>
           </div>
         )
