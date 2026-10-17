@@ -1,4 +1,10 @@
 "use client";
+
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
 import { useEffect, useState, type FormEvent } from "react";
 import {
   CreateOrganizationUserInputSchema,
@@ -18,6 +24,7 @@ function UserRow({
   accessToken: string;
   onChanged: () => void;
 }) {
+  const saveFeedback = useSaveFeedback();
   const [role, setRole] = useState(user.role);
   const [active, setActive] = useState(user.isActive);
   const [busy, setBusy] = useState(false);
@@ -25,6 +32,7 @@ function UserRow({
   async function save() {
     setBusy(true);
     setError("");
+    if (!saveFeedback.start()) return;
     try {
       const input = UpdateOrganizationMembershipInputSchema.parse({
         role,
@@ -35,8 +43,10 @@ function UserRow({
         method: "PATCH",
         body: input,
       });
+      saveFeedback.saved();
       onChanged();
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error ? cause.message : "Não foi possível alterar."
       );
@@ -69,9 +79,13 @@ function UserRow({
           />
           Vínculo ativo
         </label>
-        <button type="button" onClick={() => void save()}>
-          Salvar perfil de {user.user.displayName}
-        </button>
+        <SaveButton
+          type="button"
+          onClick={() => void save()}
+          status={saveFeedback.status}
+          label={`Salvar perfil de ${user.user.displayName}`}
+        />
+        <SaveNotice status={saveFeedback.status} label="Perfil salvo." />
       </fieldset>
       {error ? <p role="alert">{error}</p> : null}
     </li>

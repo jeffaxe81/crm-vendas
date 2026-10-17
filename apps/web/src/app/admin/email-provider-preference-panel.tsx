@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
 import { useEffect, useState, type FormEvent } from "react";
 import { apiRequest } from "../../lib/api-client";
 
@@ -38,6 +44,7 @@ export function EmailProviderPreferencePanel({
   const [preference, setPreference] = useState<Preference | null>(null);
   const [selected, setSelected] = useState<ProviderCode>("NONE");
   const [loading, setLoading] = useState(true);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -92,6 +99,7 @@ export function EmailProviderPreferencePanel({
     setBusy(true);
     setError("");
     setNotice("");
+    if (!saveFeedback.start()) return;
     try {
       const data = await apiRequest<Preference>(
         "/admin/email/provider-preference",
@@ -101,10 +109,12 @@ export function EmailProviderPreferencePanel({
           body: { version: preference.version, providerCode: selected },
         }
       );
+      saveFeedback.saved();
       setPreference(data);
       setSelected(data.providerCode);
       setNotice("Preferência salva. Conta não conectada e envio desativado.");
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -157,12 +167,16 @@ export function EmailProviderPreferencePanel({
             Conexão: Não conectada · Envio: Desativado · Versão:{" "}
             {preference.version}
           </p>
-          <button
+          <SaveButton
             type="submit"
             disabled={busy || loading || selected === preference.providerCode}
-          >
-            {busy ? "Salvando..." : "Salvar preferência"}
-          </button>
+            status={saveFeedback.status}
+            label="Salvar preferência"
+          />
+          <SaveNotice
+            status={saveFeedback.status}
+            label="Preferência salva; envio permanece desativado."
+          />
         </form>
       ) : null}
     </div>

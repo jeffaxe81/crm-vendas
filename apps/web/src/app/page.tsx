@@ -8,7 +8,7 @@ import {
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Headset, PanelRightClose, PanelRightOpen } from "lucide-react";
 
-import { authApiRequest } from "../lib/api-client";
+import { authApiRequest, SESSION_UNAUTHORIZED_EVENT } from "../lib/api-client";
 import { ActivitiesView } from "./activities/activities-view";
 import { AgendaView } from "./agenda/agenda-view";
 import { CompaniesView } from "./companies/companies-view";
@@ -87,6 +87,65 @@ export default function Home() {
       active = false;
     };
   }, []);
+
+  const accessToken = session?.accessToken;
+  const expiresIn = session?.expiresIn;
+  const organizationId = session?.organization.id;
+  const userId = session?.user.id;
+  const membershipId = session?.membership.id;
+
+  useEffect(() => {
+    if (!accessToken || !expiresIn) return;
+    let active = true;
+
+    function expireSession() {
+      if (!active) return;
+      active = false;
+      manualNavigation.current = false;
+      setSession(null);
+      setQuickSetupOpenToken(0);
+      setCommunicationOpened(false);
+      setCommunicationDockOpen(false);
+      setPassword("");
+      setError(
+        "Sua sessão expirou ou foi invalidada. Entre novamente para continuar."
+      );
+    }
+
+    function onUnauthorized(event: Event) {
+      // A late response from an old session must not close a newer login.
+      if ((event as CustomEvent<string>).detail === accessToken)
+        expireSession();
+    }
+
+    window.addEventListener(SESSION_UNAUTHORIZED_EVENT, onUnauthorized);
+    const timer = window.setTimeout(
+      () => {
+        void authApiRequest<unknown>("/auth/refresh", { method: "POST" })
+          .then(payload => {
+            const refreshed = AuthSessionResponseSchema.parse(payload);
+            // Never switch the active tenant/account because another tab changed its cookie.
+            if (
+              refreshed.organization.id !== organizationId ||
+              refreshed.user.id !== userId ||
+              refreshed.membership.id !== membershipId
+            ) {
+              expireSession();
+              return;
+            }
+            if (active) setSession(refreshed);
+          })
+          .catch(() => expireSession());
+      },
+      Math.max(1000, Math.floor(expiresIn * 800))
+    );
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+      window.removeEventListener(SESSION_UNAUTHORIZED_EVENT, onUnauthorized);
+    };
+  }, [accessToken, expiresIn, organizationId, userId, membershipId]);
 
   async function login(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
