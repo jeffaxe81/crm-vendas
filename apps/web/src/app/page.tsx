@@ -325,6 +325,14 @@ function HomeContent({
               {tenantBranding.error ? (
                 <p role="alert">{tenantBranding.error}</p>
               ) : null}
+              {session.membership.isSuperuser !== true ? (
+                <p role="note">
+                  Backup e recuperação ficam em Administração e exigem acesso
+                  de Superusuário. Um administrador comum não pode abrir
+                  esse painel; solicite habilitação pelo procedimento seguro.
+                  A restauração efetiva ainda não está disponível.
+                </p>
+              ) : null}
               <WorkspaceEditor session={session} />
             </>
           ) : activeSection === "language-settings" &&
