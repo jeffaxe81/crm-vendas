@@ -91,8 +91,10 @@ describe("tenant backup allocation and RLS", () => {
       alertLevel: "OK",
     });
     expect((await service.read(principal(orgB))).allocatedGiB).toBeNull();
-    const foreignRows = await restricted.withTenant(orgB, tx =>
-      tx.$queryRaw<{ organization_id: string }[]>`
+    const foreignRows = await restricted.withTenant(
+      orgB,
+      tx =>
+        tx.$queryRaw<{ organization_id: string }[]>`
         SELECT organization_id
         FROM public.tenant_storage_allocations
         WHERE organization_id = ${orgA}::uuid
