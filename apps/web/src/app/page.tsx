@@ -325,6 +325,14 @@ function HomeContent({
               {tenantBranding.error ? (
                 <p role="alert">{tenantBranding.error}</p>
               ) : null}
+              {session.membership.role === "ADMIN" &&
+              session.membership.isSuperuser !== true ? (
+                <p role="note">
+                  {t(
+                    "O painel Backup e recuperação fica em Administração e requer perfil de Superusuário. A restauração efetiva ainda não está disponível."
+                  )}
+                </p>
+              ) : null}
               <WorkspaceEditor session={session} />
             </>
           ) : activeSection === "language-settings" &&
