@@ -52,13 +52,11 @@ describe("PR222: 40 authenticated response combinations", () => {
     "$method status=$status token=$token",
     async ({ status, method, token }) => {
       const payload = { message: "Mensagem original", data: "confirmed" };
-      const fetchMock = vi
-        .fn()
-        .mockResolvedValue({
-          ok: status < 400,
-          status,
-          json: async () => payload,
-        });
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: status < 400,
+        status,
+        json: async () => payload,
+      });
       vi.stubGlobal("fetch", fetchMock);
       const listener = vi.fn();
       window.addEventListener(SESSION_UNAUTHORIZED_EVENT, listener);
