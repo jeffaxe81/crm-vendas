@@ -6,6 +6,8 @@ import { BackupStore, BACKUP_ENVELOPE_OVERHEAD_BYTES } from "./backup-store";
 import { BACKUP_STORE } from "./backup.service";
 
 const MAX_OBJECTS_PER_SCAN = 50;
+const CURSOR_UUID =
+  /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 
 type Finding = {
   backupId: string;
@@ -49,8 +51,7 @@ export class TenantStorageReconciliationService {
   ): Promise<StorageReconciliationResult> {
     if (
       cursor !== undefined &&
-      (typeof cursor !== "string" ||
-        !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(cursor))
+      (typeof cursor !== "string" || !CURSOR_UUID.test(cursor))
     ) {
       throw new BadRequestException("Cursor de conferência inválido.");
     }
@@ -68,8 +69,9 @@ export class TenantStorageReconciliationService {
             where: { ...where, id: cursor },
             select: { id: true },
           });
-          if (!anchor)
+          if (!anchor) {
             throw new BadRequestException("Cursor de conferência inválido.");
+          }
         }
         const [catalogCount, page] = await Promise.all([
           tx.backupRecord.count({ where }),
