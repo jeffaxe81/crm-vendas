@@ -110,7 +110,8 @@ export function TenantPurgePolicyView({
             <strong>{policy.estimatedRecords}</strong>. Última execução:{" "}
             {policy.lastRunAt
               ? new Date(policy.lastRunAt).toLocaleString("pt-BR")
-              : "nunca"}.
+              : "nunca"}
+            .
           </p>
           <form onSubmit={event => void save(event)}>
             <label>
@@ -151,9 +152,9 @@ export function TenantPurgePolicyView({
               </label>
             ) : null}
             <p>
-              A execução é automática, até uma vez a cada 24 horas, em lotes
-              de até 500 registros por tenant. A retenção é contada a partir
-              da expiração da prévia. O expurgo efetivo é irreversível.
+              A execução é automática, até uma vez a cada 24 horas, em lotes de
+              até 500 registros por tenant. A retenção é contada a partir da
+              expiração da prévia. O expurgo efetivo é irreversível.
             </p>
             <button
               type="submit"
