@@ -118,7 +118,7 @@ export function CommunicationView({ accessToken }: { accessToken?: string }) {
           </strong>
           <span>
             {t(
-              "Solicite ao administrador a configuração do endereço do NEO Interact para este ambiente."
+              "Em Administração → Integrações, habilite NEO Interact, informe a URL HTTPS e selecione Painel integrado (iframe). Salve e volte a esta tela."
             )}
           </span>
         </div>

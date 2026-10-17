@@ -99,7 +99,13 @@ export class NeoCommunicationSettingsController {
           height: row.frame_height,
           maxWidth: row.frame_max_width,
         }
-      : { enabled: false, url: "", mode: "tab", height: 800, maxWidth: 1600 };
+      : {
+          enabled: false,
+          url: "",
+          mode: "iframe",
+          height: 800,
+          maxWidth: 1600,
+        };
   }
 
   @Put()
