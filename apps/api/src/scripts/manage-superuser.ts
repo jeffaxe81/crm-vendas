@@ -8,6 +8,8 @@ const Input = z
   .object({
     action: z.enum(["list-all", "list", "grant", "revoke", "password"]),
     organizationSlug: z.string().trim().min(1).max(80).optional(),
+    organizationName: z.string().trim().min(1).max(160).optional(),
+    createOrganization: z.boolean().optional(),
     email: z.string().trim().email().max(254).optional(),
     displayName: z.string().trim().min(1).max(160).optional(),
     password: z.string().min(12).max(1024).optional(),
@@ -79,13 +81,29 @@ async function main() {
       throw new Error("Confirmação obrigatória.");
     }
     if (!input.organizationSlug) throw new Error("Empresa obrigatória.");
-    const organization = await prisma.organization.findUnique({
+    const existingOrganization = await prisma.organization.findUnique({
       where: { slug: input.organizationSlug.toLowerCase() },
     });
-    if (!organization || !organization.isActive) {
-      throw new Error("Empresa inexistente ou inativa.");
+    if (existingOrganization && !existingOrganization.isActive) {
+      throw new Error("Empresa inativa: não será reativada automaticamente.");
+    }
+    if (!existingOrganization) {
+      if (
+        input.action !== "grant" ||
+        input.createOrganization !== true ||
+        !input.organizationName
+      ) {
+        throw new Error(
+          "Empresa inexistente. Autorize sua criação e informe o nome para continuar."
+        );
+      }
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(input.organizationSlug.toLowerCase())) {
+        throw new Error("Slug da nova empresa deve conter letras, números e hífens.");
+      }
     }
     if (input.action === "list") {
+      const organization = existingOrganization!;
+
       const memberships = await prisma.organizationMembership.findMany({
         where: { organizationId: organization.id },
         orderBy: { user: { displayName: "asc" } },
@@ -153,6 +171,15 @@ async function main() {
             passwordHash: hash!,
           },
         }));
+      const organization =
+        existingOrganization ??
+        (await tx.organization.create({
+          data: {
+            name: input.organizationName!,
+            slug: input.organizationSlug!.toLowerCase(),
+            onboardingOwnerId: user.id,
+          },
+        }));
       const membership = await tx.organizationMembership.findUnique({
         where: {
           organizationId_userId: {
@@ -201,6 +228,19 @@ async function main() {
           },
         });
       }
+      if (!existingOrganization) {
+        await tx.auditLog.create({
+          data: {
+            organizationId: organization.id,
+            actorUserId: user.id,
+            requestId: "local-operator-superuser-manager",
+            action: "organization.registered",
+            entityType: "organization",
+            entityId: organization.id,
+            metadata: { source: "local-superuser-manager" },
+          },
+        });
+      }
       await tx.auditLog.create({
         data: {
           organizationId: organization.id,
@@ -222,6 +262,7 @@ async function main() {
       });
       return {
         organization: organization.slug,
+        organizationCreated: !existingOrganization,
         user: user.email,
         action: input.action,
       };
