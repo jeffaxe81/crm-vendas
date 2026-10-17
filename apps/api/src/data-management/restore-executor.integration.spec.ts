@@ -315,7 +315,8 @@ describe("transactional tenant restore executor", () => {
 
     await runtime.withMaintenance(
       target.organization.id,
-      tx => restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
 
@@ -323,7 +324,10 @@ describe("transactional tenant restore executor", () => {
     expect(await graphSnapshot(other.organization.id)).toEqual(foreignBefore);
     expect(
       (await owner.organizationMembership.findFirstOrThrow({
-        where: { organizationId: target.organization.id, userId: target.user.id },
+        where: {
+          organizationId: target.organization.id,
+          userId: target.user.id,
+        },
       })).isSuperuser
     ).toBe(true);
   });
@@ -389,7 +393,8 @@ describe("transactional tenant restore executor", () => {
     });
     await runtime.withMaintenance(
       target.organization.id,
-      tx => restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
     const after = await graphSnapshot(target.organization.id);
