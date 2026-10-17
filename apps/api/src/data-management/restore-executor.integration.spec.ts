@@ -445,7 +445,7 @@ describe("transactional tenant restore executor", () => {
     expect(after.ContactTag).toEqual([]);
   });
 
-  it("round-trips two pipeline stages and isolates other tenants", async () => {
+  it("restores pipeline stages without affecting other tenants", async () => {
     const target = await pipelineGraph();
     const other = await pipelineGraph();
     const expected = await graphSnapshot(target.organization.id);
@@ -481,7 +481,7 @@ describe("transactional tenant restore executor", () => {
     expect(await graphSnapshot(other.organization.id)).toEqual(otherBefore);
   });
 
-  it("rejects a stage pointing to a missing pipeline before replacement", async () => {
+  it("rejects stages with invalid pipeline references", async () => {
     const target = await pipelineGraph();
     const before = await graphSnapshot(target.organization.id);
     const broken = structuredClone(target.verified.data);
@@ -498,7 +498,7 @@ describe("transactional tenant restore executor", () => {
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
   });
 
-  it("rolls back all pipeline replacements on a late duplicate stage position", async () => {
+  it("rolls back a duplicate pipeline stage", async () => {
     const target = await pipelineGraph();
     const before = await graphSnapshot(target.organization.id);
     const broken = structuredClone(target.verified.data);
@@ -519,7 +519,7 @@ describe("transactional tenant restore executor", () => {
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
   });
 
-  it("deletes newer pipeline and stages missing from a same-tenant backup", async () => {
+  it("removes pipeline stages created after the backup", async () => {
     const target = await fixture();
     const pipeline = await owner.pipeline.create({
       data: {
@@ -550,7 +550,7 @@ describe("transactional tenant restore executor", () => {
     expect(restored.PipelineStage).toEqual([]);
   });
 
-  it("keeps a live opportunity and its stage when opportunity restore is unsupported", async () => {
+  it("blocks restore when a live opportunity exists", async () => {
     const target = await pipelineGraph();
     const before = await graphSnapshot(target.organization.id);
     const opportunity = await owner.opportunity.create({
