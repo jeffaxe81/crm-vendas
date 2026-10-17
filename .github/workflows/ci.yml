@@ -17,8 +17,6 @@ jobs:
 
     services:
       postgres:
-        # Official PostgreSQL Docker Hub image: bypass the ECR public mirror's
-        # Data limit exceeded throttle observed on 2026-10-17.
         image: postgres:18-bookworm
         env:
           POSTGRES_DB: axes_crm
