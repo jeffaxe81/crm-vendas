@@ -4,6 +4,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -186,5 +187,87 @@ describe("Tenant dashboard volume", () => {
       expect(screen.queryByText("777")).not.toBeInTheDocument()
     );
     expect(screen.getAllByText("9").length).toBeGreaterThan(0);
+  });
+
+  it("compares successful refreshes only inside the same tenant session", async () => {
+    const fetchMock = stubRequests();
+    const { rerender } = render(
+      <DashboardVolumeView accessToken="tenant-a" />
+    );
+    await screen.findByText("Empresas ativas");
+    expect(
+      screen.queryByText("Variação desde a consulta anterior")
+    ).not.toBeInTheDocument();
+
+    fetchMock.mockImplementation(async (url: string) =>
+      response(
+        url.endsWith("/dashboards/catalog")
+          ? catalog
+          : {
+              ...volume,
+              asOf: "2026-10-17T15:00:00.000Z",
+              counts: {
+                companies: 5,
+                contacts: 2,
+                opportunities: 1,
+                activities: 4,
+              },
+              totalActiveRecords: 12,
+            }
+      )
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Atualizar volume" }));
+    const comparison = await screen.findByRole("region", {
+      name: "Comparação com a última consulta da sessão",
+    });
+    expect(
+      within(comparison).getByText("Variação desde a consulta anterior")
+    ).toBeInTheDocument();
+    expect(within(comparison).getByText(/Empresas ativas: \+2/))
+      .toBeInTheDocument();
+
+    rerender(<DashboardVolumeView accessToken="tenant-b" />);
+    await screen.findByText("Empresas ativas");
+    expect(
+      screen.queryByText("Variação desde a consulta anterior")
+    ).not.toBeInTheDocument();
+  });
+
+  it("exports only the visible aggregate snapshot to a local CSV", async () => {
+    stubRequests();
+    const createObjectURL = vi.fn(() => "blob:local-dashboard");
+    const revokeObjectURL = vi.fn();
+    const oldCreate = URL.createObjectURL;
+    const oldRevoke = URL.revokeObjectURL;
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      value: createObjectURL,
+    });
+    Object.defineProperty(URL, "revokeObjectURL", {
+      configurable: true,
+      value: revokeObjectURL,
+    });
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {});
+    try {
+      render(<DashboardVolumeView accessToken="tenant-a" />);
+      await screen.findByText("Empresas ativas");
+      fireEvent.click(
+        screen.getByRole("button", { name: "Exportar CSV de indicadores" })
+      );
+      expect(createObjectURL).toHaveBeenCalledTimes(1);
+      expect(click).toHaveBeenCalledTimes(1);
+      expect(revokeObjectURL).toHaveBeenCalledWith("blob:local-dashboard");
+    } finally {
+      click.mockRestore();
+      Object.defineProperty(URL, "createObjectURL", {
+        configurable: true,
+        value: oldCreate,
+      });
+      Object.defineProperty(URL, "revokeObjectURL", {
+        configurable: true,
+        value: oldRevoke,
+      });
+    }
   });
 });
