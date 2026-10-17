@@ -1,9 +1,5 @@
 import { randomUUID } from "node:crypto";
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-} from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { z } from "zod";
 
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
@@ -43,7 +39,9 @@ function cutoffDate(now: Date, days: number): Date {
 export class TenantPurgeService {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
-  async read(principal: AuthenticatedPrincipal): Promise<TenantPurgePolicyView> {
+  async read(
+    principal: AuthenticatedPrincipal
+  ): Promise<TenantPurgePolicyView> {
     const policy = await this.prisma.withTenant(principal.organizationId, tx =>
       tx.purgePolicy.findUnique({
         where: { organizationId: principal.organizationId },
