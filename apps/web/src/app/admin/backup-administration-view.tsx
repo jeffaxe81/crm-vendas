@@ -16,6 +16,7 @@ import {
 
 import { apiRequest, downloadApiFile } from "../../lib/api-client";
 import { useTranslation } from "../../i18n/language-provider";
+import { TenantPurgePolicyView } from "./tenant-purge-policy-view";
 
 type Operation = {
   id: string;
@@ -638,6 +639,7 @@ export function BackupAdministrationView({
           </button>
         </section>
       ) : null}
+      <TenantPurgePolicyView accessToken={accessToken} />
     </section>
   );
 }

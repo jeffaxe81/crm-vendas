@@ -159,6 +159,7 @@ model Organization {
   operationPreviews OperationPreview[]
   dataOperations DataOperation[]
   backupSchedule BackupSchedule?
+  purgePolicy PurgePolicy?
   id                       String                     @id @default(uuid()) @db.Uuid
   name                     String                     @db.VarChar(160)
   slug                     String                     @unique @db.VarChar(80)
@@ -235,6 +236,7 @@ model User {
   operationPreviewsCreated OperationPreview[] @relation("OperationPreviewActor")
   dataOperationsCreated DataOperation[] @relation("DataOperationActor")
   backupSchedulesUpdated BackupSchedule[] @relation("BackupScheduleUpdater")
+  purgePoliciesUpdated PurgePolicy[] @relation("PurgePolicyUpdater")
   id                          String                     @id @default(uuid()) @db.Uuid
   email                       String                     @db.VarChar(254)
   emailNormalized             String                     @unique @map("email_normalized") @db.VarChar(254)
@@ -1089,6 +1091,20 @@ model DataOperation {
   preventiveBackup BackupRecord? @relation(fields:[preventiveBackupId,organizationId],references:[id,organizationId],onDelete:Restrict)
   @@index([organizationId,state,leaseUntil],map:"data_operations_org_state_lease_idx")
   @@map("data_operations")
+}
+
+
+/** Tenant-owned, opt-in purge of terminal webhook delivery attempts only. */
+model PurgePolicy {
+  organizationId String @id @map("organization_id") @db.Uuid
+  enabled Boolean @default(false)
+  retentionDays Int @default(180) @map("retention_days")
+  lastRunAt DateTime? @map("last_run_at") @db.Timestamptz(6)
+  updatedBy String? @map("updated_by") @db.Uuid
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization Organization @relation(fields:[organizationId],references:[id],onDelete:Restrict)
+  updater User? @relation("PurgePolicyUpdater",fields:[updatedBy],references:[id],onDelete:Restrict)
+  @@map("purge_policies")
 }
 
 model BackupSchedule {

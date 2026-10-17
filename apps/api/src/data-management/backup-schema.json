@@ -1,5 +1,5 @@
 {
-  "schemaSha256": "ccb02228dff6378c909872b055531f487a63670ff1008f4a2fc2115bff7a79aa",
+  "schemaSha256": "6abddf30ba91ddf527d17590d79af1e1947d08d4223ab308effc584cdacd2d98",
   "models": [
     {
       "name": "Organization",
@@ -187,6 +187,17 @@
           "type": "BackupSchedule",
           "kind": "object",
           "dbName": "backupSchedule",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "purgePolicy",
+          "type": "PurgePolicy",
+          "kind": "object",
+          "dbName": "purgePolicy",
           "isRequired": false,
           "isList": false,
           "isId": false,
@@ -835,6 +846,17 @@
           "type": "BackupSchedule",
           "kind": "object",
           "dbName": "backupSchedulesUpdated",
+          "isRequired": true,
+          "isList": true,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "purgePoliciesUpdated",
+          "type": "PurgePolicy",
+          "kind": "object",
+          "dbName": "purgePoliciesUpdated",
           "isRequired": true,
           "isList": true,
           "isId": false,
@@ -7476,6 +7498,101 @@
           "isId": false,
           "nativeType": null,
           "relationFromFields": ["preventiveBackupId", "organizationId"]
+        }
+      ]
+    },
+    {
+      "name": "PurgePolicy",
+      "dbName": "purge_policies",
+      "primaryKey": ["organizationId"],
+      "fields": [
+        {
+          "name": "organizationId",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "organization_id",
+          "isRequired": true,
+          "isList": false,
+          "isId": true,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "enabled",
+          "type": "Boolean",
+          "kind": "scalar",
+          "dbName": "enabled",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "retentionDays",
+          "type": "Int",
+          "kind": "scalar",
+          "dbName": "retention_days",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "lastRunAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "last_run_at",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedBy",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "updated_by",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Uuid",
+          "relationFromFields": []
+        },
+        {
+          "name": "updatedAt",
+          "type": "DateTime",
+          "kind": "scalar",
+          "dbName": "updated_at",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": "Timestamptz(6)",
+          "relationFromFields": []
+        },
+        {
+          "name": "organization",
+          "type": "Organization",
+          "kind": "object",
+          "dbName": "organization",
+          "isRequired": true,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["organizationId"]
+        },
+        {
+          "name": "updater",
+          "type": "User",
+          "kind": "object",
+          "dbName": "updater",
+          "isRequired": false,
+          "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": ["updatedBy"]
         }
       ]
     },
