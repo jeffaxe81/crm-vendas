@@ -1213,5 +1213,21 @@
   "Webhooks de saída": "Webhooks de saída",
   "whatsapp": "whatsapp",
   "WhatsApp": "WhatsApp",
-  "Modelos ainda não restauráveis:": "Modelos ainda não restauráveis:"
+  "Modelos ainda não restauráveis:": "Modelos ainda não restauráveis:",
+  "Volume de dados": "Volume de dados",
+  "Volume de registros do CRM": "Volume de registros do CRM",
+  "Contagem de registros ativos apenas da organização autenticada. Os alertas são informativos; não bloqueiam cadastros e não representam limite de armazenamento.": "Contagem de registros ativos apenas da organização autenticada. Os alertas são informativos; não bloqueiam cadastros e não representam limite de armazenamento.",
+  "Atualizar volume": "Atualizar volume",
+  "Consultando volume de registros...": "Consultando volume de registros...",
+  "Contagens de registros por categoria": "Contagens de registros por categoria",
+  "Total de registros ativos:": "Total de registros ativos:",
+  "Atenção: volume acima do limiar crítico de observação.": "Atenção: volume acima do limiar crítico de observação.",
+  "Atenção: volume acima do limiar de observação.": "Atenção: volume acima do limiar de observação.",
+  "Limiar de atenção:": "Limiar de atenção:",
+  "registros. Limiar crítico:": "registros. Limiar crítico:",
+  "Esta organização ainda não possui registros ativos.": "Esta organização ainda não possui registros ativos.",
+  "Empresas ativas": "Empresas ativas",
+  "Contatos ativos": "Contatos ativos",
+  "Oportunidades ativas": "Oportunidades ativas",
+  "Atividades ativas": "Atividades ativas"
 }
