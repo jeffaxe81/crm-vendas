@@ -70,9 +70,9 @@ class BackupActivationTests(unittest.TestCase):
     def test_opt_in_large_backup_limit_preserves_existing_key(self):
         key = base64.b64encode(b"z" * 32).decode("ascii")
         self.env.write_text(
-            f"BACKUP_ENCRYPTION_KEY={key}\\n"
-            "BACKUP_DIRECTORY=/var/lib/axes-crm/backups\\n"
-            "BACKUP_MAX_BYTES=67108864\\n"
+            f"BACKUP_ENCRYPTION_KEY={key}\n"
+            "BACKUP_DIRECTORY=/var/lib/axes-crm/backups\n"
+            "BACKUP_MAX_BYTES=67108864\n"
         )
         self.assertFalse(module.configure_env(self.env, max_mib=256))
         values = module.read_settings(self.env.read_text())
@@ -82,7 +82,7 @@ class BackupActivationTests(unittest.TestCase):
 
     def test_backup_cap_invalid_values_never_modify_env(self):
         key = base64.b64encode(b"z" * 32).decode("ascii")
-        self.env.write_text(f"BACKUP_ENCRYPTION_KEY={key}\\n")
+        self.env.write_text(f"BACKUP_ENCRYPTION_KEY={key}\n")
         original = self.env.read_bytes()
         for size in (0, 257, -1):
             with self.assertRaisesRegex(ValueError, "entre 1 e 256 MiB"):
