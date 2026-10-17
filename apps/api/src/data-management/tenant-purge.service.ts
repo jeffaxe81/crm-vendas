@@ -158,9 +158,7 @@ export class TenantPurgeService {
             where: {
               organizationId: organization.id,
               id: { in: candidates.map(item => item.id) },
-              status: { in: ["DELIVERED", "FAILED"] },
-            dispatch: { status: { in: ["DELIVERED", "EXHAUSTED"] } },
-              createdAt: { lt: cutoff },
+              expiresAt: { lt: cutoff },
             },
           });
           count = deleted.count;
