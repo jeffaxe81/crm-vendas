@@ -68,7 +68,9 @@ export async function preflightRestoreExecution(
   const currentCounts = counts(current);
   // Fail closed before consuming the one-time confirmation. A model in either
   // state must not be silently omitted by the current partial restore executor.
-  if (unsupportedRestoreModels(currentCounts, verified.manifest.counts).length) {
+  if (
+    unsupportedRestoreModels(currentCounts, verified.manifest.counts).length
+  ) {
     throw new BackupError("RESTORE_POLICY_UNSUPPORTED");
   }
 
