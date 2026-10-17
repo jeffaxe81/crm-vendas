@@ -2823,3 +2823,23 @@ button.save-feedback-button[data-save-status="error"] {
     flex-basis: 1.375rem;
   }
 }
+
+/* Save actions stay legible even when a tenant's brand color is pale. */
+.crm-shell .save-feedback-button[data-save-status="idle"],
+.crm-shell .save-feedback-button[data-save-status="error"] {
+  background: #155eaa;
+  border: 1px solid #104780;
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgb(21 94 170 / 18%);
+}
+
+.crm-shell .save-feedback-button[data-save-status="idle"]:hover,
+.crm-shell .save-feedback-button[data-save-status="error"]:hover {
+  background: #104780;
+}
+
+.crm-shell .save-feedback-button:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+}
