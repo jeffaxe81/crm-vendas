@@ -52,6 +52,19 @@ describe("backup administration HTTP authorization", () => {
       .auth(token, { type: "bearer" })
       .expect(403);
     await server
+      .get("/api/v1/admin/purge/policy")
+      .auth(token, { type: "bearer" })
+      .expect(403);
+    await server
+      .put("/api/v1/admin/purge/policy")
+      .auth(token, { type: "bearer" })
+      .send({
+        enabled: true,
+        retentionDays: 90,
+        confirmation: "ATIVAR EXPURGO",
+      })
+      .expect(403);
+    await server
       .post("/api/v1/admin/backups")
       .auth(token, { type: "bearer" })
       .expect(403);
@@ -132,12 +145,41 @@ describe("backup administration HTTP authorization", () => {
       })
       .expect(200);
     expect(updated.body.enabled).toBe(false);
+    const policy = await server
+      .get("/api/v1/admin/purge/policy")
+      .auth(token, { type: "bearer" })
+      .expect(200);
+    expect(policy.body).toMatchObject({
+      enabled: false,
+      retentionDays: 180,
+      target: "EXPIRED_OPERATION_PREVIEWS",
+    });
+    await server
+      .put("/api/v1/admin/purge/policy")
+      .auth(token, { type: "bearer" })
+      .send({ enabled: true, retentionDays: 90 })
+      .expect(400);
+    const savedPurge = await server
+      .put("/api/v1/admin/purge/policy")
+      .auth(token, { type: "bearer" })
+      .send({
+        enabled: true,
+        retentionDays: 90,
+        confirmation: "ATIVAR EXPURGO",
+      })
+      .expect(200);
+    expect(savedPurge.body).toMatchObject({
+      enabled: true,
+      retentionDays: 90,
+      target: "EXPIRED_OPERATION_PREVIEWS",
+    });
   });
 
   it("rejects unauthenticated catalog, schedule and download", async () => {
     const server = request(app.getHttpServer());
     await server.get("/api/v1/admin/backups").expect(401);
     await server.get("/api/v1/admin/backups/schedule").expect(401);
+    await server.get("/api/v1/admin/purge/policy").expect(401);
     await server
       .get(`/api/v1/admin/backups/${randomUUID()}/download`)
       .expect(401);
