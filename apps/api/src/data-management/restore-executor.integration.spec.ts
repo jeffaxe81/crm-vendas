@@ -322,14 +322,13 @@ describe("transactional tenant restore executor", () => {
 
     expect(await graphSnapshot(target.organization.id)).toEqual(expected);
     expect(await graphSnapshot(other.organization.id)).toEqual(foreignBefore);
-    expect(
-      (await owner.organizationMembership.findFirstOrThrow({
-        where: {
-          organizationId: target.organization.id,
-          userId: target.user.id,
-        },
-      })).isSuperuser
-    ).toBe(true);
+    const membership = await owner.organizationMembership.findFirstOrThrow({
+      where: {
+        organizationId: target.organization.id,
+        userId: target.user.id,
+      },
+    });
+    expect(membership.isSuperuser).toBe(true);
   });
 
   it("rejects a broken tag reference before altering any tenant rows", async () => {
