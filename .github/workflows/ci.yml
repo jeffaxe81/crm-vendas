@@ -99,6 +99,12 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
+      - name: Show reconciliation formatting patch on failure
+        if: failure()
+        run: |
+          pnpm exec prettier --write apps/api/src/data-management/tenant-storage-reconciliation.integration.spec.ts apps/api/src/data-management/tenant-storage-reconciliation.service.ts apps/web/src/app/admin/tenant-storage-reconciliation-view.test.tsx apps/web/src/app/admin/tenant-storage-reconciliation-view.tsx
+          git diff -- apps/api/src/data-management/tenant-storage-reconciliation.integration.spec.ts apps/api/src/data-management/tenant-storage-reconciliation.service.ts apps/web/src/app/admin/tenant-storage-reconciliation-view.test.tsx apps/web/src/app/admin/tenant-storage-reconciliation-view.tsx
+
       - name: Lint source
         run: pnpm lint
 
