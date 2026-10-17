@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
 import { TenantStorageReconciliationView } from "./tenant-storage-reconciliation-view";
@@ -37,9 +43,9 @@ afterEach(() => {
 
 it("runs only on a manual click and shows tenant-scoped findings", async () => {
   const fetchMock = vi.fn(async (_url: string, options?: RequestInit) => {
-    expect(
-      (options?.headers as Record<string, string>).Authorization
-    ).toBe("Bearer tenant-a");
+    expect((options?.headers as Record<string, string>).Authorization).toBe(
+      "Bearer tenant-a"
+    );
     return response(report);
   });
   vi.stubGlobal("fetch", fetchMock);
