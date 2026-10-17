@@ -16,6 +16,7 @@ import {
 } from "@axes/contracts";
 import { useEffect, useMemo, useState } from "react";
 
+import { FloatingTourPanel } from "./floating-tour-panel";
 import { apiRequest } from "../../lib/api-client";
 import { useTranslation } from "../../i18n/language-provider";
 
@@ -174,12 +175,7 @@ export function QuickSetupExperience({
 
   if (phase === "error") {
     return (
-      <aside
-        className="first-access-panel"
-        role="dialog"
-        aria-label={t("Configuração rápida do CRM")}
-        aria-modal="false"
-      >
+      <FloatingTourPanel label="Configuração rápida do CRM">
         <p className="first-access-eyebrow">
           {t("AXE CRM 1.2 · Configuração rápida")}
         </p>
@@ -190,7 +186,7 @@ export function QuickSetupExperience({
             {t("Tentar novamente")}
           </button>
         </div>
-      </aside>
+      </FloatingTourPanel>
     );
   }
 
@@ -198,12 +194,7 @@ export function QuickSetupExperience({
 
   if (state.completed) {
     return (
-      <aside
-        className="first-access-panel"
-        role="dialog"
-        aria-label={t("Configuração rápida do CRM")}
-        aria-modal="false"
-      >
+      <FloatingTourPanel label="Configuração rápida do CRM">
         <p className="first-access-eyebrow">
           {t("AXE CRM 1.2 · Configuração rápida")}
         </p>
@@ -226,7 +217,7 @@ export function QuickSetupExperience({
             {t("Refazer configuração")}
           </button>
         </div>
-      </aside>
+      </FloatingTourPanel>
     );
   }
 
@@ -240,12 +231,7 @@ export function QuickSetupExperience({
   const stepIndex = state.steps.findIndex(step => step.id === currentStep.id);
 
   return (
-    <aside
-      className="first-access-panel"
-      role="dialog"
-      aria-label={t("Configuração rápida do CRM")}
-      aria-modal="false"
-    >
+    <FloatingTourPanel label="Configuração rápida do CRM">
       <p className="first-access-eyebrow">
         {t("AXE CRM 1.2 · Configuração rápida")}
       </p>
@@ -296,6 +282,6 @@ export function QuickSetupExperience({
           "O progresso é salvo separadamente das alterações de negócio e pode ser retomado em outro acesso."
         )}
       </small>
-    </aside>
+    </FloatingTourPanel>
   );
 }

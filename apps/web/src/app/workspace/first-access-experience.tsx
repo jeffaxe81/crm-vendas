@@ -190,14 +190,14 @@ export function FirstAccessExperience({
   if (phase === "loading" || phase === "idle") return null;
   if (phase === "error") {
     return (
-      <aside className="first-access-panel" role="status">
+      <FloatingTourPanel label="Assistente do CRM">
         <h2>{t("Boas-vindas temporariamente indisponíveis")}</h2>
         <p>
           {t(
             "O progresso não foi alterado. Entre novamente para retomar o assistente."
           )}
         </p>
-      </aside>
+      </FloatingTourPanel>
     );
   }
 
@@ -205,12 +205,7 @@ export function FirstAccessExperience({
     const destination = stageDestinations[stage - 1]!;
     const canNavigate = steps.some(step => step.id === destination);
     return (
-      <aside
-        className="first-access-panel"
-        role="dialog"
-        aria-label={t("Configuração inicial da empresa")}
-        aria-modal="false"
-      >
+      <FloatingTourPanel label="Configuração inicial da empresa">
         <p className="first-access-eyebrow">
           {t("AXE CRM 1.1 · Configuração da empresa")}
         </p>
@@ -271,7 +266,7 @@ export function FirstAccessExperience({
             "O progresso é salvo por empresa. Você pode continuar no próximo acesso."
           )}
         </small>
-      </aside>
+      </FloatingTourPanel>
     );
   }
 
