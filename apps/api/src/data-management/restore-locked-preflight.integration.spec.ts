@@ -126,7 +126,7 @@ describe("restore locked preflight", () => {
 
   it("blocks restore when an unsupported model gained live data", async () => {
     const { organization, verified } = await fixture();
-    const tag = await owner.tag.create({
+    const pipeline = await owner.pipeline.create({
       data: {
         organizationId: organization.id,
         name: "Do not discard",
@@ -149,13 +149,13 @@ describe("restore locked preflight", () => {
     ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
 
     expect(
-      await owner.tag.findUnique({ where: { id: tag.id } })
+      await owner.pipeline.findUnique({ where: { id: pipeline.id } })
     ).not.toBeNull();
   });
 
   it("blocks unsupported rows existing only in target", async () => {
     const { organization, user } = await fixture();
-    const tag = await owner.tag.create({
+    const pipeline = await owner.pipeline.create({
       data: {
         organizationId: organization.id,
         name: "Historical tag",
@@ -164,7 +164,7 @@ describe("restore locked preflight", () => {
     });
     const backup = await backups.create(organization.id, user.id, "MANUAL");
     const verified = await backups.verify(organization.id, backup.id);
-    await owner.tag.delete({ where: { id: tag.id } });
+    await owner.pipeline.delete({ where: { id: pipeline.id } });
 
     await expect(
       runtime.withMaintenance(
@@ -181,7 +181,7 @@ describe("restore locked preflight", () => {
     ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
 
     expect(
-      await owner.tag.count({ where: { organizationId: organization.id } })
+      await owner.pipeline.count({ where: { organizationId: organization.id } })
     ).toBe(0);
   });
 
