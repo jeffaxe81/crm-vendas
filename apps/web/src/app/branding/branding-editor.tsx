@@ -145,7 +145,10 @@ export function BrandingEditor({
           )}
           <span className="branding-preview__primary">Cor principal</span>
         </div>
-        <p>Ao escolher uma logo, ela é salva automaticamente. Para alterar as cores, clique em Salvar identidade visual.</p>
+        <p>
+          Ao escolher uma logo, ela é salva automaticamente. Para alterar as
+          cores, clique em Salvar identidade visual.
+        </p>
         <button
           type="button"
           onClick={() => {
