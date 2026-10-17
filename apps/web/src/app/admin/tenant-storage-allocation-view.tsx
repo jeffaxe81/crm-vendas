@@ -84,11 +84,14 @@ export function TenantStorageAllocationView({
     setError("");
     setNotice("");
     try {
-      const result = await apiRequest<Allocation>("/admin/storage/allocation", {
-        accessToken,
-        method: "PUT",
-        body: { allocatedGiB: amount, confirmation },
-      });
+      const result = await apiRequest<Allocation>(
+        "/admin/storage/allocation",
+        {
+          accessToken,
+          method: "PUT",
+          body: { allocatedGiB: amount, confirmation },
+        }
+      );
       if (generationRef.current !== generation) return;
       setAllocation(result);
       setDesired(result.allocatedGiB?.toString() ?? "");
@@ -124,7 +127,8 @@ export function TenantStorageAllocationView({
         <>
           <p>
             Backups catalogados: <strong>{allocation.backupCount}</strong>.
-            Volume identificado: <strong>{toGiB(allocation.usedBytes)} GiB</strong>.
+            Volume identificado:{" "}
+            <strong>{toGiB(allocation.usedBytes)} GiB</strong>.
           </p>
           <p>
             Capacidade de referência:{" "}
