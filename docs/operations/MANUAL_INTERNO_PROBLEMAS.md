@@ -30,6 +30,8 @@ Registro central dos incidentes relatados pelo responsável, problemas descritos
 | CRM-P016 | [Diagnósticos de deploy com falsos positivos](#crm-p016)                          | Correções presentes no histórico; não substituem aceite real.                                         |
 | CRM-P017 | [Ambiente de desenvolvimento sem pré-requisitos para testes integrais](#crm-p017) | Limitação registrada; nenhuma nova execução autorizada agora.                                         |
 | CRM-P018 | [Outras regressões e correções técnicas ao longo do projeto](#crm-p018)           | Inventariadas por commit; validação operacional não presumida.                                        |
+| CRM-P019 | [Configuração Rápida indisponível por sessão rejeitada](#crm-p019) | Correção proposta na PR #222; validação pendente. |
+
 
 <a id="crm-p001"></a>
 
@@ -228,6 +230,17 @@ Registro central dos incidentes relatados pelo responsável, problemas descritos
 - **Causa/evidência:** As causas detalhadas variam e devem ser consultadas no diff e na descrição de cada commit; o título sozinho não comprova incidente no servidor.
 - **Tratamento e prevenção:** Consultar o índice completo de commits de correção, que preserva os títulos originais e links para evidência. Evoluir cada entrada relevante para ficha detalhada ao confirmar reprodução/impacto.
 - **Referências:** [Histórico de correções](HISTORICO_CORRECOES.md), incluindo 645b050, cc72041, 0464e16, 841d160, ab45d1e e c3c452f.
+
+<a id="crm-p019"></a>
+
+## CRM-P019 — Configuração Rápida indisponível por sessão rejeitada
+
+- **Data:** 16/10/2026.
+- **Estado:** Correção proposta na [PR #222](https://github.com/jeffaxe81/crm-vendas/pull/222); sem testes, build ou implantação nesta tarefa.
+- **Sintoma:** Configuração temporariamente indisponível; onboarding, usuários, integrações e cadastros retornam 401. Health retorna 200 e CORS autoriza a origem.
+- **Causa/evidência:** O log anexado mostra rejeição de autenticação após acessos bem-sucedidos, mas não distingue expiração de revogação. A interface só renovava sessão no carregamento inicial e não encerrava a área autenticada após bearer 401. Front em 127.0.0.1 e API em localhost constituem sites diferentes para o cookie SameSite=Strict; o refresh registrado retorna 401 sem Cookie no cabeçalho.
+- **Tratamento e prevenção:** Renovação em 80% de expiresIn, mantendo organização/usuário/vínculo; retorno ao login com mensagem clara se sessão rejeitada; alinhamento de hostname somente entre endereços loopback. Não repetir escritas automaticamente nem relaxar a proteção do cookie. Contorno local: abrir http://localhost:3000 e entrar novamente.
+- **Referências:** Arquivo fornecido Texto colado(20261017-013100).txt; PR #222 e seu checkpoint docs/checkpoints/2026-10-16-quick-setup-session.md. A confirmação no servidor permanece pendente.
 
 ## Registro de novos problemas
 
