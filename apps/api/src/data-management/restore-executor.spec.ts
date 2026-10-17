@@ -1,5 +1,8 @@
 import type { Prisma } from "../generated/prisma/client";
-import { restoreTenantSnapshot } from "./restore-executor";
+import {
+  restoreTenantSnapshot,
+  unsupportedRestoreModels,
+} from "./restore-executor";
 
 const organizationId = "00000000-0000-0000-0000-000000000001";
 const otherOrganizationId = "00000000-0000-0000-0000-000000000002";
@@ -71,4 +74,33 @@ describe("restore executor target binding", () => {
       ).rejects.toThrow("RESTORE_TARGET_INVALID");
     }
   );
+});
+
+describe("restore preview applicability", () => {
+  it("detects data in unsupported models in the target or current tenant", () => {
+    expect(
+      unsupportedRestoreModels(
+        { Company: 5, Opportunity: 1, Contact: 2, Ticket: 1 },
+        { Company: 2, Opportunity: 0, Contact: 2, Ticket: 2 }
+      )
+    ).toEqual(["Opportunity", "Ticket"]);
+  });
+
+  it("does not treat the reviewed company/contact graph as a blocker", () => {
+    expect(
+      unsupportedRestoreModels(
+        { Company: 5, Contact: 2, CompanyContact: 0 },
+        { Company: 2, Contact: 2, CompanyContact: 1 }
+      )
+    ).toEqual([]);
+  });
+
+  it("never reports excluded security state as a replacement blocker", () => {
+    expect(
+      unsupportedRestoreModels(
+        { AuditLog: 4, User: 2, BackupRecord: 3, RefreshSession: 1 },
+        { AuditLog: 2, User: 2, BackupRecord: 1, RefreshSession: 0 }
+      )
+    ).toEqual([]);
+  });
 });
