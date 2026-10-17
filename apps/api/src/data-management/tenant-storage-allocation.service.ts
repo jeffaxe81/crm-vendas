@@ -99,11 +99,10 @@ export class TenantStorageAllocationService {
     const { allocatedGiB } = parsed.data;
     await this.prisma.withTenant(principal.organizationId, async tx => {
       // Serialize administrator changes for the same tenant.
-      await tx.$queryRaw`
-        SELECT pg_advisory_xact_lock(
-          hashtextextended(${"tenant-storage:" + principal.organizationId}, 0)
-        )
-      `;
+      await tx.$executeRawUnsafe(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+        `tenant-storage:${principal.organizationId}`
+      );
       const [previous] = await tx.$queryRaw<AllocationRow[]>`
         SELECT allocation_gib, updated_at
         FROM public.tenant_storage_allocations
