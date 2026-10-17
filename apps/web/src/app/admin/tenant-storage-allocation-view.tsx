@@ -65,19 +65,15 @@ export function TenantStorageAllocationView({
   }, [accessToken]);
 
   const numeric =
-    desired === "" || (/^\d+$/.test(desired) && Number.isSafeInteger(Number(desired)));
+    desired === "" ||
+    (/^\d+$/.test(desired) && Number.isSafeInteger(Number(desired)));
   const amount = desired === "" ? null : Number(desired);
   const valid =
     numeric && (amount === null || (amount >= 1 && amount <= 10240));
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (
-      !allocation ||
-      busy ||
-      !valid ||
-      confirmation !== "AJUSTAR COTA"
-    )
+    if (!allocation || busy || !valid || confirmation !== "AJUSTAR COTA")
       return;
     const generation = generationRef.current;
     setBusy(true);
