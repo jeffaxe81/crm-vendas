@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
@@ -22,6 +22,7 @@ export type StorageReconciliationResult = {
   catalogCount: number;
   checkedCount: number;
   complete: boolean;
+  nextCursor: string | null;
   matchingCount: number;
   missingCount: number;
   sizeMismatchCount: number;
@@ -31,7 +32,7 @@ export type StorageReconciliationResult = {
 };
 
 /**
- * Bounded, read-only metadata comparison against tenant-scoped catalog rows.
+ * Bounded, cursor-paginated read-only comparison of tenant catalog records.
  * Never enumerates the shared backup directory, reads encrypted payloads,
  * reports filesystem paths or makes destructive changes.
  */
@@ -43,25 +44,50 @@ export class TenantStorageReconciliationService {
   ) {}
 
   async scan(
-    principal: AuthenticatedPrincipal
+    principal: AuthenticatedPrincipal,
+    cursor?: string
   ): Promise<StorageReconciliationResult> {
-    const { catalogCount, backups } = await this.prisma.withTenant(
+    if (
+      cursor !== undefined &&
+      (typeof cursor !== "string" ||
+        !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(cursor))
+    ) {
+      throw new BadRequestException("Cursor de conferência inválido.");
+    }
+    const { catalogCount, backups, nextCursor } = await this.prisma.withTenant(
       principal.organizationId,
       async tx => {
         const where = {
           organizationId: principal.organizationId,
           state: "COMPLETED",
         };
-        const [catalogCount, backups] = await Promise.all([
+        // Explicitly resolve the cursor under the tenant's RLS scope.
+        // A foreign/deleted backup ID cannot be used as a pagination anchor.
+        if (cursor) {
+          const anchor = await tx.backupRecord.findFirst({
+            where: { ...where, id: cursor },
+            select: { id: true },
+          });
+          if (!anchor)
+            throw new BadRequestException("Cursor de conferência inválido.");
+        }
+        const [catalogCount, page] = await Promise.all([
           tx.backupRecord.count({ where }),
           tx.backupRecord.findMany({
             where,
             orderBy: [{ completedAt: "desc" }, { id: "desc" }],
-            take: MAX_OBJECTS_PER_SCAN,
+            cursor: cursor ? { id: cursor } : undefined,
+            skip: cursor ? 1 : 0,
+            take: MAX_OBJECTS_PER_SCAN + 1,
             select: { id: true, byteCount: true },
           }),
         ]);
-        return { catalogCount, backups };
+        const backups = page.slice(0, MAX_OBJECTS_PER_SCAN);
+        const nextCursor =
+          page.length > MAX_OBJECTS_PER_SCAN
+            ? backups[backups.length - 1]!.id
+            : null;
+        return { catalogCount, backups, nextCursor };
       }
     );
     const report: StorageReconciliationResult = {
@@ -71,7 +97,8 @@ export class TenantStorageReconciliationService {
       scanLimit: MAX_OBJECTS_PER_SCAN,
       catalogCount,
       checkedCount: 0,
-      complete: catalogCount === 0,
+      complete: false,
+      nextCursor: this.store ? nextCursor : null,
       matchingCount: 0,
       missingCount: 0,
       sizeMismatchCount: 0,
@@ -125,7 +152,7 @@ export class TenantStorageReconciliationService {
       }
     }
     report.scannedFilesystemBytes = total.toString();
-    report.complete = catalogCount === report.checkedCount;
+    report.complete = nextCursor === null;
     return report;
   }
 }
