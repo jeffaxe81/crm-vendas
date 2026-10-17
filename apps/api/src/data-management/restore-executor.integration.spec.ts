@@ -497,11 +497,11 @@ describe("transactional tenant restore executor", () => {
   it("rejects live unsupported models created after the snapshot before replacing data", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
-    await owner.pipeline.create({
+    await owner.role.create({
       data: {
         organizationId: target.organization.id,
         name: "After snapshot",
-        normalizedName: "after-snapshot",
+        code: "AFTER_SNAPSHOT",
       },
     });
 
@@ -520,7 +520,7 @@ describe("transactional tenant restore executor", () => {
 
     expect(await companies(target.organization.id)).toEqual(before);
     expect(
-      await owner.pipeline.count({
+      await owner.role.count({
         where: { organizationId: target.organization.id },
       })
     ).toBe(1);
@@ -697,11 +697,11 @@ describe("transactional tenant restore executor", () => {
   it("fails closed for a non-empty unsupported replacement policy", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
-    await owner.pipeline.create({
+    await owner.role.create({
       data: {
         organizationId: target.organization.id,
         name: "Unsupported restore category",
-        normalizedName: "unsupported-restore-category",
+        code: "UNSUPPORTED_RESTORE",
       },
     });
     const backup = await backups.create(
@@ -721,7 +721,7 @@ describe("transactional tenant restore executor", () => {
 
     expect(await companies(target.organization.id)).toEqual(before);
     expect(
-      await owner.pipeline.count({
+      await owner.role.count({
         where: { organizationId: target.organization.id },
       })
     ).toBe(1);
