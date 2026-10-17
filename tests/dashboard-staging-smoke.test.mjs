@@ -25,9 +25,7 @@ function config() {
 function response(body, status = 200, noStore = true) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: noStore
-      ? { "Cache-Control": "private, no-store" }
-      : {},
+    headers: noStore ? { "Cache-Control": "private, no-store" } : {},
   });
 }
 
@@ -56,9 +54,7 @@ function fakeFetch(options = {}) {
         })),
       });
     }
-    const recordCounts = options.leakTenant
-      ? counts[0]
-      : counts[index];
+    const recordCounts = options.leakTenant ? counts[0] : counts[index];
     return response(
       {
         counts: recordCounts,
@@ -87,7 +83,10 @@ test("staging smoke validates three distinct tenants without mutation", async ()
 
 test("staging smoke rejects tenant data leak and missing no-store", async () => {
   await assert.rejects(
-    runDashboardStagingSmoke(config(), fakeFetch({ leakTenant: true }).fetchStub),
+    runDashboardStagingSmoke(
+      config(),
+      fakeFetch({ leakTenant: true }).fetchStub
+    ),
     /DASHBOARD_TENANT_COUNTS_MISMATCH/
   );
   await assert.rejects(

@@ -69,17 +69,17 @@ function validateConfiguration(config) {
     fingerprints.add(JSON.stringify(tenant.expectedCounts));
   }
   requireCondition(
-    config.tenants.map(item => item.label).sort().join("") === "ABC",
+    config.tenants
+      .map(item => item.label)
+      .sort()
+      .join("") === "ABC",
     "TENANT_LABELS_MUST_BE_ABC"
   );
   requireCondition(
     new Set(config.tenants.map(item => item.token)).size === 3,
     "TENANT_CREDENTIALS_MUST_BE_DISTINCT"
   );
-  requireCondition(
-    fingerprints.size === 3,
-    "DISTINCT_TEST_FIXTURES_REQUIRED"
-  );
+  requireCondition(fingerprints.size === 3, "DISTINCT_TEST_FIXTURES_REQUIRED");
   return target.href.replace(/\/$/, "");
 }
 
@@ -187,7 +187,10 @@ export async function runDashboardStagingSmoke(config, fetchImpl = fetch) {
     baseUrl + "/dashboards/volume?organizationId=other-tenant",
     config.tenants[0].token
   );
-  requireCondition(override.status === 400, "DASHBOARD_TENANT_OVERRIDE_ALLOWED");
+  requireCondition(
+    override.status === 400,
+    "DASHBOARD_TENANT_OVERRIDE_ALLOWED"
+  );
   return { ok: true, tenantsChecked: 3, requests: 10 };
 }
 
