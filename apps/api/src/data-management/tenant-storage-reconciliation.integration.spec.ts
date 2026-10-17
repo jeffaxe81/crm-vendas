@@ -69,7 +69,9 @@ describe("read-only tenant backup object reconciliation", () => {
 
   afterAll(async () => {
     if (owner) {
-      await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
+      await owner.$executeRawUnsafe(
+        'TRUNCATE "organizations", "users" CASCADE'
+      );
       await owner.onModuleDestroy();
     }
     await restricted?.onModuleDestroy();
@@ -126,9 +128,7 @@ describe("read-only tenant backup object reconciliation", () => {
     expect(result.findings.some(item => item.backupId === foreign.id)).toBe(
       false
     );
-    expect(result.scannedFilesystemBytes).toBe(
-      String(60 + 20 + 2 * 36)
-    );
+    expect(result.scannedFilesystemBytes).toBe(String(60 + 20 + 2 * 36));
     // Reconciliation is strictly read-only and does not remove objects.
     expect(await store.read(matching.id)).toEqual(Buffer.alloc(60));
     expect(await store.read(mismatch.id)).toEqual(Buffer.alloc(20));
