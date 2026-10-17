@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
 import { useEffect, useState, type FormEvent } from "react";
 import { apiRequest } from "../../lib/api-client";
 
@@ -28,6 +34,7 @@ export function NeoCommunicationSettingsView({
 }) {
   const [settings, setSettings] = useState<NeoSettings>(defaultNeoSettings);
   const [loading, setLoading] = useState(true);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -58,14 +65,17 @@ export function NeoCommunicationSettingsView({
     setError("");
     setNotice("");
     setBusy(true);
+    if (!saveFeedback.start()) return;
     try {
       await apiRequest("/integrations/neo-communication", {
         accessToken,
         method: "PUT",
         body: settings,
       });
+      saveFeedback.saved();
       setNotice("Configuração NEO salva para esta organização.");
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -164,12 +174,19 @@ export function NeoCommunicationSettingsView({
                 }
               />
             </label>
-            <button className="button" type="submit" disabled={busy}>
-              Salvar configuração
-            </button>
+            <SaveButton
+              type="submit"
+              disabled={busy}
+              status={saveFeedback.status}
+              label="Salvar configuração"
+            />
           </fieldset>
         </form>
       )}
+      <SaveNotice
+        status={saveFeedback.status}
+        label="Configuração NEO salva."
+      />
       {!canManage ? (
         <p>Seu perfil possui acesso de leitura à configuração.</p>
       ) : null}

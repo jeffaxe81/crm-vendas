@@ -1,4 +1,10 @@
 "use client";
+
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
 import { useEffect, useState } from "react";
 import {
   defaultBranding,
@@ -17,6 +23,7 @@ export function BrandingEditor({
   loading: boolean;
 }) {
   const [draft, setDraft] = useState(branding);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -55,10 +62,13 @@ export function BrandingEditor({
     setBusy(true);
     setError("");
     setMessage("");
+    if (!saveFeedback.start()) return;
     try {
       setDraft(await save(draft));
+      saveFeedback.saved();
       setMessage("Identidade visual salva para esta empresa.");
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -77,6 +87,10 @@ export function BrandingEditor({
       </p>
       {error ? <p role="alert">{error}</p> : null}
       {message ? <p role="status">{message}</p> : null}
+      <SaveNotice
+        status={saveFeedback.status}
+        label="Identidade visual salva."
+      />
       <fieldset disabled={busy || loading}>
         <legend>White-label</legend>
         <label>
@@ -141,9 +155,12 @@ export function BrandingEditor({
         >
           Restaurar identidade padrão
         </button>
-        <button type="button" onClick={() => void submit()}>
-          Salvar identidade visual
-        </button>
+        <SaveButton
+          type="button"
+          onClick={() => void submit()}
+          status={saveFeedback.status}
+          label="Salvar identidade visual"
+        />
       </fieldset>
     </section>
   );
