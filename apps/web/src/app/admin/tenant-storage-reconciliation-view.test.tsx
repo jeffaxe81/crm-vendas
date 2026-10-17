@@ -114,7 +114,7 @@ it("shows unavailable storage without claiming that files were inspected", async
   ).toBeInTheDocument();
 });
 
-it("loads later pages on demand and accumulates only this tenant's findings", async () => {
+it("accumulates tenant findings across manual pages", async () => {
   const cursor = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
   const first = {
     ...report,
@@ -149,8 +149,9 @@ it("loads later pages on demand and accumulates only this tenant's findings", as
   fireEvent.click(
     screen.getByRole("button", { name: "Conferir arquivos desta empresa" })
   );
-  expect(await screen.findByRole("button", { name: "Conferir próximo lote" }))
-    .toBeInTheDocument();
+  expect(
+    await screen.findByRole("button", { name: "Conferir próximo lote" })
+  ).toBeInTheDocument();
   fireEvent.click(
     screen.getByRole("button", { name: "Conferir próximo lote" })
   );
@@ -161,8 +162,9 @@ it("loads later pages on demand and accumulates only this tenant's findings", as
   expect(
     await screen.findByText(/Todos os lotes disponíveis foram conferidos/)
   ).toBeInTheDocument();
-  expect(screen.queryByRole("button", { name: "Conferir próximo lote" }))
-    .not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: "Conferir próximo lote" })
+  ).not.toBeInTheDocument();
   const summary = screen.getByText(/Arquivos conferidos:/).textContent;
   expect(summary).toContain("53 de 53");
   expect(summary).toContain("Correspondências: 51");
