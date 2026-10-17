@@ -14,6 +14,7 @@ import {
 } from "@axes/contracts";
 import { useEffect, useState } from "react";
 import { apiRequest } from "../../lib/api-client";
+import { FloatingTourPanel } from "./floating-tour-panel";
 
 const explanations: Record<WorkspaceSection, string> = {
   home: "Acompanhe seus atalhos, atividades do dia e indicadores mais relevantes.",
@@ -266,12 +267,7 @@ export function FirstAccessExperience({
   const step = steps[tourIndex];
   if (!step) return null;
   return (
-    <aside
-      className="first-access-panel"
-      role="dialog"
-      aria-label="Tour das funcionalidades do CRM"
-      aria-modal="false"
-    >
+    <FloatingTourPanel>
       <p className="first-access-eyebrow">AXE CRM 1.1 · Conheça o sistema</p>
       <SaveNotice status={saveFeedback.status} label="Configuração salva." />
       <h2>{step.label}</h2>
@@ -327,6 +323,6 @@ export function FirstAccessExperience({
         O tour é individual e respeita as permissões do seu perfil. Pode ser
         reaberto em Ajuda.
       </small>
-    </aside>
+    </FloatingTourPanel>
   );
 }

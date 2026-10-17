@@ -1,5 +1,46 @@
-const apiBaseUrl =
+const configuredApiBaseUrl =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001/api/v1";
+
+export const SESSION_UNAUTHORIZED_EVENT = "axes:session-unauthorized";
+
+// Keep local development on one site: refresh cookies are SameSite=Strict.
+// Remote deployments and non-loopback API addresses are never rewritten.
+export function resolveApiBaseUrl(
+  configured: string,
+  browserOrigin?: string
+): string {
+  if (!browserOrigin) return configured;
+  try {
+    const api = new URL(configured);
+    const browser = new URL(browserOrigin);
+    const loopbackHosts = new Set(["localhost", "127.0.0.1", "[::1]"]);
+    if (
+      loopbackHosts.has(api.hostname) &&
+      loopbackHosts.has(browser.hostname)
+    ) {
+      api.hostname = browser.hostname;
+      return api.toString().replace(/\/$/, "");
+    }
+  } catch {
+    // Preserve relative API paths and report invalid URLs through fetch.
+  }
+  return configured;
+}
+
+function apiBaseUrl(): string {
+  return resolveApiBaseUrl(
+    configuredApiBaseUrl,
+    typeof window === "undefined" ? undefined : window.location.origin
+  );
+}
+
+function reportUnauthorized(status: number, accessToken?: string): void {
+  if (status === 401 && accessToken && typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent(SESSION_UNAUTHORIZED_EVENT, { detail: accessToken })
+    );
+  }
+}
 
 type ApiErrorPayload = {
   message?: string | string[];
@@ -78,13 +119,14 @@ export async function apiRequest<T>(
     request.credentials = options.credentials;
   }
 
-  const response = await fetch(`${apiBaseUrl}${path}`, request);
+  const response = await fetch(`${apiBaseUrl()}${path}`, request);
   const payload =
     response.status === 204
       ? undefined
       : await response.json().catch(() => undefined);
 
   if (!response.ok) {
+    reportUnauthorized(response.status, options.accessToken);
     throw new ApiError(errorMessage(payload, response.status), response.status);
   }
 
@@ -107,7 +149,7 @@ export async function downloadApiFile(
   accessToken: string,
   filename: string
 ): Promise<void> {
-  const response = await fetch(`${apiBaseUrl}${path}`, {
+  const response = await fetch(`${apiBaseUrl()}${path}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "x-request-id": createRequestId(),
@@ -115,6 +157,7 @@ export async function downloadApiFile(
     cache: "no-store",
   });
   if (!response.ok) {
+    reportUnauthorized(response.status, accessToken);
     const payload = await response.json().catch(() => undefined);
     throw new ApiError(errorMessage(payload, response.status), response.status);
   }

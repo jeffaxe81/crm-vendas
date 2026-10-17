@@ -2681,6 +2681,37 @@ textarea {
   max-width: 38px;
 }
 
+/* Movable, non-modal tour; drag is limited to its dedicated handle. */
+.floating-tour-handle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--crm-border, #d5dce7);
+  border-radius: 8px;
+  background: #eef5fc;
+  color: #12487c;
+  font: inherit;
+  font-weight: 600;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.floating-tour-handle:active {
+  cursor: grabbing;
+}
+.floating-tour-handle:focus-visible {
+  outline: 3px solid var(--crm-primary, #0b63ae);
+  outline-offset: 2px;
+}
+.floating-tour-help {
+  display: block;
+  margin-top: 6px;
+  color: #42526e;
+}
+
 /* Shared save confirmation: text and icon accompany every color state. */
 button.save-feedback-button[data-save-status="saving"] {
   background: #52657a;
