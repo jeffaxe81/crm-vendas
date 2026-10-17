@@ -99,12 +99,6 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
-      - name: Show formatting patch on failure
-        if: failure()
-        run: |
-          pnpm exec prettier --write apps/api/src/data-management/tenant-storage-allocation.integration.spec.ts apps/web/src/app/admin/tenant-storage-allocation-view.test.tsx apps/web/src/app/admin/tenant-storage-allocation-view.tsx
-          git diff -- apps/api/src/data-management/tenant-storage-allocation.integration.spec.ts apps/web/src/app/admin/tenant-storage-allocation-view.test.tsx apps/web/src/app/admin/tenant-storage-allocation-view.tsx
-
       - name: Lint source
         run: pnpm lint
 
