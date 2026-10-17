@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
 import { TenantStorageAllocationView } from "./tenant-storage-allocation-view";
@@ -33,13 +39,20 @@ it("requires confirmation for a custom storage allocation", async () => {
         allocatedGiB: 64,
         confirmation: "AJUSTAR COTA",
       });
-      return response({ ...initial, allocatedGiB: 64, usagePercent: 0, alertLevel: "OK" });
+      return response({
+        ...initial,
+        allocatedGiB: 64,
+        usagePercent: 0,
+        alertLevel: "OK",
+      });
     }
     return response(initial);
   });
   vi.stubGlobal("fetch", fetchMock);
   render(<TenantStorageAllocationView accessToken="first-token" />);
-  expect(await screen.findByText(/Backups catalogados:/)).toHaveTextContent("0");
+  expect(await screen.findByText(/Backups catalogados:/)).toHaveTextContent(
+    "0"
+  );
   const submit = screen.getByRole("button", {
     name: "Salvar capacidade da empresa",
   });
@@ -65,7 +78,12 @@ it("reloads isolated capacity on tenant switch", async () => {
       ?.Authorization;
     return response(
       token === "Bearer second-token"
-        ? { ...initial, allocatedGiB: 10, usagePercent: 80, alertLevel: "WARNING" }
+        ? {
+            ...initial,
+            allocatedGiB: 10,
+            usagePercent: 80,
+            alertLevel: "WARNING",
+          }
         : initial
     );
   });
@@ -73,7 +91,9 @@ it("reloads isolated capacity on tenant switch", async () => {
   const { rerender } = render(
     <TenantStorageAllocationView accessToken="first-token" />
   );
-  expect(await screen.findByText(/Backups catalogados:/)).toHaveTextContent("0");
+  expect(await screen.findByText(/Backups catalogados:/)).toHaveTextContent(
+    "0"
+  );
   rerender(<TenantStorageAllocationView accessToken="second-token" />);
   await waitFor(() =>
     expect(
