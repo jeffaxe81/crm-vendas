@@ -1,4 +1,4 @@
--- Opt-in retention policy for terminal webhook delivery attempts, isolated by tenant.
+-- Opt-in retention policy for expired operation previews, isolated by tenant.
 CREATE TABLE public.purge_policies (
   organization_id UUID NOT NULL PRIMARY KEY,
   enabled BOOLEAN NOT NULL DEFAULT false,
