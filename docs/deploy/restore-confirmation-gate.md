@@ -87,11 +87,12 @@ políticas especiais, backup preventivo e fluxo HTTP/UI continuam pendentes.
 
 O gate não deve ser invocado isoladamente como sinal de restauração concluída.
 
-## Executor interno de empresas, contatos e etiquetas
+## Executor interno de empresas, contatos, etiquetas e funis
 
 O executor transacional interno já substitui `Company`, `Contact`,
 `ContactChannel`, `CompanyContact`, `RelationshipEntry`, `Tag`,
-`CompanyTag` e `ContactTag`. Prepara todos os registros antes da primeira
+`CompanyTag`, `ContactTag`, `Pipeline` e `PipelineStage`. Prepara todos os
+registros antes da primeira
 exclusão, verifica referências e identidades sob o lock exclusivo, remove
 primeiro os vínculos empresa/contato-etiqueta e demais dependências, depois
 os registros pais, e reinsere pais antes dos vínculos. Falha de constraint
@@ -102,9 +103,14 @@ usam o mapeamento do esquema revisado.
 Testes PostgreSQL/RLS comprovam ida e volta dos dois tipos de etiquetas,
 exclusão de associações criadas após a cópia, rejeição de referência quebrada,
 rollback de falha tardia de unicidade, preservação de outro tenant e
-preservação de associação Superusuário. Etiquetas estão agora no subconjunto
-interno implementado; modelos como `Pipeline` continuam bloqueados quando
-têm registros no backup ou no estado atual.
+preservação de associação Superusuário. Etiquetas, funis e etapas agora
+integram o subconjunto interno implementado. Testes PostgreSQL/RLS dos
+funis comprovam também ida e volta de etapas (inclusive enum OPEN/WON/LOST),
+rejeição de FK de etapa inválida antes de exclusões, rollback por conflito
+de posição, isolamento entre tenants e remoção de registros novos ausentes
+no backup. Um registro de `Opportunity` no backup ou no estado atual
+continua impedindo o restore integral; não é permitido apagar um funil
+referenciado por oportunidade ainda não suportada.
 
 Este executor rejeita modelos `REPLACE` ainda não suportados quando há
 registros no backup **ou no estado atual** da organização. Usuários globais,
