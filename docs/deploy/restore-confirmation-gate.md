@@ -87,15 +87,24 @@ políticas especiais, backup preventivo e fluxo HTTP/UI continuam pendentes.
 
 O gate não deve ser invocado isoladamente como sinal de restauração concluída.
 
-## Executor interno de empresas e contatos
+## Executor interno de empresas, contatos e etiquetas
 
 O executor transacional interno já substitui `Company`, `Contact`,
-`ContactChannel`, `CompanyContact` e `RelationshipEntry`. Prepara todos os
-registros antes da primeira exclusão, verifica referências e identidades sob
-o lock exclusivo, remove dependências antes dos pais e reinsere os pais antes
-dos vínculos. Falha de constraint reverte a transação inteira. Datas são
-convertidas diretamente pelo PostgreSQL, preservando os seis dígitos de
-microssegundos do snapshot; enums usam o mapeamento do esquema revisado.
+`ContactChannel`, `CompanyContact`, `RelationshipEntry`, `Tag`,
+`CompanyTag` e `ContactTag`. Prepara todos os registros antes da primeira
+exclusão, verifica referências e identidades sob o lock exclusivo, remove
+primeiro os vínculos empresa/contato-etiqueta e demais dependências, depois
+os registros pais, e reinsere pais antes dos vínculos. Falha de constraint
+reverte a transação inteira. Datas são convertidas diretamente pelo
+PostgreSQL, preservando seis dígitos de microssegundos do snapshot; enums
+usam o mapeamento do esquema revisado.
+
+Testes PostgreSQL/RLS comprovam ida e volta dos dois tipos de etiquetas,
+exclusão de associações criadas após a cópia, rejeição de referência quebrada,
+rollback de falha tardia de unicidade, preservação de outro tenant e
+preservação de associação Superusuário. Etiquetas estão agora no subconjunto
+interno implementado; modelos como `Pipeline` continuam bloqueados quando
+têm registros no backup ou no estado atual.
 
 Este executor rejeita modelos `REPLACE` ainda não suportados quando há
 registros no backup **ou no estado atual** da organização. Usuários globais,
