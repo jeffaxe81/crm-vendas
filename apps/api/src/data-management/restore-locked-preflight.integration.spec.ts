@@ -124,6 +124,65 @@ describe("restore locked preflight", () => {
     expect(result.currentCounts.Company).toBe(1);
   });
 
+  it("blocks restore when an unsupported model gained live data", async () => {
+    const { organization, verified } = await fixture();
+    const tag = await owner.tag.create({
+      data: {
+        organizationId: organization.id,
+        name: "Do not discard",
+        normalizedName: "do not discard",
+      },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx =>
+          preflightRestoreExecution(
+            tx,
+            organization.id,
+            verified,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+    expect(await owner.tag.findUnique({ where: { id: tag.id } })).not.toBeNull();
+  });
+
+  it("blocks restore when an unsupported model exists only in target", async () => {
+    const { organization, user } = await fixture();
+    const tag = await owner.tag.create({
+      data: {
+        organizationId: organization.id,
+        name: "Historical tag",
+        normalizedName: "historical tag",
+      },
+    });
+    const backup = await backups.create(organization.id, user.id, "MANUAL");
+    const verified = await backups.verify(organization.id, backup.id);
+    await owner.tag.delete({ where: { id: tag.id } });
+
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx =>
+          preflightRestoreExecution(
+            tx,
+            organization.id,
+            verified,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+    expect(
+      await owner.tag.count({ where: { organizationId: organization.id } })
+    ).toBe(0);
+  });
+
   it("fails closed when a referenced live identity changed after backup", async () => {
     const { organization, user, verified } = await fixture();
 
