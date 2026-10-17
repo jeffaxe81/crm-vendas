@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { apiRequest } from "../../lib/api-client";
 
 type PurgePolicy = {
@@ -11,8 +11,6 @@ type PurgePolicy = {
   target: "EXPIRED_OPERATION_PREVIEWS";
   cutoff: string;
 };
-
-const days = [30, 90, 180, 365, 730, 1095, 3650];
 
 export function TenantPurgePolicyView({
   accessToken,
@@ -26,8 +24,10 @@ export function TenantPurgePolicyView({
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
+  const generationRef = useRef(0);
 
   useEffect(() => {
+    const generation = ++generationRef.current;
     let active = true;
     setPolicy(null);
     setEnabled(false);
@@ -35,15 +35,16 @@ export function TenantPurgePolicyView({
     setConfirmation("");
     setError("");
     setNotice("");
+    setBusy(false);
     void apiRequest<PurgePolicy>("/admin/purge/policy", { accessToken })
       .then(result => {
-        if (!active) return;
+        if (!active || generationRef.current !== generation) return;
         setPolicy(result);
         setEnabled(result.enabled);
         setRetentionDays(result.retentionDays);
       })
       .catch(cause => {
-        if (active)
+        if (active && generationRef.current === generation)
           setError(
             cause instanceof Error
               ? cause.message
@@ -52,13 +53,25 @@ export function TenantPurgePolicyView({
       });
     return () => {
       active = false;
+      if (generationRef.current === generation) generationRef.current++;
     };
   }, [accessToken]);
 
+  const validRetention =
+    Number.isInteger(retentionDays) &&
+    retentionDays >= 30 &&
+    retentionDays <= 3650;
+
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!policy || busy || (enabled && confirmation !== "ATIVAR EXPURGO"))
+    if (
+      !policy ||
+      busy ||
+      !validRetention ||
+      (enabled && confirmation !== "ATIVAR EXPURGO")
+    )
       return;
+    const generation = generationRef.current;
     setBusy(true);
     setError("");
     setNotice("");
@@ -72,19 +85,21 @@ export function TenantPurgePolicyView({
           ...(enabled ? { confirmation } : {}),
         },
       });
+      if (generationRef.current !== generation) return;
       setPolicy(result);
       setEnabled(result.enabled);
       setRetentionDays(result.retentionDays);
       setConfirmation("");
       setNotice("Política de expurgo da empresa salva com sucesso.");
     } catch (cause) {
+      if (generationRef.current !== generation) return;
       setError(
         cause instanceof Error
           ? cause.message
           : "Não foi possível salvar o expurgo."
       );
     } finally {
-      setBusy(false);
+      if (generationRef.current === generation) setBusy(false);
     }
   }
 
@@ -128,18 +143,17 @@ export function TenantPurgePolicyView({
             </label>
             <label>
               Prazo de retenção dos registros técnicos
-              <select
+              <input
+                type="number"
+                min={30}
+                max={3650}
+                step={1}
                 value={retentionDays}
                 disabled={busy}
                 onChange={event => setRetentionDays(Number(event.target.value))}
-              >
-                {days.map(value => (
-                  <option value={value} key={value}>
-                    {value} dias
-                  </option>
-                ))}
-              </select>
+              />
             </label>
+            <p>Informe um prazo de 30 a 3.650 dias para este tenant.</p>
             {enabled ? (
               <label>
                 Digite ATIVAR EXPURGO para confirmar
@@ -158,7 +172,11 @@ export function TenantPurgePolicyView({
             </p>
             <button
               type="submit"
-              disabled={busy || (enabled && confirmation !== "ATIVAR EXPURGO")}
+              disabled={
+                busy ||
+                !validRetention ||
+                (enabled && confirmation !== "ATIVAR EXPURGO")
+              }
             >
               Salvar política de expurgo
             </button>
