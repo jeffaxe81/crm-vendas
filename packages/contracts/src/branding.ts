@@ -3,7 +3,7 @@ import { z } from "zod";
 // Inline raster images avoid external tracking and executable SVG/HTML content.
 export const BrandingLogoSchema = z
   .string()
-  .max(87410)
+  .max(349550)
   .refine(value => {
     if (value === "") return true;
     const match = /^data:image\/(png|jpeg);base64,([A-Za-z0-9+/]+={0,2})$/.exec(
@@ -13,7 +13,7 @@ export const BrandingLogoSchema = z
     return match[1] === "png"
       ? match[2]!.startsWith("iVBORw0KGgo")
       : match[2]!.startsWith("/9j/");
-  }, "Use uma imagem PNG ou JPEG de até 64 KB.");
+  }, "Use uma imagem PNG ou JPEG de até 256 KB.");
 export const TenantBrandingSchema = z
   .object({
     logo: BrandingLogoSchema,
