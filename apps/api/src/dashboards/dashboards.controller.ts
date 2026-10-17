@@ -3,6 +3,7 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  Header,
   Inject,
   Query,
   Req,
@@ -26,6 +27,7 @@ export class DashboardsController {
   ) {}
 
   @Get("catalog")
+  @Header("Cache-Control", "private, no-store")
   @RequirePermissions("reports.read")
   readCatalog(
     @Query() query: Record<string, unknown>,
@@ -36,6 +38,7 @@ export class DashboardsController {
   }
 
   @Get("volume")
+  @Header("Cache-Control", "private, no-store")
   @RequirePermissions("reports.read")
   readVolume(
     @Query() query: Record<string, unknown>,
