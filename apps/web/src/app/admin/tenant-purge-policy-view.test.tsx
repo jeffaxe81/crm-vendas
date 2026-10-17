@@ -110,7 +110,8 @@ it("ignores an earlier tenant save after switching to another tenant", async () 
   });
   const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
     if (init?.method === "PUT") return pendingSave;
-    const token = (init?.headers as Record<string, string> | undefined)?.Authorization;
+    const token = (init?.headers as Record<string, string> | undefined)
+      ?.Authorization;
     return response(
       token === "Bearer tenant-b-token"
         ? { ...policy, retentionDays: 365, estimatedRecords: 0 }
@@ -148,14 +149,25 @@ it("ignores an earlier tenant save after switching to another tenant", async () 
       screen.getByText(/Registros técnicos elegíveis no momento/)
     ).toHaveTextContent("0")
   );
-  expect(screen.getByRole("button", { name: "Salvar política de expurgo" })).not.toBeDisabled();
+  expect(
+    screen.getByRole("button", { name: "Salvar política de expurgo" })
+  ).not.toBeDisabled();
 
   await act(async () => {
-    resolveSave(response({ ...policy, enabled: true, retentionDays: 90, estimatedRecords: 99 }));
+    resolveSave(
+      response({
+        ...policy,
+        enabled: true,
+        retentionDays: 90,
+        estimatedRecords: 99,
+      })
+    );
     await pendingSave;
   });
 
-  expect(screen.getByLabelText("Prazo de retenção dos registros técnicos")).toHaveValue(365);
+  expect(
+    screen.getByLabelText("Prazo de retenção dos registros técnicos")
+  ).toHaveValue(365);
   expect(
     screen.getByRole("checkbox", {
       name: /Ativar expurgo automático somente nesta empresa/,
@@ -189,9 +201,13 @@ it("accepts a custom 45-day retention instead of fixed preset choices", async ()
     screen.getByLabelText("Prazo de retenção dos registros técnicos"),
     { target: { value: "45" } }
   );
-  fireEvent.click(screen.getByRole("button", { name: "Salvar política de expurgo" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Salvar política de expurgo" })
+  );
   expect(
     await screen.findByText("Política de expurgo da empresa salva com sucesso.")
   ).toBeInTheDocument();
-  expect(fetchMock.mock.calls.filter(([, options]) => options?.method === "PUT")).toHaveLength(1);
+  expect(
+    fetchMock.mock.calls.filter(([, options]) => options?.method === "PUT")
+  ).toHaveLength(1);
 });
