@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
 import { useEffect, useState, type FormEvent } from "react";
 import {
   BackupRecordSchema,
@@ -70,6 +76,7 @@ export function BackupAdministrationView({
   const [schedule, setSchedule] = useState<Schedule>(defaults);
   const [configured, setConfigured] = useState(false);
   const [loading, setLoading] = useState(true);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -176,6 +183,7 @@ export function BackupAdministrationView({
     setBusy(true);
     setError("");
     setNotice("");
+    if (!saveFeedback.start()) return;
     try {
       const { nextRunAt: _nextRunAt, ...payload } = schedule;
       const saved = await apiRequest<Schedule>("/admin/backups/schedule", {
@@ -183,9 +191,11 @@ export function BackupAdministrationView({
         method: "PUT",
         body: payload,
       });
+      saveFeedback.saved();
       setSchedule(saved);
       setNotice("Agendamento salvo com auditoria.");
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error ? cause.message : "Falha ao salvar agendamento."
       );
@@ -439,12 +449,13 @@ export function BackupAdministrationView({
             </select>
           </label>
           <p>Próxima execução: {date(schedule.nextRunAt)}</p>
-          <button
+          <SaveButton
             type="submit"
             disabled={busy || (schedule.enabled && !configured)}
-          >
-            Salvar agendamento
-          </button>
+            status={saveFeedback.status}
+            label="Salvar agendamento"
+          />
+          <SaveNotice status={saveFeedback.status} label="Agendamento salvo." />
         </form>
       </section>
 

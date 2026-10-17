@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
+import {
   OnboardingStateSchema,
   QuickSetupStateSchema,
   availableWorkspaceDestinations,
@@ -38,6 +44,7 @@ export function QuickSetupExperience({
 }: Props) {
   const [phase, setPhase] = useState<Phase>("loading");
   const [state, setState] = useState<QuickSetupState | null>(null);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const token = session.accessToken;
@@ -110,6 +117,7 @@ export function QuickSetupExperience({
     setBusy(true);
     setError("");
 
+    if (!saveFeedback.start()) return;
     try {
       const updated = QuickSetupStateSchema.parse(
         await apiRequest<unknown>("/me/quick-setup/progress", {
@@ -121,8 +129,10 @@ export function QuickSetupExperience({
           },
         })
       );
+      saveFeedback.saved();
       setState(updated);
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error
           ? cause.message
@@ -196,6 +206,10 @@ export function QuickSetupExperience({
           AXE CRM 1.2 · Configuração rápida
         </p>
         <h2>Configuração concluída</h2>
+        <SaveNotice
+          status={saveFeedback.status}
+          label="Configuração concluída e salva."
+        />
         <p>
           Perfil {session.membership.role}. O progresso desta organização e
           usuário está concluído.
@@ -253,19 +267,20 @@ export function QuickSetupExperience({
         </button>
       ) : null}
 
+      <SaveNotice status={saveFeedback.status} label="Etapa salva." />
       {error ? <p role="alert">{error}</p> : null}
 
       <div className="first-access-actions">
         <button type="button" onClick={() => setPhase("idle")}>
           Fechar
         </button>
-        <button
+        <SaveButton
           type="button"
           disabled={busy}
           onClick={() => void completeCurrentStep()}
-        >
-          {busy ? "Salvando..." : `Concluir etapa ${currentStep.title}`}
-        </button>
+          status={saveFeedback.status}
+          label={`Concluir etapa ${currentStep.title}`}
+        />
       </div>
       <small>
         O progresso é salvo separadamente das alterações de negócio e pode ser

@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  SaveButton,
+  SaveNotice,
+  useSaveFeedback,
+} from "../../components/save-feedback";
+
+import {
   OnboardingStateSchema,
   availableWorkspaceDestinations,
   type AuthSessionResponse,
@@ -75,6 +81,7 @@ export function FirstAccessExperience({
     session.organization.name
   );
   const [tourIndex, setTourIndex] = useState(0);
+  const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const steps = availableWorkspaceDestinations(
@@ -124,6 +131,7 @@ export function FirstAccessExperience({
     if (busy) return;
     setBusy(true);
     setError("");
+    if (!saveFeedback.start()) return;
     try {
       const next = stage === 4 ? 4 : stage + 1;
       const updated = await apiRequest<unknown>("/me/onboarding/organization", {
@@ -136,6 +144,7 @@ export function FirstAccessExperience({
         },
       });
       const value = OnboardingStateSchema.shape.organization.parse(updated);
+      saveFeedback.saved();
       setOrganizationName(value.name);
       if (stage === 1) onOrganizationNameChange(value.name);
       setStage(value.step);
@@ -145,6 +154,7 @@ export function FirstAccessExperience({
         onNavigate("home");
       }
     } catch (cause) {
+      saveFeedback.failed();
       setError(
         cause instanceof Error ? cause.message : "Falha ao salvar etapa."
       );
@@ -229,21 +239,22 @@ export function FirstAccessExperience({
             Abrir {steps.find(item => item.id === destination)?.label}
           </button>
         ) : null}
+        <SaveNotice status={saveFeedback.status} label="Etapa salva." />
         {error ? <p role="alert">{error}</p> : null}
         <div className="first-access-actions">
-          <button
+          <SaveButton
             type="button"
             onClick={() => void advanceWizard()}
             disabled={
               busy || (stage === 1 && organizationName.trim().length < 2)
             }
-          >
-            {busy
-              ? "Salvando..."
-              : stage === 4
+            status={saveFeedback.status}
+            label={
+              stage === 4
                 ? "Concluir configuração e iniciar tour"
-                : "Salvar e continuar"}
-          </button>
+                : "Salvar e continuar"
+            }
+          />
         </div>
         <small>
           O progresso é salvo por empresa. Você pode continuar no próximo
@@ -258,6 +269,7 @@ export function FirstAccessExperience({
   return (
     <FloatingTourPanel>
       <p className="first-access-eyebrow">AXE CRM 1.1 · Conheça o sistema</p>
+      <SaveNotice status={saveFeedback.status} label="Configuração salva." />
       <h2>{step.label}</h2>
       <p>
         Passo {tourIndex + 1} de {steps.length}

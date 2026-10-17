@@ -48,9 +48,9 @@ describe("invalid authenticated session", () => {
         apiRequest("/me/onboarding", { accessToken: "expired" })
       ).rejects.toMatchObject({ status: 401 });
       expect(listener).toHaveBeenCalledOnce();
-      expect((listener.mock.calls[0][0] as CustomEvent<string>).detail).toBe(
-        "expired"
-      );
+      expect(
+        (listener.mock.calls[0]?.[0] as CustomEvent<string> | undefined)?.detail
+      ).toBe("expired");
       expect(fetchMock).toHaveBeenCalledOnce();
     } finally {
       window.removeEventListener(SESSION_UNAUTHORIZED_EVENT, listener);

@@ -23,7 +23,7 @@ type WorkspaceState = {
   saving: boolean;
   error: string;
   message: string;
-  save: () => Promise<void>;
+  save: () => Promise<boolean>;
   restoreDefaults: () => void;
 };
 const Context = createContext<WorkspaceState | null>(null);
@@ -88,7 +88,7 @@ export function WorkspaceProvider({
     session.permissions,
   ]);
   async function save() {
-    if (saving || loading) return;
+    if (saving || loading) return false;
     const current = generation.current;
     setSaving(true);
     setError("");
@@ -110,6 +110,7 @@ export function WorkspaceProvider({
         setSaved(value);
         setDraft(value);
         setMessage("Preferências salvas para este usuário e organização.");
+        return true;
       }
     } catch (cause) {
       if (generation.current === current)
@@ -119,6 +120,7 @@ export function WorkspaceProvider({
     } finally {
       if (generation.current === current) setSaving(false);
     }
+    return false;
   }
   return (
     <Context.Provider
