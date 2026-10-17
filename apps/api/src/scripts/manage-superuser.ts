@@ -81,8 +81,9 @@ async function main() {
       throw new Error("Confirmação obrigatória.");
     }
     if (!input.organizationSlug) throw new Error("Empresa obrigatória.");
+    const slug = input.organizationSlug.toLowerCase();
     const existingOrganization = await prisma.organization.findUnique({
-      where: { slug: input.organizationSlug.toLowerCase() },
+      where: { slug },
     });
     if (existingOrganization && !existingOrganization.isActive) {
       throw new Error("Empresa inativa: não será reativada automaticamente.");
@@ -97,8 +98,10 @@ async function main() {
           "Empresa inexistente. Autorize sua criação e informe o nome para continuar."
         );
       }
-      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(input.organizationSlug.toLowerCase())) {
-        throw new Error("Slug da nova empresa deve conter letras, números e hífens.");
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+        throw new Error(
+          "Slug da nova empresa deve conter letras, números e hífens."
+        );
       }
     }
     if (input.action === "list") {
@@ -176,7 +179,7 @@ async function main() {
         (await tx.organization.create({
           data: {
             name: input.organizationName!,
-            slug: input.organizationSlug!.toLowerCase(),
+            slug,
             onboardingOwnerId: user.id,
           },
         }));
