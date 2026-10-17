@@ -140,7 +140,7 @@ it("loads later pages on demand and accumulates only this tenant's findings", as
       },
     ],
   };
-  const fetchMock = vi.fn(async () =>
+  const fetchMock = vi.fn(async (_url: string) =>
     response(fetchMock.mock.calls.length === 1 ? first : second)
   );
   vi.stubGlobal("fetch", fetchMock);
