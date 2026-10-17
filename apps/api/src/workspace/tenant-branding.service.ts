@@ -45,7 +45,7 @@ export class TenantBrandingService {
     const parsed = TenantBrandingSchema.safeParse(body);
     if (!parsed.success)
       throw new BadRequestException(
-        "Logo ou cores inválidos. Use PNG/JPEG de até 64 KB e cores hexadecimais."
+        "Logo ou cores inválidos. Use PNG/JPEG de até 256 KB e cores hexadecimais."
       );
     await this.prisma.withTenant(actor.organizationId, async tx => {
       await tx.organization.update({
