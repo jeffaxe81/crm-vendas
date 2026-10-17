@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
 import { TenantPurgePolicyView } from "./tenant-purge-policy-view";
@@ -40,8 +46,12 @@ it("keeps purge disabled until explicit confirmation and saves only current tena
   vi.stubGlobal("fetch", fetchMock);
   render(<TenantPurgePolicyView accessToken="tenant-a-token" />);
 
-  expect(await screen.findByText(/Registros técnicos elegíveis no momento/)).toHaveTextContent("3");
-  const save = screen.getByRole("button", { name: "Salvar política de expurgo" });
+  expect(
+    await screen.findByText(/Registros técnicos elegíveis no momento/)
+  ).toHaveTextContent("3");
+  const save = screen.getByRole("button", {
+    name: "Salvar política de expurgo",
+  });
   const checkbox = screen.getByRole("checkbox", {
     name: /Ativar expurgo automático somente nesta empresa/,
   });
@@ -60,7 +70,9 @@ it("keeps purge disabled until explicit confirmation and saves only current tena
   expect(
     await screen.findByText("Política de expurgo da empresa salva com sucesso.")
   ).toBeInTheDocument();
-  expect(fetchMock.mock.calls.filter(([, options]) => options?.method === "PUT")).toHaveLength(1);
+  expect(
+    fetchMock.mock.calls.filter(([, options]) => options?.method === "PUT")
+  ).toHaveLength(1);
 });
 
 it("switches tenant policy when credential changes without leaking previous configuration", async () => {
@@ -76,10 +88,14 @@ it("switches tenant policy when credential changes without leaking previous conf
   const { rerender } = render(
     <TenantPurgePolicyView accessToken="tenant-a-token" />
   );
-  expect(await screen.findByText(/Registros técnicos elegíveis no momento/)).toHaveTextContent("3");
+  expect(
+    await screen.findByText(/Registros técnicos elegíveis no momento/)
+  ).toHaveTextContent("3");
   rerender(<TenantPurgePolicyView accessToken="tenant-b-token" />);
   await waitFor(() =>
-    expect(screen.getByText(/Registros técnicos elegíveis no momento/)).toHaveTextContent("0")
+    expect(
+      screen.getByText(/Registros técnicos elegíveis no momento/)
+    ).toHaveTextContent("0")
   );
   expect(
     screen.getByLabelText("Prazo de retenção dos registros técnicos")
