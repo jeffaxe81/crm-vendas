@@ -43,7 +43,6 @@ export function unsupportedRestoreModels(
     .sort();
 }
 
-
 function fail(code: string): never {
   throw new BackupError(code);
 }
