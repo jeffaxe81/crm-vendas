@@ -148,10 +148,12 @@ describe("restore locked preflight", () => {
       )
     ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
 
-    expect(await owner.tag.findUnique({ where: { id: tag.id } })).not.toBeNull();
+    expect(
+      await owner.tag.findUnique({ where: { id: tag.id } })
+    ).not.toBeNull();
   });
 
-  it("blocks restore when an unsupported model exists only in target", async () => {
+  it("blocks unsupported rows existing only in target", async () => {
     const { organization, user } = await fixture();
     const tag = await owner.tag.create({
       data: {
