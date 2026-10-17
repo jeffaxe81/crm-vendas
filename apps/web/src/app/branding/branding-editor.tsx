@@ -36,9 +36,9 @@ export function BrandingEditor({
     setMessage("");
     if (
       !["image/png", "image/jpeg"].includes(file.type) ||
-      file.size > 64 * 1024
+      file.size > 256 * 1024
     ) {
-      setError("Escolha uma imagem PNG ou JPEG de até 64 KB.");
+      setError("Escolha uma imagem PNG ou JPEG de até 256 KB.");
       return;
     }
     setBusy(true);
@@ -52,6 +52,9 @@ export function BrandingEditor({
       const parsed = TenantBrandingSchema.safeParse({ ...draft, logo });
       if (!parsed.success) throw Error("Imagem inválida. Use PNG ou JPEG.");
       setDraft(parsed.data);
+      const saved = await save(parsed.data);
+      setDraft(saved);
+      setMessage("Logo enviada e salva para esta empresa.");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Erro ao ler logo.");
     } finally {
@@ -93,7 +96,7 @@ export function BrandingEditor({
       <fieldset disabled={busy || loading}>
         <legend>White-label</legend>
         <label>
-          Logo (PNG ou JPEG, até 64 KB)
+          Logo (PNG ou JPEG, até 256 KB)
           <input
             type="file"
             accept="image/png,image/jpeg"
@@ -142,7 +145,7 @@ export function BrandingEditor({
           )}
           <span className="branding-preview__primary">Cor principal</span>
         </div>
-        <p>A prévia só será aplicada à empresa depois de salvar.</p>
+        <p>Ao escolher uma logo, ela é salva automaticamente. Para alterar as cores, clique em Salvar identidade visual.</p>
         <button
           type="button"
           onClick={() => {
