@@ -55,6 +55,18 @@ O executor deverá repeti-la **sob lock exclusivo**, validar todas as políticas
 de modelos preservados, possíveis conflitos de unicidade e referências externas,
 e somente então aplicar a restauração com rollback integral.
 
+## Bloqueio antecipado de políticas não suportadas
+
+Antes de consumir a confirmação de uso único, `preflightRestoreExecution`
+recalcula, sob o lock de manutenção, as contagens do estado atual e compara
+com o manifesto autenticado do backup. Caso algum modelo `REPLACE` ainda não
+implementado pelo executor contenha registros no destino **ou** na cópia, falha
+com `RESTORE_POLICY_UNSUPPORTED`. A confirmação continua disponível e os
+dados não são alterados. Testes PostgreSQL/RLS cobrem ambos os sentidos.
+
+Isso é uma proteção adicional, não autorização para executar restauração:
+políticas especiais, backup preventivo e fluxo HTTP/UI continuam pendentes.
+
 ## Faltam antes de expor um botão RESTAURAR
 
 1. Implementar e testar o restaurador de todos os modelos exportáveis e as
