@@ -1229,5 +1229,10 @@
   "Empresas ativas": "Empresas ativas",
   "Contatos ativos": "Contatos ativos",
   "Oportunidades ativas": "Oportunidades ativas",
-  "Atividades ativas": "Atividades ativas"
+  "Atividades ativas": "Atividades ativas",
+  "Exportar CSV de indicadores": "Exportar CSV de indicadores",
+  "Comparação com a última consulta da sessão": "Comparação com a última consulta da sessão",
+  "Variação desde a consulta anterior": "Variação desde a consulta anterior",
+  "Variação total:": "Variação total:",
+  "Comparação apenas entre consultas desta sessão; não constitui série histórica.": "Comparação apenas entre consultas desta sessão; não constitui série histórica."
 }

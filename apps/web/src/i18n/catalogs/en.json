@@ -1229,5 +1229,10 @@
   "Empresas ativas": "Active companies",
   "Contatos ativos": "Active contacts",
   "Oportunidades ativas": "Active opportunities",
-  "Atividades ativas": "Active activities"
+  "Atividades ativas": "Active activities",
+  "Exportar CSV de indicadores": "Export metrics CSV",
+  "Comparação com a última consulta da sessão": "Comparison with the previous query in this session",
+  "Variação desde a consulta anterior": "Change since previous query",
+  "Variação total:": "Total change:",
+  "Comparação apenas entre consultas desta sessão; não constitui série histórica.": "Comparison only between queries in this session; this is not a historical time series."
 }
