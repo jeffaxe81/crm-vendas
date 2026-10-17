@@ -30,6 +30,9 @@ Registro central dos incidentes relatados pelo responsável, problemas descritos
 | CRM-P016 | [Diagnósticos de deploy com falsos positivos](#crm-p016)                          | Correções presentes no histórico; não substituem aceite real.                                         |
 | CRM-P017 | [Ambiente de desenvolvimento sem pré-requisitos para testes integrais](#crm-p017) | Limitação registrada; nenhuma nova execução autorizada agora.                                         |
 | CRM-P018 | [Outras regressões e correções técnicas ao longo do projeto](#crm-p018)           | Inventariadas por commit; validação operacional não presumida.                                        |
+| CRM-P019 | [Configuração Rápida com autenticação rejeitada](#crm-p019)                       | Correção documentada; homologação do servidor pendente.                                               |
+| CRM-P020 | [Mensagens de sucesso duplicadas](#crm-p020)                                      | Correção documentada; homologação do servidor pendente.                                               |
+| CRM-P021 | [Painel relatado como fixo após entrega do tour movível](#crm-p021)               | Correção documentada; homologação do servidor pendente.                                               |
 
 <a id="crm-p001"></a>
 
@@ -228,6 +231,30 @@ Registro central dos incidentes relatados pelo responsável, problemas descritos
 - **Causa/evidência:** As causas detalhadas variam e devem ser consultadas no diff e na descrição de cada commit; o título sozinho não comprova incidente no servidor.
 - **Tratamento e prevenção:** Consultar o índice completo de commits de correção, que preserva os títulos originais e links para evidência. Evoluir cada entrada relevante para ficha detalhada ao confirmar reprodução/impacto.
 - **Referências:** [Histórico de correções](HISTORICO_CORRECOES.md), incluindo 645b050, cc72041, 0464e16, 841d160, ab45d1e e c3c452f.
+
+<a id="crm-p019"></a>
+
+## CRM-P019 — Configuração Rápida com autenticação rejeitada
+
+- **Data:** 16/10/2026.
+- **Sintoma/evidência:** Log de 16/10 mostra onboarding e outras rotas com 401, health 200 e CORS autorizado. O front não renovava a sessão durante uso e mantinha a área autenticada. Front 127.0.0.1 e API localhost também afetam o cookie SameSite.
+- **Tratamento e limites:** PR #222 integrada: renovação antecipada, preservação de tenant e retorno ao login. Causa exata da rejeição do token não determinada só pelo log; homologação do servidor pendente.
+
+<a id="crm-p020"></a>
+
+## CRM-P020 — Mensagens de sucesso duplicadas
+
+- **Data:** 16/10/2026.
+- **Sintoma/evidência:** Regressão dos salvamentos encontrou confirmações duplicadas em preferência de e-mail e texto de branding sem contexto de empresa.
+- **Tratamento e limites:** PR #225 integrada: confirmação única nos dois painéis. Regressão final daquela entrega: 610/610.
+
+<a id="crm-p021"></a>
+
+## CRM-P021 — Painel relatado como fixo após entrega do tour movível
+
+- **Data:** 16/10/2026.
+- **Sintoma/evidência:** Responsável informou que o painel não se movia após atualização. A primeira versão só atendia ao tour das funcionalidades e dependia de setPointerCapture no cabeçalho; não havia controles explícitos nem portal. Sem acesso ao navegador do responsável, não se atribui a ocorrência a uma causa única confirmada.
+- **Tratamento e limites:** Correção estende o painel ao wizard inicial e à Configuração Rápida; portal no body, acompanhamento de pointer/mouse/touch na janela, fallback de mouse, setas e centralizar. Proteção temporária sobre iframes durante o arraste. Progresso e controles da API preservados. Validação automatizada no PR da correção; homologação visual no servidor pendente.
 
 ## Registro de novos problemas
 
