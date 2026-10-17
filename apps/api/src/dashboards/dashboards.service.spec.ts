@@ -1,3 +1,5 @@
+import { jest } from "@jest/globals";
+
 import { PrismaService } from "../database/prisma.service";
 import { DashboardsService } from "./dashboards.service";
 
