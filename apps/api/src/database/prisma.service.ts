@@ -11,6 +11,20 @@ type TenantTransactionOptions = {
   isolationLevel?: Prisma.TransactionIsolationLevel;
 };
 
+/** Validate tenant identity before any database transaction or lock. */
+export function assertValidTenantContext(
+  organizationId: unknown
+): asserts organizationId is string {
+  if (
+    typeof organizationId !== "string" ||
+    organizationId.length === 0 ||
+    organizationId.trim() !== organizationId ||
+    /[\u0000-\u001f\u007f]/.test(organizationId)
+  ) {
+    throw new Error("INVALID_TENANT_CONTEXT");
+  }
+}
+
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleDestroy {
   private readonly lockConnectionString: string;
@@ -49,6 +63,7 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
     callback: (tenant: Prisma.TransactionClient) => Promise<T>,
     options?: TenantTransactionOptions
   ): Promise<T> {
+    assertValidTenantContext(organizationId);
     return this.$transaction(async tenant => {
       await tenant.$executeRaw`
         SELECT set_config('app.current_organization_id', ${organizationId}, true)
@@ -70,6 +85,7 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
     callback: (tenant: Prisma.TransactionClient) => Promise<T>,
     options?: TenantTransactionOptions
   ): Promise<T> {
+    assertValidTenantContext(organizationId);
     // Match Prisma's interactive-transaction defaults and keep the lock wait
     // inside the same timeout budget as the maintenance work.
     const timeout = options?.timeout ?? 5_000;
