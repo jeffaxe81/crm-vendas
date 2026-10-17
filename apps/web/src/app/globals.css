@@ -2789,3 +2789,31 @@ button.save-feedback-button[data-save-status="error"] {
   outline: 3px solid #0b63ae;
   outline-offset: 2px;
 }
+
+/* High-contrast primary save action, independent of tenant theme colors. */
+.crm-shell button.save-feedback-button:not(:disabled),
+.crm-shell button.save-feedback-button[data-save-status="idle"],
+.crm-shell button.save-feedback-button[data-save-status="error"] {
+  background: #075bb5;
+  border: 2px solid #064789;
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgb(7 91 181 / 22%);
+}
+.crm-shell button.save-feedback-button:hover:not(:disabled) {
+  background: #064789;
+}
+.crm-shell button.save-feedback-button:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+}
+.crm-shell button.save-feedback-button[data-save-status="success"] {
+  background: #166534;
+  border-color: #14532d;
+  color: #ffffff;
+}
+.crm-shell button.save-feedback-button[data-save-status="saving"] {
+  background: #52657a;
+  border-color: #52657a;
+  color: #ffffff;
+}
