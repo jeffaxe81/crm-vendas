@@ -54,7 +54,8 @@ import { TenantPurgeRuntime } from "./tenant-purge.runtime";
     {
       provide: TenantPurgeRuntime,
       inject: [TenantPurgeService],
-      useFactory: (service: TenantPurgeService) => new TenantPurgeRuntime(service),
+      useFactory: (service: TenantPurgeService) =>
+        new TenantPurgeRuntime(service),
     },
     DataOperationWorker,
     {
