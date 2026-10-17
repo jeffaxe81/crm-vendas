@@ -7,10 +7,8 @@ describe("Dashboard volume", () => {
   const opportunity = { count: jest.fn() };
   const activity = { count: jest.fn() };
   const withTenant = jest.fn(
-    async (
-      _id: string,
-      callback: (tenant: unknown) => Promise<unknown>
-    ) => callback({ company, contact, opportunity, activity })
+    async (_id: string, callback: (tenant: unknown) => Promise<unknown>) =>
+      callback({ company, contact, opportunity, activity })
   );
   const service = new DashboardsService({
     withTenant,
