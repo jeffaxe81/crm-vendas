@@ -21,6 +21,28 @@ const RESTORE_MODELS = [
 ] as const;
 const implemented = new Set<string>(RESTORE_MODELS);
 
+/**
+ * Read-only assessment of currently unsupported full-replacement models.
+ * Inspect both the target and the current tenant: missing target rows do not
+ * make deleting live rows safe. This is NOT permission to execute restore.
+ */
+export function unsupportedRestoreModels(
+  currentCounts: Readonly<Record<string, number>>,
+  targetCounts: Readonly<Record<string, number>>
+): string[] {
+  return TENANT_DATA_REGISTRY.filter(
+    policy =>
+      policy.export !== "EXCLUDE" &&
+      policy.scope === "ORGANIZATION" &&
+      policy.restore === "REPLACE" &&
+      !implemented.has(policy.model) &&
+      ((currentCounts[policy.model] ?? 0) > 0 ||
+        (targetCounts[policy.model] ?? 0) > 0)
+  )
+    .map(policy => policy.model)
+    .sort();
+}
+
 function fail(code: string): never {
   throw new BackupError(code);
 }

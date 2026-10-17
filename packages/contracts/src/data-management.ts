@@ -78,6 +78,8 @@ export const OperationPreviewSchema = z
       .nullable(),
     targetCounts: z.record(z.string(), z.number().int().nonnegative()),
     currentCounts: z.record(z.string(), z.number().int().nonnegative()),
+    // Optional while older authenticated preview responses remain compatible.
+    unsupportedRestoreModels: z.array(z.string().max(80)).optional(),
     createdAt: z.string().datetime(),
     expiresAt: z.string().datetime(),
   })

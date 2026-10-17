@@ -5,6 +5,7 @@ Execute como root: sudo python3 scripts/ativar-backup.py
 Não habilita restauração efetiva, ainda indisponível na API.
 """
 
+import argparse
 import base64
 import os
 from pathlib import Path
@@ -16,8 +17,7 @@ import sys
 import tempfile
 
 BACKUP_DIRECTORY = "/var/lib/axes-crm/backups"
-KEYS = ("BACKUP_DIRECTORY", "BACKUP_ENCRYPTION_KEY")
-SETTING = re.compile(r"^\s*(?:export\s+)?(BACKUP_DIRECTORY|BACKUP_ENCRYPTION_KEY)\s*=(.*)$")
+SETTING = re.compile(r"^\s*(?:export\s+)?(BACKUP_DIRECTORY|BACKUP_ENCRYPTION_KEY|BACKUP_MAX_BYTES)\s*=(.*)$")
 
 
 def read_settings(contents: str) -> dict[str, tuple[int, str]]:
@@ -88,7 +88,7 @@ def check_no_previous_backups() -> None:
         )
 
 
-def configure_env(path: Path, check_existing=check_no_previous_backups) -> bool:
+def configure_env(path: Path, check_existing=check_no_previous_backups, *, max_mib: int | None = None) -> bool:
     """Retorna True apenas quando uma chave nova foi gerada."""
     if path.is_symlink() or not path.is_file():
         raise ValueError("Arquivo .env ausente ou não é um arquivo regular.")
@@ -109,9 +109,13 @@ def configure_env(path: Path, check_existing=check_no_previous_backups) -> bool:
         key = base64.b64encode(secrets.token_bytes(32)).decode("ascii")
     validate_key(key)
 
+    if max_mib is not None and (type(max_mib) is not int or not 1 <= max_mib <= 256):
+        raise ValueError("Limite de backup deve estar entre 1 e 256 MiB.")
     lines = contents.splitlines(keepends=True)
     updates = {"BACKUP_DIRECTORY": BACKUP_DIRECTORY, "BACKUP_ENCRYPTION_KEY": key}
-    for name in KEYS:
+    if max_mib is not None:
+        updates["BACKUP_MAX_BYTES"] = str(max_mib * 1024 * 1024)
+    for name in updates:
         if name in found:
             index, old = found[name]
             if old == updates[name]:
@@ -143,18 +147,26 @@ def configure_env(path: Path, check_existing=check_no_previous_backups) -> bool:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Habilitar backup cifrado com segurança.")
+    parser.add_argument(
+        "--max-mib", type=int, choices=range(1, 257), metavar="1-256",
+        help="Limite em MiB por backup (até 256 MiB); preserva o valor atual se omitido.",
+    )
+    args = parser.parse_args()
     if os.geteuid() != 0:
         print("ERRO: execute com sudo para proteger o arquivo .env.", file=sys.stderr)
         return 1
     root = Path(__file__).resolve().parent.parent
     os.chdir(root)
     try:
-        created = configure_env(root / ".env")
+        created = configure_env(root / ".env", max_mib=args.max_mib)
     except (OSError, ValueError, RuntimeError) as error:
         print(f"ERRO: {error}", file=sys.stderr)
         return 1
     print("SUCESSO: armazenamento de backup configurado no .env privado (0600).")
     print("Chave nova gerada." if created else "Chave existente preservada.")
+    if args.max_mib is not None:
+        print(f"Limite por backup configurado: {args.max_mib} MiB.")
     print("IMPORTANTE: guarde cópia segura da chave fora do servidor; não publique no Git.")
     print("A restauração efetiva não está disponível; a prévia de restore permanece habilitada.")
     return 0

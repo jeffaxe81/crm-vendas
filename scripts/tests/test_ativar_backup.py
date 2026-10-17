@@ -67,6 +67,28 @@ class BackupActivationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "base64"):
             module.configure_env(self.env, lambda: None)
 
+    def test_opt_in_large_backup_limit_preserves_existing_key(self):
+        key = base64.b64encode(b"z" * 32).decode("ascii")
+        self.env.write_text(
+            f"BACKUP_ENCRYPTION_KEY={key}\n"
+            "BACKUP_DIRECTORY=/var/lib/axes-crm/backups\n"
+            "BACKUP_MAX_BYTES=67108864\n"
+        )
+        self.assertFalse(module.configure_env(self.env, max_mib=256))
+        values = module.read_settings(self.env.read_text())
+        self.assertEqual(values["BACKUP_MAX_BYTES"][1], "268435456")
+        self.assertEqual(values["BACKUP_ENCRYPTION_KEY"][1], key)
+        self.assertFalse(module.configure_env(self.env, max_mib=256))
+
+    def test_backup_cap_invalid_values_never_modify_env(self):
+        key = base64.b64encode(b"z" * 32).decode("ascii")
+        self.env.write_text(f"BACKUP_ENCRYPTION_KEY={key}\n")
+        original = self.env.read_bytes()
+        for size in (0, 257, -1):
+            with self.assertRaisesRegex(ValueError, "entre 1 e 256 MiB"):
+                module.configure_env(self.env, max_mib=size)
+            self.assertEqual(self.env.read_bytes(), original)
+
     def test_symlink_to_env_is_rejected(self):
         target = Path(self.temp.name) / "target"
         target.write_text("BACKUP_ENCRYPTION_KEY=\n")

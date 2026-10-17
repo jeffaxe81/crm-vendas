@@ -1212,5 +1212,6 @@
   "Webhook criado. Guarde o segredo de assinatura.": "Webhook created. Save the signing secret.",
   "Webhooks de saída": "Outgoing webhooks",
   "whatsapp": "whatsapp",
-  "WhatsApp": "WhatsApp"
+  "WhatsApp": "WhatsApp",
+  "Modelos ainda não restauráveis:": "Models not yet supported for restoration:"
 }

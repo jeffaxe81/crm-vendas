@@ -9,6 +9,10 @@ na empresa ativa. Administradores comuns e API keys não têm acesso.
 Esta entrega disponibiliza catálogo, fila manual, agenda/retenção, download
 autenticado, prévia verificada e exclusão confirmada de cópias antigas.
 **Restauração efetiva e limpeza de dados NÃO estão habilitadas**.
+A prévia informa modelos com dados presentes na cópia ou no banco atual que
+não são suportados pelo executor transacional parcial. Essa análise é informativa
+e nunca libera a execução de uma restauração destrutiva.
+
 Não interpretar prévia como restore.
 
 ## Exclusão de uma cópia
@@ -52,6 +56,19 @@ O utilitário altera apenas `BACKUP_DIRECTORY` e `BACKUP_ENCRYPTION_KEY` em
 Se precisar criar uma chave, verifica primeiro se o contêiner API não apresenta
 chave ativa ou arquivos anteriores no volume privado. Se não conseguir
 confirmar esse estado, interrompe a operação sem gerar chave nova.
+
+Para ampliar voluntariamente o limite por backup de 64 MiB para até 256 MiB,
+sem substituir a chave AES existente, execute:
+
+```bash
+sudo python3 scripts/ativar-backup.py --max-mib 256
+```
+
+O parâmetro opcional `--max-mib` aceita valores de 1 a 256 e altera apenas
+`BACKUP_MAX_BYTES` além das configurações habituais do armazenamento. Sem
+esse parâmetro, o limite existente no `.env` é preservado. O tamanho máximo
+refere-se à cópia de um tenant, não ao volume total de armazenamento. Verifique
+RAM, espaço em disco e duração dos snapshots antes de aumentar o limite.
 
 Após a configuração, reinicie o serviço API para carregar as variáveis:
 

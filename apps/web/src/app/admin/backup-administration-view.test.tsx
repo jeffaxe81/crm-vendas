@@ -374,3 +374,52 @@ it("keeps polling an accepted deletion after the first refresh fails", async () 
   });
   expect(catalogCalls).toBe(3);
 });
+
+it("shows unsupported restore models but never enables destructive restore", async () => {
+  const preview = {
+    id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+    organizationId: completedBackup.organizationId,
+    actorUserId: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+    kind: "RESTORE",
+    targetBackupId: completedBackup.id,
+    targetChecksum: completedBackup.checksum,
+    currentFingerprint: "f".repeat(64),
+    targetSchemaVersion: 1,
+    targetByteCount: 1024,
+    targetCounts: { Company: 1, Opportunity: 1 },
+    currentCounts: { Company: 2, Opportunity: 3 },
+    unsupportedRestoreModels: ["Opportunity"],
+    createdAt: "2026-10-17T12:00:00.000Z",
+    expiresAt: "2026-10-17T12:05:00.000Z",
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string, init?: RequestInit) => {
+      if (
+        url.endsWith(`/admin/backups/${completedBackup.id}/preview`) &&
+        init?.method === "POST"
+      ) {
+        return jsonResponse(preview);
+      }
+      if (url.endsWith("/operations")) return jsonResponse([]);
+      if (url.endsWith("/schedule")) return jsonResponse(schedule);
+      if (url.endsWith("/admin/backups")) {
+        return jsonResponse({ configured: true, backups: [completedBackup] });
+      }
+      throw Error(`Unexpected endpoint: ${url}`);
+    })
+  );
+  render(<BackupAdministrationView accessToken="synthetic-token" />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Prévia de restauração" })
+  );
+  expect(
+    await screen.findByText(/Modelos ainda não restauráveis:/)
+  ).toHaveTextContent("Opportunity");
+  expect(
+    screen.getByText(/A restauração efetiva ainda está bloqueada/)
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: /confirmar restauração/i })
+  ).not.toBeInTheDocument();
+});
