@@ -125,7 +125,10 @@ export class DataPreviewService {
     const currentFingerprint = snapshotDataFingerprint(current);
     const currentCounts = snapshotCounts(current);
     const targetCounts = verified.manifest.counts;
-    const unsupportedModels = unsupportedRestoreModels(currentCounts, targetCounts);
+    const unsupportedModels = unsupportedRestoreModels(
+      currentCounts,
+      targetCounts
+    );
     const expiresAt = new Date(Date.now() + OPERATION_PREVIEW_TTL_MS);
 
     const row = await this.prisma.withTenant(
