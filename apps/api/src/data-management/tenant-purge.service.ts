@@ -60,6 +60,7 @@ export class TenantPurgeService {
             organizationId: principal.organizationId,
             createdAt: { lt: cutoff },
             status: { in: ["DELIVERED", "FAILED"] },
+            dispatch: { status: { in: ["DELIVERED", "EXHAUSTED"] } },
           },
         })
     );
@@ -148,6 +149,7 @@ export class TenantPurgeService {
           where: {
             organizationId: organization.id,
             status: { in: ["DELIVERED", "FAILED"] },
+            dispatch: { status: { in: ["DELIVERED", "EXHAUSTED"] } },
             createdAt: { lt: cutoff },
           },
           select: { id: true },
@@ -161,6 +163,7 @@ export class TenantPurgeService {
               organizationId: organization.id,
               id: { in: candidates.map(item => item.id) },
               status: { in: ["DELIVERED", "FAILED"] },
+            dispatch: { status: { in: ["DELIVERED", "EXHAUSTED"] } },
               createdAt: { lt: cutoff },
             },
           });
