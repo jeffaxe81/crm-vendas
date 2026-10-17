@@ -188,8 +188,17 @@ describe("backup administration HTTP authorization", () => {
       metadataOnly: true,
       catalogCount: 0,
       checkedCount: 0,
+      nextCursor: null,
       findings: [],
     });
+    await server
+      .get("/api/v1/admin/storage/reconciliation?cursor=other-tenant")
+      .auth(token, { type: "bearer" })
+      .expect(400);
+    await server
+      .get(`/api/v1/admin/storage/reconciliation?cursor=${randomUUID()}`)
+      .auth(token, { type: "bearer" })
+      .expect(400);
     const policy = await server
       .get("/api/v1/admin/purge/policy")
       .auth(token, { type: "bearer" })

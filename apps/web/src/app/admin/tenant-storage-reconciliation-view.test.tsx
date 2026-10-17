@@ -17,6 +17,7 @@ const report = {
   catalogCount: 2,
   checkedCount: 2,
   complete: true,
+  nextCursor: null,
   matchingCount: 1,
   missingCount: 1,
   sizeMismatchCount: 0,
@@ -111,4 +112,62 @@ it("shows unavailable storage without claiming that files were inspected", async
   expect(
     await screen.findByText(/Nenhum arquivo foi verificado/)
   ).toBeInTheDocument();
+});
+
+it("accumulates tenant findings across manual pages", async () => {
+  const cursor = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  const first = {
+    ...report,
+    catalogCount: 53,
+    checkedCount: 50,
+    complete: false,
+    nextCursor: cursor,
+    matchingCount: 49,
+  };
+  const second = {
+    ...report,
+    catalogCount: 53,
+    checkedCount: 3,
+    complete: true,
+    nextCursor: null,
+    matchingCount: 2,
+    findings: [
+      {
+        backupId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        status: "MISSING",
+        catalogBytes: "5",
+        filesystemBytes: null,
+      },
+    ],
+  };
+  const fetchMock = vi.fn(async (_url: string) =>
+    response(fetchMock.mock.calls.length === 1 ? first : second)
+  );
+  vi.stubGlobal("fetch", fetchMock);
+  render(<TenantStorageReconciliationView accessToken="tenant-a" />);
+
+  fireEvent.click(
+    screen.getByRole("button", { name: "Conferir arquivos desta empresa" })
+  );
+  expect(
+    await screen.findByRole("button", { name: "Conferir próximo lote" })
+  ).toBeInTheDocument();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Conferir próximo lote" })
+  );
+  await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+  expect(fetchMock.mock.calls[1]?.[0]).toContain(
+    `/admin/storage/reconciliation?cursor=${cursor}`
+  );
+  expect(
+    await screen.findByText(/Todos os lotes disponíveis foram conferidos/)
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: "Conferir próximo lote" })
+  ).not.toBeInTheDocument();
+  const summary = screen.getByText(/Arquivos conferidos:/).textContent;
+  expect(summary).toContain("53 de 53");
+  expect(summary).toContain("Correspondências: 51");
+  expect(summary).toContain("Ausentes: 2");
+  expect(screen.getAllByText(/Arquivo ausente/)).toHaveLength(2);
 });

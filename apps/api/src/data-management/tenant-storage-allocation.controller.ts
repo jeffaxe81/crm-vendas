@@ -5,6 +5,7 @@ import {
   Header,
   Inject,
   Put,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -39,8 +40,11 @@ export class TenantStorageAllocationController {
 
   @Get("reconciliation")
   @Header("Cache-Control", "no-store")
-  reconcile(@Req() request: AuthenticatedRequest) {
-    return this.reconciliation.scan(this.principal(request));
+  reconcile(
+    @Req() request: AuthenticatedRequest,
+    @Query("cursor") cursor?: string
+  ) {
+    return this.reconciliation.scan(this.principal(request), cursor);
   }
 
   @Put("allocation")
