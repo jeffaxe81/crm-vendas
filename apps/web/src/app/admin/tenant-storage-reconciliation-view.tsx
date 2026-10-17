@@ -60,9 +60,12 @@ export function TenantStorageReconciliationView({
     setError("");
     setReport(null);
     try {
-      const response = await apiRequest<Report>("/admin/storage/reconciliation", {
-        accessToken,
-      });
+      const response = await apiRequest<Report>(
+        "/admin/storage/reconciliation",
+        {
+          accessToken,
+        }
+      );
       if (generationRef.current === generation) setReport(response);
     } catch (cause) {
       if (generationRef.current === generation)
@@ -83,9 +86,9 @@ export function TenantStorageReconciliationView({
     >
       <h2>Conferência dos arquivos de backup</h2>
       <p>
-        Verificação manual e somente leitura de até 50 backups concluídos
-        desta empresa. Compara tamanho físico e catálogo, sem examinar
-        conteúdo ou excluir arquivos.
+        Verificação manual e somente leitura de até 50 backups concluídos desta
+        empresa. Compara tamanho físico e catálogo, sem examinar conteúdo ou
+        excluir arquivos.
       </p>
       <button type="button" onClick={() => void scan()} disabled={busy}>
         {busy ? "Verificando..." : "Conferir arquivos desta empresa"}
@@ -103,9 +106,8 @@ export function TenantStorageReconciliationView({
               Arquivos conferidos: <strong>{report.checkedCount}</strong> de{" "}
               <strong>{report.catalogCount}</strong> backups concluídos.
               Correspondências: <strong>{report.matchingCount}</strong>.
-              Ausentes: <strong>{report.missingCount}</strong>.
-              Tamanhos divergentes:{" "}
-              <strong>{report.sizeMismatchCount}</strong>.
+              Ausentes: <strong>{report.missingCount}</strong>. Tamanhos
+              divergentes: <strong>{report.sizeMismatchCount}</strong>.
               Inacessíveis: <strong>{report.unreadableCount}</strong>.
             </p>
             {!report.complete ? (
