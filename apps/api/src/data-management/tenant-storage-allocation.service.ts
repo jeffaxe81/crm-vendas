@@ -43,7 +43,7 @@ export class TenantStorageAllocationService {
     principal: AuthenticatedPrincipal
   ): Promise<TenantStorageAllocationView> {
     return this.prisma.withTenant(principal.organizationId, async tx => {
-      const [allocation] = await tx.$queryRaw<AllocationRow[]> `
+      const [allocation] = await tx.$queryRaw<AllocationRow[]>`
         SELECT allocation_gib, updated_at
         FROM public.tenant_storage_allocations
         WHERE organization_id = ${principal.organizationId}::uuid
@@ -104,7 +104,7 @@ export class TenantStorageAllocationService {
           hashtextextended(${"tenant-storage:" + principal.organizationId}, 0)
         )
       `;
-      const [previous] = await tx.$queryRaw<AllocationRow[]> `
+      const [previous] = await tx.$queryRaw<AllocationRow[]>`
         SELECT allocation_gib, updated_at
         FROM public.tenant_storage_allocations
         WHERE organization_id = ${principal.organizationId}::uuid
