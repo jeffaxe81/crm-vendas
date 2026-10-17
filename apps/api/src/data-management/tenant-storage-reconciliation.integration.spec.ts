@@ -134,6 +134,55 @@ describe("read-only tenant backup object reconciliation", () => {
     expect(await store.read(mismatch.id)).toEqual(Buffer.alloc(20));
   });
 
+  it("paginates every catalog record in bounded batches without crossing tenants", async () => {
+    const foreign = await catalogBackup(orgB, 10);
+    await owner.backupRecord.createMany({
+      data: Array.from({ length: 53 }, (_, index) => ({
+        organizationId: orgA,
+        reason: "MANUAL" as const,
+        state: "COMPLETED" as const,
+        schemaVersion: 1,
+        checksum: "b".repeat(64),
+        counts: {},
+        completedAt: new Date(Date.now() - index * 1000),
+        byteCount: 10n,
+      })),
+    });
+
+    const first = await service.scan(principal(orgA));
+    expect(first).toMatchObject({
+      catalogCount: 53,
+      checkedCount: 50,
+      complete: false,
+      missingCount: 50,
+    });
+    expect(first.nextCursor).toMatch(/^[a-f0-9-]{36}$/i);
+
+    const second = await service.scan(principal(orgA), first.nextCursor!);
+    expect(second).toMatchObject({
+      catalogCount: 53,
+      checkedCount: 3,
+      complete: true,
+      nextCursor: null,
+      missingCount: 3,
+    });
+    const examined = [...first.findings, ...second.findings].map(
+      finding => finding.backupId
+    );
+    expect(new Set(examined).size).toBe(53);
+    expect(examined).not.toContain(foreign.id);
+
+    await expect(service.scan(principal(orgA), foreign.id)).rejects.toThrow(
+      "Cursor de conferência inválido."
+    );
+    await expect(
+      service.scan(principal(orgA), "../outside")
+    ).rejects.toThrow("Cursor de conferência inválido.");
+    await expect(
+      service.scan(principal(orgA), randomUUID())
+    ).rejects.toThrow("Cursor de conferência inválido.");
+  });
+
   it("does not imply successful inspection when storage is not configured", async () => {
     await catalogBackup(orgA, 123);
     const unavailable = new TenantStorageReconciliationService(
