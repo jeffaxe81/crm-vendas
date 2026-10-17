@@ -31,6 +31,7 @@ const ApiEnvironmentSchema = z
         "APP_DATABASE_URL deve usar PostgreSQL."
       ),
     WEB_ORIGIN: z.string().url().default("http://localhost:3000"),
+    CORS_ORIGINS: z.string().optional(),
     LOG_LEVEL: z
       .enum(["fatal", "error", "warn", "info", "debug", "trace"])
       .default("info"),
@@ -198,4 +199,13 @@ export function parseApiEnvironment(
   input: Record<string, unknown>
 ): ApiEnvironment {
   return ApiEnvironmentSchema.parse(input);
+}
+
+export function buildCorsOrigins(
+  environment: Pick<ApiEnvironment, "WEB_ORIGIN" | "CORS_ORIGINS">
+): string[] {
+  return (environment.CORS_ORIGINS ?? environment.WEB_ORIGIN)
+    .split(",")
+    .map(origin => origin.trim())
+    .filter(origin => origin.length > 0);
 }

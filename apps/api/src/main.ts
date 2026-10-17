@@ -4,7 +4,7 @@ import { NestFactory } from "@nestjs/core";
 import { Logger } from "nestjs-pino";
 
 import { AppModule } from "./app.module";
-import { parseApiEnvironment } from "./config/environment";
+import { buildCorsOrigins, parseApiEnvironment } from "./config/environment";
 import { ApiErrorFilter } from "./errors/api-error.filter";
 
 async function bootstrap() {
@@ -17,7 +17,7 @@ async function bootstrap() {
   app.useGlobalFilters(new ApiErrorFilter());
   app.setGlobalPrefix("api/v1");
   app.enableCors({
-    origin: environment.WEB_ORIGIN,
+    origin: buildCorsOrigins(environment),
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "x-request-id"],
     exposedHeaders: ["x-request-id", "Content-Disposition"],
