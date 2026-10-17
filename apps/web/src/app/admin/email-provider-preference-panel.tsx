@@ -47,7 +47,6 @@ export function EmailProviderPreferencePanel({
   const saveFeedback = useSaveFeedback();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
 
   async function reload() {
     setLoading(true);
@@ -98,7 +97,6 @@ export function EmailProviderPreferencePanel({
     if (!preference || busy || loading) return;
     setBusy(true);
     setError("");
-    setNotice("");
     if (!saveFeedback.start()) return;
     try {
       const data = await apiRequest<Preference>(
@@ -112,7 +110,6 @@ export function EmailProviderPreferencePanel({
       saveFeedback.saved();
       setPreference(data);
       setSelected(data.providerCode);
-      setNotice("Preferência salva. Conta não conectada e envio desativado.");
     } catch (cause) {
       saveFeedback.failed();
       setError(
@@ -141,7 +138,6 @@ export function EmailProviderPreferencePanel({
           </button>
         </p>
       ) : null}
-      {notice ? <p role="status">{notice}</p> : null}
       {preference ? (
         <form onSubmit={event => void save(event)}>
           <label htmlFor="email-provider-choice">Provedor</label>
@@ -175,7 +171,7 @@ export function EmailProviderPreferencePanel({
           />
           <SaveNotice
             status={saveFeedback.status}
-            label="Preferência salva; envio permanece desativado."
+            label="Preferência salva. Conta não conectada e envio desativado."
           />
         </form>
       ) : null}

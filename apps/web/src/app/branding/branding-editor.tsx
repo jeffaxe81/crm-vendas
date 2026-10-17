@@ -66,7 +66,6 @@ export function BrandingEditor({
     try {
       setDraft(await save(draft));
       saveFeedback.saved();
-      setMessage("Identidade visual salva para esta empresa.");
     } catch (cause) {
       saveFeedback.failed();
       setError(
@@ -89,7 +88,7 @@ export function BrandingEditor({
       {message ? <p role="status">{message}</p> : null}
       <SaveNotice
         status={saveFeedback.status}
-        label="Identidade visual salva."
+        label="Identidade visual salva para esta empresa."
       />
       <fieldset disabled={busy || loading}>
         <legend>White-label</legend>
