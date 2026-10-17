@@ -5,12 +5,12 @@ import { PrismaService } from "../database/prisma.service";
 import { PasswordService } from "../auth/password.service";
 
 const Input = z.object({
-  action: z.enum(["grant", "revoke", "password"]),
+  action: z.enum(["list", "grant", "revoke", "password"]),
   organizationSlug: z.string().trim().min(1).max(80),
   email: z.string().trim().email().max(254),
   displayName: z.string().trim().min(1).max(160).optional(),
   password: z.string().min(12).max(1024).optional(),
-  confirm: z.literal("CONFIRMAR"),
+  confirm: z.literal("CONFIRMAR").optional(),
 }).strict();
 
 async function main() {
@@ -19,10 +19,29 @@ async function main() {
   // Administrative database access is required; never use the application's RLS role.
   const prisma = new PrismaService(process.env.DATABASE_URL);
   try {
+    if (input.action !== "list" && input.confirm !== "CONFIRMAR") throw new Error("Confirmação obrigatória.");
     const organization = await prisma.organization.findUnique({
       where: { slug: input.organizationSlug.toLowerCase() },
     });
     if (!organization || !organization.isActive) throw new Error("Empresa inexistente ou inativa.");
+    if (input.action === "list") {
+      const memberships = await prisma.organizationMembership.findMany({
+        where: { organizationId: organization.id },
+        orderBy: { user: { displayName: "asc" } },
+        select: {
+          role: true, isSuperuser: true, isActive: true,
+          user: { select: { email: true, displayName: true, isActive: true } },
+        },
+      });
+      for (const member of memberships) {
+        console.log(JSON.stringify({
+          name: member.user.displayName, email: member.user.email,
+          role: member.role, superuser: member.isSuperuser,
+          active: member.isActive && member.user.isActive,
+        }));
+      }
+      return;
+    }
     const emailNormalized = input.email.toLowerCase();
     const existing = await prisma.user.findUnique({ where: { emailNormalized } });
     if (input.action === "grant" && !existing && (!input.displayName || !input.password))
