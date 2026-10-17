@@ -6,18 +6,23 @@ if ! command -v python3 >/dev/null || ! command -v docker >/dev/null; then
   echo "Requer Python 3 e Docker Compose." >&2; exit 1
 fi
 echo "=== Administração local de Superusuários — CRM ==="
-echo "1) Criar/promover Superusuário na empresa"
-echo "2) Revogar privilégio de Superusuário"
-echo "3) Alterar senha de usuário existente"
-read -r -p "Escolha [1-3]: " selection
+echo "1) Listar usuários da empresa"
+echo "2) Criar/promover Superusuário na empresa"
+echo "3) Revogar privilégio de Superusuário"
+echo "4) Alterar senha de usuário existente"
+read -r -p "Escolha [1-4]: " selection
 case "$selection" in
-  1) action=grant ;;
-  2) action=revoke ;;
-  3) action=password ;;
+  1) action=list ;;
+  2) action=grant ;;
+  3) action=revoke ;;
+  4) action=password ;;
   *) echo "Opção inválida." >&2; exit 2 ;;
 esac
 read -r -p "Slug da empresa: " organization
-read -r -p "E-mail do usuário: " email
+email=""
+if [[ "$action" != list ]]; then
+  read -r -p "E-mail do usuário: " email
+fi
 name=""
 password=""
 if [[ "$action" == grant ]]; then
@@ -38,13 +43,18 @@ if [[ -n "$password" ]]; then
   fi
 fi
 echo "Operação: $action | Empresa: $organization | Usuário: $email"
-read -r -p 'Digite CONFIRMAR para executar: ' confirm
-if [[ "$confirm" != CONFIRMAR ]]; then echo "Cancelado."; exit 1; fi
+confirm=""
+if [[ "$action" != list ]]; then
+  read -r -p 'Digite CONFIRMAR para executar: ' confirm
+fi
+if [[ "$action" != list && "$confirm" != CONFIRMAR ]]; then echo "Cancelado."; exit 1; fi
 # Secrets cross only stdin; never command-line arguments, logs, or repository files.
 printf '%s\0' "$action" "$organization" "$email" "$name" "$password" "$confirm" |
   python3 -c 'import json,sys
 a=sys.stdin.buffer.read().decode().split("\0")
-obj={"action":a[0],"organizationSlug":a[1],"email":a[2],"confirm":a[5]}
+obj={"action":a[0],"organizationSlug":a[1]}
+if a[2]: obj["email"]=a[2]
+if a[5]: obj["confirm"]=a[5]
 if a[3]: obj["displayName"]=a[3]
 if a[4]: obj["password"]=a[4]
 sys.stdout.write(json.dumps(obj))' |
