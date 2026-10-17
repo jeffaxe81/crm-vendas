@@ -2789,3 +2789,37 @@ button.save-feedback-button[data-save-status="error"] {
   outline: 3px solid #0b63ae;
   outline-offset: 2px;
 }
+
+/* Unified native checkboxes throughout the CRM, including tenant themes. */
+:where(.crm-shell, .login-shell) input[type="checkbox"] {
+  box-sizing: border-box;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  min-inline-size: 1.125rem;
+  min-block-size: 1.125rem;
+  margin: 0 0.4rem 0 0;
+  flex: 0 0 1.125rem;
+  vertical-align: middle;
+  accent-color: var(--crm-primary, #155e75);
+  cursor: pointer;
+}
+:where(.crm-shell, .login-shell) input[type="checkbox"]:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+}
+:where(.crm-shell, .login-shell) input[type="checkbox"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+:where(.crm-shell, .login-shell) label:has(> input[type="checkbox"]) {
+  line-height: 1.5;
+}
+@media (pointer: coarse) {
+  :where(.crm-shell, .login-shell) input[type="checkbox"] {
+    inline-size: 1.375rem;
+    block-size: 1.375rem;
+    min-inline-size: 1.375rem;
+    min-block-size: 1.375rem;
+    flex-basis: 1.375rem;
+  }
+}
