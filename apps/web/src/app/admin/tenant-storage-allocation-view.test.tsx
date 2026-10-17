@@ -32,9 +32,9 @@ function response(body: unknown): Response {
 it("requires confirmation for a custom storage allocation", async () => {
   const fetchMock = vi.fn(async (_url: string, options?: RequestInit) => {
     if (options?.method === "PUT") {
-      expect(
-        (options?.headers as Record<string, string>).Authorization
-      ).toBe("Bearer first-token");
+      expect((options?.headers as Record<string, string>).Authorization).toBe(
+        "Bearer first-token"
+      );
       expect(JSON.parse(options.body as string)).toEqual({
         allocatedGiB: 64,
         confirmation: "AJUSTAR COTA",
@@ -60,9 +60,12 @@ it("requires confirmation for a custom storage allocation", async () => {
   fireEvent.change(screen.getByLabelText(/Capacidade de referência \(GiB/), {
     target: { value: "64" },
   });
-  fireEvent.change(screen.getByLabelText("Digite AJUSTAR COTA para confirmar"), {
-    target: { value: "AJUSTAR COTA" },
-  });
+  fireEvent.change(
+    screen.getByLabelText("Digite AJUSTAR COTA para confirmar"),
+    {
+      target: { value: "AJUSTAR COTA" },
+    }
+  );
   fireEvent.click(submit);
   expect(
     await screen.findByText("Capacidade de referência da empresa atualizada.")
@@ -96,9 +99,9 @@ it("reloads isolated capacity on tenant switch", async () => {
   );
   rerender(<TenantStorageAllocationView accessToken="second-token" />);
   await waitFor(() =>
-    expect(
-      screen.getByLabelText(/Capacidade de referência \(GiB/)
-    ).toHaveValue(10)
+    expect(screen.getByLabelText(/Capacidade de referência \(GiB/)).toHaveValue(
+      10
+    )
   );
   expect(screen.getByText(/igual ou superior a 80%/)).toBeInTheDocument();
 });
