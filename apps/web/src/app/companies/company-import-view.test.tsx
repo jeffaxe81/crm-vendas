@@ -20,9 +20,32 @@ function response(body: unknown, status = 200): Response {
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 describe("C4.2.1 company CSV import view", () => {
+  it("opens the file picker directly without an intermediate panel", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(response({ items: [], page: 1, limit: 20, total: 0 }));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<CompaniesView accessToken="access-token" canWrite />);
+    await screen.findByText("Nenhuma empresa encontrada.");
+    const input = screen.getByLabelText("Arquivo CSV") as HTMLInputElement;
+    const click = vi.spyOn(input, "click");
+    fireEvent.click(screen.getByRole("button", { name: "Importar CSV" }));
+    expect(click).toHaveBeenCalledOnce();
+    expect(input).toHaveAttribute("hidden");
+    expect(
+      screen.queryByRole("region", { name: "Importar empresas por CSV" })
+    ).not.toBeInTheDocument();
+    fireEvent.change(input, { target: { files: [] } });
+    expect(
+      screen.queryByRole("region", { name: "Importar empresas por CSV" })
+    ).not.toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it("previews and confirms the selected CSV before refreshing companies", async () => {
     const fetchMock = vi
       .fn()
@@ -123,6 +146,9 @@ describe("C4.2.1 company CSV import view", () => {
       name: "Confirmar importação",
     });
     expect(confirm).toBeEnabled();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(screen.getByText("empresas.csv")).toBeInTheDocument();
+    expect(screen.getByLabelText("Arquivo CSV")).toHaveValue("");
     fireEvent.click(confirm);
 
     expect(

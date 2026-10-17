@@ -256,6 +256,15 @@ Registro central dos incidentes relatados pelo responsável, problemas descritos
 - **Sintoma/evidência:** Responsável informou que o painel não se movia após atualização. A primeira versão só atendia ao tour das funcionalidades e dependia de setPointerCapture no cabeçalho; não havia controles explícitos nem portal. Sem acesso ao navegador do responsável, não se atribui a ocorrência a uma causa única confirmada.
 - **Tratamento e limites:** Correção estende o painel ao wizard inicial e à Configuração Rápida; portal no body, acompanhamento de pointer/mouse/touch na janela, fallback de mouse, setas e centralizar. Proteção temporária sobre iframes durante o arraste. Progresso e controles da API preservados. Validação automatizada no PR da correção; homologação visual no servidor pendente.
 
+<a id="crm-p022"></a>
+
+## CRM-P022 — Clique intermediário para importar empresas e contatos
+
+- **Data:** 17/10/2026.
+- **Sintoma/causa:** Nas telas Empresas e Contatos, o botão Importar CSV abria um painel com outro campo de arquivo, exigindo um segundo clique para selecionar o CSV.
+- **Tratamento:** Primeiro botão abre diretamente o seletor nativo. O painel aparece após selecionar o arquivo, preservando prévia e confirmação antes de gravar. Cancelar mantém o estado anterior e o input é limpo para permitir selecionar novamente o mesmo arquivo.
+- **Estado:** Correção no código; homologação no servidor pendente.
+
 ## Registro de novos problemas
 
 Todo novo problema encontrado deve ser acrescentado a este manual no mesmo PR da correção, ou em PR documental associado quando ainda estiver em investigação. Preservar o ID e o histórico; não apagar incidentes encerrados.
