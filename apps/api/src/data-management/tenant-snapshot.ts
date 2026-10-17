@@ -57,8 +57,9 @@ export async function exportTenantSnapshot(
     if (JSON.stringify(actual) !== JSON.stringify(expected))
       throw new BackupError("BACKUP_SCHEMA_UNSUPPORTED");
   }
-  // NEO settings, temporary OAuth PKCE grants, OAuth tokens and trusted
-  // inbound sources/keys are SQL-only security tables. Never export their
+  // NEO settings, temporary OAuth PKCE grants, OAuth tokens, storage
+  // allocations and trusted inbound sources/keys are SQL-only security
+  // tables. Never export their
   // encrypted credentials in tenant snapshots or clone them on restore.
   // Unknown tenant tables STILL fail closed until their policy is reviewed.
   const explicitlyExcludedTenantTables = new Set([
@@ -67,6 +68,7 @@ export async function exportTenantSnapshot(
     "email_oauth_credentials",
     "inbound_email_sources",
     "inbound_email_source_keys",
+    "tenant_storage_allocations",
   ]);
   if (
     databaseColumns.some(
