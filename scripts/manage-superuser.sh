@@ -38,7 +38,22 @@ while true; do
 
   name=""
   password=""
+  organizationName=""
+  createOrganization="false"
   if [[ "$action" == grant ]]; then
+    read -r -p "Se a empresa não existir, deseja criá-la? [s/N]: " createAnswer
+    case "$createAnswer" in
+      s|S|sim|SIM|Sim)
+        createOrganization="true"
+        read -r -p "Nome da empresa que será criada: " organizationName
+        if [[ -z "${organizationName//[[:space:]]/}" ]]; then
+          echo "O nome da nova empresa é obrigatório." >&2
+          continue
+        fi
+        ;;
+      ""|n|N|nao|não|NAO|NÃO) ;;
+      *) echo "Opção inválida." >&2; continue ;;
+    esac
     echo "Para promover um usuário existente, informe o e-mail e deixe nome e senha vazios."
     echo "Para criar um usuário novo, informe nome e uma senha de no mínimo 12 caracteres."
     read -r -p "Nome (somente para novo usuário): " name
@@ -68,6 +83,9 @@ while true; do
   confirm=""
   if [[ "$action" != list && "$action" != list-all ]]; then
     echo "Operação: $action | Empresa: $organization | Usuário: $email"
+    if [[ "$createOrganization" == true ]]; then
+      echo "Se a empresa não existir, será criada como: $organizationName"
+    fi
     read -r -p 'Digite CONFIRMAR para executar: ' confirm
     if [[ "$confirm" != CONFIRMAR ]]; then
       echo "Cancelado."
@@ -76,7 +94,7 @@ while true; do
   fi
 
   # O segredo viaja somente por stdin, sem argumentos, arquivos ou logs.
-  printf '%s\0' "$action" "$organization" "$email" "$name" "$password" "$confirm" |
+  printf '%s\0' "$action" "$organization" "$email" "$name" "$password" "$confirm" "$organizationName" "$createOrganization" |
     python3 -c 'import json,sys
 a=sys.stdin.buffer.read().decode().split("\0")
 obj={"action":a[0]}
@@ -85,6 +103,9 @@ if a[2]: obj["email"]=a[2]
 if a[3]: obj["displayName"]=a[3]
 if a[4]: obj["password"]=a[4]
 if a[5]: obj["confirm"]=a[5]
+if a[7]=="true":
+    obj["createOrganization"]=True
+    obj["organizationName"]=a[6]
 sys.stdout.write(json.dumps(obj))' |
     docker compose exec -T api node dist/scripts/manage-superuser.js
 
