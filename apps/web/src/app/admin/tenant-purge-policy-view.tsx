@@ -8,7 +8,7 @@ type PurgePolicy = {
   retentionDays: number;
   lastRunAt: string | null;
   estimatedRecords: number;
-  target: "WEBHOOK_DELIVERIES";
+  target: "EXPIRED_OPERATION_PREVIEWS";
   cutoff: string;
 };
 
@@ -95,9 +95,9 @@ export function TenantPurgePolicyView({
     >
       <h2>Política de expurgo por empresa (tenant)</h2>
       <p>
-        Remove apenas registros históricos de tentativas de entrega de webhooks
-        concluídas (DELIVERED/FAILED). Preserva cadastros, contatos, negócios,
-        tickets, backups e logs de auditoria. Desativada por padrão.
+        Remove apenas prévias de operações já expiradas e antigas. Preserva
+        cadastros, contatos, negócios, tickets, backups, históricos de webhooks
+        e logs de auditoria. Desativada por padrão.
       </p>
       {error ? <p role="alert">{error}</p> : null}
       {notice ? <p role="status">{notice}</p> : null}
@@ -152,8 +152,8 @@ export function TenantPurgePolicyView({
             ) : null}
             <p>
               A execução é automática, até uma vez a cada 24 horas, em lotes
-              de até 500 registros por tenant. A retenção é contada pela data
-              do registro. O expurgo efetivo é irreversível.
+              de até 500 registros por tenant. A retenção é contada a partir
+              da expiração da prévia. O expurgo efetivo é irreversível.
             </p>
             <button
               type="submit"
