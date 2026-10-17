@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -99,5 +100,98 @@ it("switches tenant policy when credential changes without leaking previous conf
   );
   expect(
     screen.getByLabelText("Prazo de retenção dos registros técnicos")
-  ).toHaveValue("365");
+  ).toHaveValue(365);
+});
+
+it("ignores an earlier tenant save after switching to another tenant", async () => {
+  let resolveSave!: (response: Response) => void;
+  const pendingSave = new Promise<Response>(resolve => {
+    resolveSave = resolve;
+  });
+  const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+    if (init?.method === "PUT") return pendingSave;
+    const token = (init?.headers as Record<string, string> | undefined)?.Authorization;
+    return response(
+      token === "Bearer tenant-b-token"
+        ? { ...policy, retentionDays: 365, estimatedRecords: 0 }
+        : policy
+    );
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  const { rerender } = render(
+    <TenantPurgePolicyView accessToken="tenant-a-token" />
+  );
+  expect(
+    await screen.findByText(/Registros técnicos elegíveis no momento/)
+  ).toHaveTextContent("3");
+  fireEvent.click(
+    screen.getByRole("checkbox", {
+      name: /Ativar expurgo automático somente nesta empresa/,
+    })
+  );
+  fireEvent.change(
+    screen.getByLabelText("Digite ATIVAR EXPURGO para confirmar"),
+    { target: { value: "ATIVAR EXPURGO" } }
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: "Salvar política de expurgo" })
+  );
+  await waitFor(() =>
+    expect(
+      fetchMock.mock.calls.filter(([, options]) => options?.method === "PUT")
+    ).toHaveLength(1)
+  );
+
+  rerender(<TenantPurgePolicyView accessToken="tenant-b-token" />);
+  await waitFor(() =>
+    expect(
+      screen.getByText(/Registros técnicos elegíveis no momento/)
+    ).toHaveTextContent("0")
+  );
+  expect(screen.getByRole("button", { name: "Salvar política de expurgo" })).not.toBeDisabled();
+
+  await act(async () => {
+    resolveSave(response({ ...policy, enabled: true, retentionDays: 90, estimatedRecords: 99 }));
+    await pendingSave;
+  });
+
+  expect(screen.getByLabelText("Prazo de retenção dos registros técnicos")).toHaveValue(365);
+  expect(
+    screen.getByRole("checkbox", {
+      name: /Ativar expurgo automático somente nesta empresa/,
+    })
+  ).not.toBeChecked();
+  expect(
+    screen.getByText(/Registros técnicos elegíveis no momento/)
+  ).toHaveTextContent("0");
+  expect(
+    screen.queryByText("Política de expurgo da empresa salva com sucesso.")
+  ).not.toBeInTheDocument();
+});
+
+it("accepts a custom 45-day retention instead of fixed preset choices", async () => {
+  const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+    if (init?.method === "PUT") {
+      expect(JSON.parse(init.body as string)).toMatchObject({
+        enabled: false,
+        retentionDays: 45,
+      });
+      return response({ ...policy, retentionDays: 45 });
+    }
+    return response(policy);
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  render(<TenantPurgePolicyView accessToken="tenant-a-token" />);
+  expect(
+    await screen.findByText(/Registros técnicos elegíveis no momento/)
+  ).toHaveTextContent("3");
+  fireEvent.change(
+    screen.getByLabelText("Prazo de retenção dos registros técnicos"),
+    { target: { value: "45" } }
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Salvar política de expurgo" }));
+  expect(
+    await screen.findByText("Política de expurgo da empresa salva com sucesso.")
+  ).toBeInTheDocument();
+  expect(fetchMock.mock.calls.filter(([, options]) => options?.method === "PUT")).toHaveLength(1);
 });
