@@ -7,7 +7,7 @@ import { PasswordService } from "../auth/password.service";
 const Input = z.object({
   action: z.enum(["list", "grant", "revoke", "password"]),
   organizationSlug: z.string().trim().min(1).max(80),
-  email: z.string().trim().email().max(254),
+  email: z.string().trim().email().max(254).optional(),
   displayName: z.string().trim().min(1).max(160).optional(),
   password: z.string().min(12).max(1024).optional(),
   confirm: z.literal("CONFIRMAR").optional(),
@@ -42,6 +42,7 @@ async function main() {
       }
       return;
     }
+    if (!input.email) throw new Error("E-mail obrigatório.");
     const emailNormalized = input.email.toLowerCase();
     const existing = await prisma.user.findUnique({ where: { emailNormalized } });
     if (input.action === "grant" && !existing && (!input.displayName || !input.password))
