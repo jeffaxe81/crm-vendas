@@ -21,7 +21,7 @@ export type NeoSettings = {
 export const defaultNeoSettings: NeoSettings = {
   enabled: false,
   url: "",
-  mode: "tab",
+  mode: "iframe",
   height: 800,
   maxWidth: 1600,
 };
