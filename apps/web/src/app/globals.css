@@ -2790,20 +2790,24 @@ button.save-feedback-button[data-save-status="error"] {
   outline-offset: 2px;
 }
 
-/* Save actions remain prominent even when a tenant selects a pale brand color. */
-.crm-shell button.save-feedback-button:not(:disabled):not([data-save-status="saving"]):not([data-save-status="success"]),
-.crm-shell button[type="submit"]:not(:disabled) {
+/* Consistent, high-contrast save actions across tenant themes. */
+.crm-shell .save-feedback-button[data-save-status="idle"],
+.crm-shell .save-feedback-button[data-save-status="error"],
+.crm-shell button[type="submit"]:not(.save-feedback-button):not(:disabled) {
   background: #155eaa;
   border: 1px solid #104780;
-  color: #ffffff;
+  color: #fff;
   font-weight: 800;
   box-shadow: 0 2px 6px rgb(21 94 170 / 18%);
 }
-.crm-shell button.save-feedback-button:not(:disabled):hover,
-.crm-shell button[type="submit"]:not(:disabled):hover {
+
+.crm-shell .save-feedback-button[data-save-status="idle"]:hover,
+.crm-shell .save-feedback-button[data-save-status="error"]:hover,
+.crm-shell button[type="submit"]:not(.save-feedback-button):hover {
   background: #104780;
 }
-.crm-shell button.save-feedback-button:focus-visible,
+
+.crm-shell .save-feedback-button:focus-visible,
 .crm-shell button[type="submit"]:focus-visible {
   outline: 3px solid #f59e0b;
   outline-offset: 3px;
