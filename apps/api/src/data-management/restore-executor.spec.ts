@@ -34,6 +34,8 @@ describe("restore executor target binding", () => {
     "Tag",
     "CompanyTag",
     "ContactTag",
+    "Pipeline",
+    "PipelineStage",
   ])(
     "rejects a missing %s collection before mutating tenant data",
     async model => {
@@ -89,7 +91,7 @@ describe("restore preview applicability", () => {
     ).toEqual(["Opportunity", "Ticket"]);
   });
 
-  it("does not block the reviewed company/contact/tag graph", () => {
+  it("does not block the reviewed company/contact/tag/pipeline graph", () => {
     expect(
       unsupportedRestoreModels(
         {
@@ -99,6 +101,8 @@ describe("restore preview applicability", () => {
           Tag: 3,
           CompanyTag: 2,
           ContactTag: 1,
+          Pipeline: 2,
+          PipelineStage: 5,
         },
         {
           Company: 2,
@@ -107,6 +111,8 @@ describe("restore preview applicability", () => {
           Tag: 1,
           CompanyTag: 0,
           ContactTag: 4,
+          Pipeline: 1,
+          PipelineStage: 3,
         }
       )
     ).toEqual([]);
