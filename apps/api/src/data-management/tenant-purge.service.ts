@@ -121,7 +121,8 @@ export class TenantPurgeService {
   async runDue(now: Date = new Date()): Promise<number> {
     if (!Number.isFinite(now.getTime())) throw Error("INVALID_PURGE_DATE");
     const organizations = await this.prisma.organization.findMany({
-      where: { isActive: true, purgePolicy: { is: { enabled: true } } },
+      // Do not join purge_policies outside a tenant context: its RLS would hide every row.
+      where: { isActive: true },
       select: { id: true },
       orderBy: { id: "asc" },
     });
