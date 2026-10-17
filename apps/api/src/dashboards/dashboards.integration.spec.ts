@@ -250,6 +250,7 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
         throw new Error("DASHBOARD_TEST_FIXTURE_MISSING");
       }
       const response = await readVolume(tenant.token);
+      expect(response.headers["cache-control"]).toBe("private, no-store");
       expect(response.body.counts).toEqual(snapshot);
       expect(response.body.totalActiveRecords).toBe(
         Object.values(snapshot).reduce((sum, value) => sum + value, 0)
@@ -261,6 +262,7 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
         .get("/api/v1/dashboards/catalog")
         .set("Authorization", `Bearer ${tenant.token}`)
         .expect(200);
+      expect(catalog.headers["cache-control"]).toBe("private, no-store");
       expect(catalog.body.metrics).toHaveLength(4);
     }
 

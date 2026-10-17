@@ -174,6 +174,14 @@ export async function runDashboardStagingSmoke(config, fetchImpl = fetch) {
 
   const anonymous = await get(fetchImpl, baseUrl + "/dashboards/volume");
   requireCondition(anonymous.status === 401, "DASHBOARD_ANONYMOUS_ALLOWED");
+  const anonymousCatalog = await get(
+    fetchImpl,
+    baseUrl + "/dashboards/catalog"
+  );
+  requireCondition(
+    anonymousCatalog.status === 401,
+    "DASHBOARD_CATALOG_ANONYMOUS_ALLOWED"
+  );
   const override = await get(
     fetchImpl,
     baseUrl + "/dashboards/volume?organizationId=other-tenant",
