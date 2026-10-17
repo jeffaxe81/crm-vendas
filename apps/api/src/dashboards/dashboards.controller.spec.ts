@@ -1,5 +1,3 @@
-import { jest } from "@jest/globals";
-
 import type {
   AuthenticatedPrincipal,
   AuthenticatedRequest,
@@ -23,13 +21,17 @@ function requestFor(auth?: AuthenticatedPrincipal): AuthenticatedRequest {
 }
 
 describe("Dashboard HTTP boundaries", () => {
-  const readVolume = jest.fn().mockResolvedValue({ counts: {} });
+  const calls: string[] = [];
+  const readVolume = async (organizationId: string) => {
+    calls.push(organizationId);
+    return { counts: {} };
+  };
   const controller = new DashboardsController({
     readVolume,
   } as unknown as DashboardsService);
 
   beforeEach(() => {
-    readVolume.mockClear();
+    calls.length = 0;
   });
 
   it("offers only the fixed catalogue to a human session", () => {
@@ -46,7 +48,7 @@ describe("Dashboard HTTP boundaries", () => {
 
   it("uses the authenticated tenant rather than a caller-supplied tenant", async () => {
     await controller.readVolume({}, requestFor(principal));
-    expect(readVolume).toHaveBeenCalledWith("tenant-one");
+    expect(calls).toEqual(["tenant-one"]);
   });
 
   it("blocks missing authentication, API keys and superusers", () => {
@@ -63,7 +65,7 @@ describe("Dashboard HTTP boundaries", () => {
         requestFor({ ...principal, isSuperuser: true })
       )
     ).toThrow();
-    expect(readVolume).not.toHaveBeenCalled();
+    expect(calls).toHaveLength(0);
   });
 
   it("refuses tenant query overrides and malformed tenant IDs", () => {
@@ -79,6 +81,6 @@ describe("Dashboard HTTP boundaries", () => {
         requestFor({ ...principal, organizationId: " tenant-one " })
       )
     ).toThrow();
-    expect(readVolume).not.toHaveBeenCalled();
+    expect(calls).toHaveLength(0);
   });
 });
