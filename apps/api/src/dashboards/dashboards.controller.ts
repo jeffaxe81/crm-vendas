@@ -41,7 +41,9 @@ export class DashboardsController {
     @Query() query: Record<string, unknown>,
     @Req() request: AuthenticatedRequest
   ) {
-    return this.dashboards.readVolume(this.requireTenantSession(query, request));
+    return this.dashboards.readVolume(
+      this.requireTenantSession(query, request)
+    );
   }
 
   private requireTenantSession(
