@@ -245,10 +245,14 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
     ];
 
     for (const [index, tenant] of [first, second, third].entries()) {
+      const snapshot = expected[index];
+      if (!snapshot) {
+        throw new Error("DASHBOARD_TEST_FIXTURE_MISSING");
+      }
       const response = await readVolume(tenant.token);
-      expect(response.body.counts).toEqual(expected[index]);
+      expect(response.body.counts).toEqual(snapshot);
       expect(response.body.totalActiveRecords).toBe(
-        Object.values(expected[index]).reduce((sum, value) => sum + value, 0)
+        Object.values(snapshot).reduce((sum, value) => sum + value, 0)
       );
       expect(response.body).not.toHaveProperty("organizationId");
       expect(response.body).not.toHaveProperty("items");
