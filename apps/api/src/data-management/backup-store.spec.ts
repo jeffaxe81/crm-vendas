@@ -125,6 +125,24 @@ describe("private encrypted backup storage", () => {
     ).rejects.toThrow();
     expect(await readdir(root)).toEqual(["file"]);
   });
+  it("inspects only UUID-named regular objects without reading their contents", async () => {
+    const id = randomUUID();
+    expect(await store.objectSize(id)).toBeNull();
+    await store.put(id, Buffer.from("size-only"));
+    const persisted = await stat(join(root, `${id}.backup`));
+    expect(await store.objectSize(id)).toBe(persisted.size);
+    await expect(store.objectSize("../outside")).rejects.toThrow();
+    await store.remove(id);
+    expect(await store.objectSize(id)).toBeNull();
+
+    const other = randomUUID();
+    const target = join(root, "external");
+    await writeFile(target, "do not follow");
+    await symlink(target, join(root, `${other}.backup`));
+    await expect(store.objectSize(other)).rejects.toThrow();
+    expect(await readFile(target, "utf8")).toBe("do not follow");
+  });
+
   it("rejects an existing shared directory without changing its permissions", async () => {
     await chmod(root, 0o755);
     await expect(
