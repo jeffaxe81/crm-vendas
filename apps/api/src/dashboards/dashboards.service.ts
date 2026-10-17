@@ -20,13 +20,18 @@ export class DashboardsService {
       organizationId,
       async tenant => {
         const where = { organizationId, deletedAt: null };
-        const [companies, contacts, opportunities, activities] = await Promise.all([
+        const [companies, contacts, deals, tasks] = await Promise.all([
           tenant.company.count({ where }),
           tenant.contact.count({ where }),
           tenant.opportunity.count({ where }),
           tenant.activity.count({ where }),
         ]);
-        return { companies, contacts, opportunities, activities };
+        return {
+          companies,
+          contacts,
+          opportunities: deals,
+          activities: tasks,
+        };
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead }
     );
