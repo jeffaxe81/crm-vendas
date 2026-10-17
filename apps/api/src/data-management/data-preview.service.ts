@@ -13,6 +13,7 @@ import {
 import { exportTenantSnapshot } from "./tenant-snapshot";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { validateRestoreIdentityReferences } from "./restore-identity-check";
+import { unsupportedRestoreModels } from "./restore-executor";
 
 export const OPERATION_PREVIEW_TTL_MS = 5 * 60 * 1000;
 
@@ -124,6 +125,7 @@ export class DataPreviewService {
     const currentFingerprint = snapshotDataFingerprint(current);
     const currentCounts = snapshotCounts(current);
     const targetCounts = verified.manifest.counts;
+    const unsupportedModels = unsupportedRestoreModels(currentCounts, targetCounts);
     const expiresAt = new Date(Date.now() + OPERATION_PREVIEW_TTL_MS);
 
     const row = await this.prisma.withTenant(
@@ -226,6 +228,7 @@ export class DataPreviewService {
       targetByteCount: verified.bytes.length,
       targetCounts,
       currentCounts,
+      unsupportedRestoreModels: unsupportedModels,
       createdAt: row.createdAt.toISOString(),
       expiresAt: row.expiresAt.toISOString(),
     });
