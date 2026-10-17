@@ -52,7 +52,7 @@ afterEach(() => {
 });
 
 describe("Tenant dashboard volume", () => {
-  it("renders a validated four-metric snapshot without exposing records", async () => {
+  it("renders validated tenant counts", async () => {
     const fetchMock = stubRequests();
     render(<DashboardVolumeView accessToken="tenant-a" />);
     expect(await screen.findByText("Empresas ativas")).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe("Tenant dashboard volume", () => {
     }
   });
 
-  it("shows observational warning and critical thresholds, never a quota", async () => {
+  it("shows warning and critical levels", async () => {
     const fetchMock = stubRequests({
       ...volume,
       counts: { companies: 800, contacts: 0, opportunities: 0, activities: 0 },
@@ -114,7 +114,7 @@ describe("Tenant dashboard volume", () => {
     ).toBeInTheDocument();
   });
 
-  it("clears previous snapshot on refresh failure and allows retry", async () => {
+  it("clears counts on failure and retries", async () => {
     const fetchMock = stubRequests();
     render(<DashboardVolumeView accessToken="tenant-a" />);
     await screen.findByText("Empresas ativas");
@@ -135,7 +135,7 @@ describe("Tenant dashboard volume", () => {
     expect(await screen.findByText("Empresas ativas")).toBeInTheDocument();
   });
 
-  it("rejects inconsistent server totals rather than showing false counts", async () => {
+  it("rejects inconsistent totals", async () => {
     stubRequests({ ...volume, totalActiveRecords: 999 });
     render(<DashboardVolumeView accessToken="tenant-a" />);
     expect(await screen.findByRole("alert")).toHaveTextContent(
@@ -144,7 +144,7 @@ describe("Tenant dashboard volume", () => {
     expect(screen.queryByText("Empresas ativas")).not.toBeInTheDocument();
   });
 
-  it("never displays an old tenant response after switching access tokens", async () => {
+  it("ignores delayed responses from other tenants", async () => {
     let resolveOld: ((value: Response) => void) | undefined;
     const mock = vi.fn((url: string, options?: RequestInit) => {
       const token = new Headers(options?.headers).get("Authorization");
