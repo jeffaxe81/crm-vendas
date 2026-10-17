@@ -55,13 +55,15 @@ describe("tenant backup allocation and RLS", () => {
 
   afterAll(async () => {
     if (owner) {
-      await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
+      await owner.$executeRawUnsafe(
+        'TRUNCATE "organizations", "users" CASCADE'
+      );
       await owner.onModuleDestroy();
     }
     await restricted?.onModuleDestroy();
   });
 
-  it("is unset by default and only changes with a confirmed tenant update", async () => {
+  it("requires confirmation for allocation changes", async () => {
     expect(await service.read(principal(orgA))).toMatchObject({
       allocatedGiB: null,
       usedBytes: "0",
@@ -109,7 +111,7 @@ describe("tenant backup allocation and RLS", () => {
     });
   });
 
-  it("measures only this tenant's completed/deleting catalog bytes and alerts", async () => {
+  it("counts tenant backups and reports usage alerts", async () => {
     const gib = 1024n * 1024n * 1024n;
     await owner.backupRecord.createMany({
       data: [
@@ -161,6 +163,8 @@ describe("tenant backup allocation and RLS", () => {
       { allocatedGiB: null, confirmation: "AJUSTAR COTA" },
       randomUUID()
     );
-    expect((await service.read(principal(orgA))).alertLevel).toBe("UNALLOCATED");
+    expect((await service.read(principal(orgA))).alertLevel).toBe(
+      "UNALLOCATED"
+    );
   });
 });
