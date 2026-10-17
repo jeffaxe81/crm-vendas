@@ -14,10 +14,13 @@ import { BackupWorkerRuntime } from "./backup-worker.runtime";
 import { BACKUP_OPTIONS, BACKUP_STORE, BackupService } from "./backup.service";
 import { DataOperationWorker } from "./data-operation.worker";
 import { DataPreviewService } from "./data-preview.service";
+import { TenantPurgeController } from "./tenant-purge.controller";
+import { TenantPurgeService } from "./tenant-purge.service";
+import { TenantPurgeRuntime } from "./tenant-purge.runtime";
 
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
-  controllers: [BackupAdministrationController],
+  controllers: [BackupAdministrationController, TenantPurgeController],
   providers: [
     {
       provide: BACKUP_OPTIONS,
@@ -47,6 +50,12 @@ import { DataPreviewService } from "./data-preview.service";
     BackupDeletionService,
     BackupScheduleService,
     DataPreviewService,
+    TenantPurgeService,
+    {
+      provide: TenantPurgeRuntime,
+      inject: [TenantPurgeService],
+      useFactory: (service: TenantPurgeService) => new TenantPurgeRuntime(service),
+    },
     DataOperationWorker,
     {
       provide: BackupWorkerRunner,
