@@ -16,6 +16,8 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
   app.useGlobalFilters(new ApiErrorFilter());
   app.setGlobalPrefix("api/v1");
+  // Inline tenant logos (até 256 KB) ultrapassam o limite padrão de 100 KB.
+  app.useBodyParser("json", { limit: "1mb" });
   app.enableCors({
     origin: buildCorsOrigins(environment),
     credentials: true,
