@@ -570,7 +570,11 @@ describe("transactional tenant restore executor", () => {
       runtime.withMaintenance(
         target.organization.id,
         tx =>
-          restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+          restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            target.verified.data
+          ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
     ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
