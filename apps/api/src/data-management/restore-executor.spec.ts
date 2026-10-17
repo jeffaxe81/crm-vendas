@@ -31,6 +31,9 @@ describe("restore executor target binding", () => {
     "ContactChannel",
     "CompanyContact",
     "RelationshipEntry",
+    "Tag",
+    "CompanyTag",
+    "ContactTag",
   ])(
     "rejects a missing %s collection before mutating tenant data",
     async model => {
@@ -86,11 +89,25 @@ describe("restore preview applicability", () => {
     ).toEqual(["Opportunity", "Ticket"]);
   });
 
-  it("does not treat the reviewed company/contact graph as a blocker", () => {
+  it("does not block the reviewed company/contact/tag graph", () => {
     expect(
       unsupportedRestoreModels(
-        { Company: 5, Contact: 2, CompanyContact: 0 },
-        { Company: 2, Contact: 2, CompanyContact: 1 }
+        {
+          Company: 5,
+          Contact: 2,
+          CompanyContact: 0,
+          Tag: 3,
+          CompanyTag: 2,
+          ContactTag: 1,
+        },
+        {
+          Company: 2,
+          Contact: 2,
+          CompanyContact: 1,
+          Tag: 1,
+          CompanyTag: 0,
+          ContactTag: 4,
+        }
       )
     ).toEqual([]);
   });
