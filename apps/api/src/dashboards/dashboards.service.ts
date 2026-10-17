@@ -1,6 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
 
-import { PrismaService, assertValidTenantContext } from "../database/prisma.service";
+import {
+  PrismaService,
+  assertValidTenantContext,
+} from "../database/prisma.service";
 import { Prisma } from "../generated/prisma/client";
 
 export const DASHBOARD_VOLUME_WARNING = 800;
@@ -17,13 +20,12 @@ export class DashboardsService {
       organizationId,
       async tenant => {
         const where = { organizationId, deletedAt: null };
-        const [companies, contacts, opportunities, activities] =
-          await Promise.all([
-            tenant.company.count({ where }),
-            tenant.contact.count({ where }),
-            tenant.opportunity.count({ where }),
-            tenant.activity.count({ where }),
-          ]);
+        const [companies, contacts, opportunities, activities] = await Promise.all([
+          tenant.company.count({ where }),
+          tenant.contact.count({ where }),
+          tenant.opportunity.count({ where }),
+          tenant.activity.count({ where }),
+        ]);
         return { companies, contacts, opportunities, activities };
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead }
