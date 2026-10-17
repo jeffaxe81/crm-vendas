@@ -209,9 +209,7 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
       .expect(200);
   }
 
-  it(
-    "isolates 3 real tenants, excludes deleted rows, and rejects cross-tenant reads",
-    async () => {
+  it("isolates dashboard metrics across three real tenants", async () => {
     const role = await restricted.$queryRaw<
       Array<{ rolsuper: boolean; rolbypassrls: boolean }>
     >`SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname = current_user`;
@@ -311,6 +309,5 @@ describe("Dashboard tenant isolation over HTTP and PostgreSQL RLS", () => {
       .get("/api/v1/dashboards/volume")
       .set("Authorization", `Bearer ${third.token}`)
       .expect(403);
-    }
-  );
+  });
 });
