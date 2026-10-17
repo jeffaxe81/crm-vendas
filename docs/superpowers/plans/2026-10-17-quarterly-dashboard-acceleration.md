@@ -16,27 +16,27 @@ com dependências externas permanecem identificadas como pendentes.
 
 ## 12 semanas — organização em três marcos
 
-| Semana | Resultado verificável | Estado |
-| --- | --- | --- |
-| 1 | API de catálogo restrito, autenticação e RLS | Implementado em #245 |
-| 2 | Testes de isolamento e contagens de três tenants | Implementado em #245 |
-| 3 | Interface de volume, erro/vazio e atualização manual | Implementado em #248 |
-| 4 | Tradução, cache desabilitado e build de imagens | Implementado em #248 |
-| 5 | Comparação de snapshots consecutivos na sessão | Implementado nesta PR |
-| 6 | Limpar comparação em troca de token/erro | Implementado nesta PR |
-| 7 | Exportação local CSV com agregados apenas | Implementado nesta PR |
-| 8 | Testes de exportação e consistência sem PII | Implementado nesta PR |
-| 9 | Verificação de 403 para API key e superuser no staging sintético | Implementado nesta PR |
-| 10 | Runbook de homologação e critérios de aceite | Documentado |
-| 11 | Ensaios de performance e layout em Docker real | Pendente de ambiente |
-| 12 | Sign-off QA/segurança, retenção e Gate 0 | Pendente de aprovação |
+| Semana | Resultado verificável                                            | Estado                |
+| ------ | ---------------------------------------------------------------- | --------------------- |
+| 1      | API de catálogo restrito, autenticação e RLS                     | Implementado em #245  |
+| 2      | Testes de isolamento e contagens de três tenants                 | Implementado em #245  |
+| 3      | Interface de volume, erro/vazio e atualização manual             | Implementado em #248  |
+| 4      | Tradução, cache desabilitado e build de imagens                  | Implementado em #248  |
+| 5      | Comparação de snapshots consecutivos na sessão                   | Implementado nesta PR |
+| 6      | Limpar comparação em troca de token/erro                         | Implementado nesta PR |
+| 7      | Exportação local CSV com agregados apenas                        | Implementado nesta PR |
+| 8      | Testes de exportação e consistência sem PII                      | Implementado nesta PR |
+| 9      | Verificação de 403 para API key e superuser no staging sintético | Implementado nesta PR |
+| 10     | Runbook de homologação e critérios de aceite                     | Documentado           |
+| 11     | Ensaios de performance e layout em Docker real                   | Pendente de ambiente  |
+| 12     | Sign-off QA/segurança, retenção e Gate 0                         | Pendente de aprovação |
 
 ## Contratos de comportamento
 
 - **Comparação:** ocorre somente quando o usuário atualiza e recebe duas
   respostas válidas cronologicamente, sem armazenamento histórico no servidor
   ou no navegador. Falhas de consulta não expõem dados defasados.
-- **CSV:** contém exclusivamente seis números agregados e horário UTC:
+- **CSV:** contém exclusivamente cinco contagens agregadas e horário UTC:
   empresas, contatos, oportunidades, atividades e total. Sem IDs/tokens,
   linhas de CRM, campos personalizáveis ou fórmulas. O arquivo é produzido
   localmente e não publicado para a API ou terceiros.

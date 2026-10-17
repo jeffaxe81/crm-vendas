@@ -95,7 +95,8 @@ function validateConfiguration(config) {
   );
   requireCondition(
     new Set(forbidden.map(item => item.label)).size === forbidden.length &&
-      new Set([...config.tenants, ...forbidden].map(item => item.token)).size ===
+      new Set([...config.tenants, ...forbidden].map(item => item.token))
+        .size ===
         3 + forbidden.length,
     "FORBIDDEN_CREDENTIALS_MUST_BE_DISTINCT"
   );

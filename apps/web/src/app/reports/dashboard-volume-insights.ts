@@ -1,7 +1,4 @@
-import {
-  DashboardVolumeSchema,
-  type DashboardVolume,
-} from "@axes/contracts";
+import { DashboardVolumeSchema, type DashboardVolume } from "@axes/contracts";
 
 export const DASHBOARD_COUNT_KEYS = [
   "companies",
@@ -57,7 +54,9 @@ export function dashboardVolumeCsv(snapshot: DashboardVolume): string {
     ["Total de registros ativos", parsed.totalActiveRecords],
     ["Atualizado em (UTC)", parsed.asOf],
   ];
-  return "\uFEFF" + rows.map(row => row.map(csvCell).join(";")).join("\r\n") + "\r\n";
+  return (
+    "\uFEFF" + rows.map(row => row.map(csvCell).join(";")).join("\r\n") + "\r\n"
+  );
 }
 
 export function downloadDashboardVolumeCsv(snapshot: DashboardVolume): void {

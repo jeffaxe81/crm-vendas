@@ -139,14 +139,16 @@ test("staging smoke checks that API keys and superusers are denied", async () =>
   });
   assert.equal(result.requests, 14);
   assert.equal(
-    calls.filter(call =>
-      call.request.headers?.Authorization === "Bearer opaque-api-key"
-    ).length, 2
+    calls.filter(
+      call => call.request.headers?.Authorization === "Bearer opaque-api-key"
+    ).length,
+    2
   );
   assert.equal(
-    calls.filter(call =>
-      call.request.headers?.Authorization === "Bearer opaque-superuser"
-    ).length, 2
+    calls.filter(
+      call => call.request.headers?.Authorization === "Bearer opaque-superuser"
+    ).length,
+    2
   );
 });
 

@@ -191,9 +191,7 @@ describe("Tenant dashboard volume", () => {
 
   it("compares successful refreshes only inside the same tenant session", async () => {
     const fetchMock = stubRequests();
-    const { rerender } = render(
-      <DashboardVolumeView accessToken="tenant-a" />
-    );
+    const { rerender } = render(<DashboardVolumeView accessToken="tenant-a" />);
     await screen.findByText("Empresas ativas");
     expect(
       screen.queryByText("Variação desde a consulta anterior")
@@ -223,8 +221,9 @@ describe("Tenant dashboard volume", () => {
     expect(
       within(comparison).getByText("Variação desde a consulta anterior")
     ).toBeInTheDocument();
-    expect(within(comparison).getByText(/Empresas ativas: \+2/))
-      .toBeInTheDocument();
+    expect(
+      within(comparison).getByText(/Empresas ativas: \+2/)
+    ).toBeInTheDocument();
 
     rerender(<DashboardVolumeView accessToken="tenant-b" />);
     await screen.findByText("Empresas ativas");
@@ -247,7 +246,8 @@ describe("Tenant dashboard volume", () => {
       configurable: true,
       value: revokeObjectURL,
     });
-    const click = vi.spyOn(HTMLAnchorElement.prototype, "click")
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
       .mockImplementation(() => {});
     try {
       render(<DashboardVolumeView accessToken="tenant-a" />);

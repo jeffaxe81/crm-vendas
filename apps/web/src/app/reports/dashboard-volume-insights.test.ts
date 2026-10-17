@@ -29,10 +29,13 @@ describe("Read-only dashboard insights", () => {
     });
     expect(compareDashboardVolumes(snapshot, snapshot)).toBeNull();
     expect(
-      compareDashboardVolumes({
-        ...snapshot,
-        asOf: "2026-10-18T16:00:00.000Z",
-      }, snapshot)
+      compareDashboardVolumes(
+        {
+          ...snapshot,
+          asOf: "2026-10-18T16:00:00.000Z",
+        },
+        snapshot
+      )
     ).toBeNull();
   });
 
