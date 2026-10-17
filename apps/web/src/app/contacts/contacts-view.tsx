@@ -11,7 +11,7 @@ import type {
   ContactCreateInput,
   RelationshipEntryKind,
 } from "@axes/contracts";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { ContactImportPanel } from "./contact-import-panel";
@@ -122,6 +122,7 @@ export function ContactsView({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [contactFormOpen, setContactFormOpen] = useState(false);
+  const importInput = useRef<HTMLInputElement>(null);
   const [importOpen, setImportOpen] = useState(false);
   const [contactForm, setContactForm] =
     useState<ContactFormState>(emptyContactForm);
@@ -533,8 +534,7 @@ export function ContactsView({
             <button
               type="button"
               onClick={() => {
-                setContactFormOpen(false);
-                setImportOpen(true);
+                importInput.current?.click();
               }}
             >
               {t("Importar CSV")}
@@ -554,8 +554,14 @@ export function ContactsView({
         </div>
       </header>
 
-      {importOpen && canWrite ? (
+      {canWrite ? (
         <ContactImportPanel
+          open={importOpen}
+          inputRef={importInput}
+          onSelected={() => {
+            setContactFormOpen(false);
+            setImportOpen(true);
+          }}
           accessToken={accessToken}
           onClose={() => setImportOpen(false)}
           onImported={async () => {

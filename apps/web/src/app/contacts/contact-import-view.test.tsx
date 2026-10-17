@@ -23,9 +23,32 @@ const emptyCompanies = { items: [], page: 1, limit: 100, total: 0 };
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 describe("C4.2.2 contact CSV import view", () => {
+  it("opens the native picker directly and keeps the panel hidden on cancel", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(response({ items: [], page: 1, limit: 20, total: 0 }));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<ContactsView accessToken="access-token" canWrite />);
+    const input = screen.getByLabelText(
+      "Arquivo CSV de contatos"
+    ) as HTMLInputElement;
+    const click = vi.spyOn(input, "click");
+    fireEvent.click(screen.getByRole("button", { name: "Importar CSV" }));
+    expect(click).toHaveBeenCalledOnce();
+    expect(input).toHaveAttribute("hidden");
+    expect(
+      screen.queryByRole("region", { name: "Importar contatos por CSV" })
+    ).not.toBeInTheDocument();
+    fireEvent.change(input, { target: { files: [] } });
+    expect(
+      screen.queryByRole("region", { name: "Importar contatos por CSV" })
+    ).not.toBeInTheDocument();
+  });
+
   it("previews and confirms the CSV, then refreshes contacts", async () => {
     const fetchMock = vi
       .fn()
@@ -104,10 +127,6 @@ describe("C4.2.2 contact CSV import view", () => {
     render(<ContactsView accessToken="access-token" canWrite />);
 
     fireEvent.click(screen.getByRole("button", { name: "Importar CSV" }));
-    expect(screen.getByText("companyDocument")).toBeVisible();
-    expect(
-      screen.getByText(/documento de uma empresa já cadastrada/)
-    ).toBeVisible();
     const file = new File(
       ["fullName,email\nAna Souza,ana@example.test\nBia,nao-e-email"],
       "contatos.csv",
@@ -117,6 +136,10 @@ describe("C4.2.2 contact CSV import view", () => {
       target: { files: [file] },
     });
 
+    expect(screen.getByText("companyDocument")).toBeVisible();
+    expect(
+      screen.getByText(/documento de uma empresa já cadastrada/)
+    ).toBeVisible();
     expect(
       await screen.findByText("1 válida(s) · 1 inválida(s)")
     ).toBeInTheDocument();

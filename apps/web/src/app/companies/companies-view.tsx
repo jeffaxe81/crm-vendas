@@ -17,6 +17,7 @@ import {
   type FormEvent,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -84,6 +85,7 @@ export function CompaniesView({
   const [form, setForm] = useState<CompanyFormState>(emptyForm);
   const saveFeedback = useSaveFeedback();
   const [submitting, setSubmitting] = useState(false);
+  const importInput = useRef<HTMLInputElement>(null);
   const [importOpen, setImportOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importPreview, setImportPreview] =
@@ -148,10 +150,9 @@ export function CompaniesView({
   }
 
   function openImport() {
-    setError("");
-    closeForm();
-    resetImportState();
-    setImportOpen(true);
+    if (!importing) {
+      importInput.current?.click();
+    }
   }
 
   function closeImport() {
@@ -188,14 +189,17 @@ export function CompaniesView({
 
   async function previewImport(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
+    event.target.value = "";
+    if (!file || importing || !canWrite) {
+      return;
+    }
+
+    closeForm();
+    setImportOpen(true);
     setImportFile(file);
     setImportPreview(null);
     setImportResult(null);
     setError("");
-
-    if (!file) {
-      return;
-    }
 
     setImporting(true);
     try {
@@ -337,7 +341,7 @@ export function CompaniesView({
         </div>
         <div className="companies-view__header-actions">
           {canWrite ? (
-            <Button variant="outline" onClick={openImport}>
+            <Button variant="outline" onClick={openImport} disabled={importing}>
               <FileUp aria-hidden="true" />
               {t("Importar CSV")}
             </Button>
@@ -372,6 +376,18 @@ export function CompaniesView({
         </p>
       ) : null}
 
+      {canWrite ? (
+        <input
+          ref={importInput}
+          aria-label={t("Arquivo CSV")}
+          type="file"
+          accept=".csv,text/csv"
+          hidden
+          disabled={importing}
+          onChange={event => void previewImport(event)}
+        />
+      ) : null}
+
       {importOpen ? (
         <section
           className="company-import"
@@ -388,16 +404,7 @@ export function CompaniesView({
             </Button>
           </div>
 
-          <label>
-            <span>{t("Arquivo CSV")}</span>
-            <input
-              aria-label={t("Arquivo CSV")}
-              type="file"
-              accept=".csv,text/csv"
-              disabled={importing}
-              onChange={event => void previewImport(event)}
-            />
-          </label>
+          <p>{importFile?.name}</p>
 
           {importing && !importPreview ? (
             <p>{t("Validando arquivo...")}</p>
