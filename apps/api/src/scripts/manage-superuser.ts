@@ -6,8 +6,8 @@ import { PasswordService } from "../auth/password.service";
 
 const Input = z
   .object({
-    action: z.enum(["list", "grant", "revoke", "password"]),
-    organizationSlug: z.string().trim().min(1).max(80),
+    action: z.enum(["list-all", "list", "grant", "revoke", "password"]),
+    organizationSlug: z.string().trim().min(1).max(80).optional(),
     email: z.string().trim().email().max(254).optional(),
     displayName: z.string().trim().min(1).max(160).optional(),
     password: z.string().min(12).max(1024).optional(),
@@ -23,9 +23,62 @@ async function main() {
   // Administrative database access is required; never use the application's RLS role.
   const prisma = new PrismaService(process.env.DATABASE_URL);
   try {
+    if (input.action === "list-all") {
+      // This is a local operator-only command, never exposed through the web API.
+      // Pagination bounds memory usage for installations with many users.
+      let page = 0;
+      while (true) {
+        const users = await prisma.user.findMany({
+          orderBy: { id: "asc" },
+          skip: page * 200,
+          take: 200,
+          select: {
+            email: true,
+            displayName: true,
+            isActive: true,
+            memberships: {
+              select: {
+                role: true,
+                isSuperuser: true,
+                isActive: true,
+                organization: {
+                  select: {
+                    name: true,
+                    slug: true,
+                    isActive: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+        for (const user of users) {
+          console.log(
+            JSON.stringify({
+              name: user.displayName,
+              email: user.email,
+              active: user.isActive,
+              tenants: user.memberships
+                .map(member => ({
+                  name: member.organization.name,
+                  slug: member.organization.slug,
+                  role: member.role,
+                  superuser: member.isSuperuser,
+                  active: member.isActive && member.organization.isActive,
+                }))
+                .sort((a, b) => a.slug.localeCompare(b.slug)),
+            })
+          );
+        }
+        if (users.length < 200) break;
+        page += 1;
+      }
+      return;
+    }
     if (input.action !== "list" && input.confirm !== "CONFIRMAR") {
       throw new Error("Confirmação obrigatória.");
     }
+    if (!input.organizationSlug) throw new Error("Empresa obrigatória.");
     const organization = await prisma.organization.findUnique({
       where: { slug: input.organizationSlug.toLowerCase() },
     });
@@ -78,6 +131,11 @@ async function main() {
     }
     if (input.action !== "grant" && !existing) {
       throw new Error("Usuário não encontrado.");
+    }
+    if (input.action === "grant" && existing && input.password) {
+      throw new Error(
+        "Usuário existente: para alterar a senha, use a opção específica."
+      );
     }
     const passwords = new PasswordService();
     const hash = input.password ? await passwords.hash(input.password) : null;
