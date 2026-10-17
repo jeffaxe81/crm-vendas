@@ -622,6 +622,12 @@ export function BackupAdministrationView({
             {Object.values(preview.targetCounts).reduce((a, b) => a + b, 0)}{" "}
             {t("registros.")}
           </p>
+          {preview.unsupportedRestoreModels?.length ? (
+            <p role="status">
+              {t("Modelos ainda não restauráveis:")}{" "}
+              {preview.unsupportedRestoreModels.join(", ")}
+            </p>
+          ) : null}
           <p>
             {t(
               "A restauração efetiva ainda está bloqueada: exige reautenticação, cópia preventiva verificada e substituição transacional homologada."
