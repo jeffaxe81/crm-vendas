@@ -589,6 +589,83 @@ describe("transactional commercial graph restore", () => {
     ).toBe(true);
   });
 
+  async function removeHistoricalOwnerMembership(
+    target: Awaited<ReturnType<typeof fixture>>
+  ) {
+    const replacement = await identity();
+    await owner.organizationMembership.create({
+      data: {
+        organizationId: target.organization.id,
+        userId: replacement.user.id,
+        role: "ADMIN",
+        isSuperuser: true,
+      },
+    });
+    await owner.opportunity.updateMany({
+      where: { organizationId: target.organization.id },
+      data: { ownerUserId: replacement.user.id },
+    });
+    await owner.organizationMembership.delete({
+      where: { id: target.membership.id },
+    });
+  }
+
+  it("rejects a removed historical owner's membership before deleting any graph rows", async () => {
+    const target = await fixture();
+    await removeHistoricalOwnerMembership(target);
+    expect(
+      await owner.user.findUnique({ where: { id: target.user.id } })
+    ).not.toBeNull();
+    await expectRejectedBeforeDeletion(
+      target.organization.id,
+      target.verified.data,
+      "RESTORE_MEMBERSHIP_REFERENCE_MISSING"
+    );
+  });
+
+  it("restores ownership through a recreated membership without restoring its historical privileges", async () => {
+    const target = await fixture();
+    await removeHistoricalOwnerMembership(target);
+    const currentMembership = await owner.organizationMembership.create({
+      data: {
+        organizationId: target.organization.id,
+        userId: target.user.id,
+        role: "ADMIN",
+        isSuperuser: false,
+      },
+    });
+    expect(currentMembership.id).not.toBe(target.membership.id);
+    const before = await snapshot(target.organization.id);
+
+    await restore(target.organization.id, target.verified.data);
+
+    const after = await snapshot(target.organization.id);
+    for (const model of [
+      "Company",
+      "Contact",
+      "ContactChannel",
+      "CompanyContact",
+      "RelationshipEntry",
+      "Tag",
+      "CompanyTag",
+      "ContactTag",
+      "Pipeline",
+      "PipelineStage",
+      "Product",
+      "Opportunity",
+      "OpportunityItem",
+      "Activity",
+    ]) {
+      expect(after[model]).toEqual(target.verified.data[model]);
+    }
+    expect(after.OrganizationMembership).toEqual(before.OrganizationMembership);
+    expect(
+      await owner.organizationMembership.findUnique({
+        where: { id: currentMembership.id },
+      })
+    ).toMatchObject({ userId: target.user.id, isSuperuser: false });
+  });
+
   it.each([
     ["Opportunity", "pipelineId"],
     ["Opportunity", "stageId"],

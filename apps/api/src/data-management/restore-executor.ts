@@ -23,6 +23,10 @@ const RESTORE_MODELS = [
   "ContactTag",
   "Pipeline",
   "PipelineStage",
+  "Product",
+  "Opportunity",
+  "OpportunityItem",
+  "Activity",
 ] as const;
 const implemented = new Set<string>(RESTORE_MODELS);
 
@@ -120,6 +124,15 @@ function prepareGraph(data: SnapshotData, organizationId: string) {
         fields.map(field => {
           let value = row[field.name];
           if (value === undefined) fail("RESTORE_TARGET_INVALID");
+          // Decimal snapshots are strings. Never pass money through Number,
+          // including values outside JavaScript's exact integer range.
+          if (
+            field.type === "Decimal" &&
+            value !== null &&
+            typeof value !== "string"
+          ) {
+            return fail("RESTORE_TARGET_INVALID");
+          }
           if (field.kind === "enum" && value !== null) {
             const mapped = BACKUP_SCHEMA.enums
               .find(item => item.name === field.type)
@@ -128,7 +141,9 @@ function prepareGraph(data: SnapshotData, organizationId: string) {
             value = mapped.dbName;
           } else if (
             field.kind !== "enum" &&
-            !["String", "DateTime", "Int", "Boolean"].includes(field.type)
+            !["String", "DateTime", "Int", "Boolean", "Decimal"].includes(
+              field.type
+            )
           ) {
             return fail("RESTORE_POLICY_UNSUPPORTED");
           }
@@ -160,10 +175,31 @@ async function requireCurrentPolicies(
   if (current?.present !== false) fail("RESTORE_POLICY_UNSUPPORTED");
 }
 
+async function requirePreservedOpportunityOwners(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  data: SnapshotData
+): Promise<void> {
+  const userIds = [
+    ...new Set(data.Opportunity!.map(row => row.ownerUserId as string)),
+  ];
+  if (userIds.length === 0) return;
+  // This increment preserves memberships. Snapshot closure alone cannot prove
+  // the live composite FK; a recreated membership may have a different ID.
+  const memberships = await tx.organizationMembership.findMany({
+    where: { organizationId, userId: { in: userIds } },
+    select: { userId: true },
+  });
+  const currentOwners = new Set(memberships.map(row => row.userId));
+  if (userIds.some(id => !currentOwners.has(id))) {
+    fail("RESTORE_MEMBERSHIP_REFERENCE_MISSING");
+  }
+}
+
 /**
  * Internal primitive for an already verified snapshot, called inside the same
  * withMaintenance transaction as the future preventive backup/confirmation.
- * Restores the company/contact/tag/pipeline graph only. Unsupported REPLACE models in
+ * Restores the reviewed business graph only. Unsupported REPLACE models in
  * either the target or live tenant fail closed; security state is preserved.
  * No HTTP route, worker operation or public restore action invokes this yet.
  */
@@ -184,6 +220,7 @@ export async function restoreTenantSnapshot(
   const graph = prepareGraph(data, organizationId);
   validateRestoreReferences(data);
   await validateRestoreIdentityReferences(tx, organizationId, data);
+  await requirePreservedOpportunityOwners(tx, organizationId, data);
   await requireCurrentPolicies(tx, organizationId);
 
   for (const { table } of [...graph].reverse()) {
