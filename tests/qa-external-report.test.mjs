@@ -64,6 +64,56 @@ test("relatórios JSON/Markdown não copiam segredos de uma resposta JSON invál
   }
 });
 
+test("relatórios não copiam erro de transporte do smoke web", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "qa-web-report-"));
+  try {
+    const entry = new URL("../qa-external/run.mjs", import.meta.url).href;
+    const script = `
+      globalThis.fetch = async url => {
+        if (url === 'https://web.qa.example.test') throw new Error('QA_WEB_TRANSPORT_SECRET');
+        return new Response(url.endsWith('/health') ? '{"status":"ok","database":"up"}' : '{}',
+          {status: url.endsWith('/health') ? 200 : 401, headers: {'content-type': 'application/json'}});
+      };
+      await import(${JSON.stringify(entry)});
+    `;
+    const result = spawnSync(
+      process.execPath,
+      ["--input-type=module", "-e", script],
+      {
+        encoding: "utf8",
+        timeout: 10000,
+        env: {
+          ...process.env,
+          QA_API_URL: "https://api.qa.example.test/api/v1",
+          QA_WEB_URL: "https://web.qa.example.test",
+          QA_MODE: "read",
+          QA_OUTPUT_DIR: dir,
+        },
+      }
+    );
+    assert.equal(result.status, 1, result.stderr);
+    assert.equal(
+      (result.stdout + result.stderr).includes("QA_WEB_TRANSPORT_SECRET"),
+      false
+    );
+    const files = await readdir(dir);
+    assert.equal(files.length, 2);
+    for (const file of files) {
+      const text = await readFile(join(dir, file), "utf8");
+      assert.equal(text.includes("QA_WEB_TRANSPORT_SECRET"), false, file);
+      assert.match(text, /Falha de transporte no front-end/);
+      if (file.endsWith(".json"))
+        assert.deepEqual(JSON.parse(text).counts, {
+          PASS: 2,
+          FAIL: 1,
+          BLOCKED: 0,
+        });
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 test("reporter de navegador só publica nomes fixos, status e contagens", async () => {
   const module = await import("../qa-external/safe-reporter.mjs").catch(
     () => null
