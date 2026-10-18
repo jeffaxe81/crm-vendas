@@ -1,4 +1,6 @@
 import type { Prisma } from "../generated/prisma/client";
+import { SNAPSHOT_POLICIES } from "./backup-models";
+import type { SnapshotData } from "./backup-manifest";
 import {
   restoreTenantSnapshot,
   unsupportedRestoreModels,
@@ -25,6 +27,36 @@ function maintenanceTransaction(): Prisma.TransactionClient {
 }
 
 describe("restore executor target binding", () => {
+  it("rejects money supplied as a JavaScript number before changing data", async () => {
+    const data: SnapshotData = Object.fromEntries(
+      SNAPSHOT_POLICIES.map(policy => [
+        policy.model,
+        policy.model === "Organization" ? [{ id: organizationId }] : [],
+      ])
+    );
+    data.Product = [
+      {
+        id: otherOrganizationId,
+        organizationId,
+        code: "SYNTHETIC",
+        name: "Synthetic product",
+        description: null,
+        unitPrice: 9007199254740994,
+        isActive: true,
+        createdAt: "2026-10-18T00:00:00.123456Z",
+        updatedAt: "2026-10-18T00:00:00.654321Z",
+        createdBy: organizationId,
+        updatedBy: organizationId,
+        version: 1,
+        deletedAt: null,
+        deletedBy: null,
+      },
+    ];
+    await expect(
+      restoreTenantSnapshot(maintenanceTransaction(), organizationId, data)
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+  });
+
   it.each([
     "Company",
     "Contact",
@@ -36,17 +68,19 @@ describe("restore executor target binding", () => {
     "ContactTag",
     "Pipeline",
     "PipelineStage",
+    "Product",
+    "Opportunity",
+    "OpportunityItem",
+    "Activity",
   ])(
     "rejects a missing %s collection before mutating tenant data",
     async model => {
-      const data = {
-        Organization: [{ id: organizationId }],
-        Company: [],
-        Contact: [],
-        ContactChannel: [],
-        CompanyContact: [],
-        RelationshipEntry: [],
-      };
+      const data: SnapshotData = Object.fromEntries(
+        SNAPSHOT_POLICIES.map(policy => [
+          policy.model,
+          policy.model === "Organization" ? [{ id: organizationId }] : [],
+        ])
+      );
       const incomplete = Object.fromEntries(
         Object.entries(data).filter(([name]) => name !== model)
       );
@@ -88,10 +122,10 @@ describe("restore preview applicability", () => {
         { Company: 5, Opportunity: 1, Contact: 2, Ticket: 1 },
         { Company: 2, Opportunity: 0, Contact: 2, Ticket: 2 }
       )
-    ).toEqual(["Opportunity", "Ticket"]);
+    ).toEqual(["Ticket"]);
   });
 
-  it("does not block the reviewed company/contact/tag/pipeline graph", () => {
+  it("does not block the reviewed commercial graph in either snapshot", () => {
     expect(
       unsupportedRestoreModels(
         {
@@ -103,6 +137,10 @@ describe("restore preview applicability", () => {
           ContactTag: 1,
           Pipeline: 2,
           PipelineStage: 5,
+          Product: 3,
+          Opportunity: 4,
+          OpportunityItem: 6,
+          Activity: 2,
         },
         {
           Company: 2,
@@ -113,6 +151,10 @@ describe("restore preview applicability", () => {
           ContactTag: 4,
           Pipeline: 1,
           PipelineStage: 3,
+          Product: 2,
+          Opportunity: 3,
+          OpportunityItem: 7,
+          Activity: 5,
         }
       )
     ).toEqual([]);

@@ -2,10 +2,11 @@
 
 ## Estado da entrega
 
-Este incremento fornece somente `consumeRestoreConfirmation`, uma função interna
-que deve participar da **mesma transação de manutenção** de uma futura
-restauração. **Não implementa a substituição de dados e não cria rota HTTP,
-botão ou comando de restauração.** Não autoriza GO de produção.
+O conjunto fornece `consumeRestoreConfirmation` e um executor interno limitado
+ao grafo descrito ao final. A orquestração futura deve reuni-los na **mesma
+transação de manutenção**, com cópia preventiva verificada. A restauração
+completa, sua rota HTTP e seu botão permanecem pendentes. O incremento não
+autoriza GO de produção.
 
 ## Restrições já verificadas pelo gate
 
@@ -87,18 +88,29 @@ políticas especiais, backup preventivo e fluxo HTTP/UI continuam pendentes.
 
 O gate não deve ser invocado isoladamente como sinal de restauração concluída.
 
-## Executor interno de empresas, contatos, etiquetas e funis
+## Executor interno de empresas, contatos, etiquetas, funis e grafo comercial
 
 O executor transacional interno já substitui `Company`, `Contact`,
 `ContactChannel`, `CompanyContact`, `RelationshipEntry`, `Tag`,
-`CompanyTag`, `ContactTag`, `Pipeline` e `PipelineStage`. Prepara todos os
-registros antes da primeira
+`CompanyTag`, `ContactTag`, `Pipeline`, `PipelineStage`, `Product`,
+`Opportunity`, `OpportunityItem` e `Activity`. Prepara todos os registros antes da primeira
 exclusão, verifica referências e identidades sob o lock exclusivo, remove
 primeiro os vínculos empresa/contato-etiqueta e demais dependências, depois
 os registros pais, e reinsere pais antes dos vínculos. Falha de constraint
 reverte a transação inteira. Datas são convertidas diretamente pelo
 PostgreSQL, preservando seis dígitos de microssegundos do snapshot; enums
-usam o mapeamento do esquema revisado.
+usam o mapeamento do esquema revisado. Valores `Decimal` são vinculados como
+strings e convertidos diretamente pelo banco; valores numéricos JavaScript
+nesses campos são rejeitados antes das exclusões.
+
+Como associações de usuários são preservadas neste incremento, o executor
+revalida também a existência de `(organizationId, ownerUserId)` para cada
+oportunidade no banco atual, sob o mesmo lock e antes da primeira exclusão.
+Um usuário global existente sem essa associação falha com
+`RESTORE_MEMBERSHIP_REFERENCE_MISSING`. Uma associação recriada com outro ID
+para o mesmo par organização/usuário é aceita; os privilégios atuais continuam
+preservados. A checagem preliminar de identidades da prévia mantém seu contrato
+independente das políticas futuras de restauração de associações.
 
 Testes PostgreSQL/RLS comprovam ida e volta dos dois tipos de etiquetas,
 exclusão de associações criadas após a cópia, rejeição de referência quebrada,
@@ -108,9 +120,12 @@ integram o subconjunto interno implementado. Testes PostgreSQL/RLS dos
 funis comprovam também ida e volta de etapas (inclusive enum OPEN/WON/LOST),
 rejeição de FK de etapa inválida antes de exclusões, rollback por conflito
 de posição, isolamento entre tenants e remoção de registros novos ausentes
-no backup. Um registro de `Opportunity` no backup ou no estado atual
-continua impedindo o restore integral; não é permitido apagar um funil
-referenciado por oportunidade ainda não suportada.
+no backup. O grafo comercial acrescenta cobertura PostgreSQL/RLS para
+preços além da precisão inteira do JavaScript, quantidades fracionárias,
+microssegundos, dois tipos de cliente da oportunidade, FKs quebradas ou de
+outro tenant, associação do responsável removida/recriada e rollback tardio
+de constraint de quantidade. `Ticket` e os demais modelos ainda não
+implementados continuam bloqueando a execução quando presentes em qualquer lado.
 
 Este executor rejeita modelos `REPLACE` ainda não suportados quando há
 registros no backup **ou no estado atual** da organização. Usuários globais,
