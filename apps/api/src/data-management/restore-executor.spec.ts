@@ -78,6 +78,10 @@ describe("restore executor target binding", () => {
     "TerritoryMetrics",
     "SupportQueue",
     "SlaPolicy",
+    "CustomFieldDefinition",
+    "CompanyCustomFieldValue",
+    "ContactCustomFieldValue",
+    "UserWorkspacePreference",
   ])(
     "rejects a missing %s collection before mutating tenant data",
     async model => {
@@ -100,6 +104,34 @@ describe("restore executor target binding", () => {
       ).rejects.toThrow("RESTORE_TARGET_INVALID");
     }
   );
+
+  it.each([
+    ["parsed object", { theme: "dark" }],
+    ["parsed array", ["dark"]],
+    ["JavaScript number", 9007199254740992],
+    ["JavaScript boolean", false],
+    ["SQL NULL in a required JSON column", null],
+    ["malformed JSON text", '{"theme":'],
+  ])("rejects %s before any mutation", async (_name, preferences) => {
+    const data: SnapshotData = Object.fromEntries(
+      SNAPSHOT_POLICIES.map(policy => [
+        policy.model,
+        policy.model === "Organization" ? [{ id: organizationId }] : [],
+      ])
+    );
+    data.UserWorkspacePreference = [
+      {
+        organizationId,
+        userId: otherOrganizationId,
+        preferences,
+        createdAt: "2026-10-18T00:00:00.123456Z",
+        updatedAt: "2026-10-18T00:00:00.654321Z",
+      },
+    ];
+    await expect(
+      restoreTenantSnapshot(maintenanceTransaction(), organizationId, data)
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+  });
 
   it.each([
     ["another organization", [{ id: otherOrganizationId }]],
@@ -153,6 +185,10 @@ describe("restore preview applicability", () => {
           TerritoryMetrics: 2,
           SupportQueue: 3,
           SlaPolicy: 4,
+          CustomFieldDefinition: 4,
+          CompanyCustomFieldValue: 3,
+          ContactCustomFieldValue: 2,
+          UserWorkspacePreference: 2,
         },
         {
           Company: 2,
@@ -173,6 +209,10 @@ describe("restore preview applicability", () => {
           TerritoryMetrics: 1,
           SupportQueue: 1,
           SlaPolicy: 2,
+          CustomFieldDefinition: 3,
+          CompanyCustomFieldValue: 2,
+          ContactCustomFieldValue: 1,
+          UserWorkspacePreference: 1,
         }
       )
     ).toEqual([]);

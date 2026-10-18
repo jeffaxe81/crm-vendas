@@ -155,3 +155,54 @@ describe("restore preserved opportunity ownership", () => {
     );
   });
 });
+
+describe("restore preserved workspace membership", () => {
+  function workspaceBackup() {
+    const data = backup();
+    // The guard must also run when no opportunity references this user.
+    data.Opportunity = [];
+    data.UserWorkspacePreference = [
+      {
+        organizationId,
+        userId,
+        preferences: '{"nested":{"number":9007199254740993},"theme":"dark"}',
+        createdAt: date,
+        updatedAt: date,
+      },
+    ];
+    return data;
+  }
+
+  it.each([
+    ["absent", []],
+    [
+      "present only in another tenant",
+      [{ id: membershipId, organizationId: opportunityId, userId }],
+    ],
+  ])(
+    "rejects a workspace membership %s before the first DELETE",
+    async (_name, rows) => {
+      const current = transaction(rows);
+      await expect(
+        restoreTenantSnapshot(current.tx, organizationId, workspaceBackup())
+      ).rejects.toMatchObject({ code: "RESTORE_MEMBERSHIP_REFERENCE_MISSING" });
+      expect(current.mutations).toEqual([]);
+    }
+  );
+
+  it("restores preferences with a recreated membership ID for the same organization and user", async () => {
+    const current = transaction([
+      { id: opportunityId, organizationId, userId },
+    ]);
+    await expect(
+      restoreTenantSnapshot(current.tx, organizationId, workspaceBackup())
+    ).resolves.toBeUndefined();
+    expect(current.queries).toContainEqual({
+      organizationId,
+      userId: { in: [userId] },
+    });
+    expect(current.mutations.some(sql => sql.startsWith("DELETE FROM"))).toBe(
+      true
+    );
+  });
+});

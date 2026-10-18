@@ -550,16 +550,14 @@ describe("transactional tenant restore executor", () => {
     expect(restored.PipelineStage).toEqual([]);
   });
 
-  it("blocks restore when an unsupported live custom field definition exists", async () => {
+  it("blocks restore when an unsupported live role exists", async () => {
     const target = await pipelineGraph();
     const before = await graphSnapshot(target.organization.id);
-    const definition = await owner.customFieldDefinition.create({
+    const role = await owner.role.create({
       data: {
         organizationId: target.organization.id,
-        scope: "COMPANY",
-        key: "synthetic_after_backup",
-        label: "Criado depois do backup",
-        type: "TEXT",
+        code: "SYNTHETIC_AFTER_BACKUP",
+        name: "Criado depois do backup",
       },
     });
 
@@ -578,8 +576,8 @@ describe("transactional tenant restore executor", () => {
 
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
     expect(
-      await owner.customFieldDefinition.findUnique({
-        where: { id: definition.id },
+      await owner.role.findUnique({
+        where: { id: role.id },
       })
     ).not.toBeNull();
   });
