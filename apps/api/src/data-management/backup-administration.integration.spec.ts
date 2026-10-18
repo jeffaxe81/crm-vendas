@@ -52,6 +52,19 @@ describe("backup administration HTTP authorization", () => {
       .auth(token, { type: "bearer" })
       .expect(403);
     await server
+      .get("/api/v1/admin/storage/allocation")
+      .auth(token, { type: "bearer" })
+      .expect(403);
+    await server
+      .get("/api/v1/admin/storage/reconciliation")
+      .auth(token, { type: "bearer" })
+      .expect(403);
+    await server
+      .put("/api/v1/admin/storage/allocation")
+      .auth(token, { type: "bearer" })
+      .send({ allocatedGiB: 5, confirmation: "AJUSTAR COTA" })
+      .expect(403);
+    await server
       .get("/api/v1/admin/purge/policy")
       .auth(token, { type: "bearer" })
       .expect(403);
@@ -145,6 +158,47 @@ describe("backup administration HTTP authorization", () => {
       })
       .expect(200);
     expect(updated.body.enabled).toBe(false);
+    const allocation = await server
+      .get("/api/v1/admin/storage/allocation")
+      .auth(token, { type: "bearer" })
+      .expect(200);
+    expect(allocation.body).toMatchObject({
+      allocatedGiB: null,
+      usedBytes: "0",
+      alertLevel: "UNALLOCATED",
+      enforced: false,
+    });
+    await server
+      .put("/api/v1/admin/storage/allocation")
+      .auth(token, { type: "bearer" })
+      .send({ allocatedGiB: 5 })
+      .expect(400);
+    const savedAllocation = await server
+      .put("/api/v1/admin/storage/allocation")
+      .auth(token, { type: "bearer" })
+      .send({ allocatedGiB: 5, confirmation: "AJUSTAR COTA" })
+      .expect(200);
+    expect(savedAllocation.body.allocatedGiB).toBe(5);
+    const reconciliation = await server
+      .get("/api/v1/admin/storage/reconciliation")
+      .auth(token, { type: "bearer" })
+      .expect(200);
+    expect(reconciliation.body).toMatchObject({
+      scope: "COMPLETED_TENANT_BACKUPS",
+      metadataOnly: true,
+      catalogCount: 0,
+      checkedCount: 0,
+      nextCursor: null,
+      findings: [],
+    });
+    await server
+      .get("/api/v1/admin/storage/reconciliation?cursor=other-tenant")
+      .auth(token, { type: "bearer" })
+      .expect(400);
+    await server
+      .get(`/api/v1/admin/storage/reconciliation?cursor=${randomUUID()}`)
+      .auth(token, { type: "bearer" })
+      .expect(400);
     const policy = await server
       .get("/api/v1/admin/purge/policy")
       .auth(token, { type: "bearer" })
@@ -180,6 +234,8 @@ describe("backup administration HTTP authorization", () => {
     await server.get("/api/v1/admin/backups").expect(401);
     await server.get("/api/v1/admin/backups/schedule").expect(401);
     await server.get("/api/v1/admin/purge/policy").expect(401);
+    await server.get("/api/v1/admin/storage/allocation").expect(401);
+    await server.get("/api/v1/admin/storage/reconciliation").expect(401);
     await server
       .get(`/api/v1/admin/backups/${randomUUID()}/download`)
       .expect(401);

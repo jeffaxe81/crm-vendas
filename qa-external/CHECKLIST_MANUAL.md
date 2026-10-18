@@ -44,6 +44,8 @@ Registrar por sessão: **data/hora**, **operador**, **URL**, **ambiente isolado*
 
 ## Registro de execução
 
+O laboratório de navegador não preserva HTML, trace, vídeo, screenshot ou contexto de erro automático. Para cada evidência manual, reproduzir apenas em QA sintética, limitar a captura ao comportamento necessário e revisar/remover senhas, tokens, cookies, payloads e dados pessoais antes de salvar ou compartilhar. Registrar o vínculo com o nome fixo e resultado do resumo seguro; um resumo sem detalhes não substitui a evidência humana exigida.
+
 Copiar este bloco para cada caso executado:
 
 - **Caso:** M-___

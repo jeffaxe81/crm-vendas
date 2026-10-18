@@ -17,6 +17,8 @@ import {
 import { apiRequest, downloadApiFile } from "../../lib/api-client";
 import { useTranslation } from "../../i18n/language-provider";
 import { TenantPurgePolicyView } from "./tenant-purge-policy-view";
+import { TenantStorageAllocationView } from "./tenant-storage-allocation-view";
+import { TenantStorageReconciliationView } from "./tenant-storage-reconciliation-view";
 
 type Operation = {
   id: string;
@@ -639,6 +641,8 @@ export function BackupAdministrationView({
           </button>
         </section>
       ) : null}
+      <TenantStorageAllocationView accessToken={accessToken} />
+      <TenantStorageReconciliationView accessToken={accessToken} />
       <TenantPurgePolicyView accessToken={accessToken} />
     </section>
   );

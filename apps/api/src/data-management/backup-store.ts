@@ -12,6 +12,7 @@ const MAGIC = Buffer.from("AXESBK01");
 const IV_BYTES = 12;
 const TAG_BYTES = 16;
 const HEADER_BYTES = MAGIC.length + IV_BYTES + TAG_BYTES;
+export const BACKUP_ENVELOPE_OVERHEAD_BYTES = HEADER_BYTES;
 
 export type BackupStoreOptions = {
   directory: string;
@@ -141,6 +142,36 @@ export class BackupStore {
       ]);
     } catch {
       throw new BackupStoreIntegrityError("Invalid backup authentication");
+    }
+  }
+
+  /**
+   * Read-only inspection: checks a single UUID-named encrypted object.
+   * No content is decrypted or read; symlinks and non-regular files are refused.
+   * A missing object returns null; other filesystem errors remain failures.
+   */
+  async objectSize(id: string): Promise<number | null> {
+    const objectId = this.objectId(id);
+    await this.requireDirectory();
+    let file;
+    try {
+      file = await open(
+        this.path(objectId),
+        constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK
+      );
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+      throw error;
+    }
+    try {
+      const info = await file.stat();
+      if (!info.isFile())
+        throw new BackupStoreIntegrityError(
+          "Backup object must be a regular file"
+        );
+      return info.size;
+    } finally {
+      await file.close();
     }
   }
 

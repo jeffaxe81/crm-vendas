@@ -18,6 +18,11 @@ const RESTORE_MODELS = [
   "ContactChannel",
   "CompanyContact",
   "RelationshipEntry",
+  "Tag",
+  "CompanyTag",
+  "ContactTag",
+  "Pipeline",
+  "PipelineStage",
 ] as const;
 const implemented = new Set<string>(RESTORE_MODELS);
 
@@ -158,7 +163,7 @@ async function requireCurrentPolicies(
 /**
  * Internal primitive for an already verified snapshot, called inside the same
  * withMaintenance transaction as the future preventive backup/confirmation.
- * Restores the company/contact graph only. Other non-empty REPLACE models in
+ * Restores the company/contact/tag/pipeline graph only. Unsupported REPLACE models in
  * either the target or live tenant fail closed; security state is preserved.
  * No HTTP route, worker operation or public restore action invokes this yet.
  */

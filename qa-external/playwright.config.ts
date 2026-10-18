@@ -1,4 +1,23 @@
 import { defineConfig } from "@playwright/test";
+import { normalizeWebUrl } from "./guards.mjs";
+
+// O runner Playwright aceita reporter extra por ambiente ou substituição CLI.
+if (
+  process.env.PW_TEST_REPORTER ||
+  process.argv.some(
+    arg => arg === "--reporter" || arg.startsWith("--reporter=")
+  )
+) {
+  throw new Error("Reporter externo adicional ou substituto recusado.");
+}
+
+const webUrl = normalizeWebUrl(process.env.QA_WEB_URL);
+if (!webUrl)
+  throw new Error("Informe QA_WEB_URL explícita. Não use o fallback.");
+
+// Playwright 1.62: impede cópia da página/ARIA para contexto de erro.
+// preserveOutput=never remove os demais contextos/anexos temporários do teste.
+process.env.PLAYWRIGHT_NO_COPY_PROMPT = "1";
 
 export default defineConfig({
   testDir: ".",
@@ -7,16 +26,32 @@ export default defineConfig({
   expect: { timeout: 12000 },
   fullyParallel: false,
   workers: 1,
-  reporter: [["list"], ["html", { outputFolder: "qa-external/artifacts/playwright-html", open: "never" }]],
+  reporter: [["./safe-reporter.mjs"]],
+  quiet: true,
+  preserveOutput: "never",
+  captureGitInfo: { commit: false, diff: false },
   outputDir: "qa-external/artifacts/playwright-results",
   use: {
-    baseURL: process.env.QA_WEB_URL || "http://127.0.0.1:3000",
-    trace: "retain-on-failure",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure"
+    baseURL: webUrl,
+    ignoreHTTPSErrors: false,
+    serviceWorkers: "block",
+    // Nem página pública deve persistir payloads remotos ou contextos de falha.
+    trace: "off",
+    screenshot: "off",
+    video: "off",
   },
   projects: [
-    { name: "desktop", use: { browserName: "chromium", viewport: { width: 1440, height: 900 } } },
-    { name: "mobile", use: { browserName: "chromium", viewport: { width: 390, height: 844 }, isMobile: true } }
-  ]
+    {
+      name: "desktop",
+      use: { browserName: "chromium", viewport: { width: 1440, height: 900 } },
+    },
+    {
+      name: "mobile",
+      use: {
+        browserName: "chromium",
+        viewport: { width: 390, height: 844 },
+        isMobile: true,
+      },
+    },
+  ],
 });

@@ -55,6 +55,18 @@ O executor deverá repeti-la **sob lock exclusivo**, validar todas as políticas
 de modelos preservados, possíveis conflitos de unicidade e referências externas,
 e somente então aplicar a restauração com rollback integral.
 
+## Bloqueio antecipado de políticas não suportadas
+
+Antes de consumir a confirmação de uso único, `preflightRestoreExecution`
+recalcula, sob o lock de manutenção, as contagens do estado atual e compara
+com o manifesto autenticado do backup. Caso algum modelo `REPLACE` ainda não
+implementado pelo executor contenha registros no destino **ou** na cópia, falha
+com `RESTORE_POLICY_UNSUPPORTED`. A confirmação continua disponível e os
+dados não são alterados. Testes PostgreSQL/RLS cobrem ambos os sentidos.
+
+Isso é uma proteção adicional, não autorização para executar restauração:
+políticas especiais, backup preventivo e fluxo HTTP/UI continuam pendentes.
+
 ## Faltam antes de expor um botão RESTAURAR
 
 1. Implementar e testar o restaurador de todos os modelos exportáveis e as
@@ -75,15 +87,30 @@ e somente então aplicar a restauração com rollback integral.
 
 O gate não deve ser invocado isoladamente como sinal de restauração concluída.
 
-## Executor interno de empresas e contatos
+## Executor interno de empresas, contatos, etiquetas e funis
 
 O executor transacional interno já substitui `Company`, `Contact`,
-`ContactChannel`, `CompanyContact` e `RelationshipEntry`. Prepara todos os
-registros antes da primeira exclusão, verifica referências e identidades sob
-o lock exclusivo, remove dependências antes dos pais e reinsere os pais antes
-dos vínculos. Falha de constraint reverte a transação inteira. Datas são
-convertidas diretamente pelo PostgreSQL, preservando os seis dígitos de
-microssegundos do snapshot; enums usam o mapeamento do esquema revisado.
+`ContactChannel`, `CompanyContact`, `RelationshipEntry`, `Tag`,
+`CompanyTag`, `ContactTag`, `Pipeline` e `PipelineStage`. Prepara todos os
+registros antes da primeira
+exclusão, verifica referências e identidades sob o lock exclusivo, remove
+primeiro os vínculos empresa/contato-etiqueta e demais dependências, depois
+os registros pais, e reinsere pais antes dos vínculos. Falha de constraint
+reverte a transação inteira. Datas são convertidas diretamente pelo
+PostgreSQL, preservando seis dígitos de microssegundos do snapshot; enums
+usam o mapeamento do esquema revisado.
+
+Testes PostgreSQL/RLS comprovam ida e volta dos dois tipos de etiquetas,
+exclusão de associações criadas após a cópia, rejeição de referência quebrada,
+rollback de falha tardia de unicidade, preservação de outro tenant e
+preservação de associação Superusuário. Etiquetas, funis e etapas agora
+integram o subconjunto interno implementado. Testes PostgreSQL/RLS dos
+funis comprovam também ida e volta de etapas (inclusive enum OPEN/WON/LOST),
+rejeição de FK de etapa inválida antes de exclusões, rollback por conflito
+de posição, isolamento entre tenants e remoção de registros novos ausentes
+no backup. Um registro de `Opportunity` no backup ou no estado atual
+continua impedindo o restore integral; não é permitido apagar um funil
+referenciado por oportunidade ainda não suportada.
 
 Este executor rejeita modelos `REPLACE` ainda não suportados quando há
 registros no backup **ou no estado atual** da organização. Usuários globais,

@@ -124,6 +124,67 @@ describe("restore locked preflight", () => {
     expect(result.currentCounts.Company).toBe(1);
   });
 
+  it("blocks restore when an unsupported model gained live data", async () => {
+    const { organization, verified } = await fixture();
+    const role = await owner.role.create({
+      data: {
+        organizationId: organization.id,
+        name: "Do not discard",
+        code: "DO_NOT_DISCARD",
+      },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx =>
+          preflightRestoreExecution(
+            tx,
+            organization.id,
+            verified,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+    expect(
+      await owner.role.findUnique({ where: { id: role.id } })
+    ).not.toBeNull();
+  });
+
+  it("blocks unsupported rows existing only in target", async () => {
+    const { organization, user } = await fixture();
+    const role = await owner.role.create({
+      data: {
+        organizationId: organization.id,
+        name: "Historical role",
+        code: "HISTORICAL",
+      },
+    });
+    const backup = await backups.create(organization.id, user.id, "MANUAL");
+    const verified = await backups.verify(organization.id, backup.id);
+    await owner.role.delete({ where: { id: role.id } });
+
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx =>
+          preflightRestoreExecution(
+            tx,
+            organization.id,
+            verified,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+    expect(
+      await owner.role.count({ where: { organizationId: organization.id } })
+    ).toBe(0);
+  });
+
   it("fails closed when a referenced live identity changed after backup", async () => {
     const { organization, user, verified } = await fixture();
 
