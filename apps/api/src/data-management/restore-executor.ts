@@ -33,6 +33,10 @@ const RESTORE_MODELS = [
   "TerritoryMetrics",
   "SupportQueue",
   "SlaPolicy",
+  "CustomFieldDefinition",
+  "CompanyCustomFieldValue",
+  "ContactCustomFieldValue",
+  "UserWorkspacePreference",
 ] as const;
 const implemented = new Set<string>(RESTORE_MODELS);
 
@@ -139,6 +143,21 @@ function prepareGraph(data: SnapshotData, organizationId: string) {
           ) {
             return fail("RESTORE_TARGET_INVALID");
           }
+          if (field.type === "Json") {
+            if (value === null) {
+              if (field.isRequired) return fail("RESTORE_TARGET_INVALID");
+            } else {
+              if (typeof value !== "string")
+                return fail("RESTORE_TARGET_INVALID");
+              try {
+                // Check syntax only; keep the raw text for native SQL decoding.
+                // Using the parsed result would round large JSON numbers.
+                JSON.parse(value);
+              } catch {
+                return fail("RESTORE_TARGET_INVALID");
+              }
+            }
+          }
           if (field.kind === "enum" && value !== null) {
             const mapped = BACKUP_SCHEMA.enums
               .find(item => item.name === field.type)
@@ -147,9 +166,14 @@ function prepareGraph(data: SnapshotData, organizationId: string) {
             value = mapped.dbName;
           } else if (
             field.kind !== "enum" &&
-            !["String", "DateTime", "Int", "Boolean", "Decimal"].includes(
-              field.type
-            )
+            ![
+              "String",
+              "DateTime",
+              "Int",
+              "Boolean",
+              "Decimal",
+              "Json",
+            ].includes(field.type)
           ) {
             return fail("RESTORE_POLICY_UNSUPPORTED");
           }
@@ -160,6 +184,12 @@ function prepareGraph(data: SnapshotData, organizationId: string) {
     return {
       table: `"public".${quotedIdentifier(policy.table)}`,
       columns: fields.map(field => quotedIdentifier(field.dbName)).join(", "),
+      selectColumns: fields
+        .map(field => {
+          const column = quotedIdentifier(field.dbName);
+          return field.type === "Json" ? `(${column} #>> '{}')::jsonb` : column;
+        })
+        .join(", "),
       rows,
     };
   });
@@ -181,13 +211,16 @@ async function requireCurrentPolicies(
   if (current?.present !== false) fail("RESTORE_POLICY_UNSUPPORTED");
 }
 
-async function requirePreservedOpportunityOwners(
+async function requirePreservedMemberships(
   tx: Prisma.TransactionClient,
   organizationId: string,
   data: SnapshotData
 ): Promise<void> {
   const userIds = [
-    ...new Set(data.Opportunity!.map(row => row.ownerUserId as string)),
+    ...new Set([
+      ...data.Opportunity!.map(row => row.ownerUserId as string),
+      ...data.UserWorkspacePreference!.map(row => row.userId as string),
+    ]),
   ];
   if (userIds.length === 0) return;
   // This increment preserves memberships. Snapshot closure alone cannot prove
@@ -196,8 +229,8 @@ async function requirePreservedOpportunityOwners(
     where: { organizationId, userId: { in: userIds } },
     select: { userId: true },
   });
-  const currentOwners = new Set(memberships.map(row => row.userId));
-  if (userIds.some(id => !currentOwners.has(id))) {
+  const currentUsers = new Set(memberships.map(row => row.userId));
+  if (userIds.some(id => !currentUsers.has(id))) {
     fail("RESTORE_MEMBERSHIP_REFERENCE_MISSING");
   }
 }
@@ -226,7 +259,7 @@ export async function restoreTenantSnapshot(
   const graph = prepareGraph(data, organizationId);
   validateRestoreReferences(data);
   await validateRestoreIdentityReferences(tx, organizationId, data);
-  await requirePreservedOpportunityOwners(tx, organizationId, data);
+  await requirePreservedMemberships(tx, organizationId, data);
   await requireCurrentPolicies(tx, organizationId);
 
   for (const { table } of [...graph].reverse()) {
@@ -235,12 +268,15 @@ export async function restoreTenantSnapshot(
       organizationId
     );
   }
-  for (const { table, columns, rows } of graph) {
+  for (const { table, columns, selectColumns, rows } of graph) {
     if (rows.length === 0) continue;
     // PostgreSQL converts timestamp strings directly, retaining all six digits.
     // Identifiers come only from reviewed metadata; all values are bound JSON.
+    // Json fields contain raw JSON text, wrapped as JSON strings by the recordset.
+    // Extract and cast that text in PostgreSQL to retain numbers and JSON null;
+    // nullable SQL NULL stays distinct from the raw JSON text "null".
     const inserted = await tx.$executeRawUnsafe(
-      `INSERT INTO ${table} (${columns}) SELECT ${columns}
+      `INSERT INTO ${table} (${columns}) SELECT ${selectColumns}
        FROM json_populate_recordset(NULL::${table}, $1::json)`,
       JSON.stringify(rows)
     );
