@@ -72,6 +72,12 @@ describe("restore executor target binding", () => {
     "Opportunity",
     "OpportunityItem",
     "Activity",
+    "Territory",
+    "TerritoryQuota",
+    "TerritoryTarget",
+    "TerritoryMetrics",
+    "SupportQueue",
+    "SlaPolicy",
   ])(
     "rejects a missing %s collection before mutating tenant data",
     async model => {
@@ -125,7 +131,7 @@ describe("restore preview applicability", () => {
     ).toEqual(["Ticket"]);
   });
 
-  it("does not block the reviewed commercial graph in either snapshot", () => {
+  it("does not block the reviewed business and configuration graph in either snapshot", () => {
     expect(
       unsupportedRestoreModels(
         {
@@ -141,6 +147,12 @@ describe("restore preview applicability", () => {
           Opportunity: 4,
           OpportunityItem: 6,
           Activity: 2,
+          Territory: 2,
+          TerritoryQuota: 4,
+          TerritoryTarget: 5,
+          TerritoryMetrics: 2,
+          SupportQueue: 3,
+          SlaPolicy: 4,
         },
         {
           Company: 2,
@@ -155,6 +167,12 @@ describe("restore preview applicability", () => {
           Opportunity: 3,
           OpportunityItem: 7,
           Activity: 5,
+          Territory: 1,
+          TerritoryQuota: 3,
+          TerritoryTarget: 2,
+          TerritoryMetrics: 1,
+          SupportQueue: 1,
+          SlaPolicy: 2,
         }
       )
     ).toEqual([]);

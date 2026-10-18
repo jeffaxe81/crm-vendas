@@ -550,15 +550,16 @@ describe("transactional tenant restore executor", () => {
     expect(restored.PipelineStage).toEqual([]);
   });
 
-  it("blocks restore when an unsupported live support queue exists", async () => {
+  it("blocks restore when an unsupported live custom field definition exists", async () => {
     const target = await pipelineGraph();
     const before = await graphSnapshot(target.organization.id);
-    const queue = await owner.supportQueue.create({
+    const definition = await owner.customFieldDefinition.create({
       data: {
         organizationId: target.organization.id,
-        name: "Criada depois do backup",
-        createdBy: target.user.id,
-        updatedBy: target.user.id,
+        scope: "COMPANY",
+        key: "synthetic_after_backup",
+        label: "Criado depois do backup",
+        type: "TEXT",
       },
     });
 
@@ -577,7 +578,9 @@ describe("transactional tenant restore executor", () => {
 
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
     expect(
-      await owner.supportQueue.findUnique({ where: { id: queue.id } })
+      await owner.customFieldDefinition.findUnique({
+        where: { id: definition.id },
+      })
     ).not.toBeNull();
   });
 
