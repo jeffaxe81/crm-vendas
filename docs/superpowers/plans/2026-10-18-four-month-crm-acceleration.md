@@ -61,6 +61,12 @@ O [checkpoint do grafo comercial](../../checkpoints/2026-10-18-commercial-restor
 - [x] Revisar o diff e corrigir a validação de associações antes de exclusões. Manter o bloqueio para outros modelos e restore sem rota/botão/worker público neste incremento.
 - [x] Registrar o subconjunto e as políticas pendentes no checkpoint; exigir CI completo do SHA candidato antes da integração. O resultado corrente fica no PR, separado de staging e produção.
 
+## Continuidade do bloco 2 — territórios, filas e SLA
+
+Na base `321e2f19ea42467668d06cc744277cd44a15c8c7`, as PRs #243 e #257 já estão integradas e seu CI de `push/main` foi aprovado. A [PR #258](https://github.com/jeffaxe81/crm-vendas/pull/258) acrescenta seis políticas `REPLACE` ao executor interno: `Territory`, `TerritoryQuota`, `TerritoryTarget`, `TerritoryMetrics`, `SupportQueue` e `SlaPolicy`.
+
+O [checkpoint desse incremento](../../checkpoints/2026-10-18-restore-territories-support-config.md) registra o escopo e os testes. A integração exige CI completo do SHA candidato e confirmação da árvore final. Chamados, campos personalizados, perfis/permissões, preferências e as políticas especiais continuam seguindo os critérios de #250. Os quatro blocos e os gates de homologação/produção deste plano permanecem aplicáveis.
+
 ## Review Focus
 
 1. Decimal ou timestamp alterado na ida e volta: rejeitar a entrega do bloco 1 se perder precisão.

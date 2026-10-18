@@ -88,12 +88,14 @@ políticas especiais, backup preventivo e fluxo HTTP/UI continuam pendentes.
 
 O gate não deve ser invocado isoladamente como sinal de restauração concluída.
 
-## Executor interno de empresas, contatos, etiquetas, funis e grafo comercial
+## Executor interno dos subconjuntos revisados
 
 O executor transacional interno já substitui `Company`, `Contact`,
 `ContactChannel`, `CompanyContact`, `RelationshipEntry`, `Tag`,
 `CompanyTag`, `ContactTag`, `Pipeline`, `PipelineStage`, `Product`,
-`Opportunity`, `OpportunityItem` e `Activity`. Prepara todos os registros antes da primeira
+`Opportunity`, `OpportunityItem`, `Activity`, `Territory`, `TerritoryQuota`,
+`TerritoryTarget`, `TerritoryMetrics`, `SupportQueue` e `SlaPolicy`.
+Prepara todos os registros antes da primeira
 exclusão, verifica referências e identidades sob o lock exclusivo, remove
 primeiro os vínculos empresa/contato-etiqueta e demais dependências, depois
 os registros pais, e reinsere pais antes dos vínculos. Falha de constraint
@@ -126,6 +128,19 @@ microssegundos, dois tipos de cliente da oportunidade, FKs quebradas ou de
 outro tenant, associação do responsável removida/recriada e rollback tardio
 de constraint de quantidade. `Ticket` e os demais modelos ainda não
 implementados continuam bloqueando a execução quando presentes em qualquer lado.
+
+O subconjunto de territórios recupera cotas de vendas por período, empresas
+vinculadas e métricas armazenadas, preservando seus valores decimais e datas.
+As dependências de território e empresa são preparadas antes da primeira
+exclusão. Filas e políticas de SLA recuperam prioridades, prazos, flags e
+exclusão lógica. A cobertura PostgreSQL inclui os índices legados e específicos
+de mês/trimestre/ano, referências ausentes ou de outro tenant, usuário histórico
+removido, conflito do nome de fila e falhas tardias de cotas e SLA.
+
+Um `Ticket` vinculado a uma fila continua impedindo o restore quando presente
+somente no estado atual ou somente no backup. Protocolos, eventos e pesquisas
+de satisfação ainda dependem de políticas próprias; este incremento não expõe
+recuperação de chamados.
 
 Este executor rejeita modelos `REPLACE` ainda não suportados quando há
 registros no backup **ou no estado atual** da organização. Usuários globais,

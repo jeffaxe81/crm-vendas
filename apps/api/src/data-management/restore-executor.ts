@@ -27,6 +27,12 @@ const RESTORE_MODELS = [
   "Opportunity",
   "OpportunityItem",
   "Activity",
+  "Territory",
+  "TerritoryQuota",
+  "TerritoryTarget",
+  "TerritoryMetrics",
+  "SupportQueue",
+  "SlaPolicy",
 ] as const;
 const implemented = new Set<string>(RESTORE_MODELS);
 
