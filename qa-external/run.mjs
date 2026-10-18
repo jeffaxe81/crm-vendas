@@ -285,7 +285,12 @@ async function main() {
   });
   if (webUrl) {
     await check("WEB-01", "Front-end acessível sem redirect inseguro", async () => {
-      const r = await fetch(webUrl, { redirect: "manual", signal: AbortSignal.timeout(15000) });
+      let r;
+      try {
+        r = await fetch(webUrl, { redirect: "manual", signal: AbortSignal.timeout(15000) });
+      } catch {
+        throw new Error("Falha de transporte no front-end; verifique rede e confiança TLS.");
+      }
       if (r.status !== 200) throw new Error("Front HTTP " + r.status + " (esperado 200).");
     });
   }
