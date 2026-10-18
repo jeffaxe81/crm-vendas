@@ -1,4 +1,8 @@
 module.exports = {
+  // Database suites share fixtures: keep one worker, recycling its VM between
+  // files when idle memory grows rather than retaining every suite in-process.
+  maxWorkers: 1,
+  workerIdleMemoryLimit: "1GB",
   rootDir: "src",
   testRegex: ".*\\.spec\\.ts$",
   extensionsToTreatAsEsm: [".ts"],

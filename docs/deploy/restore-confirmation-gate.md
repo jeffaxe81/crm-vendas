@@ -94,7 +94,9 @@ O executor transacional interno já substitui `Company`, `Contact`,
 `ContactChannel`, `CompanyContact`, `RelationshipEntry`, `Tag`,
 `CompanyTag`, `ContactTag`, `Pipeline`, `PipelineStage`, `Product`,
 `Opportunity`, `OpportunityItem`, `Activity`, `Territory`, `TerritoryQuota`,
-`TerritoryTarget`, `TerritoryMetrics`, `SupportQueue` e `SlaPolicy`.
+`TerritoryTarget`, `TerritoryMetrics`, `SupportQueue`, `SlaPolicy`,
+`CustomFieldDefinition`, `CompanyCustomFieldValue`, `ContactCustomFieldValue`
+e `UserWorkspacePreference` (24 modelos).
 Prepara todos os registros antes da primeira
 exclusão, verifica referências e identidades sob o lock exclusivo, remove
 primeiro os vínculos empresa/contato-etiqueta e demais dependências, depois
@@ -107,7 +109,8 @@ nesses campos são rejeitados antes das exclusões.
 
 Como associações de usuários são preservadas neste incremento, o executor
 revalida também a existência de `(organizationId, ownerUserId)` para cada
-oportunidade no banco atual, sob o mesmo lock e antes da primeira exclusão.
+oportunidade e de `(organizationId, userId)` para cada preferência de workspace
+no banco atual, sob o mesmo lock e antes da primeira exclusão.
 Um usuário global existente sem essa associação falha com
 `RESTORE_MEMBERSHIP_REFERENCE_MISSING`. Uma associação recriada com outro ID
 para o mesmo par organização/usuário é aceita; os privilégios atuais continuam
@@ -141,6 +144,22 @@ Um `Ticket` vinculado a uma fila continua impedindo o restore quando presente
 somente no estado atual ou somente no backup. Protocolos, eventos e pesquisas
 de satisfação ainda dependem de políticas próprias; este incremento não expõe
 recuperação de chamados.
+
+Campos personalizados recuperam definições e valores de empresas/contatos,
+respeitando a ordem de dependências. O formato existente do snapshot guarda
+colunas `Json` como texto bruto do PostgreSQL: `null` em JavaScript representa
+SQL NULL e a string `"null"` representa JSON null. O executor valida o tipo e a
+sintaxe desse texto antes das exclusões e usa extração/cast nativos do banco,
+sem reserializar o resultado de `JSON.parse`. Assim preserva números grandes,
+frações, objetos, arrays, strings e a distinção entre os dois tipos de nulo.
+Preferências de workspace seguem o mesmo mecanismo e exigem a associação
+atual do usuário; não restauram identidades ou privilégios históricos.
+
+Os novos casos PostgreSQL/RLS cobrem ida e volta criptografada, precisão de
+JSON e microssegundos, cópia vazia, referências inválidas, associação removida
+ou recriada e rollback por constraints reais. A integração deste incremento
+exige o resultado real do CI completo, registrado no PR #259, além do CI de
+`push/main` e manifesto do commit final.
 
 Este executor rejeita modelos `REPLACE` ainda não suportados quando há
 registros no backup **ou no estado atual** da organização. Usuários globais,

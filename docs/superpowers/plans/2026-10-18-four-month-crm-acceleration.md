@@ -67,6 +67,12 @@ Na base `321e2f19ea42467668d06cc744277cd44a15c8c7`, as PRs #243 e #257 já estã
 
 O [checkpoint desse incremento](../../checkpoints/2026-10-18-restore-territories-support-config.md) registra o escopo e os testes. A integração exige CI completo do SHA candidato e confirmação da árvore final. Chamados, campos personalizados, perfis/permissões, preferências e as políticas especiais continuam seguindo os critérios de #250. Os quatro blocos e os gates de homologação/produção deste plano permanecem aplicáveis.
 
+## Continuidade do bloco 2 — campos personalizados e workspace
+
+Na base `ef793e79a18ecc73928bfeb9abc4a60cc836e71e`, o executor interno já cobre os 20 modelos das PRs anteriores. A [PR #259](https://github.com/jeffaxe81/crm-vendas/pull/259) acrescenta `CustomFieldDefinition`, `CompanyCustomFieldValue`, `ContactCustomFieldValue` e `UserWorkspacePreference`, com recuperação nativa de JSON bruto e checagem da associação atual do usuário.
+
+O [checkpoint desse incremento](../../checkpoints/2026-10-18-restore-custom-fields-workspace.md) registra o RED observado nos 26 casos PostgreSQL e em 14 regressões unitárias, com os outros 958 testes da API passando. O formato de backup permanece o mesmo. A integração depende também do GREEN, revisão independente, CI completo do candidato e confirmação de origem da `main`. Os quatro modelos organizacionais `REPLACE` restantes (`Role`, `RolePermission`, `Ticket` e `TicketEvent`), configuração raiz, políticas especiais e orquestração integral seguem na #250; os gates operacionais permanecem aplicáveis.
+
 ## Review Focus
 
 1. Decimal ou timestamp alterado na ida e volta: rejeitar a entrega do bloco 1 se perder precisão.
