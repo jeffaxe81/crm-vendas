@@ -550,18 +550,13 @@ describe("transactional tenant restore executor", () => {
     expect(restored.PipelineStage).toEqual([]);
   });
 
-  it("blocks restore when a live opportunity exists", async () => {
+  it("blocks restore when an unsupported live support queue exists", async () => {
     const target = await pipelineGraph();
     const before = await graphSnapshot(target.organization.id);
-    const opportunity = await owner.opportunity.create({
+    const queue = await owner.supportQueue.create({
       data: {
         organizationId: target.organization.id,
-        pipelineId: target.pipeline.id,
-        stageId: target.first.id,
-        companyId: (await companies(target.organization.id))[0]!.id,
-        ownerUserId: target.user.id,
-        title: "Criada depois do backup",
-        estimatedValue: "200.00",
+        name: "Criada depois do backup",
         createdBy: target.user.id,
         updatedBy: target.user.id,
       },
@@ -582,7 +577,7 @@ describe("transactional tenant restore executor", () => {
 
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
     expect(
-      await owner.opportunity.findUnique({ where: { id: opportunity.id } })
+      await owner.supportQueue.findUnique({ where: { id: queue.id } })
     ).not.toBeNull();
   });
 
