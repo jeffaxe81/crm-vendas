@@ -124,6 +124,7 @@ jobs:
         run: pnpm --filter @axes/api test --shard=1/2
 
       - name: Run API tests (shard 2 of 2)
+        if: always() && !cancelled()
         timeout-minutes: 5
         env:
           APP_DATABASE_URL: ${{ env.MIGRATION_DATABASE_URL }}
