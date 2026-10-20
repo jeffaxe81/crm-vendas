@@ -724,6 +724,54 @@ describe("transactional tenant restore executor", () => {
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
   });
 
+  it.each(["Company", "Contact"] as const)(
+    "rolls back a %s ID collision with another tenant without changing either tenant",
+    async model => {
+      const target = await contactGraph();
+      const other = await contactGraph();
+      const before = await graphSnapshot(target.organization.id);
+      const otherBefore = await graphSnapshot(other.organization.id);
+      const broken = structuredClone(target.verified.data);
+      const originalId =
+        model === "Company" ? target.company.id : target.contact.id;
+      const foreignId =
+        model === "Company" ? other.company.id : other.contact.id;
+
+      // Keep the synthetic snapshot's internal foreign keys consistent:
+      // the collision must be caught by PostgreSQL's global unique key,
+      // not by the ordinary broken-reference validation.
+      broken[model]![0]!.id = foreignId;
+      const relatedModels =
+        model === "Company"
+          ? (["CompanyContact", "RelationshipEntry"] as const)
+          : ([
+              "ContactChannel",
+              "CompanyContact",
+              "RelationshipEntry",
+            ] as const);
+      const field = model === "Company" ? "companyId" : "contactId";
+      for (const relatedModel of relatedModels) {
+        for (const row of broken[relatedModel] ?? []) {
+          if (row[field] === originalId) row[field] = foreignId;
+        }
+      }
+
+      await expect(
+        runtime.withMaintenance(
+          target.organization.id,
+          tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+          { isolationLevel: "RepeatableRead", timeout: 60_000 }
+        )
+      ).rejects.toThrow(/23505|Unique constraint|duplicate key/);
+
+      // RLS hides foreign rows from the restricted role, while PostgreSQL's
+      // unique index still protects them. A failed insert must roll back every
+      // earlier DELETE/INSERT in the target and preserve the other tenant.
+      expect(await graphSnapshot(target.organization.id)).toEqual(before);
+      expect(await graphSnapshot(other.organization.id)).toEqual(otherBefore);
+    }
+  );
+
   it("rechecks live user identities under the maintenance lock", async () => {
     const target = await contactGraph();
     const before = await graphSnapshot(target.organization.id);
