@@ -163,8 +163,23 @@ jobs:
       - name: Validate Compose contract
         run: docker compose config --quiet
 
+      # Public ECR can exhaust anonymous download quota (HTTP 429).
+      # Retry ONLY that registry failure against the official Docker Hub mirror;
+      # do not mask Dockerfile, application or dependency build failures.
       - name: Build application images
-        run: docker compose build api web
+        shell: bash
+        run: |
+          set -o pipefail
+          build_log="${RUNNER_TEMP}/crm-docker-build.log"
+          if docker compose build api web 2>&1 | tee "$build_log"; then
+            exit 0
+          fi
+          if ! grep -Eqi '429 Too Many Requests|toomanyrequests: Data limit exceeded' "$build_log"; then
+            echo "::error::Docker image build failed for a reason other than a registry rate limit."
+            exit 1
+          fi
+          echo "::warning::Public ECR HTTP 429: retrying with the official Docker Hub Node image."
+          docker compose build --build-arg NODE_BASE_IMAGE=docker.io/library/node:24.20.0-bookworm-slim api web
 
   # The quality job runs code generation, tests and builds that may change the
   # tracked worktree. Source provenance must come from a FRESH checkout, never

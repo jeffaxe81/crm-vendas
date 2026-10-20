@@ -1,4 +1,5 @@
-FROM public.ecr.aws/docker/library/node:24.20.0-bookworm-slim AS dependencies
+ARG NODE_BASE_IMAGE=public.ecr.aws/docker/library/node:24.20.0-bookworm-slim
+FROM ${NODE_BASE_IMAGE} AS dependencies
 
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
@@ -32,7 +33,7 @@ COPY packages/contracts packages/contracts
 RUN pnpm --filter @axes/contracts build \
     && pnpm --filter @axes/web build
 
-FROM public.ecr.aws/docker/library/node:24.20.0-bookworm-slim AS runtime
+FROM ${NODE_BASE_IMAGE} AS runtime
 
 ENV NODE_ENV=production
 ENV PORT=3000
