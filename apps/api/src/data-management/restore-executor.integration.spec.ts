@@ -832,11 +832,13 @@ describe("transactional tenant restore executor", () => {
   it("rejects live unsupported models created after the snapshot before replacing data", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
-    await owner.role.create({
+    await owner.ticket.create({
       data: {
         organizationId: target.organization.id,
-        name: "After snapshot",
-        code: "AFTER_SNAPSHOT",
+        protocol: "2026-000103",
+        subject: "After snapshot",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
       },
     });
 
@@ -855,7 +857,7 @@ describe("transactional tenant restore executor", () => {
 
     expect(await companies(target.organization.id)).toEqual(before);
     expect(
-      await owner.role.count({
+      await owner.ticket.count({
         where: { organizationId: target.organization.id },
       })
     ).toBe(1);
