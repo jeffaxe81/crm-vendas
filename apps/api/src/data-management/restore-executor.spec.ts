@@ -58,6 +58,8 @@ describe("restore executor target binding", () => {
   });
 
   it.each([
+    "Role",
+    "RolePermission",
     "Company",
     "Contact",
     "ContactChannel",
@@ -167,6 +169,8 @@ describe("restore preview applicability", () => {
     expect(
       unsupportedRestoreModels(
         {
+          Role: 2,
+          RolePermission: 4,
           Company: 5,
           Contact: 2,
           CompanyContact: 0,
@@ -191,6 +195,8 @@ describe("restore preview applicability", () => {
           UserWorkspacePreference: 2,
         },
         {
+          Role: 1,
+          RolePermission: 3,
           Company: 2,
           Contact: 2,
           CompanyContact: 1,
