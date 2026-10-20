@@ -13,6 +13,8 @@ import { TENANT_DATA_REGISTRY } from "./tenant-data-registry";
 // Parent-first insertion order; deletion uses the reverse order. Only these
 // reviewed FULL/REPLACE policies are supported by this internal increment.
 const RESTORE_MODELS = [
+  "Role",
+  "RolePermission",
   "Company",
   "Contact",
   "ContactChannel",
