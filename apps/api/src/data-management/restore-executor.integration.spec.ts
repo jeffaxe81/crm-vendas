@@ -744,7 +744,11 @@ describe("transactional tenant restore executor", () => {
       const relatedModels =
         model === "Company"
           ? (["CompanyContact", "RelationshipEntry"] as const)
-          : (["ContactChannel", "CompanyContact", "RelationshipEntry"] as const);
+          : ([
+              "ContactChannel",
+              "CompanyContact",
+              "RelationshipEntry",
+            ] as const);
       const field = model === "Company" ? "companyId" : "contactId";
       for (const relatedModel of relatedModels) {
         for (const row of broken[relatedModel] ?? []) {
