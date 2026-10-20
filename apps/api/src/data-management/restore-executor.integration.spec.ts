@@ -342,7 +342,12 @@ describe("transactional tenant restore executor", () => {
 
     await runtime.withMaintenance(
       target.organization.id,
-      tx => restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      tx =>
+          restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            target.verified.data
+          ),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
     expect(await graphSnapshot(target.organization.id)).toEqual(expected);
@@ -370,7 +375,12 @@ describe("transactional tenant restore executor", () => {
 
     await runtime.withMaintenance(
       target.organization.id,
-      tx => restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      tx =>
+          restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            target.verified.data
+          ),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
     const restored = await graphSnapshot(target.organization.id);
@@ -719,13 +729,20 @@ describe("transactional tenant restore executor", () => {
     await expect(
       runtime.withMaintenance(
         target.organization.id,
-        tx => restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+        tx =>
+          restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            target.verified.data
+          ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
     ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
 
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
-    expect(await owner.ticket.findUnique({ where: { id: ticket.id } })).not.toBeNull();
+    expect(
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
+    ).not.toBeNull();
   });
 
   it("preserves PostgreSQL microseconds in a company-only snapshot", async () => {
