@@ -343,11 +343,7 @@ describe("transactional tenant restore executor", () => {
     await runtime.withMaintenance(
       target.organization.id,
       tx =>
-        restoreTenantSnapshot(
-          tx,
-          target.organization.id,
-          target.verified.data
-        ),
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
     expect(await graphSnapshot(target.organization.id)).toEqual(expected);
@@ -376,11 +372,7 @@ describe("transactional tenant restore executor", () => {
     await runtime.withMaintenance(
       target.organization.id,
       tx =>
-        restoreTenantSnapshot(
-          tx,
-          target.organization.id,
-          target.verified.data
-        ),
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
     const restored = await graphSnapshot(target.organization.id);
