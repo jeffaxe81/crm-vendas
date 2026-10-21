@@ -1414,7 +1414,7 @@ describe("transactional tenant restore executor", () => {
     expect(await companies(other.organization.id)).toEqual(otherBefore);
   });
 
-  it("keeps the live protocol counter above the older backup value", async () => {
+  it("preserves protocol counter high-water after an older backup", async () => {
     const target = await fixture();
     await owner.ticketProtocolCounter.create({
       data: {
@@ -1446,7 +1446,7 @@ describe("transactional tenant restore executor", () => {
     expect(counter?.lastValue).toBe(29);
   });
 
-  it("blocks cross-tenant ticket insertion by a restricted application role", async () => {
+  it("denies cross-tenant ticket writes by the restricted role", async () => {
     const actor = await fixture(true);
     const other = await fixture();
     const before = await owner.ticket.count({
