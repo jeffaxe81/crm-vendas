@@ -155,6 +155,25 @@ describe("restore executor target binding", () => {
   );
 });
 
+describe("unsupported ticket snapshot preflight", () => {
+  it.each(["Ticket", "TicketEvent"])(
+    "rejects populated %s snapshots before any company mutation",
+    async model => {
+      const data: SnapshotData = Object.fromEntries(
+        SNAPSHOT_POLICIES.map(policy => [
+          policy.model,
+          policy.model === "Organization" ? [{ id: organizationId }] : [],
+        ])
+      );
+      data[model] = [{ organizationId, id: otherOrganizationId }];
+
+      await expect(
+        restoreTenantSnapshot(maintenanceTransaction(), organizationId, data)
+      ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    }
+  );
+});
+
 describe("restore preview applicability", () => {
   it("detects data in unsupported models in the target or current tenant", () => {
     expect(
