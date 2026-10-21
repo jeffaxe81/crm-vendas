@@ -122,7 +122,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
     expect(snapshotDataFingerprint(verified.data)).toBe(
       result.currentFingerprint
     );
-    expect(verified.data.Company.map(row => row.id)).toContain(company.id);
+    expect(verified.data.Company?.map(row => row.id)).toContain(company.id);
 
     const state = await runtime.withTenant(org.id, async tx => ({
       backup: await tx.backupRecord.findUniqueOrThrow({
