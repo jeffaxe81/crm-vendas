@@ -1114,6 +1114,50 @@ describe("transactional tenant restore executor", () => {
     ).toBe(1);
   });
 
+  it("preserves live ticket events when an older snapshot has none", async () => {
+    const target = await fixture();
+    const before = await companies(target.organization.id);
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: target.organization.id,
+        protocol: "2026-000003",
+        subject: "Current service record",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+    const event = await owner.ticketEvent.create({
+      data: {
+        organizationId: target.organization.id,
+        ticketId: ticket.id,
+        type: "NOTE",
+        authorUserId: target.user.id,
+        body: "Keep this live event",
+      },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx =>
+          restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            target.verified.data
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+    expect(await companies(target.organization.id)).toEqual(before);
+    expect(
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
+    ).not.toBeNull();
+    expect(
+      await owner.ticketEvent.findUnique({ where: { id: event.id } })
+    ).not.toBeNull();
+  });
+
   it("rejects a transaction without the exclusive maintenance context", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
