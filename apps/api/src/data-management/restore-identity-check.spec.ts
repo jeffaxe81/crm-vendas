@@ -24,6 +24,42 @@ function transaction(
 }
 
 describe("restore identity reference readiness", () => {
+  it("rejects a membership projected from a different tenant", async () => {
+    const data = backup();
+    data.OrganizationMembership![0]!.organizationId =
+      "00000000-0000-0000-0000-000000000099";
+    await expect(
+      validateRestoreIdentityReferences(
+        transaction([{ id: userId, email: "user@example.test" }], []),
+        organizationId,
+        data
+      )
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+  });
+
+  it.each(["User", "OrganizationMembership"])(
+    "rejects duplicated identity keys in %s",
+    async model => {
+      const data = backup();
+      data[model]!.push({ ...data[model]![0]! });
+      await expect(
+        validateRestoreIdentityReferences(
+          transaction([{ id: userId, email: "user@example.test" }], []),
+          organizationId,
+          data
+        )
+      ).rejects.toThrow("RESTORE_TARGET_INVALID");
+    }
+  );
+
+  it("rejects a missing identity collection", async () => {
+    const data = backup();
+    delete data.User;
+    await expect(
+      validateRestoreIdentityReferences(transaction([], []), organizationId, data)
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+  });
+
   it("accepts users and unchanged membership assignments", async () => {
     const tx = transaction(
       [{ id: userId, email: "user@example.test" }],
