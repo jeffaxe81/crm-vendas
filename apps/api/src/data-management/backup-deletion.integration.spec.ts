@@ -199,6 +199,28 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
     expect((await state()).state).toBe("COMPLETED");
   });
 
+  it("protects PRE_RESTORE against manual deletion and scheduled retention", async () => {
+    await owner.backupRecord.update({
+      where: { id: older.id },
+      data: {
+        reason: "PRE_RESTORE",
+        completedAt: new Date("2020-01-01T00:00:00.000Z"),
+      },
+    });
+    await remove().expect(409);
+
+    // At least one ordinary copy must exceed the seven-copy policy.
+    // PRE_RESTORE remains protected even though it is older than all of them.
+    for (let index = 0; index < 7; index++)
+      await app.get(BackupService).create(organizationId, userId, "MANUAL");
+
+    expect(
+      await app.get(BackupService).pruneRetention(organizationId, 7)
+    ).toBeGreaterThan(0);
+    expect((await state()).reason).toBe("PRE_RESTORE");
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+  });
+
   it("protects the newest completed backup and pending operations", async () => {
     await remove(newest).expect(409);
     await runtime.withTenant(organizationId, tx =>
