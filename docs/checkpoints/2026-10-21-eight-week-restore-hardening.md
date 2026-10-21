@@ -8,16 +8,22 @@ não representam oito semanas transcorridas, operação homologada ou cronograma
 
 ## Frentes e evidências de implementação
 
-| Semana lógica | Entrega de engenharia | Prova prevista |
-| --- | --- | --- |
-| 1 | Preflight rejeita snapshot não-objeto, UUID inválido e linhas primitivas/nulas/arrays | Testes parametrizados de formato |
-| 2 | Preflight valida presença e unicidade de PKs declaradas no schema Prisma | Duplicidades de Company, Ticket, TicketEvent e Membership |
-| 3 | Verificação de PK composta e falha de campos ausentes antes de referências | TicketProtocolCounter repetido ou sem year |
-| 4 | Prévia de modelos não suportados rejeita contagens negativas, fracionárias e não finitas | Bloqueios com `RESTORE_TARGET_INVALID` |
-| 5 | Suíte de regressão de prévia com inteiros inseguros e valores não numéricos | Nenhum valor inválido é interpretado como zero |
-| 6 | Validação de identidade por tenant: coleções obrigatórias, IDs únicos, associações no tenant alvo | Provas unitárias de membership falso e User duplicado |
-| 7 | Banco PostgreSQL com usuário restrito: tentativa de escrita em outro tenant e preservação de `TicketProtocolCounter` após restore comercial | Integração RLS e regra de high-water |
-| 8 | Critérios de merge, rastreabilidade SHA e runbook NO-GO | `verify` no SHA da PR + `verify`/`source_manifest` no SHA `push/main` |
+1. **Semana 1 — formato de snapshot:** rejeitar conteúdo não-objeto,
+   UUID de tenant inválido e registros com estruturas inesperadas.
+2. **Semana 2 — PKs:** verificar presença e unicidade das chaves primárias
+   declaradas no metadata Prisma antes de percorrer dependências.
+3. **Semana 3 — PK composta:** cobrir `TicketProtocolCounter`,
+   duplicidades e componentes de chave ausentes.
+4. **Semana 4 — contagens:** bloquear contagens negativas, fracionárias,
+   infinitas e inteiros fora da faixa segura.
+5. **Semana 5 — regressões de prévia:** confirmar que valores numéricos
+   inválidos e tipos inesperados não viram zero silenciosamente.
+6. **Semana 6 — identidade preservada:** rejeitar associações com tenant
+   incorreto, usuários duplicados e coleções incompletas.
+7. **Semana 7 — PostgreSQL/RLS:** provar proteção contra escrita cruzada e
+   preservação do contador de protocolo após restore comercial.
+8. **Semana 8 — gates de entrega:** registrar código, SHA, CI da PR,
+   `push/main`, manifesto e dependências operacionais NO-GO.
 
 ## Invariantes de segurança
 
