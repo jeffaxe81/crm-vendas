@@ -1,4 +1,3 @@
-import { jest } from "@jest/globals";
 import { randomBytes, randomUUID } from "node:crypto";
 import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -10,6 +9,8 @@ import { BackupService } from "./backup.service";
 import { BackupStore } from "./backup-store";
 import { persistPreventiveRestoreBackup } from "./restore-preventive-backup";
 
+let jestRuntime: typeof jest;
+
 describe("encrypted PRE_RESTORE safety copy under tenant maintenance", () => {
   let owner: PrismaService;
   let runtime: PrismaService;
@@ -20,6 +21,8 @@ describe("encrypted PRE_RESTORE safety copy under tenant maintenance", () => {
   const options = { maxBytes: 8_388_608, snapshotTimeoutMs: 60_000 };
 
   beforeAll(async () => {
+    const globalsModule = "@jest/globals";
+    jestRuntime = (await import(globalsModule)).jest;
     if (!process.env.RLS_DATABASE_URL) {
       throw Error("Restricted PostgreSQL role required");
     }
@@ -215,7 +218,7 @@ describe("encrypted PRE_RESTORE safety copy under tenant maintenance", () => {
   it("rejects a failed encrypted readback without creating a catalog or binding", async () => {
     const { tenant, operation, target } = await fixture();
     const before = new Set(await readdir(directory));
-    const read = jest
+    const read = jestRuntime
       .spyOn(store, "read")
       .mockResolvedValueOnce(Buffer.from("synthetic corrupt readback"));
     try {
