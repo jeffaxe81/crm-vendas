@@ -114,6 +114,10 @@ export class BackupDeletionService {
           throw new ConflictException(
             "Somente backups concluídos podem ser excluídos."
           );
+        if (row.reason === "PRE_RESTORE")
+          throw new ConflictException(
+            "Cópias preventivas de restauração estão protegidas contra exclusão."
+          );
 
         const newest = await tx.backupRecord.findFirst({
           where: {
@@ -215,6 +219,7 @@ export class BackupDeletionService {
                 },
               });
               if (!row) return false;
+              if (row.reason === "PRE_RESTORE") return false;
               // Acceptance and cleanup can be separated by a restart or I/O
               // failure. Revalidate protection under this lock, not just when
               // the human request first marked the catalog row DELETING.
