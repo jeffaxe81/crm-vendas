@@ -5,7 +5,7 @@ import {
   snapshotFields,
 } from "./backup-models";
 import { BackupError } from "./backup-error";
-import type { SnapshotData } from "./backup-manifest";
+import { isValidSnapshotField, type SnapshotData } from "./backup-manifest";
 import { validateRestoreIdentityReferences } from "./restore-identity-check";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { TENANT_DATA_REGISTRY } from "./tenant-data-registry";
@@ -145,7 +145,10 @@ function prepareGraph(data: SnapshotData, organizationId: string) {
       return Object.fromEntries(
         fields.map(field => {
           let value = row[field.name];
-          if (value === undefined) fail("RESTORE_TARGET_INVALID");
+          // Validate all scalar types and native bounds before the first
+          // DELETE, even if an internal caller skipped snapshot decoding.
+          if (!isValidSnapshotField(value, field))
+            fail("RESTORE_TARGET_INVALID");
           // Decimal snapshots are strings. Never pass money through Number,
           // including values outside JavaScript's exact integer range.
           if (

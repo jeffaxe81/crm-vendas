@@ -144,7 +144,9 @@ function scalar(value: unknown, field: Field): boolean {
       return false;
   }
 }
-function validField(value: unknown, field: Field): boolean {
+// Shared by snapshot encode/decode and the internal restore executor. Never
+// let an internal caller bypass the scalar format checks before tenant DELETEs.
+export function isValidSnapshotField(value: unknown, field: Field): boolean {
   if (value === null) return !field.isRequired;
   if (field.isList)
     return Array.isArray(value) && value.every(v => scalar(v, field));
@@ -180,7 +182,7 @@ function validateData(data: SnapshotData, organizationId: string): void {
       )
         invalid();
       for (const field of fields)
-        if (!validField(row[field.name], field)) invalid();
+        if (!isValidSnapshotField(row[field.name], field)) invalid();
       if (
         policy.scope === "ORGANIZATION" &&
         row.organizationId !== organizationId

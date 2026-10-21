@@ -58,6 +58,54 @@ describe("restore executor target binding", () => {
   });
 
   it.each([
+    ["invalid UUID", "id", "not-a-uuid"],
+    ["NUL in string", "code", "unsafe" + String.fromCharCode(0) + "value"],
+    ["overlong code", "code", "X".repeat(61)],
+    ["number in nullable string", "description", 42],
+    ["text instead of Boolean", "isActive", "true"],
+    ["fractional Int", "version", 1.5],
+    ["out-of-range Int", "version", 2147483648],
+    ["incorrect timestamp", "createdAt", "not-a-date"],
+    ["required timestamp missing", "updatedAt", null],
+    ["invalid nullable timestamp", "deletedAt", 42],
+    ["invalid Decimal scale", "unitPrice", "12.345"],
+    ["invalid Decimal precision", "unitPrice", "9".repeat(20)],
+    ["required Decimal missing", "unitPrice", null],
+  ])(
+    "rejects %s in %s before SQL mutation",
+    async (_case, field: string, invalid: unknown) => {
+      const data: SnapshotData = Object.fromEntries(
+        SNAPSHOT_POLICIES.map(policy => [
+          policy.model,
+          policy.model === "Organization" ? [{ id: organizationId }] : [],
+        ])
+      );
+      data.Product = [
+        {
+          id: otherOrganizationId,
+          organizationId,
+          code: "SAFE",
+          name: "Synthetic product",
+          description: null,
+          unitPrice: "12.34",
+          isActive: true,
+          createdAt: "2026-10-18T00:00:00.123456Z",
+          updatedAt: "2026-10-18T00:00:00.654321Z",
+          createdBy: organizationId,
+          updatedBy: organizationId,
+          version: 1,
+          deletedAt: null,
+          deletedBy: null,
+          [field]: invalid,
+        },
+      ];
+      await expect(
+        restoreTenantSnapshot(maintenanceTransaction(), organizationId, data)
+      ).rejects.toMatchObject({ code: "RESTORE_TARGET_INVALID" });
+    }
+  );
+
+  it.each([
     "Role",
     "RolePermission",
     "Company",
