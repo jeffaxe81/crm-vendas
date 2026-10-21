@@ -56,7 +56,11 @@ describe("restore identity reference readiness", () => {
     const data = backup();
     delete data.User;
     await expect(
-      validateRestoreIdentityReferences(transaction([], []), organizationId, data)
+      validateRestoreIdentityReferences(
+        transaction([], []),
+        organizationId,
+        data
+      )
     ).rejects.toThrow("RESTORE_TARGET_INVALID");
   });
 
