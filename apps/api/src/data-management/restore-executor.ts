@@ -227,7 +227,6 @@ async function requireCurrentPolicies(
   if (current?.present !== false) fail("RESTORE_POLICY_UNSUPPORTED");
 }
 
-
 /**
  * Internal primitive for an already verified snapshot, called inside the same
  * withMaintenance transaction as the future preventive backup/confirmation.
