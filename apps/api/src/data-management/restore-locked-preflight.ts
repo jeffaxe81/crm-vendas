@@ -3,6 +3,7 @@ import { BackupError } from "./backup-error";
 import { snapshotDataFingerprint, type SnapshotData } from "./backup-manifest";
 import type { VerifiedBackup } from "./backup.service";
 import { validateRestoreIdentityReferences } from "./restore-identity-check";
+import { validateRestorePreservedMemberships } from "./restore-membership-check";
 import { unsupportedRestoreModels } from "./restore-executor";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { exportTenantSnapshot } from "./tenant-snapshot";
@@ -63,6 +64,7 @@ export async function preflightRestoreExecution(
 
   validateRestoreReferences(verified.data);
   await validateRestoreIdentityReferences(tx, organizationId, verified.data);
+  await validateRestorePreservedMemberships(tx, organizationId, verified.data);
 
   const current = await exportTenantSnapshot(tx, organizationId, maxBytes);
   const currentCounts = counts(current);
