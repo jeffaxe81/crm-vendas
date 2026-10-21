@@ -124,6 +124,79 @@ describe("restore locked preflight", () => {
     expect(result.currentCounts.Company).toBe(1);
   });
 
+  it("rejects a backup revoked after verification without touching tenant data", async () => {
+    const { organization, verified } = await fixture();
+
+    await owner.backupRecord.update({
+      where: { id: verified.record.id },
+      data: { state: "FAILED" },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx =>
+          preflightRestoreExecution(
+            tx,
+            organization.id,
+            verified,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+
+    expect(
+      await owner.company.count({ where: { organizationId: organization.id } })
+    ).toBe(1);
+  });
+
+  it("rejects a changed catalog checksum after verification", async () => {
+    const { organization, verified } = await fixture();
+
+    await owner.backupRecord.update({
+      where: { id: verified.record.id },
+      data: { checksum: "0".repeat(64) },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx =>
+          preflightRestoreExecution(
+            tx,
+            organization.id,
+            verified,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+  });
+
+  it("rejects a changed catalog model count after verification", async () => {
+    const { organization, verified } = await fixture();
+
+    await owner.backupRecord.update({
+      where: { id: verified.record.id },
+      data: { counts: { Company: 999 } },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx =>
+          preflightRestoreExecution(
+            tx,
+            organization.id,
+            verified,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+  });
+
   it("blocks restore when an unsupported model gained live data", async () => {
     const { organization, user, verified } = await fixture();
     const ticket = await owner.ticket.create({
