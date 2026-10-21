@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { randomBytes, randomUUID } from "node:crypto";
 import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -158,8 +159,9 @@ describe("encrypted PRE_RESTORE safety copy under tenant maintenance", () => {
     expect(raw.includes(Buffer.from("Tenant A protected before restore"))).toBe(
       false
     );
+    const decrypted = await store.read(created.backupId);
     const verified = decodeSnapshot(
-      await store.read(created.backupId),
+      decrypted,
       tenant.id,
       options.maxBytes
     );
@@ -167,7 +169,7 @@ describe("encrypted PRE_RESTORE safety copy under tenant maintenance", () => {
     expect(verified.data.Company).toHaveLength(1);
     expect(() =>
       decodeSnapshot(
-        Buffer.from(JSON.stringify({ wrong: true })),
+        decrypted,
         other.id,
         options.maxBytes
       )
