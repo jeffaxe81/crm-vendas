@@ -165,6 +165,31 @@ describe("restore preview applicability", () => {
     ).toEqual(["Ticket"]);
   });
 
+  it("blocks current-tenant tickets from unsupported restore", () => {
+    const models = unsupportedRestoreModels({ Ticket: 1 }, {});
+    expect(models).toEqual(["Ticket"]);
+  });
+
+  it("blocks target-snapshot ticket events from unsupported restore", () => {
+    const models = unsupportedRestoreModels({}, { TicketEvent: 2 });
+    expect(models).toEqual(["TicketEvent"]);
+  });
+
+  it("blocks both ticket models across current and target", () => {
+    const current = { Ticket: 1, TicketEvent: 0 };
+    const target = { Ticket: 0, TicketEvent: 3 };
+    expect(unsupportedRestoreModels(current, target)).toEqual([
+      "Ticket",
+      "TicketEvent",
+    ]);
+  });
+
+  it("allows zero counts for unsupported ticket models", () => {
+    const current = { Ticket: 0 };
+    const target = { TicketEvent: 0 };
+    expect(unsupportedRestoreModels(current, target)).toEqual([]);
+  });
+
   it("does not block the reviewed business and configuration graph in either snapshot", () => {
     expect(
       unsupportedRestoreModels(
