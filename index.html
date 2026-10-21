@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#0c1931">
+  <meta name="description" content="Protótipo demonstrativo do CRM Vendas — navegação e dados fictícios.">
+  <title>CRM Vendas | Protótipo</title>
+  <link rel="stylesheet" href="./assets/site.css">
+  <script defer src="./assets/app.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
+    <a class="brand" href="./" aria-label="CRM Vendas — início" id="brand-home">
+      <span class="brand-mark" aria-hidden="true">A<span class="brand-dot"></span></span>
+      <span><strong>CRM Vendas</strong><small>Ambiente de demonstração</small></span>
+    </a>
+    <div class="tenant-card"><div class="tenant-symbol">E</div><div><span class="tenant-eyebrow">ESPAÇO DE TRABALHO</span><strong>Empresa Exemplo</strong></div><span class="tenant-chevron">⌄</span></div>
+    <p class="nav-label">MENU PRINCIPAL</p>
+    <nav class="nav" id="primary-nav">
+      <button class="nav-link selected" data-section="inicio"><span class="nav-icon">▦</span>Visão geral</button>
+      <button class="nav-link" data-section="oportunidades"><span class="nav-icon">◫</span>Oportunidades <span class="nav-count" id="opportunity-nav-count">8</span></button>
+      <button class="nav-link" data-section="empresas"><span class="nav-icon">▤</span>Empresas</button>
+      <button class="nav-link" data-section="contatos"><span class="nav-icon">♧</span>Contatos</button>
+      <button class="nav-link" data-section="agenda"><span class="nav-icon">▣</span>Agenda</button>
+      <button class="nav-link" data-section="chamados"><span class="nav-icon">◎</span>Chamados</button>
+      <button class="nav-link" data-section="relatorios"><span class="nav-icon">▥</span>Relatórios</button>
+    </nav>
+    <p class="nav-label nav-label-bottom">ADMINISTRAÇÃO</p>
+    <nav class="nav"><button class="nav-link" data-section="configuracoes"><span class="nav-icon">⚙</span>Configurações</button></nav>
+    <div class="sidebar-bottom">
+      <div class="demo-protection"><span class="demo-status"></span><div><strong>Modo protótipo</strong><small>Sem API, banco ou login real</small></div></div>
+      <div class="account-card"><div class="avatar">DV</div><div><strong>Demonstrador</strong><small>Perfil de teste</small></div><span class="account-ellipsis">•••</span></div>
+    </div>
+  </aside>
+  <div class="app-main">
+    <div class="demo-banner"><span class="demo-pill">PROTÓTIPO</span><span>Dados fictícios • Alterações somente neste navegador • Não utilize informações reais</span><button id="reset-top" type="button">Reiniciar demo <span aria-hidden="true">↺</span></button></div>
+    <header class="topbar">
+      <button class="icon-button mobile-toggle" id="sidebar-toggle" aria-label="Abrir menu">☰</button>
+      <div class="breadcrumbs"><span>CRM Vendas</span><span class="crumb-sep">/</span><strong id="breadcrumb-label">Visão geral</strong></div>
+      <div class="top-actions">
+        <label class="search-wrapper"><span aria-hidden="true">⌕</span><input id="global-search" type="search" placeholder="Pesquisar na seção..." aria-label="Pesquisar na seção"><kbd>/</kbd></label>
+        <span class="today-indicator" id="today-indicator"></span>
+        <button class="top-create" id="top-create" type="button"><span aria-hidden="true">＋</span> Nova oportunidade</button>
+      </div>
+    </header>
+    <main class="page" id="page-content" tabindex="-1"><div class="loading-msg">Abrindo protótipo...</div></main>
+    <footer class="site-footer"><span>CRM Vendas · Demonstração estática</span><span>Sem vínculo com ambientes de produção</span></footer>
+  </div>
+</div>
+<div class="mobile-shade" id="mobile-shade"></div>
+<div class="modal-shade" id="modal-shade" hidden>
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+    <div class="modal-head"><div><p class="eyebrow">OPORTUNIDADES</p><h2 id="modal-heading">Adicionar oportunidade</h2></div><button class="icon-button" id="modal-close" aria-label="Fechar">✕</button></div>
+    <form id="create-form" autocomplete="off">
+      <label>Título da oportunidade<input name="title" maxlength="80" required placeholder="Ex.: Renovação de contratos"></label>
+      <label>Empresa<input name="company" maxlength="60" required placeholder="Ex.: Empresa Exemplo"></label>
+      <div class="modal-two"><label>Valor estimado (R$)<input name="amount" type="number" required min="0" max="99999999" step="100" placeholder="25000"></label><label>Etapa<select name="stage"><option value="qualificacao">Qualificação</option><option value="proposta">Proposta</option><option value="negociacao">Negociação</option></select></label></div>
+      <p class="form-note">Este registro será armazenado apenas no navegador, para testar a interface.</p>
+      <div class="modal-actions"><button type="button" class="secondary-btn" id="modal-cancel">Cancelar</button><button type="submit" class="primary-btn">Criar oportunidade</button></div>
+    </form>
+  </section>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript>Este protótipo precisa de JavaScript habilitado para exibir suas telas.</noscript>
+</body>
+</html>
