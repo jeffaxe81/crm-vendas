@@ -192,6 +192,32 @@ describe("restore confirmation is session-bound and transactional", () => {
     await expect(run()).rejects.toThrow("RESTORE_CONFIRMATION_INVALID");
   });
 
+  it("does not consume confirmation when its verified backup is revoked", async () => {
+    const { org, backup, preview, run } = await fixture();
+    await owner.backupRecord.update({
+      where: { id: backup.id },
+      data: { state: "FAILED" },
+    });
+
+    await expect(run()).rejects.toThrow("RESTORE_TARGET_INVALID");
+
+    const state = await runtime.withTenant(org.id, async tx => ({
+      preview: await tx.operationPreview.findUniqueOrThrow({
+        where: { id: preview.id },
+      }),
+      audits: await tx.auditLog.count({
+        where: {
+          entityId: preview.id,
+          action: "restore.confirmation_consumed",
+        },
+      }),
+      companies: await tx.company.count({ where: { organizationId: org.id } }),
+    }));
+    expect(state.preview.consumedAt).toBeNull();
+    expect(state.audits).toBe(0);
+    expect(state.companies).toBe(1);
+  });
+
   it("revalidates target references under the maintenance lock", async () => {
     const { org, principal, proof, verified } = await fixture();
     const broken = {
