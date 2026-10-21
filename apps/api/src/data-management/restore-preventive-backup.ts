@@ -8,7 +8,7 @@ import {
   snapshotDataFingerprint,
 } from "./backup-manifest";
 import type { VerifiedBackup } from "./backup.service";
-import { BackupStore } from "./backup-store";
+import type { BackupStore } from "./backup-store";
 import { preflightRestoreExecution } from "./restore-locked-preflight";
 import { exportTenantSnapshot } from "./tenant-snapshot";
 
@@ -144,5 +144,9 @@ export async function persistPreventiveRestoreBackup(
     },
   });
 
-  return { backupId, checksum: manifest.checksum, currentFingerprint: fingerprint };
+  return {
+    backupId,
+    checksum: manifest.checksum,
+    currentFingerprint: fingerprint,
+  };
 }
