@@ -402,8 +402,14 @@ export class BackupService {
             .map(row => row.preventiveBackupId)
             .filter((id): id is string => id !== null)
         );
+        // Preventive restore copies remain outside automatic retention
+        // until a separately reviewed recovery policy is implemented.
         const completed = await tx.backupRecord.findMany({
-          where: { organizationId, state: "COMPLETED" },
+          where: {
+            organizationId,
+            state: "COMPLETED",
+            reason: { not: "PRE_RESTORE" },
+          },
           orderBy: [
             { completedAt: "desc" },
             { createdAt: "desc" },
@@ -439,7 +445,12 @@ export class BackupService {
         });
         if (protectedByOperation > 0) return false;
         const row = await tx.backupRecord.findFirst({
-          where: { id, organizationId, state: "COMPLETED" },
+          where: {
+            id,
+            organizationId,
+            state: "COMPLETED",
+            reason: { not: "PRE_RESTORE" },
+          },
           select: { id: true },
         });
         if (!row) return false;
