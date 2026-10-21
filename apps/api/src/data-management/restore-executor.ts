@@ -7,6 +7,7 @@ import {
 import { BackupError } from "./backup-error";
 import { isValidSnapshotField, type SnapshotData } from "./backup-manifest";
 import { validateRestoreIdentityReferences } from "./restore-identity-check";
+import { validateRestorePreservedMemberships } from "./restore-membership-check";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { TENANT_DATA_REGISTRY } from "./tenant-data-registry";
 
@@ -226,30 +227,6 @@ async function requireCurrentPolicies(
   if (current?.present !== false) fail("RESTORE_POLICY_UNSUPPORTED");
 }
 
-async function requirePreservedMemberships(
-  tx: Prisma.TransactionClient,
-  organizationId: string,
-  data: SnapshotData
-): Promise<void> {
-  const userIds = [
-    ...new Set([
-      ...data.Opportunity!.map(row => row.ownerUserId as string),
-      ...data.UserWorkspacePreference!.map(row => row.userId as string),
-    ]),
-  ];
-  if (userIds.length === 0) return;
-  // This increment preserves memberships. Snapshot closure alone cannot prove
-  // the live composite FK; a recreated membership may have a different ID.
-  const memberships = await tx.organizationMembership.findMany({
-    where: { organizationId, userId: { in: userIds } },
-    select: { userId: true },
-  });
-  const currentUsers = new Set(memberships.map(row => row.userId));
-  if (userIds.some(id => !currentUsers.has(id))) {
-    fail("RESTORE_MEMBERSHIP_REFERENCE_MISSING");
-  }
-}
-
 /**
  * Internal primitive for an already verified snapshot, called inside the same
  * withMaintenance transaction as the future preventive backup/confirmation.
@@ -274,7 +251,7 @@ export async function restoreTenantSnapshot(
   const graph = prepareGraph(data, organizationId);
   validateRestoreReferences(data);
   await validateRestoreIdentityReferences(tx, organizationId, data);
-  await requirePreservedMemberships(tx, organizationId, data);
+  await validateRestorePreservedMemberships(tx, organizationId, data);
   await requireCurrentPolicies(tx, organizationId);
 
   for (const { table } of [...graph].reverse()) {

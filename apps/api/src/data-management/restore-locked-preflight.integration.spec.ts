@@ -189,6 +189,99 @@ describe("restore locked preflight", () => {
     ).toBe(0);
   });
 
+  it.each([
+    ["absent", false],
+    ["recreated for same tenant and user", true],
+  ] as const)(
+    "validates an %s preserved workspace membership before confirmation",
+    async (_case, recreate) => {
+      const { organization, user } = await fixture();
+      const collaboratorEmail = `restore-collaborator-${randomUUID()}@example.test`;
+      const collaborator = await owner.user.create({
+        data: {
+          email: collaboratorEmail,
+          emailNormalized: collaboratorEmail,
+          displayName: "Historical workspace owner",
+          passwordHash: "synthetic",
+        },
+      });
+      const oldMembership = await owner.organizationMembership.create({
+        data: {
+          organizationId: organization.id,
+          userId: collaborator.id,
+          role: "SELLER",
+        },
+      });
+      await owner.$executeRawUnsafe(
+        `INSERT INTO "user_workspace_preferences"
+          (organization_id, user_id, preferences, created_at, updated_at)
+          VALUES ($1::uuid, $2::uuid, $3::jsonb, now(), now())`,
+        organization.id,
+        collaborator.id,
+        '{"theme":"dark"}'
+      );
+
+      const backup = await backups.create(organization.id, user.id, "MANUAL");
+      const verified = await backups.verify(organization.id, backup.id);
+
+      // The backup still projects the old membership and workspace owner.
+      // Removing the live membership must not permit a stale preview to pass.
+      await owner.organizationMembership.delete({
+        where: { id: oldMembership.id },
+      });
+
+      if (recreate) {
+        const replacement = await owner.organizationMembership.create({
+          data: {
+            organizationId: organization.id,
+            userId: collaborator.id,
+            role: "SELLER",
+          },
+        });
+        expect(replacement.id).not.toBe(oldMembership.id);
+      } else {
+        const other = await owner.organization.create({
+          data: { name: "Different tenant", slug: randomUUID() },
+        });
+        await owner.organizationMembership.create({
+          data: {
+            organizationId: other.id,
+            userId: collaborator.id,
+            role: "SELLER",
+          },
+        });
+      }
+
+      const preflight = () =>
+        runtime.withMaintenance(
+          organization.id,
+          tx =>
+            preflightRestoreExecution(
+              tx,
+              organization.id,
+              verified,
+              options.maxBytes
+            ),
+          { isolationLevel: "RepeatableRead", timeout: 60_000 }
+        );
+
+      if (recreate) {
+        await expect(preflight()).resolves.toMatchObject({
+          targetChecksum: verified.manifest.checksum,
+        });
+      } else {
+        await expect(preflight()).rejects.toThrow(
+          "RESTORE_MEMBERSHIP_REFERENCE_MISSING"
+        );
+      }
+      expect(
+        await owner.company.count({
+          where: { organizationId: organization.id },
+        })
+      ).toBe(1);
+    }
+  );
+
   it("fails closed when a referenced live identity changed after backup", async () => {
     const { organization, user, verified } = await fixture();
 

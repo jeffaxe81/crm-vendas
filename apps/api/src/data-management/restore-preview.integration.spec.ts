@@ -215,6 +215,65 @@ describe("session-bound restore previews", () => {
     expect(audit).not.toBeNull();
   });
 
+  it.each([
+    ["missing in tenant", false],
+    ["recreated with same tenant/user pair", true],
+  ] as const)(
+    "checks historical workspace owner membership %s before creating a preview",
+    async (_scenario, recreated) => {
+      const {
+        organization,
+        otherOrganization,
+        superuser,
+        admin,
+        adminMembership,
+        principal,
+      } = await fixture();
+      await owner.$executeRawUnsafe(
+        `INSERT INTO "user_workspace_preferences"
+          (organization_id, user_id, preferences, created_at, updated_at)
+          VALUES ($1::uuid, $2::uuid, $3::jsonb, now(), now())`,
+        organization.id,
+        admin.id,
+        '{"theme":"dark"}'
+      );
+      const backup = await backups.create(
+        organization.id,
+        superuser.id,
+        "MANUAL"
+      );
+
+      await owner.organizationMembership.delete({
+        where: { id: adminMembership.id },
+      });
+      const next = await owner.organizationMembership.create({
+        data: {
+          organizationId: recreated ? organization.id : otherOrganization.id,
+          userId: admin.id,
+          role: "ADMIN",
+        },
+      });
+      expect(next.id).not.toBe(adminMembership.id);
+
+      if (recreated) {
+        await expect(
+          previews.previewRestore(principal, backup.id)
+        ).resolves.toMatchObject({ targetBackupId: backup.id });
+      } else {
+        await expect(
+          previews.previewRestore(principal, backup.id)
+        ).rejects.toThrow("RESTORE_MEMBERSHIP_REFERENCE_MISSING");
+        expect(
+          await runtime.withTenant(organization.id, tx =>
+            tx.operationPreview.count({
+              where: { organizationId: organization.id },
+            })
+          )
+        ).toBe(0);
+      }
+    }
+  );
+
   it("rejects identity changes without issuing a preview", async () => {
     const { organization, superuser, principal } = await fixture();
     const backup = await backups.create(

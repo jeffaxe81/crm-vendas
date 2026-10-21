@@ -13,6 +13,7 @@ import {
 import { exportTenantSnapshot } from "./tenant-snapshot";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { validateRestoreIdentityReferences } from "./restore-identity-check";
+import { validateRestorePreservedMemberships } from "./restore-membership-check";
 import { unsupportedRestoreModels } from "./restore-executor";
 
 export const OPERATION_PREVIEW_TTL_MS = 5 * 60 * 1000;
@@ -106,6 +107,11 @@ export class DataPreviewService {
         // Projected identities in a backup are references, not credentials.
         // They must still resolve to the same live users before a preview.
         await validateRestoreIdentityReferences(
+          tx,
+          principal.organizationId,
+          verified.data
+        );
+        await validateRestorePreservedMemberships(
           tx,
           principal.organizationId,
           verified.data
