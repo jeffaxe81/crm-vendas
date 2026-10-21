@@ -170,9 +170,7 @@ describe("restore preview applicability", () => {
   });
 
   it("fails closed on unsupported ticket events in the target snapshot", () => {
-    expect(unsupportedRestoreModels({}, { TicketEvent: 2 })).toEqual([
-      "TicketEvent",
-    ]);
+    expect(unsupportedRestoreModels({}, { TicketEvent: 2 })).toEqual(["TicketEvent"]);
   });
 
   it("reports both unsupported models across current and target", () => {
@@ -185,9 +183,7 @@ describe("restore preview applicability", () => {
   });
 
   it("does not block zero-count service records", () => {
-    expect(
-      unsupportedRestoreModels({ Ticket: 0 }, { TicketEvent: 0 })
-    ).toEqual([]);
+    expect(unsupportedRestoreModels({ Ticket: 0 }, { TicketEvent: 0 })).toEqual([]);
   });
 
   it("does not block the reviewed business and configuration graph in either snapshot", () => {
