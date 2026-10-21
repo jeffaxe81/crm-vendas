@@ -117,11 +117,8 @@ describe("internal preventive restore snapshot under maintenance", () => {
     expect(result.backupId).toBe(operation.id);
     expect(result.currentFingerprint).toMatch(/^[0-9a-f]{64}$/);
 
-    const verified = decodeSnapshot(
-      await store.read(operation.id),
-      org.id,
-      maxBytes
-    );
+    const persisted = await store.read(operation.id);
+    const verified = decodeSnapshot(persisted, org.id, maxBytes);
     expect(snapshotDataFingerprint(verified.data)).toBe(
       result.currentFingerprint
     );
@@ -243,11 +240,10 @@ describe("internal preventive restore snapshot under maintenance", () => {
     expect(
       await owner.backupRecord.count({ where: { id: operation.id } })
     ).toBe(0);
-    expect(
-      (await owner.dataOperation.findUniqueOrThrow({
-        where: { id: operation.id },
-      })).preventiveBackupId
-    ).toBeNull();
+    const currentOperation = await owner.dataOperation.findUniqueOrThrow({
+      where: { id: operation.id },
+    });
+    expect(currentOperation.preventiveBackupId).toBeNull();
 
     await expect(run()).resolves.toMatchObject({ backupId: operation.id });
     expect(await store.read(operation.id)).toEqual(oldBytes);
