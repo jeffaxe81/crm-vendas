@@ -160,19 +160,11 @@ describe("encrypted PRE_RESTORE safety copy under tenant maintenance", () => {
       false
     );
     const decrypted = await store.read(created.backupId);
-    const verified = decodeSnapshot(
-      decrypted,
-      tenant.id,
-      options.maxBytes
-    );
+    const verified = decodeSnapshot(decrypted, tenant.id, options.maxBytes);
     expect(verified.manifest.checksum).toBe(created.checksum);
     expect(verified.data.Company).toHaveLength(1);
     expect(() =>
-      decodeSnapshot(
-        decrypted,
-        other.id,
-        options.maxBytes
-      )
+      decodeSnapshot(decrypted, other.id, options.maxBytes)
     ).toThrow();
     expect(
       await owner.company.count({ where: { organizationId: other.id } })
