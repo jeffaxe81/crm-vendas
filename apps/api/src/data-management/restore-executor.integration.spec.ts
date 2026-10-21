@@ -1203,7 +1203,7 @@ describe("transactional tenant restore executor", () => {
     });
   });
 
-  it("rejects a historical Ticket and TicketEvent snapshot after they were deleted live", async () => {
+  it("blocks historical tickets and events missing from live state", async () => {
     const target = await fixture();
     const other = await fixture();
     const otherBefore = await companies(other.organization.id);
@@ -1252,14 +1252,18 @@ describe("transactional tenant restore executor", () => {
     expect(await companies(target.organization.id)).toEqual(before);
     expect(await companies(other.organization.id)).toEqual(otherBefore);
     expect(
-      await owner.ticket.count({ where: { organizationId: target.organization.id } })
+      await owner.ticket.count({
+        where: { organizationId: target.organization.id },
+      })
     ).toBe(0);
     expect(
-      await owner.ticketEvent.count({ where: { organizationId: target.organization.id } })
+      await owner.ticketEvent.count({
+        where: { organizationId: target.organization.id },
+      })
     ).toBe(0);
   });
 
-  it("preserves a live ticket, satisfaction survey, and encrypted email outbox on blocked restore", async () => {
+  it("preserves live survey and encrypted email outbox on blocked restore", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
     const ticket = await owner.ticket.create({
