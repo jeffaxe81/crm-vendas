@@ -1,6 +1,10 @@
 import type { Prisma } from "../generated/prisma/client";
 import { BackupError } from "./backup-error";
-import { snapshotDataFingerprint, type SnapshotData } from "./backup-manifest";
+import {
+  canonical,
+  snapshotDataFingerprint,
+  type SnapshotData,
+} from "./backup-manifest";
 import type { VerifiedBackup } from "./backup.service";
 import { validateRestoreIdentityReferences } from "./restore-identity-check";
 import { validateRestorePreservedMemberships } from "./restore-membership-check";
@@ -57,7 +61,30 @@ export async function preflightRestoreExecution(
   if (
     verified.record.organizationId !== organizationId ||
     verified.manifest.organizationId !== organizationId ||
-    verified.record.checksum !== verified.manifest.checksum
+    verified.record.checksum !== verified.manifest.checksum ||
+    verified.record.byteCount !== verified.bytes.length
+  ) {
+    throw new BackupError("RESTORE_TARGET_INVALID");
+  }
+
+  // Verification is a point-in-time read. A preview must not authorize
+  // restoration of a copy later revoked, deleted or replaced in the catalog.
+  // Recheck under the exclusive maintenance transaction, before confirmation
+  // is consumed or any tenant data is modified.
+  const catalog = await tx.backupRecord.findFirst({
+    where: {
+      id: verified.record.id,
+      organizationId,
+      state: "COMPLETED",
+      checksum: verified.manifest.checksum,
+      schemaVersion: verified.manifest.schemaVersion,
+      byteCount: BigInt(verified.bytes.length),
+    },
+    select: { counts: true },
+  });
+  if (
+    !catalog ||
+    canonical(catalog.counts) !== canonical(verified.manifest.counts)
   ) {
     throw new BackupError("RESTORE_TARGET_INVALID");
   }
