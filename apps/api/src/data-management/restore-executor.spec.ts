@@ -165,6 +165,23 @@ describe("restore preview applicability", () => {
     ).toEqual(["Ticket"]);
   });
 
+  it.each([
+    ["Ticket only in current tenant", { Ticket: 1 }, {}, ["Ticket"]],
+    ["TicketEvent only in target snapshot", {}, { TicketEvent: 2 }, ["TicketEvent"]],
+    [
+      "Ticket and TicketEvent across both states",
+      { Ticket: 1, TicketEvent: 0 },
+      { Ticket: 0, TicketEvent: 3 },
+      ["Ticket", "TicketEvent"],
+    ],
+    ["zero rows in both states", { Ticket: 0 }, { TicketEvent: 0 }, []],
+  ])(
+    "fails closed for unsupported service records: %s",
+    (_scenario, current, target, expected) => {
+      expect(unsupportedRestoreModels(current, target)).toEqual(expected);
+    }
+  );
+
   it("does not block the reviewed business and configuration graph in either snapshot", () => {
     expect(
       unsupportedRestoreModels(
