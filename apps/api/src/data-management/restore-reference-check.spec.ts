@@ -57,6 +57,45 @@ describe("restore reference preflight", () => {
     );
   });
 
+  it("rejects a ticket event pointing to an absent ticket", () => {
+    const data = fixture();
+    data.TicketEvent = [
+      {
+        id: "00000000-0000-0000-0000-000000000010",
+        organizationId: org,
+        ticketId: "00000000-0000-0000-0000-000000000011",
+        authorUserId: user,
+      },
+    ];
+    expect(() => validateRestoreReferences(data)).toThrow(
+      "BACKUP_REFERENCES_INVALID"
+    );
+  });
+
+  it("rejects a ticket event linked to another organization's ticket", () => {
+    const data = fixture();
+    const ticketId = "00000000-0000-0000-0000-000000000012";
+    data.Ticket = [
+      {
+        id: ticketId,
+        organizationId: "00000000-0000-0000-0000-000000000099",
+        createdBy: user,
+        updatedBy: user,
+      },
+    ];
+    data.TicketEvent = [
+      {
+        id: "00000000-0000-0000-0000-000000000013",
+        organizationId: org,
+        ticketId,
+        authorUserId: user,
+      },
+    ];
+    expect(() => validateRestoreReferences(data)).toThrow(
+      "BACKUP_REFERENCES_INVALID"
+    );
+  });
+
   it("rejects mismatched composite organization relationships", () => {
     const data = fixture();
     data.CompanyContact = [
