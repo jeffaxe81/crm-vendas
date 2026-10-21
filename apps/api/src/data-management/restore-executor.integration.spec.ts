@@ -1203,6 +1203,129 @@ describe("transactional tenant restore executor", () => {
     });
   });
 
+  it("blocks historical tickets and events missing from live state", async () => {
+    const target = await fixture();
+    const other = await fixture();
+    const otherBefore = await companies(other.organization.id);
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: target.organization.id,
+        protocol: "2026-000005",
+        subject: "Historical ticket from the backup",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+    const event = await owner.ticketEvent.create({
+      data: {
+        organizationId: target.organization.id,
+        ticketId: ticket.id,
+        type: "COMMENT",
+        authorUserId: target.user.id,
+        body: "Historical ticket event",
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+
+    await owner.ticketEvent.delete({ where: { id: event.id } });
+    await owner.ticket.delete({ where: { id: ticket.id } });
+    const current = (await companies(target.organization.id))[0]!;
+    await owner.company.update({
+      where: { id: current.id },
+      data: { legalName: "Live company must not be reverted" },
+    });
+    const before = await companies(target.organization.id);
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+    expect(await companies(target.organization.id)).toEqual(before);
+    expect(await companies(other.organization.id)).toEqual(otherBefore);
+    expect(
+      await owner.ticket.count({
+        where: { organizationId: target.organization.id },
+      })
+    ).toBe(0);
+    expect(
+      await owner.ticketEvent.count({
+        where: { organizationId: target.organization.id },
+      })
+    ).toBe(0);
+  });
+
+  it("preserves live survey and encrypted email outbox on blocked restore", async () => {
+    const target = await fixture();
+    const before = await companies(target.organization.id);
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: target.organization.id,
+        protocol: "2026-000006",
+        subject: "Ticket with protected dependents",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+    const survey = await owner.ticketSatisfactionSurvey.create({
+      data: {
+        organizationId: target.organization.id,
+        ticketId: ticket.id,
+        tokenHash: randomBytes(32).toString("hex"),
+        expiresAt: new Date("2026-12-01T00:00:00Z"),
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+    const outbox = await owner.emailOutbox.create({
+      data: {
+        organizationId: target.organization.id,
+        ticketId: ticket.id,
+        idempotencyHash: randomBytes(32).toString("hex"),
+        purpose: "SATISFACTION_REQUEST",
+        encryptedEmail: "synthetic-test-ciphertext",
+      },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx =>
+          restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            target.verified.data
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+    expect(await companies(target.organization.id)).toEqual(before);
+    expect(
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
+    ).not.toBeNull();
+    expect(
+      await owner.ticketSatisfactionSurvey.findUnique({
+        where: { id: survey.id },
+      })
+    ).toMatchObject({ ticketId: ticket.id, tokenHash: survey.tokenHash });
+    expect(
+      await owner.emailOutbox.findUnique({ where: { id: outbox.id } })
+    ).toMatchObject({
+      organizationId: target.organization.id,
+      ticketId: ticket.id,
+      encryptedEmail: "synthetic-test-ciphertext",
+    });
+  });
+
   it("rejects a transaction without the exclusive maintenance context", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
