@@ -1130,7 +1130,7 @@ describe("transactional tenant restore executor", () => {
       data: {
         organizationId: target.organization.id,
         ticketId: ticket.id,
-        type: "NOTE",
+        type: "COMMENT",
         authorUserId: target.user.id,
         body: "Keep this live event",
       },
