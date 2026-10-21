@@ -30,6 +30,68 @@ describe("restore reference preflight", () => {
     expect(() => validateRestoreReferences(fixture())).not.toThrow();
   });
 
+  it("rejects a malformed snapshot root without a TypeError", () => {
+    expect(() =>
+      validateRestoreReferences(null as unknown as SnapshotData)
+    ).toThrow("BACKUP_REFERENCES_INVALID");
+    expect(() =>
+      validateRestoreReferences([] as unknown as SnapshotData)
+    ).toThrow("BACKUP_REFERENCES_INVALID");
+  });
+
+  it("rejects tenant roots that are not UUIDs", () => {
+    const data = fixture();
+    data.Organization = [{ id: "not-a-tenant-id" }];
+    expect(() => validateRestoreReferences(data)).toThrow(
+      "BACKUP_REFERENCES_INVALID"
+    );
+  });
+
+  it.each([null, "invalid", [], 23])(
+    "rejects a malformed collection row (%p)",
+    value => {
+      const data = fixture();
+      data.Ticket = [value as unknown as Record<string, unknown>];
+      expect(() => validateRestoreReferences(data)).toThrow(
+        "BACKUP_REFERENCES_INVALID"
+      );
+    }
+  );
+
+  it.each(["Company", "Ticket", "TicketEvent", "OrganizationMembership"])(
+    "rejects duplicated primary keys in %s",
+    model => {
+      const data = fixture();
+      const original = data[model]?.[0] ?? {
+        id: "00000000-0000-0000-0000-000000000029",
+        organizationId: org,
+      };
+      data[model] = [{ ...original }, { ...original }];
+      expect(() => validateRestoreReferences(data)).toThrow(
+        "BACKUP_REFERENCES_INVALID"
+      );
+    }
+  );
+
+  it("rejects a repeated composite protocol-counter key", () => {
+    const data = fixture();
+    data.TicketProtocolCounter = [
+      { organizationId: org, year: 2026, lastValue: 5 },
+      { organizationId: org, year: 2026, lastValue: 9 },
+    ];
+    expect(() => validateRestoreReferences(data)).toThrow(
+      "BACKUP_REFERENCES_INVALID"
+    );
+  });
+
+  it("rejects a missing declared primary-key component", () => {
+    const data = fixture();
+    data.TicketProtocolCounter = [{ organizationId: org, lastValue: 10 }];
+    expect(() => validateRestoreReferences(data)).toThrow(
+      "BACKUP_REFERENCES_INVALID"
+    );
+  });
+
   it("rejects an empty or ambiguous tenant root", () => {
     const empty = fixture();
     empty.Organization = [];
