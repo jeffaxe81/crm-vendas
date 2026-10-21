@@ -480,7 +480,7 @@ describe("transactional workspace preference restore", () => {
     }
   );
 
-  it("rolls back earlier business inserts and all preferences on a duplicate composite primary key", async () => {
+  it("rejects duplicate composite keys before mutating business data", async () => {
     const target = await fixture();
     const other = await fixture();
     await changeLiveState(target);
@@ -496,7 +496,7 @@ describe("transactional workspace preference restore", () => {
     });
 
     await expect(restore(target.organization.id, broken)).rejects.toThrow(
-      "user_workspace_preferences_pkey"
+      "BACKUP_REFERENCES_INVALID"
     );
 
     expect(await snapshot(target.organization.id)).toEqual(before);
