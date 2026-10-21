@@ -1326,6 +1326,94 @@ describe("transactional tenant restore executor", () => {
     });
   });
 
+  it("hides another tenant's tickets, events, surveys and email outbox under RLS", async () => {
+    const actor = await fixture(true);
+    const other = await fixture();
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: other.organization.id,
+        protocol: "2026-000007",
+        subject: "Other tenant private ticket",
+        createdBy: other.user.id,
+        updatedBy: other.user.id,
+      },
+    });
+    const event = await owner.ticketEvent.create({
+      data: {
+        organizationId: other.organization.id,
+        ticketId: ticket.id,
+        type: "COMMENT",
+        authorUserId: other.user.id,
+        body: "Restricted event",
+      },
+    });
+    const survey = await owner.ticketSatisfactionSurvey.create({
+      data: {
+        organizationId: other.organization.id,
+        ticketId: ticket.id,
+        tokenHash: randomBytes(32).toString("hex"),
+        expiresAt: new Date("2026-12-01T00:00:00Z"),
+        createdBy: other.user.id,
+        updatedBy: other.user.id,
+      },
+    });
+    const outbox = await owner.emailOutbox.create({
+      data: {
+        organizationId: other.organization.id,
+        ticketId: ticket.id,
+        idempotencyHash: randomBytes(32).toString("hex"),
+        purpose: "SATISFACTION_REQUEST",
+        encryptedEmail: "synthetic-other-tenant-ciphertext",
+      },
+    });
+
+    const invisible = await runtime.withTenant(
+      actor.organization.id,
+      async tx =>
+        Promise.all([
+          tx.ticket.findMany(),
+          tx.ticketEvent.findMany(),
+          tx.ticketSatisfactionSurvey.findMany(),
+          tx.emailOutbox.findMany(),
+        ])
+    );
+    expect(invisible).toEqual([[], [], [], []]);
+
+    const visible = await runtime.withTenant(other.organization.id, async tx =>
+      Promise.all([
+        tx.ticket.findMany({ select: { id: true } }),
+        tx.ticketEvent.findMany({ select: { id: true } }),
+        tx.ticketSatisfactionSurvey.findMany({ select: { id: true } }),
+        tx.emailOutbox.findMany({ select: { id: true } }),
+      ])
+    );
+    expect(visible).toEqual([
+      [{ id: ticket.id }],
+      [{ id: event.id }],
+      [{ id: survey.id }],
+      [{ id: outbox.id }],
+    ]);
+  });
+
+  it("rejects a restore whose maintenance tenant differs from the target", async () => {
+    const target = await fixture();
+    const other = await fixture();
+    const targetBefore = await companies(target.organization.id);
+    const otherBefore = await companies(other.organization.id);
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx =>
+          restoreTenantSnapshot(tx, other.organization.id, other.verified.data),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_MAINTENANCE_REQUIRED");
+
+    expect(await companies(target.organization.id)).toEqual(targetBefore);
+    expect(await companies(other.organization.id)).toEqual(otherBefore);
+  });
+
   it("rejects a transaction without the exclusive maintenance context", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);

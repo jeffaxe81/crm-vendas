@@ -17,6 +17,28 @@ import type { SnapshotData, SnapshotRow } from "./backup-manifest";
  * preserved external state, lock the tenant, or mutate any table.
  */
 export function validateRestoreReferences(data: SnapshotData): void {
+  // Week 1: a verified snapshot must belong to one organization even when
+  // some rows have no business-model FK to exercise below.
+  const roots = data.Organization;
+  const organizationId =
+    Array.isArray(roots) && roots.length === 1 ? roots[0]?.id : null;
+  if (typeof organizationId !== "string")
+    throw new BackupError("BACKUP_REFERENCES_INVALID");
+
+  for (const policy of SNAPSHOT_POLICIES) {
+    const rows = data[policy.model];
+    if (!Array.isArray(rows))
+      throw new BackupError("BACKUP_REFERENCES_INVALID");
+    if (
+      (policy.scope === "ORGANIZATION" &&
+        rows.some(row => row?.organizationId !== organizationId)) ||
+      (policy.scope === "ORGANIZATION_ROOT" &&
+        rows.some(row => row?.id !== organizationId))
+    ) {
+      throw new BackupError("BACKUP_REFERENCES_INVALID");
+    }
+  }
+
   const exported = new Set(SNAPSHOT_POLICIES.map(policy => policy.model));
   const schema = new Map(
     BACKUP_SCHEMA.models.map(model => [model.name, model])
@@ -68,13 +90,17 @@ export function validateRestoreReferences(data: SnapshotData): void {
       }
       const targetSet = new Set(targetRows.map(row => key(row, targetKeys)));
       for (const row of sourceRows) {
-        // An optional composite relation is absent when any FK component is null.
+        // Optional composite FKs may be absent (PostgreSQL MATCH SIMPLE).
+        // Mandatory FKs must never be silently skipped on null or undefined.
         if (
           sourceKeys.some(
             field => row[field] === null || row[field] === undefined
           )
-        )
+        ) {
+          if (relation.isRequired)
+            throw new BackupError("BACKUP_REFERENCES_INVALID");
           continue;
+        }
         if (!targetSet.has(key(row, sourceKeys))) {
           throw new BackupError("BACKUP_REFERENCES_INVALID");
         }
