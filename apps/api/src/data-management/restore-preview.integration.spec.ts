@@ -248,9 +248,7 @@ describe("session-bound restore previews", () => {
       });
       const next = await owner.organizationMembership.create({
         data: {
-          organizationId: recreated
-            ? organization.id
-            : otherOrganization.id,
+          organizationId: recreated ? organization.id : otherOrganization.id,
           userId: admin.id,
           role: "ADMIN",
         },
