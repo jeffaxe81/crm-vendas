@@ -175,6 +175,30 @@ describe("unsupported ticket snapshot preflight", () => {
 });
 
 describe("restore preview applicability", () => {
+  it.each([
+    ["negative", -1],
+    ["fractional", 1.5],
+    ["not a number", Number.NaN],
+    ["infinite", Number.POSITIVE_INFINITY],
+    ["unsafe integer", Number.MAX_SAFE_INTEGER + 1],
+  ])("fails closed on %s row counts", (_kind, invalid) => {
+    expect(() => unsupportedRestoreModels({ Ticket: invalid }, {})).toThrow(
+      "RESTORE_TARGET_INVALID"
+    );
+    expect(() =>
+      unsupportedRestoreModels({}, { TicketEvent: invalid })
+    ).toThrow("RESTORE_TARGET_INVALID");
+  });
+
+  it("rejects nonnumeric preview counts", () => {
+    expect(() =>
+      unsupportedRestoreModels(
+        { Ticket: "not-counted" as unknown as number },
+        {}
+      )
+    ).toThrow("RESTORE_TARGET_INVALID");
+  });
+
   it("detects data in unsupported models in the target or current tenant", () => {
     expect(
       unsupportedRestoreModels(

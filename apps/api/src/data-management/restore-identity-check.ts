@@ -15,8 +15,35 @@ export async function validateRestoreIdentityReferences(
   organizationId: string,
   data: SnapshotData
 ): Promise<void> {
-  const userRows = data.User ?? [];
+  if (
+    !data ||
+    typeof data !== "object" ||
+    !Array.isArray(data.User) ||
+    !Array.isArray(data.OrganizationMembership)
+  )
+    throw new BackupError("RESTORE_TARGET_INVALID");
+
+  // Week 6: standalone identity checks must not trust a mismatched tenant
+  // membership or ambiguous IDs, even when called outside full snapshot decode.
+  const userRows = data.User;
+  const membershipRows = data.OrganizationMembership;
+  if (
+    userRows.some(row => !row || typeof row.id !== "string") ||
+    membershipRows.some(
+      row =>
+        !row ||
+        typeof row.id !== "string" ||
+        row.organizationId !== organizationId
+    )
+  )
+    throw new BackupError("RESTORE_TARGET_INVALID");
   const userIds = userRows.map(row => row.id as string);
+  const membershipIds = membershipRows.map(row => row.id as string);
+  if (
+    new Set(userIds).size !== userIds.length ||
+    new Set(membershipIds).size !== membershipIds.length
+  )
+    throw new BackupError("RESTORE_TARGET_INVALID");
   const existingUsers = await tx.user.findMany({
     where: { id: { in: userIds } },
     select: { id: true, email: true },
@@ -32,8 +59,6 @@ export async function validateRestoreIdentityReferences(
     }
   }
 
-  const membershipRows = data.OrganizationMembership ?? [];
-  const membershipIds = membershipRows.map(row => row.id as string);
   const existingMemberships = await tx.organizationMembership.findMany({
     where: {
       organizationId,

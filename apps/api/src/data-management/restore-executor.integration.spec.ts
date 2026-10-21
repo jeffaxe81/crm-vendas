@@ -1414,6 +1414,66 @@ describe("transactional tenant restore executor", () => {
     expect(await companies(other.organization.id)).toEqual(otherBefore);
   });
 
+  it("preserves protocol counter high-water after an older backup", async () => {
+    const target = await fixture();
+    await owner.ticketProtocolCounter.create({
+      data: {
+        organizationId: target.organization.id,
+        year: 2026,
+        lastValue: 3,
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+    await owner.ticketProtocolCounter.updateMany({
+      where: { organizationId: target.organization.id, year: 2026 },
+      data: { lastValue: 29 },
+    });
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+
+    const counter = await owner.ticketProtocolCounter.findFirst({
+      where: { organizationId: target.organization.id, year: 2026 },
+    });
+    expect(counter?.lastValue).toBe(29);
+  });
+
+  it("denies cross-tenant ticket writes by the restricted role", async () => {
+    const actor = await fixture(true);
+    const other = await fixture();
+    const before = await owner.ticket.count({
+      where: { organizationId: other.organization.id },
+    });
+
+    await expect(
+      runtime.withTenant(actor.organization.id, tx =>
+        tx.ticket.create({
+          data: {
+            organizationId: other.organization.id,
+            protocol: "2026-000008",
+            subject: "Cross-tenant write must fail",
+            createdBy: other.user.id,
+            updatedBy: other.user.id,
+          },
+        })
+      )
+    ).rejects.toThrow();
+
+    expect(
+      await owner.ticket.count({
+        where: { organizationId: other.organization.id },
+      })
+    ).toBe(before);
+  });
+
   it("rejects a transaction without the exclusive maintenance context", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);

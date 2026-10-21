@@ -17,18 +17,42 @@ import type { SnapshotData, SnapshotRow } from "./backup-manifest";
  * preserved external state, lock the tenant, or mutate any table.
  */
 export function validateRestoreReferences(data: SnapshotData): void {
+  if (!data || typeof data !== "object" || Array.isArray(data))
+    throw new BackupError("BACKUP_REFERENCES_INVALID");
+
+  // A valid root must be a tenant UUID, not just an arbitrary nonempty string.
   // Week 1: a verified snapshot must belong to one organization even when
   // some rows have no business-model FK to exercise below.
   const roots = data.Organization;
   const organizationId =
     Array.isArray(roots) && roots.length === 1 ? roots[0]?.id : null;
-  if (typeof organizationId !== "string")
+  if (
+    typeof organizationId !== "string" ||
+    !/^[a-f\d]{8}-(?:[a-f\d]{4}-){3}[a-f\d]{12}$/i.test(organizationId)
+  )
     throw new BackupError("BACKUP_REFERENCES_INVALID");
 
   for (const policy of SNAPSHOT_POLICIES) {
     const rows = data[policy.model];
-    if (!Array.isArray(rows))
+    if (
+      !Array.isArray(rows) ||
+      rows.some(row => !row || typeof row !== "object" || Array.isArray(row))
+    )
       throw new BackupError("BACKUP_REFERENCES_INVALID");
+    // Week 2: validate Prisma primary keys before checking foreign keys.
+    // Catch duplicate tickets, events and composite tenant counters early.
+    const primaryKey = modelMetadata(policy).primaryKey;
+    if (primaryKey.length === 0)
+      throw new BackupError("BACKUP_SCHEMA_UNSUPPORTED");
+    const seen = new Set<string>();
+    for (const row of rows) {
+      const values = primaryKey.map(field => row[field]);
+      if (values.some(value => value === null || value === undefined))
+        throw new BackupError("BACKUP_REFERENCES_INVALID");
+      const pk = JSON.stringify(values);
+      if (seen.has(pk)) throw new BackupError("BACKUP_REFERENCES_INVALID");
+      seen.add(pk);
+    }
     if (
       (policy.scope === "ORGANIZATION" &&
         rows.some(row => row?.organizationId !== organizationId)) ||
