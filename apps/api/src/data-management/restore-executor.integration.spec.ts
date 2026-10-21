@@ -259,6 +259,37 @@ describe("transactional tenant restore executor", () => {
     };
   }
 
+  async function roleGraph() {
+    const target = await fixture();
+    const role = await owner.role.create({
+      data: {
+        organizationId: target.organization.id,
+        code: "TEAM_REPORTS",
+        name: "Equipe de relatórios",
+        isSystem: false,
+      },
+    });
+    const permission = await owner.rolePermission.create({
+      data: {
+        organizationId: target.organization.id,
+        roleId: role.id,
+        permission: "reports.read",
+        scope: "ORGANIZATION",
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    return {
+      ...target,
+      role,
+      permission,
+      verified: await backups.verify(target.organization.id, backup.id),
+    };
+  }
+
   async function graphSnapshot(organizationId: string) {
     const data = await runtime.withTenant(
       organizationId,
@@ -267,6 +298,8 @@ describe("transactional tenant restore executor", () => {
     );
     return Object.fromEntries(
       [
+        "Role",
+        "RolePermission",
         "Company",
         "Contact",
         "ContactChannel",
@@ -280,6 +313,128 @@ describe("transactional tenant restore executor", () => {
       ].map(model => [model, data[model]])
     );
   }
+
+  it("round-trips tenant roles and permissions while preserving another tenant", async () => {
+    const target = await roleGraph();
+    const other = await roleGraph();
+    const expected = await graphSnapshot(target.organization.id);
+    const otherBefore = await graphSnapshot(other.organization.id);
+
+    await owner.role.update({
+      where: { id: target.role.id },
+      data: { name: "Modified after backup" },
+    });
+    await owner.rolePermission.delete({ where: { id: target.permission.id } });
+    await owner.rolePermission.create({
+      data: {
+        organizationId: target.organization.id,
+        roleId: target.role.id,
+        permission: "contacts.read",
+      },
+    });
+    await owner.role.create({
+      data: {
+        organizationId: target.organization.id,
+        code: "CREATED_AFTER_BACKUP",
+        name: "Should be removed",
+      },
+    });
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+    expect(await graphSnapshot(target.organization.id)).toEqual(expected);
+    expect(await graphSnapshot(other.organization.id)).toEqual(otherBefore);
+  });
+
+  it("removes tenant roles created after an empty role backup", async () => {
+    const target = await fixture();
+    const other = await roleGraph();
+    const otherBefore = await graphSnapshot(other.organization.id);
+    const role = await owner.role.create({
+      data: {
+        organizationId: target.organization.id,
+        code: "AFTER_BACKUP",
+        name: "Newer role",
+      },
+    });
+    await owner.rolePermission.create({
+      data: {
+        organizationId: target.organization.id,
+        roleId: role.id,
+        permission: "reports.read",
+      },
+    });
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+    const restored = await graphSnapshot(target.organization.id);
+    expect(restored.Role).toEqual([]);
+    expect(restored.RolePermission).toEqual([]);
+    expect(await graphSnapshot(other.organization.id)).toEqual(otherBefore);
+  });
+
+  it("rejects a role permission targeting a role missing from the snapshot", async () => {
+    const target = await roleGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const broken = structuredClone(target.verified.data);
+    broken.RolePermission![0]!.roleId = randomUUID();
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("BACKUP_REFERENCES_INVALID");
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
+
+  it("rejects a role permission referencing another tenant's role", async () => {
+    const target = await roleGraph();
+    const other = await roleGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const otherBefore = await graphSnapshot(other.organization.id);
+    const broken = structuredClone(target.verified.data);
+    broken.RolePermission![0]!.roleId = other.role.id;
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("BACKUP_REFERENCES_INVALID");
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+    expect(await graphSnapshot(other.organization.id)).toEqual(otherBefore);
+  });
+
+  it("rolls back role changes if a duplicate permission violates uniqueness", async () => {
+    const target = await roleGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const broken = structuredClone(target.verified.data);
+    broken.Role![0]!.name = "Should be rolled back";
+    broken.RolePermission!.push({
+      ...broken.RolePermission![0]!,
+      id: randomUUID(),
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, broken),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow(/23505|Unique constraint|duplicate key/);
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+  });
 
   it("round-trips contacts, channels, company links and notes with exact timestamp precision", async () => {
     const target = await contactGraph();
@@ -550,14 +705,16 @@ describe("transactional tenant restore executor", () => {
     expect(restored.PipelineStage).toEqual([]);
   });
 
-  it("blocks restore when an unsupported live role exists", async () => {
+  it("blocks restore when an unsupported live ticket exists", async () => {
     const target = await pipelineGraph();
     const before = await graphSnapshot(target.organization.id);
-    const role = await owner.role.create({
+    const ticket = await owner.ticket.create({
       data: {
         organizationId: target.organization.id,
-        code: "SYNTHETIC_AFTER_BACKUP",
-        name: "Criado depois do backup",
+        protocol: "2026-000001",
+        subject: "Created after backup",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
       },
     });
 
@@ -576,9 +733,7 @@ describe("transactional tenant restore executor", () => {
 
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
     expect(
-      await owner.role.findUnique({
-        where: { id: role.id },
-      })
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
     ).not.toBeNull();
   });
 
@@ -677,11 +832,13 @@ describe("transactional tenant restore executor", () => {
   it("rejects live unsupported models created after the snapshot before replacing data", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
-    await owner.role.create({
+    await owner.ticket.create({
       data: {
         organizationId: target.organization.id,
-        name: "After snapshot",
-        code: "AFTER_SNAPSHOT",
+        protocol: "2026-000103",
+        subject: "After snapshot",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
       },
     });
 
@@ -700,7 +857,7 @@ describe("transactional tenant restore executor", () => {
 
     expect(await companies(target.organization.id)).toEqual(before);
     expect(
-      await owner.role.count({
+      await owner.ticket.count({
         where: { organizationId: target.organization.id },
       })
     ).toBe(1);
@@ -922,14 +1079,16 @@ describe("transactional tenant restore executor", () => {
     expect(await companies(target.organization.id)).toEqual(before);
   });
 
-  it("fails closed for a non-empty unsupported replacement policy", async () => {
+  it("fails closed for a non-empty unsupported Ticket replacement policy", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
-    await owner.role.create({
+    await owner.ticket.create({
       data: {
         organizationId: target.organization.id,
-        name: "Unsupported restore category",
-        code: "UNSUPPORTED_RESTORE",
+        protocol: "2026-000002",
+        subject: "Unsupported restore category",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
       },
     });
     const backup = await backups.create(
@@ -949,7 +1108,7 @@ describe("transactional tenant restore executor", () => {
 
     expect(await companies(target.organization.id)).toEqual(before);
     expect(
-      await owner.role.count({
+      await owner.ticket.count({
         where: { organizationId: target.organization.id },
       })
     ).toBe(1);

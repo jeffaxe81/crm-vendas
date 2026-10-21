@@ -125,12 +125,14 @@ describe("restore locked preflight", () => {
   });
 
   it("blocks restore when an unsupported model gained live data", async () => {
-    const { organization, verified } = await fixture();
-    const role = await owner.role.create({
+    const { organization, user, verified } = await fixture();
+    const ticket = await owner.ticket.create({
       data: {
         organizationId: organization.id,
-        name: "Do not discard",
-        code: "DO_NOT_DISCARD",
+        protocol: "2026-000101",
+        subject: "Do not discard",
+        createdBy: user.id,
+        updatedBy: user.id,
       },
     });
 
@@ -149,22 +151,24 @@ describe("restore locked preflight", () => {
     ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
 
     expect(
-      await owner.role.findUnique({ where: { id: role.id } })
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
     ).not.toBeNull();
   });
 
   it("blocks unsupported rows existing only in target", async () => {
     const { organization, user } = await fixture();
-    const role = await owner.role.create({
+    const ticket = await owner.ticket.create({
       data: {
         organizationId: organization.id,
-        name: "Historical role",
-        code: "HISTORICAL",
+        protocol: "2026-000102",
+        subject: "Historical ticket",
+        createdBy: user.id,
+        updatedBy: user.id,
       },
     });
     const backup = await backups.create(organization.id, user.id, "MANUAL");
     const verified = await backups.verify(organization.id, backup.id);
-    await owner.role.delete({ where: { id: role.id } });
+    await owner.ticket.delete({ where: { id: ticket.id } });
 
     await expect(
       runtime.withMaintenance(
@@ -181,7 +185,7 @@ describe("restore locked preflight", () => {
     ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
 
     expect(
-      await owner.role.count({ where: { organizationId: organization.id } })
+      await owner.ticket.count({ where: { organizationId: organization.id } })
     ).toBe(0);
   });
 
