@@ -157,17 +157,19 @@ describe("internal preventive restore snapshot under maintenance", () => {
   it("requires maintenance and an owned, active restore operation", async () => {
     const { org, other, user, operation } = await fixture();
     await expect(
-      runtime.withTenant(org.id, tx =>
-        stageRestorePreventiveCopy(
-          tx,
-          org.id,
-          user.id,
-          operation.id,
-          workerId,
-          1,
-          store,
-          maxBytes
-        ),
+      runtime.withTenant(
+        org.id,
+        tx =>
+          stageRestorePreventiveCopy(
+            tx,
+            org.id,
+            user.id,
+            operation.id,
+            workerId,
+            1,
+            store,
+            maxBytes
+          ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
     ).rejects.toThrow("RESTORE_MAINTENANCE_REQUIRED");
