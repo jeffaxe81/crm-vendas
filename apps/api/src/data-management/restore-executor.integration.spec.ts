@@ -1158,6 +1158,51 @@ describe("transactional tenant restore executor", () => {
     ).not.toBeNull();
   });
 
+  it("leaves another tenant's ticket and event untouched on a failed restore", async () => {
+    const target = await fixture();
+    const other = await fixture();
+    const otherBefore = await companies(other.organization.id);
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: other.organization.id,
+        protocol: "2026-000004",
+        subject: "Other tenant service record",
+        createdBy: other.user.id,
+        updatedBy: other.user.id,
+      },
+    });
+    const event = await owner.ticketEvent.create({
+      data: {
+        organizationId: other.organization.id,
+        ticketId: ticket.id,
+        type: "COMMENT",
+        authorUserId: other.user.id,
+        body: "Other tenant confidential event",
+      },
+    });
+    const invalid = structuredClone(target.verified.data);
+    invalid.Company!.push({ ...invalid.Company![0]! });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, invalid),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow();
+
+    expect(await companies(other.organization.id)).toEqual(otherBefore);
+    expect(
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
+    ).toMatchObject({ organizationId: other.organization.id });
+    expect(
+      await owner.ticketEvent.findUnique({ where: { id: event.id } })
+    ).toMatchObject({
+      organizationId: other.organization.id,
+      ticketId: ticket.id,
+    });
+  });
+
   it("rejects a transaction without the exclusive maintenance context", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
