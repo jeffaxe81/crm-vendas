@@ -185,9 +185,9 @@ describe("restore preview applicability", () => {
     expect(() => unsupportedRestoreModels({ Ticket: invalid }, {})).toThrow(
       "RESTORE_TARGET_INVALID"
     );
-    expect(() => unsupportedRestoreModels({}, { TicketEvent: invalid })).toThrow(
-      "RESTORE_TARGET_INVALID"
-    );
+    expect(() =>
+      unsupportedRestoreModels({}, { TicketEvent: invalid })
+    ).toThrow("RESTORE_TARGET_INVALID");
   });
 
   it("rejects nonnumeric preview counts", () => {
