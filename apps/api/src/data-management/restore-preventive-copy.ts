@@ -36,7 +36,11 @@ export async function stageRestorePreventiveCopy(
   maxBytes: number
 ): Promise<PreventiveRestoreCopy> {
   const [context] = await tx.$queryRawUnsafe<
-    { maintenance: string | null; isolation: string; organization: string | null }[]
+    {
+      maintenance: string | null;
+      isolation: string;
+      organization: string | null;
+    }[]
   >(
     `SELECT current_setting('app.maintenance_authorized',true) AS maintenance,
        current_setting('transaction_isolation') AS isolation,
