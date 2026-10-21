@@ -39,8 +39,8 @@ export function validateRestoreReferences(data: SnapshotData): void {
       rows.some(row => !row || typeof row !== "object" || Array.isArray(row))
     )
       throw new BackupError("BACKUP_REFERENCES_INVALID");
-    // Week 2: validate declared Prisma primary keys before reading foreign keys.
-    // This catches duplicate tickets, events and composite tenant counters early.
+    // Week 2: validate Prisma primary keys before checking foreign keys.
+    // Catch duplicate tickets, events and composite tenant counters early.
     const primaryKey = modelMetadata(policy).primaryKey;
     if (primaryKey.length === 0)
       throw new BackupError("BACKUP_SCHEMA_UNSUPPORTED");
