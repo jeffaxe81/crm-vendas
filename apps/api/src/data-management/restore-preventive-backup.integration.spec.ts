@@ -231,8 +231,8 @@ describe("encrypted PRE_RESTORE safety copy under tenant maintenance", () => {
     expect(unpublished).toHaveLength(1);
     const id = unpublished[0]!.replace(/\.backup$/, "");
     expect(
-      decodeSnapshot(await store.read(id), tenant.id, options.maxBytes)
-        .manifest.organizationId
+      decodeSnapshot(await store.read(id), tenant.id, options.maxBytes).manifest
+        .organizationId
     ).toBe(tenant.id);
     expect(
       await owner.backupRecord.count({
@@ -273,11 +273,8 @@ describe("encrypted PRE_RESTORE safety copy under tenant maintenance", () => {
       await owner.dataOperation.findUnique({ where: { id: operation.id } })
     ).toMatchObject({ preventiveBackupId: null });
     expect(
-      decodeSnapshot(
-        await store.read(orphanId!),
-        tenant.id,
-        options.maxBytes
-      ).manifest.organizationId
+      decodeSnapshot(await store.read(orphanId!), tenant.id, options.maxBytes)
+        .manifest.organizationId
     ).toBe(tenant.id);
   });
 
