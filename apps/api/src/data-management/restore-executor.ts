@@ -51,6 +51,16 @@ export function unsupportedRestoreModels(
   currentCounts: Readonly<Record<string, number>>,
   targetCounts: Readonly<Record<string, number>>
 ): string[] {
+  // Week 4: missing counts mean zero, but invalid counts must not quietly
+  // suppress a blocker in a read-only applicability assessment.
+  for (const counts of [currentCounts, targetCounts]) {
+    if (!counts || typeof counts !== "object" || Array.isArray(counts))
+      throw new BackupError("RESTORE_TARGET_INVALID");
+    for (const count of Object.values(counts)) {
+      if (!Number.isSafeInteger(count) || count < 0)
+        throw new BackupError("RESTORE_TARGET_INVALID");
+    }
+  }
   return TENANT_DATA_REGISTRY.filter(
     policy =>
       policy.export !== "EXCLUDE" &&
