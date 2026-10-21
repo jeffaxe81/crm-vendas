@@ -1290,7 +1290,7 @@ describe("transactional tenant restore executor", () => {
         organizationId: target.organization.id,
         ticketId: ticket.id,
         idempotencyHash: randomBytes(32).toString("hex"),
-        purpose: "SURVEY",
+        purpose: "SATISFACTION_REQUEST",
         encryptedEmail: "synthetic-test-ciphertext",
       },
     });
