@@ -165,22 +165,30 @@ describe("restore preview applicability", () => {
     ).toEqual(["Ticket"]);
   });
 
-  it.each([
-    ["Ticket only in current tenant", { Ticket: 1 }, {}, ["Ticket"]],
-    ["TicketEvent only in target snapshot", {}, { TicketEvent: 2 }, ["TicketEvent"]],
-    [
-      "Ticket and TicketEvent across both states",
-      { Ticket: 1, TicketEvent: 0 },
-      { Ticket: 0, TicketEvent: 3 },
-      ["Ticket", "TicketEvent"],
-    ],
-    ["zero rows in both states", { Ticket: 0 }, { TicketEvent: 0 }, []],
-  ])(
-    "fails closed for unsupported service records: %s",
-    (_scenario, current, target, expected) => {
-      expect(unsupportedRestoreModels(current, target)).toEqual(expected);
-    }
-  );
+  it("fails closed on unsupported tickets in the current tenant", () => {
+    expect(unsupportedRestoreModels({ Ticket: 1 }, {})).toEqual(["Ticket"]);
+  });
+
+  it("fails closed on unsupported ticket events in the target snapshot", () => {
+    expect(unsupportedRestoreModels({}, { TicketEvent: 2 })).toEqual([
+      "TicketEvent",
+    ]);
+  });
+
+  it("reports both unsupported models across current and target", () => {
+    expect(
+      unsupportedRestoreModels(
+        { Ticket: 1, TicketEvent: 0 },
+        { Ticket: 0, TicketEvent: 3 }
+      )
+    ).toEqual(["Ticket", "TicketEvent"]);
+  });
+
+  it("does not block zero-count service records", () => {
+    expect(
+      unsupportedRestoreModels({ Ticket: 0 }, { TicketEvent: 0 })
+    ).toEqual([]);
+  });
 
   it("does not block the reviewed business and configuration graph in either snapshot", () => {
     expect(
