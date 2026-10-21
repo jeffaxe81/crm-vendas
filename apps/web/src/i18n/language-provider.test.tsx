@@ -58,7 +58,7 @@ describe("tenant language provider", () => {
       </LanguageProvider>
     );
     expect(await screen.findByText("Companies")).toBeInTheDocument();
-    expect(document.documentElement.lang).toBe("en");
+    await waitFor(() => expect(document.documentElement.lang).toBe("en"));
     expect(JSON.parse(localStorage.getItem("axes-crm-language:a")!)).toEqual({
       defaultLanguage: "en",
       detectBrowserLanguage: false,
