@@ -1367,13 +1367,15 @@ describe("transactional tenant restore executor", () => {
       },
     });
 
-    const invisible = await runtime.withTenant(actor.organization.id, async tx =>
-      Promise.all([
-        tx.ticket.findMany(),
-        tx.ticketEvent.findMany(),
-        tx.ticketSatisfactionSurvey.findMany(),
-        tx.emailOutbox.findMany(),
-      ])
+    const invisible = await runtime.withTenant(
+      actor.organization.id,
+      async tx =>
+        Promise.all([
+          tx.ticket.findMany(),
+          tx.ticketEvent.findMany(),
+          tx.ticketSatisfactionSurvey.findMany(),
+          tx.emailOutbox.findMany(),
+        ])
     );
     expect(invisible).toEqual([[], [], [], []]);
 
