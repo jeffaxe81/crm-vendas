@@ -199,7 +199,6 @@ describe("restore preview applicability", () => {
     ).toThrow("RESTORE_TARGET_INVALID");
   });
 
-
   it("detects data in unsupported models in the target or current tenant", () => {
     expect(
       unsupportedRestoreModels(
