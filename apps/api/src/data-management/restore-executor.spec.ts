@@ -59,9 +59,9 @@ describe("restore executor target binding", () => {
 
   it.each([
     ["invalid UUID", "id", "not-a-uuid"],
-    ["NUL in string", "code", "unsafe\\u0000value"],
+    ["NUL in string", "code", "unsafe" + String.fromCharCode(0) + "value"],
     ["overlong code", "code", "X".repeat(61)],
-    ["nonstr integer", "description", 42],
+    ["number in nullable string", "description", 42],
     ["text instead of Boolean", "isActive", "true"],
     ["fractional Int", "version", 1.5],
     ["out-of-range Int", "version", 2147483648],
@@ -73,7 +73,7 @@ describe("restore executor target binding", () => {
     ["required Decimal missing", "unitPrice", null],
   ])(
     "rejects %s in %s before SQL mutation",
-    async (_case, field, invalid) => {
+    async (_case, field: string, invalid: unknown) => {
       const data: SnapshotData = Object.fromEntries(
         SNAPSHOT_POLICIES.map(policy => [
           policy.model,
