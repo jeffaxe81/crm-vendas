@@ -25,6 +25,13 @@ A suíte `backup-deletion.integration.spec.ts` agora prepara nove cópias, corro
 
 Esta entrega **não** resolve a recuperação de arquivos órfãos após falha de I/O entre exclusão do catálogo e remoção física. Não habilita `RESTORE`, não é implantação, nem representa homologação operacional. `GO` de produção continua bloqueado pelas issues #159 e #250.
 
+## Validação corrente
+
+- PR: `#282`, branch `fix/verify-retention-keeper-20261021`.
+- O primeiro candidato `86b58f9ef1a2a2d364bde4000d07cc52f37e6150` não recebeu run de `pull_request` associado e, portanto, **não constitui evidência de gate**.
+- A aprovação técnica deve usar somente o run integral do HEAD resultante desta atualização, incluindo PostgreSQL/RLS, testes, build e Docker.
+- Nenhuma política de expurgo em ambiente real deve ser ativada a partir deste documento.
+
 ## Gates
 
 - [ ] Gate integral da PR, com PostgreSQL/RLS e build, aprovado no HEAD exato.
