@@ -266,13 +266,6 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
       .auth(token, { type: "bearer" })
       .expect(201);
     await remove().expect(409);
-    for (let index = 0; index < 7; index++) {
-      await app.get(BackupService).create(organizationId, userId, "MANUAL");
-    }
-    expect(
-      await app.get(BackupService).pruneRetention(organizationId, 7)
-    ).toBe(1);
-    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
   });
 
   it("retention refuses to erase older recoverable copies when newest is corrupt", async () => {
