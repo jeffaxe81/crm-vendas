@@ -173,18 +173,18 @@ Estado: **PENDENTE DE APROVAÇÃO HUMANA**.
 
 Antes de liberar merge/deploy, preencher:
 
-| Item | Responsável | Evidência | Estado |
-|---|---|---|---|
-| Break-glass/MFA | A definir | staging + aprovação | PENDENTE |
-| 403 API key/superuser | A definir | staging | PENDENTE |
-| RLS 3 tenants | A definir | smoke/evidência | PENDENTE |
-| no-store ingress/proxy | A definir | headers staging | PENDENTE |
-| Retenção/privacidade | A definir | aceite formal | PENDENTE |
-| Performance | A definir | p50/p95/erros/recursos | PENDENTE |
-| Mobile/desktop/a11y/i18n | A definir | relatório QA | PENDENTE |
-| Backup/restore regressão | A definir | relatório QA | PENDENTE |
-| Rollback | A definir | procedimento validado | PENDENTE |
-| Janela de implantação | A definir | mudança aprovada | PENDENTE |
+| Item                     | Responsável | Evidência              | Estado   |
+| ------------------------ | ----------- | ---------------------- | -------- |
+| Break-glass/MFA          | A definir   | staging + aprovação    | PENDENTE |
+| 403 API key/superuser    | A definir   | staging                | PENDENTE |
+| RLS 3 tenants            | A definir   | smoke/evidência        | PENDENTE |
+| no-store ingress/proxy   | A definir   | headers staging        | PENDENTE |
+| Retenção/privacidade     | A definir   | aceite formal          | PENDENTE |
+| Performance              | A definir   | p50/p95/erros/recursos | PENDENTE |
+| Mobile/desktop/a11y/i18n | A definir   | relatório QA           | PENDENTE |
+| Backup/restore regressão | A definir   | relatório QA           | PENDENTE |
+| Rollback                 | A definir   | procedimento validado  | PENDENTE |
+| Janela de implantação    | A definir   | mudança aprovada       | PENDENTE |
 
 ## 11. Regra de GO
 
