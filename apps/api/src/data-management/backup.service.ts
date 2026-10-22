@@ -436,6 +436,12 @@ export class BackupService {
           "SELECT pg_advisory_xact_lock_shared(hashtextextended($1,0))",
           `tenant-maintenance:${organizationId}`
         );
+        // Serialize retention passes so two workers cannot jointly remove
+        // more than the configured number of ordinary completed backups.
+        await tx.$executeRawUnsafe(
+          "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+          `backup-retention:${organizationId}`
+        );
         const protectedByOperation = await tx.dataOperation.count({
           where: {
             organizationId,
@@ -454,6 +460,31 @@ export class BackupService {
           select: { id: true },
         });
         if (!row) return false;
+
+        // A catalog COMPLETED flag is not proof that the recovery object
+        // remains decryptable. Re-evaluate the keepers under the retention
+        // lock and fail closed if the most recent retained copy is invalid.
+        const keepers = await tx.backupRecord.findMany({
+          where: {
+            organizationId,
+            state: "COMPLETED",
+            reason: { not: "PRE_RESTORE" },
+          },
+          orderBy: [
+            { completedAt: "desc" },
+            { createdAt: "desc" },
+            { id: "desc" },
+          ],
+          take: retentionCount,
+          select: { id: true },
+        });
+        if (
+          keepers.length < retentionCount ||
+          keepers.some(keeper => keeper.id === id)
+        )
+          return false;
+        requireActive(signal);
+        await this.verify(organizationId, keepers[0]!.id);
         requireActive(signal);
         await this.audit(
           tx,
