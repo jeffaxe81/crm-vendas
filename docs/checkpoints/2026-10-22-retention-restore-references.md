@@ -16,7 +16,7 @@ A exclusão manual já considera prévias de restauração, mas o expurgo autom�
 
 ## Evidência de regressão
 
-Em ambiente PostgreSQL com RLS e banco descartável, o teste integrado cria nove backups, uma prévia e uma operação concluída que referenciam dois candidatos ao expurgo. Valida que ambos permanecem acessíveis, inclusive após expiração/consumo sintéticos da prévia. Depois de retirar **somente no teste** essas referências históricas, valida que a retenção volta a funcionar.
+Em ambiente PostgreSQL com RLS e banco descartável, regressões independentes criam nove backups para forçar candidatos além da política de sete cópias. Um cenário publica uma prévia que referencia a cópia antiga; outro cria uma operação `RESTORE` concluída com `preventiveBackupId` apontando para essa cópia. Em ambos os casos, a retenção remove somente o outro candidato elegível e a cópia referenciada permanece acessível no armazenamento.
 
 A suíte usa `TRUNCATE ... CASCADE` para preparar fixtures. **Nunca** executar contra dados reais.
 
