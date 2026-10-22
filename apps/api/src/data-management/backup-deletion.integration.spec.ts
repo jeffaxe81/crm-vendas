@@ -277,9 +277,9 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
       .auth(token, { type: "bearer" })
       .expect(201);
 
-    expect(
-      await app.get(BackupService).pruneRetention(organizationId, 7)
-    ).toBe(1);
+    expect(await app.get(BackupService).pruneRetention(organizationId, 7)).toBe(
+      1
+    );
     await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
   });
 
@@ -299,9 +299,9 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
       })
     );
 
-    expect(
-      await app.get(BackupService).pruneRetention(organizationId, 7)
-    ).toBe(1);
+    expect(await app.get(BackupService).pruneRetention(organizationId, 7)).toBe(
+      1
+    );
     await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
   });
 
