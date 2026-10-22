@@ -16,6 +16,7 @@
 ## Testes de regressão
 
 `apps/api/src/data-management/backup-deletion.integration.spec.ts` inclui:
+
 1. Negativa HTTP 409 de exclusão manual `PRE_RESTORE` e preservação de arquivo durante o expurgo de backups comuns.
 2. Reconciliação segura de registro legado `PRE_RESTORE/DELETING`, sem exclusão de arquivo nem auditoria `backup.deleted`.
 
