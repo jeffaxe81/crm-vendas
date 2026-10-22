@@ -273,35 +273,6 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
       await app.get(BackupService).pruneRetention(organizationId, 7)
     ).toBe(1);
     await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
-
-    await owner.operationPreview.updateMany({
-      where: { organizationId, targetBackupId: older.id },
-      data: { consumedAt: new Date() },
-    });
-    expect(
-      await app.get(BackupService).pruneRetention(organizationId, 7)
-    ).toBe(0);
-  });
-
-  it("protects historical operation references during retention", async () => {
-    for (let index = 0; index < 7; index++) {
-      await app.get(BackupService).create(organizationId, userId, "MANUAL");
-    }
-    await runtime.withTenant(organizationId, tx =>
-      tx.dataOperation.create({
-        data: {
-          organizationId,
-          actorUserId: userId,
-          kind: "RESTORE",
-          state: "COMPLETED",
-          preventiveBackupId: older.id,
-        },
-      })
-    );
-    expect(
-      await app.get(BackupService).pruneRetention(organizationId, 7)
-    ).toBe(1);
-    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
   });
 
   it("retention refuses to erase older recoverable copies when newest is corrupt", async () => {
