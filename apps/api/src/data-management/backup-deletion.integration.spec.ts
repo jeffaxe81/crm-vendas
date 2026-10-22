@@ -199,6 +199,51 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
     expect((await state()).state).toBe("COMPLETED");
   });
 
+  it("protects PRE_RESTORE from manual deletion and ordinary retention", async () => {
+    await owner.backupRecord.update({
+      where: { id: older.id },
+      data: {
+        reason: "PRE_RESTORE",
+        completedAt: new Date("2020-01-01T00:00:00.000Z"),
+      },
+    });
+    await remove().expect(409);
+
+    // Enough ordinary backups to trigger pruning independently of PRE_RESTORE.
+    for (let index = 0; index < 7; index++) {
+      await app.get(BackupService).create(organizationId, userId, "MANUAL");
+    }
+    expect(
+      await app.get(BackupService).pruneRetention(organizationId, 7)
+    ).toBeGreaterThan(0);
+
+    expect(await state()).toMatchObject({
+      reason: "PRE_RESTORE",
+      state: "COMPLETED",
+    });
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+  });
+
+  it("does not reconcile a legacy queued PRE_RESTORE deletion", async () => {
+    await owner.backupRecord.update({
+      where: { id: older.id },
+      data: { reason: "PRE_RESTORE", state: "DELETING" },
+    });
+
+    await app.get(BackupWorkerRunner).runCycle();
+    expect(await state()).toMatchObject({
+      reason: "PRE_RESTORE",
+      state: "DELETING",
+    });
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+    const deleted = await runtime.withTenant(organizationId, tx =>
+      tx.auditLog.count({
+        where: { entityId: older.id, action: "backup.deleted" },
+      })
+    );
+    expect(deleted).toBe(0);
+  });
+
   it("protects the newest completed backup and pending operations", async () => {
     await remove(newest).expect(409);
     await runtime.withTenant(organizationId, tx =>
