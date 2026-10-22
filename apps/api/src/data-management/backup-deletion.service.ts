@@ -114,6 +114,12 @@ export class BackupDeletionService {
           throw new ConflictException(
             "Somente backups concluídos podem ser excluídos."
           );
+        // The preventive copy is a mandatory recovery safeguard, not a
+        // regular backup administrators may remove.
+        if (row.reason === "PRE_RESTORE")
+          throw new ConflictException(
+            "Cópias preventivas de restauração estão protegidas contra exclusão."
+          );
 
         const newest = await tx.backupRecord.findFirst({
           where: {
@@ -215,6 +221,9 @@ export class BackupDeletionService {
                 },
               });
               if (!row) return false;
+              // Fail closed for catalog rows queued before this safeguard was
+              // added or changed under an earlier code version.
+              if (row.reason === "PRE_RESTORE") return false;
               // Acceptance and cleanup can be separated by a restart or I/O
               // failure. Revalidate protection under this lock, not just when
               // the human request first marked the catalog row DELETING.
