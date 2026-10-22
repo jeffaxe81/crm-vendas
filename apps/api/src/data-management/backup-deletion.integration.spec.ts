@@ -268,6 +268,37 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
     await remove().expect(409);
   });
 
+  it("retention refuses to erase older recoverable copies when newest is corrupt", async () => {
+    let latest = newest;
+    for (let index = 0; index < 7; index++) {
+      latest = await app
+        .get(BackupService)
+        .create(organizationId, userId, "MANUAL");
+    }
+    const totalBefore = await runtime.withTenant(organizationId, tx =>
+      tx.backupRecord.count({
+        where: { organizationId, state: "COMPLETED" },
+      })
+    );
+    expect(totalBefore).toBe(9);
+
+    await writeFile(
+      join(directory, `${latest.id}.backup`),
+      Buffer.from("corrupt newest retention keeper")
+    );
+    await expect(
+      app.get(BackupService).pruneRetention(organizationId, 7)
+    ).rejects.toThrow("BACKUP_INVALID");
+
+    const totalAfter = await runtime.withTenant(organizationId, tx =>
+      tx.backupRecord.count({
+        where: { organizationId, state: "COMPLETED" },
+      })
+    );
+    expect(totalAfter).toBe(totalBefore);
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+  });
+
   it("retains an older valid copy if the newest completed file is corrupt", async () => {
     await writeFile(
       join(directory, `${newest.id}.backup`),
