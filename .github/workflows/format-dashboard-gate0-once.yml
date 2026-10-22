@@ -1,0 +1,32 @@
+name: Format Gate 0 readiness once
+
+on:
+  push:
+    branches:
+      - feat/dashboard-consolidation-current-main-20261022
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feat/dashboard-consolidation-current-main-20261022
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - run: corepack enable && corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier --write docs/checkpoints/2026-10-22-dashboard-gate0-readiness.md
+      - name: Commit formatting
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/checkpoints/2026-10-22-dashboard-gate0-readiness.md
+          git commit -m "style(docs): format dashboard Gate 0 readiness"
+          git push
