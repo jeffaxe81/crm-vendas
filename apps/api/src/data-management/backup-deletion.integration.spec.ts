@@ -268,7 +268,7 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
     await remove().expect(409);
   });
 
-  it("retention preserves referenced backups until preview and operation records are explicitly cleaned", async () => {
+  it("preserves referenced backups through retention", async () => {
     // Nine ordinary copies leave two candidates beyond the seven-copy policy.
     for (let index = 0; index < 7; index++) {
       await app.get(BackupService).create(organizationId, userId, "MANUAL");
