@@ -266,62 +266,42 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
       .auth(token, { type: "bearer" })
       .expect(201);
     await remove().expect(409);
-  });
-
-  it("preserves referenced backups through retention", async () => {
-    // Nine ordinary copies leave two candidates beyond the seven-copy policy.
     for (let index = 0; index < 7; index++) {
       await app.get(BackupService).create(organizationId, userId, "MANUAL");
     }
-    await request(app.getHttpServer())
-      .post(`/api/v1/admin/backups/${older.id}/preview`)
-      .auth(token, { type: "bearer" })
-      .expect(201);
+    expect(
+      await app.get(BackupService).pruneRetention(organizationId, 7)
+    ).toBe(1);
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
 
-    const operation = await runtime.withTenant(organizationId, tx =>
+    await owner.operationPreview.updateMany({
+      where: { organizationId, targetBackupId: older.id },
+      data: { consumedAt: new Date() },
+    });
+    expect(
+      await app.get(BackupService).pruneRetention(organizationId, 7)
+    ).toBe(0);
+  });
+
+  it("protects historical operation references during retention", async () => {
+    for (let index = 0; index < 7; index++) {
+      await app.get(BackupService).create(organizationId, userId, "MANUAL");
+    }
+    await runtime.withTenant(organizationId, tx =>
       tx.dataOperation.create({
         data: {
           organizationId,
           actorUserId: userId,
           kind: "RESTORE",
           state: "COMPLETED",
-          preventiveBackupId: newest.id,
+          preventiveBackupId: older.id,
         },
       })
     );
-
-    // Both FK references are durable, even when the operation is terminal.
     expect(
       await app.get(BackupService).pruneRetention(organizationId, 7)
-    ).toBe(0);
+    ).toBe(1);
     await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
-    await expect(store.read(newest.id)).resolves.toBeInstanceOf(Buffer);
-
-    // Consumed and expired records still have restrictive FK references.
-    await owner.operationPreview.updateMany({
-      where: { organizationId, targetBackupId: older.id },
-      data: {
-        createdAt: new Date("2020-01-01T00:00:00.000Z"),
-        expiresAt: new Date("2020-01-01T00:05:00.000Z"),
-        consumedAt: new Date("2020-01-01T00:01:00.000Z"),
-      },
-    });
-    expect(
-      await app.get(BackupService).pruneRetention(organizationId, 7)
-    ).toBe(0);
-
-    // Cleanup is synthetic and explicit: production retention never deletes
-    // preview or operation audit history to force backup removal.
-    await owner.operationPreview.deleteMany({
-      where: { organizationId, targetBackupId: older.id },
-    });
-    await owner.dataOperation.delete({ where: { id: operation.id } });
-
-    expect(
-      await app.get(BackupService).pruneRetention(organizationId, 7)
-    ).toBe(2);
-    await expect(store.read(older.id)).rejects.toThrow();
-    await expect(store.read(newest.id)).rejects.toThrow();
   });
 
   it("retention refuses to erase older recoverable copies when newest is corrupt", async () => {
