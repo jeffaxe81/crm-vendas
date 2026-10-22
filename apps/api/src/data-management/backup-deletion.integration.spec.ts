@@ -268,6 +268,43 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
     await remove().expect(409);
   });
 
+  it("protects a restore preview target during retention", async () => {
+    for (let index = 0; index < 7; index++) {
+      await app.get(BackupService).create(organizationId, userId, "MANUAL");
+    }
+    await request(app.getHttpServer())
+      .post(`/api/v1/admin/backups/${older.id}/preview`)
+      .auth(token, { type: "bearer" })
+      .expect(201);
+
+    expect(await app.get(BackupService).pruneRetention(organizationId, 7)).toBe(
+      1
+    );
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+  });
+
+  it("protects a completed restore operation reference during retention", async () => {
+    for (let index = 0; index < 7; index++) {
+      await app.get(BackupService).create(organizationId, userId, "MANUAL");
+    }
+    await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.create({
+        data: {
+          organizationId,
+          actorUserId: userId,
+          kind: "RESTORE",
+          state: "COMPLETED",
+          preventiveBackupId: older.id,
+        },
+      })
+    );
+
+    expect(await app.get(BackupService).pruneRetention(organizationId, 7)).toBe(
+      1
+    );
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+  });
+
   it("retention refuses to erase older recoverable copies when newest is corrupt", async () => {
     let latest = newest;
     for (let index = 0; index < 7; index++) {

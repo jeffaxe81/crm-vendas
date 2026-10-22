@@ -429,11 +429,12 @@ export class BackupService {
       requireActive(signal);
       const deleted = await this.prisma.withTenant(organizationId, async tx => {
         requireActive(signal);
-        // Manual deletion takes the exclusive maintenance lock. Read the
-        // catalog only after acquiring its shared counterpart, so retention
-        // cannot act on a stale COMPLETED row that has become DELETING.
+        // Preview publication takes a shared maintenance lock. Retention
+        // needs the exclusive counterpart: otherwise a new preview could
+        // reference this backup between our lookup and catalog deletion.
+        // It also serializes with administrator deletion and restore staging.
         await tx.$executeRawUnsafe(
-          "SELECT pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+          "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
           `tenant-maintenance:${organizationId}`
         );
         // Serialize retention passes so two workers cannot jointly remove
@@ -442,14 +443,18 @@ export class BackupService {
           "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
           `backup-retention:${organizationId}`
         );
+        // Both foreign keys use ON DELETE RESTRICT. Completed operations and
+        // expired/consumed previews still retain their audit relationships.
+        // Never purge the referenced backup without a separate, reviewed
+        // lifecycle for those records.
         const protectedByOperation = await tx.dataOperation.count({
-          where: {
-            organizationId,
-            preventiveBackupId: id,
-            state: { in: ["PENDING", "RUNNING"] },
-          },
+          where: { organizationId, preventiveBackupId: id },
         });
         if (protectedByOperation > 0) return false;
+        const protectedByPreview = await tx.operationPreview.count({
+          where: { organizationId, targetBackupId: id },
+        });
+        if (protectedByPreview > 0) return false;
         const row = await tx.backupRecord.findFirst({
           where: {
             id,
