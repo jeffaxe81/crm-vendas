@@ -312,6 +312,55 @@ describe("internal atomic restore pipeline under restricted RLS", () => {
     ).toMatchObject({ consumedAt: null });
   });
 
+  it.each(["missing", "replaced"] as const)(
+    "rolls back confirmation when the target file is %s after preview",
+    async failure => {
+      const { org, target, operation, preview, company, run } = await fixture();
+      await store.remove(target.record.id);
+      if (failure === "replaced") {
+        await store.put(
+          target.record.id,
+          Buffer.from("synthetic changed snapshot")
+        );
+      }
+
+      await expect(run()).rejects.toThrow("RESTORE_TARGET_INVALID");
+      expect(await store.objectSize(operation.id)).toBeNull();
+      expect(
+        await owner.backupRecord.findUnique({
+          where: { id: operation.id },
+        })
+      ).toBeNull();
+      expect(
+        await owner.operationPreview.findUniqueOrThrow({
+          where: { id: preview.id },
+        })
+      ).toMatchObject({ consumedAt: null });
+      expect(
+        await owner.dataOperation.findUniqueOrThrow({
+          where: { id: operation.id },
+        })
+      ).toMatchObject({
+        state: "RUNNING",
+        preventiveBackupId: null,
+        completedAt: null,
+      });
+      expect(
+        await owner.company.findUniqueOrThrow({
+          where: { id: company.id },
+        })
+      ).toMatchObject({
+        organizationId: org.id,
+        legalName: "Changed after backup",
+      });
+      expect(
+        await owner.auditLog.count({
+          where: { entityId: operation.id, action: "restore.completed" },
+        })
+      ).toBe(0);
+    }
+  );
+
   it("rolls back a late failure and can safely adopt the orphan on retry", async () => {
     const {
       org,
