@@ -153,17 +153,30 @@ export class BackupDeletionService {
             state: { in: ["PENDING", "RUNNING"] },
           },
         });
-        const previews = await tx.operationPreview.count({
-          where: {
-            organizationId: principal.organizationId,
-            targetBackupId: id,
-            consumedAt: null,
-            expiresAt: { gt: new Date() },
-          },
-        });
-        if (active || previews)
+        if (active)
           throw new ConflictException(
-            "Há uma operação ou prévia de restauração em andamento. Aguarde sua conclusão ou expiração."
+            "Há uma operação em andamento. Aguarde sua conclusão."
+          );
+        // These foreign keys are ON DELETE RESTRICT even after a preview
+        // expires or an operation finishes. Refuse the request up front
+        // instead of queuing a deletion that can never complete safely.
+        const [previews, operationReferences] = await Promise.all([
+          tx.operationPreview.count({
+            where: {
+              organizationId: principal.organizationId,
+              targetBackupId: id,
+            },
+          }),
+          tx.dataOperation.count({
+            where: {
+              organizationId: principal.organizationId,
+              preventiveBackupId: id,
+            },
+          }),
+        ]);
+        if (previews || operationReferences)
+          throw new ConflictException(
+            "O backup possui histórico de restauração vinculado e não pode ser excluído."
           );
 
         await tx.backupRecord.update({
@@ -234,6 +247,23 @@ export class BackupDeletionService {
                 },
               });
               if (active) return false;
+              // Rows accepted by an older version may retain historical
+              // restore references. Never unlink a still-referenced object.
+              const [previews, operationReferences] = await Promise.all([
+                tx.operationPreview.count({
+                  where: {
+                    organizationId: organization.id,
+                    targetBackupId: id,
+                  },
+                }),
+                tx.dataOperation.count({
+                  where: {
+                    organizationId: organization.id,
+                    preventiveBackupId: id,
+                  },
+                }),
+              ]);
+              if (previews || operationReferences) return false;
               const keeper = await tx.backupRecord.findFirst({
                 where: { organizationId: organization.id, state: "COMPLETED" },
                 orderBy: [
