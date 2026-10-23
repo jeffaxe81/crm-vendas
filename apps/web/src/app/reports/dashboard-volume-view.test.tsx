@@ -8,6 +8,13 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("../../i18n/language-provider", () => ({
+  useTranslation: () => ({
+    locale: "en-US",
+    t: (message: string | undefined) => message ?? "",
+  }),
+}));
+
 import { DashboardVolumeView } from "./dashboard-volume-view";
 
 const catalog = {
@@ -72,6 +79,23 @@ describe("Tenant dashboard volume", () => {
         "Bearer tenant-a"
       );
     }
+  });
+
+  it("formats numbers using the active locale", async () => {
+    stubRequests({
+      ...volume,
+      counts: {
+        companies: 1000,
+        contacts: 0,
+        opportunities: 0,
+        activities: 0,
+      },
+      totalActiveRecords: 1000,
+      level: "critical",
+    });
+    render(<DashboardVolumeView accessToken="tenant-a" />);
+    expect(await screen.findByText("1,000")).toBeInTheDocument();
+    expect(screen.queryByText("1.000")).not.toBeInTheDocument();
   });
 
   it("shows warning and critical levels", async () => {
