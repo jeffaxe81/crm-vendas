@@ -64,7 +64,7 @@ function TenantDashboardVolume({
   accessToken: string;
   refreshVersion: number;
 }) {
-  const { t } = useTranslation();
+  const { locale, t } = useTranslation();
   const [revision, setRevision] = useState(0);
   const [state, setState] = useState<VolumeState>({ status: "loading" });
   const lastSuccessful = useRef<DashboardVolume | null>(null);
@@ -149,7 +149,7 @@ function TenantDashboardVolume({
         <>
           <p className="activities-view__status">
             {t("Atualizado em ")}
-            {new Date(state.volume.asOf).toLocaleString("pt-BR")}
+            {new Date(state.volume.asOf).toLocaleString(locale)}
           </p>
           <div
             className="companies-view__grid"
@@ -160,7 +160,7 @@ function TenantDashboardVolume({
               return (
                 <article key={metric.id} className="companies-view__card">
                   <span>{t(metric.label)}</span>
-                  <strong>{count.toLocaleString("pt-BR")}</strong>
+                  <strong>{count.toLocaleString(locale)}</strong>
                 </article>
               );
             })}
@@ -168,7 +168,7 @@ function TenantDashboardVolume({
           <p className="activities-view__status">
             {t("Total de registros ativos: ")}
             <strong>
-              {state.volume.totalActiveRecords.toLocaleString("pt-BR")}
+              {state.volume.totalActiveRecords.toLocaleString(locale)}
             </strong>
           </p>
           <button
@@ -186,7 +186,7 @@ function TenantDashboardVolume({
                 {t("Variação total: ")}
                 <strong>
                   {state.comparison.totalDelta > 0 ? "+" : ""}
-                  {state.comparison.totalDelta.toLocaleString("pt-BR")}
+                  {state.comparison.totalDelta.toLocaleString(locale)}
                 </strong>
               </p>
               <ul>
@@ -196,7 +196,7 @@ function TenantDashboardVolume({
                   return (
                     <li key={metric.id}>
                       {t(metric.label)}: {delta > 0 ? "+" : ""}
-                      {delta.toLocaleString("pt-BR")}
+                      {delta.toLocaleString(locale)}
                     </li>
                   );
                 })}
@@ -217,9 +217,9 @@ function TenantDashboardVolume({
           ) : null}
           <p className="activities-view__status">
             {t("Limiar de atenção: ")}
-            {state.volume.thresholds.warning.toLocaleString("pt-BR")}
+            {state.volume.thresholds.warning.toLocaleString(locale)}
             {t(" registros. Limiar crítico: ")}
-            {state.volume.thresholds.critical.toLocaleString("pt-BR")}
+            {state.volume.thresholds.critical.toLocaleString(locale)}
             {t(" registros.")}
           </p>
           {state.volume.totalActiveRecords === 0 ? (
