@@ -178,8 +178,16 @@ describe("internal atomic restore pipeline under restricted RLS", () => {
   }
 
   it("commits confirmed restore, verified preventive backup, audit and fence atomically", async () => {
-    const { org, other, company, companyOther, backup, preview, operation, run } =
-      await fixture();
+    const {
+      org,
+      other,
+      company,
+      companyOther,
+      backup,
+      preview,
+      operation,
+      run,
+    } = await fixture();
     const result = await run();
 
     expect(result.preventiveBackupId).toBe(operation.id);
@@ -189,9 +197,7 @@ describe("internal atomic restore pipeline under restricted RLS", () => {
       org.id,
       options.maxBytes
     );
-    expect(persisted.data.Company?.[0]?.legalName).toBe(
-      "Changed after backup"
-    );
+    expect(persisted.data.Company?.[0]?.legalName).toBe("Changed after backup");
 
     const [current, external, op, state, copy, restoredAudit] =
       await Promise.all([
@@ -235,9 +241,7 @@ describe("internal atomic restore pipeline under restricted RLS", () => {
       state: "COMPLETED",
     });
     expect(restoredAudit).not.toBeNull();
-    await expect(run()).rejects.toThrow(
-      "RESTORE_PREVENTIVE_NOT_AUTHORIZED"
-    );
+    await expect(run()).rejects.toThrow("RESTORE_PREVENTIVE_NOT_AUTHORIZED");
   });
 
   it("rejects wrong credentials and mismatched operation payload without creating a copy", async () => {
@@ -279,9 +283,7 @@ describe("internal atomic restore pipeline under restricted RLS", () => {
         },
       },
     });
-    await expect(run()).rejects.toThrow(
-      "RESTORE_PREVENTIVE_NOT_AUTHORIZED"
-    );
+    await expect(run()).rejects.toThrow("RESTORE_PREVENTIVE_NOT_AUTHORIZED");
     expect(await store.objectSize(operation.id)).toBeNull();
     expect(
       await owner.operationPreview.findUniqueOrThrow({
@@ -301,9 +303,7 @@ describe("internal atomic restore pipeline under restricted RLS", () => {
       where: { id: operation.id },
       data: { leaseUntil: new Date(0) },
     });
-    await expect(run()).rejects.toThrow(
-      "RESTORE_PREVENTIVE_NOT_AUTHORIZED"
-    );
+    await expect(run()).rejects.toThrow("RESTORE_PREVENTIVE_NOT_AUTHORIZED");
     expect(await store.objectSize(operation.id)).toBeNull();
     expect(
       await owner.operationPreview.findUniqueOrThrow({
