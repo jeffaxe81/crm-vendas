@@ -705,38 +705,31 @@ describe("transactional tenant restore executor", () => {
     expect(restored.PipelineStage).toEqual([]);
   });
 
-  it(
-    "removes a supported live ticket that is absent from the target snapshot",
-    async () => {
-      const target = await pipelineGraph();
-      const before = await graphSnapshot(target.organization.id);
-      const ticket = await owner.ticket.create({
-        data: {
-          organizationId: target.organization.id,
-          protocol: "2026-000001",
-          subject: "Created after backup",
-          createdBy: target.user.id,
-          updatedBy: target.user.id,
-        },
-      });
-  
-      await runtime.withMaintenance(
-        target.organization.id,
-        tx =>
-          restoreTenantSnapshot(
-            tx,
-            target.organization.id,
-            target.verified.data
-          ),
-        { isolationLevel: "RepeatableRead", timeout: 60_000 }
-      );
-  
-      expect(await graphSnapshot(target.organization.id)).toEqual(before);
-      expect(
-        await owner.ticket.findUnique({ where: { id: ticket.id } })
-      ).toBeNull();
-    }
-  );
+  it("removes a supported live ticket that is absent from the target snapshot", async () => {
+    const target = await pipelineGraph();
+    const before = await graphSnapshot(target.organization.id);
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: target.organization.id,
+        protocol: "2026-000001",
+        subject: "Created after backup",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+
+    expect(await graphSnapshot(target.organization.id)).toEqual(before);
+    expect(
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
+    ).toBeNull();
+  });
 
   it("preserves PostgreSQL microseconds in a company-only snapshot", async () => {
     const target = await fixture();
@@ -846,11 +839,7 @@ describe("transactional tenant restore executor", () => {
     await runtime.withMaintenance(
       target.organization.id,
       tx =>
-        restoreTenantSnapshot(
-          tx,
-          target.organization.id,
-          target.verified.data
-        ),
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
 
@@ -1136,11 +1125,7 @@ describe("transactional tenant restore executor", () => {
     await runtime.withMaintenance(
       target.organization.id,
       tx =>
-        restoreTenantSnapshot(
-          tx,
-          target.organization.id,
-          target.verified.data
-        ),
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
 
