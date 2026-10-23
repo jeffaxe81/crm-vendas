@@ -16,12 +16,21 @@
 
 A legenda é **Concluído em código** somente quando o SHA e os testes foram aprovados; **Em CI**, **Em desenvolvimento** e **Bloqueado por ambiente/aceite** não equivalem à entrega final.
 
-| Bloco | Prioridade e resultado exigido | Estado no checkpoint | Evidência / gate de saída |
-| --- | --- | --- | --- |
-| **1 — Dados e segurança** | Grafo comercial, perfis, campos personalizados e `Ticket`/`TicketEvent`, preservando integridade referencial, RLS e rollback | **Parcial**: base comercial integrada; `Ticket`/`TicketEvent` na PR #290, ainda draft | CI PostgreSQL/RLS e round-trip de todas as políticas `REPLACE`; #290 aprovada no HEAD, depois `push/main` |
-| **2 — Restore transacional e backups** | Cópia preventiva, confirmação vinculada à sessão, fencing, expurgo sem perda, integridade de destino e ensaios adversariais | **Parcial**: código interno #285/#287/#288/#289/#291 integrado; testes adicionais #292 pendentes | Políticas especiais e capacidade recuperável #250/#246; timeout, crash, rollback e preview anti-replay testados; não ativar endpoint/worker antes disso |
-| **3 — Dashboards e qualidade** | API read-only por tenant, volumes, insights, CSV e i18n PT/EN/ES; medição com massa sintética e acessibilidade | **Draft / bloqueado**: #286 e #283 sem autorização operacional | Gate #256 formal, staging #255 com 3 tenants, teste de acesso/403 e `no-store`, p50/p95 com metodologia, UI/CSV e aprovação registrada |
-| **4 — Homologação e entrega operacional** | Versão candidata identificada, TLS com CA confiável, login/funil, RLS no servidor, restauração e rollback em ambiente isolado, aceite | **NO-GO operacional**: CI/proveniência não substituem servidor nem pessoas responsáveis | #159: evidências reais, versões implantadas, rollback ensaiado, aprovação explícita; #250 controla separadamente RESTORE produtivo |
+### Bloco 1 — Dados e segurança
+
+**Resultado exigido:** grafo comercial, perfis, campos personalizados e `Ticket`/`TicketEvent`, preservando FKs, RLS e rollback. **Estado:** parcial; a base comercial está integrada, mas a PR #290 continua draft. **Gate:** CI PostgreSQL/RLS, round-trip de todas as políticas `REPLACE`, merge apenas após CI do HEAD e verificação de `push/main`.
+
+### Bloco 2 — Restore transacional e backups
+
+**Resultado exigido:** cópia preventiva, confirmação de sessão, fencing, retenção segura, revalidação física e falhas adversariais. **Estado:** parcial; código interno das PRs #285/#287/#288/#289/#291 integrado e regressões #292 pendentes. **Gate:** políticas especiais, capacidade e recuperação #250/#246; testes de timeout, rollback e anti-replay; sem endpoint público.
+
+### Bloco 3 — Dashboards e qualidade
+
+**Resultado exigido:** API read-only por tenant, volumes, insights, CSV e idiomas PT/EN/ES, além de acessibilidade e performance sintética. **Estado:** draft/bloqueado. **Gate:** liberação formal da #256 e staging #255 com três tenants, acesso/403, `no-store`, p50/p95 e testes de UI.
+
+### Bloco 4 — Homologação e entrega operacional
+
+**Resultado exigido:** SHA de candidato, TLS com CA confiável, login, funil, RLS no servidor, restore/rollback isolado e aceite. **Estado:** NO-GO operacional. **Gate:** evidências reais e aprovação explícita #159; a #250 controla RESTORE produtivo separadamente.
 
 ## Fila de execução com dependências
 
@@ -38,13 +47,11 @@ A legenda é **Concluído em código** somente quando o SHA e os testes foram ap
 
 A porcentagem é **somente do gate específico**: para uma execução GitHub `verify`, etapas aprovadas / etapas exigidas no mesmo run. Não extrapolar o valor para conclusão do produto.
 
-| Indicador | Resultado validado |
-| --- | --- |
-| Base automatizada da `main` `68d05db` | **100% dos jobs obrigatórios concluídos** naquele SHA |
-| `source_manifest` da mesma base | **Aprovado**, artefato verificado |
-| PR #290 e PR #292 | **Pendentes** até CI e merge respectivos |
-| Dashboard staging #255 e segurança #256 | **Pendente**, sem equivalência com testes locais |
-| Restore integral #250 e homologação #159 | **NO-GO**, sem aceite operacional |
+- **Base automatizada da `main` `68d05db`:** 100% dos jobs obrigatórios concluídos naquele SHA.
+- **`source_manifest` da mesma base:** aprovado, com artefato verificado.
+- **PRs #290 e #292:** pendentes até CI e merge respectivos.
+- **Dashboard staging #255 e segurança #256:** pendentes; testes locais não equivalem a homologação.
+- **Restore integral #250 e homologação #159:** NO-GO, sem aceite operacional.
 
 **Regra de acompanhamento:** registrar para cada incremento número da PR, HEAD, CI do HEAD, SHA da `main`, jobs `verify/source_manifest`, artefato e resultado do gate operacional separado. Evitar percentuais de meses sem um denominador previamente aprovado e não realizar alterações destrutivas em dados de produção.
 
