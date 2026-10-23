@@ -200,5 +200,4 @@ describe("internal Ticket/TicketEvent restore graph", () => {
       ).toMatchObject({ subject: "Preserve while dependent exists" });
     }
   );
-
 });
