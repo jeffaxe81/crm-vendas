@@ -734,7 +734,7 @@ describe("transactional commercial graph restore", () => {
   });
 
   it.each(["current", "target"] as const)(
-    "continues to reject unsupported Ticket rows present only in the %s graph",
+    "restores supported Ticket rows present only in the %s graph",
     async location => {
       const target = await identity();
       const company = await owner.company.create({
@@ -750,7 +750,7 @@ describe("transactional commercial graph restore", () => {
           data: {
             organizationId: target.organization.id,
             protocol: "2026-000001",
-            subject: "Categoria ainda não restaurável",
+            subject: "Ticket comercial restaurável",
             companyId: company.id,
             createdBy: target.user.id,
             updatedBy: target.user.id,
@@ -765,19 +765,13 @@ describe("transactional commercial graph restore", () => {
       if (location === "current") await createTicket();
       await owner.company.update({
         where: { id: company.id },
-        data: { legalName: "Estado atual que não pode ser substituído" },
+        data: { legalName: "Estado atual a substituir" },
       });
-      // Commercial models are empty on both sides: only Ticket can explain
-      // this refusal, including before commercial restore is implemented.
-      expect(verified.data.Ticket).toHaveLength(location === "target" ? 1 : 0);
-      const before = await snapshot(target.organization.id);
-      expect(before.Ticket).toHaveLength(location === "current" ? 1 : 0);
 
-      await expectRejectedBeforeDeletion(
-        target.organization.id,
-        verified.data,
-        "RESTORE_POLICY_UNSUPPORTED"
-      );
+      await restore(target.organization.id, verified.data);
+
+      expect(await snapshot(target.organization.id)).toEqual(verified.data);
     }
   );
+
 });
