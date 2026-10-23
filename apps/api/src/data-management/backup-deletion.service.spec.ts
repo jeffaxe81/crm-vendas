@@ -34,6 +34,8 @@ describe("queued deletion safety after enqueue", () => {
     await store.put(keeper.id, Buffer.from("newest readable copy"));
     const audits: string[] = [];
     let activeOperations = 0;
+    let historicalReferences = 0;
+    let previewReferences = 0;
     const tx = {
       backupRecord: {
         async findMany() {
@@ -56,13 +58,15 @@ describe("queued deletion safety after enqueue", () => {
         },
       },
       dataOperation: {
-        async count() {
-          return activeOperations;
+        async count({ where }: { where: { preventiveBackupId?: string } }) {
+          return where.preventiveBackupId
+            ? historicalReferences
+            : activeOperations;
         },
       },
       operationPreview: {
         async count() {
-          return 0;
+          return previewReferences;
         },
       },
       auditLog: {
@@ -102,8 +106,29 @@ describe("queued deletion safety after enqueue", () => {
       setActiveOperations: (value: number) => {
         activeOperations = value;
       },
+      setHistoricalReferences: (value: number) => {
+        historicalReferences = value;
+      },
+      setPreviewReferences: (value: number) => {
+        previewReferences = value;
+      },
     };
   }
+
+  it("preserves queued bytes while historical restore references exist", async () => {
+    const f = await fixture();
+    f.setHistoricalReferences(1);
+    await f.service.reconcile();
+    expect(f.target.state).toBe("DELETING");
+    await expect(f.store.read(f.target.id)).resolves.toBeInstanceOf(Buffer);
+
+    f.setHistoricalReferences(0);
+    f.setPreviewReferences(1);
+    await f.service.reconcile();
+    expect(f.target.state).toBe("DELETING");
+    await expect(f.store.read(f.target.id)).resolves.toBeInstanceOf(Buffer);
+    expect(f.audits).toEqual([]);
+  });
 
   it("keeps the queued object if the keeper becomes corrupt after acceptance", async () => {
     const f = await fixture();
