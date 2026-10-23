@@ -499,5 +499,4 @@ describe("transactional support configuration restore", () => {
       expect(await snapshot(target.organization.id)).toEqual(verified.data);
     }
   );
-
 });
