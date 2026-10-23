@@ -11,6 +11,7 @@ import { validateRestorePreservedMemberships } from "./restore-membership-check"
 import { unsupportedRestoreModels } from "./restore-executor";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { exportTenantSnapshot } from "./tenant-snapshot";
+import { requireSupportedTicketRestoreDependencies } from "./restore-ticket-dependencies";
 
 export type RestoreLockedPreflight = {
   currentFingerprint: string;
@@ -102,6 +103,9 @@ export async function preflightRestoreExecution(
   ) {
     throw new BackupError("RESTORE_POLICY_UNSUPPORTED");
   }
+
+  // Fail before confirmation consumption or preventive file publication.
+  await requireSupportedTicketRestoreDependencies(tx, organizationId, verified.data);
 
   return {
     currentFingerprint: snapshotDataFingerprint(current),
