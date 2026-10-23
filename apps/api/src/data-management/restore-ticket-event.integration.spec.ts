@@ -100,10 +100,7 @@ describe("internal Ticket/TicketEvent restore graph", () => {
       where: { id: ticket.id },
       data: { subject: "Changed after backup" },
     });
-    await owner.ticketEvent.update({
-      where: { id: event.id },
-      data: { body: "Changed event after backup" },
-    });
+    await owner.ticketEvent.delete({ where: { id: event.id } });
 
     await runtime.withMaintenance(
       organization.id,
