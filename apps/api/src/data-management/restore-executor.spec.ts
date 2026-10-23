@@ -203,25 +203,6 @@ describe("restore executor target binding", () => {
   );
 });
 
-describe("unsupported ticket snapshot preflight", () => {
-  it.each(["Ticket", "TicketEvent"])(
-    "rejects populated %s snapshots before any company mutation",
-    async model => {
-      const data: SnapshotData = Object.fromEntries(
-        SNAPSHOT_POLICIES.map(policy => [
-          policy.model,
-          policy.model === "Organization" ? [{ id: organizationId }] : [],
-        ])
-      );
-      data[model] = [{ organizationId, id: otherOrganizationId }];
-
-      await expect(
-        restoreTenantSnapshot(maintenanceTransaction(), organizationId, data)
-      ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
-    }
-  );
-});
-
 describe("restore preview applicability", () => {
   it.each([
     ["negative", -1],
@@ -247,38 +228,19 @@ describe("restore preview applicability", () => {
     ).toThrow("RESTORE_TARGET_INVALID");
   });
 
-  it("detects data in unsupported models in the target or current tenant", () => {
+  it("does not report supported Ticket rows as replacement blockers", () => {
     expect(
       unsupportedRestoreModels(
         { Company: 5, Opportunity: 1, Contact: 2, Ticket: 1 },
         { Company: 2, Opportunity: 0, Contact: 2, Ticket: 2 }
       )
-    ).toEqual(["Ticket"]);
+    ).toEqual([]);
   });
 
-  it("blocks current-tenant tickets from unsupported restore", () => {
-    const models = unsupportedRestoreModels({ Ticket: 1 }, {});
-    expect(models).toEqual(["Ticket"]);
-  });
-
-  it("blocks target-snapshot ticket events from unsupported restore", () => {
-    const models = unsupportedRestoreModels({}, { TicketEvent: 2 });
-    expect(models).toEqual(["TicketEvent"]);
-  });
-
-  it("blocks both ticket models across current and target", () => {
-    const current = { Ticket: 1, TicketEvent: 0 };
-    const target = { Ticket: 0, TicketEvent: 3 };
-    expect(unsupportedRestoreModels(current, target)).toEqual([
-      "Ticket",
-      "TicketEvent",
-    ]);
-  });
-
-  it("allows zero counts for unsupported ticket models", () => {
-    const current = { Ticket: 0 };
-    const target = { TicketEvent: 0 };
-    expect(unsupportedRestoreModels(current, target)).toEqual([]);
+  it("does not report supported TicketEvent rows as replacement blockers", () => {
+    expect(unsupportedRestoreModels({ Ticket: 1 }, { TicketEvent: 2 })).toEqual(
+      []
+    );
   });
 
   it("does not block the reviewed business and configuration graph in either snapshot", () => {
