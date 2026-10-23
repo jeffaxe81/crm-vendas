@@ -198,7 +198,6 @@ Somente considerar Gate 0 aprovado quando:
 
 Até lá: **NO-GO para deploy e merge do dashboard consolidado**.
 
-
 ### Revalidação sobre a main de 23/10/2026
 
 - base reconsolidada: `main` @ `f0ccba636f76ed1320646420cac70518a616aabc`;
