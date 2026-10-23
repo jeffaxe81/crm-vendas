@@ -105,7 +105,11 @@ export async function preflightRestoreExecution(
   }
 
   // Fail before confirmation consumption or preventive file publication.
-  await requireSupportedTicketRestoreDependencies(tx, organizationId, verified.data);
+  await requireSupportedTicketRestoreDependencies(
+    tx,
+    organizationId,
+    verified.data
+  );
 
   return {
     currentFingerprint: snapshotDataFingerprint(current),
