@@ -59,9 +59,8 @@ describe("queued deletion safety after enqueue", () => {
       },
       dataOperation: {
         async count({ where }: { where: { preventiveBackupId?: string } }) {
-          return where.preventiveBackupId
-            ? historicalReferences
-            : activeOperations;
+          if (where.preventiveBackupId) return historicalReferences;
+          return activeOperations;
         },
       },
       operationPreview: {
