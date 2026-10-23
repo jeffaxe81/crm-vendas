@@ -32,6 +32,8 @@ export class DataOperationWorker {
       orderBy: { id: "asc" },
     });
     for (const organization of organizations) {
+      // This worker is intentionally BACKUP-only. Restore/delete jobs must
+      // remain untouched for their dedicated, audited future executors.
       const job = await this.prisma.withTenant(organization.id, async tx => {
         const [lock] = await tx.$queryRawUnsafe<{ acquired: boolean }[]>(
           "SELECT pg_try_advisory_xact_lock(hashtextextended($1,0)) AS acquired",
@@ -43,6 +45,7 @@ export class DataOperationWorker {
           WITH candidate AS (
             SELECT id FROM public.data_operations
             WHERE organization_id=$1::uuid
+              AND kind='BACKUP'
               AND (state='PENDING' OR (state='RUNNING' AND lease_until <= clock_timestamp()))
               AND NOT EXISTS (
                 SELECT 1 FROM public.data_operations live
