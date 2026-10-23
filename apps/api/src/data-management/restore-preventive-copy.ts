@@ -1,5 +1,7 @@
 import type { Prisma } from "../generated/prisma/client";
 import { BackupError } from "./backup-error";
+import type { VerifiedBackup } from "./backup.service";
+import { preflightRestoreExecution } from "./restore-locked-preflight";
 import {
   decodeSnapshot,
   encodeSnapshot,
@@ -17,7 +19,8 @@ export type PreventiveRestoreCopy = {
 /**
  * Internal, transactional staging primitive. No worker, HTTP route or restore
  * executor invokes this yet. The caller must own an exclusive maintenance
- * transaction and a fenced RUNNING RESTORE operation.
+ * transaction, a fenced RUNNING RESTORE operation, and provide a verified
+ * target backup. The target catalog is rechecked under the lock.
  *
  * The immutable encrypted file is published and read back BEFORE any catalog
  * or operation change. If the transaction rolls back or the process crashes,
@@ -32,6 +35,7 @@ export async function stageRestorePreventiveCopy(
   operationId: string,
   workerId: string,
   attempts: number,
+  target: VerifiedBackup,
   store: BackupStore,
   maxBytes: number
 ): Promise<PreventiveRestoreCopy> {
@@ -70,10 +74,22 @@ export async function stageRestorePreventiveCopy(
   });
   if (!operation) throw new BackupError("RESTORE_PREVENTIVE_NOT_AUTHORIZED");
 
+  // A completed catalog entry can be revoked or mutated after verification.
+  // Before publishing ANY immutable file, repeat the full target/tenant,
+  // reference and restore-policy checks under the same maintenance snapshot.
+  const locked = await preflightRestoreExecution(
+    tx,
+    organizationId,
+    target,
+    maxBytes
+  );
+
   // Use the operation UUID as the immutable backup object name. Retries must
   // read/adopt this object, never publish another version under a new name.
   const data = await exportTenantSnapshot(tx, organizationId, maxBytes);
   const currentFingerprint = snapshotDataFingerprint(data);
+  if (currentFingerprint !== locked.currentFingerprint)
+    throw new BackupError("RESTORE_PREVIEW_STALE");
   const bytes = encodeSnapshot(organizationId, data, new Date(), maxBytes);
   try {
     await store.put(operationId, bytes);
