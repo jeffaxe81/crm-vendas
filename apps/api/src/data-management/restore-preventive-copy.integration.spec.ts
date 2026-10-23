@@ -410,17 +410,18 @@ describe("internal preventive restore snapshot under maintenance", () => {
     }
   });
 
-  it("rejects newly created unsupported tickets before preventive publication", async () => {
+  it("publishes the preventive copy when a supported Ticket exists only in live state", async () => {
     const { org, user, target, operation } = await fixture();
     const ticket = await owner.ticket.create({
       data: {
         organizationId: org.id,
         protocol: "2026-000321",
-        subject: "Preserve unsupported ticket history",
+        subject: "Protected by preventive copy",
         createdBy: user.id,
         updatedBy: user.id,
       },
     });
+
     await expect(
       runtime.withMaintenance(
         org.id,
@@ -438,8 +439,9 @@ describe("internal preventive restore snapshot under maintenance", () => {
           ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
-    expect(await store.objectSize(operation.id)).toBeNull();
+    ).resolves.toMatchObject({ backupId: operation.id });
+
+    expect((await store.objectSize(operation.id)) ?? 0).toBeGreaterThan(0);
     expect(
       await owner.ticket.findUnique({ where: { id: ticket.id } })
     ).not.toBeNull();
