@@ -367,6 +367,49 @@ describe("internal preventive restore snapshot under maintenance", () => {
     ).toBe(0);
   });
 
+  for (const failure of ["missing", "replaced"] as const) {
+    it(`rejects a ${failure} restore target before preventive publication`, async () => {
+      const { org, target, operation, run } = await fixture();
+      await store.remove(target.record.id);
+      if (failure === "replaced") {
+        // A valid encrypted envelope can still hold the wrong content.
+        await store.put(target.record.id, Buffer.from("replaced target"));
+      }
+
+      await expect(run()).rejects.toThrow("RESTORE_TARGET_INVALID");
+      expect(await store.objectSize(operation.id)).toBeNull();
+      expect(
+        await owner.backupRecord.count({
+          where: { organizationId: org.id, reason: "PRE_RESTORE" },
+        })
+      ).toBe(0);
+      expect(
+        await owner.dataOperation.findUniqueOrThrow({
+          where: { id: operation.id },
+        })
+      ).toMatchObject({ preventiveBackupId: null });
+    });
+  }
+
+  it("preserves transient target read errors for safe retries", async () => {
+    const { target, operation, run } = await fixture();
+    const originalRead = store.read.bind(store);
+    store.read = async id => {
+      if (id === target.record.id) {
+        throw Object.assign(new Error("synthetic storage outage"), {
+          code: "EIO",
+        });
+      }
+      return originalRead(id);
+    };
+    try {
+      await expect(run()).rejects.toThrow("synthetic storage outage");
+      expect(await store.objectSize(operation.id)).toBeNull();
+    } finally {
+      store.read = originalRead;
+    }
+  });
+
   it("rejects newly created unsupported tickets before preventive publication", async () => {
     const { org, user, target, operation } = await fixture();
     const ticket = await owner.ticket.create({
