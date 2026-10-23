@@ -7,7 +7,7 @@ import {
   encodeSnapshot,
   snapshotDataFingerprint,
 } from "./backup-manifest";
-import type { BackupStore } from "./backup-store";
+import { BackupStoreIntegrityError, type BackupStore } from "./backup-store";
 import { exportTenantSnapshot } from "./tenant-snapshot";
 
 export type PreventiveRestoreCopy = {
@@ -83,6 +83,26 @@ export async function stageRestorePreventiveCopy(
     target,
     maxBytes
   );
+
+  // The verified target was read before the maintenance lock. Its catalog
+  // may still be COMPLETED even if storage has since lost or replaced the
+  // ciphertext. Reauthenticate the exact pinned target before publication.
+  let currentTarget: Buffer;
+  try {
+    currentTarget = await store.read(target.record.id);
+  } catch (error) {
+    if (
+      error instanceof BackupStoreIntegrityError ||
+      (error as NodeJS.ErrnoException).code === "ENOENT"
+    ) {
+      throw new BackupError("RESTORE_TARGET_INVALID");
+    }
+    // I/O outages are transient. Preserve the original error for retry;
+    // never publish a preventive object from an unverified target.
+    throw error;
+  }
+  if (!currentTarget.equals(target.bytes))
+    throw new BackupError("RESTORE_TARGET_INVALID");
 
   // Use the operation UUID as the immutable backup object name. Retries must
   // read/adopt this object, never publish another version under a new name.
