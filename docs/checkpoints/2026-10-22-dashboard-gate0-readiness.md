@@ -1,10 +1,10 @@
 # Gate 0 — Dashboard Read-only: pacote de prontidão
 
 Data: 2026-10-22  
-PR candidata: #283  
-Branch: `feat/dashboard-consolidation-current-main-20261022`  
-SHA técnico validado antes deste documento: `d91b60b8eac6ada0fe2254c671f33505df3ad12a`  
-Gate técnico: run #1740 / `39859979619` — **GREEN**
+PR candidata: #296  
+Branch: `feat/dashboard-consolidation-current-main-20261023-r3`  
+SHA técnico validado antes desta atualização: `a808d03dbaa56eedd745458a7034bc26ce7bb7cb`  
+Gate técnico: run #1812 / `40029386162` — **GREEN**
 
 > Este documento organiza a homologação e as aprovações. Ele **não** substitui staging real, QA, validação jurídica ou autorização de produção.
 
@@ -192,8 +192,20 @@ Somente considerar Gate 0 aprovado quando:
 
 - issue #255 estiver concluída com evidências reais;
 - issue #256 estiver concluída com aprovações formais;
-- PR #283 estiver atualizada sobre a `main` vigente;
+- PR #296 estiver atualizada sobre a `main` vigente;
 - CI do SHA final estiver verde;
 - rollback e janela de implantação estiverem registrados.
 
 Até lá: **NO-GO para deploy e merge do dashboard consolidado**.
+
+
+### Revalidação sobre a main de 23/10/2026
+
+- base reconsolidada: `main` @ `f0ccba636f76ed1320646420cac70518a616aabc`;
+- candidato técnico anterior a esta atualização documental: `a808d03dbaa56eedd745458a7034bc26ce7bb7cb`;
+- Gate #1812 (`40029386162`) aprovado integralmente no job `verify`;
+- o diff do PR #296 não altera arquivos de backup/restore;
+- isolamento RLS, bloqueio de API key/superuser, `private, no-store`, CSV agregado e smoke read-only permanecem cobertos por testes automatizados;
+- issues #255 e #256 permanecem bloqueadoras por exigirem ambiente real e aprovações humanas.
+
+Esta revalidação técnica **não substitui homologação real nem autoriza GO operacional**.
