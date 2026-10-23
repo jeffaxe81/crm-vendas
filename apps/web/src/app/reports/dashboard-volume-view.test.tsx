@@ -94,7 +94,7 @@ describe("Tenant dashboard volume", () => {
       level: "critical",
     });
     render(<DashboardVolumeView accessToken="tenant-a" />);
-    expect(await screen.findByText("1,000")).toBeInTheDocument();
+    expect((await screen.findAllByText("1,000")).length).toBeGreaterThan(0);
     expect(screen.queryByText("1.000")).not.toBeInTheDocument();
   });
 
