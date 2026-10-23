@@ -10,6 +10,7 @@ import { validateRestoreIdentityReferences } from "./restore-identity-check";
 import { validateRestorePreservedMemberships } from "./restore-membership-check";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { TENANT_DATA_REGISTRY } from "./tenant-data-registry";
+import { requireSupportedTicketRestoreDependencies } from "./restore-ticket-dependencies";
 
 // Parent-first insertion order; deletion uses the reverse order. Only these
 // reviewed FULL/REPLACE policies are supported by this internal increment.
@@ -36,6 +37,8 @@ const RESTORE_MODELS = [
   "TerritoryMetrics",
   "SupportQueue",
   "SlaPolicy",
+  "Ticket",
+  "TicketEvent",
   "CustomFieldDefinition",
   "CompanyCustomFieldValue",
   "ContactCustomFieldValue",
@@ -252,6 +255,8 @@ export async function restoreTenantSnapshot(
   validateRestoreReferences(data);
   await validateRestoreIdentityReferences(tx, organizationId, data);
   await validateRestorePreservedMemberships(tx, organizationId, data);
+  // Direct callers cannot bypass the safety checks of the locked preflight.
+  await requireSupportedTicketRestoreDependencies(tx, organizationId, data);
   await requireCurrentPolicies(tx, organizationId);
 
   for (const { table } of [...graph].reverse()) {

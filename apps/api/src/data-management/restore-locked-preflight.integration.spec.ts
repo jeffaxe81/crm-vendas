@@ -197,13 +197,13 @@ describe("restore locked preflight", () => {
     ).rejects.toThrow("RESTORE_TARGET_INVALID");
   });
 
-  it("blocks restore when an unsupported model gained live data", async () => {
+  it("accepts a supported Ticket that exists only in live state", async () => {
     const { organization, user, verified } = await fixture();
     const ticket = await owner.ticket.create({
       data: {
         organizationId: organization.id,
         protocol: "2026-000101",
-        subject: "Do not discard",
+        subject: "Protected by the preventive copy",
         createdBy: user.id,
         updatedBy: user.id,
       },
@@ -221,14 +221,18 @@ describe("restore locked preflight", () => {
           ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    ).resolves.toMatchObject({
+      targetChecksum: verified.manifest.checksum,
+      currentCounts: { Ticket: 1 },
+      targetCounts: { Ticket: 0 },
+    });
 
     expect(
       await owner.ticket.findUnique({ where: { id: ticket.id } })
     ).not.toBeNull();
   });
 
-  it("blocks unsupported rows existing only in target", async () => {
+  it("accepts a supported Ticket that exists only in the target snapshot", async () => {
     const { organization, user } = await fixture();
     const ticket = await owner.ticket.create({
       data: {
@@ -255,11 +259,108 @@ describe("restore locked preflight", () => {
           ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    ).resolves.toMatchObject({
+      targetChecksum: verified.manifest.checksum,
+      currentCounts: { Ticket: 0 },
+      targetCounts: { Ticket: 1 },
+    });
+  });
 
-    expect(
-      await owner.ticket.count({ where: { organizationId: organization.id } })
-    ).toBe(0);
+  it.each(["survey", "outbox"] as const)(
+    "fails closed when a live Ticket has a preserved %s dependent",
+    async dependent => {
+      const { organization, user, verified } = await fixture();
+      const ticket = await owner.ticket.create({
+        data: {
+          organizationId: organization.id,
+          protocol: "2026-000103",
+          subject: "Ticket with protected dependent",
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      });
+      if (dependent === "survey") {
+        await owner.ticketSatisfactionSurvey.create({
+          data: {
+            organizationId: organization.id,
+            ticketId: ticket.id,
+            tokenHash: randomBytes(32).toString("hex"),
+            expiresAt: new Date("2026-12-01T00:00:00Z"),
+            createdBy: user.id,
+            updatedBy: user.id,
+          },
+        });
+      } else {
+        await owner.emailOutbox.create({
+          data: {
+            organizationId: organization.id,
+            ticketId: ticket.id,
+            idempotencyHash: randomBytes(32).toString("hex"),
+            purpose: "SATISFACTION_REQUEST",
+            encryptedEmail: "synthetic-preflight-ciphertext",
+          },
+        });
+      }
+
+      await expect(
+        runtime.withMaintenance(
+          organization.id,
+          tx =>
+            preflightRestoreExecution(
+              tx,
+              organization.id,
+              verified,
+              options.maxBytes
+            ),
+          { isolationLevel: "RepeatableRead", timeout: 60_000 }
+        )
+      ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+
+      expect(
+        await owner.ticket.findUnique({ where: { id: ticket.id } })
+      ).not.toBeNull();
+    }
+  );
+
+  it("fails closed when the target contains a satisfaction survey policy not implemented by restore", async () => {
+    const { organization, user } = await fixture();
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: organization.id,
+        protocol: "2026-000104",
+        subject: "Historical ticket with CSAT",
+        createdBy: user.id,
+        updatedBy: user.id,
+      },
+    });
+    const survey = await owner.ticketSatisfactionSurvey.create({
+      data: {
+        organizationId: organization.id,
+        ticketId: ticket.id,
+        tokenHash: randomBytes(32).toString("hex"),
+        expiresAt: new Date("2026-12-01T00:00:00Z"),
+        createdBy: user.id,
+        updatedBy: user.id,
+      },
+    });
+    const backup = await backups.create(organization.id, user.id, "MANUAL");
+    const verified = await backups.verify(organization.id, backup.id);
+    await owner.ticketSatisfactionSurvey.delete({ where: { id: survey.id } });
+    await owner.ticket.delete({ where: { id: ticket.id } });
+
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx =>
+          preflightRestoreExecution(
+            tx,
+            organization.id,
+            verified,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
   });
 
   it.each([

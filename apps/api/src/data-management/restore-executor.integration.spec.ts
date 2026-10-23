@@ -705,7 +705,7 @@ describe("transactional tenant restore executor", () => {
     expect(restored.PipelineStage).toEqual([]);
   });
 
-  it("blocks restore when an unsupported live ticket exists", async () => {
+  it("removes a supported live ticket that is absent from the target snapshot", async () => {
     const target = await pipelineGraph();
     const before = await graphSnapshot(target.organization.id);
     const ticket = await owner.ticket.create({
@@ -718,23 +718,17 @@ describe("transactional tenant restore executor", () => {
       },
     });
 
-    await expect(
-      runtime.withMaintenance(
-        target.organization.id,
-        tx =>
-          restoreTenantSnapshot(
-            tx,
-            target.organization.id,
-            target.verified.data
-          ),
-        { isolationLevel: "RepeatableRead", timeout: 60_000 }
-      )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
 
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
     expect(
       await owner.ticket.findUnique({ where: { id: ticket.id } })
-    ).not.toBeNull();
+    ).toBeNull();
   });
 
   it("preserves PostgreSQL microseconds in a company-only snapshot", async () => {
@@ -829,10 +823,10 @@ describe("transactional tenant restore executor", () => {
     expect(await graphSnapshot(target.organization.id)).toEqual(before);
   });
 
-  it("rejects live unsupported models created after the snapshot before replacing data", async () => {
+  it("removes a supported Ticket created after the snapshot", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
-    await owner.ticket.create({
+    const ticket = await owner.ticket.create({
       data: {
         organizationId: target.organization.id,
         protocol: "2026-000103",
@@ -842,25 +836,17 @@ describe("transactional tenant restore executor", () => {
       },
     });
 
-    await expect(
-      runtime.withMaintenance(
-        target.organization.id,
-        tx =>
-          restoreTenantSnapshot(
-            tx,
-            target.organization.id,
-            target.verified.data
-          ),
-        { isolationLevel: "RepeatableRead", timeout: 60_000 }
-      )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
 
     expect(await companies(target.organization.id)).toEqual(before);
     expect(
-      await owner.ticket.count({
-        where: { organizationId: target.organization.id },
-      })
-    ).toBe(1);
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
+    ).toBeNull();
   });
 
   it("rejects a contact row from another tenant before replacing data", async () => {
@@ -1079,14 +1065,14 @@ describe("transactional tenant restore executor", () => {
     expect(await companies(target.organization.id)).toEqual(before);
   });
 
-  it("fails closed for a non-empty unsupported Ticket replacement policy", async () => {
+  it("restores a non-empty supported Ticket replacement policy", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
-    await owner.ticket.create({
+    const ticket = await owner.ticket.create({
       data: {
         organizationId: target.organization.id,
         protocol: "2026-000002",
-        subject: "Unsupported restore category",
+        subject: "Supported restore category",
         createdBy: target.user.id,
         updatedBy: target.user.id,
       },
@@ -1097,24 +1083,24 @@ describe("transactional tenant restore executor", () => {
       "MANUAL"
     );
     const verified = await backups.verify(target.organization.id, backup.id);
+    await owner.ticket.update({
+      where: { id: ticket.id },
+      data: { subject: "Changed after backup" },
+    });
 
-    await expect(
-      runtime.withMaintenance(
-        target.organization.id,
-        tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
-        { isolationLevel: "RepeatableRead", timeout: 60_000 }
-      )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
 
     expect(await companies(target.organization.id)).toEqual(before);
     expect(
-      await owner.ticket.count({
-        where: { organizationId: target.organization.id },
-      })
-    ).toBe(1);
+      await owner.ticket.findUniqueOrThrow({ where: { id: ticket.id } })
+    ).toMatchObject({ subject: "Supported restore category" });
   });
 
-  it("preserves live ticket events when an older snapshot has none", async () => {
+  it("removes live Ticket/TicketEvent rows when an older snapshot has none", async () => {
     const target = await fixture();
     const before = await companies(target.organization.id);
     const ticket = await owner.ticket.create({
@@ -1132,30 +1118,24 @@ describe("transactional tenant restore executor", () => {
         ticketId: ticket.id,
         type: "COMMENT",
         authorUserId: target.user.id,
-        body: "Keep this live event",
+        body: "Remove with newer live ticket",
       },
     });
 
-    await expect(
-      runtime.withMaintenance(
-        target.organization.id,
-        tx =>
-          restoreTenantSnapshot(
-            tx,
-            target.organization.id,
-            target.verified.data
-          ),
-        { isolationLevel: "RepeatableRead", timeout: 60_000 }
-      )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx =>
+        restoreTenantSnapshot(tx, target.organization.id, target.verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
 
     expect(await companies(target.organization.id)).toEqual(before);
     expect(
       await owner.ticket.findUnique({ where: { id: ticket.id } })
-    ).not.toBeNull();
+    ).toBeNull();
     expect(
       await owner.ticketEvent.findUnique({ where: { id: event.id } })
-    ).not.toBeNull();
+    ).toBeNull();
   });
 
   it("leaves another tenant's ticket and event untouched on a failed restore", async () => {
@@ -1203,7 +1183,7 @@ describe("transactional tenant restore executor", () => {
     });
   });
 
-  it("blocks historical tickets and events missing from live state", async () => {
+  it("restores historical Ticket/TicketEvent rows missing from live state", async () => {
     const target = await fixture();
     const other = await fixture();
     const otherBefore = await companies(other.organization.id);
@@ -1237,30 +1217,28 @@ describe("transactional tenant restore executor", () => {
     const current = (await companies(target.organization.id))[0]!;
     await owner.company.update({
       where: { id: current.id },
-      data: { legalName: "Live company must not be reverted" },
+      data: { legalName: "Live company must be reverted" },
     });
-    const before = await companies(target.organization.id);
 
-    await expect(
-      runtime.withMaintenance(
-        target.organization.id,
-        tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
-        { isolationLevel: "RepeatableRead", timeout: 60_000 }
-      )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
 
-    expect(await companies(target.organization.id)).toEqual(before);
+    const restoredCompanies = await companies(target.organization.id);
+    expect(restoredCompanies).toHaveLength(1);
+    expect(restoredCompanies[0]).toMatchObject({
+      id: verified.data.Company![0]!.id,
+      legalName: verified.data.Company![0]!.legalName,
+    });
     expect(await companies(other.organization.id)).toEqual(otherBefore);
     expect(
-      await owner.ticket.count({
-        where: { organizationId: target.organization.id },
-      })
-    ).toBe(0);
+      await owner.ticket.findUniqueOrThrow({ where: { id: ticket.id } })
+    ).toMatchObject({ subject: "Historical ticket from the backup" });
     expect(
-      await owner.ticketEvent.count({
-        where: { organizationId: target.organization.id },
-      })
-    ).toBe(0);
+      await owner.ticketEvent.findUniqueOrThrow({ where: { id: event.id } })
+    ).toMatchObject({ body: "Historical ticket event", ticketId: ticket.id });
   });
 
   it("preserves live survey and encrypted email outbox on blocked restore", async () => {
@@ -1414,7 +1392,7 @@ describe("transactional tenant restore executor", () => {
     expect(await companies(other.organization.id)).toEqual(otherBefore);
   });
 
-  it("preserves protocol counter high-water after an older backup", async () => {
+  it("fails closed before applying an unsupported protocol counter merge policy", async () => {
     const target = await fixture();
     await owner.ticketProtocolCounter.create({
       data: {
@@ -1434,11 +1412,13 @@ describe("transactional tenant restore executor", () => {
       data: { lastValue: 29 },
     });
 
-    await runtime.withMaintenance(
-      target.organization.id,
-      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
-      { isolationLevel: "RepeatableRead", timeout: 60_000 }
-    );
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
 
     const counter = await owner.ticketProtocolCounter.findFirst({
       where: { organizationId: target.organization.id, year: 2026 },
