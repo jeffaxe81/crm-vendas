@@ -93,11 +93,7 @@ describe("internal Ticket/TicketEvent restore graph", () => {
       },
     });
 
-    const backup = await backups.create(
-      organization.id,
-      user.id,
-      "MANUAL"
-    );
+    const backup = await backups.create(organization.id, user.id, "MANUAL");
     const verified = await backups.verify(organization.id, backup.id);
 
     await owner.ticket.update({
