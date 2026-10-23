@@ -773,5 +773,4 @@ describe("transactional commercial graph restore", () => {
       expect(await snapshot(target.organization.id)).toEqual(verified.data);
     }
   );
-
 });
