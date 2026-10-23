@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "project": "CRM Vendas",
+  "review_date": "2026-10-23",
+  "policy": {
+    "development_may_continue_without_external_environment": true,
+    "automated_code_security_tests_required": true,
+    "manual_environment_tests_required_before_production_go": true,
+    "do_not_claim_unperformed_tests_as_passed": true,
+    "do_not_disable_technical_security_gates": true
+  },
+  "release_status": "NOT_APPROVED_FOR_PRODUCTION",
+  "risk_note": "Restore é interno e fail-closed; não habilitar API/UI ou restore em produção.",
+  "external_environment_tests": [
+    {
+      "id": "CRM-REAL-01",
+      "area": "HTTPS e fluxo funcional",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "gate": "PRODUCTION_GO",
+      "procedure": "Validar hostname, certificado CA/SAN, login, vendas/contatos/negócios, dashboards e relatórios na instância real.",
+      "evidence_required": "URL, SHA implantado, testes ponta a ponta e imagens sanitizadas",
+      "owner": "to_be_assigned",
+      "executed_at": null,
+      "evidence_url": null
+    },
+    {
+      "id": "CRM-REAL-02",
+      "area": "Dados e isolamento",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "gate": "PRODUCTION_GO",
+      "procedure": "Testar RLS negativo entre no mínimo dois tenants, sessão/token, permissões e auditoria, sem dados de clientes.",
+      "evidence_required": "matriz de isolamento, consultas, audit logs e conta de teste",
+      "owner": "to_be_assigned",
+      "executed_at": null,
+      "evidence_url": null
+    },
+    {
+      "id": "CRM-REAL-03",
+      "area": "Recuperação",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "gate": "PRODUCTION_GO",
+      "procedure": "Executar backup/restore em cópia descartável isolada, interrupções, falha tardia, rollback, quotas, integridade de manifestos e políticas especiais pendentes.",
+      "evidence_required": "hash do snapshot, diff antes/depois e relatório de rollback",
+      "owner": "to_be_assigned",
+      "executed_at": null,
+      "evidence_url": null
+    },
+    {
+      "id": "CRM-REAL-04",
+      "area": "Aprovação operacional",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "gate": "PRODUCTION_GO",
+      "procedure": "Consolidar evidências de segurança/LGPD, backup, restore, versionamento e aceite identificado para o SHA realmente implantado.",
+      "evidence_required": "decisão GO/NO-GO datada e links de CI/artefatos",
+      "owner": "to_be_assigned",
+      "executed_at": null,
+      "evidence_url": null
+    }
+  ],
+  "references": [
+    "https://github.com/jeffaxe81/crm-vendas/issues/159",
+    "https://github.com/jeffaxe81/crm-vendas/issues/250",
+    "https://github.com/jeffaxe81/crm-vendas/pull/290"
+  ]
+}
