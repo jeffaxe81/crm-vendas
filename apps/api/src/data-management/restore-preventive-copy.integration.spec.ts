@@ -401,5 +401,4 @@ describe("internal preventive restore snapshot under maintenance", () => {
       await owner.ticket.findUnique({ where: { id: ticket.id } })
     ).not.toBeNull();
   });
-
 });
