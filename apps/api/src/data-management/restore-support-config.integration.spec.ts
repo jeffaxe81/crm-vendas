@@ -461,7 +461,7 @@ describe("transactional support configuration restore", () => {
   );
 
   it.each(["current", "target"] as const)(
-    "rejects a real queue-linked Ticket present only in the %s graph before any deletion",
+    "restores a queue-linked Ticket present only in the %s graph",
     async location => {
       const target = await identity();
       const graph = await createGraph(target);
@@ -470,7 +470,7 @@ describe("transactional support configuration restore", () => {
           data: {
             organizationId: target.organization.id,
             protocol: "2026-000001",
-            subject: "Categoria ainda não restaurável",
+            subject: "Ticket de suporte restaurável",
             queueId,
             createdBy: target.user.id,
             updatedBy: target.user.id,
@@ -493,27 +493,11 @@ describe("transactional support configuration restore", () => {
         },
       });
       if (location === "current") await createTicket(currentQueue.id);
-      const before = await snapshot(target.organization.id);
-      expect(verified.data.Ticket).toHaveLength(location === "target" ? 1 : 0);
-      expect(before.Ticket).toHaveLength(location === "current" ? 1 : 0);
-      expect(verified.data.SupportQueue!.map(row => row.id)).not.toContain(
-        currentQueue.id
-      );
-      expect(before.SupportQueue).toHaveLength(1);
-      for (const model of [
-        "TicketEvent",
-        "TicketProtocolCounter",
-        "TicketSatisfactionSurvey",
-      ]) {
-        expect(verified.data[model]).toEqual([]);
-        expect(before[model]).toEqual([]);
-      }
 
-      await expectRejectedBeforeDeletion(
-        target.organization.id,
-        verified.data,
-        "RESTORE_POLICY_UNSUPPORTED"
-      );
+      await restore(target.organization.id, verified.data);
+
+      expect(await snapshot(target.organization.id)).toEqual(verified.data);
     }
   );
+
 });
