@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { PrismaService } from "../database/prisma.service";
+import { BackupService } from "./backup.service";
 import { BackupStore } from "./backup-store";
 import { decodeSnapshot, snapshotDataFingerprint } from "./backup-manifest";
 import { stageRestorePreventiveCopy } from "./restore-preventive-copy";
@@ -12,6 +13,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
   let owner: PrismaService;
   let runtime: PrismaService;
   let store: BackupStore;
+  let backups: BackupService;
   let root: string;
 
   const maxBytes = 8_388_608;
@@ -30,6 +32,10 @@ describe("internal preventive restore snapshot under maintenance", () => {
       directory: root,
       key: randomBytes(32),
       maxBytes,
+    });
+    backups = new BackupService(runtime, store, {
+      maxBytes,
+      snapshotTimeoutMs: 60_000,
     });
   });
 
@@ -80,6 +86,8 @@ describe("internal preventive restore snapshot under maintenance", () => {
         updatedBy: user.id,
       },
     });
+    const manual = await backups.create(org.id, user.id, "MANUAL");
+    const target = await backups.verify(org.id, manual.id);
     const operation = await owner.dataOperation.create({
       data: {
         organizationId: org.id,
@@ -103,12 +111,13 @@ describe("internal preventive restore snapshot under maintenance", () => {
             operation.id,
             workerId,
             1,
+            target,
             store,
             maxBytes
           ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       );
-    return { org, other, user, company, operation, run };
+    return { org, other, user, company, operation, target, run };
   }
 
   it("publishes, authenticates and catalogs a real immutable copy under RLS", async () => {
@@ -155,7 +164,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
   });
 
   it("requires maintenance and an owned, active restore operation", async () => {
-    const { org, other, user, operation } = await fixture();
+    const { org, other, user, operation, target } = await fixture();
     await expect(
       runtime.withTenant(
         org.id,
@@ -167,6 +176,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
             operation.id,
             workerId,
             1,
+            target,
             store,
             maxBytes
           ),
@@ -185,6 +195,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
             operation.id,
             "wrong-worker",
             1,
+            target,
             store,
             maxBytes
           ),
@@ -203,6 +214,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
             operation.id,
             workerId,
             1,
+            target,
             store,
             maxBytes
           ),
@@ -217,7 +229,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
   });
 
   it("adopts a verified orphan after transaction rollback without republishing", async () => {
-    const { org, user, operation, run } = await fixture();
+    const { org, user, operation, target, run } = await fixture();
     await expect(
       runtime.withMaintenance(
         org.id,
@@ -229,6 +241,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
             operation.id,
             workerId,
             1,
+            target,
             store,
             maxBytes
           );
@@ -257,7 +270,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
   });
 
   it("refuses to adopt an orphan whose tenant snapshot changed", async () => {
-    const { org, user, company, operation } = await fixture();
+    const { org, user, company, operation, target } = await fixture();
     await expect(
       runtime.withMaintenance(
         org.id,
@@ -269,6 +282,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
             operation.id,
             workerId,
             1,
+            target,
             store,
             maxBytes
           );
@@ -293,6 +307,7 @@ describe("internal preventive restore snapshot under maintenance", () => {
             operation.id,
             workerId,
             1,
+            target,
             store,
             maxBytes
           ),
@@ -312,5 +327,78 @@ describe("internal preventive restore snapshot under maintenance", () => {
     ).toMatchObject({ legalName: "Changed after orphan publication" });
     // A stale object is retained for safe offline reconciliation.
     expect((await store.read(operation.id)).length).toBeGreaterThan(0);
+  });
+  it("refuses a target revoked after verification before publishing preventive bytes", async () => {
+    const { org, target, user, operation } = await fixture();
+    await owner.backupRecord.update({
+      where: { id: target.record.id },
+      data: { state: "FAILED" },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        org.id,
+        tx =>
+          stageRestorePreventiveCopy(
+            tx,
+            org.id,
+            user.id,
+            operation.id,
+            workerId,
+            1,
+            target,
+            store,
+            maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+
+    expect(await store.objectSize(operation.id)).toBeNull();
+    expect(
+      await owner.dataOperation.findUniqueOrThrow({
+        where: { id: operation.id },
+      })
+    ).toMatchObject({ preventiveBackupId: null });
+    expect(
+      await owner.backupRecord.count({
+        where: { organizationId: org.id, reason: "PRE_RESTORE" },
+      })
+    ).toBe(0);
+  });
+
+  it("rejects newly created unsupported tickets before preventive publication", async () => {
+    const { org, user, target, operation } = await fixture();
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: org.id,
+        protocol: "2026-000321",
+        subject: "Preserve unsupported ticket history",
+        createdBy: user.id,
+        updatedBy: user.id,
+      },
+    });
+    await expect(
+      runtime.withMaintenance(
+        org.id,
+        tx =>
+          stageRestorePreventiveCopy(
+            tx,
+            org.id,
+            user.id,
+            operation.id,
+            workerId,
+            1,
+            target,
+            store,
+            maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    expect(await store.objectSize(operation.id)).toBeNull();
+    expect(
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
+    ).not.toBeNull();
   });
 });
