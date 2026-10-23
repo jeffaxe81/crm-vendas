@@ -318,10 +318,7 @@ describe("internal atomic restore pipeline under restricted RLS", () => {
       const { org, target, operation, preview, company, run } = await fixture();
       await store.remove(target.record.id);
       if (failure === "replaced") {
-        await store.put(
-          target.record.id,
-          Buffer.from("synthetic changed snapshot")
-        );
+        await store.put(target.record.id, Buffer.from("changed snapshot"));
       }
 
       await expect(run()).rejects.toThrow("RESTORE_TARGET_INVALID");
