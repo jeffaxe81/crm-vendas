@@ -36,6 +36,8 @@ const RESTORE_MODELS = [
   "TerritoryMetrics",
   "SupportQueue",
   "SlaPolicy",
+  "Ticket",
+  "TicketEvent",
   "CustomFieldDefinition",
   "CompanyCustomFieldValue",
   "ContactCustomFieldValue",
