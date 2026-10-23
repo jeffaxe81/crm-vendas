@@ -268,6 +268,71 @@ describe("confirmed backup deletion with restricted PostgreSQL/RLS", () => {
     await remove().expect(409);
   });
 
+  it("rejects deletion with expired previews or completed restore operations", async () => {
+    await request(app.getHttpServer())
+      .post(`/api/v1/admin/backups/${older.id}/preview`)
+      .auth(token, { type: "bearer" })
+      .expect(201);
+
+    await owner.operationPreview.updateMany({
+      where: { organizationId, targetBackupId: older.id },
+      data: {
+        createdAt: new Date("2020-01-01T00:00:00.000Z"),
+        expiresAt: new Date("2020-01-01T00:05:00.000Z"),
+        consumedAt: new Date("2020-01-01T00:01:00.000Z"),
+      },
+    });
+    await remove().expect(409);
+    expect((await state()).state).toBe("COMPLETED");
+
+    await owner.operationPreview.deleteMany({
+      where: { organizationId, targetBackupId: older.id },
+    });
+    await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.create({
+        data: {
+          organizationId,
+          actorUserId: userId,
+          kind: "RESTORE",
+          state: "COMPLETED",
+          preventiveBackupId: older.id,
+        },
+      })
+    );
+    await remove().expect(409);
+    expect((await state()).state).toBe("COMPLETED");
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+  });
+
+  it("reconciler preserves a legacy deletion with historical restore references", async () => {
+    await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.create({
+        data: {
+          organizationId,
+          actorUserId: userId,
+          kind: "RESTORE",
+          state: "COMPLETED",
+          preventiveBackupId: older.id,
+        },
+      })
+    );
+    await owner.backupRecord.update({
+      where: { id: older.id },
+      data: { state: "DELETING" },
+    });
+
+    await app.get(BackupWorkerRunner).runCycle();
+    expect((await state()).state).toBe("DELETING");
+    await expect(store.read(older.id)).resolves.toBeInstanceOf(Buffer);
+    expect(
+      await runtime.withTenant(organizationId, tx =>
+        tx.auditLog.count({
+          where: { entityId: older.id, action: "backup.deleted" },
+        })
+      )
+    ).toBe(0);
+  });
+
   it("protects a restore preview target during retention", async () => {
     for (let index = 0; index < 7; index++) {
       await app.get(BackupService).create(organizationId, userId, "MANUAL");
