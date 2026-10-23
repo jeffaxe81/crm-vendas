@@ -8,7 +8,7 @@
 - PRs #285, #287, #288, #289 e #291: integradas à `main` em incrementos de proteção de backup e restauração interna.
 - CI de `push/main` #39888480774 no commit exato `68d05dbb236669bc6eb4b09324961173d0347adb`: `completed/success`, jobs `verify` e `source_manifest` aprovados; artefato `crm-source-evidence-68d05dbb236669bc6eb4b09324961173d0347adb` (ID 12474181244), presente e não expirado na conferência.
 - A PR #290 (`Ticket`/`TicketEvent`) permanece **draft**, com CI ainda não aprovada para merge na data deste checkpoint.
-- A PR #292 adiciona regressão sintética de rollback diante de desaparecimento/substituição do destino; publicada, sem merge até aprovação de CI do HEAD exato.
+- A PR #292 adicionou regressões de rollback por desaparecimento/substituição do destino; HEAD `9df294a3bdbf93f783a243235844eeda86e42b14` aprovado e merge na `main` em `2697e7962a04d8602b5b8c8080773b31dee54c39`. CI de `push/main` desse merge ainda não confirmada neste checkpoint.
 - Dashboards #286/#283 e drafts históricos #245/#248/#254 permanecem **sem liberação**, bloqueados por #256 e pelo staging #255.
 - Restore integral #250 e homologação #159 permanecem **abertos**. CI aprovada não significa servidor instalado, restauração real, rollback operacional ou aceite.
 
@@ -22,7 +22,7 @@ A legenda é **Concluído em código** somente quando o SHA e os testes foram ap
 
 ### Bloco 2 — Restore transacional e backups
 
-**Resultado exigido:** cópia preventiva, confirmação de sessão, fencing, retenção segura, revalidação física e falhas adversariais. **Estado:** parcial; código interno das PRs #285/#287/#288/#289/#291 integrado e regressões #292 pendentes. **Gate:** políticas especiais, capacidade e recuperação #250/#246; testes de timeout, rollback e anti-replay; sem endpoint público.
+**Resultado exigido:** cópia preventiva, confirmação de sessão, fencing, retenção segura, revalidação física e falhas adversariais. **Estado:** parcial; código interno das PRs #285/#287/#288/#289/#291 e regressões #292 integrados, aguardando a evidência pós-merge da #292. **Gate:** políticas especiais, capacidade e recuperação #250/#246; testes de timeout, rollback e anti-replay; sem endpoint público.
 
 ### Bloco 3 — Dashboards e qualidade
 
@@ -35,7 +35,8 @@ A legenda é **Concluído em código** somente quando o SHA e os testes foram ap
 ## Fila de execução com dependências
 
 - [x] **A1 — Base de proteção de backup/restore:** integrar #285/#287/#288/#289/#291 e validar CI de `main` no SHA exato.
-- [ ] **A2 — Prova adicional de rollback físico:** concluir CI, revisão do HEAD, merge da PR #292 e manifesto no novo SHA.
+- [x] **A2 — Prova adicional de rollback físico:** PR #292 com CI integral verde no HEAD exato e merge concluído.
+- [ ] **A2b — Proveniência pós-merge:** confirmar `verify`, `source_manifest` e artefato da `main` no SHA `2697e7962a04d8602b5b8c8080773b31dee54c39`.
 - [ ] **A3 — Chamados e eventos:** concluir PR #290, verificando a ordem das FKs e bloqueio de dependências de satisfação, outbox e contadores. O destino e o tenant com políticas não suportadas devem falhar antes de qualquer `DELETE`.
 - [ ] **A4 — Políticas especiais:** inventariar e implementar apenas com testes negativos para identidade, sessão, credenciais, `PRESERVE_AND_REVOKE`, `MERGE_HIGH_WATER`, `RENEW_EXPIRED_TOKEN` e configuração raiz. Sem expor operações destrutivas.
 - [ ] **B1 — Capacidade e recovery:** validar reservas/cotas de armazenamento, interrupção de I/O, arquivo órfão e espaço físico, sob #246/#250.
@@ -49,7 +50,8 @@ A porcentagem é **somente do gate específico**: para uma execução GitHub `ve
 
 - **Base automatizada da `main` `68d05db`:** 100% dos jobs obrigatórios concluídos naquele SHA.
 - **`source_manifest` da mesma base:** aprovado, com artefato verificado.
-- **PRs #290 e #292:** pendentes até CI e merge respectivos.
+- **PR #290:** draft; depende de compatibilização de regressões e CI verde.
+- **PR #292:** integrada; a evidência `push/main` do merge está pendente neste checkpoint.
 - **Dashboard staging #255 e segurança #256:** pendentes; testes locais não equivalem a homologação.
 - **Restore integral #250 e homologação #159:** NO-GO, sem aceite operacional.
 
