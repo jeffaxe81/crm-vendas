@@ -1,0 +1,21 @@
+name: Print restore executor prettier
+
+on:
+  push:
+    branches:
+      - feat/restore-ticket-event-internal-20261022
+    paths:
+      - .github/workflows/temp-print-prettier.yml
+
+jobs:
+  print:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - run: corepack enable
+      - run: corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier apps/api/src/data-management/restore-executor.integration.spec.ts
