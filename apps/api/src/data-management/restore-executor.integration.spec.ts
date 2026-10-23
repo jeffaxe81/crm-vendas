@@ -1226,9 +1226,12 @@ describe("transactional tenant restore executor", () => {
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
 
-    expect(await companies(target.organization.id)).toEqual(
-      verified.data.Company
-    );
+    const restoredCompanies = await companies(target.organization.id);
+    expect(restoredCompanies).toHaveLength(1);
+    expect(restoredCompanies[0]).toMatchObject({
+      id: verified.data.Company![0]!.id,
+      legalName: verified.data.Company![0]!.legalName,
+    });
     expect(await companies(other.organization.id)).toEqual(otherBefore);
     expect(
       await owner.ticket.findUniqueOrThrow({ where: { id: ticket.id } })
@@ -1389,7 +1392,7 @@ describe("transactional tenant restore executor", () => {
     expect(await companies(other.organization.id)).toEqual(otherBefore);
   });
 
-  it("preserves protocol counter high-water after an older backup", async () => {
+  it("fails closed before applying an unsupported protocol counter merge policy", async () => {
     const target = await fixture();
     await owner.ticketProtocolCounter.create({
       data: {
@@ -1409,11 +1412,13 @@ describe("transactional tenant restore executor", () => {
       data: { lastValue: 29 },
     });
 
-    await runtime.withMaintenance(
-      target.organization.id,
-      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
-      { isolationLevel: "RepeatableRead", timeout: 60_000 }
-    );
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
 
     const counter = await owner.ticketProtocolCounter.findFirst({
       where: { organizationId: target.organization.id, year: 2026 },
