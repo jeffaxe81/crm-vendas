@@ -104,6 +104,9 @@ function transaction(
     user: {
       findMany: async () => [{ id: userId, email: "owner@example.test" }],
     },
+    ticketSatisfactionSurvey: { count: async () => 0 },
+    emailOutbox: { count: async () => 0 },
+    ticketProtocolCounter: { count: async () => 0 },
     organizationMembership: {
       findMany: async ({ where }: { where: Record<string, unknown> }) => {
         queries.push(where);
