@@ -705,7 +705,9 @@ describe("transactional tenant restore executor", () => {
     expect(restored.PipelineStage).toEqual([]);
   });
 
-  it("removes a supported live ticket that is absent from the target snapshot", async () => {
+  it(
+    "removes a supported live ticket that is absent from the target snapshot",
+    async () => {
     const target = await pipelineGraph();
     const before = await graphSnapshot(target.organization.id);
     const ticket = await owner.ticket.create({
@@ -733,7 +735,8 @@ describe("transactional tenant restore executor", () => {
     expect(
       await owner.ticket.findUnique({ where: { id: ticket.id } })
     ).toBeNull();
-  });
+    }
+  );
 
   it("preserves PostgreSQL microseconds in a company-only snapshot", async () => {
     const target = await fixture();
