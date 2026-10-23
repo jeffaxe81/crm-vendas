@@ -91,6 +91,84 @@ describe("durable data-operation claims under tenant RLS", () => {
     expect(claims.filter(Boolean)).toHaveLength(1);
     expect(await worker.claimNext("replica-c")).toBeNull();
   });
+  it("skips queued RESTORE and DELETE without stealing their leases or starving BACKUP", async () => {
+    const restore = await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.create({
+        data: { organizationId, kind: "RESTORE", state: "PENDING" },
+      })
+    );
+    const deletion = await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.create({
+        data: { organizationId, kind: "DELETE", state: "PENDING" },
+      })
+    );
+    const backup = await queue();
+
+    const claimed = await worker.claimNext("backup-only");
+    expect(claimed?.id).toBe(backup.id);
+    expect(claimed?.kind).toBe("BACKUP");
+    expect(claimed?.state).toBe("RUNNING");
+
+    for (const operation of [restore, deletion]) {
+      const saved = await owner.dataOperation.findUniqueOrThrow({
+        where: { id: operation.id },
+      });
+      expect(saved.state).toBe("PENDING");
+      expect(saved.attempts).toBe(0);
+      expect(saved.workerId).toBeNull();
+      expect(saved.leaseUntil).toBeNull();
+    }
+  });
+
+  it("returns no work when only RESTORE and DELETE are queued", async () => {
+    const pending = await Promise.all(
+      (["RESTORE", "DELETE"] as const).map(kind =>
+        runtime.withTenant(organizationId, tx =>
+          tx.dataOperation.create({
+            data: { organizationId, kind, state: "PENDING" },
+          })
+        )
+      )
+    );
+    await expect(worker.claimNext("backup-only")).resolves.toBeNull();
+    await expect(worker.processNext("backup-only")).resolves.toBe(false);
+    for (const operation of pending) {
+      const saved = await owner.dataOperation.findUniqueOrThrow({
+        where: { id: operation.id },
+      });
+      expect(saved.state).toBe("PENDING");
+      expect(saved.attempts).toBe(0);
+      expect(saved.workerId).toBeNull();
+    }
+  });
+
+  it("does not bypass a live RESTORE lease to claim backup in the same tenant", async () => {
+    const restore = await runtime.withTenant(organizationId, tx =>
+      tx.dataOperation.create({
+        data: {
+          organizationId,
+          kind: "RESTORE",
+          state: "RUNNING",
+          workerId: "reserved-restore",
+          attempts: 1,
+          leaseUntil: new Date(Date.now() + 60_000),
+        },
+      })
+    );
+    const backup = await queue();
+    await expect(worker.claimNext("backup-only")).resolves.toBeNull();
+    expect(
+      await owner.dataOperation.findUniqueOrThrow({
+        where: { id: restore.id },
+      })
+    ).toMatchObject({ state: "RUNNING", workerId: "reserved-restore" });
+    expect(
+      await owner.dataOperation.findUniqueOrThrow({
+        where: { id: backup.id },
+      })
+    ).toMatchObject({ state: "PENDING", attempts: 0, workerId: null });
+  });
+
   it("does not heartbeat or complete a job after its lease expires", async () => {
     await queue();
     const job = (await worker.claimNext("replica-a"))!;
