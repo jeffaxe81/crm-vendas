@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 
 import { useWorkspace } from "../workspace/workspace-provider";
 import { DashboardWidgets } from "./dashboard-widgets";
+import { DashboardVolumeView } from "./dashboard-volume-view";
 import { apiRequest } from "../../lib/api-client";
 import { SalesByOwnerView } from "./sales-by-owner-view";
 import { SalesByProductView } from "./sales-by-product-view";
@@ -20,6 +21,7 @@ import { SlaReportView } from "./sla-report-view";
 import { useTranslation } from "../../i18n/language-provider";
 
 export type ReportTab =
+  | "volume"
   | "summary"
   | "sales-by-product"
   | "sales-by-owner"
@@ -32,6 +34,7 @@ export type ReportTab =
 
 const reportTabs: Array<{ id: ReportTab; label: string }> = [
   { id: "summary", label: "Indicadores" },
+  { id: "volume", label: "Volume de dados" },
   { id: "sales-by-product", label: "Vendas por produto" },
   { id: "sales-by-owner", label: "Vendas por vendedor" },
   { id: "sales-by-month", label: "Vendas por período" },
@@ -149,7 +152,18 @@ export function ManagementSummaryView({
         ))}
       </div>
 
-      {tab === "sales-by-product" ? (
+      {tab === "volume" ? (
+        <div
+          role="tabpanel"
+          id="report-panel-volume"
+          aria-labelledby="report-tab-volume"
+        >
+          <DashboardVolumeView
+            accessToken={accessToken}
+            refreshVersion={refreshVersion}
+          />
+        </div>
+      ) : tab === "sales-by-product" ? (
         <div
           role="tabpanel"
           id="report-panel-sales-by-product"
