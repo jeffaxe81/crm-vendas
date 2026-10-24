@@ -377,7 +377,11 @@ describe("internal TicketSatisfactionSurvey RENEW_EXPIRED_TOKEN restore policy",
       runtime.withMaintenance(
         target.organization.id,
         async tx => {
-          await restoreTenantSnapshot(tx, target.organization.id, verified.data);
+          await restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            verified.data
+          );
           throw new Error("synthetic failure after CSAT restore");
         },
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
