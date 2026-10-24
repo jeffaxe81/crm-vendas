@@ -10,6 +10,7 @@ import { validateRestoreIdentityReferences } from "./restore-identity-check";
 import { validateRestorePreservedMemberships } from "./restore-membership-check";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { TENANT_DATA_REGISTRY } from "./tenant-data-registry";
+import { revokeActiveRefreshSessionsAfterRestore } from "./restore-refresh-sessions";
 import { requireSupportedTicketRestoreDependencies } from "./restore-ticket-dependencies";
 import {
   applyTicketProtocolCounterHighWater,
@@ -293,4 +294,5 @@ export async function restoreTenantSnapshot(
     organizationId,
     protocolCounterHighWater
   );
+  await revokeActiveRefreshSessionsAfterRestore(tx, organizationId);
 }
