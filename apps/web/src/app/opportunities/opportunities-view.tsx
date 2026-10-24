@@ -142,6 +142,7 @@ export function OpportunitiesView({
 }: OpportunitiesViewProps) {
   const { t } = useTranslation();
   const [opportunities, setOpportunities] = useState<OpportunityRecord[]>([]);
+  const [noForecastOnly, setNoForecastOnly] = useState(false);
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -565,6 +566,10 @@ export function OpportunitiesView({
     }
   }
 
+  const visibleOpportunities = noForecastOnly
+    ? opportunities.filter(opportunity => opportunity.expectedCloseAt === null)
+    : opportunities;
+
   return (
     <section
       className="opportunities-view"
@@ -759,6 +764,15 @@ export function OpportunitiesView({
         </div>
       </form>
 
+      <label className="opportunities-view__forecast-filter">
+        <input
+          type="checkbox"
+          checked={noForecastOnly}
+          onChange={event => setNoForecastOnly(event.target.checked)}
+        />
+        <span>{t("Apenas sem previsão")}</span>
+      </label>
+
       <div
         className="opportunities-view__mode"
         aria-label={t("Visualização de oportunidades")}
@@ -791,18 +805,22 @@ export function OpportunitiesView({
         </p>
       ) : null}
 
-      {!loading && !error && opportunities.length === 0 ? (
+      {!loading && !error && visibleOpportunities.length === 0 ? (
         <div className="opportunities-view__empty">
-          <strong>{t("Nenhuma oportunidade encontrada.")}</strong>
+          <strong>
+            {noForecastOnly
+              ? t("Nenhuma oportunidade sem previsão.")
+              : t("Nenhuma oportunidade encontrada.")}
+          </strong>
           <span>
             {t("Ajuste a busca ou aguarde novos registros comerciais.")}
           </span>
         </div>
       ) : null}
 
-      {!loading && !error && opportunities.length > 0 && viewMode === "list" ? (
+      {!loading && !error && visibleOpportunities.length > 0 && viewMode === "list" ? (
         <ul className="opportunities-view__list">
-          {opportunities.map(opportunity => {
+          {visibleOpportunities.map(opportunity => {
             const opportunityPipeline = pipelines.find(
               pipeline => pipeline.id === opportunity.pipelineId
             );
@@ -1151,7 +1169,7 @@ export function OpportunitiesView({
             <div className="opportunities-view__kanban-columns">
               {boardStages.map(stage => {
                 const stageKind = stage.kind ?? "OPEN";
-                const stageOpportunities = opportunities.filter(
+                const stageOpportunities = visibleOpportunities.filter(
                   opportunity =>
                     opportunity.pipelineId === boardPipeline.id &&
                     opportunity.stageId === stage.id
