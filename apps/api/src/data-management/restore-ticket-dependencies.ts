@@ -16,24 +16,20 @@ export async function requireSupportedTicketRestoreDependencies(
   organizationId: string,
   target: SnapshotData
 ): Promise<void> {
-  // RENEW_EXPIRED_TOKEN and MERGE_HIGH_WATER are not implemented by the
-  // current internal graph. A nonempty snapshot must not be silently ignored.
-  if (
-    (target.TicketSatisfactionSurvey?.length ?? 0) > 0 ||
-    (target.TicketProtocolCounter?.length ?? 0) > 0
-  ) {
+  // RENEW_EXPIRED_TOKEN is not implemented by the current internal graph.
+  // A nonempty snapshot must not be silently ignored.
+  if ((target.TicketSatisfactionSurvey?.length ?? 0) > 0) {
     throw new BackupError("RESTORE_POLICY_UNSUPPORTED");
   }
 
   // These rows outlive the replaced Ticket table. CSAT holds a restrict FK,
   // while encrypted outbox objects are deliberately excluded from exports.
   // Do not mutate/delete either record class merely to make restore possible.
-  const [surveys, outbox, counters] = await Promise.all([
+  const [surveys, outbox] = await Promise.all([
     tx.ticketSatisfactionSurvey.count({ where: { organizationId } }),
     tx.emailOutbox.count({ where: { organizationId } }),
-    tx.ticketProtocolCounter.count({ where: { organizationId } }),
   ]);
-  if (surveys > 0 || outbox > 0 || counters > 0) {
+  if (surveys > 0 || outbox > 0) {
     throw new BackupError("RESTORE_POLICY_UNSUPPORTED");
   }
 }
