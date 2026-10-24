@@ -29,24 +29,25 @@ export function prepareTicketProtocolCounterHighWater(
 
   const years = new Set<number>();
   return source.map(row => {
+    if (!row || typeof row !== "object" || Array.isArray(row)) return fail();
+
+    const year = row.year;
+    const lastValue = row.lastValue;
     if (
-      !row ||
-      typeof row !== "object" ||
-      Array.isArray(row) ||
       Object.keys(row).length !== 3 ||
       row.organizationId !== organizationId ||
-      !Number.isSafeInteger(row.year) ||
-      row.year < POSTGRES_INT_MIN ||
-      row.year > POSTGRES_INT_MAX ||
-      !Number.isSafeInteger(row.lastValue) ||
-      row.lastValue < 0 ||
-      row.lastValue > POSTGRES_INT_MAX
+      typeof year !== "number" ||
+      !Number.isSafeInteger(year) ||
+      year < POSTGRES_INT_MIN ||
+      year > POSTGRES_INT_MAX ||
+      typeof lastValue !== "number" ||
+      !Number.isSafeInteger(lastValue) ||
+      lastValue < 0 ||
+      lastValue > POSTGRES_INT_MAX
     ) {
       return fail();
     }
 
-    const year = row.year as number;
-    const lastValue = row.lastValue as number;
     if (years.has(year)) fail();
     years.add(year);
     return { year, lastValue };
