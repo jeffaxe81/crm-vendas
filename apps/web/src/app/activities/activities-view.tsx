@@ -409,7 +409,10 @@ export function ActivitiesView({
             type="button"
             className={status === option ? "is-active" : undefined}
             aria-pressed={status === option}
-            onClick={() => setStatus(option)}
+            onClick={() => {
+              setStatus(option);
+              setOnlyOverdue(false);
+            }}
           >
             {t(statusLabels[option])}
           </button>
@@ -425,6 +428,11 @@ export function ActivitiesView({
           />
           <span>{t("Atividades atrasadas")}</span>
         </label>
+      ) : null}
+      {!loading && !error ? (
+        <span role="status" aria-live="polite">
+          {visibleActivities.length} / {activities.length}
+        </span>
       ) : null}
 
       {error ? (
