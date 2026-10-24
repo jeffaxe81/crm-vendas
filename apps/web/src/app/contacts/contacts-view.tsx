@@ -638,15 +638,27 @@ export function ContactsView({
       ) : null}
 
       {loading ? <p>{t("Carregando contatos...")}</p> : null}
-      <label className="contacts-view__search">
-        <span>{t("Filtrar contatos carregados")}</span>
-        <input
-          type="search"
-          value={contactQuery}
-          onChange={event => setContactQuery(event.target.value)}
-          placeholder={t("Nome, cargo, telefone ou e-mail")}
-        />
-      </label>
+      <div className="contacts-view__search">
+        <label>
+          <span>{t("Filtrar contatos carregados")}</span>
+          <input
+            type="search"
+            value={contactQuery}
+            onChange={event => setContactQuery(event.target.value)}
+            placeholder={t("Nome, cargo, telefone ou e-mail")}
+          />
+        </label>
+        {contactQuery ? (
+          <button type="button" onClick={() => setContactQuery("")}>
+            {t("Limpar")}
+          </button>
+        ) : null}
+        {!loading ? (
+          <span role="status" aria-live="polite">
+            {visibleContacts.length} / {contacts.length} {t("Contatos")}
+          </span>
+        ) : null}
+      </div>
       {!loading && visibleContacts.length === 0 && contacts.length > 0 ? (
         <p role="status">{t("Nenhum contato corresponde ao filtro.")}</p>
       ) : null}
