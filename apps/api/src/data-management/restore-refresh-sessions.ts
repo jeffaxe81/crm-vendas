@@ -2,8 +2,8 @@ import type { Prisma } from "../generated/prisma/client";
 
 /**
  * Refresh sessions are security state, not snapshot data. Preserve every row,
- * keep historical revocation timestamps intact, and revoke only sessions that
- * are still active for the tenant whose business data was restored.
+ * keep historical revocation timestamps intact, and revoke every unrevoked
+ * session of the restored tenant, including expired rows, as auth revocation does.
  *
  * This runs inside the same maintenance transaction as the graph replacement,
  * so a later restore failure rolls the revocation back atomically.

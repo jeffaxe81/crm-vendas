@@ -76,7 +76,7 @@ describe("internal RefreshSession PRESERVE_AND_REVOKE restore policy", () => {
     return { organization, user };
   }
 
-  it("preserves session rows, revokes only active sessions in the restored tenant, and leaves another tenant untouched", async () => {
+  it("preserves session metadata and revokes only unrevoked sessions in the restored tenant", async () => {
     const target = await identity("Restore refresh target");
     const other = await identity("Restore refresh other");
     const previouslyRevokedAt = new Date("2026-10-20T12:00:00.000Z");
@@ -129,6 +129,9 @@ describe("internal RefreshSession PRESERVE_AND_REVOKE restore policy", () => {
     ]);
 
     expect(activeAfter.revokedAt).not.toBeNull();
+    expect(activeAfter).toEqual({ ...active, revokedAt: expect.any(Date) });
+    expect(revokedAfter).toEqual(alreadyRevoked);
+    expect(foreignAfter).toEqual(foreign);
     expect(revokedAfter.revokedAt).toEqual(previouslyRevokedAt);
     expect(foreignAfter.revokedAt).toBeNull();
     expect(
@@ -136,5 +139,119 @@ describe("internal RefreshSession PRESERVE_AND_REVOKE restore policy", () => {
         where: { organizationId: target.organization.id },
       })
     ).toBe(2);
+  });
+
+  it("revokes a session created after backup without changing the same user's other tenant, even on replay", async () => {
+    const target = await identity("Shared user restore target");
+    const other = await identity("Shared user other tenant");
+    await owner.organizationMembership.create({
+      data: {
+        organizationId: other.organization.id,
+        userId: target.user.id,
+        role: "VIEWER",
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+    expect(verified.data.RefreshSession).toBeUndefined();
+    const active = await owner.refreshSession.create({
+      data: {
+        organizationId: target.organization.id,
+        userId: target.user.id,
+        tokenHash: randomUUID(),
+        expiresAt: new Date("2026-12-01T00:00:00.000Z"),
+        lastUsedAt: new Date("2026-10-20T12:00:00.000Z"),
+      },
+    });
+    const foreign = await owner.refreshSession.create({
+      data: {
+        organizationId: other.organization.id,
+        userId: target.user.id,
+        tokenHash: randomUUID(),
+        expiresAt: new Date("2026-12-01T00:00:00.000Z"),
+      },
+    });
+
+    let firstRevocation: Date | null = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      );
+      const after = await owner.refreshSession.findUniqueOrThrow({
+        where: { id: active.id },
+      });
+      expect(after.revokedAt).toBeInstanceOf(Date);
+      if (attempt === 0) firstRevocation = after.revokedAt;
+      expect(after).toEqual({ ...active, revokedAt: firstRevocation });
+      await expect(
+        owner.refreshSession.findUniqueOrThrow({ where: { id: foreign.id } })
+      ).resolves.toEqual(foreign);
+    }
+  });
+
+  it("rolls back session revocation and business restoration together after a late failure", async () => {
+    const target = await identity("Session rollback target");
+    const company = await owner.company.create({
+      data: {
+        organizationId: target.organization.id,
+        legalName: "Company in backup",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+    const liveCompany = await owner.company.update({
+      where: { id: company.id },
+      data: { legalName: "Company after backup" },
+    });
+    const session = await owner.refreshSession.create({
+      data: {
+        organizationId: target.organization.id,
+        userId: target.user.id,
+        tokenHash: randomUUID(),
+        expiresAt: new Date("2026-12-01T00:00:00.000Z"),
+      },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        async tx => {
+          await restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            verified.data
+          );
+          expect(
+            await tx.refreshSession.findUniqueOrThrow({
+              where: { id: session.id },
+            })
+          ).toMatchObject({ revokedAt: expect.any(Date) });
+          expect(
+            await tx.company.findUniqueOrThrow({ where: { id: company.id } })
+          ).toMatchObject({ legalName: "Company in backup" });
+          throw Error("SYNTHETIC_FAILURE_AFTER_SESSION_REVOCATION");
+        },
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("SYNTHETIC_FAILURE_AFTER_SESSION_REVOCATION");
+
+    await expect(
+      owner.refreshSession.findUniqueOrThrow({ where: { id: session.id } })
+    ).resolves.toEqual(session);
+    await expect(
+      owner.company.findUniqueOrThrow({ where: { id: company.id } })
+    ).resolves.toEqual(liveCompany);
   });
 });
