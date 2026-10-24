@@ -335,4 +335,118 @@ describe("internal TicketSatisfactionSurvey RENEW_EXPIRED_TOKEN restore policy",
       })
     ).not.toBeNull();
   });
+
+  it("rolls back both Ticket and CSAT replacement on late maintenance failure", async () => {
+    const target = await identity("Restore CSAT atomic rollback");
+    const currentTicket = await ticket(
+      target.organization.id,
+      target.user.id,
+      "2026-010004",
+      "Original subject from backup"
+    );
+    const survey = await owner.ticketSatisfactionSurvey.create({
+      data: {
+        organizationId: target.organization.id,
+        ticketId: currentTicket.id,
+        tokenHash: tokenHash("rollback-backup-token"),
+        expiresAt: new Date("2026-12-01T00:00:00.000Z"),
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+    const liveHash = tokenHash("rollback-live-token");
+    await owner.ticket.update({
+      where: { id: currentTicket.id },
+      data: { subject: "Live subject after backup" },
+    });
+    await owner.ticketSatisfactionSurvey.update({
+      where: { id: survey.id },
+      data: {
+        tokenHash: liveHash,
+        expiresAt: new Date("2027-01-01T00:00:00.000Z"),
+      },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        async tx => {
+          await restoreTenantSnapshot(tx, target.organization.id, verified.data);
+          throw new Error("synthetic failure after CSAT restore");
+        },
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("synthetic failure after CSAT restore");
+
+    expect(
+      await owner.ticket.findUniqueOrThrow({ where: { id: currentTicket.id } })
+    ).toMatchObject({ subject: "Live subject after backup" });
+    expect(
+      await owner.ticketSatisfactionSurvey.findUniqueOrThrow({
+        where: { id: survey.id },
+      })
+    ).toMatchObject({
+      ticketId: currentTicket.id,
+      tokenHash: liveHash,
+      expiresAt: new Date("2027-01-01T00:00:00.000Z"),
+    });
+  });
+
+  it("rejects an injected snapshot token hash before changing live data", async () => {
+    const target = await identity("Restore CSAT rejects forged token");
+    const currentTicket = await ticket(
+      target.organization.id,
+      target.user.id,
+      "2026-010005",
+      "Backup subject"
+    );
+    const liveHash = tokenHash("never-restore-this-token");
+    const survey = await owner.ticketSatisfactionSurvey.create({
+      data: {
+        organizationId: target.organization.id,
+        ticketId: currentTicket.id,
+        tokenHash: liveHash,
+        expiresAt: new Date("2026-12-01T00:00:00.000Z"),
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+    const injected = JSON.parse(JSON.stringify(verified.data));
+    injected.TicketSatisfactionSurvey[0].tokenHash = tokenHash(
+      "attacker-controlled-token"
+    );
+    await owner.ticket.update({
+      where: { id: currentTicket.id },
+      data: { subject: "Live subject must remain" },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        tx => restoreTenantSnapshot(tx, target.organization.id, injected),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_TARGET_INVALID");
+
+    expect(
+      await owner.ticket.findUniqueOrThrow({ where: { id: currentTicket.id } })
+    ).toMatchObject({ subject: "Live subject must remain" });
+    expect(
+      await owner.ticketSatisfactionSurvey.findUniqueOrThrow({
+        where: { id: survey.id },
+      })
+    ).toMatchObject({ tokenHash: liveHash });
+  });
 });
