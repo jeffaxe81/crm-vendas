@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, sep } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
@@ -39,7 +39,7 @@ const transactionImport =
 test("the internal restore transaction has no production importer", () => {
   const offenders = productionSources()
     .filter(({ path, content }) => {
-      if (path.endsWith("/restore-transaction.ts")) return false;
+      if (path.endsWith(sep + "restore-transaction.ts")) return false;
       return transactionImport.test(content);
     })
     .map(({ path }) => path.slice(root.length))
@@ -56,8 +56,8 @@ test("business graph replacement has no direct runtime caller", () => {
   const offenders = productionSources()
     .filter(({ path, content }) => {
       if (
-        path.endsWith("/restore-executor.ts") ||
-        path.endsWith("/restore-transaction.ts")
+        path.endsWith(sep + "restore-executor.ts") ||
+        path.endsWith(sep + "restore-transaction.ts")
       ) {
         return false;
       }
