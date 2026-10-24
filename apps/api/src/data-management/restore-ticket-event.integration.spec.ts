@@ -175,4 +175,5 @@ describe("internal Ticket/TicketEvent restore graph", () => {
     expect(
       await owner.ticket.findUniqueOrThrow({ where: { id: ticket.id } })
     ).toMatchObject({ subject: "Preserve while dependent exists" });
-  });});
+  });
+});
