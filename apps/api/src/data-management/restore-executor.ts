@@ -11,6 +11,10 @@ import { validateRestorePreservedMemberships } from "./restore-membership-check"
 import { validateRestoreReferences } from "./restore-reference-check";
 import { TENANT_DATA_REGISTRY } from "./tenant-data-registry";
 import { requireSupportedTicketRestoreDependencies } from "./restore-ticket-dependencies";
+import {
+  applyTicketProtocolCounterHighWater,
+  prepareTicketProtocolCounterHighWater,
+} from "./restore-ticket-protocol-counter";
 
 // Parent-first insertion order; deletion uses the reverse order. Only these
 // reviewed FULL/REPLACE policies are supported by this internal increment.
@@ -252,6 +256,10 @@ export async function restoreTenantSnapshot(
   }
   // Prepare the entire graph and recheck live identities before the first DELETE.
   const graph = prepareGraph(data, organizationId);
+  const protocolCounterHighWater = prepareTicketProtocolCounterHighWater(
+    data,
+    organizationId
+  );
   validateRestoreReferences(data);
   await validateRestoreIdentityReferences(tx, organizationId, data);
   await validateRestorePreservedMemberships(tx, organizationId, data);
@@ -279,4 +287,10 @@ export async function restoreTenantSnapshot(
     );
     if (inserted !== rows.length) fail("RESTORE_TARGET_INVALID");
   }
+
+  await applyTicketProtocolCounterHighWater(
+    tx,
+    organizationId,
+    protocolCounterHighWater
+  );
 }
