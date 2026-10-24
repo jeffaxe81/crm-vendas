@@ -113,6 +113,7 @@ export function ContactsView({
 }: ContactsViewProps) {
   const { t } = useTranslation();
   const [contacts, setContacts] = useState<ContactRecord[]>([]);
+  const [contactQuery, setContactQuery] = useState("");
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
   const [history, setHistory] = useState<RelationshipEntryRecord[]>([]);
   const contactSave = useSaveFeedback();
@@ -514,6 +515,19 @@ export function ContactsView({
     ? contacts.find(contact => contact.id === customFieldsContactId)
     : undefined;
 
+  const normalizedContactQuery = contactQuery.trim().toLocaleLowerCase("pt-BR");
+  const visibleContacts = normalizedContactQuery
+    ? contacts.filter(contact =>
+        [
+          contact.fullName,
+          contact.jobTitle ?? "",
+          ...(contact.channels ?? []).map(channel => channel.value),
+        ].some(value =>
+          value.toLocaleLowerCase("pt-BR").includes(normalizedContactQuery)
+        )
+      )
+    : contacts;
+
   return (
     <section className="contacts-view" aria-labelledby="contacts-title">
       <SaveNotice status={contactSave.status} label={t("Contato salvo.")} />
@@ -624,9 +638,21 @@ export function ContactsView({
       ) : null}
 
       {loading ? <p>{t("Carregando contatos...")}</p> : null}
+      <label className="contacts-view__search">
+        <span>{t("Filtrar contatos carregados")}</span>
+        <input
+          type="search"
+          value={contactQuery}
+          onChange={event => setContactQuery(event.target.value)}
+          placeholder={t("Nome, cargo, telefone ou e-mail")}
+        />
+      </label>
+      {!loading && visibleContacts.length === 0 && contacts.length > 0 ? (
+        <p role="status">{t("Nenhum contato corresponde ao filtro.")}</p>
+      ) : null}
 
       <div className="contacts-view__grid">
-        {contacts.map(contact => (
+        {visibleContacts.map(contact => (
           <article className="contact-card" key={contact.id}>
             <div>
               <p className="contact-card__eyebrow">{t("Contato")}</p>
