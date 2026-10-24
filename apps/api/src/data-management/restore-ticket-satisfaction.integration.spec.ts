@@ -167,8 +167,7 @@ describe("internal TicketSatisfactionSurvey RENEW_EXPIRED_TOKEN restore policy",
     const restoreStartedAt = Date.now();
     await runtime.withMaintenance(
       target.organization.id,
-      tx =>
-        restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
 
@@ -253,8 +252,7 @@ describe("internal TicketSatisfactionSurvey RENEW_EXPIRED_TOKEN restore policy",
 
     await runtime.withMaintenance(
       target.organization.id,
-      tx =>
-        restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
 
@@ -322,8 +320,7 @@ describe("internal TicketSatisfactionSurvey RENEW_EXPIRED_TOKEN restore policy",
 
     await runtime.withMaintenance(
       target.organization.id,
-      tx =>
-        restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
       { isolationLevel: "RepeatableRead", timeout: 60_000 }
     );
 
@@ -333,7 +330,9 @@ describe("internal TicketSatisfactionSurvey RENEW_EXPIRED_TOKEN restore policy",
       })
     ).toBe(0);
     expect(
-      await owner.ticketSatisfactionSurvey.findUnique({ where: { id: foreign.id } })
+      await owner.ticketSatisfactionSurvey.findUnique({
+        where: { id: foreign.id },
+      })
     ).not.toBeNull();
   });
 });
