@@ -13,6 +13,11 @@ import { TENANT_DATA_REGISTRY } from "./tenant-data-registry";
 import { revokeActiveRefreshSessionsAfterRestore } from "./restore-refresh-sessions";
 import { requireSupportedTicketRestoreDependencies } from "./restore-ticket-dependencies";
 import {
+  deleteCurrentTicketSatisfactionSurveys,
+  insertTicketSatisfactionSurveys,
+  prepareTicketSatisfactionRestore,
+} from "./restore-ticket-satisfaction";
+import {
   applyTicketProtocolCounterHighWater,
   prepareTicketProtocolCounterHighWater,
 } from "./restore-ticket-protocol-counter";
@@ -261,12 +266,21 @@ export async function restoreTenantSnapshot(
     data,
     organizationId
   );
+  const ticketSatisfactionRows = prepareTicketSatisfactionRestore(
+    data,
+    organizationId
+  );
   validateRestoreReferences(data);
   await validateRestoreIdentityReferences(tx, organizationId, data);
   await validateRestorePreservedMemberships(tx, organizationId, data);
   // Direct callers cannot bypass the safety checks of the locked preflight.
   await requireSupportedTicketRestoreDependencies(tx, organizationId, data);
   await requireCurrentPolicies(tx, organizationId);
+
+  // CSAT holds a RESTRICT FK to Ticket. Its reviewed special policy replaces
+  // the projection inside this same transaction before the Ticket graph is
+  // deleted. Any later failure rolls both CSAT and Ticket changes back.
+  await deleteCurrentTicketSatisfactionSurveys(tx, organizationId);
 
   for (const { table } of [...graph].reverse()) {
     await tx.$executeRawUnsafe(
@@ -288,6 +302,8 @@ export async function restoreTenantSnapshot(
     );
     if (inserted !== rows.length) fail("RESTORE_TARGET_INVALID");
   }
+
+  await insertTicketSatisfactionSurveys(tx, ticketSatisfactionRows);
 
   await applyTicketProtocolCounterHighWater(
     tx,

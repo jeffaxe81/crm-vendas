@@ -122,74 +122,58 @@ describe("internal Ticket/TicketEvent restore graph", () => {
       body: "Event from backup",
     });
   });
-  it.each(["survey", "outbox"] as const)(
-    "refuses direct Ticket replacement with live %s policy data",
-    async dependent => {
-      const organization = await owner.organization.create({
-        data: { name: "Ticket dependency safety", slug: randomUUID() },
-      });
-      const email = `dependency-${randomUUID()}@example.test`;
-      const user = await owner.user.create({
-        data: {
-          email,
-          emailNormalized: email,
-          displayName: "Ticket safety operator",
-          passwordHash: "synthetic",
-        },
-      });
-      await owner.organizationMembership.create({
-        data: {
-          organizationId: organization.id,
-          userId: user.id,
-          role: "ADMIN",
-          isSuperuser: true,
-        },
-      });
-      const ticket = await owner.ticket.create({
-        data: {
-          organizationId: organization.id,
-          protocol: "2026-009001",
-          subject: "Preserve while dependent exists",
-          createdBy: user.id,
-          updatedBy: user.id,
-        },
-      });
-      const backup = await backups.create(organization.id, user.id, "MANUAL");
-      const verified = await backups.verify(organization.id, backup.id);
+  it("refuses direct Ticket replacement with live outbox policy data", async () => {
+    const organization = await owner.organization.create({
+      data: { name: "Ticket dependency safety", slug: randomUUID() },
+    });
+    const email = `dependency-${randomUUID()}@example.test`;
+    const user = await owner.user.create({
+      data: {
+        email,
+        emailNormalized: email,
+        displayName: "Ticket safety operator",
+        passwordHash: "synthetic",
+      },
+    });
+    await owner.organizationMembership.create({
+      data: {
+        organizationId: organization.id,
+        userId: user.id,
+        role: "ADMIN",
+        isSuperuser: true,
+      },
+    });
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: organization.id,
+        protocol: "2026-009001",
+        subject: "Preserve while dependent exists",
+        createdBy: user.id,
+        updatedBy: user.id,
+      },
+    });
+    const backup = await backups.create(organization.id, user.id, "MANUAL");
+    const verified = await backups.verify(organization.id, backup.id);
 
-      if (dependent === "survey") {
-        await owner.ticketSatisfactionSurvey.create({
-          data: {
-            organizationId: organization.id,
-            ticketId: ticket.id,
-            tokenHash: randomBytes(32).toString("hex"),
-            expiresAt: new Date("2026-12-01T00:00:00Z"),
-            createdBy: user.id,
-            updatedBy: user.id,
-          },
-        });
-      } else {
-        await owner.emailOutbox.create({
-          data: {
-            organizationId: organization.id,
-            ticketId: ticket.id,
-            idempotencyHash: randomBytes(32).toString("hex"),
-            purpose: "SATISFACTION_REQUEST",
-            encryptedEmail: "synthetic-private-ciphertext",
-          },
-        });
-      }
+    await owner.emailOutbox.create({
+      data: {
+        organizationId: organization.id,
+        ticketId: ticket.id,
+        idempotencyHash: randomBytes(32).toString("hex"),
+        purpose: "SATISFACTION_REQUEST",
+        encryptedEmail: "synthetic-private-ciphertext",
+      },
+    });
 
-      await expect(
-        runtime.withMaintenance(
-          organization.id,
-          tx => restoreTenantSnapshot(tx, organization.id, verified.data),
-          { isolationLevel: "RepeatableRead", timeout: 60_000 }
-        )
-      ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
-      expect(
-        await owner.ticket.findUniqueOrThrow({ where: { id: ticket.id } })
-      ).toMatchObject({ subject: "Preserve while dependent exists" });
-    }
-  );
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx => restoreTenantSnapshot(tx, organization.id, verified.data),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    expect(
+      await owner.ticket.findUniqueOrThrow({ where: { id: ticket.id } })
+    ).toMatchObject({ subject: "Preserve while dependent exists" });
+  });
 });
