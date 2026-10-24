@@ -142,13 +142,13 @@ if (direct) {
   const index = process.argv.indexOf("--manifest");
   const manifestRelativePath =
     "../docs/quality/real-environment-pending-2026-10-23.json";
-  const defaultPath = fileURLToPath(
-    new URL(manifestRelativePath, import.meta.url)
-  );
+  const manifestUrl = new URL(manifestRelativePath, import.meta.url);
+  const defaultPath = fileURLToPath(manifestUrl);
   const path = index >= 0 ? process.argv[index + 1] : defaultPath;
   let result;
   try {
-    result = checkRealEnvironmentRecord(JSON.parse(await readFile(path, "utf8")));
+    const parsed = JSON.parse(await readFile(path, "utf8"));
+    result = checkRealEnvironmentRecord(parsed);
   } catch {
     result = checkRealEnvironmentRecord(null);
     result.errors.push("manifest not readable or not valid JSON");
