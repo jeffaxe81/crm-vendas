@@ -61,7 +61,9 @@ function projectedRows(
     if (
       (rating === null) !== (respondedAt === null) ||
       (rating !== null &&
-        (!Number.isInteger(rating) || Number(rating) < 1 || Number(rating) > 5)) ||
+        (!Number.isInteger(rating) ||
+          Number(rating) < 1 ||
+          Number(rating) > 5)) ||
       (comment !== null &&
         (typeof comment !== "string" || comment.length > 2_000))
     ) {
@@ -107,8 +109,7 @@ export function prepareTicketSatisfactionRestore(
       ...row,
       token_hash: randomBytes(32).toString("hex"),
       expires_at:
-        respondedAt === null &&
-        Date.parse(snapshotExpiry) > now.getTime()
+        respondedAt === null && Date.parse(snapshotExpiry) > now.getTime()
           ? now.toISOString()
           : snapshotExpiry,
     };
