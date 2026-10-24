@@ -1392,7 +1392,7 @@ describe("transactional tenant restore executor", () => {
     expect(await companies(other.organization.id)).toEqual(otherBefore);
   });
 
-  it("fails closed before applying an unsupported protocol counter merge policy", async () => {
+  it("preserves the live protocol counter when it is higher than the backup", async () => {
     const target = await fixture();
     await owner.ticketProtocolCounter.create({
       data: {
@@ -1412,13 +1412,11 @@ describe("transactional tenant restore executor", () => {
       data: { lastValue: 29 },
     });
 
-    await expect(
-      runtime.withMaintenance(
-        target.organization.id,
-        tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
-        { isolationLevel: "RepeatableRead", timeout: 60_000 }
-      )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
 
     const counter = await owner.ticketProtocolCounter.findFirst({
       where: { organizationId: target.organization.id, year: 2026 },
