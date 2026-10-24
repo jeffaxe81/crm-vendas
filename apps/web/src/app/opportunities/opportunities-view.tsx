@@ -772,6 +772,16 @@ export function OpportunitiesView({
         />
         <span>{t("Apenas sem previsão")}</span>
       </label>
+      {noForecastOnly ? (
+        <button type="button" onClick={() => setNoForecastOnly(false)}>
+          {t("Limpar")}
+        </button>
+      ) : null}
+      {!loading && !error ? (
+        <span role="status" aria-live="polite">
+          {visibleOpportunities.length} / {opportunities.length}
+        </span>
+      ) : null}
 
       <div
         className="opportunities-view__mode"
