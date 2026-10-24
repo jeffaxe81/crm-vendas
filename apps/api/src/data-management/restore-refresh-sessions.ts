@@ -12,13 +12,11 @@ export async function revokeActiveRefreshSessionsAfterRestore(
   tx: Prisma.TransactionClient,
   organizationId: string
 ): Promise<void> {
-  await tx.refreshSession.updateMany({
-    where: {
-      organizationId,
-      revokedAt: null,
-    },
-    data: {
-      revokedAt: new Date(),
-    },
-  });
+  await tx.$executeRawUnsafe(
+    `UPDATE public.refresh_sessions
+     SET revoked_at=clock_timestamp()
+     WHERE organization_id=$1::uuid
+       AND revoked_at IS NULL`,
+    organizationId
+  );
 }
