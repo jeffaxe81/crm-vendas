@@ -62,6 +62,7 @@ export type ApiRequestOptions = {
   method?: string;
   body?: unknown;
   credentials?: RequestCredentials;
+  cache?: RequestCache;
 };
 
 function createRequestId(): string {
@@ -107,6 +108,7 @@ export async function apiRequest<T>(
   const request: RequestInit = {
     method: options.method ?? "GET",
     headers,
+    cache: options.cache,
   };
 
   if (options.body !== undefined) {
