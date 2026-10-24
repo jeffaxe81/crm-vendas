@@ -78,6 +78,9 @@ export function CompaniesView({
   const { t } = useTranslation();
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
   const [query, setQuery] = useState("");
+  const [sortMode, setSortMode] = useState<"original" | "name" | "updated">(
+    "original"
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
@@ -131,16 +134,24 @@ export function CompaniesView({
 
   const visibleCompanies = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
-    if (!normalizedQuery) {
-      return companies;
+    const matches = normalizedQuery
+      ? companies.filter(company =>
+          [company.legalName, company.tradeName ?? ""].some(value =>
+            value.toLocaleLowerCase("pt-BR").includes(normalizedQuery)
+          )
+        )
+      : companies;
+
+    if (sortMode === "original") {
+      return matches;
     }
 
-    return companies.filter(company =>
-      [company.legalName, company.tradeName ?? ""].some(value =>
-        value.toLocaleLowerCase("pt-BR").includes(normalizedQuery)
-      )
+    return [...matches].sort((left, right) =>
+      sortMode === "name"
+        ? left.legalName.localeCompare(right.legalName, "pt-BR")
+        : Date.parse(right.updatedAt) - Date.parse(left.updatedAt)
     );
-  }, [companies, query]);
+  }, [companies, query, sortMode]);
 
   function resetImportState() {
     setImportFile(null);
@@ -364,8 +375,21 @@ export function CompaniesView({
             onChange={event => setQuery(event.target.value)}
           />
         </label>
+        <label>
+          <span>{t("Ordenar empresas")}</span>
+          <select
+            value={sortMode}
+            onChange={event =>
+              setSortMode(event.target.value as typeof sortMode)
+            }
+          >
+            <option value="original">{t("Ordem original")}</option>
+            <option value="name">{t("Nome (A-Z)")}</option>
+            <option value="updated">{t("Atualização recente")}</option>
+          </select>
+        </label>
         <span>
-          {companies.length}
+          {visibleCompanies.length} / {companies.length}
           {t(" empresa(s)")}
         </span>
       </div>
