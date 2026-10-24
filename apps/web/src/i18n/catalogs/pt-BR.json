@@ -1213,5 +1213,8 @@
   "Webhooks de saída": "Webhooks de saída",
   "whatsapp": "whatsapp",
   "WhatsApp": "WhatsApp",
-  "Modelos ainda não restauráveis:": "Modelos ainda não restauráveis:"
+  "Modelos ainda não restauráveis:": "Modelos ainda não restauráveis:",
+  "Filtrar contatos carregados": "Filtrar contatos carregados",
+  "Nome, cargo, telefone ou e-mail": "Nome, cargo, telefone ou e-mail",
+  "Nenhum contato corresponde ao filtro.": "Nenhum contato corresponde ao filtro."
 }
