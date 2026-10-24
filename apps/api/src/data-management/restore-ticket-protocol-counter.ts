@@ -1,1 +1,78 @@
-import type { Prisma } from "../generated/prisma/client";\nimport { BackupError } from "./backup-error";\nimport type { SnapshotData } from "./backup-manifest";\n\ntype ProtocolCounterHighWater = {\n  year: number;\n  lastValue: number;\n};\n\nconst POSTGRES_INT_MIN = -2_147_483_648;\nconst POSTGRES_INT_MAX = 2_147_483_647;\n\nfunction fail(): never {\n  throw new BackupError("RESTORE_TARGET_INVALID");\n}\n\n/**\n * Validate the special MERGE_HIGH_WATER snapshot before any destructive\n * replacement starts. Missing counter data is treated as an empty legacy\n * projection, which safely preserves all live high-water rows.\n */\nexport function prepareTicketProtocolCounterHighWater(\n  data: SnapshotData,\n  organizationId: string\n): ProtocolCounterHighWater[] {\n  const source = data.TicketProtocolCounter;\n  if (source === undefined) return [];\n  if (!Array.isArray(source)) fail();\n\n  const years = new Set<number>();\n  return source.map(row => {\n    if (\n      !row ||\n      typeof row !== "object" ||\n      Array.isArray(row) ||\n      Object.keys(row).length !== 3 ||\n      row.organizationId !== organizationId ||\n      !Number.isSafeInteger(row.year) ||\n      row.year < POSTGRES_INT_MIN ||\n      row.year > POSTGRES_INT_MAX ||\n      !Number.isSafeInteger(row.lastValue) ||\n      row.lastValue < 0 ||\n      row.lastValue > POSTGRES_INT_MAX\n    ) {\n      return fail();\n    }\n\n    const year = row.year as number;\n    const lastValue = row.lastValue as number;\n    if (years.has(year)) fail();\n    years.add(year);\n    return { year, lastValue };\n  });\n}\n\n/**\n * Keep protocol allocation monotonic. Rows existing only in the live tenant\n * are intentionally preserved; snapshot rows are inserted when absent and\n * can only raise, never lower, an existing high-water value.\n */\nexport async function applyTicketProtocolCounterHighWater(\n  tx: Prisma.TransactionClient,\n  organizationId: string,\n  counters: readonly ProtocolCounterHighWater[]\n): Promise<void> {\n  for (const counter of counters) {\n    const changed = await tx.$executeRaw`\n      INSERT INTO ticket_protocol_counters (organization_id, year, last_value)\n      VALUES (${organizationId}::uuid, ${counter.year}, ${counter.lastValue})\n      ON CONFLICT (organization_id, year)\n      DO UPDATE SET last_value = GREATEST(\n        ticket_protocol_counters.last_value,\n        EXCLUDED.last_value\n      )\n    `;\n    if (changed !== 1) fail();\n  }\n}\n
+import type { Prisma } from "../generated/prisma/client";
+import { BackupError } from "./backup-error";
+import type { SnapshotData } from "./backup-manifest";
+
+type ProtocolCounterHighWater = {
+  year: number;
+  lastValue: number;
+};
+
+const POSTGRES_INT_MIN = -2_147_483_648;
+const POSTGRES_INT_MAX = 2_147_483_647;
+
+function fail(): never {
+  throw new BackupError("RESTORE_TARGET_INVALID");
+}
+
+/**
+ * Validate the special MERGE_HIGH_WATER snapshot before any destructive
+ * replacement starts. Missing counter data is treated as an empty legacy
+ * projection, which safely preserves all live high-water rows.
+ */
+export function prepareTicketProtocolCounterHighWater(
+  data: SnapshotData,
+  organizationId: string
+): ProtocolCounterHighWater[] {
+  const source = data.TicketProtocolCounter;
+  if (source === undefined) return [];
+  if (!Array.isArray(source)) fail();
+
+  const years = new Set<number>();
+  return source.map(row => {
+    if (
+      !row ||
+      typeof row !== "object" ||
+      Array.isArray(row) ||
+      Object.keys(row).length !== 3 ||
+      row.organizationId !== organizationId ||
+      !Number.isSafeInteger(row.year) ||
+      row.year < POSTGRES_INT_MIN ||
+      row.year > POSTGRES_INT_MAX ||
+      !Number.isSafeInteger(row.lastValue) ||
+      row.lastValue < 0 ||
+      row.lastValue > POSTGRES_INT_MAX
+    ) {
+      return fail();
+    }
+
+    const year = row.year as number;
+    const lastValue = row.lastValue as number;
+    if (years.has(year)) fail();
+    years.add(year);
+    return { year, lastValue };
+  });
+}
+
+/**
+ * Keep protocol allocation monotonic. Rows existing only in the live tenant
+ * are intentionally preserved; snapshot rows are inserted when absent and
+ * can only raise, never lower, an existing high-water value.
+ */
+export async function applyTicketProtocolCounterHighWater(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  counters: readonly ProtocolCounterHighWater[]
+): Promise<void> {
+  for (const counter of counters) {
+    const changed = await tx.$executeRaw`
+      INSERT INTO ticket_protocol_counters (organization_id, year, last_value)
+      VALUES (${organizationId}::uuid, ${counter.year}, ${counter.lastValue})
+      ON CONFLICT (organization_id, year)
+      DO UPDATE SET last_value = GREATEST(
+        ticket_protocol_counters.last_value,
+        EXCLUDED.last_value
+      )
+    `;
+    if (changed !== 1) fail();
+  }
+}
