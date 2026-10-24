@@ -375,6 +375,11 @@ export function CompaniesView({
             onChange={event => setQuery(event.target.value)}
           />
         </label>
+        {query ? (
+          <button type="button" onClick={() => setQuery("")}>
+            {t("Limpar")}
+          </button>
+        ) : null}
         <label>
           <span>{t("Ordenar empresas")}</span>
           <select
