@@ -1213,5 +1213,7 @@
   "Webhooks de saída": "Outgoing webhooks",
   "whatsapp": "whatsapp",
   "WhatsApp": "WhatsApp",
-  "Modelos ainda não restauráveis:": "Models not yet supported for restoration:"
+  "Modelos ainda não restauráveis:": "Models not yet supported for restoration:",
+  "Apenas sem previsão": "Only without expected date",
+  "Nenhuma oportunidade sem previsão.": "No opportunities without an expected closing date."
 }
