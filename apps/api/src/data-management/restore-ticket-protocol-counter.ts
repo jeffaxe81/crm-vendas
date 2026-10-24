@@ -42,7 +42,7 @@ export function prepareTicketProtocolCounterHighWater(
       year > POSTGRES_INT_MAX ||
       typeof lastValue !== "number" ||
       !Number.isSafeInteger(lastValue) ||
-      lastValue < 0 ||
+      lastValue <= 0 ||
       lastValue > POSTGRES_INT_MAX
     ) {
       return fail();
