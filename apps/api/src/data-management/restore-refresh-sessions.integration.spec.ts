@@ -76,66 +76,69 @@ describe("internal RefreshSession PRESERVE_AND_REVOKE restore policy", () => {
     return { organization, user };
   }
 
-  it("preserves session rows, revokes only active sessions in the restored tenant, and leaves another tenant untouched", async () => {
-    const target = await identity("Restore refresh target");
-    const other = await identity("Restore refresh other");
-    const previouslyRevokedAt = new Date("2026-10-20T12:00:00.000Z");
+  it(
+    "preserves session rows, revokes only active sessions in the restored tenant, and leaves another tenant untouched",
+    async () => {
+      const target = await identity("Restore refresh target");
+      const other = await identity("Restore refresh other");
+      const previouslyRevokedAt = new Date("2026-10-20T12:00:00.000Z");
 
-    const active = await owner.refreshSession.create({
-      data: {
-        organizationId: target.organization.id,
-        userId: target.user.id,
-        tokenHash: randomUUID(),
-        expiresAt: new Date("2026-12-01T00:00:00.000Z"),
-      },
-    });
-    const alreadyRevoked = await owner.refreshSession.create({
-      data: {
-        organizationId: target.organization.id,
-        userId: target.user.id,
-        tokenHash: randomUUID(),
-        expiresAt: new Date("2026-12-01T00:00:00.000Z"),
-        revokedAt: previouslyRevokedAt,
-      },
-    });
-    const foreign = await owner.refreshSession.create({
-      data: {
-        organizationId: other.organization.id,
-        userId: other.user.id,
-        tokenHash: randomUUID(),
-        expiresAt: new Date("2026-12-01T00:00:00.000Z"),
-      },
-    });
+      const active = await owner.refreshSession.create({
+        data: {
+          organizationId: target.organization.id,
+          userId: target.user.id,
+          tokenHash: randomUUID(),
+          expiresAt: new Date("2026-12-01T00:00:00.000Z"),
+        },
+      });
+      const alreadyRevoked = await owner.refreshSession.create({
+        data: {
+          organizationId: target.organization.id,
+          userId: target.user.id,
+          tokenHash: randomUUID(),
+          expiresAt: new Date("2026-12-01T00:00:00.000Z"),
+          revokedAt: previouslyRevokedAt,
+        },
+      });
+      const foreign = await owner.refreshSession.create({
+        data: {
+          organizationId: other.organization.id,
+          userId: other.user.id,
+          tokenHash: randomUUID(),
+          expiresAt: new Date("2026-12-01T00:00:00.000Z"),
+        },
+      });
 
-    const backup = await backups.create(
-      target.organization.id,
-      target.user.id,
-      "MANUAL"
-    );
-    const verified = await backups.verify(target.organization.id, backup.id);
+      const backup = await backups.create(
+        target.organization.id,
+        target.user.id,
+        "MANUAL"
+      );
+      const verified = await backups.verify(target.organization.id, backup.id);
 
-    await runtime.withMaintenance(
-      target.organization.id,
-      tx =>
-        restoreTenantSnapshot(tx, target.organization.id, verified.data),
-      { isolationLevel: "RepeatableRead", timeout: 60_000 }
-    );
+      await runtime.withMaintenance(
+        target.organization.id,
+        tx =>
+          restoreTenantSnapshot(tx, target.organization.id, verified.data),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      );
 
-    const [activeAfter, revokedAfter, foreignAfter] = await Promise.all([
-      owner.refreshSession.findUniqueOrThrow({ where: { id: active.id } }),
-      owner.refreshSession.findUniqueOrThrow({
-        where: { id: alreadyRevoked.id },
-      }),
-      owner.refreshSession.findUniqueOrThrow({ where: { id: foreign.id } }),
-    ]);
+      const [activeAfter, revokedAfter, foreignAfter] = await Promise.all([
+        owner.refreshSession.findUniqueOrThrow({ where: { id: active.id } }),
+        owner.refreshSession.findUniqueOrThrow({
+          where: { id: alreadyRevoked.id },
+        }),
+        owner.refreshSession.findUniqueOrThrow({ where: { id: foreign.id } }),
+      ]);
 
-    expect(activeAfter.revokedAt).not.toBeNull();
-    expect(revokedAfter.revokedAt).toEqual(previouslyRevokedAt);
-    expect(foreignAfter.revokedAt).toBeNull();
-    expect(
-      await owner.refreshSession.count({
-        where: { organizationId: target.organization.id },
-      })
-    ).toBe(2);
-  });
+      expect(activeAfter.revokedAt).not.toBeNull();
+      expect(revokedAfter.revokedAt).toEqual(previouslyRevokedAt);
+      expect(foreignAfter.revokedAt).toBeNull();
+      expect(
+        await owner.refreshSession.count({
+          where: { organizationId: target.organization.id },
+        })
+      ).toBe(2);
+    }
+  );
 });
