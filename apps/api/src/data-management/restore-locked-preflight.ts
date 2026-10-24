@@ -12,6 +12,7 @@ import { unsupportedRestoreModels } from "./restore-executor";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { exportTenantSnapshot } from "./tenant-snapshot";
 import { requireSupportedTicketRestoreDependencies } from "./restore-ticket-dependencies";
+import { validateTicketSatisfactionRestore } from "./restore-ticket-satisfaction";
 
 export type RestoreLockedPreflight = {
   currentFingerprint: string;
@@ -91,6 +92,7 @@ export async function preflightRestoreExecution(
   }
 
   validateRestoreReferences(verified.data);
+  validateTicketSatisfactionRestore(verified.data, organizationId);
   await validateRestoreIdentityReferences(tx, organizationId, verified.data);
   await validateRestorePreservedMemberships(tx, organizationId, verified.data);
 
