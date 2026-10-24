@@ -1213,5 +1213,8 @@
   "Webhooks de saída": "Webhooks de salida",
   "whatsapp": "whatsapp",
   "WhatsApp": "WhatsApp",
-  "Modelos ainda não restauráveis:": "Modelos aún no compatibles con la restauración:"
+  "Modelos ainda não restauráveis:": "Modelos aún no compatibles con la restauración:",
+  "Filtrar contatos carregados": "Filtrar contactos cargados",
+  "Nome, cargo, telefone ou e-mail": "Nombre, cargo, teléfono o correo electrónico",
+  "Nenhum contato corresponde ao filtro.": "Ningún contacto coincide con el filtro."
 }
