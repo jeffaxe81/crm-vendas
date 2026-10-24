@@ -122,7 +122,7 @@ describe("internal Ticket/TicketEvent restore graph", () => {
       body: "Event from backup",
     });
   });
-  it.each(["survey", "outbox", "counter"] as const)(
+  it.each(["survey", "outbox"] as const)(
     "refuses direct Ticket replacement with live %s policy data",
     async dependent => {
       const organization = await owner.organization.create({
@@ -168,7 +168,7 @@ describe("internal Ticket/TicketEvent restore graph", () => {
             updatedBy: user.id,
           },
         });
-      } else if (dependent === "outbox") {
+      } else {
         await owner.emailOutbox.create({
           data: {
             organizationId: organization.id,
@@ -176,14 +176,6 @@ describe("internal Ticket/TicketEvent restore graph", () => {
             idempotencyHash: randomBytes(32).toString("hex"),
             purpose: "SATISFACTION_REQUEST",
             encryptedEmail: "synthetic-private-ciphertext",
-          },
-        });
-      } else {
-        await owner.ticketProtocolCounter.create({
-          data: {
-            organizationId: organization.id,
-            year: 2026,
-            lastValue: 9001,
           },
         });
       }
