@@ -185,4 +185,142 @@ describe("internal TicketProtocolCounter MERGE_HIGH_WATER restore policy", () =>
       })
     ).resolves.toMatchObject({ lastValue: 43 });
   });
+
+  it.each([10, 43])(
+    "restores the backup high-water when the live counter is %s and remains idempotent",
+    async liveValue => {
+      const target = await identity("Protocol snapshot high-water");
+      const key = { organizationId: target.organization.id, year: 2026 };
+      await owner.ticketProtocolCounter.create({
+        data: { ...key, lastValue: 43 },
+      });
+      const backup = await backups.create(
+        target.organization.id,
+        target.user.id,
+        "MANUAL"
+      );
+      const verified = await backups.verify(target.organization.id, backup.id);
+      await owner.ticketProtocolCounter.update({
+        where: { organizationId_year: key },
+        data: { lastValue: liveValue },
+      });
+
+      for (let attempt = 0; attempt < 2; attempt++) {
+        await runtime.withMaintenance(
+          target.organization.id,
+          tx =>
+            restoreTenantSnapshot(tx, target.organization.id, verified.data),
+          { isolationLevel: "RepeatableRead", timeout: 60_000 }
+        );
+        await expect(
+          owner.ticketProtocolCounter.findUniqueOrThrow({
+            where: { organizationId_year: key },
+          })
+        ).resolves.toMatchObject({ lastValue: 43 });
+      }
+    }
+  );
+
+  it("preserves a live-only year when restoring an older snapshot", async () => {
+    const target = await identity("Protocol live-only year");
+    await owner.ticketProtocolCounter.create({
+      data: {
+        organizationId: target.organization.id,
+        year: 2025,
+        lastValue: 43,
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+    await owner.ticketProtocolCounter.create({
+      data: {
+        organizationId: target.organization.id,
+        year: 2026,
+        lastValue: 29,
+      },
+    });
+
+    await runtime.withMaintenance(
+      target.organization.id,
+      tx => restoreTenantSnapshot(tx, target.organization.id, verified.data),
+      { isolationLevel: "RepeatableRead", timeout: 60_000 }
+    );
+
+    await expect(
+      owner.ticketProtocolCounter.findMany({
+        where: { organizationId: target.organization.id },
+        select: { year: true, lastValue: true },
+        orderBy: { year: "asc" },
+      })
+    ).resolves.toEqual([
+      { year: 2025, lastValue: 43 },
+      { year: 2026, lastValue: 29 },
+    ]);
+  });
+
+  it("rolls back the counter merge and business graph together on a late failure", async () => {
+    const target = await identity("Protocol rollback");
+    const key = { organizationId: target.organization.id, year: 2026 };
+    await owner.ticketProtocolCounter.create({
+      data: { ...key, lastValue: 43 },
+    });
+    const company = await owner.company.create({
+      data: {
+        organizationId: target.organization.id,
+        legalName: "Company in snapshot",
+        createdBy: target.user.id,
+        updatedBy: target.user.id,
+      },
+    });
+    const backup = await backups.create(
+      target.organization.id,
+      target.user.id,
+      "MANUAL"
+    );
+    const verified = await backups.verify(target.organization.id, backup.id);
+    await owner.ticketProtocolCounter.update({
+      where: { organizationId_year: key },
+      data: { lastValue: 10 },
+    });
+    const liveCompany = await owner.company.update({
+      where: { id: company.id },
+      data: { legalName: "Company after snapshot" },
+    });
+
+    await expect(
+      runtime.withMaintenance(
+        target.organization.id,
+        async tx => {
+          await restoreTenantSnapshot(
+            tx,
+            target.organization.id,
+            verified.data
+          );
+          expect(
+            await tx.ticketProtocolCounter.findUniqueOrThrow({
+              where: { organizationId_year: key },
+            })
+          ).toMatchObject({ lastValue: 43 });
+          expect(
+            await tx.company.findUniqueOrThrow({ where: { id: company.id } })
+          ).toMatchObject({ legalName: "Company in snapshot" });
+          throw Error("SYNTHETIC_FAILURE_AFTER_RESTORE");
+        },
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("SYNTHETIC_FAILURE_AFTER_RESTORE");
+
+    await expect(
+      owner.ticketProtocolCounter.findUniqueOrThrow({
+        where: { organizationId_year: key },
+      })
+    ).resolves.toMatchObject({ lastValue: 10 });
+    await expect(
+      owner.company.findUniqueOrThrow({ where: { id: company.id } })
+    ).resolves.toEqual(liveCompany);
+  });
 });
