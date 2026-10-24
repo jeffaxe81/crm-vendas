@@ -109,6 +109,7 @@ export function ActivitiesView({
   const { t } = useTranslation();
   const [activities, setActivities] = useState<ActivityRecord[]>([]);
   const [status, setStatus] = useState<ActivityStatus>("PENDING");
+  const [onlyOverdue, setOnlyOverdue] = useState(false);
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -353,6 +354,11 @@ export function ActivitiesView({
     }
   }
 
+  const visibleActivities =
+    onlyOverdue && status === "PENDING"
+      ? activities.filter(isOverdue)
+      : activities;
+
   return (
     <section className="activities-view" aria-labelledby="activities-title">
       <header className="activities-view__header">
@@ -409,6 +415,17 @@ export function ActivitiesView({
           </button>
         ))}
       </nav>
+
+      {status === "PENDING" ? (
+        <label className="activities-view__overdue-filter">
+          <input
+            type="checkbox"
+            checked={onlyOverdue}
+            onChange={event => setOnlyOverdue(event.target.checked)}
+          />
+          <span>{t("Atividades atrasadas")}</span>
+        </label>
+      ) : null}
 
       {error ? (
         <p className="activities-view__error" role="alert">
@@ -575,9 +592,9 @@ export function ActivitiesView({
         </p>
       ) : null}
 
-      {!loading && !error && activities.length > 0 ? (
+      {!loading && !error && visibleActivities.length > 0 ? (
         <ul className="activities-view__list">
-          {activities.map(activity => {
+          {visibleActivities.map(activity => {
             const overdue = isOverdue(activity);
 
             return (
@@ -672,11 +689,14 @@ export function ActivitiesView({
         </ul>
       ) : null}
 
-      {!loading && !error && activities.length === 0 ? (
+      {!loading && !error && visibleActivities.length === 0 ? (
         <div className="activities-view__empty">
           <strong>
-            {t("Nenhuma atividade em ")}
-            {t(statusLabels[status].toLowerCase())}.
+            {onlyOverdue && status === "PENDING"
+              ? t("Nenhuma atividade pendente atrasada.")
+              : t("Nenhuma atividade em ") +
+                t(statusLabels[status].toLowerCase()) +
+                "."}
           </strong>
           <span>{t("As atividades deste status aparecerão aqui.")}</span>
         </div>
