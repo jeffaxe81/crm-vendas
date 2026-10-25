@@ -146,9 +146,8 @@ export class BackupStorageInventoryService {
       findings: [],
     };
     for (const tenant of result.tenants) {
-      tenant.catalogBytes = (
-        catalogBytes.get(tenant.organizationId) ?? 0n
-      ).toString();
+      const bytesForTenant = catalogBytes.get(tenant.organizationId) ?? 0n;
+      tenant.catalogBytes = bytesForTenant.toString();
     }
     if (!this.store) return result;
 
@@ -231,9 +230,8 @@ export class BackupStorageInventoryService {
     }
     result.physicalBytes = bytes.toString();
     for (const tenant of result.tenants) {
-      tenant.physicalBytes = (
-        physicalBytes.get(tenant.organizationId) ?? 0n
-      ).toString();
+      const bytesForTenant = physicalBytes.get(tenant.organizationId) ?? 0n;
+      tenant.physicalBytes = bytesForTenant.toString();
     }
     result.complete = true;
     return result;
