@@ -1,19 +1,10 @@
 import { randomBytes, randomUUID } from "node:crypto";
-import {
-  mkdtemp,
-  readdir,
-  rm,
-  symlink,
-  writeFile,
-} from "node:fs/promises";
+import { mkdtemp, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { PrismaService } from "../database/prisma.service";
-import {
-  BackupStore,
-  BACKUP_ENVELOPE_OVERHEAD_BYTES,
-} from "./backup-store";
+import { BackupStore, BACKUP_ENVELOPE_OVERHEAD_BYTES } from "./backup-store";
 import { BackupStorageInventoryService } from "./backup-storage-inventory.service";
 
 describe("global read-only backup storage inventory under tenant RLS", () => {
@@ -62,7 +53,9 @@ describe("global read-only backup storage inventory under tenant RLS", () => {
 
   afterAll(async () => {
     if (owner) {
-      await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
+      await owner.$executeRawUnsafe(
+        'TRUNCATE "organizations", "users" CASCADE'
+      );
       await owner.onModuleDestroy();
     }
     await restricted?.onModuleDestroy();
@@ -214,10 +207,7 @@ describe("global read-only backup storage inventory under tenant RLS", () => {
     const orphanPhysical = 25 + BACKUP_ENVELOPE_OVERHEAD_BYTES;
     expect(result.physicalBytes).toBe(
       String(
-        matchingPhysical +
-          mismatchPhysical +
-          deletedPhysical +
-          orphanPhysical
+        matchingPhysical + mismatchPhysical + deletedPhysical + orphanPhysical
       )
     );
     expect(result.tenants).toEqual(
