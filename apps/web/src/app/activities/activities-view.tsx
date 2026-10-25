@@ -479,10 +479,7 @@ export function ActivitiesView({
             onChange={event =>
               setDueFilter(
                 event.target.value as
-                  | "all"
-                  | "overdue"
-                  | "today"
-                  | "without-date"
+                  "all" | "overdue" | "today" | "without-date"
               )
             }
           >
