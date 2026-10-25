@@ -395,10 +395,12 @@ export function CompaniesView({
               {t("Importar CSV")}
             </Button>
           ) : null}
-          <Button className="companies-view__primary" onClick={openCreate}>
-            <Plus aria-hidden="true" />
-            {t("Nova empresa")}
-          </Button>
+          {canWrite ? (
+            <Button className="companies-view__primary" onClick={openCreate}>
+              <Plus aria-hidden="true" />
+              {t("Nova empresa")}
+            </Button>
+          ) : null}
         </div>
       </header>
 
@@ -648,14 +650,16 @@ export function CompaniesView({
               <h2>{company.legalName}</h2>
               {company.tradeName ? <p>{company.tradeName}</p> : null}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => openEdit(company)}
-            >
-              <Pencil aria-hidden="true" />
-              {t("Editar")}
-            </Button>
+            {canWrite ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => openEdit(company)}
+              >
+                <Pencil aria-hidden="true" />
+                {t("Editar")}
+              </Button>
+            ) : null}
           </article>
         ))}
       </div>
