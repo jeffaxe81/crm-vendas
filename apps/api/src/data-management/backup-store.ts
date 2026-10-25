@@ -5,7 +5,7 @@ import {
   randomUUID,
 } from "node:crypto";
 import { constants } from "node:fs";
-import { link, lstat, mkdir, open, unlink } from "node:fs/promises";
+import { link, lstat, mkdir, open, opendir, unlink } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 
 const MAGIC = Buffer.from("AXESBK01");
@@ -13,6 +13,51 @@ const IV_BYTES = 12;
 const TAG_BYTES = 16;
 const HEADER_BYTES = MAGIC.length + IV_BYTES + TAG_BYTES;
 export const BACKUP_ENVELOPE_OVERHEAD_BYTES = HEADER_BYTES;
+
+export type BackupStoreInventoryEntry =
+  | { kind: "OBJECT"; id: string; size: number }
+  | { kind: "UNREADABLE_OBJECT"; id: string }
+  | { kind: "TEMPORARY" }
+  | { kind: "UNEXPECTED" };
+
+const UUID_TEXT =
+  "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+const BACKUP_OBJECT_NAME = new RegExp(`^(${UUID_TEXT})\\.backupimport {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  randomUUID,
+} from "node:crypto";
+import { constants } from "node:fs";
+import { link, lstat, mkdir, open, opendir, unlink } from "node:fs/promises";
+import { isAbsolute, join } from "node:path";
+
+const MAGIC = Buffer.from("AXESBK01");
+const IV_BYTES = 12;
+const TAG_BYTES = 16;
+const HEADER_BYTES = MAGIC.length + IV_BYTES + TAG_BYTES;
+export const BACKUP_ENVELOPE_OVERHEAD_BYTES = HEADER_BYTES;
+
+);
+const BACKUP_TEMPORARY_NAME = new RegExp(
+  `^\\.(${UUID_TEXT})\\.(${UUID_TEXT})\\.tmpimport {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  randomUUID,
+} from "node:crypto";
+import { constants } from "node:fs";
+import { link, lstat, mkdir, open, opendir, unlink } from "node:fs/promises";
+import { isAbsolute, join } from "node:path";
+
+const MAGIC = Buffer.from("AXESBK01");
+const IV_BYTES = 12;
+const TAG_BYTES = 16;
+const HEADER_BYTES = MAGIC.length + IV_BYTES + TAG_BYTES;
+export const BACKUP_ENVELOPE_OVERHEAD_BYTES = HEADER_BYTES;
+
+
+);
 
 export type BackupStoreOptions = {
   directory: string;
@@ -172,6 +217,36 @@ export class BackupStore {
       return info.size;
     } finally {
       await file.close();
+    }
+  }
+
+  async *inventoryEntries(): AsyncGenerator<BackupStoreInventoryEntry> {
+    await this.requireDirectory();
+    const directory = await opendir(this.directory);
+
+    for await (const entry of directory) {
+      const object = BACKUP_OBJECT_NAME.exec(entry.name);
+      if (object) {
+        const id = object[1]!;
+        try {
+          const size = await this.objectSize(id);
+          if (size === null) {
+            yield { kind: "UNREADABLE_OBJECT", id };
+          } else {
+            yield { kind: "OBJECT", id, size };
+          }
+        } catch {
+          yield { kind: "UNREADABLE_OBJECT", id };
+        }
+        continue;
+      }
+
+      if (BACKUP_TEMPORARY_NAME.test(entry.name)) {
+        yield { kind: "TEMPORARY" };
+        continue;
+      }
+
+      yield { kind: "UNEXPECTED" };
     }
   }
 
