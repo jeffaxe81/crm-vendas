@@ -368,27 +368,25 @@ export function ActivitiesView({
           <button
             type="button"
             disabled={
-              loading ||
-              !activities.some(activity => activity.dueAt !== null)
+              loading || !activities.some(activity => activity.dueAt !== null)
             }
-            title={t("Gera lembretes provisórios apenas das atividades carregadas")}
+            title={t(
+              "Gera lembretes provisórios apenas das atividades carregadas"
+            )}
             onClick={() =>
-              downloadLoadedCalendar(
-                "crm-atividades-carregadas.ics",
-                activities
-              )
+              downloadLoadedCalendar("crm-atividades-carregadas.ics", activities)
             }
           >
             {t("Exportar prazos ICS")}
           </button>
-        {canWrite ? (
-          <button
-            className="button activities-view__primary"
-            onClick={openCreate}
-          >
-            {t("Nova atividade")}
-          </button>
-        ) : null}
+          {canWrite ? (
+            <button
+              className="button activities-view__primary"
+              onClick={openCreate}
+            >
+              {t("Nova atividade")}
+            </button>
+          ) : null}
         </div>
       </header>
 
