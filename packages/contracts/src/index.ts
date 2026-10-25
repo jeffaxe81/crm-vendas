@@ -404,3 +404,12 @@ export {
   defaultBranding,
   type TenantBranding,
 } from "./branding";
+
+export {
+  DashboardCatalogSchema,
+  DashboardMetricIdSchema,
+  DashboardVolumeSchema,
+  type DashboardCatalog,
+  type DashboardMetricId,
+  type DashboardVolume,
+} from "./dashboard-volume";

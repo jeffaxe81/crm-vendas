@@ -86,6 +86,22 @@ test("rejects mismatched expected SHA and untrusted CI link", async t => {
   assert.match(result.errors.join(" "), /CI declarado/);
 });
 
+test("rejects traversal to an existing file outside the manifest directory", async t => {
+  const { root, manifest } = await fixture(t);
+  for (const item of Object.values(manifest.evidence)) {
+    item.file = item.file.slice("evidence/".length);
+  }
+  manifest.evidence.serverDiagnostics.file = "../manifest.json";
+  const nestedManifest = join(root, "evidence", "manifest.json");
+  await writeFile(nestedManifest, JSON.stringify(manifest));
+  const result = await evaluate(nestedManifest, sha);
+  assert.equal(result.status, "NO_GO");
+  assert.match(
+    result.errors.join(" "),
+    /serverDiagnostics: arquivo fora do diretório de evidências/
+  );
+});
+
 test("rejects traversal and symbolic links", async t => {
   const { root, path, manifest, save } = await fixture(t);
   manifest.evidence.serverDiagnostics.file = "../outside.txt";

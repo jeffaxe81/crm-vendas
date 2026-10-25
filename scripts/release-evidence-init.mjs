@@ -5,7 +5,7 @@
  */
 import { execFileSync } from "node:child_process";
 import { mkdir, readFile, realpath, rmdir, writeFile } from "node:fs/promises";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -20,7 +20,8 @@ const templatePath = resolve(
 function within(parent, child) {
   const rel = relative(parent, child);
   return (
-    rel === "" || (rel !== ".." && !rel.startsWith("../") && !isAbsolute(rel))
+    rel === "" ||
+    (rel !== ".." && !rel.startsWith(".." + sep) && !isAbsolute(rel))
   );
 }
 

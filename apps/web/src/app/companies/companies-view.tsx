@@ -23,6 +23,7 @@ import {
 
 import { Button } from "../../components/ui/button";
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedCsv } from "../../lib/local-productivity-export";
 import { FileUp, Pencil, Plus, X } from "lucide-react";
 import { useTranslation } from "../../i18n/language-provider";
 
@@ -78,6 +79,12 @@ export function CompaniesView({
   const { t } = useTranslation();
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
   const [query, setQuery] = useState("");
+  const [companyProfileFilter, setCompanyProfileFilter] = useState<
+    "all" | "with-trade-name" | "without-trade-name"
+  >("all");
+  const [companySort, setCompanySort] = useState<
+    "recent" | "name-asc" | "name-desc"
+  >("name-asc");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
@@ -131,16 +138,39 @@ export function CompaniesView({
 
   const visibleCompanies = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
-    if (!normalizedQuery) {
-      return companies;
-    }
-
-    return companies.filter(company =>
-      [company.legalName, company.tradeName ?? ""].some(value =>
-        value.toLocaleLowerCase("pt-BR").includes(normalizedQuery)
-      )
-    );
-  }, [companies, query]);
+    return companies
+      .filter(company => {
+        const hasTradeName = Boolean(company.tradeName?.trim());
+        if (companyProfileFilter === "with-trade-name" && !hasTradeName) {
+          return false;
+        }
+        if (companyProfileFilter === "without-trade-name" && hasTradeName) {
+          return false;
+        }
+        return (
+          !normalizedQuery ||
+          [
+            company.legalName,
+            company.tradeName ?? "",
+            company.document ?? "",
+            company.website ?? "",
+          ].some(value =>
+            value.toLocaleLowerCase("pt-BR").includes(normalizedQuery)
+          )
+        );
+      })
+      .sort((a, b) => {
+        if (companySort === "name-asc") {
+          return a.legalName.localeCompare(b.legalName, "pt-BR");
+        }
+        if (companySort === "name-desc") {
+          return b.legalName.localeCompare(a.legalName, "pt-BR");
+        }
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      });
+  }, [companies, query, companyProfileFilter, companySort]);
 
   function resetImportState() {
     setImportFile(null);
@@ -340,16 +370,37 @@ export function CompaniesView({
           </p>
         </div>
         <div className="companies-view__header-actions">
+          <Button
+            variant="outline"
+            disabled={loading || visibleCompanies.length === 0}
+            title={t("Exporta apenas as empresas exibidas nesta página")}
+            onClick={() =>
+              downloadLoadedCsv(
+                "crm-empresas-visiveis.csv",
+                ["Razão social", "Nome fantasia", "Documento", "Website"],
+                visibleCompanies.map(company => [
+                  company.legalName,
+                  company.tradeName,
+                  company.document,
+                  company.website,
+                ])
+              )
+            }
+          >
+            {t("Exportar empresas CSV")}
+          </Button>
           {canWrite ? (
             <Button variant="outline" onClick={openImport} disabled={importing}>
               <FileUp aria-hidden="true" />
               {t("Importar CSV")}
             </Button>
           ) : null}
-          <Button className="companies-view__primary" onClick={openCreate}>
-            <Plus aria-hidden="true" />
-            {t("Nova empresa")}
-          </Button>
+          {canWrite ? (
+            <Button className="companies-view__primary" onClick={openCreate}>
+              <Plus aria-hidden="true" />
+              {t("Nova empresa")}
+            </Button>
+          ) : null}
         </div>
       </header>
 
@@ -364,9 +415,55 @@ export function CompaniesView({
             onChange={event => setQuery(event.target.value)}
           />
         </label>
-        <span>
-          {companies.length}
-          {t(" empresa(s)")}
+        <label>
+          <span>{t("Dados da empresa")}</span>
+          <select
+            value={companyProfileFilter}
+            onChange={event =>
+              setCompanyProfileFilter(
+                event.target.value as
+                  "all" | "with-trade-name" | "without-trade-name"
+              )
+            }
+          >
+            <option value="all">{t("Todas as empresas")}</option>
+            <option value="with-trade-name">{t("Com nome fantasia")}</option>
+            <option value="without-trade-name">{t("Sem nome fantasia")}</option>
+          </select>
+        </label>
+        <label>
+          <span>{t("Ordenar empresas")}</span>
+          <select
+            value={companySort}
+            onChange={event =>
+              setCompanySort(
+                event.target.value as "recent" | "name-asc" | "name-desc"
+              )
+            }
+          >
+            <option value="name-asc">{t("Razão social A-Z")}</option>
+            <option value="name-desc">{t("Razão social Z-A")}</option>
+            <option value="recent">{t("Atualizadas recentemente")}</option>
+          </select>
+        </label>
+        <button
+          type="button"
+          disabled={
+            !query &&
+            companyProfileFilter === "all" &&
+            companySort === "name-asc"
+          }
+          onClick={() => {
+            setQuery("");
+            setCompanyProfileFilter("all");
+            setCompanySort("name-asc");
+          }}
+        >
+          {t("Limpar filtros")}
+        </button>
+        <span aria-live="polite">
+          {visibleCompanies.length} {t("de")} {companies.length}
+          {t(" empresas carregadas")}
         </span>
       </div>
 
@@ -551,14 +648,16 @@ export function CompaniesView({
               <h2>{company.legalName}</h2>
               {company.tradeName ? <p>{company.tradeName}</p> : null}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => openEdit(company)}
-            >
-              <Pencil aria-hidden="true" />
-              {t("Editar")}
-            </Button>
+            {canWrite ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => openEdit(company)}
+              >
+                <Pencil aria-hidden="true" />
+                {t("Editar")}
+              </Button>
+            ) : null}
           </article>
         ))}
       </div>

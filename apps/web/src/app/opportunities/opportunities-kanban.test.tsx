@@ -121,12 +121,18 @@ describe("C3.6.7 opportunities sales funnel", () => {
     );
 
     await screen.findByText("Renovação anual");
+    expect(
+      screen.getByRole("button", { name: "Exportar oportunidades CSV" })
+    ).toBeEnabled();
 
     fireEvent.click(screen.getByRole("button", { name: "Funil" }));
 
     const board = await screen.findByRole("region", {
       name: "Funil de vendas",
     });
+    expect(
+      screen.queryByRole("button", { name: "Exportar oportunidades CSV" })
+    ).not.toBeInTheDocument();
     const columns = within(board).getAllByRole("region");
     const [prospectingColumn, proposalColumn] = columns;
 
@@ -147,5 +153,9 @@ describe("C3.6.7 opportunities sales funnel", () => {
     expect(
       within(proposalColumn).getByText("Expansão de contrato")
     ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Lista" }));
+    expect(
+      screen.getByRole("button", { name: "Exportar oportunidades CSV" })
+    ).toBeEnabled();
   });
 });
