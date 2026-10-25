@@ -618,7 +618,13 @@ export function OpportunitiesView({
           new Date(left.updatedAt).getTime()
         );
       });
-  }, [opportunities, localCustomerFilter, localCloseFilter, localSort, pipelines]);
+  }, [
+    opportunities,
+    localCustomerFilter,
+    localCloseFilter,
+    localSort,
+    pipelines,
+  ]);
 
   return (
     <section
@@ -639,9 +645,7 @@ export function OpportunitiesView({
           <button
             type="button"
             disabled={loading || visibleOpportunities.length === 0}
-            title={t(
-              "Exporta somente as negociações visíveis nesta página"
-            )}
+            title={t("Exporta somente as negociações visíveis nesta página")}
             onClick={() =>
               downloadLoadedCsv(
                 "crm-oportunidades-visiveis.csv",
