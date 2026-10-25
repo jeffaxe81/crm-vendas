@@ -4,6 +4,7 @@ import type { ActivityCreateInput, ActivityUpdateInput } from "@axes/contracts";
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedCalendar } from "../../lib/local-productivity-export";
 import { useTranslation } from "../../i18n/language-provider";
 
 type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
@@ -363,6 +364,23 @@ export function ActivitiesView({
             {t("Organize tarefas e próximos passos da operação comercial.")}
           </p>
         </div>
+        <div className="companies-view__header-actions">
+          <button
+            type="button"
+            disabled={
+              loading ||
+              !activities.some(activity => activity.dueAt !== null)
+            }
+            title={t("Gera lembretes provisórios apenas das atividades carregadas")}
+            onClick={() =>
+              downloadLoadedCalendar(
+                "crm-atividades-carregadas.ics",
+                activities
+              )
+            }
+          >
+            {t("Exportar prazos ICS")}
+          </button>
         {canWrite ? (
           <button
             className="button activities-view__primary"
@@ -371,6 +389,7 @@ export function ActivitiesView({
             {t("Nova atividade")}
           </button>
         ) : null}
+        </div>
       </header>
 
       <form
