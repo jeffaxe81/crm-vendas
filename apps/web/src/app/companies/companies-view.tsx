@@ -426,6 +426,21 @@ export function CompaniesView({
             <option value="recent">{t("Atualizadas recentemente")}</option>
           </select>
         </label>
+        <button
+          type="button"
+          disabled={
+            !query &&
+            companyProfileFilter === "all" &&
+            companySort === "name-asc"
+          }
+          onClick={() => {
+            setQuery("");
+            setCompanyProfileFilter("all");
+            setCompanySort("name-asc");
+          }}
+        >
+          {t("Limpar filtros")}
+        </button>
         <span aria-live="polite">
           {visibleCompanies.length} {t("de")} {companies.length}
           {t(" empresas carregadas")}
