@@ -107,7 +107,10 @@ function escapeCalendarValue(value: string): string {
 }
 
 function toUtcCalendarTime(date: Date): string {
-  return date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  return date
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}Z$/, "Z");
 }
 
 export function downloadLoadedCalendar(
