@@ -364,10 +364,7 @@ export function ActivitiesView({
     const now = new Date();
     const today = now.toDateString();
     return activities.filter(activity => {
-      if (
-        priorityFilter !== "all" &&
-        activity.priority !== priorityFilter
-      ) {
+      if (priorityFilter !== "all" && activity.priority !== priorityFilter) {
         return false;
       }
       if (dueFilter === "overdue") return isOverdue(activity);
@@ -396,13 +393,17 @@ export function ActivitiesView({
           <button
             type="button"
             disabled={
-              loading || !visibleActivities.some(activity => activity.dueAt !== null)
+              loading ||
+              !visibleActivities.some(activity => activity.dueAt !== null)
             }
             title={t(
               "Gera lembretes provisórios apenas das atividades visíveis"
             )}
             onClick={() =>
-              downloadLoadedCalendar("crm-atividades-visiveis.ics", visibleActivities)
+              downloadLoadedCalendar(
+                "crm-atividades-visiveis.ics",
+                visibleActivities
+              )
             }
           >
             {t("Exportar prazos ICS")}
