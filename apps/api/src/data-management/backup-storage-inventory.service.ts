@@ -7,11 +7,7 @@ import { BACKUP_STORE } from "./backup.service";
 const PAGE_SIZE = 200;
 
 type FindingStatus =
-  | "ORPHAN"
-  | "MISSING"
-  | "SIZE_MISMATCH"
-  | "UNREADABLE"
-  | "STATE_INCONSISTENCY";
+  "ORPHAN" | "MISSING" | "SIZE_MISMATCH" | "UNREADABLE" | "STATE_INCONSISTENCY";
 
 type CatalogRecord = {
   organizationId: string;

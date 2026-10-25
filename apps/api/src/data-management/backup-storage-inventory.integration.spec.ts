@@ -5,9 +5,7 @@ import { join } from "node:path";
 
 import { PrismaService } from "../database/prisma.service";
 import { BackupStore, BACKUP_ENVELOPE_OVERHEAD_BYTES } from "./backup-store";
-import {
-  BackupStorageInventoryService,
-} from "./backup-storage-inventory.service";
+import { BackupStorageInventoryService } from "./backup-storage-inventory.service";
 
 describe("global read-only backup storage inventory under tenant RLS", () => {
   let owner: PrismaService;
