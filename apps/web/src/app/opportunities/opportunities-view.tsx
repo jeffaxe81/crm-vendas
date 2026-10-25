@@ -5,7 +5,7 @@ import type {
   OpportunityMoveInput,
   OpportunityUpdateInput,
 } from "@axes/contracts";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { downloadLoadedCsv } from "../../lib/local-productivity-export";
@@ -164,6 +164,15 @@ export function OpportunitiesView({
     null
   );
   const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
+  const [localCustomerFilter, setLocalCustomerFilter] = useState<
+    "all" | "company" | "contact"
+  >("all");
+  const [localCloseFilter, setLocalCloseFilter] = useState<
+    "all" | "overdue" | "this-month" | "unscheduled"
+  >("all");
+  const [localSort, setLocalSort] = useState<
+    "updated" | "title" | "close-date"
+  >("updated");
   const [boardPipelineId, setBoardPipelineId] = useState("");
   const [selectedOpportunityId, setSelectedOpportunityId] = useState<
     string | null
@@ -566,6 +575,51 @@ export function OpportunitiesView({
     }
   }
 
+  const visibleOpportunities = useMemo(() => {
+    const now = new Date();
+    return opportunities
+      .filter(opportunity => {
+        if (localCustomerFilter === "company" && !opportunity.companyId)
+          return false;
+        if (localCustomerFilter === "contact" && !opportunity.contactId)
+          return false;
+        if (localCloseFilter === "unscheduled")
+          return opportunity.expectedCloseAt === null;
+        if (localCloseFilter !== "all") {
+          if (!opportunity.expectedCloseAt) return false;
+          const expected = new Date(opportunity.expectedCloseAt);
+          if (localCloseFilter === "overdue") {
+            const stage = pipelines
+              .find(item => item.id === opportunity.pipelineId)
+              ?.stages.find(item => item.id === opportunity.stageId);
+            return (stage?.kind ?? "OPEN") === "OPEN" && expected < now;
+          }
+          return (
+            expected.getFullYear() === now.getFullYear() &&
+            expected.getMonth() === now.getMonth()
+          );
+        }
+        return true;
+      })
+      .sort((left, right) => {
+        if (localSort === "title")
+          return left.title.localeCompare(right.title, "pt-BR");
+        if (localSort === "close-date") {
+          const leftDate = left.expectedCloseAt
+            ? new Date(left.expectedCloseAt).getTime()
+            : Number.POSITIVE_INFINITY;
+          const rightDate = right.expectedCloseAt
+            ? new Date(right.expectedCloseAt).getTime()
+            : Number.POSITIVE_INFINITY;
+          return leftDate - rightDate;
+        }
+        return (
+          new Date(right.updatedAt).getTime() -
+          new Date(left.updatedAt).getTime()
+        );
+      });
+  }, [opportunities, localCustomerFilter, localCloseFilter, localSort, pipelines]);
+
   return (
     <section
       className="opportunities-view"
@@ -810,6 +864,80 @@ export function OpportunitiesView({
         </button>
       </div>
 
+      {viewMode === "list" ? (
+        <div className="opportunities-view__local-filters">
+          <label>
+            <span>{t("Tipo de cliente")}</span>
+            <select
+              value={localCustomerFilter}
+              onChange={event =>
+                setLocalCustomerFilter(
+                  event.target.value as "all" | "company" | "contact"
+                )
+              }
+            >
+              <option value="all">{t("Todos")}</option>
+              <option value="company">{t("Empresas")}</option>
+              <option value="contact">{t("Contatos")}</option>
+            </select>
+          </label>
+          <label>
+            <span>{t("Previsão de fechamento")}</span>
+            <select
+              value={localCloseFilter}
+              onChange={event =>
+                setLocalCloseFilter(
+                  event.target.value as
+                    | "all"
+                    | "overdue"
+                    | "this-month"
+                    | "unscheduled"
+                )
+              }
+            >
+              <option value="all">{t("Todas")}</option>
+              <option value="overdue">{t("Em atraso")}</option>
+              <option value="this-month">{t("Neste mês")}</option>
+              <option value="unscheduled">{t("Sem previsão")}</option>
+            </select>
+          </label>
+          <label>
+            <span>{t("Ordenar oportunidades")}</span>
+            <select
+              value={localSort}
+              onChange={event =>
+                setLocalSort(
+                  event.target.value as "updated" | "title" | "close-date"
+                )
+              }
+            >
+              <option value="updated">{t("Atualizadas recentemente")}</option>
+              <option value="title">{t("Título A-Z")}</option>
+              <option value="close-date">{t("Previsão mais próxima")}</option>
+            </select>
+          </label>
+          <button
+            type="button"
+            disabled={
+              localCustomerFilter === "all" &&
+              localCloseFilter === "all" &&
+              localSort === "updated"
+            }
+            onClick={() => {
+              setLocalCustomerFilter("all");
+              setLocalCloseFilter("all");
+              setLocalSort("updated");
+            }}
+          >
+            {t("Limpar filtros")}
+          </button>
+          <p aria-live="polite">
+            {visibleOpportunities.length} {t("de")} {opportunities.length}{" "}
+            {t("oportunidades carregadas")}
+          </p>
+        </div>
+      ) : null}
+
       {error ? (
         <p className="opportunities-view__error" role="alert">
           {t(error)}
@@ -831,9 +959,19 @@ export function OpportunitiesView({
         </div>
       ) : null}
 
-      {!loading && !error && opportunities.length > 0 && viewMode === "list" ? (
+      {!loading &&
+      !error &&
+      viewMode === "list" &&
+      opportunities.length > 0 &&
+      visibleOpportunities.length === 0 ? (
+        <p className="opportunities-view__status">
+          {t("Nenhuma oportunidade corresponde aos filtros locais.")}
+        </p>
+      ) : null}
+
+      {!loading && !error && visibleOpportunities.length > 0 && viewMode === "list" ? (
         <ul className="opportunities-view__list">
-          {opportunities.map(opportunity => {
+          {visibleOpportunities.map(opportunity => {
             const opportunityPipeline = pipelines.find(
               pipeline => pipeline.id === opportunity.pipelineId
             );
