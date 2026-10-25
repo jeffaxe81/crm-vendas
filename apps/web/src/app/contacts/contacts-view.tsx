@@ -705,6 +705,21 @@ export function ContactsView({
             <option value="name-desc">{t("Nome Z-A")}</option>
           </select>
         </label>
+        <button
+          type="button"
+          disabled={
+            !contactSearch &&
+            channelFilter === "all" &&
+            contactSort === "recent"
+          }
+          onClick={() => {
+            setContactSearch("");
+            setChannelFilter("all");
+            setContactSort("recent");
+          }}
+        >
+          {t("Limpar filtros")}
+        </button>
         <p aria-live="polite">
           {visibleContacts.length} {t("de")} {contacts.length}{" "}
           {t("contatos carregados")}
