@@ -8,6 +8,7 @@ import { BackupAdministrationController } from "./backup-administration.controll
 import { BackupAdministrationService } from "./backup-administration.service";
 import { BackupDeletionService } from "./backup-deletion.service";
 import { BackupScheduleService } from "./backup-schedule.service";
+import { BackupStorageInventoryService } from "./backup-storage-inventory.service";
 import { BackupStore } from "./backup-store";
 import { BackupWorkerRunner } from "./backup-worker.runner";
 import { BackupWorkerRuntime } from "./backup-worker.runtime";
@@ -56,6 +57,7 @@ import { TenantStorageReconciliationService } from "./tenant-storage-reconciliat
     BackupAdministrationService,
     BackupDeletionService,
     BackupScheduleService,
+    BackupStorageInventoryService,
     DataPreviewService,
     TenantPurgeService,
     TenantStorageAllocationService,
