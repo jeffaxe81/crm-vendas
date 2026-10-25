@@ -51,6 +51,33 @@ export type VcardContact = {
   channels?: readonly { type: string; value: string }[];
 };
 
+function serializeContentLines(lines: readonly string[]): string {
+  const encoder = new TextEncoder();
+  return (
+    lines
+      .map(line => {
+        const folded: string[] = [];
+        let segment = "";
+        let octets = 0;
+        // RFC 5545/2425: count UTF-8 octets, including the continuation space,
+        // and never split a code point between physical lines.
+        for (const character of line) {
+          const size = encoder.encode(character).length;
+          if (octets + size > 75) {
+            folded.push(segment);
+            segment = " ";
+            octets = 1;
+          }
+          segment += character;
+          octets += size;
+        }
+        folded.push(segment);
+        return folded.join("\r\n");
+      })
+      .join("\r\n") + "\r\n"
+  );
+}
+
 function escapeCardValue(value: string): string {
   return value
     .replace(/\\/g, "\\\\")
@@ -86,7 +113,7 @@ export function downloadLoadedVcards(
   }
   downloadLocalFile(
     filename,
-    lines.join("\r\n") + "\r\n",
+    serializeContentLines(lines),
     "text/vcard;charset=utf-8"
   );
 }
@@ -147,7 +174,7 @@ export function downloadLoadedCalendar(
   lines.push("END:VCALENDAR");
   downloadLocalFile(
     filename,
-    lines.join("\r\n") + "\r\n",
+    serializeContentLines(lines),
     "text/calendar;charset=utf-8"
   );
 }
