@@ -473,6 +473,16 @@ export function ActivitiesView({
             <option value="without-date">{t("Sem prazo")}</option>
           </select>
         </label>
+        <button
+          type="button"
+          disabled={priorityFilter === "all" && dueFilter === "all"}
+          onClick={() => {
+            setPriorityFilter("all");
+            setDueFilter("all");
+          }}
+        >
+          {t("Limpar filtros")}
+        </button>
         <p aria-live="polite">
           {visibleActivities.length} {t("de")} {activities.length}{" "}
           {t("atividades carregadas")}
