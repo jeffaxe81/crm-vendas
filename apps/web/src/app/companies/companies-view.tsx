@@ -23,6 +23,7 @@ import {
 
 import { Button } from "../../components/ui/button";
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedCsv } from "../../lib/local-productivity-export";
 import { FileUp, Pencil, Plus, X } from "lucide-react";
 import { useTranslation } from "../../i18n/language-provider";
 
@@ -340,6 +341,25 @@ export function CompaniesView({
           </p>
         </div>
         <div className="companies-view__header-actions">
+          <Button
+            variant="outline"
+            disabled={loading || visibleCompanies.length === 0}
+            title={t("Exporta apenas as empresas exibidas nesta página")}
+            onClick={() =>
+              downloadLoadedCsv(
+                "crm-empresas-visiveis.csv",
+                ["Razão social", "Nome fantasia", "Documento", "Website"],
+                visibleCompanies.map(company => [
+                  company.legalName,
+                  company.tradeName,
+                  company.document,
+                  company.website,
+                ])
+              )
+            }
+          >
+            {t("Exportar empresas CSV")}
+          </Button>
           {canWrite ? (
             <Button variant="outline" onClick={openImport} disabled={importing}>
               <FileUp aria-hidden="true" />
