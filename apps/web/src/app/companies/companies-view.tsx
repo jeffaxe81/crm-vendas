@@ -78,6 +78,12 @@ export function CompaniesView({
   const { t } = useTranslation();
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
   const [query, setQuery] = useState("");
+  const [companyProfileFilter, setCompanyProfileFilter] = useState<
+    "all" | "with-trade-name" | "without-trade-name"
+  >("all");
+  const [companySort, setCompanySort] = useState<
+    "recent" | "name-asc" | "name-desc"
+  >("name-asc");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
@@ -131,16 +137,39 @@ export function CompaniesView({
 
   const visibleCompanies = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
-    if (!normalizedQuery) {
-      return companies;
-    }
-
-    return companies.filter(company =>
-      [company.legalName, company.tradeName ?? ""].some(value =>
-        value.toLocaleLowerCase("pt-BR").includes(normalizedQuery)
-      )
-    );
-  }, [companies, query]);
+    return companies
+      .filter(company => {
+        const hasTradeName = Boolean(company.tradeName?.trim());
+        if (companyProfileFilter === "with-trade-name" && !hasTradeName) {
+          return false;
+        }
+        if (companyProfileFilter === "without-trade-name" && hasTradeName) {
+          return false;
+        }
+        return (
+          !normalizedQuery ||
+          [
+            company.legalName,
+            company.tradeName ?? "",
+            company.document ?? "",
+            company.website ?? "",
+          ].some(value =>
+            value.toLocaleLowerCase("pt-BR").includes(normalizedQuery)
+          )
+        );
+      })
+      .sort((a, b) => {
+        if (companySort === "name-asc") {
+          return a.legalName.localeCompare(b.legalName, "pt-BR");
+        }
+        if (companySort === "name-desc") {
+          return b.legalName.localeCompare(a.legalName, "pt-BR");
+        }
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      });
+  }, [companies, query, companyProfileFilter, companySort]);
 
   function resetImportState() {
     setImportFile(null);
@@ -364,9 +393,42 @@ export function CompaniesView({
             onChange={event => setQuery(event.target.value)}
           />
         </label>
-        <span>
-          {companies.length}
-          {t(" empresa(s)")}
+        <label>
+          <span>{t("Dados da empresa")}</span>
+          <select
+            value={companyProfileFilter}
+            onChange={event =>
+              setCompanyProfileFilter(
+                event.target.value as
+                  | "all"
+                  | "with-trade-name"
+                  | "without-trade-name"
+              )
+            }
+          >
+            <option value="all">{t("Todas as empresas")}</option>
+            <option value="with-trade-name">{t("Com nome fantasia")}</option>
+            <option value="without-trade-name">{t("Sem nome fantasia")}</option>
+          </select>
+        </label>
+        <label>
+          <span>{t("Ordenar empresas")}</span>
+          <select
+            value={companySort}
+            onChange={event =>
+              setCompanySort(
+                event.target.value as "recent" | "name-asc" | "name-desc"
+              )
+            }
+          >
+            <option value="name-asc">{t("Razão social A-Z")}</option>
+            <option value="name-desc">{t("Razão social Z-A")}</option>
+            <option value="recent">{t("Atualizadas recentemente")}</option>
+          </select>
+        </label>
+        <span aria-live="polite">
+          {visibleCompanies.length} {t("de")} {companies.length}
+          {t(" empresas carregadas")}
         </span>
       </div>
 
