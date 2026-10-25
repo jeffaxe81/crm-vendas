@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedCalendar } from "../../lib/local-productivity-export";
 import { useTranslation } from "../../i18n/language-provider";
 
 type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
@@ -229,6 +230,19 @@ export function AgendaView({
             )}
           </p>
         </div>
+        <button
+          type="button"
+          disabled={loading || activities.length === 0}
+          title={t("Exporta somente a página carregada; horários são provisórios")}
+          onClick={() =>
+            downloadLoadedCalendar(
+              "crm-agenda-pagina.ics",
+              activities
+            )
+          }
+        >
+          {t("Exportar agenda ICS")}
+        </button>
       </header>
 
       <nav
