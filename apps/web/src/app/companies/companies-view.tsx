@@ -422,9 +422,7 @@ export function CompaniesView({
             onChange={event =>
               setCompanyProfileFilter(
                 event.target.value as
-                  | "all"
-                  | "with-trade-name"
-                  | "without-trade-name"
+                  "all" | "with-trade-name" | "without-trade-name"
               )
             }
           >
