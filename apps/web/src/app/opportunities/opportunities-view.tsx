@@ -638,13 +638,13 @@ export function OpportunitiesView({
         <div className="companies-view__header-actions">
           <button
             type="button"
-            disabled={loading || opportunities.length === 0}
+            disabled={loading || visibleOpportunities.length === 0}
             title={t(
-              "Exporta somente as negociações carregadas nesta página"
+              "Exporta somente as negociações visíveis nesta página"
             )}
             onClick={() =>
               downloadLoadedCsv(
-                "crm-oportunidades-carregadas.csv",
+                "crm-oportunidades-visiveis.csv",
                 [
                   "Título",
                   "Valor estimado",
@@ -652,7 +652,7 @@ export function OpportunitiesView({
                   "Cliente",
                   "Observações",
                 ],
-                opportunities.map(opportunity => [
+                visibleOpportunities.map(opportunity => [
                   opportunity.title,
                   opportunity.estimatedValue,
                   opportunity.expectedCloseAt,
