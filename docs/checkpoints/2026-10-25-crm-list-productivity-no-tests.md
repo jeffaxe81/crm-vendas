@@ -17,7 +17,6 @@ Data: 2026-10-25. Base da branch: `main@7310e045e21dbfa49ef87d37fc7a1db0add7d017
 - **Pedido expresso:** avançar sem adicionar ou executar testes neste ciclo. Esta entrega não foi validada por testes manuais ou automatizados durante a implementação e não tem evidência de homologação.
 - Manter PR como **draft**, sem merge na `main`, deploy ou GO, até validações e autorização específicas em etapa posterior.
 
-
 ## Continuidade da mesma PR — novas funções sem testes
 
 - **Oportunidades (visão de lista):** filtro local por cliente vinculado a empresa/contato, por previsão de fechamento (atrasada, neste mês, sem previsão) e ordenação (atualizadas recentemente, título A-Z, fechamento mais próximo). A visão Kanban permanece com o comportamento anterior.
