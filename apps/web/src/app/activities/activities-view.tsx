@@ -1,7 +1,7 @@
 "use client";
 
 import type { ActivityCreateInput, ActivityUpdateInput } from "@axes/contracts";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { useTranslation } from "../../i18n/language-provider";
@@ -109,6 +109,12 @@ export function ActivitiesView({
   const { t } = useTranslation();
   const [activities, setActivities] = useState<ActivityRecord[]>([]);
   const [status, setStatus] = useState<ActivityStatus>("PENDING");
+  const [priorityFilter, setPriorityFilter] = useState<
+    "all" | ActivityPriority
+  >("all");
+  const [dueFilter, setDueFilter] = useState<
+    "all" | "overdue" | "today" | "without-date"
+  >("all");
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -353,6 +359,28 @@ export function ActivitiesView({
     }
   }
 
+  const visibleActivities = useMemo(() => {
+    const now = new Date();
+    const today = now.toDateString();
+    return activities.filter(activity => {
+      if (
+        priorityFilter !== "all" &&
+        activity.priority !== priorityFilter
+      ) {
+        return false;
+      }
+      if (dueFilter === "overdue") return isOverdue(activity);
+      if (dueFilter === "without-date") return activity.dueAt === null;
+      if (dueFilter === "today") {
+        return (
+          activity.dueAt !== null &&
+          new Date(activity.dueAt).toDateString() === today
+        );
+      }
+      return true;
+    });
+  }, [activities, priorityFilter, dueFilter]);
+
   return (
     <section className="activities-view" aria-labelledby="activities-title">
       <header className="activities-view__header">
@@ -409,6 +437,47 @@ export function ActivitiesView({
           </button>
         ))}
       </nav>
+
+      <div className="activities-view__quick-filters">
+        <label>
+          <span>{t("Filtrar prioridade")}</span>
+          <select
+            value={priorityFilter}
+            onChange={event =>
+              setPriorityFilter(event.target.value as "all" | ActivityPriority)
+            }
+          >
+            <option value="all">{t("Todas as prioridades")}</option>
+            <option value="HIGH">{t("Alta")}</option>
+            <option value="MEDIUM">{t("Média")}</option>
+            <option value="LOW">{t("Baixa")}</option>
+          </select>
+        </label>
+        <label>
+          <span>{t("Filtrar prazo")}</span>
+          <select
+            value={dueFilter}
+            onChange={event =>
+              setDueFilter(
+                event.target.value as
+                  | "all"
+                  | "overdue"
+                  | "today"
+                  | "without-date"
+              )
+            }
+          >
+            <option value="all">{t("Todos os prazos")}</option>
+            <option value="overdue">{t("Atrasadas")}</option>
+            <option value="today">{t("Vencem hoje")}</option>
+            <option value="without-date">{t("Sem prazo")}</option>
+          </select>
+        </label>
+        <p aria-live="polite">
+          {visibleActivities.length} {t("de")} {activities.length}{" "}
+          {t("atividades carregadas")}
+        </p>
+      </div>
 
       {error ? (
         <p className="activities-view__error" role="alert">
@@ -575,9 +644,9 @@ export function ActivitiesView({
         </p>
       ) : null}
 
-      {!loading && !error && activities.length > 0 ? (
+      {!loading && !error && visibleActivities.length > 0 ? (
         <ul className="activities-view__list">
-          {activities.map(activity => {
+          {visibleActivities.map(activity => {
             const overdue = isOverdue(activity);
 
             return (
@@ -672,13 +741,13 @@ export function ActivitiesView({
         </ul>
       ) : null}
 
-      {!loading && !error && activities.length === 0 ? (
+      {!loading && !error && visibleActivities.length === 0 ? (
         <div className="activities-view__empty">
           <strong>
             {t("Nenhuma atividade em ")}
             {t(statusLabels[status].toLowerCase())}.
           </strong>
-          <span>{t("As atividades deste status aparecerão aqui.")}</span>
+          <span>{t("Ajuste os filtros ou selecione outro status.")}</span>
         </div>
       ) : null}
     </section>
