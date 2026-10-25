@@ -76,10 +76,7 @@ export function downloadLoadedVcards(
       const value = escapeCardValue(channel.value);
       if (channel.type === "EMAIL") {
         lines.push("EMAIL;TYPE=INTERNET:" + value);
-      } else if (
-        channel.type === "MOBILE" ||
-        channel.type === "WHATSAPP"
-      ) {
+      } else if (channel.type === "MOBILE" || channel.type === "WHATSAPP") {
         lines.push("TEL;TYPE=CELL:" + value);
       } else if (channel.type === "PHONE") {
         lines.push("TEL;TYPE=VOICE:" + value);
