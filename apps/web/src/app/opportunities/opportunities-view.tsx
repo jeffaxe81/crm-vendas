@@ -885,6 +885,21 @@ export function OpportunitiesView({
               <option value="close-date">{t("Previsão mais próxima")}</option>
             </select>
           </label>
+          <button
+            type="button"
+            disabled={
+              localCustomerFilter === "all" &&
+              localCloseFilter === "all" &&
+              localSort === "updated"
+            }
+            onClick={() => {
+              setLocalCustomerFilter("all");
+              setLocalCloseFilter("all");
+              setLocalSort("updated");
+            }}
+          >
+            {t("Limpar filtros")}
+          </button>
           <p aria-live="polite">
             {visibleOpportunities.length} {t("de")} {opportunities.length}{" "}
             {t("oportunidades carregadas")}
