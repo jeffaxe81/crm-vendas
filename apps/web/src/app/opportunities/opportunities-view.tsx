@@ -8,6 +8,7 @@ import type {
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedCsv } from "../../lib/local-productivity-export";
 import { OpportunityItemsPanel, formatMoney } from "./opportunity-items-panel";
 import { useTranslation } from "../../i18n/language-provider";
 
@@ -580,6 +581,27 @@ export function OpportunitiesView({
             {t("Acompanhe as negociações comerciais em uma visão objetiva.")}
           </p>
         </div>
+        <div className="companies-view__header-actions">
+          <button
+            type="button"
+            disabled={loading || opportunities.length === 0}
+            title={t("Exporta somente as negociações carregadas nesta página")}
+            onClick={() =>
+              downloadLoadedCsv(
+                "crm-oportunidades-carregadas.csv",
+                ["Título", "Valor estimado", "Previsão de fechamento", "Cliente", "Observações"],
+                opportunities.map(opportunity => [
+                  opportunity.title,
+                  opportunity.estimatedValue,
+                  opportunity.expectedCloseAt,
+                  opportunity.companyId ? "Empresa" : "Contato",
+                  opportunity.notes,
+                ])
+              )
+            }
+          >
+            {t("Exportar oportunidades CSV")}
+          </button>
         {canWrite ? (
           <button
             className="button"
@@ -589,6 +611,7 @@ export function OpportunitiesView({
             {t("Nova oportunidade")}
           </button>
         ) : null}
+        </div>
       </header>
 
       {canWrite && createOpen ? (
