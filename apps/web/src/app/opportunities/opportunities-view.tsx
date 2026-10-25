@@ -642,32 +642,34 @@ export function OpportunitiesView({
           </p>
         </div>
         <div className="companies-view__header-actions">
-          <button
-            type="button"
-            disabled={loading || visibleOpportunities.length === 0}
-            title={t("Exporta somente as negociações visíveis nesta página")}
-            onClick={() =>
-              downloadLoadedCsv(
-                "crm-oportunidades-visiveis.csv",
-                [
-                  "Título",
-                  "Valor estimado",
-                  "Previsão de fechamento",
-                  "Cliente",
-                  "Observações",
-                ],
-                visibleOpportunities.map(opportunity => [
-                  opportunity.title,
-                  opportunity.estimatedValue,
-                  opportunity.expectedCloseAt,
-                  opportunity.companyId ? "Empresa" : "Contato",
-                  opportunity.notes,
-                ])
-              )
-            }
-          >
-            {t("Exportar oportunidades CSV")}
-          </button>
+          {viewMode === "list" ? (
+            <button
+              type="button"
+              disabled={loading || visibleOpportunities.length === 0}
+              title={t("Exporta somente as negociações visíveis nesta página")}
+              onClick={() =>
+                downloadLoadedCsv(
+                  "crm-oportunidades-visiveis.csv",
+                  [
+                    "Título",
+                    "Valor estimado",
+                    "Previsão de fechamento",
+                    "Cliente",
+                    "Observações",
+                  ],
+                  visibleOpportunities.map(opportunity => [
+                    opportunity.title,
+                    opportunity.estimatedValue,
+                    opportunity.expectedCloseAt,
+                    opportunity.companyId ? "Empresa" : "Contato",
+                    opportunity.notes,
+                  ])
+                )
+              }
+            >
+              {t("Exportar oportunidades CSV")}
+            </button>
+          ) : null}
           {canWrite ? (
             <button
               className="button"

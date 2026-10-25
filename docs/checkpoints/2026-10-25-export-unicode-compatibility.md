@@ -18,3 +18,7 @@ Os exportadores concatenavam propriedades completas sem dobragem. Regressões co
 ## Entrega
 
 Branch separada; não altera main nem o deploy local ativo. A PR #309 e seus gates de exportação/homologação continuam aplicáveis. Não há novas rotas, migrações ou operações sobre dados. Este incremento não declara compatibilidade homologada com aplicativos externos específicos.
+
+## Revisão anterior à integração em main
+
+Pedido posterior do responsável: seguir e commitar em main. A PR #310 foi direcionada à main com o pacote completo da #309, mantendo suas PRs originais preservadas. Revisão independente encontrou CSV de oportunidades disponível no Kanban mesmo usando filtros da lista. A exportação agora aparece somente na visão de lista, cujo conjunto de registros ela exporta. A regressão reproduziu a presença indevida do botão antes da correção e passou depois, cobrindo também sua volta ao retornar à lista. Integração depende do CI do novo SHA; não realiza deploy nem aprova operação de produção.
