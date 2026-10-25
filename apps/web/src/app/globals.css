@@ -2937,7 +2937,6 @@ button.save-feedback-button[data-save-status="error"] {
   font-size: 0.85rem;
 }
 
-
 /* Quick reset actions share the same compact treatment across CRM lists. */
 .contacts-view__filters > button,
 .activities-view__quick-filters > button,
