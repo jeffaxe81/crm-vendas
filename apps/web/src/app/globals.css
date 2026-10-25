@@ -2901,3 +2901,39 @@ button.save-feedback-button[data-save-status="error"] {
   padding: 16px;
   color: #52677f;
 }
+
+.opportunities-view__local-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--crm-border);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.opportunities-view__local-filters label {
+  display: grid;
+  flex: 1 1 190px;
+  gap: 6px;
+  color: #263e58;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.opportunities-view__local-filters select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #bfcddd;
+  border-radius: 9px;
+  background: #fbfdff;
+  color: var(--crm-text);
+}
+
+.opportunities-view__local-filters p {
+  margin: 0;
+  color: #52677f;
+  font-size: 0.85rem;
+}
