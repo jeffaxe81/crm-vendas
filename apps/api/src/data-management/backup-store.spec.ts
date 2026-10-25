@@ -195,5 +195,4 @@ describe("private encrypted backup storage", () => {
     expect(after).toEqual(before);
     expect(await readFile(external, "utf8")).toBe("do not follow");
   });
-
 });
