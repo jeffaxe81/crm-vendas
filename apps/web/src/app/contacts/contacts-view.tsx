@@ -573,7 +573,9 @@ export function ContactsView({
           <button
             type="button"
             disabled={loading || visibleContacts.length === 0}
-            title={t("Exporta somente os contatos visíveis pelos filtros locais")}
+            title={t(
+              "Exporta somente os contatos visíveis pelos filtros locais"
+            )}
             onClick={() =>
               downloadLoadedVcards("crm-contatos-visiveis.vcf", visibleContacts)
             }
@@ -590,17 +592,19 @@ export function ContactsView({
               {t("Importar CSV")}
             </button>
           ) : null}
-          <button
-            type="button"
-            className="button contacts-view__primary"
-            onClick={() => {
+          {canWrite ? (
+            <button
+              type="button"
+              className="button contacts-view__primary"
+              onClick={() => {
               setImportOpen(false);
               contactSave.reset();
               setContactFormOpen(true);
-            }}
-          >
-            {t("Novo contato")}
-          </button>
+              }}
+            >
+              {t("Novo contato")}
+            </button>
+          ) : null}
         </div>
       </header>
 
