@@ -5,7 +5,9 @@ import { join } from "node:path";
 
 import { PrismaService } from "../database/prisma.service";
 import { BackupStore, BACKUP_ENVELOPE_OVERHEAD_BYTES } from "./backup-store";
-import { BackupStorageInventoryService } from "./backup-storage-inventory.service";
+import {
+  BackupStorageInventoryService,
+} from "./backup-storage-inventory.service";
 
 describe("global read-only backup storage inventory under tenant RLS", () => {
   let owner: PrismaService;
@@ -88,7 +90,7 @@ describe("global read-only backup storage inventory under tenant RLS", () => {
     });
   }
 
-  it("reconciles every tenant through withTenant and reports sanitized read-only findings", async () => {
+  it("reconciles tenant catalogs with sanitized findings", async () => {
     const [orgA, orgB, orgC] = await Promise.all([
       createOrganization("Inventory A", "inventory-a"),
       createOrganization("Inventory B", "inventory-b"),
@@ -241,7 +243,7 @@ describe("global read-only backup storage inventory under tenant RLS", () => {
     expect(await store.read(orphanId)).toEqual(Buffer.alloc(25));
   });
 
-  it("does not report transient rows as missing and stays incomplete without configured storage", async () => {
+  it("leaves unconfigured storage incomplete", async () => {
     const org = await createOrganization("Inventory Null", "inventory-null");
     await catalogBackup({ organizationId: org.id, state: "RUNNING" });
     await catalogBackup({ organizationId: org.id, state: "DELETING" });
