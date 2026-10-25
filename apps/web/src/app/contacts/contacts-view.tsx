@@ -693,10 +693,7 @@ export function ContactsView({
             value={channelFilter}
             onChange={event =>
               setChannelFilter(
-                event.target.value as
-                  | "all"
-                  | "with-channel"
-                  | "without-channel"
+                event.target.value as "all" | "with-channel" | "without-channel"
               )
             }
           >
