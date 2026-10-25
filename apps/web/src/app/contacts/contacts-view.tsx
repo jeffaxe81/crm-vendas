@@ -572,10 +572,10 @@ export function ContactsView({
         <div className="companies-view__header-actions">
           <button
             type="button"
-            disabled={loading || contacts.length === 0}
-            title={t("Exporta somente os contatos carregados nesta página")}
+            disabled={loading || visibleContacts.length === 0}
+            title={t("Exporta somente os contatos visíveis pelos filtros locais")}
             onClick={() =>
-              downloadLoadedVcards("crm-contatos-carregados.vcf", contacts)
+              downloadLoadedVcards("crm-contatos-visiveis.vcf", visibleContacts)
             }
           >
             {t("Exportar contatos VCF")}
