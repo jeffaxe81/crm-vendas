@@ -2843,3 +2843,119 @@ button.save-feedback-button[data-save-status="error"] {
   outline: 3px solid #f59e0b;
   outline-offset: 3px;
 }
+
+/* CRM list productivity filters: local to the records already loaded. */
+.contacts-view__filters,
+.activities-view__quick-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--crm-border);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.contacts-view__filters label,
+.activities-view__quick-filters label {
+  display: grid;
+  flex: 1 1 190px;
+  gap: 6px;
+  color: #263e58;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.contacts-view__filters input,
+.contacts-view__filters select,
+.activities-view__quick-filters select,
+.companies-view__toolbar select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #bfcddd;
+  border-radius: 9px;
+  background: #fbfdff;
+  color: var(--crm-text);
+}
+
+.contacts-view__filters p,
+.activities-view__quick-filters p {
+  margin: 0;
+  color: #52677f;
+  font-size: 0.85rem;
+}
+
+.companies-view__toolbar {
+  flex-wrap: wrap;
+}
+
+.companies-view__toolbar label {
+  flex: 1 1 190px;
+  max-width: 380px;
+}
+
+.contacts-view__empty {
+  padding: 16px;
+  color: #52677f;
+}
+
+.opportunities-view__local-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--crm-border);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.opportunities-view__local-filters label {
+  display: grid;
+  flex: 1 1 190px;
+  gap: 6px;
+  color: #263e58;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.opportunities-view__local-filters select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #bfcddd;
+  border-radius: 9px;
+  background: #fbfdff;
+  color: var(--crm-text);
+}
+
+.opportunities-view__local-filters p {
+  margin: 0;
+  color: #52677f;
+  font-size: 0.85rem;
+}
+
+/* Quick reset actions share the same compact treatment across CRM lists. */
+.contacts-view__filters > button,
+.activities-view__quick-filters > button,
+.opportunities-view__local-filters > button,
+.companies-view__toolbar > button {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #bfcddd;
+  border-radius: 9px;
+  background: #f7f9fc;
+  color: #27445f;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.contacts-view__filters > button:disabled,
+.activities-view__quick-filters > button:disabled,
+.opportunities-view__local-filters > button:disabled,
+.companies-view__toolbar > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
