@@ -597,9 +597,9 @@ export function ContactsView({
               type="button"
               className="button contacts-view__primary"
               onClick={() => {
-              setImportOpen(false);
-              contactSave.reset();
-              setContactFormOpen(true);
+                setImportOpen(false);
+                contactSave.reset();
+                setContactFormOpen(true);
               }}
             >
               {t("Novo contato")}
