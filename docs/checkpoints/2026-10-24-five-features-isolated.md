@@ -40,3 +40,11 @@ Todo o desenvolvimento e a validação deste pacote ocorrem no worktree `/worksp
 Os comandos foram executados em `feat/five-crm-features-isolated-20261024`. A `main` local permaneceu em `22400048e0c93d4b053133d46bdd8893fb15baa2`; nenhum teste, push ou merge foi executado nela como parte deste pacote.
 
 Ambiente local: Node 24.19.0/pnpm 11.25.0, com aviso de divergência das versões fixadas. PostgreSQL 18 descartável em porta local exclusiva, banco sintético e papel sem superusuário/BYPASSRLS. Nenhum dado ou serviço de produção foi usado.
+
+## Cobertura de navegador adicional — 25/10/2026
+
+Adicionada a jornada `tests/e2e/dashboard-volume.spec.ts`, sem mocks nem alteração de código de produção. Uma organização exclusiva é criada pelo fluxo público. O teste abre `Resumo gerencial` e a aba `Volume de dados`, confirma a contagem inicial e `Cache-Control: private, no-store`, cria uma empresa com a sessão corrente do navegador e atualiza o painel. São verificados o total de empresas, o delta `+1`, o download real do CSV com os agregados e a ausência do nome individual da empresa. Recarregar a página preserva a contagem e descarta a comparação transitória.
+
+A primeira execução desta jornada não selecionava a aba de volume e terminou por timeout; a navegação do teste foi corrigida. A jornada direcionada passou e, em seguida, `pnpm test:e2e` completo passou com **8 testes**, em Chromium e banco descartável, usando papel restrito no servidor. A revisão independente não encontrou bloqueadores no novo teste.
+
+Essa jornada não é prova isolada de acesso entre tenants nem de restauração pública. Os controles de autorização/RLS e as políticas internas de restauração continuam cobertos pelas suítes de API/componentes já registradas. Toda a execução permanece no mesmo worktree/branch isolado, sem testes ou alterações na `main` e sem deploy.
