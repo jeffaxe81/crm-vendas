@@ -242,6 +242,55 @@ describe("global read-only backup storage inventory under tenant RLS", () => {
     expect(await store.read(orphanId)).toEqual(Buffer.alloc(25));
   });
 
+  it("attributes unreadable deleted objects to their tenant and reports both anomalies", async () => {
+    const org = await createOrganization(
+      "Inventory unreadable",
+      "inventory-unreadable"
+    );
+    const deleted = await catalogBackup({
+      organizationId: org.id,
+      state: "DELETED",
+    });
+    await writeFile(externalTarget, "must not be inspected");
+    await symlink(
+      externalTarget,
+      join(storageDirectory, `${deleted.id}.backup`)
+    );
+
+    const result = await new BackupStorageInventoryService(
+      restricted,
+      store
+    ).scan();
+    expect(result.physicalObjectCount).toBe(1);
+    expect(result.physicalBytes).toBe("0");
+    expect(result.tenants).toEqual([
+      expect.objectContaining({
+        organizationId: org.id,
+        physicalObjectCount: 1,
+        physicalBytes: "0",
+      }),
+    ]);
+    expect(result.unreadableCount).toBe(1);
+    expect(result.stateInconsistencyCount).toBe(1);
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          backupId: deleted.id,
+          organizationId: org.id,
+          status: "UNREADABLE",
+          filesystemBytes: null,
+        }),
+        expect.objectContaining({
+          backupId: deleted.id,
+          organizationId: org.id,
+          status: "STATE_INCONSISTENCY",
+          filesystemBytes: null,
+        }),
+      ])
+    );
+    expect(await readdir(storageDirectory)).toEqual([`${deleted.id}.backup`]);
+  });
+
   it("leaves unconfigured storage incomplete", async () => {
     const org = await createOrganization("Inventory Null", "inventory-null");
     await catalogBackup({ organizationId: org.id, state: "RUNNING" });

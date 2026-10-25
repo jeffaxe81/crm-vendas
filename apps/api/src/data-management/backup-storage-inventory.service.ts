@@ -166,11 +166,12 @@ export class BackupStorageInventoryService {
       const current = catalog.get(entry.id);
       const size = entry.kind === "OBJECT" ? BigInt(entry.size) : null;
 
+      if (current) {
+        tenants.get(current.organizationId)!.physicalObjectCount++;
+      }
       if (size !== null) {
         bytes += size;
         if (current) {
-          const tenant = tenants.get(current.organizationId)!;
-          tenant.physicalObjectCount++;
           physicalBytes.set(
             current.organizationId,
             (physicalBytes.get(current.organizationId) ?? 0n) + size
@@ -190,6 +191,9 @@ export class BackupStorageInventoryService {
       if (!current) {
         result.orphanCount++;
         finding("ORPHAN");
+      } else if (current.state === "DELETED") {
+        result.stateInconsistencyCount++;
+        finding("STATE_INCONSISTENCY");
       }
       if (entry.kind === "UNREADABLE_OBJECT") {
         result.unreadableCount++;
@@ -197,10 +201,6 @@ export class BackupStorageInventoryService {
         continue;
       }
       if (!current) continue;
-      if (current.state === "DELETED") {
-        result.stateInconsistencyCount++;
-        finding("STATE_INCONSISTENCY");
-      }
       if (current.state !== "COMPLETED") continue;
       const expected =
         current.byteCount === null

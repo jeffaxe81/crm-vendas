@@ -95,6 +95,12 @@ como ausentes. Um UUID físico presente mas ilegível pode também ser
 classificado como órfão, se não houver registro correspondente. Sem
 armazenamento configurado, `configured=false` e `complete=false`.
 
+A contagem física por organização inclui também entradas UUID ilegíveis que
+possuem referência no catálogo, de forma consistente com a contagem global.
+Os totais de bytes incluem somente tamanhos que puderam ser inspecionados.
+Um registro `DELETED` com entrada ilegível produz tanto `UNREADABLE` quanto
+`STATE_INCONSISTENCY`, sem abrir o destino de um symlink.
+
 **Limites obrigatórios:** a comparação entre PostgreSQL e filesystem
 não é um snapshot atômico; alterações simultâneas podem afetar o resultado.
 O inventário não autentica o envelope AES-GCM, não prova restaurabilidade
