@@ -411,6 +411,7 @@ export function ActivitiesView({
           {canWrite ? (
             <button
               className="button activities-view__primary"
+              type="button"
               onClick={openCreate}
             >
               {t("Nova atividade")}
