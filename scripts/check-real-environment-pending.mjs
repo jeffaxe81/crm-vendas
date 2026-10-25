@@ -51,6 +51,7 @@ function validTime(value) {
   }
   const timestamp = Date.parse(value);
   // Date.parse normalizes impossible dates and 24:00 into another day.
+  // Compare calendar/time components without discarding valid sub-ms input.
   return (
     !Number.isNaN(timestamp) &&
     new Date(timestamp).toISOString().slice(0, 19) === value.slice(0, 19)

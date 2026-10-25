@@ -18,53 +18,6 @@ async function fixture() {
   return JSON.parse(await readFile(source, "utf8"));
 }
 
-for (const executedAt of [
-  "2026-02-30T12:00:00Z",
-  "2026-02-29T12:00:00Z",
-  "2026-04-31T12:00:00Z",
-  "2026-10-23T24:00:00Z",
-]) {
-  test(`rejects normalized invalid evidence time ${executedAt}`, async () => {
-    const record = await fixture();
-    Object.assign(record.external_environment_tests[0], {
-      status: "EVIDENCE_SUBMITTED_FOR_REVIEW",
-      owner: "qa-engineer",
-      executed_at: executedAt,
-      evidence_url: "https://example.com/evidence",
-    });
-    assert.equal(checkRealEnvironmentRecord(record).status, "INVALID_RECORD");
-  });
-}
-
-test("rejects an unassigned evidence owner padded with whitespace", async () => {
-  const record = await fixture();
-  Object.assign(record.external_environment_tests[0], {
-    status: "EVIDENCE_SUBMITTED_FOR_REVIEW",
-    owner: " to_be_assigned \t",
-    executed_at: "2026-10-23T12:00:00Z",
-    evidence_url: "https://example.com/evidence",
-  });
-  assert.equal(checkRealEnvironmentRecord(record).status, "INVALID_RECORD");
-});
-
-for (const executedAt of [
-  "2024-02-29T12:00:00Z",
-  "2026-10-23T12:00:00.123456Z",
-]) {
-  test(`accepts valid evidence time ${executedAt} without approval`, async () => {
-    const record = await fixture();
-    Object.assign(record.external_environment_tests[0], {
-      status: "EVIDENCE_SUBMITTED_FOR_REVIEW",
-      owner: "qa-engineer",
-      executed_at: executedAt,
-      evidence_url: "https://example.com/evidence",
-    });
-    const result = checkRealEnvironmentRecord(record);
-    assert.deepEqual(result.errors, []);
-    assert.equal(result.productionApproved, false);
-  });
-}
-
 test("committed real-environment record is consistent but never approves production", async () => {
   const result = checkRealEnvironmentRecord(await fixture());
   assert.deepEqual(result.errors, []);
@@ -137,6 +90,61 @@ test("submitted evidence remains unverified even with complete metadata", async 
   assert.equal(result.submittedForReview, 1);
   assert.equal(result.productionApproved, false);
   assert.equal(result.externalChecksExecuted, false);
+});
+
+for (const executedAt of [
+  "2026-02-29T12:00:00Z",
+  "2026-02-30T12:00:00Z",
+  "2026-04-31T12:00:00Z",
+  "2026-10-23T24:00:00Z",
+]) {
+  test(`rejects normalized nonexistent execution time ${executedAt}`, async () => {
+    const record = await fixture();
+    Object.assign(record.external_environment_tests[0], {
+      status: "EVIDENCE_SUBMITTED_FOR_REVIEW",
+      owner: "qa-engineer",
+      executed_at: executedAt,
+      evidence_url: "https://example.com/evidence",
+    });
+    const result = checkRealEnvironmentRecord(record);
+    assert.equal(result.status, "INVALID_RECORD");
+    assert.equal(result.productionApproved, false);
+    assert.match(result.errors.join(" "), /needs owner, UTC time/);
+  });
+}
+
+for (const executedAt of [
+  "2024-02-29T12:00:00Z",
+  "2026-10-23T22:00:00.1Z",
+  "2026-10-23T22:00:00.123456Z",
+]) {
+  test(`accepts real UTC execution time ${executedAt} without approval`, async () => {
+    const record = await fixture();
+    Object.assign(record.external_environment_tests[0], {
+      status: "EVIDENCE_SUBMITTED_FOR_REVIEW",
+      owner: "qa-engineer",
+      executed_at: executedAt,
+      evidence_url: "https://example.com/evidence",
+    });
+    const result = checkRealEnvironmentRecord(record);
+    assert.deepEqual(result.errors, []);
+    assert.equal(result.submittedForReview, 1);
+    assert.equal(result.productionApproved, false);
+  });
+}
+
+test("rejects a padded unassigned owner on submitted evidence", async () => {
+  const record = await fixture();
+  Object.assign(record.external_environment_tests[0], {
+    status: "EVIDENCE_SUBMITTED_FOR_REVIEW",
+    owner: " to_be_assigned ",
+    executed_at: "2026-10-23T22:00:00Z",
+    evidence_url: "https://example.com/evidence",
+  });
+  const result = checkRealEnvironmentRecord(record);
+  assert.equal(result.status, "INVALID_RECORD");
+  assert.equal(result.productionApproved, false);
+  assert.match(result.errors.join(" "), /needs owner, UTC time/);
 });
 
 test("missing record fails closed", () => {
