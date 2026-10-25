@@ -22,43 +22,10 @@ export type BackupStoreInventoryEntry =
 
 const UUID_TEXT =
   "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-const BACKUP_OBJECT_NAME = new RegExp(`^(${UUID_TEXT})\\.backupimport {
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-  randomUUID,
-} from "node:crypto";
-import { constants } from "node:fs";
-import { link, lstat, mkdir, open, opendir, unlink } from "node:fs/promises";
-import { isAbsolute, join } from "node:path";
-
-const MAGIC = Buffer.from("AXESBK01");
-const IV_BYTES = 12;
-const TAG_BYTES = 16;
-const HEADER_BYTES = MAGIC.length + IV_BYTES + TAG_BYTES;
-export const BACKUP_ENVELOPE_OVERHEAD_BYTES = HEADER_BYTES;
-
-);
+const BACKUP_OBJECT_NAME = new RegExp(`^(${UUID_TEXT})\\.backup$`);
 const BACKUP_TEMPORARY_NAME = new RegExp(
-  `^\\.(${UUID_TEXT})\\.(${UUID_TEXT})\\.tmpimport {
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-  randomUUID,
-} from "node:crypto";
-import { constants } from "node:fs";
-import { link, lstat, mkdir, open, opendir, unlink } from "node:fs/promises";
-import { isAbsolute, join } from "node:path";
-
-const MAGIC = Buffer.from("AXESBK01");
-const IV_BYTES = 12;
-const TAG_BYTES = 16;
-const HEADER_BYTES = MAGIC.length + IV_BYTES + TAG_BYTES;
-export const BACKUP_ENVELOPE_OVERHEAD_BYTES = HEADER_BYTES;
-
-
+  `^\\.(${UUID_TEXT})\\.(${UUID_TEXT})\\.tmp$`
 );
-
 export type BackupStoreOptions = {
   directory: string;
   key: Buffer;
@@ -249,7 +216,6 @@ export class BackupStore {
       yield { kind: "UNEXPECTED" };
     }
   }
-
   async remove(id: string): Promise<void> {
     const objectId = this.objectId(id);
     await this.requireDirectory();
