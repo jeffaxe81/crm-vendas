@@ -2937,3 +2937,27 @@ button.save-feedback-button[data-save-status="error"] {
   color: #52677f;
   font-size: 0.85rem;
 }
+
+
+/* Quick reset actions share the same compact treatment across CRM lists. */
+.contacts-view__filters > button,
+.activities-view__quick-filters > button,
+.opportunities-view__local-filters > button,
+.companies-view__toolbar > button {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #bfcddd;
+  border-radius: 9px;
+  background: #f7f9fc;
+  color: #27445f;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.contacts-view__filters > button:disabled,
+.activities-view__quick-filters > button:disabled,
+.opportunities-view__local-filters > button:disabled,
+.companies-view__toolbar > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
