@@ -892,10 +892,7 @@ export function OpportunitiesView({
               onChange={event =>
                 setLocalCloseFilter(
                   event.target.value as
-                    | "all"
-                    | "overdue"
-                    | "this-month"
-                    | "unscheduled"
+                    "all" | "overdue" | "this-month" | "unscheduled"
                 )
               }
             >
@@ -973,7 +970,10 @@ export function OpportunitiesView({
         </p>
       ) : null}
 
-      {!loading && !error && visibleOpportunities.length > 0 && viewMode === "list" ? (
+      {!loading &&
+      !error &&
+      visibleOpportunities.length > 0 &&
+      viewMode === "list" ? (
         <ul className="opportunities-view__list">
           {visibleOpportunities.map(opportunity => {
             const opportunityPipeline = pipelines.find(
