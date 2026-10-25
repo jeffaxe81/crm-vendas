@@ -585,11 +585,19 @@ export function OpportunitiesView({
           <button
             type="button"
             disabled={loading || opportunities.length === 0}
-            title={t("Exporta somente as negociações carregadas nesta página")}
+            title={t(
+              "Exporta somente as negociações carregadas nesta página"
+            )}
             onClick={() =>
               downloadLoadedCsv(
                 "crm-oportunidades-carregadas.csv",
-                ["Título", "Valor estimado", "Previsão de fechamento", "Cliente", "Observações"],
+                [
+                  "Título",
+                  "Valor estimado",
+                  "Previsão de fechamento",
+                  "Cliente",
+                  "Observações",
+                ],
                 opportunities.map(opportunity => [
                   opportunity.title,
                   opportunity.estimatedValue,
@@ -602,15 +610,15 @@ export function OpportunitiesView({
           >
             {t("Exportar oportunidades CSV")}
           </button>
-        {canWrite ? (
-          <button
-            className="button"
-            type="button"
-            onClick={() => void openCreate()}
-          >
-            {t("Nova oportunidade")}
-          </button>
-        ) : null}
+          {canWrite ? (
+            <button
+              className="button"
+              type="button"
+              onClick={() => void openCreate()}
+            >
+              {t("Nova oportunidade")}
+            </button>
+          ) : null}
         </div>
       </header>
 
