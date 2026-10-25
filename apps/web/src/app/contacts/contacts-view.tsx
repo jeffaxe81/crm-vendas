@@ -14,6 +14,7 @@ import type {
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedVcards } from "../../lib/local-productivity-export";
 import { ContactImportPanel } from "./contact-import-panel";
 import {
   CustomFieldsEditor,
@@ -530,6 +531,16 @@ export function ContactsView({
           <p>{t("Gerencie pessoas, canais e vínculos comerciais.")}</p>
         </div>
         <div className="companies-view__header-actions">
+          <button
+            type="button"
+            disabled={loading || contacts.length === 0}
+            title={t("Exporta somente os contatos carregados nesta página")}
+            onClick={() =>
+              downloadLoadedVcards("crm-contatos-carregados.vcf", contacts)
+            }
+          >
+            {t("Exportar contatos VCF")}
+          </button>
           {canWrite ? (
             <button
               type="button"
