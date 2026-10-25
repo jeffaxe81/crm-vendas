@@ -11,7 +11,7 @@ import type {
   ContactCreateInput,
   RelationshipEntryKind,
 } from "@axes/contracts";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { ContactImportPanel } from "./contact-import-panel";
@@ -113,6 +113,13 @@ export function ContactsView({
 }: ContactsViewProps) {
   const { t } = useTranslation();
   const [contacts, setContacts] = useState<ContactRecord[]>([]);
+  const [contactSearch, setContactSearch] = useState("");
+  const [channelFilter, setChannelFilter] = useState<
+    "all" | "with-channel" | "without-channel"
+  >("all");
+  const [contactSort, setContactSort] = useState<
+    "recent" | "name-asc" | "name-desc"
+  >("recent");
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
   const [history, setHistory] = useState<RelationshipEntryRecord[]>([]);
   const contactSave = useSaveFeedback();
@@ -507,6 +514,38 @@ export function ContactsView({
     }
   }
 
+  const visibleContacts = useMemo(() => {
+    const normalizedSearch = contactSearch.trim().toLocaleLowerCase("pt-BR");
+    return contacts
+      .filter(contact => {
+        const hasChannel = (contact.channels ?? []).length > 0;
+        if (channelFilter === "with-channel" && !hasChannel) return false;
+        if (channelFilter === "without-channel" && hasChannel) return false;
+        if (!normalizedSearch) return true;
+        return [
+          contact.fullName,
+          contact.jobTitle ?? "",
+          ...(contact.channels ?? []).flatMap(channel => [
+            channel.value,
+            channel.label ?? "",
+          ]),
+        ].some(value =>
+          value.toLocaleLowerCase("pt-BR").includes(normalizedSearch)
+        );
+      })
+      .sort((a, b) => {
+        if (contactSort === "name-asc") {
+          return a.fullName.localeCompare(b.fullName, "pt-BR");
+        }
+        if (contactSort === "name-desc") {
+          return b.fullName.localeCompare(a.fullName, "pt-BR");
+        }
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      });
+  }, [contacts, contactSearch, channelFilter, contactSort]);
+
   const taggedContact = tagContactId
     ? contacts.find(contact => contact.id === tagContactId)
     : undefined;
@@ -623,10 +662,65 @@ export function ContactsView({
         </form>
       ) : null}
 
+      <div className="contacts-view__filters" role="search">
+        <label>
+          <span>{t("Buscar contatos carregados")}</span>
+          <input
+            type="search"
+            value={contactSearch}
+            onChange={event => setContactSearch(event.target.value)}
+            placeholder={t("Nome, cargo, e-mail ou telefone")}
+          />
+        </label>
+        <label>
+          <span>{t("Canais de contato")}</span>
+          <select
+            value={channelFilter}
+            onChange={event =>
+              setChannelFilter(
+                event.target.value as
+                  | "all"
+                  | "with-channel"
+                  | "without-channel"
+              )
+            }
+          >
+            <option value="all">{t("Todos os contatos")}</option>
+            <option value="with-channel">{t("Com canal")}</option>
+            <option value="without-channel">{t("Sem canal")}</option>
+          </select>
+        </label>
+        <label>
+          <span>{t("Ordenar contatos")}</span>
+          <select
+            value={contactSort}
+            onChange={event =>
+              setContactSort(
+                event.target.value as "recent" | "name-asc" | "name-desc"
+              )
+            }
+          >
+            <option value="recent">{t("Atualizados recentemente")}</option>
+            <option value="name-asc">{t("Nome A-Z")}</option>
+            <option value="name-desc">{t("Nome Z-A")}</option>
+          </select>
+        </label>
+        <p aria-live="polite">
+          {visibleContacts.length} {t("de")} {contacts.length}{" "}
+          {t("contatos carregados")}
+        </p>
+      </div>
+
       {loading ? <p>{t("Carregando contatos...")}</p> : null}
 
+      {!loading && visibleContacts.length === 0 ? (
+        <p className="contacts-view__empty">
+          {t("Nenhum contato corresponde aos filtros atuais.")}
+        </p>
+      ) : null}
+
       <div className="contacts-view__grid">
-        {contacts.map(contact => (
+        {visibleContacts.map(contact => (
           <article className="contact-card" key={contact.id}>
             <div>
               <p className="contact-card__eyebrow">{t("Contato")}</p>
