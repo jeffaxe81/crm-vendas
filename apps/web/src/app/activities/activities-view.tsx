@@ -396,13 +396,13 @@ export function ActivitiesView({
           <button
             type="button"
             disabled={
-              loading || !activities.some(activity => activity.dueAt !== null)
+              loading || !visibleActivities.some(activity => activity.dueAt !== null)
             }
             title={t(
-              "Gera lembretes provisórios apenas das atividades carregadas"
+              "Gera lembretes provisórios apenas das atividades visíveis"
             )}
             onClick={() =>
-              downloadLoadedCalendar("crm-atividades-carregadas.ics", activities)
+              downloadLoadedCalendar("crm-atividades-visiveis.ics", visibleActivities)
             }
           >
             {t("Exportar prazos ICS")}
