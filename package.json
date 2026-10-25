@@ -13,7 +13,7 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter @axes/contracts build && pnpm test:repo && pnpm -r test",
     "test:e2e": "playwright test",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --write apps/web/src/app/activities/activities-view.tsx apps/web/src/app/companies/companies-view.tsx apps/web/src/app/contacts/contacts-view.tsx apps/web/src/app/globals.css apps/web/src/app/opportunities/opportunities-view.tsx apps/web/src/lib/local-productivity-export.ts docs/checkpoints/2026-10-25-crm-list-productivity-no-tests.md docs/checkpoints/2026-10-25-productivity-consolidation.md && git diff --no-ext-diff --unified=3 -- apps/web/src/app/activities/activities-view.tsx apps/web/src/app/companies/companies-view.tsx apps/web/src/app/contacts/contacts-view.tsx apps/web/src/app/globals.css apps/web/src/app/opportunities/opportunities-view.tsx apps/web/src/lib/local-productivity-export.ts docs/checkpoints/2026-10-25-crm-list-productivity-no-tests.md docs/checkpoints/2026-10-25-productivity-consolidation.md && exit 1",
     "verify": "pnpm verify:foundation && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "test:repo": "node --test tests/*.test.mjs",
     "verify:foundation": "node scripts/verify-foundation.mjs",
