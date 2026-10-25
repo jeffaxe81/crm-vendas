@@ -107,3 +107,16 @@ O inventário não autentica o envelope AES-GCM, não prova restaurabilidade
 e não autoriza limpeza, alteração de catálogos, aplicação de cotas, deploy
 nem GO operacional. Antes de produção, homologar a autorização global,
 a volumetria, o isolamento real, as evidências e o aceite formal.
+
+## Consulta na administração
+
+A seção **Inventário global de backups**, no painel **Backup e recuperação**,
+consulta o endpoint somente após clique de um Superusuário. O resultado inclui
+totais e consumo conhecido por empresa, com filtro por tipo de ocorrência.
+As tabelas exibem até 20 linhas por página; paginação e filtros são locais e
+não disparam novas varreduras. Uma nova consulta substitui o resultado anterior.
+
+A interface valida a resposta antes de apresentar números, preserva bytes
+como inteiros exatos e descarta resultados ao trocar de sessão/token.
+Armazenamento indisponível, relatório parcial e falha de consulta são estados
+distintos. Não oferece exclusão, reparo ou alteração de cotas.
