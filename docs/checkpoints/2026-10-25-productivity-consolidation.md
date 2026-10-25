@@ -26,7 +26,7 @@ novos filtros; o filtro de oportunidades destina-se ao modo lista.
 - Nenhuma operação de escrita, endpoint, migração ou regra RLS foi alterada.
 - CSV/VCF/ICS podem conter dados pessoais e comerciais: revisar permissão
   específica de exportação, finalidade, retenção e auditoria antes de deploy.
-- Horários ICS são *provisórios*, não convocam participantes e não sincronizam
+- Horários ICS são _provisórios_, não convocam participantes e não sincronizam
   calendários. Conferir eventuais duplicações após importação.
 - **Sem execução manual nem inclusão de testes** nesta rodada a pedido do
   usuário. Construção, formatação, segurança e homologação não foram
