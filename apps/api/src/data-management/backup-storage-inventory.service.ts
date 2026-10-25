@@ -1,3 +1,7 @@
+import type {
+  StorageGlobalInventory,
+  StorageInventoryFindingStatus,
+} from "@axes/contracts";
 import { Inject, Injectable } from "@nestjs/common";
 
 import { PrismaService } from "../database/prisma.service";
@@ -6,8 +10,7 @@ import { BACKUP_STORE } from "./backup.service";
 
 const PAGE_SIZE = 200;
 
-type FindingStatus =
-  "ORPHAN" | "MISSING" | "SIZE_MISMATCH" | "UNREADABLE" | "STATE_INCONSISTENCY";
+type FindingStatus = StorageInventoryFindingStatus;
 
 type CatalogRecord = {
   organizationId: string;
@@ -15,42 +18,8 @@ type CatalogRecord = {
   byteCount: bigint | null;
 };
 
-type Finding = {
-  backupId: string;
-  organizationId: string | null;
-  status: FindingStatus;
-  catalogBytes: string | null;
-  filesystemBytes: string | null;
-};
-
-export type GlobalInventoryTenant = {
-  organizationId: string;
-  catalogCount: number;
-  completedCount: number;
-  physicalObjectCount: number;
-  catalogBytes: string;
-  physicalBytes: string;
-};
-
-export type StorageGlobalInventoryResult = {
-  configured: boolean;
-  readOnly: true;
-  complete: boolean;
-  atomicSnapshot: false;
-  scope: "ALL_ORGANIZATIONS";
-  catalogCount: number;
-  physicalObjectCount: number;
-  physicalBytes: string;
-  orphanCount: number;
-  missingCount: number;
-  sizeMismatchCount: number;
-  unreadableCount: number;
-  stateInconsistencyCount: number;
-  temporaryCount: number;
-  unexpectedCount: number;
-  tenants: GlobalInventoryTenant[];
-  findings: Finding[];
-};
+export type GlobalInventoryTenant = StorageGlobalInventory["tenants"][number];
+export type StorageGlobalInventoryResult = StorageGlobalInventory;
 
 /**
  * Global metadata-only inventory. Catalog reads stay within the application's
