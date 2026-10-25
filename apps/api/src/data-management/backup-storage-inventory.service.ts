@@ -11,7 +11,7 @@ type FindingStatus =
   | "MISSING"
   | "SIZE_MISMATCH"
   | "UNREADABLE"
-  | "DELETED_OBJECT";
+  | "STATE_INCONSISTENCY";
 
 type CatalogRecord = {
   organizationId: string;
@@ -49,7 +49,7 @@ export type StorageGlobalInventoryResult = {
   missingCount: number;
   sizeMismatchCount: number;
   unreadableCount: number;
-  deletedObjectCount: number;
+  stateInconsistencyCount: number;
   temporaryCount: number;
   unexpectedCount: number;
   tenants: GlobalInventoryTenant[];
@@ -139,7 +139,7 @@ export class BackupStorageInventoryService {
       missingCount: 0,
       sizeMismatchCount: 0,
       unreadableCount: 0,
-      deletedObjectCount: 0,
+      stateInconsistencyCount: 0,
       temporaryCount: 0,
       unexpectedCount: 0,
       tenants: Array.from(tenants.values()),
@@ -203,8 +203,8 @@ export class BackupStorageInventoryService {
       }
       if (!current) continue;
       if (current.state === "DELETED") {
-        result.deletedObjectCount++;
-        finding("DELETED_OBJECT");
+        result.stateInconsistencyCount++;
+        finding("STATE_INCONSISTENCY");
       }
       if (current.state !== "COMPLETED") continue;
       const expected =
