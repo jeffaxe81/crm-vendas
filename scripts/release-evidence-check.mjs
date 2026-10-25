@@ -4,7 +4,7 @@
  * it does NOT verify their truth or approve deployment/release.
  */
 import { lstat, readFile, realpath } from "node:fs/promises";
-import { dirname, isAbsolute, relative, resolve } from "node:path";
+import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const required = [
@@ -28,7 +28,7 @@ const isRecord = value =>
 
 function isWithin(root, file) {
   const rel = relative(root, file);
-  return rel !== ".." && !rel.startsWith("../") && !isAbsolute(rel);
+  return rel !== ".." && !rel.startsWith(".." + sep) && !isAbsolute(rel);
 }
 
 async function checkFile(root, item, field, errors) {
