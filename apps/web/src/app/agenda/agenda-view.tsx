@@ -233,12 +233,11 @@ export function AgendaView({
         <button
           type="button"
           disabled={loading || activities.length === 0}
-          title={t("Exporta somente a página carregada; horários são provisórios")}
+          title={t(
+            "Exporta somente a página carregada; horários são provisórios"
+          )}
           onClick={() =>
-            downloadLoadedCalendar(
-              "crm-agenda-pagina.ics",
-              activities
-            )
+            downloadLoadedCalendar("crm-agenda-pagina.ics", activities)
           }
         >
           {t("Exportar agenda ICS")}
