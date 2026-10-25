@@ -11,13 +11,18 @@ protótipos foram gravados na branch agora, mas isso **não equivale** a cinco
 meses de trabalho concluídos, integração na `main`, homologação ou entrega em
 produção.
 
-| Ciclo planejado | Frente | Candidato implementado agora | Situação |
-| --- | --- | --- | --- |
-| 1: out/2026–nov/2026 | Portabilidade de contatos | Exportar os contatos carregados em arquivo VCF/vCard 3.0, com nome, cargo, e-mail e telefone | Código isolado; sem testes |
-| 2: nov/2026–dez/2026 | Dados comerciais de empresas | Exportar as empresas visíveis em CSV UTF-8 com razão social, nome fantasia, documento e website | Código isolado; sem testes |
-| 3: dez/2026–jan/2027 | Produtividade do funil | Exportar as oportunidades carregadas em CSV com valores, previsão, tipo de vínculo e observações | Código isolado; sem testes |
-| 4: jan/2027–fev/2027 | Mobilidade de atividades | Exportar prazos de tarefas/compromissos da tela atual em calendário ICS | Código isolado; sem testes |
-| 5: fev/2027–mar/2027 | Portabilidade da agenda | Exportar página de agenda carregada em ICS, sem integração ou sincronização externa | Código isolado; sem testes |
+### Frentes antecipadas
+
+1. **Outubro a novembro de 2026 — Contatos:** exportação VCF dos contatos
+   carregados, incluindo nome, cargo, e-mail e telefone.
+2. **Novembro a dezembro de 2026 — Empresas:** exportação CSV das empresas
+   visíveis, incluindo razão social, nome fantasia, documento e website.
+3. **Dezembro de 2026 a janeiro de 2027 — Oportunidades:** exportação CSV
+   de negociações carregadas com valores, previsão, vínculo e observações.
+4. **Janeiro a fevereiro de 2027 — Atividades:** exportação ICS de prazos
+   das tarefas e compromissos carregados.
+5. **Fevereiro a março de 2027 — Agenda:** exportação ICS da página carregada,
+   sem sincronização com provedores externos.
 
 ## Contrato técnico do candidato
 
