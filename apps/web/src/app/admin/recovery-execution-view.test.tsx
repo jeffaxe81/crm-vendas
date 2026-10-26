@@ -130,6 +130,9 @@ it("manually prepares commercial deletion and requires separate confirmation", a
       name: "Preparar prévia de exclusão operacional",
     })
   );
+  expect(
+    await screen.findByText(/Registros necessários a referências preservadas/)
+  ).toBeInTheDocument();
   await fill("EXCLUIR DADOS OPERACIONAIS");
   expect(
     fetch.mock.calls.filter(([, init]) => init?.method === "POST")

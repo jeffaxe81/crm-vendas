@@ -1347,5 +1347,6 @@
   "Recuperação protegida": "Protected recovery",
   "Restauração e exclusão operacional pendentes de homologação e configuração. Execução indisponível.": "Restore and operational deletion await validation and configuration. Execution unavailable.",
   "Senha atual": "Current password",
-  "Válida até:": "Valid until:"
+  "Válida até:": "Valid until:",
+  "Registros necessários a referências preservadas serão mantidos; confira as contagens antes de confirmar.": "Records required by preserved references will be retained; review the counts before confirming."
 }

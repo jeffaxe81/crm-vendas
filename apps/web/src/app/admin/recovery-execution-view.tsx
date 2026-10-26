@@ -303,6 +303,13 @@ function RecoveryConfirmation({
             : "Confirmar exclusão operacional"
         )}
       </h3>
+      {kind === "DELETE" && (
+        <p>
+          {t(
+            "Registros necessários a referências preservadas serão mantidos; confira as contagens antes de confirmar."
+          )}
+        </p>
+      )}
       <p>
         {t("Backup de destino:")} {preview.targetBackupId ?? "—"}
       </p>
