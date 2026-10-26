@@ -1094,11 +1094,12 @@ model DataOperation {
 }
 
 
-/** Tenant-owned, opt-in purge of terminal webhook delivery attempts only. */
+/** Tenant-owned, opt-in purge of explicitly selected technical categories. */
 model PurgePolicy {
   organizationId String @id @map("organization_id") @db.Uuid
   enabled Boolean @default(false)
   retentionDays Int @default(180) @map("retention_days")
+  categories String[] @default(["EXPIRED_OPERATION_PREVIEWS"])
   lastRunAt DateTime? @map("last_run_at") @db.Timestamptz(6)
   updatedBy String? @map("updated_by") @db.Uuid
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)

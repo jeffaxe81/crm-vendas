@@ -5,9 +5,26 @@ import { z } from "zod";
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
 
+export const PURGE_CATEGORIES = [
+  "EXPIRED_OPERATION_PREVIEWS",
+  "TERMINAL_WEBHOOK_DELIVERIES",
+] as const;
+type Category = (typeof PURGE_CATEGORIES)[number];
+const CategoriesSchema = z
+  .array(z.enum(PURGE_CATEGORIES))
+  .min(1)
+  .max(2)
+  .refine(v => new Set(v).size === v.length);
+const SimulationSchema = z
+  .object({
+    retentionDays: z.number().int().min(30).max(3650),
+    categories: CategoriesSchema,
+  })
+  .strict();
 const PolicyInputSchema = z
   .object({
     enabled: z.boolean(),
+    categories: CategoriesSchema.optional(),
     retentionDays: z.number().int().min(30).max(3650),
     // An explicit phrase is needed each time automatic deletion is enabled.
     confirmation: z.literal("ATIVAR EXPURGO").optional(),
@@ -16,6 +33,8 @@ const PolicyInputSchema = z
   .refine(value => !value.enabled || value.confirmation === "ATIVAR EXPURGO");
 
 export type TenantPurgePolicyView = {
+  categories: Category[];
+  counts: Record<Category, number>;
   enabled: boolean;
   retentionDays: number;
   lastRunAt: string | null;
@@ -32,7 +51,7 @@ function cutoffDate(now: Date, days: number): Date {
   return new Date(now.getTime() - days * INTERVAL_MS);
 }
 
-/** Tenant-scoped purge of expired operation previews, not business data.
+/** Tenant-scoped opt-in purge of bounded technical categories.
  * Does not touch active previews, queued jobs, CRM entities, audit logs or backups.
  */
 @Injectable()
@@ -50,17 +69,18 @@ export class TenantPurgeService {
     const retentionDays = policy?.retentionDays ?? DEFAULT_RETENTION_DAYS;
     const now = new Date();
     const cutoff = cutoffDate(now, retentionDays);
-    const estimatedRecords = await this.prisma.withTenant(
+    const categories = (policy?.categories ?? [
+      "EXPIRED_OPERATION_PREVIEWS",
+    ]) as Category[];
+    const counts = await this.counts(
       principal.organizationId,
-      tx =>
-        tx.operationPreview.count({
-          where: {
-            organizationId: principal.organizationId,
-            expiresAt: { lt: cutoff },
-          },
-        })
+      cutoff,
+      categories
     );
+    const estimatedRecords = Object.values(counts).reduce((a, b) => a + b, 0);
     return {
+      categories,
+      counts,
       enabled: policy?.enabled ?? false,
       retentionDays,
       lastRunAt: policy?.lastRunAt?.toISOString() ?? null,
@@ -82,15 +102,30 @@ export class TenantPurgeService {
       );
     const { enabled, retentionDays } = parsed.data;
     await this.prisma.withTenant(principal.organizationId, async tx => {
+      await tx.$executeRawUnsafe(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+        `purge-tenant:${principal.organizationId}`
+      );
+      const current = await tx.purgePolicy.findUnique({
+        where: { organizationId: principal.organizationId },
+      });
+      const categories = parsed.data.categories ??
+        current?.categories ?? ["EXPIRED_OPERATION_PREVIEWS"];
       const updated = await tx.purgePolicy.upsert({
         where: { organizationId: principal.organizationId },
         create: {
           organizationId: principal.organizationId,
           enabled,
           retentionDays,
+          categories,
           updatedBy: principal.userId,
         },
-        update: { enabled, retentionDays, updatedBy: principal.userId },
+        update: {
+          enabled,
+          retentionDays,
+          categories,
+          updatedBy: principal.userId,
+        },
       });
       await tx.auditLog.create({
         data: {
@@ -101,6 +136,7 @@ export class TenantPurgeService {
           entityType: "purge_policy",
           entityId: principal.organizationId,
           metadata: {
+            categories: updated.categories,
             enabled: updated.enabled,
             retentionDays: updated.retentionDays,
             target: "EXPIRED_OPERATION_PREVIEWS",
@@ -109,6 +145,64 @@ export class TenantPurgeService {
       });
     });
     return this.read(principal);
+  }
+
+  private predicate(category: Category): string {
+    if (category === "EXPIRED_OPERATION_PREVIEWS")
+      return `p.organization_id = $1::uuid AND p.expires_at < $2 AND NOT EXISTS (SELECT 1 FROM data_operations o WHERE o.organization_id = p.organization_id AND o.payload->>'previewId' = p.id::text)`;
+    if (category === "TERMINAL_WEBHOOK_DELIVERIES")
+      return `p.organization_id = $1::uuid AND p.created_at < $2 AND EXISTS (SELECT 1 FROM webhook_dispatches d WHERE d.id = p.dispatch_id AND d.organization_id = p.organization_id AND d.status IN ('DELIVERED','EXHAUSTED','CANCELLED') AND d.locked_until IS NULL AND d.lease_token IS NULL AND d.updated_at < $2)`;
+    throw new BadRequestException("INVALID_PURGE_CATEGORY");
+  }
+
+  private async counts(
+    organizationId: string,
+    cutoff: Date,
+    categories: Category[]
+  ) {
+    return this.prisma.withTenant(
+      organizationId,
+      async tx => {
+        const counts: Record<Category, number> = {
+          EXPIRED_OPERATION_PREVIEWS: 0,
+          TERMINAL_WEBHOOK_DELIVERIES: 0,
+        };
+        for (const category of categories) {
+          const table =
+            category === "EXPIRED_OPERATION_PREVIEWS"
+              ? "operation_previews"
+              : "webhook_deliveries";
+          const [result] = await tx.$queryRawUnsafe<{ count: bigint }[]>(
+            `SELECT count(*) AS count FROM ${table} p WHERE ${this.predicate(category)}`,
+            organizationId,
+            cutoff
+          );
+          counts[category] = Number(result?.count ?? 0);
+        }
+        return counts;
+      },
+      { isolationLevel: "RepeatableRead" }
+    );
+  }
+
+  async simulate(principal: AuthenticatedPrincipal, body: unknown) {
+    const parsed = SimulationSchema.safeParse(body);
+    if (!parsed.success)
+      throw new BadRequestException("INVALID_PURGE_SIMULATION");
+    const cutoff = cutoffDate(new Date(), parsed.data.retentionDays);
+    const counts = await this.counts(
+      principal.organizationId,
+      cutoff,
+      parsed.data.categories
+    );
+    return {
+      dryRun: true,
+      cutoff: cutoff.toISOString(),
+      categories: parsed.data.categories,
+      counts,
+      estimatedRecords: Object.values(counts).reduce((a, b) => a + b, 0),
+      batchSize: BATCH_SIZE,
+    };
   }
 
   /**
@@ -142,26 +236,28 @@ export class TenantPurgeService {
         )
           return 0;
         const cutoff = cutoffDate(now, policy.retentionDays);
-        const candidates = await tx.operationPreview.findMany({
-          where: {
-            organizationId: organization.id,
-            expiresAt: { lt: cutoff },
-          },
-          select: { id: true },
-          orderBy: [{ expiresAt: "asc" }, { id: "asc" }],
-          take: BATCH_SIZE,
-        });
-        let count = 0;
-        if (candidates.length > 0) {
-          const deleted = await tx.operationPreview.deleteMany({
-            where: {
-              organizationId: organization.id,
-              id: { in: candidates.map(item => item.id) },
-              expiresAt: { lt: cutoff },
-            },
-          });
-          count = deleted.count;
+        const counts: Record<Category, number> = {
+          EXPIRED_OPERATION_PREVIEWS: 0,
+          TERMINAL_WEBHOOK_DELIVERIES: 0,
+        };
+        await tx.$executeRawUnsafe(
+          "SELECT set_config('app.technical_purge', 'on', true)"
+        );
+        for (const category of policy.categories as Category[]) {
+          const predicate = this.predicate(category);
+          const table =
+            category === "EXPIRED_OPERATION_PREVIEWS"
+              ? "operation_previews"
+              : "webhook_deliveries";
+          const deleted = await tx.$queryRawUnsafe<{ id: string }[]>(
+            `WITH candidates AS MATERIALIZED (SELECT p.id FROM ${table} p WHERE ${predicate} ORDER BY p.created_at, p.id LIMIT $3 FOR UPDATE OF p SKIP LOCKED) DELETE FROM ${table} p USING candidates c WHERE p.id = c.id AND p.organization_id = $1::uuid RETURNING p.id`,
+            organization.id,
+            cutoff,
+            BATCH_SIZE
+          );
+          counts[category] = deleted.length;
         }
+        const count = Object.values(counts).reduce((a, b) => a + b, 0);
         await tx.purgePolicy.update({
           where: { organizationId: organization.id },
           data: { lastRunAt: now },
@@ -178,6 +274,8 @@ export class TenantPurgeService {
               target: "EXPIRED_OPERATION_PREVIEWS",
               retentionDays: policy.retentionDays,
               cutoff: cutoff.toISOString(),
+              categories: policy.categories,
+              counts,
               recordsDeleted: count,
               limit: BATCH_SIZE,
             },
