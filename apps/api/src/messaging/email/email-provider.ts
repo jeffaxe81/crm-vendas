@@ -25,7 +25,11 @@ export type EmailSubmission = Readonly<{
 }>;
 
 export interface EmailProvider {
-  send(email: TransactionalEmail): Promise<EmailSubmission>;
+  prepareOrganization?(organizationId: string): Promise<EmailProvider>;
+  send(
+    email: TransactionalEmail,
+    signal?: AbortSignal
+  ): Promise<EmailSubmission>;
 }
 
 export class EmailProviderUnavailableError extends Error {

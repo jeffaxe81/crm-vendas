@@ -1,5 +1,5 @@
+import { validEmailOAuthRedirect } from "./email-oauth-redirect";
 import { createHash } from "node:crypto";
-import { isIP } from "node:net";
 import {
   ForbiddenException,
   ServiceUnavailableException,
@@ -37,6 +37,8 @@ export type ConsumedEmailOAuthGrant = Readonly<{
   provider: EmailOAuthProvider;
   /** Bind the later token-vault write to the same selected-provider revision. */
   providerPreferenceVersion: number;
+  credentialVersion?: number;
+  intentCreatedAt?: Date;
   codeVerifier: string;
   /** Compare with the verified OIDC token nonce; do not send to browsers. */
   oidcNonce: string;
@@ -45,6 +47,8 @@ export type ConsumedEmailOAuthGrant = Readonly<{
 
 type StoredGrant = {
   provider_code: string;
+  credential_version?: number;
+  created_at?: Date;
   provider_preference_version: number | null;
   encrypted_code_verifier: string;
   encrypted_nonce: string;
@@ -63,24 +67,7 @@ function forbidden(): never {
 }
 
 function validateRedirect(raw: string): boolean {
-  try {
-    const u = new URL(raw);
-    return (
-      raw.length <= 512 &&
-      raw === u.toString() &&
-      u.protocol === "https:" &&
-      u.username === "" &&
-      u.password === "" &&
-      u.port === "" &&
-      u.search === "" &&
-      u.hash === "" &&
-      u.pathname === "/admin/email/oauth/callback" &&
-      isIP(u.hostname) === 0 &&
-      /^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/.test(u.hostname)
-    );
-  } catch {
-    return false;
-  }
+  return raw.length <= 512 && validEmailOAuthRedirect(raw);
 }
 
 function binding(
@@ -191,6 +178,7 @@ export class EmailOAuthPendingGrantStore {
       nonceBinding(grant)
     );
     await this.prisma.withTenant(context.organizationId, async tx => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${context.organizationId}`}, 0))`;
       await this.assertAdmin(tx, context);
       await this.assertSession(tx, context);
       // Lock the preference revision while staging: a concurrent provider
@@ -206,7 +194,7 @@ export class EmailOAuthPendingGrantStore {
       await tx.$executeRaw`
         INSERT INTO public.email_oauth_pending_grants
           (organization_id, actor_user_id, session_id, provider_code,
-           provider_preference_version, state_hash,
+           provider_preference_version, credential_version, state_hash,
            encrypted_code_verifier, encrypted_nonce, redirect_uri, created_at, expires_at)
         VALUES (
           ${context.organizationId}::uuid,
@@ -214,6 +202,8 @@ export class EmailOAuthPendingGrantStore {
           ${context.sessionId}::uuid,
           ${grant.provider},
           ${pref.version},
+          COALESCE((SELECT version FROM public.email_oauth_credentials
+            WHERE organization_id = ${context.organizationId}::uuid AND provider_code = ${grant.provider}), 0),
           ${grant.stateHash},
           ${encrypted},
           ${encryptedNonce},
@@ -258,20 +248,9 @@ export class EmailOAuthPendingGrantStore {
       forbidden();
     const stateHash = createHash("sha256").update(state, "ascii").digest("hex");
     return this.prisma.withTenant(context.organizationId, async tx => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${context.organizationId}`}, 0))`;
       await this.assertAdmin(tx, context);
       await this.assertSession(tx, context);
-      const rows = await tx.$queryRaw<StoredGrant[]>`
-        DELETE FROM public.email_oauth_pending_grants
-        WHERE organization_id = ${context.organizationId}::uuid
-          AND actor_user_id = ${context.actorUserId}::uuid
-          AND session_id = ${context.sessionId}::uuid
-          AND state_hash = ${stateHash}
-          AND expires_at > CURRENT_TIMESTAMP
-        RETURNING provider_code, provider_preference_version,
-          encrypted_code_verifier, encrypted_nonce, redirect_uri
-      `;
-      const row = rows[0];
-      if (!row || !PROVIDERS.includes(row.provider_code)) forbidden();
       // The same provider name after an intervening change is NOT the same
       // authorization intent. Lock the revision until the state is consumed.
       const [pref] = await tx.$queryRaw<
@@ -281,6 +260,18 @@ export class EmailOAuthPendingGrantStore {
         WHERE organization_id = ${context.organizationId}::uuid
         FOR UPDATE
       `;
+      const rows = await tx.$queryRaw<StoredGrant[]>`
+        DELETE FROM public.email_oauth_pending_grants
+        WHERE organization_id = ${context.organizationId}::uuid
+          AND actor_user_id = ${context.actorUserId}::uuid
+          AND session_id = ${context.sessionId}::uuid
+          AND state_hash = ${stateHash}
+          AND expires_at > CURRENT_TIMESTAMP
+        RETURNING provider_code, provider_preference_version, credential_version, created_at,
+          encrypted_code_verifier, encrypted_nonce, redirect_uri
+      `;
+      const row = rows[0];
+      if (!row || !PROVIDERS.includes(row.provider_code)) forbidden();
       if (
         !pref ||
         pref.provider_code !== row.provider_code ||
@@ -336,6 +327,8 @@ export class EmailOAuthPendingGrantStore {
       return {
         provider: row.provider_code as EmailOAuthProvider,
         providerPreferenceVersion: pref.version,
+        credentialVersion: row.credential_version,
+        intentCreatedAt: row.created_at,
         codeVerifier: verifier,
         oidcNonce,
         redirectUri: row.redirect_uri,

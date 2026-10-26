@@ -1,3 +1,6 @@
+import { PrismaService } from "../../database/prisma.service";
+import { EmailOAuthRuntimeService } from "./email-oauth-runtime.service";
+import { EmailOAuthController } from "./email-oauth.controller";
 import { Module } from "@nestjs/common";
 import { AuthorizationModule } from "../../authorization/authorization.module";
 import { DatabaseModule } from "../../database/database.module";
@@ -23,6 +26,7 @@ import { DisabledEmailProvider, EMAIL_PROVIDER } from "./email-provider";
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
   controllers: [
+    EmailOAuthController,
     EmailManualReviewController,
     EmailRelaySettingsController,
     EmailProviderPreferenceController,
@@ -38,6 +42,12 @@ import { DisabledEmailProvider, EMAIL_PROVIDER } from "./email-provider";
     EmailOutboxWorker,
     SlaEmailPlanner,
     EmailDispatchService,
+    {
+      provide: EmailOAuthRuntimeService,
+      inject: [PrismaService],
+      useFactory: (prisma: PrismaService) =>
+        new EmailOAuthRuntimeService(prisma),
+    },
     { provide: EMAIL_PROVIDER, useClass: DisabledEmailProvider },
   ],
   exports: [EmailDispatchService, EmailOutboxWorker, SlaEmailPlanner],

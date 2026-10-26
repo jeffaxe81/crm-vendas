@@ -25,9 +25,20 @@ export class EmailDispatchService {
     @Inject(EMAIL_PROVIDER) private readonly provider: EmailProvider
   ) {}
 
-  async attempt(email: TransactionalEmail): Promise<EmailSendOutcome> {
+  async forOrganization(organizationId: string): Promise<EmailDispatchService> {
+    return this.provider.prepareOrganization
+      ? new EmailDispatchService(
+          await this.provider.prepareOrganization(organizationId)
+        )
+      : this;
+  }
+
+  async attempt(
+    email: TransactionalEmail,
+    signal?: AbortSignal
+  ): Promise<EmailSendOutcome> {
     try {
-      const result = await this.provider.send(email);
+      const result = await this.provider.send(email, signal);
       if (
         !result ||
         typeof result.providerMessageId !== "string" ||

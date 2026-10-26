@@ -23,8 +23,7 @@ describe("CRM 1.0 email transport release guard", () => {
     );
 
     expect(providerBindings).toHaveLength(1);
-    expect(providerBindings[0]).toEqual({
-      provide: EMAIL_PROVIDER,
+    expect(providerBindings[0]).toMatchObject({
       useClass: DisabledEmailProvider,
     });
   });

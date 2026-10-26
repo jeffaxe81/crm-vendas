@@ -1,4 +1,5 @@
 "use client";
+import { EmailOAuthConnectionPanel } from "./email-oauth-connection-panel";
 
 import {
   SaveButton,
@@ -179,6 +180,14 @@ export function EmailProviderPreferencePanel({
             )}
           />
         </form>
+      ) : null}
+      {preference &&
+      (preference.providerCode === "GMAIL" ||
+        preference.providerCode === "MICROSOFT_365") ? (
+        <EmailOAuthConnectionPanel
+          provider={preference.providerCode}
+          accessToken={accessToken}
+        />
       ) : null}
     </div>
   );
