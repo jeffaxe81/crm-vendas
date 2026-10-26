@@ -16,7 +16,10 @@ export function validEmailOAuthOrigin(raw: string): boolean {
       url.protocol === "https:" &&
       !url.port &&
       isIP(url.hostname) === 0 &&
-      /^(?:[a-z0-9-]+\.)+[a-z0-9-]+$/.test(url.hostname)
+      url.hostname.length <= 253 &&
+      /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(
+        url.hostname
+      )
     )
       return true;
     return (
@@ -34,6 +37,8 @@ export function validEmailOAuthRedirect(raw: string): boolean {
     const url = new URL(raw);
     return (
       raw === url.toString() &&
+      !url.username &&
+      !url.password &&
       url.pathname === "/admin/email/oauth/callback" &&
       !url.search &&
       !url.hash &&
