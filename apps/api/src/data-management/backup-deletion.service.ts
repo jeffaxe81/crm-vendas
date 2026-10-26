@@ -1,3 +1,4 @@
+import { releaseBackupStorage } from "./backup-storage-capacity";
 import { randomUUID } from "node:crypto";
 import {
   BadRequestException,
@@ -278,6 +279,7 @@ export class BackupDeletionService {
               // Unlink is idempotent. If audit/commit fails after unlink, the
               // durable DELETING row survives and the next cycle retries it.
               await store.remove(id);
+              await releaseBackupStorage(tx, organization.id, id);
               await tx.auditLog.create({
                 data: {
                   organizationId: organization.id,

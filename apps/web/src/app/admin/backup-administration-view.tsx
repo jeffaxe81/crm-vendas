@@ -6,7 +6,7 @@ import {
   useSaveFeedback,
 } from "../../components/save-feedback";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   BackupRecordSchema,
   OperationPreviewSchema,
@@ -19,6 +19,7 @@ import { useTranslation } from "../../i18n/language-provider";
 import { TenantPurgePolicyView } from "./tenant-purge-policy-view";
 import { TenantStorageAllocationView } from "./tenant-storage-allocation-view";
 import { TenantStorageReconciliationView } from "./tenant-storage-reconciliation-view";
+import { RecoveryExecutionView } from "./recovery-execution-view";
 import { GlobalStorageInventoryView } from "./global-storage-inventory-view";
 
 type Operation = {
@@ -77,6 +78,8 @@ export function BackupAdministrationView({
   accessToken: string;
 }) {
   const { t } = useTranslation();
+  const currentToken = useRef(accessToken);
+  currentToken.current = accessToken;
   const [backups, setBackups] = useState<BackupRecord[]>([]);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [schedule, setSchedule] = useState<Schedule>(defaults);
@@ -95,6 +98,7 @@ export function BackupAdministrationView({
   const [acceptedDeletions, setAcceptedDeletions] = useState<string[]>([]);
   useEffect(() => {
     setDeletionTarget(null);
+    setPreview(null);
     setDeletionConfirmation("");
     setAcceptedDeletions([]);
   }, [accessToken]);
@@ -221,7 +225,8 @@ export function BackupAdministrationView({
         accessToken,
         method: "POST",
       });
-      setPreview(OperationPreviewSchema.parse(result));
+      if (currentToken.current === accessToken)
+        setPreview(OperationPreviewSchema.parse(result));
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -490,7 +495,9 @@ export function BackupAdministrationView({
               <li key={item.id}>
                 {date(item.createdAt)} · {states[item.state] ?? item.state} ·{" "}
                 {item.stage}
-                {item.errorCode ? ` · Erro: ${item.errorCode}` : ""}
+                {item.errorCode
+                  ? ` · ${item.errorCode === "BACKUP_QUOTA_EXCEEDED" ? t("Capacidade de backups excedida. Aumente a cota ou libere capacidade antes de tentar novamente.") : item.errorCode}`
+                  : ""}
               </li>
             ))}
           </ul>
@@ -632,16 +639,12 @@ export function BackupAdministrationView({
               {preview.unsupportedRestoreModels.join(", ")}
             </p>
           ) : null}
-          <p>
-            {t(
-              "A restauração efetiva ainda está bloqueada: exige reautenticação, cópia preventiva verificada e substituição transacional homologada."
-            )}
-          </p>
           <button type="button" onClick={() => setPreview(null)}>
             {t("Fechar prévia")}
           </button>
         </section>
       ) : null}
+      <RecoveryExecutionView accessToken={accessToken} preview={preview} />
       <TenantStorageAllocationView accessToken={accessToken} />
       <TenantStorageReconciliationView accessToken={accessToken} />
       <GlobalStorageInventoryView accessToken={accessToken} />

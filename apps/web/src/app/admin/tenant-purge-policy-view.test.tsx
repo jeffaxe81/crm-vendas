@@ -38,6 +38,7 @@ it("keeps purge disabled until explicit confirmation and saves only current tena
       expect(JSON.parse(init?.body as string)).toEqual({
         enabled: true,
         retentionDays: 90,
+        categories: ["EXPIRED_OPERATION_PREVIEWS"],
         confirmation: "ATIVAR EXPURGO",
       });
       return response({ ...policy, enabled: true, retentionDays: 90 });
@@ -210,4 +211,46 @@ it("accepts a custom 45-day retention instead of fixed preset choices", async ()
   expect(
     fetchMock.mock.calls.filter(([, options]) => options?.method === "PUT")
   ).toHaveLength(1);
+});
+
+it("simulates only explicitly selected categories without saving or deleting", async () => {
+  const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+    if (url.endsWith("/simulate")) {
+      expect(init?.method).toBe("POST");
+      expect(JSON.parse(init?.body as string)).toEqual({
+        retentionDays: 180,
+        categories: [
+          "EXPIRED_OPERATION_PREVIEWS",
+          "TERMINAL_WEBHOOK_DELIVERIES",
+        ],
+      });
+      return response({
+        counts: {
+          EXPIRED_OPERATION_PREVIEWS: 3,
+          TERMINAL_WEBHOOK_DELIVERIES: 7,
+        },
+      });
+    }
+    expect(init?.method).not.toBe("PUT");
+    return response(policy);
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  render(<TenantPurgePolicyView accessToken="tenant-a-token" />);
+  await screen.findByText(/Registros técnicos elegíveis no momento/);
+  const webhook = screen.getByRole("checkbox", {
+    name: "Tentativas de webhooks encerrados",
+  });
+  expect(webhook).not.toBeChecked();
+  fireEvent.click(webhook);
+  fireEvent.click(screen.getByRole("button", { name: "Simular sem excluir" }));
+  expect(
+    await screen.findByText("Simulação: nenhuma alteração foi realizada.")
+  ).toHaveTextContent("7");
+  expect(
+    fetchMock.mock.calls.filter(([, options]) => options?.method === "PUT")
+  ).toHaveLength(0);
+  fireEvent.click(webhook);
+  expect(
+    screen.queryByText("Simulação: nenhuma alteração foi realizada.")
+  ).not.toBeInTheDocument();
 });

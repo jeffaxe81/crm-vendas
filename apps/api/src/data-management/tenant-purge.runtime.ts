@@ -34,11 +34,8 @@ export class TenantPurgeRuntime implements OnModuleInit, OnModuleDestroy {
     if (this.stopped || this.inFlight) return;
     const cycle = Promise.resolve()
       .then(() => this.service.runDue())
-      .catch(error => {
-        this.logger.error(
-          "Tenant purge cycle failed",
-          error instanceof Error ? error.stack : undefined
-        );
+      .catch(() => {
+        this.logger.error("Tenant purge cycle failed");
       })
       .then(() => undefined);
     this.inFlight = cycle;

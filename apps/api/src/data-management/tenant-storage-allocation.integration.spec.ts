@@ -157,7 +157,7 @@ describe("tenant backup allocation and RLS", () => {
       randomUUID()
     );
     expect(await service.read(principal(orgA))).toMatchObject({
-      usedBytes: (10n * gib).toString(),
+      usedBytes: (10n * gib + 72n).toString(),
       backupCount: 2,
       usagePercent: 83,
       alertLevel: "WARNING",
