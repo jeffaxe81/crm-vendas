@@ -64,6 +64,9 @@ describe("backup operation heartbeat lifecycle", () => {
       .fn<Promise<unknown>, [entry: unknown]>()
       .mockResolvedValue({});
     const transaction = {
+      $queryRawUnsafe: jestRuntime
+        .fn<Promise<unknown[]>, [query: string, ...parameters: unknown[]]>()
+        .mockResolvedValue([]),
       $executeRawUnsafe: execute,
       backupSchedule: { findUnique: schedule },
       auditLog: { create: audit },
@@ -302,6 +305,7 @@ describe("backup operation heartbeat lifecycle", () => {
     "BACKUP_ORGANIZATION_MISMATCH",
     "BACKUP_REFERENCES_INVALID",
     "BACKUP_TOO_LARGE",
+    "BACKUP_QUOTA_EXCEEDED",
     "BACKUP_ATTACHMENT_ADAPTER_REQUIRED",
   ])("terminalizes and audits an owned operation after %s", async errorCode => {
     const test = setup();

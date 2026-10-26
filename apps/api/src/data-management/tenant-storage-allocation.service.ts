@@ -5,17 +5,24 @@ import { z } from "zod";
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
 
+import {
+  backupStorageUsage,
+  lockBackupStorage,
+} from "./backup-storage-capacity";
+
 const GIB = 1024n * 1024n * 1024n;
 const LIMIT = 10240;
 const inputSchema = z
   .object({
     allocatedGiB: z.number().int().min(1).max(LIMIT).nullable(),
+    enforced: z.boolean().optional(),
     confirmation: z.literal("AJUSTAR COTA"),
   })
   .strict();
 
 type AllocationRow = {
   allocation_gib: number | null;
+  enforced: boolean;
   updated_at: Date;
 };
 
@@ -25,15 +32,14 @@ export type TenantStorageAllocationView = {
   backupCount: number;
   usagePercent: number | null;
   alertLevel: "UNALLOCATED" | "OK" | "WARNING" | "EXCEEDED";
-  enforced: false;
+  enforced: boolean;
+  reservedBytes: string;
   scope: "ENCRYPTED_BACKUP_CATALOG";
   updatedAt: string | null;
 };
 
 /**
- * Capacity planning ONLY: counts completed/pending-deletion backup catalog bytes.
- * Does not change filesystem capacity or reject writes; there is deliberately no
- * misleading hard-cap assertion before the worker can reserve bytes atomically.
+ * Physical encrypted backup accounting with explicit opt-in capacity enforcement.
  */
 @Injectable()
 export class TenantStorageAllocationService {
@@ -44,7 +50,7 @@ export class TenantStorageAllocationService {
   ): Promise<TenantStorageAllocationView> {
     return this.prisma.withTenant(principal.organizationId, async tx => {
       const [allocation] = await tx.$queryRaw<AllocationRow[]>`
-        SELECT allocation_gib, updated_at
+        SELECT allocation_gib, enforced, updated_at
         FROM public.tenant_storage_allocations
         WHERE organization_id = ${principal.organizationId}::uuid
       `;
@@ -56,7 +62,8 @@ export class TenantStorageAllocationService {
         _sum: { byteCount: true },
         _count: { id: true },
       });
-      const usedBytes = usage._sum.byteCount ?? 0n;
+      const physical = await backupStorageUsage(tx, principal.organizationId);
+      const usedBytes = physical.usedBytes + physical.reservedBytes;
       const allocatedGiB = allocation?.allocation_gib ?? null;
       const allocatedBytes =
         allocatedGiB === null ? null : BigInt(allocatedGiB) * GIB;
@@ -78,7 +85,8 @@ export class TenantStorageAllocationService {
         backupCount: usage._count.id,
         usagePercent,
         alertLevel,
-        enforced: false as const,
+        enforced: allocation?.enforced ?? false,
+        reservedBytes: physical.reservedBytes.toString(),
         scope: "ENCRYPTED_BACKUP_CATALOG" as const,
         updatedAt: allocation?.updated_at.toISOString() ?? null,
       };
@@ -97,27 +105,33 @@ export class TenantStorageAllocationService {
       );
     }
     const { allocatedGiB } = parsed.data;
+    if (parsed.data.enforced && allocatedGiB === null)
+      throw new BadRequestException(
+        "Defina uma capacidade para ativar o bloqueio de backups."
+      );
     await this.prisma.withTenant(principal.organizationId, async tx => {
       // Serialize administrator changes for the same tenant.
-      await tx.$executeRawUnsafe(
-        "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
-        `tenant-storage:${principal.organizationId}`
-      );
+      await lockBackupStorage(tx, principal.organizationId);
       const [previous] = await tx.$queryRaw<AllocationRow[]>`
-        SELECT allocation_gib, updated_at
+        SELECT allocation_gib, enforced, updated_at
         FROM public.tenant_storage_allocations
         WHERE organization_id = ${principal.organizationId}::uuid
       `;
+      const enforced =
+        parsed.data.enforced ??
+        (allocatedGiB === null ? false : (previous?.enforced ?? false));
       await tx.$executeRaw`
         INSERT INTO public.tenant_storage_allocations
-          (organization_id, allocation_gib, updated_by)
+          (organization_id, allocation_gib, updated_by, enforced)
         VALUES (
           ${principal.organizationId}::uuid,
           ${allocatedGiB},
-          ${principal.userId}::uuid
+          ${principal.userId}::uuid,
+          ${enforced}
         )
         ON CONFLICT (organization_id)
         DO UPDATE SET allocation_gib = EXCLUDED.allocation_gib,
+                      enforced = EXCLUDED.enforced,
                       updated_by = EXCLUDED.updated_by,
                       updated_at = CURRENT_TIMESTAMP
       `;
@@ -133,7 +147,7 @@ export class TenantStorageAllocationService {
             previousGiB: previous?.allocation_gib ?? null,
             allocatedGiB,
             scope: "ENCRYPTED_BACKUP_CATALOG",
-            enforced: false,
+            enforced,
           },
         },
       });

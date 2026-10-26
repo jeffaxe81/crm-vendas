@@ -13,6 +13,12 @@ import type {
   Prisma,
 } from "../generated/prisma/client";
 import { BackupStore, BackupStoreIntegrityError } from "./backup-store";
+import {
+  lockBackupStorage,
+  reserveBackupStorage,
+  releaseBackupStorage,
+} from "./backup-storage-capacity";
+import { BACKUP_ENVELOPE_OVERHEAD_BYTES } from "./backup-store";
 import { BackupError } from "./backup-error";
 import {
   canonical,
@@ -123,6 +129,7 @@ export class BackupService {
     fence?: BackupWorkerFence
   ): Promise<void> {
     requireActive(fence?.signal);
+    await lockBackupStorage(tx, organizationId);
     if (!fence) return;
     // Match the write-trigger lock order before locking the operation row.
     await tx.$executeRawUnsafe(
@@ -237,6 +244,27 @@ export class BackupService {
 
       const readPublished = async () => {
         requireActive(workerFence?.signal);
+        // Upgrade interrupted publications from versions predating reservations,
+        // including authenticated envelopes whose snapshot validation later fails.
+        let physicalSize: number | null;
+        try {
+          physicalSize = await store.objectSize(id);
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+          throw error;
+        }
+        if (physicalSize !== null && physicalSize > 0) {
+          await this.prisma.withTenant(organizationId, async tx => {
+            await this.requireWorkerFence(tx, organizationId, id, workerFence);
+            await reserveBackupStorage(
+              tx,
+              organizationId,
+              id,
+              BigInt(physicalSize!),
+              true
+            );
+          });
+        }
         let bytes: Buffer;
         try {
           bytes = await store.read(id);
@@ -258,7 +286,7 @@ export class BackupService {
       };
       // A process can die after immutable publication but before the catalog
       // commit. Adopt only authenticated, tenant-validated snapshot bytes.
-      let published = workerFence ? await readPublished() : null;
+      let published = await readPublished();
       if (!published) {
         const bytes = await this.prisma.withTenant(
           organizationId,
@@ -287,21 +315,36 @@ export class BackupService {
             timeout: this.options.snapshotTimeoutMs,
           }
         );
-        await this.prisma.withTenant(organizationId, tx =>
-          this.requireWorkerFence(tx, organizationId, id, workerFence)
-        );
+        // Commit the reservation before starting any immutable publication.
+        await this.prisma.withTenant(organizationId, async tx => {
+          await this.requireWorkerFence(tx, organizationId, id, workerFence);
+          await reserveBackupStorage(
+            tx,
+            organizationId,
+            id,
+            BigInt(bytes.length + BACKUP_ENVELOPE_OVERHEAD_BYTES)
+          );
+        });
         requireActive(workerFence?.signal);
         let adopted = false;
         try {
-          await store.put(id, bytes);
+          await this.prisma.withTenant(
+            organizationId,
+            async tx => {
+              await this.requireWorkerFence(
+                tx,
+                organizationId,
+                id,
+                workerFence
+              );
+              await store.put(id, bytes);
+            },
+            { timeout: this.options.snapshotTimeoutMs }
+          );
         } catch (error) {
           // Another fenced publisher may win after our pre-publication check.
           // The immutable object is authoritative only after full validation.
-          if (
-            !workerFence ||
-            (error as NodeJS.ErrnoException).code !== "EEXIST"
-          )
-            throw error;
+          if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
           adopted = true;
         }
         published = await readPublished();
@@ -314,6 +357,13 @@ export class BackupService {
         async tx => {
           await this.authorize(tx, organizationId, actorId, reason);
           await this.requireWorkerFence(tx, organizationId, id, workerFence);
+          await reserveBackupStorage(
+            tx,
+            organizationId,
+            id,
+            BigInt(persisted.length + BACKUP_ENVELOPE_OVERHEAD_BYTES),
+            true
+          );
           const row = await tx.backupRecord.update({
             where: { id_organizationId: { id, organizationId } },
             data: {
@@ -326,6 +376,7 @@ export class BackupService {
               errorCode: null,
             },
           });
+          await releaseBackupStorage(tx, organizationId, id);
           await this.audit(
             tx,
             organizationId,
@@ -344,13 +395,6 @@ export class BackupService {
       return summary(completed);
     } catch (error) {
       const code = error instanceof BackupError ? error.code : "BACKUP_FAILED";
-      if (!workerFence) {
-        try {
-          await store.remove(id);
-        } catch {
-          /* Worker reconciliation must handle leftover private objects. */
-        }
-      }
       try {
         await this.prisma.withTenant(organizationId, async tx => {
           await this.requireWorkerFence(tx, organizationId, id, workerFence);
@@ -498,6 +542,8 @@ export class BackupService {
           id,
           "backup.retention_deleted"
         );
+        await this.store!.remove(id);
+        await releaseBackupStorage(tx, organizationId, id);
         await tx.backupRecord.delete({
           where: { id_organizationId: { id, organizationId } },
         });
@@ -505,9 +551,6 @@ export class BackupService {
         return true;
       });
       if (!deleted) continue;
-      // Finish the already-committed deletion even if the lease is now lost;
-      // stopping here would leave a file no catalog-based sweep can discover.
-      await this.store.remove(id);
       removed += 1;
     }
     return removed;

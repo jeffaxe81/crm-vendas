@@ -4,8 +4,10 @@ import { PasswordService } from "../auth/password.service";
 import { BackupError } from "./backup-error";
 import type { VerifiedBackup } from "./backup.service";
 import { preflightRestoreExecution } from "./restore-locked-preflight";
+import { preflightDeletionExecution } from "./recovery-deletion-preflight";
 
 export const RESTORE_CONFIRMATION_PHRASE = "RESTAURAR DADOS";
+export const DELETE_CONFIRMATION_PHRASE = "EXCLUIR DADOS OPERACIONAIS";
 
 export type RestoreConfirmation = {
   previewId: string;
@@ -27,9 +29,10 @@ export async function consumeRestoreConfirmation(
   tx: Prisma.TransactionClient,
   principal: AuthenticatedPrincipal,
   input: RestoreConfirmation,
-  verified: VerifiedBackup,
+  verified: VerifiedBackup | null,
   passwords: PasswordService,
-  maxBytes: number
+  maxBytes: number,
+  kind: "RESTORE" | "DELETE" = "RESTORE"
 ): Promise<void> {
   if (
     principal.authMethod !== "session" ||
@@ -67,10 +70,15 @@ export async function consumeRestoreConfirmation(
     typeof input.password !== "string" ||
     input.password.length < 1 ||
     input.password.length > 1024 ||
-    input.confirmation !== RESTORE_CONFIRMATION_PHRASE ||
-    verified.record.organizationId !== principal.organizationId ||
-    verified.manifest.organizationId !== principal.organizationId ||
-    verified.record.checksum !== verified.manifest.checksum
+    input.confirmation !==
+      (kind === "RESTORE"
+        ? RESTORE_CONFIRMATION_PHRASE
+        : DELETE_CONFIRMATION_PHRASE) ||
+    (kind === "RESTORE" &&
+      (!verified ||
+        verified.record.organizationId !== principal.organizationId ||
+        verified.manifest.organizationId !== principal.organizationId ||
+        verified.record.checksum !== verified.manifest.checksum))
   ) {
     throw new BackupError("RESTORE_CONFIRMATION_INVALID");
   }
@@ -108,9 +116,9 @@ export async function consumeRestoreConfirmation(
         organizationId: principal.organizationId,
         actorUserId: principal.userId,
         sessionId: principal.sessionId,
-        kind: "RESTORE",
-        targetBackupId: verified.record.id,
-        targetChecksum: verified.manifest.checksum,
+        kind,
+        targetBackupId: verified?.record.id ?? null,
+        targetChecksum: verified?.manifest.checksum ?? null,
         consumedAt: null,
         expiresAt: { gt: now },
       },
@@ -129,16 +137,32 @@ export async function consumeRestoreConfirmation(
 
   // Re-run target/reference/identity readiness and current-state fingerprint
   // under the same exclusive maintenance lock that will guard restoration.
-  const locked = await preflightRestoreExecution(
-    tx,
-    principal.organizationId,
-    verified,
-    maxBytes
-  );
+  const locked =
+    kind === "RESTORE"
+      ? await preflightRestoreExecution(
+          tx,
+          principal.organizationId,
+          verified!,
+          maxBytes
+        )
+      : await preflightDeletionExecution(
+          tx,
+          principal.organizationId,
+          maxBytes
+        );
   const fingerprint = locked.currentFingerprint;
   if (fingerprint !== preview.currentFingerprint) {
     throw new BackupError("RESTORE_PREVIEW_STALE");
   }
+  if (
+    kind === "DELETE" &&
+    (typeof preview.payload !== "object" ||
+      preview.payload === null ||
+      Array.isArray(preview.payload) ||
+      preview.payload.targetFingerprint !==
+        (locked as { targetFingerprint: string }).targetFingerprint)
+  )
+    throw new BackupError("RESTORE_PREVIEW_STALE");
 
   const consumed = await tx.operationPreview.updateMany({
     where: {
@@ -146,9 +170,9 @@ export async function consumeRestoreConfirmation(
       organizationId: principal.organizationId,
       actorUserId: principal.userId,
       sessionId: principal.sessionId,
-      kind: "RESTORE",
-      targetBackupId: verified.record.id,
-      targetChecksum: verified.manifest.checksum,
+      kind,
+      targetBackupId: verified?.record.id ?? null,
+      targetChecksum: verified?.manifest.checksum ?? null,
       currentFingerprint: fingerprint,
       expiresAt: { gt: new Date() },
       consumedAt: null,
@@ -164,12 +188,12 @@ export async function consumeRestoreConfirmation(
       organizationId: principal.organizationId,
       actorUserId: principal.userId,
       requestId: preview.id,
-      action: "restore.confirmation_consumed",
+      action: `${kind.toLowerCase()}.confirmation_consumed`,
       entityType: "operation_preview",
       entityId: preview.id,
       metadata: {
-        backupId: verified.record.id,
-        targetChecksum: verified.manifest.checksum,
+        backupId: verified?.record.id ?? null,
+        targetChecksum: verified?.manifest.checksum ?? null,
       },
     },
   });

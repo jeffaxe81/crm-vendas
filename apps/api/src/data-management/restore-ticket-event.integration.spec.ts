@@ -122,7 +122,7 @@ describe("internal Ticket/TicketEvent restore graph", () => {
       body: "Event from backup",
     });
   });
-  it("refuses direct Ticket replacement with live outbox policy data", async () => {
+  it("preserves protected outbox references while pausing dispatch after Ticket replacement", async () => {
     const organization = await owner.organization.create({
       data: { name: "Ticket dependency safety", slug: randomUUID() },
     });
@@ -171,9 +171,18 @@ describe("internal Ticket/TicketEvent restore graph", () => {
         tx => restoreTenantSnapshot(tx, organization.id, verified.data),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    ).resolves.toBeUndefined();
     expect(
       await owner.ticket.findUniqueOrThrow({ where: { id: ticket.id } })
     ).toMatchObject({ subject: "Preserve while dependent exists" });
+    expect(
+      await owner.emailOutbox.findFirstOrThrow({
+        where: { ticketId: ticket.id },
+      })
+    ).toMatchObject({
+      status: "MANUAL_REVIEW",
+      encryptedEmail: "synthetic-private-ciphertext",
+      lastErrorCode: "RECOVERY_REVIEW_REQUIRED",
+    });
   });
 });

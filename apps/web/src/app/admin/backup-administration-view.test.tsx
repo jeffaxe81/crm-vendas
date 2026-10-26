@@ -60,6 +60,8 @@ afterEach(() => {
 
 it("disables backup creation when the encrypted store is not configured", async () => {
   const fetchMock = vi.fn(async (url: string) => {
+    if (url.endsWith("/admin/recovery/capabilities"))
+      return jsonResponse({ enabled: false, configured: false });
     if (url.endsWith("/admin/backups/operations")) {
       return jsonResponse([]);
     }
@@ -89,6 +91,8 @@ it("disables backup creation when the encrypted store is not configured", async 
 it("creates a queued manual backup using the authenticated API", async () => {
   let queued = false;
   const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+    if (url.endsWith("/admin/recovery/capabilities"))
+      return jsonResponse({ enabled: false, configured: false });
     if (url.endsWith("/admin/backups/operations")) {
       return jsonResponse(queued ? [{ ...operation, state: "PENDING" }] : []);
     }
@@ -125,6 +129,8 @@ it("creates a queued manual backup using the authenticated API", async () => {
 it("polls a running operation and stops after completion", async () => {
   let operationFetches = 0;
   const fetchMock = vi.fn(async (url: string) => {
+    if (url.endsWith("/admin/recovery/capabilities"))
+      return jsonResponse({ enabled: false, configured: false });
     if (url.endsWith("/admin/backups/operations")) {
       operationFetches++;
       return jsonResponse([
@@ -180,6 +186,8 @@ it("requires explicit confirmation tied to the selected backup and then polls de
   let deleted = false;
   let catalogCalls = 0;
   const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+    if (url.endsWith("/admin/recovery/capabilities"))
+      return jsonResponse({ enabled: false, configured: false });
     if (
       url.endsWith(`/admin/backups/${completedBackup.id}`) &&
       init?.method === "DELETE"
@@ -238,6 +246,8 @@ it("requires explicit confirmation tied to the selected backup and then polls de
 
 it("cancels deletion without making a destructive request", async () => {
   const fetchMock = vi.fn(async (url: string) => {
+    if (url.endsWith("/admin/recovery/capabilities"))
+      return jsonResponse({ enabled: false, configured: false });
     if (url.endsWith("/operations")) return jsonResponse([]);
     if (url.endsWith("/schedule")) return jsonResponse(schedule);
     return jsonResponse({ configured: true, backups: [completedBackup] });
@@ -267,6 +277,8 @@ it("polls a pending deletion and stops after the file is removed", async () => {
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string) => {
+      if (url.endsWith("/admin/recovery/capabilities"))
+        return jsonResponse({ enabled: false, configured: false });
       if (url.endsWith("/operations")) return jsonResponse([]);
       if (url.endsWith("/schedule")) return jsonResponse(schedule);
       catalogCalls++;
@@ -304,6 +316,8 @@ it("keeps the confirmation available and reports a rejected deletion", async () 
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith("/admin/recovery/capabilities"))
+        return jsonResponse({ enabled: false, configured: false });
       if (init?.method === "DELETE")
         return {
           ok: false,
@@ -347,6 +361,8 @@ it("keeps polling an accepted deletion after the first refresh fails", async () 
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith("/admin/recovery/capabilities"))
+        return jsonResponse({ enabled: false, configured: false });
       if (init?.method === "DELETE")
         return jsonResponse({ id: completedBackup.id, state: "DELETING" });
       if (url.endsWith("/operations")) return jsonResponse([]);
@@ -407,6 +423,8 @@ it("shows unsupported restore models but never enables destructive restore", asy
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith("/admin/recovery/capabilities"))
+        return jsonResponse({ enabled: false, configured: false });
       if (
         url.endsWith(`/admin/backups/${completedBackup.id}/preview`) &&
         init?.method === "POST"
@@ -429,7 +447,7 @@ it("shows unsupported restore models but never enables destructive restore", asy
     await screen.findByText(/Modelos ainda não restauráveis:/)
   ).toHaveTextContent("Opportunity");
   expect(
-    screen.getByText(/A restauração efetiva ainda está bloqueada/)
+    screen.getByText(/Restauração e exclusão operacional pendentes/)
   ).toBeInTheDocument();
   expect(
     screen.queryByRole("button", { name: /confirmar restauração/i })

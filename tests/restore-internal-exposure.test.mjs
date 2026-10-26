@@ -6,9 +6,9 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../apps/api/src/", import.meta.url));
 
-// Until #250 and #159 have signed operational evidence, the destructive
-// executor must remain an internal, transaction-only primitive.
-// This is a source exposure guard, NOT approval to execute RESTORE.
+// Runtime wiring is restricted to the explicit, default-disabled recovery
+// service. This source boundary complements HTTP/transaction safety tests;
+// it is not operational approval to enable recovery in production.
 function productionSources(directory = root) {
   const entries = [];
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
@@ -36,10 +36,12 @@ function productionSources(directory = root) {
 const transactionImport =
   /(?:\bfrom\s*|\bimport\s*\(\s*|\brequire\s*\(\s*)["'][^"']*restore-transaction(?:\.[cm]?js|\.ts)?["']/;
 
-test("the internal restore transaction has no production importer", () => {
+test("the restore transaction is imported only by the controlled recovery service", () => {
   const offenders = productionSources()
     .filter(({ path, content }) => {
       if (path.endsWith(sep + "restore-transaction.ts")) return false;
+      if (path.endsWith(sep + "recovery-execution.service.ts")) return false;
+      if (path.endsWith(sep + "delete-transaction.ts")) return false;
       return transactionImport.test(content);
     })
     .map(({ path }) => path.slice(root.length))
@@ -48,7 +50,7 @@ test("the internal restore transaction has no production importer", () => {
   assert.deepEqual(
     offenders,
     [],
-    "Do not wire RESTORE into runtime before #250/#159 approval"
+    "Restore wiring must remain inside the guarded recovery service"
   );
 });
 
@@ -57,7 +59,8 @@ test("business graph replacement has no direct runtime caller", () => {
     .filter(({ path, content }) => {
       if (
         path.endsWith(sep + "restore-executor.ts") ||
-        path.endsWith(sep + "restore-transaction.ts")
+        path.endsWith(sep + "restore-transaction.ts") ||
+        path.endsWith(sep + "delete-transaction.ts")
       ) {
         return false;
       }

@@ -299,7 +299,7 @@ describe("restore locked preflight", () => {
           ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    ).rejects.toThrow("RESTORE_PRESERVED_REFERENCE_MISSING");
 
     expect(
       await owner.ticket.findUnique({ where: { id: ticket.id } })

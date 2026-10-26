@@ -37,6 +37,8 @@ describe("queued deletion safety after enqueue", () => {
     let historicalReferences = 0;
     let previewReferences = 0;
     const tx = {
+      $executeRawUnsafe: async () => 0,
+      $executeRaw: async () => 0,
       backupRecord: {
         async findMany() {
           return target.state === "DELETING" ? [{ id: target.id }] : [];

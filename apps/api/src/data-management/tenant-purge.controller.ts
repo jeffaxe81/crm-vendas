@@ -5,6 +5,7 @@ import {
   Header,
   Inject,
   Put,
+  Post,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -31,6 +32,12 @@ export class TenantPurgeController {
   @Header("Cache-Control", "no-store")
   getPolicy(@Req() request: AuthenticatedRequest) {
     return this.purge.read(this.principal(request));
+  }
+
+  @Post("simulate")
+  @Header("Cache-Control", "no-store")
+  simulate(@Body() body: unknown, @Req() request: AuthenticatedRequest) {
+    return this.purge.simulate(this.principal(request), body);
   }
 
   @Put("policy")
