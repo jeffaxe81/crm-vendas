@@ -1187,7 +1187,7 @@ model EmailOutbox {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  ticket Ticket @relation(fields: [ticketId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "email_outbox_ticket_org_fkey")
+  ticket Ticket @relation(fields: [ticketId, organizationId], references: [id, organizationId], onDelete: NoAction, map: "email_outbox_ticket_org_fkey")
 
   @@unique([organizationId, idempotencyHash], map: "email_outbox_org_idempotency_key")
   @@index([organizationId, status, nextAttemptAt, leasedUntil], map: "email_outbox_org_due_idx")

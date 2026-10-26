@@ -13,6 +13,7 @@ import { validateRestoreReferences } from "./restore-reference-check";
 import { exportTenantSnapshot } from "./tenant-snapshot";
 import { requireSupportedTicketRestoreDependencies } from "./restore-ticket-dependencies";
 import { validateTicketSatisfactionRestore } from "./restore-ticket-satisfaction";
+import { validateOrganizationRestoreOwner } from "./restore-organization";
 
 export type RestoreLockedPreflight = {
   currentFingerprint: string;
@@ -95,6 +96,7 @@ export async function preflightRestoreExecution(
   validateTicketSatisfactionRestore(verified.data, organizationId);
   await validateRestoreIdentityReferences(tx, organizationId, verified.data);
   await validateRestorePreservedMemberships(tx, organizationId, verified.data);
+  await validateOrganizationRestoreOwner(tx, organizationId, verified.data);
 
   const current = await exportTenantSnapshot(tx, organizationId, maxBytes);
   const currentCounts = counts(current);

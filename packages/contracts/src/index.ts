@@ -420,3 +420,11 @@ export {
   type StorageGlobalInventory,
   type StorageInventoryFindingStatus,
 } from "./storage-global-inventory";
+
+export {
+  RestoreExecutionRequestSchema,
+  DeleteExecutionRequestSchema,
+  RecoveryCapabilitiesSchema,
+  type RestoreExecutionRequest,
+  type DeleteExecutionRequest,
+} from "./recovery";

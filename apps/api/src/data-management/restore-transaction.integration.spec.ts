@@ -6,6 +6,8 @@ import { join } from "node:path";
 import { PasswordService } from "../auth/password.service";
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
+import { RecoveryExecutionService } from "./recovery-execution.service";
+import { DELETE_CONFIRMATION_PHRASE } from "./restore-confirmation";
 import { BackupService } from "./backup.service";
 import { BackupStore } from "./backup-store";
 import { decodeSnapshot } from "./backup-manifest";
@@ -176,6 +178,236 @@ describe("internal atomic restore pipeline under restricted RLS", () => {
       run,
     };
   }
+
+  function recovery(enabled = true) {
+    return new RecoveryExecutionService(
+      runtime,
+      backups,
+      passwords,
+      store,
+      options,
+      { enabled }
+    );
+  }
+
+  it("keeps recovery disabled without touching tenant storage", async () => {
+    await expect(
+      recovery(false).execute({} as AuthenticatedPrincipal, "DELETE", {})
+    ).rejects.toMatchObject({ status: 503 });
+  });
+
+  it("executes protected deletion with a verified preventive copy and revoked sessions", async () => {
+    const f = await fixture();
+    await owner.dataOperation.delete({ where: { id: f.operation.id } });
+    const service = recovery();
+    const preview = await service.previewDeletion(f.principal);
+    const receipt = await service.execute(f.principal, "DELETE", {
+      previewId: preview.id,
+      password: pass,
+      confirmation: DELETE_CONFIRMATION_PHRASE,
+    });
+    expect(receipt.state).toBe("COMPLETED");
+    expect(receipt.preventiveBackupId).toBeTruthy();
+    expect(
+      await owner.company.count({ where: { organizationId: f.org.id } })
+    ).toBe(0);
+    expect(
+      await owner.company.count({ where: { organizationId: f.other.id } })
+    ).toBe(1);
+    const preventive = await backups.verify(
+      f.org.id,
+      receipt.preventiveBackupId!
+    );
+    expect(preventive.data.Company!.some(row => row.id === f.company.id)).toBe(
+      true
+    );
+    expect(
+      await owner.refreshSession.findUniqueOrThrow({
+        where: { id: f.principal.sessionId! },
+      })
+    ).toMatchObject({ revokedAt: expect.any(Date) });
+    expect(
+      await owner.organizationMembership.count({
+        where: { organizationId: f.org.id, isActive: true },
+      })
+    ).toBe(1);
+  });
+
+  it("executes a confirmed restore through the public orchestration without persisting its password", async () => {
+    const f = await fixture();
+    await owner.dataOperation.delete({ where: { id: f.operation.id } });
+    const receipt = await recovery().execute(
+      f.principal,
+      "RESTORE",
+      f.confirmation
+    );
+    expect(receipt).toMatchObject({
+      state: "COMPLETED",
+      targetBackupId: f.backup.id,
+    });
+    expect(
+      await owner.company.findUniqueOrThrow({ where: { id: f.company.id } })
+    ).toMatchObject({ legalName: "Backup version" });
+    const operation = await owner.dataOperation.findUniqueOrThrow({
+      where: { id: receipt.id },
+    });
+    const audits = await owner.auditLog.findMany({
+      where: { organizationId: f.org.id },
+    });
+    expect(JSON.stringify([operation, audits])).not.toContain(pass);
+    await expect(
+      recovery().execute(f.principal, "RESTORE", f.confirmation)
+    ).rejects.toMatchObject({ status: 403 });
+  });
+
+  it("rejects incorrect passwords and caps confirmation attempts without deleting data", async () => {
+    const f = await fixture();
+    await owner.dataOperation.delete({ where: { id: f.operation.id } });
+    const service = recovery();
+    const preview = await service.previewDeletion(f.principal);
+    const body = {
+      previewId: preview.id,
+      password: "incorrect",
+      confirmation: DELETE_CONFIRMATION_PHRASE,
+    };
+    for (let i = 0; i < 5; i++)
+      await expect(
+        service.execute(f.principal, "DELETE", body)
+      ).rejects.toMatchObject({ status: 400 });
+    await expect(
+      service.execute(f.principal, "DELETE", { ...body, password: pass })
+    ).rejects.toMatchObject({ status: 429 });
+    expect(
+      await owner.company.count({ where: { organizationId: f.org.id } })
+    ).toBe(1);
+    expect(
+      await owner.dataOperation.count({ where: { organizationId: f.org.id } })
+    ).toBe(0);
+  });
+
+  it("retains the ticket and company closure required by encrypted mail and pauses pending dispatch", async () => {
+    const f = await fixture();
+    await owner.dataOperation.delete({ where: { id: f.operation.id } });
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: f.org.id,
+        protocol: "2026-000001",
+        subject: "Retain protected reference",
+        companyId: f.company.id,
+        createdBy: f.user.id,
+        updatedBy: f.user.id,
+      },
+    });
+    const mail = await owner.emailOutbox.create({
+      data: {
+        organizationId: f.org.id,
+        ticketId: ticket.id,
+        purpose: "SATISFACTION_REQUEST",
+        idempotencyHash: randomBytes(32).toString("hex"),
+        encryptedEmail: "synthetic-ciphertext-preserved",
+      },
+    });
+    const extra = await owner.company.create({
+      data: {
+        organizationId: f.org.id,
+        legalName: "Removable",
+        createdBy: f.user.id,
+        updatedBy: f.user.id,
+      },
+    });
+    const service = recovery();
+    const preview = await service.previewDeletion(f.principal);
+    expect(preview.targetCounts.Ticket).toBe(1);
+    expect(preview.targetCounts.Company).toBe(1);
+    await service.execute(f.principal, "DELETE", {
+      previewId: preview.id,
+      password: pass,
+      confirmation: DELETE_CONFIRMATION_PHRASE,
+    });
+    expect(
+      await owner.company.findUnique({ where: { id: extra.id } })
+    ).toBeNull();
+    expect(
+      await owner.company.findUnique({ where: { id: f.company.id } })
+    ).not.toBeNull();
+    expect(
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
+    ).not.toBeNull();
+    expect(
+      await owner.emailOutbox.findUniqueOrThrow({ where: { id: mail.id } })
+    ).toMatchObject({
+      status: "MANUAL_REVIEW",
+      encryptedEmail: mail.encryptedEmail,
+      idempotencyHash: mail.idempotencyHash,
+      lastErrorCode: "RECOVERY_REVIEW_REQUIRED",
+    });
+  });
+
+  it("rejects stale previews, API keys and unknown request fields before changing data", async () => {
+    const f = await fixture();
+    await owner.dataOperation.delete({ where: { id: f.operation.id } });
+    const service = recovery();
+    await expect(
+      service.previewDeletion({
+        ...f.principal,
+        authMethod: "api_key",
+      } as AuthenticatedPrincipal)
+    ).rejects.toMatchObject({ status: 403 });
+    const preview = await service.previewDeletion(f.principal);
+    const body = {
+      previewId: preview.id,
+      password: pass,
+      confirmation: DELETE_CONFIRMATION_PHRASE,
+    };
+    await expect(
+      service.execute(f.principal, "DELETE", { ...body, unapproved: true })
+    ).rejects.toMatchObject({ status: 400 });
+    await owner.company.update({
+      where: { id: f.company.id },
+      data: { legalName: "Changed after deletion preview" },
+    });
+    await expect(
+      service.execute(f.principal, "DELETE", body)
+    ).rejects.toMatchObject({ status: 409 });
+    expect(
+      await owner.company.findUniqueOrThrow({ where: { id: f.company.id } })
+    ).toMatchObject({ legalName: "Changed after deletion preview" });
+    expect(
+      await owner.operationPreview.findUniqueOrThrow({
+        where: { id: preview.id },
+      })
+    ).toMatchObject({ consumedAt: null });
+  });
+
+  it("restores organization presentation while preserving its live identity and access", async () => {
+    const f = await fixture();
+    await owner.organization.update({
+      where: { id: f.org.id },
+      data: {
+        name: "Changed organization",
+        defaultLanguage: "es",
+        detectBrowserLanguage: true,
+      },
+    });
+    const preview = await previews.previewRestore(f.principal, f.backup.id);
+    f.confirmation.previewId = preview.id;
+    await owner.dataOperation.update({
+      where: { id: f.operation.id },
+      data: { payload: { previewId: preview.id, targetBackupId: f.backup.id } },
+    });
+    const live = await owner.organization.findUniqueOrThrow({
+      where: { id: f.org.id },
+    });
+    await f.run();
+    const restored = await owner.organization.findUniqueOrThrow({
+      where: { id: f.org.id },
+    });
+    expect(restored.name).toBe("Atomic restore A");
+    expect(restored.defaultLanguage).toBe("pt-BR");
+    expect(restored.detectBrowserLanguage).toBe(false);
+    expect(restored.slug).toBe(live.slug);
+    expect(restored.isActive).toBe(live.isActive);
+  });
 
   it("commits confirmed restore, verified preventive backup, audit and fence atomically", async () => {
     const {

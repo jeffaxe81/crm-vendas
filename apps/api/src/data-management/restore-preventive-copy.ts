@@ -9,6 +9,7 @@ import {
 } from "./backup-manifest";
 import { BackupStoreIntegrityError, type BackupStore } from "./backup-store";
 import { exportTenantSnapshot } from "./tenant-snapshot";
+import { preflightDeletionExecution } from "./recovery-deletion-preflight";
 
 export type PreventiveRestoreCopy = {
   backupId: string;
@@ -35,9 +36,10 @@ export async function stageRestorePreventiveCopy(
   operationId: string,
   workerId: string,
   attempts: number,
-  target: VerifiedBackup,
+  target: VerifiedBackup | null,
   store: BackupStore,
-  maxBytes: number
+  maxBytes: number,
+  kind: "RESTORE" | "DELETE" = "RESTORE"
 ): Promise<PreventiveRestoreCopy> {
   const [context] = await tx.$queryRawUnsafe<
     {
@@ -63,7 +65,7 @@ export async function stageRestorePreventiveCopy(
       id: operationId,
       organizationId,
       actorUserId,
-      kind: "RESTORE",
+      kind,
       state: "RUNNING",
       workerId,
       attempts,
@@ -77,32 +79,31 @@ export async function stageRestorePreventiveCopy(
   // A completed catalog entry can be revoked or mutated after verification.
   // Before publishing ANY immutable file, repeat the full target/tenant,
   // reference and restore-policy checks under the same maintenance snapshot.
-  const locked = await preflightRestoreExecution(
-    tx,
-    organizationId,
-    target,
-    maxBytes
-  );
+  if (kind === "RESTORE" && !target)
+    throw new BackupError("RESTORE_TARGET_INVALID");
+  const locked =
+    kind === "RESTORE"
+      ? await preflightRestoreExecution(tx, organizationId, target!, maxBytes)
+      : await preflightDeletionExecution(tx, organizationId, maxBytes);
 
   // The verified target was read before the maintenance lock. Its catalog
   // may still be COMPLETED even if storage has since lost or replaced the
   // ciphertext. Reauthenticate the exact pinned target before publication.
-  let currentTarget: Buffer;
-  try {
-    currentTarget = await store.read(target.record.id);
-  } catch (error) {
-    if (
-      error instanceof BackupStoreIntegrityError ||
-      (error as NodeJS.ErrnoException).code === "ENOENT"
-    ) {
-      throw new BackupError("RESTORE_TARGET_INVALID");
+  if (target) {
+    let currentTarget: Buffer;
+    try {
+      currentTarget = await store.read(target.record.id);
+    } catch (error) {
+      if (
+        error instanceof BackupStoreIntegrityError ||
+        (error as NodeJS.ErrnoException).code === "ENOENT"
+      )
+        throw new BackupError("RESTORE_TARGET_INVALID");
+      throw error;
     }
-    // I/O outages are transient. Preserve the original error for retry;
-    // never publish a preventive object from an unverified target.
-    throw error;
+    if (!currentTarget.equals(target.bytes))
+      throw new BackupError("RESTORE_TARGET_INVALID");
   }
-  if (!currentTarget.equals(target.bytes))
-    throw new BackupError("RESTORE_TARGET_INVALID");
 
   // Use the operation UUID as the immutable backup object name. Retries must
   // read/adopt this object, never publish another version under a new name.
@@ -112,11 +113,15 @@ export async function stageRestorePreventiveCopy(
     throw new BackupError("RESTORE_PREVIEW_STALE");
   const bytes = encodeSnapshot(organizationId, data, new Date(), maxBytes);
   try {
-    await store.put(operationId, bytes);
+    await store.read(operationId);
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
-    // A previous attempt may have committed its file but rolled back SQL.
-    // Re-adopt only after authentication, decoding and current-state match.
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    try {
+      await store.put(operationId, bytes);
+    } catch (publicationError) {
+      if ((publicationError as NodeJS.ErrnoException).code !== "EEXIST")
+        throw publicationError;
+    }
   }
 
   const persisted = await store.read(operationId);
@@ -125,19 +130,33 @@ export async function stageRestorePreventiveCopy(
     throw new BackupError("RESTORE_PREVENTIVE_STALE");
   }
 
-  await tx.backupRecord.create({
-    data: {
-      id: operationId,
-      organizationId,
-      actorUserId,
-      reason: "PRE_RESTORE",
-      state: "COMPLETED",
-      schemaVersion: verified.manifest.schemaVersion,
-      checksum: verified.manifest.checksum,
-      byteCount: BigInt(persisted.length),
-      counts: verified.manifest.counts,
-      completedAt: new Date(),
-    },
+  const existing = await tx.backupRecord.findFirst({
+    where: { id: operationId, organizationId },
+  });
+  const reason = kind === "RESTORE" ? "PRE_RESTORE" : "PRE_DELETE";
+  if (
+    existing &&
+    (existing.actorUserId !== actorUserId ||
+      existing.reason !== reason ||
+      !["PENDING", "RUNNING", "FAILED", "COMPLETED"].includes(existing.state))
+  )
+    throw new BackupError("RESTORE_PREVENTIVE_NOT_AUTHORIZED");
+  const catalog = {
+    id: operationId,
+    organizationId,
+    actorUserId,
+    reason,
+    state: "COMPLETED",
+    schemaVersion: verified.manifest.schemaVersion,
+    checksum: verified.manifest.checksum,
+    byteCount: BigInt(persisted.length),
+    counts: verified.manifest.counts,
+    completedAt: new Date(),
+  };
+  await tx.backupRecord.upsert({
+    where: { id_organizationId: { id: operationId, organizationId } },
+    create: catalog,
+    update: catalog,
   });
 
   // Check the worker fence again after slow file I/O. The operation-to-backup
@@ -147,7 +166,7 @@ export async function stageRestorePreventiveCopy(
       id: operationId,
       organizationId,
       actorUserId,
-      kind: "RESTORE",
+      kind,
       state: "RUNNING",
       workerId,
       attempts,
@@ -167,7 +186,7 @@ export async function stageRestorePreventiveCopy(
       organizationId,
       actorUserId,
       requestId: operationId,
-      action: "restore.preventive_backup_verified",
+      action: `${kind.toLowerCase()}.preventive_backup_verified`,
       entityType: "data_operation",
       entityId: operationId,
       metadata: {

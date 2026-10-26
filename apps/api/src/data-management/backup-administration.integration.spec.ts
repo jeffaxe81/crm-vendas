@@ -39,6 +39,21 @@ describe("backup administration HTTP authorization", () => {
     const token = registered.body.accessToken as string;
     const server = request(app.getHttpServer());
 
+    for (const path of ["capabilities", "operations"]) {
+      await server.get(`/api/v1/admin/recovery/${path}`).expect(401);
+      await server
+        .get(`/api/v1/admin/recovery/${path}`)
+        .auth(token, { type: "bearer" })
+        .expect(403);
+    }
+    for (const path of ["restore", "delete", "delete/preview"]) {
+      await server.post(`/api/v1/admin/recovery/${path}`).send({}).expect(401);
+      await server
+        .post(`/api/v1/admin/recovery/${path}`)
+        .auth(token, { type: "bearer" })
+        .send({})
+        .expect(403);
+    }
     await server
       .get("/api/v1/admin/backups")
       .auth(token, { type: "bearer" })
@@ -130,6 +145,19 @@ describe("backup administration HTTP authorization", () => {
     }
 
     const server = request(app.getHttpServer());
+    const capability = await server
+      .get("/api/v1/admin/recovery/capabilities")
+      .auth(token, { type: "bearer" })
+      .expect(200);
+    expect(capability.headers["cache-control"]).toBe("no-store");
+    expect(capability.body.enabled).toBe(false);
+    for (const path of ["restore", "delete", "delete/preview"]) {
+      await server
+        .post(`/api/v1/admin/recovery/${path}`)
+        .auth(token, { type: "bearer" })
+        .send({})
+        .expect(503);
+    }
     const catalog = await server
       .get("/api/v1/admin/backups")
       .auth(token, { type: "bearer" })

@@ -18,13 +18,17 @@ export async function requireSupportedTicketRestoreDependencies(
 ): Promise<void> {
   // The target is validated separately by validateTicketSatisfactionRestore.
   // Keep it in this signature so preflight/executor use one dependency gate.
-  void target;
 
   // Never delete or rewrite encrypted outbox rows merely to make Ticket
   // replacement possible. Until EmailOutbox has its own reviewed policy,
   // any live row keeps restore fail-closed.
-  const outbox = await tx.emailOutbox.count({ where: { organizationId } });
-  if (outbox > 0) {
-    throw new BackupError("RESTORE_POLICY_UNSUPPORTED");
+  const outbox = await tx.emailOutbox.findMany({
+    where: { organizationId },
+    select: { ticketId: true },
+    distinct: ["ticketId"],
+  });
+  const tickets = new Set(target.Ticket?.map(row => row.id));
+  if (outbox.some(row => !tickets.has(row.ticketId))) {
+    throw new BackupError("RESTORE_PRESERVED_REFERENCE_MISSING");
   }
 }
