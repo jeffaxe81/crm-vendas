@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { PrismaService } from "../database/prisma.service";
 import { BackupStore } from "./backup-store";
+import { backupStorageUsage } from "./backup-storage-capacity";
 import { BackupService } from "./backup.service";
 import type { Prisma } from "../generated/prisma/client";
 
@@ -312,6 +313,7 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
   });
   it("rolls back catalog completion when mandatory audit fails", async () => {
     const { organization, user } = await fixture();
+    const id = randomUUID();
     await owner.$executeRawUnsafe(
       "CREATE FUNCTION public.reject_backup_completion_fixture() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.action = 'backup.completed' THEN RAISE EXCEPTION 'synthetic audit failure'; END IF; RETURN NEW; END $$"
     );
@@ -320,7 +322,7 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
     );
     try {
       await expect(
-        service.create(organization.id, user.id, "MANUAL")
+        service.create(organization.id, user.id, "MANUAL", id)
       ).rejects.toThrow();
       const rows = await runtime.withTenant(organization.id, tx =>
         tx.$queryRawUnsafe<{ id: string; state: string }[]>(
@@ -337,7 +339,12 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
           },
         })
       ).toBe(0);
-      await expect(store.read(rows[0]!.id)).rejects.toThrow();
+      const retained = await store.read(rows[0]!.id);
+      expect(
+        await runtime.withTenant(organization.id, tx =>
+          backupStorageUsage(tx, organization.id)
+        )
+      ).toEqual({ usedBytes: 0n, reservedBytes: BigInt(retained.length + 36) });
     } finally {
       await owner.$executeRawUnsafe(
         "DROP TRIGGER reject_backup_completion_fixture ON public.audit_logs"
@@ -346,5 +353,15 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
         "DROP FUNCTION public.reject_backup_completion_fixture()"
       );
     }
+    await expect(
+      service.create(organization.id, user.id, "MANUAL", id)
+    ).resolves.toMatchObject({ id, state: "COMPLETED" });
+    expect(
+      (
+        await runtime.withTenant(organization.id, tx =>
+          backupStorageUsage(tx, organization.id)
+        )
+      ).reservedBytes
+    ).toBe(0n);
   });
 });

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
+import { useTranslation } from "../../i18n/language-provider";
 import { apiRequest } from "../../lib/api-client";
 
 type Allocation = {
@@ -10,7 +11,8 @@ type Allocation = {
   backupCount: number;
   usagePercent: number | null;
   alertLevel: "UNALLOCATED" | "OK" | "WARNING" | "EXCEEDED";
-  enforced: false;
+  enforced: boolean;
+  reservedBytes?: string;
   scope: "ENCRYPTED_BACKUP_CATALOG";
   updatedAt: string | null;
 };
@@ -26,8 +28,10 @@ export function TenantStorageAllocationView({
 }: {
   accessToken: string;
 }) {
+  const { t } = useTranslation();
   const [allocation, setAllocation] = useState<Allocation | null>(null);
   const [desired, setDesired] = useState("");
+  const [enforced, setEnforced] = useState(false);
   const [confirmation, setConfirmation] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -47,6 +51,7 @@ export function TenantStorageAllocationView({
       .then(result => {
         if (!active || generationRef.current !== generation) return;
         setAllocation(result);
+        setEnforced(result.enforced);
         setDesired(result.allocatedGiB?.toString() ?? "");
       })
       .catch(cause => {
@@ -83,10 +88,11 @@ export function TenantStorageAllocationView({
       const result = await apiRequest<Allocation>("/admin/storage/allocation", {
         accessToken,
         method: "PUT",
-        body: { allocatedGiB: amount, confirmation },
+        body: { allocatedGiB: amount, enforced, confirmation },
       });
       if (generationRef.current !== generation) return;
       setAllocation(result);
+      setEnforced(result.enforced);
       setDesired(result.allocatedGiB?.toString() ?? "");
       setConfirmation("");
       setNotice("Capacidade de referência da empresa atualizada.");
@@ -109,8 +115,9 @@ export function TenantStorageAllocationView({
     >
       <h2>Capacidade de backups por empresa</h2>
       <p>
-        Referência lógica de armazenamento por tenant. Não altera o tamanho
-        físico do disco ou do banco de dados e não bloqueia novas gravações.
+        {t(
+          "Capacidade de backups criptografados por empresa. Ative o bloqueio para impedir novos backups que ultrapassem a cota. Backups existentes são preservados."
+        )}
       </p>
       {error ? <p role="alert">{error}</p> : null}
       {notice ? <p role="status">{notice}</p> : null}
@@ -156,9 +163,22 @@ export function TenantStorageAllocationView({
                 disabled={busy}
                 onChange={event => {
                   setDesired(event.target.value);
+                  if (event.target.value === "") setEnforced(false);
                   setConfirmation("");
                 }}
               />
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={enforced}
+                disabled={busy || amount === null}
+                onChange={event => {
+                  setEnforced(event.target.checked);
+                  setConfirmation("");
+                }}
+              />
+              {t("Bloquear novos backups ao atingir a capacidade")}
             </label>
             <label>
               Digite AJUSTAR COTA para confirmar
@@ -177,9 +197,9 @@ export function TenantStorageAllocationView({
             </button>
           </form>
           <p>
-            O consumo considera exclusivamente backups concluídos ou aguardando
-            exclusão. Arquivos órfãos, dados do PostgreSQL e outros anexos não
-            estão incluídos.
+            {t(
+              "O consumo inclui os bytes criptografados de backups concluídos, aguardando exclusão e reservas de publicação. Reservas incertas são preservadas até a conclusão ou exclusão confirmada. Dados do PostgreSQL e outros anexos não estão incluídos."
+            )}
           </p>
         </>
       )}

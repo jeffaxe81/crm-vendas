@@ -12,6 +12,7 @@ const TERMINAL_BACKUP_ERRORS = new Set([
   "BACKUP_ORGANIZATION_MISMATCH",
   "BACKUP_REFERENCES_INVALID",
   "BACKUP_TOO_LARGE",
+  "BACKUP_QUOTA_EXCEEDED",
   "BACKUP_ATTACHMENT_ADAPTER_REQUIRED",
 ]);
 
@@ -35,6 +36,10 @@ export class DataOperationWorker {
       // This worker is intentionally BACKUP-only. Restore/delete jobs must
       // remain untouched for their dedicated, audited future executors.
       const job = await this.prisma.withTenant(organization.id, async tx => {
+        await tx.$executeRawUnsafe(
+          "SELECT true AS locked FROM pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+          `tenant-maintenance:${organization.id}`
+        );
         const [lock] = await tx.$queryRawUnsafe<{ acquired: boolean }[]>(
           "SELECT pg_try_advisory_xact_lock(hashtextextended($1,0)) AS acquired",
           `data-operation:${organization.id}`
@@ -146,6 +151,11 @@ export class DataOperationWorker {
           job.organizationId,
           async tx => {
             if (lease.signal.aborted) return 0;
+            await tx.$queryRawUnsafe(
+              "SELECT true AS locked FROM pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+              `tenant-maintenance:${job.organizationId}`
+            );
+            if (lease.signal.aborted) return 0;
             return tx.$executeRawUnsafe(
               `
               UPDATE public.data_operations
@@ -209,6 +219,11 @@ export class DataOperationWorker {
   ): Promise<boolean> {
     return this.prisma.withTenant(job.organizationId, async tx => {
       if (signal.aborted) return false;
+      await tx.$queryRawUnsafe(
+        "SELECT true AS locked FROM pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+        `tenant-maintenance:${job.organizationId}`
+      );
+      if (signal.aborted) return false;
       const count = await tx.$executeRawUnsafe(
         `
         UPDATE public.data_operations SET state='FAILED', stage='FAILED', error_code=$5,
@@ -239,6 +254,10 @@ export class DataOperationWorker {
 
   async heartbeat(job: DataOperation): Promise<boolean> {
     return this.prisma.withTenant(job.organizationId, async tx => {
+      await tx.$queryRawUnsafe(
+        "SELECT true AS locked FROM pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+        `tenant-maintenance:${job.organizationId}`
+      );
       const count = await tx.$executeRawUnsafe(
         `
         UPDATE public.data_operations SET heartbeat_at=clock_timestamp(),
@@ -255,6 +274,10 @@ export class DataOperationWorker {
   }
   async finish(job: DataOperation): Promise<boolean> {
     return this.prisma.withTenant(job.organizationId, async tx => {
+      await tx.$queryRawUnsafe(
+        "SELECT true AS locked FROM pg_advisory_xact_lock_shared(hashtextextended($1,0))",
+        `tenant-maintenance:${job.organizationId}`
+      );
       const count = await tx.$executeRawUnsafe(
         `
         UPDATE public.data_operations SET state='COMPLETED', stage='COMPLETED',

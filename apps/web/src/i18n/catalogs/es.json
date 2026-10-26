@@ -1370,5 +1370,10 @@
   "Prazo de retenção dos registros técnicos": "Plazo de retención de registros técnicos",
   "Informe um prazo de 30 a 3.650 dias para este tenant.": "Indique entre 30 y 3.650 días para este tenant.",
   "Digite ATIVAR EXPURGO para confirmar": "Escriba ATIVAR EXPURGO para confirmar",
-  "Salvar política de expurgo": "Guardar política de purga"
+  "Salvar política de expurgo": "Guardar política de purga",
+  "Capacidade de backups criptografados por empresa. Ative o bloqueio para impedir novos backups que ultrapassem a cota. Backups existentes são preservados.": "Capacidad de copias cifradas por empresa. Active el bloqueo para impedir nuevas copias que superen la cuota. Se conservan las copias existentes.",
+  "Bloquear novos backups ao atingir a capacidade": "Bloquear nuevas copias al alcanzar la capacidad",
+  "O consumo inclui os bytes criptografados de backups concluídos, aguardando exclusão e reservas de publicação. Reservas incertas são preservadas até a conclusão ou exclusão confirmada. Dados do PostgreSQL e outros anexos não estão incluídos.": "El consumo incluye bytes cifrados de copias completadas, pendientes de eliminación y reservas de publicación. Las reservas inciertas se conservan hasta la finalización o eliminación confirmada. Se excluyen los datos de PostgreSQL y otros adjuntos.",
+  "BACKUP_QUOTA_EXCEEDED": "Se ha superado la capacidad de copias. Aumente la cuota o libere capacidad antes de reintentar.",
+  "Capacidade de backups excedida. Aumente a cota ou libere capacidade antes de tentar novamente.": "Se ha superado la capacidad de copias. Aumente la cuota o libere capacidad antes de reintentar."
 }

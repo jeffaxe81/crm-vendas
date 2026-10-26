@@ -495,7 +495,9 @@ export function BackupAdministrationView({
               <li key={item.id}>
                 {date(item.createdAt)} · {states[item.state] ?? item.state} ·{" "}
                 {item.stage}
-                {item.errorCode ? ` · Erro: ${item.errorCode}` : ""}
+                {item.errorCode
+                  ? ` · ${item.errorCode === "BACKUP_QUOTA_EXCEEDED" ? t("Capacidade de backups excedida. Aumente a cota ou libere capacidade antes de tentar novamente.") : item.errorCode}`
+                  : ""}
               </li>
             ))}
           </ul>

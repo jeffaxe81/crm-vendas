@@ -49,15 +49,14 @@ export async function reserveBackupStorage(
       ? existing.physical_bytes
       : physicalBytes;
   const usage = await backupStorageUsage(tx, organizationId);
+  const additionalBytes = bytes - (existing?.physical_bytes ?? 0n);
   // Adoption accounts for bytes that already exist; rejecting it would hide an existing physical charge.
   if (
     !adoptPublished &&
+    additionalBytes > 0n &&
     allocation?.enforced &&
     allocation.allocation_gib !== null &&
-    usage.usedBytes +
-      usage.reservedBytes -
-      (existing?.physical_bytes ?? 0n) +
-      bytes >
+    usage.usedBytes + usage.reservedBytes + additionalBytes >
       BigInt(allocation.allocation_gib) * 1073741824n
   )
     throw new BackupError("BACKUP_QUOTA_EXCEEDED");
