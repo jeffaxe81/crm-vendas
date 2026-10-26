@@ -69,6 +69,7 @@ export async function exportTenantSnapshot(
     "inbound_email_sources",
     "inbound_email_source_keys",
     "tenant_storage_allocations",
+    "backup_storage_reservations",
   ]);
   if (
     databaseColumns.some(
