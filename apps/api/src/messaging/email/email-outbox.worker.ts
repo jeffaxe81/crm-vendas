@@ -32,6 +32,7 @@ export class EmailOutboxWorker {
       return false;
     }
     const claimed = await this.prisma.withTenant(organizationId, async tx => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${organizationId}`}, 0))`;
       const [candidate] = await tx.$queryRaw<{ id: string }[]>`
         SELECT id FROM email_outbox
         WHERE organization_id = ${organizationId}::uuid
@@ -90,30 +91,76 @@ export class EmailOutboxWorker {
     if (claimed.kind === "FINAL") return true;
 
     const row = claimed.row;
-    let outcome: Awaited<ReturnType<EmailDispatchService["attempt"]>>;
+    let outcome: Awaited<ReturnType<EmailDispatchService["attempt"]>> = {
+      status: "FAILED",
+      errorCode: "PROVIDER_ERROR",
+    };
     let staleAlert = false;
+    let claimValid = false;
+    // Recovery takes the exclusive tenant-maintenance lock. Keep its shared
+    // counterpart through provider acceptance, but release it before the final
+    // DB write: the maintenance guard on another connection must not deadlock.
+    // Refresh rotation writes must finish before the shared maintenance lock.
+    // Otherwise a queued maintenance writer could deadlock against this worker.
+    let preparedDispatch: EmailDispatchService;
     try {
-      const email = decryptOutboxEmail(
-        row.encryptedEmail,
-        key,
-        organizationId,
-        row.ticketId,
-        row.idempotencyHash
-      );
-      if (await isSlaEmailStillCurrent(this.prisma, email, now)) {
-        outcome = await this.dispatch.attempt(email);
-      } else {
-        staleAlert = true;
-        outcome = { status: "FAILED", errorCode: "PROVIDER_ERROR" };
-      }
+      preparedDispatch = await this.dispatch.forOrganization(organizationId);
     } catch {
-      outcome = { status: "FAILED", errorCode: "PROVIDER_ERROR" };
+      preparedDispatch = new EmailDispatchService({
+        send: async () => {
+          throw Error("EMAIL_PROVIDER_PREPARATION_FAILED");
+        },
+      });
     }
+    await this.prisma.withSessionAdvisoryLock(
+      `email-outbox-send:${row.id}`,
+      async signal => {
+        const fresh = await this.prisma.withTenant(organizationId, tx =>
+          tx.emailOutbox.findFirst({
+            where: {
+              id: row.id,
+              organizationId,
+              status: "PROCESSING",
+              leaseToken: row.leaseToken,
+              leasedUntil: {
+                gt: new Date(Math.max(now.getTime(), Date.now())),
+              },
+            },
+          })
+        );
+        if (!fresh) return;
+        claimValid = true;
+        try {
+          const email = decryptOutboxEmail(
+            fresh.encryptedEmail,
+            key,
+            organizationId,
+            fresh.ticketId,
+            fresh.idempotencyHash
+          );
+          if (await isSlaEmailStillCurrent(this.prisma, email, now))
+            outcome = await preparedDispatch.attempt(email, signal);
+          else {
+            staleAlert = true;
+            outcome = { status: "FAILED", errorCode: "PROVIDER_ERROR" };
+          }
+        } catch {
+          outcome = { status: "FAILED", errorCode: "PROVIDER_ERROR" };
+        }
+      },
+      AbortSignal.timeout(60000),
+      `tenant-maintenance:${organizationId}`
+    );
+    if (!claimValid) return true;
 
-    const accepted = outcome.status === "ACCEPTED";
+    const resolvedOutcome = outcome as Awaited<
+      ReturnType<EmailDispatchService["attempt"]>
+    >;
+    const accepted = resolvedOutcome.status === "ACCEPTED";
     const exhausted = !accepted && row.attemptCount >= MAX_ATTEMPTS;
     const unknown =
-      outcome.status === "FAILED" && outcome.errorCode === "DELIVERY_UNKNOWN";
+      resolvedOutcome.status === "FAILED" &&
+      resolvedOutcome.errorCode === "DELIVERY_UNKNOWN";
     const status = staleAlert
       ? "CANCELLED"
       : unknown
@@ -130,6 +177,10 @@ export class EmailOutboxWorker {
           )
         : null;
     await this.prisma.withTenant(organizationId, async tx => {
+      // Take the transaction shared gate before locking a queue row. The
+      // trigger also takes this gate, but only after its row lock; acquiring
+      // here avoids a row-lock/maintenance-lock inversion during recovery.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${organizationId}`}, 0))`;
       // A late worker cannot rewrite another process's recovered lease.
       await tx.emailOutbox.updateMany({
         where: {
@@ -144,13 +195,13 @@ export class EmailOutboxWorker {
           leaseToken: null,
           leasedUntil: null,
           providerMessageId:
-            outcome.status === "ACCEPTED"
-              ? outcome.providerMessageId.slice(0, 200)
+            resolvedOutcome.status === "ACCEPTED"
+              ? resolvedOutcome.providerMessageId.slice(0, 200)
               : null,
           lastErrorCode: staleAlert
             ? "STALE_OR_UNAUTHORIZED_ALERT"
-            : outcome.status === "FAILED"
-              ? outcome.errorCode
+            : resolvedOutcome.status === "FAILED"
+              ? resolvedOutcome.errorCode
               : null,
         },
       });

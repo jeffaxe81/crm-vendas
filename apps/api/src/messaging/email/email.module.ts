@@ -1,3 +1,7 @@
+import { PrismaService } from "../../database/prisma.service";
+import { EmailOAuthRuntimeService } from "./email-oauth-runtime.service";
+import { EmailOAuthController } from "./email-oauth.controller";
+import { EmailOAuthSendProvider } from "./email-oauth-send.provider";
 import { Module } from "@nestjs/common";
 import { AuthorizationModule } from "../../authorization/authorization.module";
 import { DatabaseModule } from "../../database/database.module";
@@ -23,6 +27,7 @@ import { DisabledEmailProvider, EMAIL_PROVIDER } from "./email-provider";
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
   controllers: [
+    EmailOAuthController,
     EmailManualReviewController,
     EmailRelaySettingsController,
     EmailProviderPreferenceController,
@@ -38,7 +43,46 @@ import { DisabledEmailProvider, EMAIL_PROVIDER } from "./email-provider";
     EmailOutboxWorker,
     SlaEmailPlanner,
     EmailDispatchService,
-    { provide: EMAIL_PROVIDER, useClass: DisabledEmailProvider },
+    {
+      provide: EmailOAuthRuntimeService,
+      inject: [PrismaService],
+      useFactory: (prisma: PrismaService) =>
+        new EmailOAuthRuntimeService(prisma),
+    },
+    {
+      provide: EMAIL_PROVIDER,
+      inject: [EmailOAuthRuntimeService],
+      useFactory: (runtime: EmailOAuthRuntimeService) => {
+        if (process.env.EMAIL_OAUTH_SEND_ENABLED !== "true")
+          return new DisabledEmailProvider();
+        const recipients = new Map<string, ReadonlySet<string>>();
+        try {
+          const raw =
+            process.env.EMAIL_OAUTH_HOMOLOGATION_RECIPIENTS_JSON ?? "{}";
+          if (raw.length > 65536) throw Error();
+          const parsed: unknown = JSON.parse(raw);
+          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed))
+            throw Error();
+          for (const [organizationId, values] of Object.entries(parsed)) {
+            if (
+              !Array.isArray(values) ||
+              values.some(value => typeof value !== "string")
+            )
+              throw Error();
+            recipients.set(
+              organizationId,
+              new Set((values as string[]).map(value => value.toLowerCase()))
+            );
+          }
+        } catch {
+          return new DisabledEmailProvider();
+        }
+        return new EmailOAuthSendProvider(runtime, {
+          enabled: true,
+          homologationRecipients: recipients,
+        });
+      },
+    },
   ],
   exports: [EmailDispatchService, EmailOutboxWorker, SlaEmailPlanner],
 })

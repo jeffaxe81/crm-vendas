@@ -1323,5 +1323,15 @@
   "Próxima página de ocorrências": "Próxima página de ocorrências",
   "Nenhuma inconsistência encontrada nesta consulta.": "Nenhuma inconsistência encontrada nesta consulta.",
   "Nenhuma ocorrência para este filtro.": "Nenhuma ocorrência para este filtro.",
-  "Os bytes não incluem tamanhos desconhecidos. Alterações durante a consulta podem afetar o resultado; esta verificação não comprova integridade nem restaurabilidade.": "Os bytes não incluem tamanhos desconhecidos. Alterações durante a consulta podem afetar o resultado; esta verificação não comprova integridade nem restaurabilidade."
+  "Os bytes não incluem tamanhos desconhecidos. Alterações durante a consulta podem afetar o resultado; esta verificação não comprova integridade nem restaurabilidade.": "Os bytes não incluem tamanhos desconhecidos. Alterações durante a consulta podem afetar o resultado; esta verificação não comprova integridade nem restaurabilidade.",
+  "Configuração OAuth pendente.": "Configuração OAuth pendente.",
+  "Não foi possível conectar. Inicie uma nova autorização.": "Não foi possível conectar. Inicie uma nova autorização.",
+  "Permita a janela de autorização e tente novamente.": "Permita a janela de autorização e tente novamente.",
+  "Não foi possível desconectar. Atualize e tente novamente.": "Não foi possível desconectar. Atualize e tente novamente.",
+  "Conexão da conta de e-mail": "Conexão da conta de e-mail",
+  "Conta conectada. Envio real desativado.": "Conta conectada. Envio real desativado.",
+  "Conexão pendente de configuração do aplicativo OAuth. Envio real desativado.": "Conexão pendente de configuração do aplicativo OAuth. Envio real desativado.",
+  "Conectar conta": "Conectar conta",
+  "Desconectar conta": "Desconectar conta",
+  "Desconectar remove a credencial deste CRM. O consentimento pode ser revogado nas configurações do provedor.": "Desconectar remove a credencial deste CRM. O consentimento pode ser revogado nas configurações do provedor."
 }

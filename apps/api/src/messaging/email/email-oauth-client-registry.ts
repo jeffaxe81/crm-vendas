@@ -1,4 +1,4 @@
-import { isIP } from "node:net";
+import { validEmailOAuthOrigin } from "./email-oauth-redirect";
 import { ServiceUnavailableException } from "@nestjs/common";
 import { z } from "zod";
 import type {
@@ -61,28 +61,9 @@ function configurationUnavailable(): never {
 }
 
 function strictCallbackOrigin(raw: string): string {
-  let url: URL;
-  try {
-    url = new URL(raw);
-  } catch {
+  if (raw.length > 256 || !validEmailOAuthOrigin(raw))
     return configurationUnavailable();
-  }
-  if (
-    raw.length > 256 ||
-    url.origin !== raw ||
-    url.protocol !== "https:" ||
-    url.username !== "" ||
-    url.password !== "" ||
-    url.port !== "" ||
-    url.pathname !== "/" ||
-    url.search !== "" ||
-    url.hash !== "" ||
-    isIP(url.hostname) !== 0 ||
-    !DOMAIN.test(url.hostname)
-  ) {
-    return configurationUnavailable();
-  }
-  return url.origin;
+  return raw;
 }
 
 /**

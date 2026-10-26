@@ -1323,5 +1323,15 @@
   "Próxima página de ocorrências": "Página siguiente de incidencias",
   "Nenhuma inconsistência encontrada nesta consulta.": "No se encontraron inconsistencias en esta consulta.",
   "Nenhuma ocorrência para este filtro.": "No hay incidencias para este filtro.",
-  "Os bytes não incluem tamanhos desconhecidos. Alterações durante a consulta podem afetar o resultado; esta verificação não comprova integridade nem restaurabilidade.": "Los bytes no incluyen tamaños desconocidos. Los cambios durante la consulta pueden afectar el resultado; esta verificación no demuestra integridad ni capacidad de restauración."
+  "Os bytes não incluem tamanhos desconhecidos. Alterações durante a consulta podem afetar o resultado; esta verificação não comprova integridade nem restaurabilidade.": "Los bytes no incluyen tamaños desconocidos. Los cambios durante la consulta pueden afectar el resultado; esta verificación no demuestra integridad ni capacidad de restauración.",
+  "Configuração OAuth pendente.": "La configuración de la aplicación OAuth está pendiente.",
+  "Não foi possível conectar. Inicie uma nova autorização.": "No se pudo conectar. Inicia una nueva autorización.",
+  "Permita a janela de autorização e tente novamente.": "Permite la ventana de autorización e inténtalo de nuevo.",
+  "Não foi possível desconectar. Atualize e tente novamente.": "No se pudo desconectar. Actualiza e inténtalo de nuevo.",
+  "Conexão da conta de e-mail": "Conexión de la cuenta de correo",
+  "Conta conectada. Envio real desativado.": "Cuenta conectada. Envío real desactivado.",
+  "Conexão pendente de configuração do aplicativo OAuth. Envio real desativado.": "Conexión pendiente de la configuración de la aplicación OAuth. Envío real desactivado.",
+  "Conectar conta": "Conectar cuenta",
+  "Desconectar conta": "Desconectar cuenta",
+  "Desconectar remove a credencial deste CRM. O consentimento pode ser revogado nas configurações do provedor.": "Desconectar elimina la credencial de este CRM. El consentimiento se puede revocar en la configuración del proveedor."
 }

@@ -1323,5 +1323,15 @@
   "Próxima página de ocorrências": "Next findings page",
   "Nenhuma inconsistência encontrada nesta consulta.": "No inconsistencies found in this query.",
   "Nenhuma ocorrência para este filtro.": "No findings for this filter.",
-  "Os bytes não incluem tamanhos desconhecidos. Alterações durante a consulta podem afetar o resultado; esta verificação não comprova integridade nem restaurabilidade.": "Byte totals exclude unknown sizes. Changes during the query may affect the result; this check does not establish integrity or restorability."
+  "Os bytes não incluem tamanhos desconhecidos. Alterações durante a consulta podem afetar o resultado; esta verificação não comprova integridade nem restaurabilidade.": "Byte totals exclude unknown sizes. Changes during the query may affect the result; this check does not establish integrity or restorability.",
+  "Configuração OAuth pendente.": "OAuth app configuration is pending.",
+  "Não foi possível conectar. Inicie uma nova autorização.": "Could not connect. Start a new authorization.",
+  "Permita a janela de autorização e tente novamente.": "Allow the authorization window and try again.",
+  "Não foi possível desconectar. Atualize e tente novamente.": "Could not disconnect. Refresh and try again.",
+  "Conexão da conta de e-mail": "Email account connection",
+  "Conta conectada. Envio real desativado.": "Account connected. Live sending disabled.",
+  "Conexão pendente de configuração do aplicativo OAuth. Envio real desativado.": "Connection pending OAuth app configuration. Live sending disabled.",
+  "Conectar conta": "Connect account",
+  "Desconectar conta": "Disconnect account",
+  "Desconectar remove a credencial deste CRM. O consentimento pode ser revogado nas configurações do provedor.": "Disconnecting removes the credential from this CRM. Consent can be revoked in the provider settings."
 }

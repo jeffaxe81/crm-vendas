@@ -99,6 +99,105 @@ describe("F4.3 email outbox PostgreSQL RLS and leases", () => {
     else process.env.EMAIL_OUTBOX_ENCRYPTION_KEY = original;
   });
 
+  it("maintenance waits for in-flight acceptance and a late finalize cannot overwrite recovery pause", async () => {
+    await app.withTenant(organizationId, tx =>
+      enqueueTransactionalEmail(tx, email())
+    );
+    let entered!: () => void;
+    let release!: () => void;
+    const started = new Promise<void>(resolve => {
+      entered = resolve;
+    });
+    const hold = new Promise<void>(resolve => {
+      release = resolve;
+    });
+    const provider: EmailProvider = {
+      send: async () => {
+        entered();
+        await hold;
+        return { providerMessageId: "simulator-accepted" };
+      },
+    };
+    const worker = new EmailOutboxWorker(
+      app,
+      new EmailDispatchService(provider)
+    );
+    const sending = worker.processNext(organizationId, when);
+    await started;
+    let maintenanceEntered = false;
+    const recovery = owner.withMaintenance(
+      organizationId,
+      async tx => {
+        maintenanceEntered = true;
+        await tx.emailOutbox.updateMany({
+          where: { organizationId },
+          data: {
+            status: "MANUAL_REVIEW",
+            leaseToken: null,
+            leasedUntil: null,
+            nextAttemptAt: null,
+            lastErrorCode: "RECOVERY_REVIEW_REQUIRED",
+          },
+        });
+      },
+      { timeout: 10000 }
+    );
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(maintenanceEntered).toBe(false);
+    release();
+    await Promise.all([sending, recovery]);
+    const row = await app.withTenant(organizationId, tx =>
+      tx.emailOutbox.findFirstOrThrow()
+    );
+    expect(row).toMatchObject({
+      status: "MANUAL_REVIEW",
+      leaseToken: null,
+      lastErrorCode: "RECOVERY_REVIEW_REQUIRED",
+    });
+  });
+
+  it("does not dispatch a claim invalidated before obtaining the maintenance gate", async () => {
+    await app.withTenant(organizationId, tx =>
+      enqueueTransactionalEmail(tx, email())
+    );
+    let sends = 0;
+    const provider: EmailProvider = {
+      send: async () => {
+        sends++;
+        return { providerMessageId: "must-not-send" };
+      },
+    };
+    const actualLock = app.withSessionAdvisoryLock.bind(app);
+    app.withSessionAdvisoryLock = async (key, operation, signal, sharedKey) => {
+      await owner.withMaintenance(organizationId, tx =>
+        tx.emailOutbox.updateMany({
+          where: { organizationId },
+          data: {
+            status: "MANUAL_REVIEW",
+            leaseToken: null,
+            leasedUntil: null,
+            nextAttemptAt: null,
+            lastErrorCode: "RECOVERY_REVIEW_REQUIRED",
+          },
+        })
+      );
+      return actualLock(key, operation, signal, sharedKey);
+    };
+    try {
+      await new EmailOutboxWorker(
+        app,
+        new EmailDispatchService(provider)
+      ).processNext(organizationId, when);
+    } finally {
+      app.withSessionAdvisoryLock = actualLock;
+    }
+    expect(sends).toBe(0);
+    const row = await app.withTenant(organizationId, tx =>
+      tx.emailOutbox.findFirstOrThrow()
+    );
+    expect(row.status).toBe("MANUAL_REVIEW");
+  });
+
   it("enforces FORCE RLS and refuses cross-tenant inserts", async () => {
     const [flag] = await owner.$queryRaw<
       { relrowsecurity: boolean; relforcerowsecurity: boolean }[]
