@@ -1,5 +1,5 @@
 {
-  "schemaSha256": "fea07ed52bc566da0a838a335fc6305e6ccfa4c8ee43de208cc5558e01850959",
+  "schemaSha256": "00548040484009d1bd7c6a8c006ad8df687a5db96243d70f92a124caabdb8007",
   "models": [
     {
       "name": "Organization",
@@ -7535,6 +7535,17 @@
           "dbName": "retention_days",
           "isRequired": true,
           "isList": false,
+          "isId": false,
+          "nativeType": null,
+          "relationFromFields": []
+        },
+        {
+          "name": "categories",
+          "type": "String",
+          "kind": "scalar",
+          "dbName": "categories",
+          "isRequired": true,
+          "isList": true,
           "isId": false,
           "nativeType": null,
           "relationFromFields": []

@@ -260,6 +260,32 @@ describe("internal atomic restore pipeline under restricted RLS", () => {
     ).rejects.toMatchObject({ status: 403 });
   });
 
+  it("refuses recovery when preventive capacity is unavailable and preserves the existing backup", async () => {
+    const f = await fixture();
+    await owner.dataOperation.delete({ where: { id: f.operation.id } });
+    await owner.$executeRaw`INSERT INTO tenant_storage_allocations (organization_id,allocation_gib,enforced) VALUES (${f.org.id}::uuid,1,true)`;
+    await owner.$executeRaw`INSERT INTO backup_storage_reservations (organization_id,backup_id,physical_bytes) VALUES (${f.org.id}::uuid,${randomUUID()}::uuid,1073741824)`;
+    const preview = await recovery().previewDeletion(f.principal);
+    await expect(
+      recovery().execute(f.principal, "DELETE", {
+        previewId: preview.id,
+        password: pass,
+        confirmation: DELETE_CONFIRMATION_PHRASE,
+      })
+    ).rejects.toMatchObject({ status: 409 });
+    expect(
+      await owner.company.count({ where: { organizationId: f.org.id } })
+    ).toBe(1);
+    await expect(backups.verify(f.org.id, f.backup.id)).resolves.toMatchObject({
+      record: { id: f.backup.id, state: "COMPLETED" },
+    });
+    expect(
+      await owner.operationPreview.findUniqueOrThrow({
+        where: { id: preview.id },
+      })
+    ).toMatchObject({ consumedAt: null });
+  });
+
   it("rejects incorrect passwords and caps confirmation attempts without deleting data", async () => {
     const f = await fixture();
     await owner.dataOperation.delete({ where: { id: f.operation.id } });
