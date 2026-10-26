@@ -12,16 +12,14 @@ describe("OAuth refresh simulator", () => {
   it.each(["GMAIL", "MICROSOFT_365"] as const)(
     "refreshes %s once, supporting optional rotation",
     async provider => {
-      const request = jest
-        .fn<typeof fetch>()
-        .mockResolvedValue(
-          Response.json({
-            token_type: "Bearer",
-            access_token: "access-token-1234567890",
-            refresh_token: "rotated-token-1234567890",
-            expires_in: 3600,
-          })
-        );
+      const request = jest.fn<typeof fetch>().mockResolvedValue(
+        Response.json({
+          token_type: "Bearer",
+          access_token: "access-token-1234567890",
+          refresh_token: "rotated-token-1234567890",
+          expires_in: 3600,
+        })
+      );
       const result = await new EmailOAuthRefresh(request).refresh(
         {
           ...client,
