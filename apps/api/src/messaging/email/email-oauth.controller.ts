@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   Inject,
   Param,
   Post,
@@ -30,7 +31,9 @@ export class EmailOAuthController {
     @Inject(EmailOAuthRuntimeService)
     private readonly runtime: EmailOAuthRuntimeService
   ) {}
-  @Get(":provider/status") status(
+  @Get(":provider/status")
+  @Header("Cache-Control", "no-store")
+  status(
     @Param("provider") provider: string,
     @Req() request: AuthenticatedRequest
   ) {
@@ -39,7 +42,9 @@ export class EmailOAuthController {
       this.context(request)
     );
   }
-  @Post(":provider/connect") connect(
+  @Post(":provider/connect")
+  @Header("Cache-Control", "no-store")
+  connect(
     @Param("provider") provider: string,
     @Req() request: AuthenticatedRequest
   ) {
@@ -48,17 +53,18 @@ export class EmailOAuthController {
       this.context(request)
     );
   }
-  @Post("callback") callback(
-    @Body() body: unknown,
-    @Req() request: AuthenticatedRequest
-  ) {
+  @Post("callback")
+  @Header("Cache-Control", "no-store")
+  callback(@Body() body: unknown, @Req() request: AuthenticatedRequest) {
     const input = validated(
       z.object({ rawQuery: z.string().max(10000) }).strict(),
       body
     );
     return this.runtime.callback(input.rawQuery, this.context(request));
   }
-  @Post(":provider/disconnect") disconnect(
+  @Post(":provider/disconnect")
+  @Header("Cache-Control", "no-store")
+  disconnect(
     @Param("provider") provider: string,
     @Body() body: unknown,
     @Req() request: AuthenticatedRequest

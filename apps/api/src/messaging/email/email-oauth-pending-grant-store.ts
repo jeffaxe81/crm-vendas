@@ -251,6 +251,15 @@ export class EmailOAuthPendingGrantStore {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${context.organizationId}`}, 0))`;
       await this.assertAdmin(tx, context);
       await this.assertSession(tx, context);
+      // The same provider name after an intervening change is NOT the same
+      // authorization intent. Lock the revision until the state is consumed.
+      const [pref] = await tx.$queryRaw<
+        { provider_code: string; version: number }[]
+      >`
+        SELECT provider_code, version FROM public.email_provider_preferences
+        WHERE organization_id = ${context.organizationId}::uuid
+        FOR UPDATE
+      `;
       const rows = await tx.$queryRaw<StoredGrant[]>`
         DELETE FROM public.email_oauth_pending_grants
         WHERE organization_id = ${context.organizationId}::uuid
@@ -263,15 +272,6 @@ export class EmailOAuthPendingGrantStore {
       `;
       const row = rows[0];
       if (!row || !PROVIDERS.includes(row.provider_code)) forbidden();
-      // The same provider name after an intervening change is NOT the same
-      // authorization intent. Lock the revision until the state is consumed.
-      const [pref] = await tx.$queryRaw<
-        { provider_code: string; version: number }[]
-      >`
-        SELECT provider_code, version FROM public.email_provider_preferences
-        WHERE organization_id = ${context.organizationId}::uuid
-        FOR UPDATE
-      `;
       if (
         !pref ||
         pref.provider_code !== row.provider_code ||

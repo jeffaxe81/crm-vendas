@@ -150,6 +150,16 @@ export class EmailOAuthRuntimeService implements EmailOAuthSendCredentials {
         connectionStatus: "PENDING_DOMAIN_CONFIG",
         sendingEnabled: false,
       };
+    if (
+      !this.environment.EMAIL_OAUTH_TOKEN_ENCRYPTION_KEY ||
+      !this.environment.EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON ||
+      !this.environment.EMAIL_OAUTH_CLIENT_SECRETS_JSON
+    )
+      return {
+        provider,
+        connectionStatus: "PENDING_CLIENT_CONFIG",
+        sendingEnabled: false,
+      };
     // Admin authorization is performed by vault status even if no credential exists.
     return this.vault().status(provider, context);
   }

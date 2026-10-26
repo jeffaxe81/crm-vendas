@@ -23,17 +23,9 @@ describe("CRM 1.0 email transport release guard", () => {
     );
 
     expect(providerBindings).toHaveLength(1);
-    const binding = providerBindings[0] as {
-      useFactory: (runtime: unknown) => unknown;
-    };
-    const original = process.env.EMAIL_OAUTH_SEND_ENABLED;
-    delete process.env.EMAIL_OAUTH_SEND_ENABLED;
-    try {
-      expect(binding.useFactory({})).toBeInstanceOf(DisabledEmailProvider);
-    } finally {
-      if (original === undefined) delete process.env.EMAIL_OAUTH_SEND_ENABLED;
-      else process.env.EMAIL_OAUTH_SEND_ENABLED = original;
-    }
+    expect(providerBindings[0]).toMatchObject({
+      useClass: DisabledEmailProvider,
+    });
   });
 
   it("does not export the transport binding for unreviewed consumers", () => {

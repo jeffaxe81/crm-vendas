@@ -367,6 +367,8 @@ export class EmailOAuthCredentialVault {
     return this.prisma.withTenant(context.organizationId, async tx => {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${context.organizationId}`}, 0))`;
       await this.assertAdmin(tx, context);
+      // Serialize credential and pending-grant mutations behind the same preference row.
+      await tx.$queryRaw`SELECT version FROM public.email_provider_preferences WHERE organization_id = ${context.organizationId}::uuid FOR UPDATE`;
       const deleted = await tx.$queryRaw<StoredVersion[]>`
         DELETE FROM public.email_oauth_credentials
         WHERE organization_id = ${context.organizationId}::uuid

@@ -8,7 +8,7 @@ type Connection = {
   version?: number;
   hasEncryptedCredential?: boolean;
 };
-export function EmailOAuthConnectionPanel({
+function EmailOAuthConnectionSession({
   provider,
   accessToken,
 }: {
@@ -29,11 +29,19 @@ export function EmailOAuthConnectionPanel({
     );
   }
   useEffect(() => {
+    let active = true;
     void apiRequest<Connection>(`/admin/email/oauth/${provider}/status`, {
       accessToken,
     })
-      .then(setConnection)
-      .catch(() => setError(t("Configuração OAuth pendente.")));
+      .then(value => {
+        if (active) setConnection(value);
+      })
+      .catch(() => {
+        if (active) setError(t("Configuração OAuth pendente."));
+      });
+    return () => {
+      active = false;
+    };
   }, [accessToken, provider, t]);
   useEffect(() => {
     function callback(event: MessageEvent) {
@@ -150,5 +158,17 @@ export function EmailOAuthConnectionPanel({
         )}
       </p>
     </section>
+  );
+}
+
+export function EmailOAuthConnectionPanel(props: {
+  provider: Provider;
+  accessToken: string;
+}) {
+  return (
+    <EmailOAuthConnectionSession
+      key={`${props.accessToken}:${props.provider}`}
+      {...props}
+    />
   );
 }
