@@ -69,7 +69,10 @@ export async function restoreOrganizationSettings(
   const changed = await tx.$executeRawUnsafe(
     `UPDATE public.organizations SET name=$2, default_language=$3, detect_browser_language=$4,
       branding=$5::jsonb, onboarding_owner_id=$6::uuid, onboarding_step=$7,
-      onboarding_completed_at=$8::timestamptz, updated_at=clock_timestamp()
+      onboarding_completed_at=$8::timestamptz,
+      updated_at=CASE WHEN ROW(name,default_language,detect_browser_language,branding,onboarding_owner_id,onboarding_step,onboarding_completed_at)
+        IS DISTINCT FROM ROW($2::varchar,$3::varchar,$4::boolean,$5::jsonb,$6::uuid,$7::integer,$8::timestamptz)
+        THEN clock_timestamp() ELSE updated_at END
      WHERE id=$1::uuid`,
     organizationId,
     row.name,
