@@ -166,3 +166,132 @@ test("staging smoke fails closed when a privileged credential is accepted", asyn
     /DASHBOARD_PRIVILEGED_CREDENTIAL_ALLOWED/
   );
 });
+
+test("performance mode excludes warmup and reports nearest-rank percentiles per tenant", async () => {
+  const candidate = {
+    ...config(),
+    performance: { warmupIterations: 1, samplesPerTenant: 5 },
+  };
+  const { fetchStub, calls } = fakeFetch();
+  let value = 0;
+  let tick = 0;
+  const clock = () => {
+    if (tick++ % 2 === 0) return value;
+    value += Math.ceil(tick / 2);
+    return value;
+  };
+  const result = await runDashboardStagingSmoke(candidate, fetchStub, clock);
+  assert.equal(result.requests, 28);
+  assert.equal(result.performance.percentileMethod, "nearest-rank");
+  assert.equal(result.performance.concurrency, 1);
+  assert.deepEqual(
+    result.performance.tenants.map(t => [
+      t.label,
+      t.sampleCount,
+      t.minMs,
+      t.p50Ms,
+      t.p95Ms,
+      t.maxMs,
+    ]),
+    [
+      ["A", 5, 1, 7, 13, 13],
+      ["B", 5, 2, 8, 14, 14],
+      ["C", 5, 3, 9, 15, 15],
+    ]
+  );
+  assert.deepEqual(
+    calls.slice(10).map(c => c.request.headers.Authorization),
+    Array.from({ length: 6 }, () => tokens.map(t => "Bearer " + t)).flat()
+  );
+  const report = JSON.stringify(result);
+  for (const secret of [...tokens, candidate.baseUrl])
+    assert(!report.includes(secret));
+});
+
+test("invalid performance budgets fail before the first request", async () => {
+  for (const performance of [
+    null,
+    [],
+    {},
+    { warmupIterations: -1, samplesPerTenant: 5 },
+    { warmupIterations: 11, samplesPerTenant: 5 },
+    { warmupIterations: 1, samplesPerTenant: 4 },
+    { warmupIterations: 1, samplesPerTenant: 101 },
+    { warmupIterations: 1, samplesPerTenant: 5.5 },
+    { warmupIterations: 1, samplesPerTenant: NaN },
+    { warmupIterations: 1, samplesPerTenant: 5, parallel: 100 },
+  ]) {
+    const { fetchStub, calls } = fakeFetch();
+    await assert.rejects(
+      runDashboardStagingSmoke({ ...config(), performance }, fetchStub),
+      /INVALID_PERFORMANCE_CONFIGURATION/
+    );
+    assert.equal(calls.length, 0);
+  }
+});
+
+test("performance samples revalidate counts and cache rather than timing untrusted responses", async () => {
+  for (const failure of [{ leakTenant: true }, { omitCacheHeader: true }]) {
+    const good = fakeFetch();
+    const bad = fakeFetch(failure);
+    let n = 0;
+    await assert.rejects(
+      runDashboardStagingSmoke(
+        {
+          ...config(),
+          performance: { warmupIterations: 0, samplesPerTenant: 5 },
+        },
+        (...args) =>
+          ++n <= 10 ? good.fetchStub(...args) : bad.fetchStub(...args)
+      ),
+      /DASHBOARD_(TENANT_COUNTS_MISMATCH|NO_STORE_HEADER_MISSING)/
+    );
+  }
+});
+
+test("invalid clocks fail safely without reporting partial measurements", async () => {
+  for (const clock of [
+    () => NaN,
+    () => -1,
+    () => Infinity,
+    (() => {
+      let n = 2;
+      return () => n--;
+    })(),
+    () => {
+      throw Error("opaque-token-A private URL");
+    },
+  ]) {
+    await assert.rejects(
+      runDashboardStagingSmoke(
+        {
+          ...config(),
+          performance: { warmupIterations: 0, samplesPerTenant: 5 },
+        },
+        fakeFetch().fetchStub,
+        clock
+      ),
+      /^Error: INVALID_PERFORMANCE_CLOCK$/
+    );
+  }
+});
+
+test("a failed performance sample stops the run and never echoes a secret transport error", async () => {
+  const good = fakeFetch();
+  let calls = 0;
+  await assert.rejects(
+    runDashboardStagingSmoke(
+      {
+        ...config(),
+        performance: { warmupIterations: 0, samplesPerTenant: 5 },
+      },
+      (...args) => {
+        calls++;
+        if (calls > 10) throw Error("opaque-token-A private URL");
+        return good.fetchStub(...args);
+      }
+    ),
+    /^Error: STAGING_NETWORK_FAILURE$/
+  );
+  assert.equal(calls, 11);
+});
