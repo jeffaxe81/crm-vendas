@@ -27,15 +27,15 @@
 **Files:** scripts/dashboard-staging-smoke.mjs; tests/dashboard-staging-smoke.test.mjs.
 **Interfaces:** runDashboardStagingSmoke(config, fetchImpl=fetch, now=performance.now) preserva resultado legado; performance opcional acrescenta relatório sanitizado.
 
-- [ ] Adicionar testes determinísticos dos cinco focos e observar RED.
-- [ ] Validar performance antes de GET e medir leituras round-robin; calcular estatísticas.
-- [ ] Acrescentar entrada CLI opcional e saída JSON apenas no modo de medição.
-- [ ] Verificar node--test e formatação, atualizar guia operacional e commitar.
+- [x] Adicionar testes determinísticos dos cinco focos e observar RED.
+- [x] Validar performance antes de GET e medir leituras round-robin; calcular estatísticas.
+- [x] Acrescentar entrada CLI opcional e saída JSON apenas no modo de medição.
+- [x] Verificar node--test e formatação, atualizar guia operacional e commitar.
 
 ### Task2: Homologação sintética e revisão
 
 **Files:** docs/checkpoints/2026-10-27-dashboard-performance.md.
 
-- [ ] Preparar laboratório separado com papel RLS restrito, três sessões e100/1000/10000 empresas.
-- [ ] Rodar smoke com aquecimento2 e30 amostras por empresa; registrar metodologia e evidência sanitizada.
+- [x] Preparar laboratório separado com papel RLS restrito, três sessões e100/1000/10000 empresas.
+- [x] Rodar smoke com aquecimento2 e30 amostras por empresa; registrar metodologia e evidência sanitizada.
 - [ ] Revisão independente, CI no PR e integração somente após sucesso.

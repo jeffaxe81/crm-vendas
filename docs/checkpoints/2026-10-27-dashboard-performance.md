@@ -23,3 +23,7 @@ Evidência sanitizada: [JSON da rodada](evidence/2026-10-27-dashboard-performanc
 Dez testes direcionados aprovados após RED→GREEN; suíte de repositório113/113 aprovada com variáveis sintéticas de Compose. A primeira execução ampla encontrou somente falta de APP_DB_PASSWORD na configuração de teste; o rerun com a variável sintética passou. Não foi necessário alterar o contrato do Compose.
 
 Esta rodada não conclui a issue#255: persistem homologação via ingress/HTTPS, cargas completas por tipo de entidade, consumo de pico/concorrência, revisão humana de acessibilidade/mobile e critérios de aceite acordados. O banco da instalação em uso não foi alvo de semeadura, teste destrutivo ou medição. Credenciais efêmeras do laboratório são revogadas ao encerrar a rodada.
+
+Revisão independente: sem P1/P2; os dez testes direcionados e o hash da evidência foram conferidos por outro agente. Refinamentos menores registrados para depois: adicionar um teste de percentis com ao menos20amostras desordenadas e verificar retrocesso entre amostras em relógios injetados. A CLI usa `performance.now()`, que já é monotônico. A execução real do PostgreSQL foi feita pelo implementador e não foi repetida pelo revisor.
+
+Encerramento: confirmada diretamente a role da aplicação sem SUPERUSER/BYPASSRLS; sessões sintéticas e chave de integração revogadas, arquivo privado de tokens removido e container da API de laboratório encerrado. Nenhuma credencial foi versionada.
