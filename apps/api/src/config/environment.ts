@@ -10,6 +10,10 @@ const ApiEnvironmentSchema = z
       .enum(["development", "test", "production"])
       .default("development"),
     PORT: z.coerce.number().int().min(1).max(65535).default(3001),
+    RECOVERY_EXECUTION_ENABLED: z
+      .enum(["true", "false"])
+      .default("false")
+      .transform(value => value === "true"),
     DATABASE_URL: z
       .string()
       .url()

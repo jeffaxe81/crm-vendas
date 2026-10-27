@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { PasswordService } from "../auth/password.service";
 import { hostname } from "node:os";
 
 import { parseApiEnvironment } from "../config/environment";
@@ -8,6 +9,7 @@ import { BackupAdministrationController } from "./backup-administration.controll
 import { BackupAdministrationService } from "./backup-administration.service";
 import { BackupDeletionService } from "./backup-deletion.service";
 import { BackupScheduleService } from "./backup-schedule.service";
+import { BackupStorageInventoryService } from "./backup-storage-inventory.service";
 import { BackupStore } from "./backup-store";
 import { BackupWorkerRunner } from "./backup-worker.runner";
 import { BackupWorkerRuntime } from "./backup-worker.runtime";
@@ -20,6 +22,11 @@ import { TenantPurgeRuntime } from "./tenant-purge.runtime";
 import { TenantStorageAllocationController } from "./tenant-storage-allocation.controller";
 import { TenantStorageAllocationService } from "./tenant-storage-allocation.service";
 import { TenantStorageReconciliationService } from "./tenant-storage-reconciliation.service";
+import { RecoveryExecutionController } from "./recovery-execution.controller";
+import {
+  RecoveryExecutionService,
+  RECOVERY_OPTIONS,
+} from "./recovery-execution.service";
 
 @Module({
   imports: [DatabaseModule, AuthorizationModule],
@@ -27,8 +34,17 @@ import { TenantStorageReconciliationService } from "./tenant-storage-reconciliat
     BackupAdministrationController,
     TenantPurgeController,
     TenantStorageAllocationController,
+    RecoveryExecutionController,
   ],
   providers: [
+    {
+      provide: RECOVERY_OPTIONS,
+      useFactory: () => ({
+        enabled: parseApiEnvironment(process.env).RECOVERY_EXECUTION_ENABLED,
+      }),
+    },
+    PasswordService,
+    RecoveryExecutionService,
     {
       provide: BACKUP_OPTIONS,
       useFactory: () => {
@@ -56,6 +72,7 @@ import { TenantStorageReconciliationService } from "./tenant-storage-reconciliat
     BackupAdministrationService,
     BackupDeletionService,
     BackupScheduleService,
+    BackupStorageInventoryService,
     DataPreviewService,
     TenantPurgeService,
     TenantStorageAllocationService,

@@ -10,7 +10,18 @@ import { validateRestoreIdentityReferences } from "./restore-identity-check";
 import { validateRestorePreservedMemberships } from "./restore-membership-check";
 import { validateRestoreReferences } from "./restore-reference-check";
 import { TENANT_DATA_REGISTRY } from "./tenant-data-registry";
+import {
+  restoreOrganizationSettings,
+  validateOrganizationRestoreOwner,
+} from "./restore-organization";
+import { revokeActiveRefreshSessionsAfterRestore } from "./restore-refresh-sessions";
+import { pauseOutboxAfterRecovery } from "./recovery-outbox";
 import { requireSupportedTicketRestoreDependencies } from "./restore-ticket-dependencies";
+import {
+  deleteCurrentTicketSatisfactionSurveys,
+  insertTicketSatisfactionSurveys,
+  prepareTicketSatisfactionRestore,
+} from "./restore-ticket-satisfaction";
 import {
   applyTicketProtocolCounterHighWater,
   prepareTicketProtocolCounterHighWater,
@@ -260,12 +271,25 @@ export async function restoreTenantSnapshot(
     data,
     organizationId
   );
+  const ticketSatisfactionRows = prepareTicketSatisfactionRestore(
+    data,
+    organizationId
+  );
   validateRestoreReferences(data);
   await validateRestoreIdentityReferences(tx, organizationId, data);
   await validateRestorePreservedMemberships(tx, organizationId, data);
+  await validateOrganizationRestoreOwner(tx, organizationId, data);
   // Direct callers cannot bypass the safety checks of the locked preflight.
   await requireSupportedTicketRestoreDependencies(tx, organizationId, data);
   await requireCurrentPolicies(tx, organizationId);
+
+  // CSAT holds a RESTRICT FK to Ticket. Its reviewed special policy replaces
+  // the projection inside this same transaction before the Ticket graph is
+  // deleted. Any later failure rolls both CSAT and Ticket changes back.
+  await deleteCurrentTicketSatisfactionSurveys(tx, organizationId);
+  await tx.$executeRawUnsafe(
+    'SET CONSTRAINTS "email_outbox_ticket_org_fkey" DEFERRED'
+  );
 
   for (const { table } of [...graph].reverse()) {
     await tx.$executeRawUnsafe(
@@ -288,9 +312,14 @@ export async function restoreTenantSnapshot(
     if (inserted !== rows.length) fail("RESTORE_TARGET_INVALID");
   }
 
+  await insertTicketSatisfactionSurveys(tx, ticketSatisfactionRows);
+
   await applyTicketProtocolCounterHighWater(
     tx,
     organizationId,
     protocolCounterHighWater
   );
+  await restoreOrganizationSettings(tx, organizationId, data);
+  await pauseOutboxAfterRecovery(tx, organizationId);
+  await revokeActiveRefreshSessionsAfterRestore(tx, organizationId);
 }

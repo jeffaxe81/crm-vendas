@@ -266,69 +266,54 @@ describe("restore locked preflight", () => {
     });
   });
 
-  it.each(["survey", "outbox"] as const)(
-    "fails closed when a live Ticket has a preserved %s dependent",
-    async dependent => {
-      const { organization, user, verified } = await fixture();
-      const ticket = await owner.ticket.create({
-        data: {
-          organizationId: organization.id,
-          protocol: "2026-000103",
-          subject: "Ticket with protected dependent",
-          createdBy: user.id,
-          updatedBy: user.id,
-        },
-      });
-      if (dependent === "survey") {
-        await owner.ticketSatisfactionSurvey.create({
-          data: {
-            organizationId: organization.id,
-            ticketId: ticket.id,
-            tokenHash: randomBytes(32).toString("hex"),
-            expiresAt: new Date("2026-12-01T00:00:00Z"),
-            createdBy: user.id,
-            updatedBy: user.id,
-          },
-        });
-      } else {
-        await owner.emailOutbox.create({
-          data: {
-            organizationId: organization.id,
-            ticketId: ticket.id,
-            idempotencyHash: randomBytes(32).toString("hex"),
-            purpose: "SATISFACTION_REQUEST",
-            encryptedEmail: "synthetic-preflight-ciphertext",
-          },
-        });
-      }
+  it("fails closed when a live Ticket has a preserved outbox dependent", async () => {
+    const { organization, user, verified } = await fixture();
+    const ticket = await owner.ticket.create({
+      data: {
+        organizationId: organization.id,
+        protocol: "2026-000103",
+        subject: "Ticket with protected dependent",
+        createdBy: user.id,
+        updatedBy: user.id,
+      },
+    });
+    await owner.emailOutbox.create({
+      data: {
+        organizationId: organization.id,
+        ticketId: ticket.id,
+        idempotencyHash: randomBytes(32).toString("hex"),
+        purpose: "SATISFACTION_REQUEST",
+        encryptedEmail: "synthetic-preflight-ciphertext",
+      },
+    });
 
-      await expect(
-        runtime.withMaintenance(
-          organization.id,
-          tx =>
-            preflightRestoreExecution(
-              tx,
-              organization.id,
-              verified,
-              options.maxBytes
-            ),
-          { isolationLevel: "RepeatableRead", timeout: 60_000 }
-        )
-      ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    await expect(
+      runtime.withMaintenance(
+        organization.id,
+        tx =>
+          preflightRestoreExecution(
+            tx,
+            organization.id,
+            verified,
+            options.maxBytes
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
+      )
+    ).rejects.toThrow("RESTORE_PRESERVED_REFERENCE_MISSING");
 
-      expect(
-        await owner.ticket.findUnique({ where: { id: ticket.id } })
-      ).not.toBeNull();
-    }
-  );
-
-  it("fails closed when the target contains a satisfaction survey policy not implemented by restore", async () => {
+    expect(
+      await owner.ticket.findUnique({ where: { id: ticket.id } })
+    ).not.toBeNull();
+  });
+  it("accepts a target satisfaction projection after the token policy is reviewed", async () => {
     const { organization, user } = await fixture();
     const ticket = await owner.ticket.create({
       data: {
         organizationId: organization.id,
         protocol: "2026-000104",
         subject: "Historical ticket with CSAT",
+        status: "RESOLVED",
+        resolvedAt: new Date("2026-10-20T12:00:00.000Z"),
         createdBy: user.id,
         updatedBy: user.id,
       },
@@ -360,7 +345,11 @@ describe("restore locked preflight", () => {
           ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    ).resolves.toMatchObject({
+      targetChecksum: verified.manifest.checksum,
+      currentCounts: { Ticket: 0, TicketSatisfactionSurvey: 0 },
+      targetCounts: { Ticket: 1, TicketSatisfactionSurvey: 1 },
+    });
   });
 
   it.each([

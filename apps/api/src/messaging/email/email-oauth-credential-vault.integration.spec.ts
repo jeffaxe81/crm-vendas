@@ -1,3 +1,5 @@
+import { generateKeyPairSync, sign } from "node:crypto";
+import { EmailOAuthRuntimeService } from "./email-oauth-runtime.service";
 import { PrismaService } from "../../database/prisma.service";
 import { decryptWebhookSecret } from "../../webhooks/webhook-secret";
 import { createEmailOAuthAuthorizationIntent } from "./email-oauth-authorization-intent";
@@ -120,6 +122,197 @@ describe("F4.3-05A credential vault PostgreSQL/RLS (offline only)", () => {
     await owner?.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
     await owner?.onModuleDestroy();
     await app?.onModuleDestroy();
+  });
+
+  it.each(["GMAIL", "MICROSOFT_365"] as const)(
+    "completes signed %s callback and rejects replay/cross-tenant/stale intent offline",
+    async provider => {
+      const tenantId = "b9c71e22-a16a-4fb7-bcd2-50831fd9317a";
+      const clientId =
+        provider === "GMAIL"
+          ? "123456-clientclient.apps.googleusercontent.com"
+          : "9e18c280-f6a8-4c23-a958-c9e8f1c2498a";
+      await app.withTenant(organizationId, tx =>
+        tx.emailProviderPreference.create({
+          data: { organizationId, providerCode: provider },
+        })
+      );
+      const registration = {
+        organizationId,
+        provider,
+        clientId,
+        ...(provider === "MICROSOFT_365"
+          ? { microsoftTenantId: tenantId }
+          : {}),
+      };
+      const environment = {
+        EMAIL_OAUTH_CALLBACK_ORIGIN: "https://crm.example.com",
+        EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON: JSON.stringify({
+          version: 1,
+          registrations: [registration],
+        }),
+        EMAIL_OAUTH_CLIENT_SECRETS_JSON: JSON.stringify({
+          [`${organizationId}:${provider}`]: "synthetic-client-secret-123",
+        }),
+        EMAIL_OAUTH_PENDING_ENCRYPTION_KEY: pendingKey,
+        EMAIL_OAUTH_TOKEN_ENCRYPTION_KEY: encryptionKey,
+      };
+      const { publicKey, privateKey } = generateKeyPairSync("rsa", {
+        modulusLength: 2048,
+      });
+      const key = {
+        ...publicKey.export({ format: "jwk" }),
+        kid: "simulator",
+        alg: "RS256",
+        use: "sig",
+      };
+      let currentNonce = "";
+      let exchanges = 0;
+      const request: typeof fetch = async url => {
+        if (String(url).endsWith("/token")) {
+          exchanges++;
+          const now = Math.floor(Date.now() / 1000);
+          const header = Buffer.from(
+            JSON.stringify({ alg: "RS256", kid: "simulator", typ: "JWT" })
+          ).toString("base64url");
+          const claims = Buffer.from(
+            JSON.stringify({
+              iss:
+                provider === "GMAIL"
+                  ? "https://accounts.google.com"
+                  : `https://login.microsoftonline.com/${tenantId}/v2.0`,
+              aud: clientId,
+              sub: "signed-account-subject",
+              nonce: currentNonce,
+              iat: now,
+              exp: now + 300,
+              ...(provider === "GMAIL"
+                ? { email: "sender@example.test", email_verified: true }
+                : {
+                    tid: tenantId,
+                    ver: "2.0",
+                    preferred_username: "untrusted@example.test",
+                  }),
+            })
+          ).toString("base64url");
+          const data = `${header}.${claims}`;
+          const jwt =
+            data +
+            "." +
+            sign("RSA-SHA256", Buffer.from(data), privateKey).toString(
+              "base64url"
+            );
+          return Response.json({
+            token_type: "Bearer",
+            access_token: "synthetic-access-token-123",
+            refresh_token: token,
+            expires_in: 3600,
+            id_token: jwt,
+          });
+        }
+        if (
+          String(url).includes("certs") ||
+          String(url).includes("discovery/v2.0/keys")
+        )
+          return Response.json({ keys: [key] });
+        throw Error("Unexpected simulator endpoint");
+      };
+      const runtime = new EmailOAuthRuntimeService(app, environment, request);
+      const sessionContext = { ...context(), authMethod: "session" as const };
+      const first = createEmailOAuthAuthorizationIntent({
+        organizationId,
+        actorUserId: adminId,
+        provider,
+        clientId,
+        redirectUri: callbackUrl,
+        ...(provider === "MICROSOFT_365"
+          ? { microsoftTenantId: tenantId }
+          : {}),
+      });
+      const stale = createEmailOAuthAuthorizationIntent({
+        organizationId,
+        actorUserId: adminId,
+        provider,
+        clientId,
+        redirectUri: callbackUrl,
+        ...(provider === "MICROSOFT_365"
+          ? { microsoftTenantId: tenantId }
+          : {}),
+      });
+      await pending.stage(first.pendingGrant, context());
+      await pending.stage(stale.pendingGrant, context());
+      const query = `?code=synthetic-code-123&state=${new URL(first.authorizationUrl).searchParams.get("state")}`;
+      currentNonce = first.pendingGrant.oidcNonce;
+      await expect(
+        runtime.callback(query, {
+          ...sessionContext,
+          organizationId: otherOrganizationId,
+        })
+      ).rejects.toThrow();
+      expect(exchanges).toBe(0);
+      const result = await runtime.callback(query, sessionContext);
+      expect(result.hasEncryptedCredential).toBe(true);
+      await expect(runtime.callback(query, sessionContext)).rejects.toThrow();
+      expect(exchanges).toBe(1);
+      currentNonce = stale.pendingGrant.oidcNonce;
+      await expect(
+        runtime.callback(
+          `?code=synthetic-code-456&state=${new URL(stale.authorizationUrl).searchParams.get("state")}`,
+          sessionContext
+        )
+      ).rejects.toThrow();
+      expect((await vault.status(provider, context())).version).toBe(1);
+      const audit = await app.withTenant(organizationId, tx =>
+        tx.auditLog.findMany()
+      );
+      expect(JSON.stringify(audit)).not.toContain(token);
+      if (provider === "MICROSOFT_365") {
+        const [row] = await app.withTenant(
+          organizationId,
+          tx =>
+            tx.$queryRaw<
+              { encrypted_sender: string }[]
+            >`SELECT encrypted_sender FROM public.email_oauth_credentials`
+        );
+        expect(
+          decryptWebhookSecret(
+            row!.encrypted_sender,
+            encryptionKey,
+            `email-oauth-vault:v1:${organizationId}:MICROSOFT_365:1:sender`
+          )
+        ).toBe("MICROSOFT_SUBJECT_BOUND");
+      }
+    }
+  );
+
+  it("serializes refresh rotation, hides tokens and removes revoked credentials", async () => {
+    await selectProvider();
+    await vault.stageVerified(credential(), context());
+    const rotated = "rotated-refresh-token-1234567890";
+    const seen: string[] = [];
+    await Promise.all(
+      [1, 2].map(() =>
+        vault.withRefreshToken(organizationId, "GMAIL", async old => {
+          seen.push(old);
+          return { value: "opaque-access-result", refreshToken: rotated };
+        })
+      )
+    );
+    expect(seen).toEqual([token, rotated]);
+    await expect(
+      vault.withRefreshToken(organizationId, "GMAIL", async () => ({
+        value: "",
+        revoked: true,
+      }))
+    ).rejects.toThrow();
+    expect(
+      (await vault.status("GMAIL", context())).hasEncryptedCredential
+    ).toBe(false);
+    await expect(
+      vault.withRefreshToken(otherOrganizationId, "GMAIL", async () => ({
+        value: "must-not-read",
+      }))
+    ).rejects.toThrow();
   });
 
   it("encrypts token and sender with versioned AAD and exposes only metadata", async () => {

@@ -61,3 +61,62 @@ bloqueia backups e não executa limpeza automática.
 
 A reconciliação é uma etapa preparatória para cotas efetivas. Enforcement
 com reservas transacionais de capacidade permanece fora do escopo.
+
+## Inventário global de objetos físicos — candidato isolado
+
+A microentrega da PR #306 propõe o endpoint de diagnóstico
+`GET /api/v1/admin/storage/inventory`. O endpoint exige sessão humana
+autenticada com `isSuperuser=true`, recusa parâmetros de consulta (inclusive
+`organizationId`) e responde `Cache-Control: no-store`.
+A implementação permanece isolada até aprovação do gate da branch e não
+autoriza seu uso em produção.
+
+Diferentemente da reconciliação paginada por tenant, o inventário global
+percorre o catálogo de **todas** as organizações, usando exclusivamente
+`PrismaService.withTenant(organizationId)` para cada página de até 200
+backups. O papel de banco da API permanece restrito, com FORCE RLS, sem
+credencial de migração ou `BYPASSRLS`. O diretório privado é enumerado
+sem seguir symlinks e sem retornar caminhos físicos, nomes inesperados,
+segredos ou conteúdo criptografado.
+
+O resultado possui `readOnly: true`, `scope: ALL_ORGANIZATIONS`,
+`atomicSnapshot: false`, `configured`, `complete`, totais por
+organização e ocorrências sanitizadas por UUID. Ele distingue:
+
+- `ORPHAN`: objeto físico sem referência em qualquer estado do catálogo;
+- `MISSING`: backup `COMPLETED` sem objeto físico observado;
+- `SIZE_MISMATCH`: tamanho físico distinto de `byteCount + 36`;
+- `UNREADABLE`: objeto com UUID que não pôde ser inspecionado de modo seguro;
+- `STATE_INCONSISTENCY`: objeto físico com registro `DELETED`;
+- temporários e nomes inesperados: **apenas contadores**, sem seus nomes.
+
+Backups `PENDING`, `RUNNING` e `DELETING` não são marcados
+como ausentes. Um UUID físico presente mas ilegível pode também ser
+classificado como órfão, se não houver registro correspondente. Sem
+armazenamento configurado, `configured=false` e `complete=false`.
+
+A contagem física por organização inclui também entradas UUID ilegíveis que
+possuem referência no catálogo, de forma consistente com a contagem global.
+Os totais de bytes incluem somente tamanhos que puderam ser inspecionados.
+Um registro `DELETED` com entrada ilegível produz tanto `UNREADABLE` quanto
+`STATE_INCONSISTENCY`, sem abrir o destino de um symlink.
+
+**Limites obrigatórios:** a comparação entre PostgreSQL e filesystem
+não é um snapshot atômico; alterações simultâneas podem afetar o resultado.
+O inventário não autentica o envelope AES-GCM, não prova restaurabilidade
+e não autoriza limpeza, alteração de catálogos, aplicação de cotas, deploy
+nem GO operacional. Antes de produção, homologar a autorização global,
+a volumetria, o isolamento real, as evidências e o aceite formal.
+
+## Consulta na administração
+
+A seção **Inventário global de backups**, no painel **Backup e recuperação**,
+consulta o endpoint somente após clique de um Superusuário. O resultado inclui
+totais e consumo conhecido por empresa, com filtro por tipo de ocorrência.
+As tabelas exibem até 20 linhas por página; paginação e filtros são locais e
+não disparam novas varreduras. Uma nova consulta substitui o resultado anterior.
+
+A interface valida a resposta antes de apresentar números, preserva bytes
+como inteiros exatos e descarta resultados ao trocar de sessão/token.
+Armazenamento indisponível, relatório parcial e falha de consulta são estados
+distintos. Não oferece exclusão, reparo ou alteração de cotas.

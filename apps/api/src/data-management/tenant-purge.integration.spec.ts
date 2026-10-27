@@ -191,4 +191,203 @@ describe("tenant-specific purge policy and isolated execution", () => {
       )
     ).not.toBeNull();
   });
+  async function makeDelivery(
+    organizationId: string,
+    status = "EXHAUSTED",
+    daysOld = 120
+  ) {
+    const date = new Date(now.getTime() - daysOld * 86400000);
+    const subscription = await owner.webhookSubscription.create({
+      data: {
+        organizationId,
+        createdBy: userId,
+        name: "Synthetic purge",
+        targetUrl: "https://synthetic.invalid/hook",
+        encryptedSecret: "synthetic-secret",
+        eventTypes: ["company.created"],
+      },
+    });
+    const dispatch = await owner.webhookDispatch.create({
+      data: {
+        organizationId,
+        subscriptionId: subscription.id,
+        subscriptionVersion: 1,
+        eventId: randomUUID(),
+        eventType: "company.created",
+        payload: { synthetic: true },
+        targetUrl: "https://synthetic.invalid/hook",
+        encryptedSecret: "synthetic-secret",
+        status,
+        requestId: randomUUID(),
+        createdAt: date,
+        updatedAt: date,
+        nextAttemptAt: null,
+      },
+    });
+    return owner.webhookDelivery.create({
+      data: {
+        organizationId,
+        subscriptionId: subscription.id,
+        dispatchId: dispatch.id,
+        attempt: 1,
+        status: "FAILED",
+        errorCode: "SYNTHETIC",
+        createdAt: date,
+      },
+    });
+  }
+
+  it("simulates exact proposed categories without policy, audit or data mutation", async () => {
+    const preview = await makePreview(orgA, sessionA, 120);
+    await makePreview(orgB, sessionB, 120);
+    await makeDelivery(orgA);
+    await makeDelivery(orgA, "PENDING");
+    await makeDelivery(orgA, "EXHAUSTED", 5);
+    const before = {
+      policies: await owner.purgePolicy.count(),
+      audit: await owner.auditLog.count(),
+      deliveries: await owner.webhookDelivery.count(),
+    };
+    const result = await service.simulate(principal(orgA), {
+      retentionDays: 90,
+      categories: ["EXPIRED_OPERATION_PREVIEWS", "TERMINAL_WEBHOOK_DELIVERIES"],
+    });
+    expect(result).toMatchObject({
+      dryRun: true,
+      estimatedRecords: 2,
+      counts: { EXPIRED_OPERATION_PREVIEWS: 1, TERMINAL_WEBHOOK_DELIVERIES: 1 },
+    });
+    expect({
+      policies: await owner.purgePolicy.count(),
+      audit: await owner.auditLog.count(),
+      deliveries: await owner.webhookDelivery.count(),
+    }).toEqual(before);
+    expect(
+      await owner.operationPreview.findUnique({ where: { id: preview.id } })
+    ).not.toBeNull();
+    await expect(
+      service.simulate(principal(orgA), {
+        retentionDays: 90,
+        categories: ["USERS"],
+      })
+    ).rejects.toThrow();
+    await expect(
+      service.simulate(principal(orgA), { retentionDays: 90, categories: [] })
+    ).rejects.toThrow();
+  });
+
+  it("requires category opt-in and keeps active webhook attempts and referenced previews", async () => {
+    const old = await makeDelivery(orgA);
+    const active = await makeDelivery(orgA, "PROCESSING");
+    const other = await makeDelivery(orgB);
+    const referenced = await makePreview(orgA, sessionA, 120);
+    await owner.dataOperation.create({
+      data: {
+        organizationId: orgA,
+        kind: "RESTORE",
+        payload: { previewId: referenced.id },
+      },
+    });
+    await service.configure(
+      principal(orgA),
+      { enabled: true, retentionDays: 90, confirmation: "ATIVAR EXPURGO" },
+      randomUUID()
+    );
+    expect((await service.read(principal(orgA))).categories).toEqual([
+      "EXPIRED_OPERATION_PREVIEWS",
+    ]);
+    expect(await service.runDue(now)).toBe(0);
+    expect(
+      await owner.webhookDelivery.findUnique({ where: { id: old.id } })
+    ).not.toBeNull();
+    await service.configure(
+      principal(orgA),
+      {
+        enabled: true,
+        retentionDays: 90,
+        categories: ["TERMINAL_WEBHOOK_DELIVERIES"],
+        confirmation: "ATIVAR EXPURGO",
+      },
+      randomUUID()
+    );
+    const next = new Date(now.getTime() + 86400000);
+    const results = await Promise.all([
+      service.runDue(next),
+      service.runDue(next),
+    ]);
+    expect(results.reduce((a, b) => a + b, 0)).toBe(1);
+    expect(
+      await owner.webhookDelivery.findUnique({ where: { id: old.id } })
+    ).toBeNull();
+    for (const id of [active.id, other.id])
+      expect(
+        await owner.webhookDelivery.findUnique({ where: { id } })
+      ).not.toBeNull();
+    expect(
+      await owner.operationPreview.findUnique({ where: { id: referenced.id } })
+    ).not.toBeNull();
+    expect(
+      await owner.user.findUnique({ where: { id: userId } })
+    ).not.toBeNull();
+    const audit = await owner.auditLog.findFirst({
+      where: {
+        action: "purge.expired_previews_completed",
+        organizationId: orgA,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    expect(audit?.metadata).toMatchObject({
+      counts: { TERMINAL_WEBHOOK_DELIVERIES: 1 },
+    });
+    expect(JSON.stringify(audit?.metadata)).not.toMatch(
+      /synthetic-secret|synthetic.invalid|payload/
+    );
+    await expect(
+      restricted.withTenant(orgA, tx =>
+        tx.webhookDelivery.deleteMany({ where: { id: active.id } })
+      )
+    ).rejects.toThrow();
+  });
+
+  it("limits each category to 500 records and rolls deletion back when mandatory audit fails", async () => {
+    const preview = await makePreview(orgA, sessionA, 120);
+    await service.configure(
+      principal(orgA),
+      { enabled: true, retentionDays: 90, confirmation: "ATIVAR EXPURGO" },
+      randomUUID()
+    );
+    await owner.$executeRawUnsafe(
+      `CREATE FUNCTION public.test_reject_purge_audit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.action = 'purge.expired_previews_completed' THEN RAISE EXCEPTION 'synthetic audit failure'; END IF; RETURN NEW; END $$`
+    );
+    await owner.$executeRawUnsafe(
+      "CREATE TRIGGER test_reject_purge_audit BEFORE INSERT ON public.audit_logs FOR EACH ROW EXECUTE FUNCTION public.test_reject_purge_audit()"
+    );
+    try {
+      await expect(service.runDue(now)).rejects.toThrow();
+      expect(
+        await owner.operationPreview.findUnique({ where: { id: preview.id } })
+      ).not.toBeNull();
+      expect((await service.read(principal(orgA))).lastRunAt).toBeNull();
+    } finally {
+      await owner.$executeRawUnsafe(
+        "DROP TRIGGER test_reject_purge_audit ON public.audit_logs"
+      );
+      await owner.$executeRawUnsafe(
+        "DROP FUNCTION public.test_reject_purge_audit()"
+      );
+    }
+    const { id, ...data } = preview;
+    await owner.operationPreview.createMany({
+      data: Array.from({ length: 501 }, () => ({
+        ...data,
+        payload: {},
+        id: randomUUID(),
+      })),
+    });
+    expect(await service.runDue(now)).toBe(500);
+    expect(
+      await owner.operationPreview.count({ where: { organizationId: orgA } })
+    ).toBe(2);
+    expect(await service.runDue(now)).toBe(0);
+  });
 });

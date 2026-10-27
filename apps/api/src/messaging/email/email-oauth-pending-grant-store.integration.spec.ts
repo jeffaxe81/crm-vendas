@@ -1,3 +1,4 @@
+import type { Prisma } from "../../generated/prisma/client";
 import { createEmailOAuthAuthorizationIntent } from "./email-oauth-authorization-intent";
 import { EmailOAuthPendingGrantStore } from "./email-oauth-pending-grant-store";
 import { PrismaService } from "../../database/prisma.service";
@@ -130,6 +131,52 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     await app?.onModuleDestroy();
   });
 
+  it("locks the preference before deleting a one-use grant to avoid callback/disconnect lock cycles", async () => {
+    await select();
+    const created = intent();
+    await store.stage(created.pendingGrant, context());
+    const statements: string[] = [];
+    const traced = {
+      withTenant: (
+        org: string,
+        callback: (tx: Prisma.TransactionClient) => Promise<unknown>
+      ) =>
+        app.withTenant(org, tx =>
+          callback(
+            new Proxy(tx, {
+              get(target, key) {
+                const method = Reflect.get(target, key);
+                if (key !== "$queryRaw")
+                  return typeof method === "function"
+                    ? method.bind(target)
+                    : method;
+                return (...args: unknown[]) => {
+                  statements.push(
+                    Array.from(args[0] as TemplateStringsArray).join("?")
+                  );
+                  return Reflect.apply(method, target, args);
+                };
+              },
+            })
+          )
+        ),
+    } as unknown as PrismaService;
+    const observed = new EmailOAuthPendingGrantStore(traced, key);
+    await observed.consume(
+      new URL(created.authorizationUrl).searchParams.get("state")!,
+      context()
+    );
+    const preference = statements.findIndex(
+      sql =>
+        sql.includes("email_provider_preferences") && sql.includes("FOR UPDATE")
+    );
+    const deletion = statements.findIndex(sql =>
+      sql.includes("DELETE FROM public.email_oauth_pending_grants")
+    );
+    expect(preference).toBeGreaterThanOrEqual(0);
+    expect(preference).toBeLessThan(deletion);
+  });
+
   it("stores encrypted PKCE by tenant and consumes exactly once", async () => {
     await select();
     const created = intent();
@@ -175,6 +222,8 @@ describe("F4.3-04B2 pending OAuth intents PostgreSQL/RLS (offline only)", () => 
     await expect(store.consume(state, context())).resolves.toEqual({
       provider: "GMAIL",
       providerPreferenceVersion: 1,
+      credentialVersion: 0,
+      intentCreatedAt: new Date(created.pendingGrant.createdAt),
       codeVerifier: created.pendingGrant.codeVerifier,
       oidcNonce: created.pendingGrant.oidcNonce,
       redirectUri: callbackUrl,

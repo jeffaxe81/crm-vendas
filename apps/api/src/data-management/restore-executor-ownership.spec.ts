@@ -25,7 +25,21 @@ function backup(): SnapshotData {
     deletedAt: null,
     deletedBy: null,
   };
-  data.Organization = [{ id: organizationId }];
+  data.Organization = [
+    {
+      id: organizationId,
+      name: "Synthetic organization",
+      slug: "synthetic-organization",
+      isActive: true,
+      defaultLanguage: "pt-BR",
+      detectBrowserLanguage: false,
+      branding: null,
+      onboardingOwnerId: null,
+      onboardingStep: 1,
+      onboardingCompletedAt: null,
+      ...timestamps,
+    },
+  ];
   data.User = [{ id: userId, email: "owner@example.test" }];
   data.OrganizationMembership = [{ id: membershipId, organizationId, userId }];
   data.Company = [
@@ -105,7 +119,10 @@ function transaction(
       findMany: async () => [{ id: userId, email: "owner@example.test" }],
     },
     ticketSatisfactionSurvey: { count: async () => 0 },
-    emailOutbox: { count: async () => 0 },
+    emailOutbox: {
+      findMany: async () => [],
+      updateMany: async () => ({ count: 0 }),
+    },
     ticketProtocolCounter: { count: async () => 0 },
     organizationMembership: {
       findMany: async ({ where }: { where: Record<string, unknown> }) => {

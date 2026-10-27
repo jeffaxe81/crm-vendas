@@ -404,3 +404,27 @@ export {
   defaultBranding,
   type TenantBranding,
 } from "./branding";
+
+export {
+  DashboardCatalogSchema,
+  DashboardMetricIdSchema,
+  DashboardVolumeSchema,
+  type DashboardCatalog,
+  type DashboardMetricId,
+  type DashboardVolume,
+} from "./dashboard-volume";
+
+export {
+  StorageGlobalInventorySchema,
+  StorageInventoryFindingStatusSchema,
+  type StorageGlobalInventory,
+  type StorageInventoryFindingStatus,
+} from "./storage-global-inventory";
+
+export {
+  RestoreExecutionRequestSchema,
+  DeleteExecutionRequestSchema,
+  RecoveryCapabilitiesSchema,
+  type RestoreExecutionRequest,
+  type DeleteExecutionRequest,
+} from "./recovery";

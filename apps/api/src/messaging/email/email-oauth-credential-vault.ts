@@ -7,6 +7,7 @@ import {
 import type { Prisma } from "../../generated/prisma/client";
 import { PrismaService } from "../../database/prisma.service";
 import {
+  decryptWebhookSecret,
   encryptWebhookSecret,
   webhookEncryptionKey,
 } from "../../webhooks/webhook-secret";
@@ -22,9 +23,10 @@ import type { EmailOAuthGrantContext } from "./email-oauth-pending-grant-store";
 export type StagedOAuthCredential = Readonly<{
   provider: EmailOAuthProvider;
   providerSubject: string;
-  verifiedSenderEmail: string;
+  verifiedSenderEmail?: string;
   refreshToken: string;
   expectedVersion: number;
+  intentCreatedAt?: Date;
   /** Revision of the selected provider from the consumed, one-use OAuth state. */
   expectedProviderPreferenceVersion: number;
 }>;
@@ -143,8 +145,11 @@ export class EmailOAuthCredentialVault {
       !Number.isSafeInteger(input.expectedProviderPreferenceVersion) ||
       input.expectedProviderPreferenceVersion < 1 ||
       !SUBJECT.test(input.providerSubject) ||
-      !SENDER.test(input.verifiedSenderEmail) ||
-      input.verifiedSenderEmail.length > 254 ||
+      (input.provider === "GMAIL" &&
+        !SENDER.test(input.verifiedSenderEmail ?? "")) ||
+      (input.verifiedSenderEmail !== undefined &&
+        (!SENDER.test(input.verifiedSenderEmail) ||
+          input.verifiedSenderEmail.length > 254)) ||
       !REFRESH_TOKEN.test(input.refreshToken)
     )
       denied();
@@ -154,7 +159,7 @@ export class EmailOAuthCredentialVault {
     const provider = input.provider;
     const subject = this.subjectHmac(org, provider, input.providerSubject);
     const sender = encryptWebhookSecret(
-      input.verifiedSenderEmail.toLowerCase(),
+      input.verifiedSenderEmail?.toLowerCase() ?? "MICROSOFT_SUBJECT_BOUND",
       this.encryptionKey,
       sealedBinding(org, provider, version, "sender")
     );
@@ -165,6 +170,7 @@ export class EmailOAuthCredentialVault {
     );
 
     return this.prisma.withTenant(org, async tx => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${org}`}, 0))`;
       await this.assertAdmin(tx, context);
       // Lock the provider selection through the credential commit. This
       // closes the gap after one-time state consumption and OIDC exchange.
@@ -207,6 +213,7 @@ export class EmailOAuthCredentialVault {
           WHERE organization_id = ${org}::uuid
             AND provider_code = ${provider}
             AND version = ${input.expectedVersion}
+            AND created_at <= ${input.intentCreatedAt ?? new Date()}
           RETURNING version, provider_preference_version
         `;
       }
@@ -230,6 +237,73 @@ export class EmailOAuthCredentialVault {
       });
       return this.view(provider, version);
     });
+  }
+
+  /** Internal worker access only. Serialized rotation prevents concurrent refresh use.
+   * The token never crosses an HTTP response, audit event or backup boundary. */
+  async withRefreshToken<T>(
+    organizationId: string,
+    provider: EmailOAuthProvider,
+    refresh: (
+      token: string
+    ) => Promise<{ value: T; refreshToken?: string; revoked?: boolean }>
+  ): Promise<T> {
+    if (!UUID.test(organizationId) || !PROVIDERS.includes(provider)) denied();
+    const result = await this.prisma.withTenant(
+      organizationId,
+      async tx => {
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${organizationId}`}, 0))`;
+        // Same lock order as stageVerified/deleteLocal: preference, credential.
+        const [pref] = await tx.$queryRaw<
+          { provider_code: string; version: number }[]
+        >`
+        SELECT provider_code, version FROM public.email_provider_preferences
+        WHERE organization_id = ${organizationId}::uuid FOR UPDATE
+      `;
+        if (pref?.provider_code !== provider) denied();
+        const [row] = await tx.$queryRaw<
+          {
+            version: number;
+            provider_preference_version: number;
+            encrypted_refresh_token: string;
+          }[]
+        >`
+        SELECT version, provider_preference_version, encrypted_refresh_token
+        FROM public.email_oauth_credentials
+        WHERE organization_id = ${organizationId}::uuid AND provider_code = ${provider}
+        FOR UPDATE
+      `;
+        if (!row || row.provider_preference_version !== pref.version) denied();
+        const token = decryptWebhookSecret(
+          row.encrypted_refresh_token,
+          this.encryptionKey,
+          sealedBinding(organizationId, provider, row.version, "refresh")
+        );
+        const refreshed = await refresh(token);
+        if (refreshed.revoked) {
+          await tx.$executeRaw`DELETE FROM public.email_oauth_credentials
+          WHERE organization_id = ${organizationId}::uuid AND provider_code = ${provider}`;
+          await tx.$executeRaw`DELETE FROM public.email_oauth_pending_grants
+          WHERE organization_id = ${organizationId}::uuid AND provider_code = ${provider}`;
+          return { revoked: true as const };
+        }
+        if (refreshed.refreshToken !== undefined) {
+          if (!REFRESH_TOKEN.test(refreshed.refreshToken)) denied();
+          const sealed = encryptWebhookSecret(
+            refreshed.refreshToken,
+            this.encryptionKey,
+            sealedBinding(organizationId, provider, row.version, "refresh")
+          );
+          await tx.$executeRaw`UPDATE public.email_oauth_credentials
+          SET encrypted_refresh_token = ${sealed}, updated_at = CURRENT_TIMESTAMP
+          WHERE organization_id = ${organizationId}::uuid AND provider_code = ${provider}`;
+        }
+        return { revoked: false as const, value: refreshed.value };
+      },
+      { timeout: 12000 }
+    );
+    if (result.revoked) denied();
+    return result.value;
   }
 
   private view(
@@ -256,6 +330,7 @@ export class EmailOAuthCredentialVault {
   ): Promise<CredentialVaultStatus> {
     this.validateContext(provider, context);
     return this.prisma.withTenant(context.organizationId, async tx => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${context.organizationId}`}, 0))`;
       await this.assertAdmin(tx, context);
       const rows = await tx.$queryRaw<StoredVersion[]>`
         SELECT version, provider_preference_version
@@ -290,7 +365,10 @@ export class EmailOAuthCredentialVault {
     this.validateContext(provider, context);
     if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1) denied();
     return this.prisma.withTenant(context.organizationId, async tx => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(hashtextextended(${`tenant-maintenance:${context.organizationId}`}, 0))`;
       await this.assertAdmin(tx, context);
+      // Serialize credential and pending-grant mutations behind the same preference row.
+      await tx.$queryRaw`SELECT version FROM public.email_provider_preferences WHERE organization_id = ${context.organizationId}::uuid FOR UPDATE`;
       const deleted = await tx.$queryRaw<StoredVersion[]>`
         DELETE FROM public.email_oauth_credentials
         WHERE organization_id = ${context.organizationId}::uuid

@@ -37,6 +37,7 @@ it("requires confirmation for a custom storage allocation", async () => {
       );
       expect(JSON.parse(options.body as string)).toEqual({
         allocatedGiB: 64,
+        enforced: false,
         confirmation: "AJUSTAR COTA",
       });
       return response({
@@ -104,4 +105,36 @@ it("reloads isolated capacity on tenant switch", async () => {
     )
   );
   expect(screen.getByText(/igual ou superior a 80%/)).toBeInTheDocument();
+});
+
+it("requires an explicit switch and confirmation before enabling quota enforcement", async () => {
+  const fetchMock = vi.fn(async (_url: string, options?: RequestInit) => {
+    if (options?.method === "PUT") {
+      expect(JSON.parse(options.body as string)).toEqual({
+        allocatedGiB: 1,
+        enforced: true,
+        confirmation: "AJUSTAR COTA",
+      });
+      return response({ ...initial, allocatedGiB: 1, enforced: true });
+    }
+    return response({ ...initial, allocatedGiB: 1 });
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  render(<TenantStorageAllocationView accessToken="token" />);
+  const activation = await screen.findByRole("checkbox", {
+    name: "Bloquear novos backups ao atingir a capacidade",
+  });
+  expect(activation).not.toBeChecked();
+  fireEvent.click(activation);
+  const submit = screen.getByRole("button", {
+    name: "Salvar capacidade da empresa",
+  });
+  expect(submit).toBeDisabled();
+  fireEvent.change(
+    screen.getByLabelText("Digite AJUSTAR COTA para confirmar"),
+    { target: { value: "AJUSTAR COTA" } }
+  );
+  fireEvent.click(submit);
+  await screen.findByText("Capacidade de referência da empresa atualizada.");
+  expect(activation).toBeChecked();
 });

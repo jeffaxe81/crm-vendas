@@ -1284,7 +1284,7 @@ describe("transactional tenant restore executor", () => {
           ),
         { isolationLevel: "RepeatableRead", timeout: 60_000 }
       )
-    ).rejects.toThrow("RESTORE_POLICY_UNSUPPORTED");
+    ).rejects.toThrow("RESTORE_PRESERVED_REFERENCE_MISSING");
 
     expect(await companies(target.organization.id)).toEqual(before);
     expect(

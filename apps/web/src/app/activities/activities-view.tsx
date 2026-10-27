@@ -4,6 +4,7 @@ import type { ActivityCreateInput, ActivityUpdateInput } from "@axes/contracts";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedCalendar } from "../../lib/local-productivity-export";
 import { useTranslation } from "../../i18n/language-provider";
 
 type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
@@ -363,10 +364,7 @@ export function ActivitiesView({
     const now = new Date();
     const today = now.toDateString();
     return activities.filter(activity => {
-      if (
-        priorityFilter !== "all" &&
-        activity.priority !== priorityFilter
-      ) {
+      if (priorityFilter !== "all" && activity.priority !== priorityFilter) {
         return false;
       }
       if (dueFilter === "overdue") return isOverdue(activity);
@@ -391,14 +389,35 @@ export function ActivitiesView({
             {t("Organize tarefas e próximos passos da operação comercial.")}
           </p>
         </div>
-        {canWrite ? (
+        <div className="companies-view__header-actions">
           <button
-            className="button activities-view__primary"
-            onClick={openCreate}
+            type="button"
+            disabled={
+              loading ||
+              !visibleActivities.some(activity => activity.dueAt !== null)
+            }
+            title={t(
+              "Gera lembretes provisórios apenas das atividades visíveis"
+            )}
+            onClick={() =>
+              downloadLoadedCalendar(
+                "crm-atividades-visiveis.ics",
+                visibleActivities
+              )
+            }
           >
-            {t("Nova atividade")}
+            {t("Exportar prazos ICS")}
           </button>
-        ) : null}
+          {canWrite ? (
+            <button
+              className="button activities-view__primary"
+              type="button"
+              onClick={openCreate}
+            >
+              {t("Nova atividade")}
+            </button>
+          ) : null}
+        </div>
       </header>
 
       <form
@@ -460,10 +479,7 @@ export function ActivitiesView({
             onChange={event =>
               setDueFilter(
                 event.target.value as
-                  | "all"
-                  | "overdue"
-                  | "today"
-                  | "without-date"
+                  "all" | "overdue" | "today" | "without-date"
               )
             }
           >

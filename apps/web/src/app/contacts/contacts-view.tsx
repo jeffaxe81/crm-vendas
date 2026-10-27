@@ -14,6 +14,7 @@ import type {
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedVcards } from "../../lib/local-productivity-export";
 import { ContactImportPanel } from "./contact-import-panel";
 import {
   CustomFieldsEditor,
@@ -569,6 +570,18 @@ export function ContactsView({
           <p>{t("Gerencie pessoas, canais e vínculos comerciais.")}</p>
         </div>
         <div className="companies-view__header-actions">
+          <button
+            type="button"
+            disabled={loading || visibleContacts.length === 0}
+            title={t(
+              "Exporta somente os contatos visíveis pelos filtros locais"
+            )}
+            onClick={() =>
+              downloadLoadedVcards("crm-contatos-visiveis.vcf", visibleContacts)
+            }
+          >
+            {t("Exportar contatos VCF")}
+          </button>
           {canWrite ? (
             <button
               type="button"
@@ -579,17 +592,19 @@ export function ContactsView({
               {t("Importar CSV")}
             </button>
           ) : null}
-          <button
-            type="button"
-            className="button contacts-view__primary"
-            onClick={() => {
-              setImportOpen(false);
-              contactSave.reset();
-              setContactFormOpen(true);
-            }}
-          >
-            {t("Novo contato")}
-          </button>
+          {canWrite ? (
+            <button
+              type="button"
+              className="button contacts-view__primary"
+              onClick={() => {
+                setImportOpen(false);
+                contactSave.reset();
+                setContactFormOpen(true);
+              }}
+            >
+              {t("Novo contato")}
+            </button>
+          ) : null}
         </div>
       </header>
 
@@ -678,10 +693,7 @@ export function ContactsView({
             value={channelFilter}
             onChange={event =>
               setChannelFilter(
-                event.target.value as
-                  | "all"
-                  | "with-channel"
-                  | "without-channel"
+                event.target.value as "all" | "with-channel" | "without-channel"
               )
             }
           >

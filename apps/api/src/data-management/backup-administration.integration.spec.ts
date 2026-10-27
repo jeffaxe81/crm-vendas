@@ -39,6 +39,21 @@ describe("backup administration HTTP authorization", () => {
     const token = registered.body.accessToken as string;
     const server = request(app.getHttpServer());
 
+    for (const path of ["capabilities", "operations"]) {
+      await server.get(`/api/v1/admin/recovery/${path}`).expect(401);
+      await server
+        .get(`/api/v1/admin/recovery/${path}`)
+        .auth(token, { type: "bearer" })
+        .expect(403);
+    }
+    for (const path of ["restore", "delete", "delete/preview"]) {
+      await server.post(`/api/v1/admin/recovery/${path}`).send({}).expect(401);
+      await server
+        .post(`/api/v1/admin/recovery/${path}`)
+        .auth(token, { type: "bearer" })
+        .send({})
+        .expect(403);
+    }
     await server
       .get("/api/v1/admin/backups")
       .auth(token, { type: "bearer" })
@@ -57,6 +72,10 @@ describe("backup administration HTTP authorization", () => {
       .expect(403);
     await server
       .get("/api/v1/admin/storage/reconciliation")
+      .auth(token, { type: "bearer" })
+      .expect(403);
+    await server
+      .get("/api/v1/admin/storage/inventory")
       .auth(token, { type: "bearer" })
       .expect(403);
     await server
@@ -126,6 +145,19 @@ describe("backup administration HTTP authorization", () => {
     }
 
     const server = request(app.getHttpServer());
+    const capability = await server
+      .get("/api/v1/admin/recovery/capabilities")
+      .auth(token, { type: "bearer" })
+      .expect(200);
+    expect(capability.headers["cache-control"]).toBe("no-store");
+    expect(capability.body.enabled).toBe(false);
+    for (const path of ["restore", "delete", "delete/preview"]) {
+      await server
+        .post(`/api/v1/admin/recovery/${path}`)
+        .auth(token, { type: "bearer" })
+        .send({})
+        .expect(503);
+    }
     const catalog = await server
       .get("/api/v1/admin/backups")
       .auth(token, { type: "bearer" })
@@ -199,6 +231,20 @@ describe("backup administration HTTP authorization", () => {
       .get(`/api/v1/admin/storage/reconciliation?cursor=${randomUUID()}`)
       .auth(token, { type: "bearer" })
       .expect(400);
+    const inventory = await server
+      .get("/api/v1/admin/storage/inventory")
+      .auth(token, { type: "bearer" })
+      .expect(200);
+    expect(inventory.headers["cache-control"]).toBe("no-store");
+    expect(inventory.body).toMatchObject({
+      scope: "ALL_ORGANIZATIONS",
+      readOnly: true,
+      atomicSnapshot: false,
+    });
+    await server
+      .get(`/api/v1/admin/storage/inventory?organizationId=${organizationId}`)
+      .auth(token, { type: "bearer" })
+      .expect(400);
     const policy = await server
       .get("/api/v1/admin/purge/policy")
       .auth(token, { type: "bearer" })
@@ -236,6 +282,7 @@ describe("backup administration HTTP authorization", () => {
     await server.get("/api/v1/admin/purge/policy").expect(401);
     await server.get("/api/v1/admin/storage/allocation").expect(401);
     await server.get("/api/v1/admin/storage/reconciliation").expect(401);
+    await server.get("/api/v1/admin/storage/inventory").expect(401);
     await server
       .get(`/api/v1/admin/backups/${randomUUID()}/download`)
       .expect(401);

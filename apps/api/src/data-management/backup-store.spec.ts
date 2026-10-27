@@ -151,4 +151,48 @@ describe("private encrypted backup storage", () => {
     expect((await stat(root)).mode & 0o777).toBe(0o755);
     expect(await readdir(root)).toEqual([]);
   });
+
+  it("enumerates recognized objects without following links or exposing unexpected names", async () => {
+    const firstId = randomUUID();
+    const secondId = randomUUID();
+    const linkedId = randomUUID();
+    const temporaryObjectId = randomUUID();
+    const temporaryAttemptId = randomUUID();
+
+    await store.put(firstId, Buffer.from("first inventory object"));
+    await store.put(secondId, Buffer.from("second inventory object"));
+
+    const external = join(root, "unexpected-source");
+    await writeFile(external, "do not follow");
+    await symlink(external, join(root, `${linkedId}.backup`));
+
+    const temporary = `.${temporaryObjectId}.${temporaryAttemptId}.tmp`;
+    await writeFile(join(root, temporary), "temporary");
+    await writeFile(join(root, "unexpected-entry.txt"), "unexpected");
+
+    const before = (await readdir(root)).sort();
+    const entries = [];
+    for await (const entry of store.inventoryEntries()) {
+      entries.push(entry);
+    }
+    const after = (await readdir(root)).sort();
+
+    const firstSize = (await stat(join(root, `${firstId}.backup`))).size;
+    const secondSize = (await stat(join(root, `${secondId}.backup`))).size;
+
+    expect(entries).toEqual(
+      expect.arrayContaining([
+        { kind: "OBJECT", id: firstId.toLowerCase(), size: firstSize },
+        { kind: "OBJECT", id: secondId.toLowerCase(), size: secondSize },
+        { kind: "UNREADABLE_OBJECT", id: linkedId.toLowerCase() },
+        { kind: "TEMPORARY" },
+        { kind: "UNEXPECTED" },
+      ])
+    );
+    expect(entries).toHaveLength(6);
+    expect(entries.every(entry => !("path" in entry))).toBe(true);
+    expect(entries.every(entry => !("name" in entry))).toBe(true);
+    expect(after).toEqual(before);
+    expect(await readFile(external, "utf8")).toBe("do not follow");
+  });
 });

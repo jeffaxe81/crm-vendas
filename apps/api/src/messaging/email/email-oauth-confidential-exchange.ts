@@ -1,4 +1,4 @@
-import { isIP } from "node:net";
+import { validEmailOAuthRedirect } from "./email-oauth-redirect";
 import type { ConsumedEmailOAuthGrant } from "./email-oauth-pending-grant-store";
 import type { EmailOAuthProvider } from "./email-oauth-authorization-intent";
 
@@ -42,25 +42,10 @@ function visible(v: unknown, min: number, max: number): v is string {
     /^[\x21-\x7e]+$/.test(v)
   );
 }
-function validRedirect(value: string): boolean {
-  try {
-    const url = new URL(value);
-    return (
-      value === url.toString() &&
-      url.protocol === "https:" &&
-      url.username === "" &&
-      url.password === "" &&
-      url.port === "" &&
-      url.search === "" &&
-      url.hash === "" &&
-      url.pathname === "/admin/email/oauth/callback" &&
-      isIP(url.hostname) === 0 &&
-      DNS.test(url.hostname)
-    );
-  } catch {
-    return false;
-  }
+function validRedirect(raw: string): boolean {
+  return raw.length <= 512 && validEmailOAuthRedirect(raw);
 }
+
 function pinnedEndpoint(client: ConfidentialClient): string {
   if (client.provider === "GMAIL") {
     if (

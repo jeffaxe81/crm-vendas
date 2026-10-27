@@ -2844,7 +2844,6 @@ button.save-feedback-button[data-save-status="error"] {
   outline-offset: 3px;
 }
 
-
 /* CRM list productivity filters: local to the records already loaded. */
 .contacts-view__filters,
 .activities-view__quick-filters {
@@ -2937,7 +2936,6 @@ button.save-feedback-button[data-save-status="error"] {
   color: #52677f;
   font-size: 0.85rem;
 }
-
 
 /* Quick reset actions share the same compact treatment across CRM lists. */
 .contacts-view__filters > button,

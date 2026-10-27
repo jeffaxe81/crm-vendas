@@ -8,6 +8,7 @@ import type {
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedCsv } from "../../lib/local-productivity-export";
 import { OpportunityItemsPanel, formatMoney } from "./opportunity-items-panel";
 import { useTranslation } from "../../i18n/language-provider";
 
@@ -617,7 +618,13 @@ export function OpportunitiesView({
           new Date(left.updatedAt).getTime()
         );
       });
-  }, [opportunities, localCustomerFilter, localCloseFilter, localSort, pipelines]);
+  }, [
+    opportunities,
+    localCustomerFilter,
+    localCloseFilter,
+    localSort,
+    pipelines,
+  ]);
 
   return (
     <section
@@ -634,15 +641,45 @@ export function OpportunitiesView({
             {t("Acompanhe as negociações comerciais em uma visão objetiva.")}
           </p>
         </div>
-        {canWrite ? (
-          <button
-            className="button"
-            type="button"
-            onClick={() => void openCreate()}
-          >
-            {t("Nova oportunidade")}
-          </button>
-        ) : null}
+        <div className="companies-view__header-actions">
+          {viewMode === "list" ? (
+            <button
+              type="button"
+              disabled={loading || visibleOpportunities.length === 0}
+              title={t("Exporta somente as negociações visíveis nesta página")}
+              onClick={() =>
+                downloadLoadedCsv(
+                  "crm-oportunidades-visiveis.csv",
+                  [
+                    "Título",
+                    "Valor estimado",
+                    "Previsão de fechamento",
+                    "Cliente",
+                    "Observações",
+                  ],
+                  visibleOpportunities.map(opportunity => [
+                    opportunity.title,
+                    opportunity.estimatedValue,
+                    opportunity.expectedCloseAt,
+                    opportunity.companyId ? "Empresa" : "Contato",
+                    opportunity.notes,
+                  ])
+                )
+              }
+            >
+              {t("Exportar oportunidades CSV")}
+            </button>
+          ) : null}
+          {canWrite ? (
+            <button
+              className="button"
+              type="button"
+              onClick={() => void openCreate()}
+            >
+              {t("Nova oportunidade")}
+            </button>
+          ) : null}
+        </div>
       </header>
 
       {canWrite && createOpen ? (
@@ -857,10 +894,7 @@ export function OpportunitiesView({
               onChange={event =>
                 setLocalCloseFilter(
                   event.target.value as
-                    | "all"
-                    | "overdue"
-                    | "this-month"
-                    | "unscheduled"
+                    "all" | "overdue" | "this-month" | "unscheduled"
                 )
               }
             >
@@ -938,7 +972,10 @@ export function OpportunitiesView({
         </p>
       ) : null}
 
-      {!loading && !error && visibleOpportunities.length > 0 && viewMode === "list" ? (
+      {!loading &&
+      !error &&
+      visibleOpportunities.length > 0 &&
+      viewMode === "list" ? (
         <ul className="opportunities-view__list">
           {visibleOpportunities.map(opportunity => {
             const opportunityPipeline = pipelines.find(
