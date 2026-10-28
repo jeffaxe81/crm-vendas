@@ -100,6 +100,23 @@ function validateConfiguration(config) {
         3 + forbidden.length,
     "FORBIDDEN_CREDENTIALS_MUST_BE_DISTINCT"
   );
+  if (config.performance !== undefined) {
+    const settings = config.performance;
+    requireCondition(
+      settings &&
+        typeof settings === "object" &&
+        !Array.isArray(settings) &&
+        Object.keys(settings).sort().join(",") ===
+          "samplesPerTenant,warmupIterations" &&
+        Number.isInteger(settings.warmupIterations) &&
+        settings.warmupIterations >= 0 &&
+        settings.warmupIterations <= 10 &&
+        Number.isInteger(settings.samplesPerTenant) &&
+        settings.samplesPerTenant >= 5 &&
+        settings.samplesPerTenant <= 100,
+      "INVALID_PERFORMANCE_CONFIGURATION"
+    );
+  }
   return target.href.replace(/\/$/, "");
 }
 
@@ -179,11 +196,68 @@ async function readVolume(fetchImpl, baseUrl, tenant) {
   );
 }
 
+function clockValue(now) {
+  try {
+    const value = now();
+    if (typeof value !== "number" || !Number.isFinite(value) || value < 0)
+      throw new Error();
+    return value;
+  } catch {
+    throw new Error("INVALID_PERFORMANCE_CLOCK");
+  }
+}
+
+async function measureVolume(config, fetchImpl, baseUrl, now) {
+  const { warmupIterations, samplesPerTenant } = config.performance;
+  for (let i = 0; i < warmupIterations; i++)
+    for (const tenant of config.tenants)
+      await readVolume(fetchImpl, baseUrl, tenant);
+  const durations = config.tenants.map(() => []);
+  for (let i = 0; i < samplesPerTenant; i++) {
+    for (const [index, tenant] of config.tenants.entries()) {
+      const start = clockValue(now);
+      await readVolume(fetchImpl, baseUrl, tenant);
+      const elapsed = clockValue(now) - start;
+      requireCondition(elapsed >= 0, "INVALID_PERFORMANCE_CLOCK");
+      durations[index].push(elapsed);
+    }
+  }
+  const round = value => Number(value.toFixed(3));
+  return {
+    mode: "sequential",
+    concurrency: 1,
+    timeoutMs: 15000,
+    warmupIterations,
+    samplesPerTenant,
+    percentileMethod: "nearest-rank",
+    tenants: config.tenants.map((tenant, index) => {
+      const sorted = durations[index].sort((a, b) => a - b);
+      const percentile = q => round(sorted[Math.ceil(q * sorted.length) - 1]);
+      return {
+        label: tenant.label,
+        activeRecords: COUNT_KEYS.reduce(
+          (sum, key) => sum + tenant.expectedCounts[key],
+          0
+        ),
+        sampleCount: sorted.length,
+        minMs: round(sorted[0]),
+        p50Ms: percentile(0.5),
+        p95Ms: percentile(0.95),
+        maxMs: round(sorted.at(-1)),
+      };
+    }),
+  };
+}
+
 /**
  * Read-only, opt-in staging smoke test. Credentials are accepted only in
  * process memory, and failures never print HTTP payloads or bearer tokens.
  */
-export async function runDashboardStagingSmoke(config, fetchImpl = fetch) {
+export async function runDashboardStagingSmoke(
+  config,
+  fetchImpl = fetch,
+  now = () => performance.now()
+) {
   const baseUrl = validateConfiguration(config);
   for (const tenant of config.tenants) {
     await readCatalog(fetchImpl, baseUrl, tenant.token);
@@ -224,11 +298,19 @@ export async function runDashboardStagingSmoke(config, fetchImpl = fetch) {
       );
     }
   }
-  return {
+  const result = {
     ok: true,
     tenantsChecked: 3,
     requests: 10 + (config.forbidden?.length ?? 0) * 2,
   };
+  if (config.performance !== undefined) {
+    result.performance = await measureVolume(config, fetchImpl, baseUrl, now);
+    result.requests +=
+      3 *
+      (config.performance.warmupIterations +
+        config.performance.samplesPerTenant);
+  }
+  return result;
 }
 
 if (
@@ -252,19 +334,31 @@ if (
     } catch {
       throw new Error("INVALID_STAGING_FORBIDDEN_INPUT");
     }
+    let performance;
+    try {
+      if (process.env.DASHBOARD_STAGING_PERFORMANCE_JSON !== undefined)
+        performance = JSON.parse(
+          process.env.DASHBOARD_STAGING_PERFORMANCE_JSON
+        );
+    } catch {
+      throw new Error("INVALID_STAGING_PERFORMANCE_INPUT");
+    }
     const result = await runDashboardStagingSmoke({
       baseUrl: process.env.DASHBOARD_STAGING_BASE_URL,
       acknowledgment: process.env.DASHBOARD_STAGING_ACK,
       tenants,
       forbidden,
+      performance,
     });
-    console.log(
-      "Dashboard staging: approved " +
-        result.tenantsChecked +
-        " synthetic tenants (" +
-        result.requests +
-        " read-only requests)."
-    );
+    if (result.performance) console.log(JSON.stringify(result));
+    else
+      console.log(
+        "Dashboard staging: approved " +
+          result.tenantsChecked +
+          " synthetic tenants (" +
+          result.requests +
+          " read-only requests)."
+      );
   } catch (cause) {
     // Never include the HTTP URL, payload or credentials in diagnostic output.
     console.error(

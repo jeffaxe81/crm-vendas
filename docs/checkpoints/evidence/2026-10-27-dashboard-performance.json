@@ -1,0 +1,71 @@
+{
+  "applicationMainCommit": "d105e80868b8ed73224ff699376937cb530786f6",
+  "runnerSha256": "efa6a91b3d1332b9fec6a7b9481ca19db4536d95d21439a3b2dd1dbb748dbc25",
+  "measuredAt": "2026-10-27T07:22:58.881872+00:00",
+  "transport": "HTTP loopback; no ingress or TLS",
+  "dataset": "Synthetic companies only, distributed as100/1000/10000 acrossA/B/C; other measured entity counts0",
+  "runtime": {
+    "postgres": "18.6 (Debian 18.6-1.pgdg12+2)",
+    "apiNode": "24.20.0",
+    "logicalCpusAvailableToApi": 3,
+    "cpuQuota": "none at container cgroup",
+    "containerMemoryLimit": "none at container cgroup",
+    "dockerReportedHostMemoryGiB": 9.735,
+    "applicationRole": {
+      "superuser": false,
+      "bypassRls": false
+    }
+  },
+  "resourcesAfter": {
+    "apiMemoryMiB": 236.7,
+    "postgresMemoryMiB": 60.06,
+    "method": "Single docker stats snapshot after the run; not peak usage"
+  },
+  "result": {
+    "ok": true,
+    "tenantsChecked": 3,
+    "requests": 110,
+    "performance": {
+      "mode": "sequential",
+      "concurrency": 1,
+      "timeoutMs": 15000,
+      "warmupIterations": 2,
+      "samplesPerTenant": 30,
+      "percentileMethod": "nearest-rank",
+      "tenants": [
+        {
+          "label": "A",
+          "activeRecords": 100,
+          "sampleCount": 30,
+          "minMs": 5.021,
+          "p50Ms": 6.716,
+          "p95Ms": 9.576,
+          "maxMs": 11.421
+        },
+        {
+          "label": "B",
+          "activeRecords": 1000,
+          "sampleCount": 30,
+          "minMs": 5.815,
+          "p50Ms": 6.691,
+          "p95Ms": 11.681,
+          "maxMs": 35.337
+        },
+        {
+          "label": "C",
+          "activeRecords": 10000,
+          "sampleCount": 30,
+          "minMs": 6.726,
+          "p50Ms": 8.946,
+          "p95Ms": 12.183,
+          "maxMs": 19.265
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Sequential end-to-end request latency, concurrency1; not capacity or saturation testing",
+    "Warm server cache, no ingress/TLS and only companies populated",
+    "No SLA or production approval; issue255 remains partially pending"
+  ]
+}
