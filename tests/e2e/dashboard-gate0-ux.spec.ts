@@ -122,18 +122,17 @@ test("dashboard Gate 0 keeps desktop keyboard navigation accessible", async ({
 
   await page.reload();
   await expect(page.getByRole("main", { name: "Acesso ao CRM" })).toBeVisible();
-  await page.evaluate(() => {
-    // blur() leaves Chromium's sequential navigation starting point intact.
-    // Focus the document start so Tab genuinely tests the first keyboard target.
-    const previousTabIndex = document.body.getAttribute("tabindex");
-    document.body.tabIndex = -1;
-    document.body.focus();
-    if (previousTabIndex === null) document.body.removeAttribute("tabindex");
-    else document.body.setAttribute("tabindex", previousTabIndex);
+  const shell = page.locator(".crm-shell");
+  await shell.evaluate(element => {
+    // The development server prepends Next.js Dev Tools outside the CRM.
+    // Start at the application boundary; Tab must still reach its skip-link.
+    const previousTabIndex = element.getAttribute("tabindex");
+    element.tabIndex = -1;
+    element.focus();
+    if (previousTabIndex === null) element.removeAttribute("tabindex");
+    else element.setAttribute("tabindex", previousTabIndex);
   });
-  await expect
-    .poll(() => page.evaluate(() => document.activeElement === document.body))
-    .toBe(true);
+  await expect(shell).toBeFocused();
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Ir para o conteúdo" });
   await expect(skip).toBeFocused();

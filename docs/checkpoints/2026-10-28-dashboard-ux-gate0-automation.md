@@ -4,11 +4,11 @@ O PR #316 acrescenta quatro jornadas Playwright: desktop com skip-link e largura
 
 ## Diagnóstico do teste de teclado
 
-Na CI `40742272504`, em `7b94ecb7`, 11 jornadas passaram e uma falhou: após `blur()` e Tab, o skip-link não recebeu foco. A API, os testes de componentes, tipos e build passaram nessa execução; o gate integral permaneceu reprovado.
+Na CI `40742272504`, em `7b94ecb7`, 11 jornadas passaram e uma falhou: após A primeira hipótese foi que `blur()` não reiniciava a posição de navegação sequencial do Chromium. Focar o body com `tabindex=-1` temporário resolveu uma reprodução mínima em dez páginas novas. Uma tentativa anterior reutilizava a mesma página com `setContent` e não reproduzia o estado inicial de forma estável. Essa reprodução mínima não representava toda a aplicação: a CI `40754345491`, em `9a1d43b3`, repetiu a falha do skip-link, com outras 11 jornadas aprovadas.
 
-`blur()` não reinicia a posição de navegação sequencial do Chromium. A preparação agora foca o início do documento com `tabindex=-1` temporário no body e restaura o atributo original. O teste continua pressionando Tab e Enter e exigindo foco no skip-link e no conteúdo; não foca diretamente o link que pretende verificar.
+O diagnóstico seguinte usou a aplicação real em servidor Next.js de desenvolvimento isolado, porta 3333, com todas as chamadas de API interceptadas e respostas sintéticas, sem acesso ao banco. Ao focar o body e pressionar Tab, `document.activeElement` era `nextjs-portal`; dentro do shadow DOM, o foco estava no botão `Open Next.js Dev Tools`. Esse elemento é inserido antes da aplicação no modo de desenvolvimento utilizado pela CI.
 
-Reprodução mínima local com `/usr/bin/chromium`, sem API ou banco: dez páginas novas reproduziram a falha da preparação anterior e passaram com a nova preparação, incluindo foco no conteúdo após Enter e restauração do atributo do body. Uma primeira tentativa reutilizou a mesma página com `setContent`; a premissa de repetição do estado inicial não se sustentou, por isso a reprodução foi refeita com páginas novas. Essa reprodução não equivale à execução das jornadas completas.
+A preparação agora foca a fronteira `.crm-shell` com `tabindex=-1` temporário e restaura seu atributo original. Tab e Enter continuam reais: o teste exige foco no skip-link e depois no conteúdo. Não foca diretamente o link que pretende verificar, nem desativa os controles da aplicação. Dez repetições com a interface real em modo de desenvolvimento passaram, incluindo a restauração do atributo. As respostas de API foram simuladas apenas nessa investigação local; as jornadas do PR continuam usando a API real e tenants sintéticos do ambiente descartável de CI. O servidor local precisou usar Webpack porque o Turbopack rejeitou dependências compartilhadas por symlinks fora da raiz; o workflow permanece inalterado.
 
 ## Verificação reproduzível
 
