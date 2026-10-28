@@ -25,3 +25,11 @@ Data: 2026-10-25. Base da branch: `main@7310e045e21dbfa49ef87d37fc7a1db0add7d017
 - A busca de oportunidades existente continua consultando o servidor e seus parâmetros permanecem iguais; os novos filtros são restritos aos resultados já carregados (`limit=20`).
 - **Não foram acrescentados nem executados testes manualmente**, e nenhuma checagem de build, lint ou typecheck foi iniciada como parte desta continuidade. Esta é uma entrega **não validada** para revisão em PR draft.
 - A `main` pode avançar independentemente; antes de eventual integração, reconciliar a base, verificar conflitos, validar segurança e executar os gates exigidos. Não há autorização de deploy nem GO operacional.
+
+## Reconciliação com a main — 27/10/2026
+
+As funcionalidades originais deste candidato foram incorporadas na main pelo [PR #310](https://github.com/jeffaxe81/crm-vendas/pull/310), na consolidação de filtros e exportações. A branch do PR #307 foi atualizada com `main@d105e80868b8ed73224ff699376937cb530786f6` para eliminar conflitos.
+
+A revisão comparou as listas de contatos, empresas, atividades e oportunidades, além dos estilos. Foram preservados os filtros, ordenação e limpeza rápida já publicados, as exportações VCF/CSV/ICS, as traduções e as proteções de permissão presentes na main. O código antigo não substitui a implementação consolidada.
+
+O diff restante do PR #307 é apenas este registro documental; não há alteração de comportamento, migração ou deploy. As restrições de draft e de ausência de validação descritas acima registram a etapa histórica de 25/10, não a situação após reconciliação. A aptidão para merge depende da CI no novo SHA da branch.
