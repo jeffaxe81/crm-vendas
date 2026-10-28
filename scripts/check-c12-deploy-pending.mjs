@@ -171,8 +171,7 @@ if (direct) {
       import.meta.url
     )
   );
-  const path =
-    manifestFlag >= 0 ? process.argv[manifestFlag + 1] : defaultPath;
+  const path = manifestFlag >= 0 ? process.argv[manifestFlag + 1] : defaultPath;
 
   let result;
   try {
