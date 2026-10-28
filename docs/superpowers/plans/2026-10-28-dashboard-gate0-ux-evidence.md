@@ -31,6 +31,7 @@
 ### Task 1: Matriz E2E de viewport e teclado
 
 **Files:**
+
 - Create: `tests/e2e/dashboard-gate0-ux.spec.ts`
 
 - [ ] Criar teste desktop que abre Resumo gerencial/Volume de dados e verifica região, refresh e largura útil sem overflow horizontal do documento.
@@ -41,6 +42,7 @@
 ### Task 2: i18n e isolamento visual entre sessões
 
 **Files:**
+
 - Modify: `tests/e2e/dashboard-gate0-ux.spec.ts`
 
 - [ ] Criar tenants sintéticos A/B com volumes diferentes.
@@ -51,6 +53,7 @@
 ### Task 3: Evidência e gate final
 
 **Files:**
+
 - Create: `docs/checkpoints/2026-10-28-dashboard-ux-gate0-automation.md`
 - Modify: `docs/deploy/dashboard-staging-read-only-check.md`
 

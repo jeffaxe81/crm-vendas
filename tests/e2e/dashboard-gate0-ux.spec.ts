@@ -1,4 +1,9 @@
-import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
+import {
+  expect,
+  test,
+  type APIRequestContext,
+  type Page,
+} from "@playwright/test";
 import { randomUUID } from "node:crypto";
 
 import {
@@ -63,13 +68,10 @@ async function setLanguage(
   accessToken: string,
   defaultLanguage: "pt-BR" | "en" | "es"
 ) {
-  const response = await request.put(
-    `${api}/organization/language-settings`,
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      data: { defaultLanguage, detectBrowserLanguage: false },
-    }
-  );
+  const response = await request.put(`${api}/organization/language-settings`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    data: { defaultLanguage, detectBrowserLanguage: false },
+  });
   expect(response.ok()).toBe(true);
 }
 
@@ -87,9 +89,7 @@ async function openTranslatedVolume(
   if ((await group.getAttribute("aria-expanded")) !== "true") {
     await group.click();
   }
-  await page
-    .getByRole("button", { name: labels.summary, exact: true })
-    .click();
+  await page.getByRole("button", { name: labels.summary, exact: true }).click();
   await page.getByRole("tab", { name: labels.volume, exact: true }).click();
   await expect(
     page.getByRole("region", { name: labels.heading, exact: true })
@@ -127,9 +127,7 @@ test("dashboard Gate 0 keeps desktop keyboard navigation accessible", async ({
   const skip = page.getByRole("link", { name: "Ir para o conteúdo" });
   await expect(skip).toBeFocused();
   await page.keyboard.press("Enter");
-  await expect(
-    page.getByRole("main", { name: "Acesso ao CRM" })
-  ).toBeFocused();
+  await expect(page.getByRole("main", { name: "Acesso ao CRM" })).toBeFocused();
 });
 
 test("dashboard Gate 0 keeps the mobile drawer keyboard-safe", async ({
@@ -243,7 +241,10 @@ test("dashboard Gate 0 does not flash the previous tenant during a session switc
     exact: true,
   });
   await expect(
-    panelA.locator("article").filter({ hasText: "Empresas ativas" }).locator("strong")
+    panelA
+      .locator("article")
+      .filter({ hasText: "Empresas ativas" })
+      .locator("strong")
   ).toHaveText("1");
   await expect(
     page.getByText(tenantA.session.organization.name, { exact: true })
@@ -272,10 +273,15 @@ test("dashboard Gate 0 does not flash the previous tenant during a session switc
     name: "Volume de registros do CRM",
     exact: true,
   });
-  await expect(panelB.getByText("Consultando volume de registros...")).toBeVisible();
+  await expect(
+    panelB.getByText("Consultando volume de registros...")
+  ).toBeVisible();
   await expect(panelB.getByText("Empresas ativas")).toHaveCount(0);
   await expect(
-    panelB.locator("article").filter({ hasText: "Empresas ativas" }).locator("strong")
+    panelB
+      .locator("article")
+      .filter({ hasText: "Empresas ativas" })
+      .locator("strong")
   ).toHaveText("3");
   await page.unroute(`${api}/dashboards/volume`);
 });
