@@ -123,9 +123,13 @@ test("dashboard Gate 0 keeps desktop keyboard navigation accessible", async ({
   await page.reload();
   await expect(page.getByRole("main", { name: "Acesso ao CRM" })).toBeVisible();
   await page.evaluate(() => {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
+    // blur() leaves Chromium's sequential navigation starting point intact.
+    // Focus the document start so Tab genuinely tests the first keyboard target.
+    const previousTabIndex = document.body.getAttribute("tabindex");
+    document.body.tabIndex = -1;
+    document.body.focus();
+    if (previousTabIndex === null) document.body.removeAttribute("tabindex");
+    else document.body.setAttribute("tabindex", previousTabIndex);
   });
   await expect
     .poll(() => page.evaluate(() => document.activeElement === document.body))
