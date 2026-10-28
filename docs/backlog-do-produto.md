@@ -29,8 +29,8 @@
 
 ## Ciclo 12 — prioridades
 
-| ID     | Épico          | Título                                                                | Prioridade  | Situação   | Dependências | Esforço |
-| ------ | -------------- | --------------------------------------------------------------------- | ----------- | ---------- | ------------ | ------- |
+| ID     | Épico          | Título                                                                | Prioridade  | Situação                                   | Dependências | Esforço |
+| ------ | -------------- | --------------------------------------------------------------------- | ----------- | ------------------------------------------ | ------------ | ------- |
 | C12-01 | Infraestrutura | Deploy HTTPS reproduzível (Nginx, certificados, role do banco, front) | P0 — máxima | Implementado; homologação externa pendente | —            | Médio   |
 
 C12-01 é a primeira entrega do Ciclo 12 e bloqueia as demais em ambiente de servidor.
