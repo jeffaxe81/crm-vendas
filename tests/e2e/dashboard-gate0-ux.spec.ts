@@ -103,6 +103,7 @@ test("dashboard Gate 0 keeps desktop keyboard navigation accessible", async ({
   await page.setViewportSize({ width: 1440, height: 900 });
   const tenant = await registerTenant(request, "desktop");
   await login(page, tenant.email, tenant.password);
+  await finishInitialExperience(page);
 
   await openWorkspaceSection(page, "Resumo gerencial");
   await page.getByRole("tab", { name: "Volume de dados", exact: true }).click();
@@ -132,10 +133,10 @@ test("dashboard Gate 0 keeps the mobile drawer keyboard-safe", async ({
   page,
   request,
 }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
   const tenant = await registerTenant(request, "mobile");
   await login(page, tenant.email, tenant.password);
   await finishInitialExperience(page);
+  await page.setViewportSize({ width: 390, height: 844 });
 
   const trigger = page.getByRole("button", { name: "Abrir navegação" });
   await expect(trigger).toBeVisible();
