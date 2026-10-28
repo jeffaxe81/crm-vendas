@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "release_status": "NOT_APPROVED_FOR_PRODUCTION",
+  "policy": {
+    "development_may_continue_without_external_environment": true,
+    "automated_code_security_tests_required": true,
+    "manual_environment_tests_required_before_production_go": true,
+    "do_not_claim_unperformed_tests_as_passed": true,
+    "do_not_disable_technical_security_gates": true
+  },
+  "external_environment_tests": [
+    {
+      "id": "C12-REAL-01",
+      "gate": "PRODUCTION_GO",
+      "area": "Database credential rotation",
+      "procedure": "On an existing PostgreSQL volume, rotate APP_DB_PASSWORD and start the stack without running ALTER ROLE manually.",
+      "evidence_required": "Sanitized deploy diagnostics showing db-bootstrap completed and API/Web healthy after the password rotation.",
+      "owner": "to_be_assigned",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "executed_at": null,
+      "evidence_url": null
+    },
+    {
+      "id": "C12-REAL-02",
+      "gate": "PRODUCTION_GO",
+      "area": "Fresh database bootstrap",
+      "procedure": "Start the stack with a new PostgreSQL volume and verify that axes_app and its grants are created automatically.",
+      "evidence_required": "Sanitized bootstrap and database-role diagnostics proving the restricted role exists, authenticates and has expected grants.",
+      "owner": "to_be_assigned",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "executed_at": null,
+      "evidence_url": null
+    },
+    {
+      "id": "C12-REAL-03",
+      "gate": "PRODUCTION_GO",
+      "area": "Trusted HTTPS and authenticated login",
+      "procedure": "From another machine on the target network, run the external C12 smoke with the trusted CA and complete an authorized browser login.",
+      "evidence_required": "External smoke report plus sanitized browser evidence showing trusted HTTPS and successful authenticated access.",
+      "owner": "to_be_assigned",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "executed_at": null,
+      "evidence_url": null
+    },
+    {
+      "id": "C12-REAL-04",
+      "gate": "PRODUCTION_GO",
+      "area": "HTTP to HTTPS redirect",
+      "procedure": "From another machine on the target network, request the HTTP origin and verify one redirect to the expected HTTPS CRM origin.",
+      "evidence_required": "External smoke output showing an unambiguous 301 or 308 redirect to the expected HTTPS origin.",
+      "owner": "to_be_assigned",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "executed_at": null,
+      "evidence_url": null
+    },
+    {
+      "id": "C12-REAL-05",
+      "gate": "PRODUCTION_GO",
+      "area": "Network exposure",
+      "procedure": "On the server, verify ports 3000, 3001 and 5432 are bound only to loopback or are otherwise unavailable from the network.",
+      "evidence_required": "Sanitized socket/firewall diagnostics proving application and database ports are not exposed beyond loopback.",
+      "owner": "to_be_assigned",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "executed_at": null,
+      "evidence_url": null
+    },
+    {
+      "id": "C12-REAL-06",
+      "gate": "PRODUCTION_GO",
+      "area": "Server deploy verification",
+      "procedure": "Run scripts/verificar-deploy.sh on the target server using the expected CRM IP and trusted CA.",
+      "evidence_required": "Sanitized verifier output ending with zero failures.",
+      "owner": "to_be_assigned",
+      "status": "PENDING_REAL_ENVIRONMENT",
+      "executed_at": null,
+      "evidence_url": null
+    }
+  ]
+}
