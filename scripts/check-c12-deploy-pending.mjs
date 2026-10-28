@@ -30,8 +30,7 @@ const requiredPolicies = [
 const isRecord = value =>
   value !== null && typeof value === "object" && !Array.isArray(value);
 
-const nonEmpty = value =>
-  typeof value === "string" && value.trim().length > 0;
+const nonEmpty = value => typeof value === "string" && value.trim().length > 0;
 
 function validEvidenceUrl(value) {
   if (!nonEmpty(value)) return false;
