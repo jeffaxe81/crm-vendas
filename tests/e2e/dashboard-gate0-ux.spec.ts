@@ -45,9 +45,7 @@ async function login(page: Page, email: string, password: string) {
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Senha").fill(password);
   await page.getByRole("button", { name: "Entrar no CRM" }).click();
-  await expect(
-    page.getByRole("main", { name: "Acesso ao CRM" })
-  ).toBeVisible();
+  await expect(page.getByRole("main", { name: "Acesso ao CRM" })).toBeVisible();
 }
 
 async function seedCompanies(
@@ -122,9 +120,7 @@ test("dashboard Gate 0 keeps desktop keyboard navigation accessible", async ({
   ).toBe(true);
 
   await page.reload();
-  await expect(
-    page.getByRole("main", { name: "Acesso ao CRM" })
-  ).toBeVisible();
+  await expect(page.getByRole("main", { name: "Acesso ao CRM" })).toBeVisible();
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Ir para o conteúdo" });
   await expect(skip).toBeFocused();
