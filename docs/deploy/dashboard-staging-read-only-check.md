@@ -40,6 +40,19 @@ Encerre/revogue as três sessões após concluir. Não desative a validação TL
 - Sem autenticação: HTTP 401; query `organizationId`: HTTP 400.
 - Nenhuma operação de escrita; nenhum token ou corpo HTTP nos diagnósticos.
 
+## Evidência automatizada complementar do Gate 0
+
+O PR #316 adiciona uma matriz Playwright reproduzível com tenants sintéticos para
+complementar este checklist: desktop sem overflow horizontal, skip-link e foco por
+teclado, drawer mobile em 390x844 com Escape e retorno de foco, PT-BR/EN/ES e
+troca de sessão A → B sem reapresentar organização ou contagem do tenant anterior.
+A evidência e suas limitações ficam registradas em
+`docs/checkpoints/2026-10-28-dashboard-ux-gate0-automation.md`.
+
+Essa automação **não substitui** staging real, proxy/ingress HTTPS, leitor de tela
+humano, aceite de retenção/privacidade, break-glass/MFA ou janela de implantação.
+Os controles manuais abaixo permanecem pendentes até evidência própria.
+
 ## Controles adicionais de aceite (manuais)
 
 - [ ] Confirmar papel PostgreSQL sem `BYPASSRLS`, com testes RLS no CI.
