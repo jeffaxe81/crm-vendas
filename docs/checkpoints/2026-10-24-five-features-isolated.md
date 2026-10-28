@@ -48,3 +48,11 @@ Adicionada a jornada `tests/e2e/dashboard-volume.spec.ts`, sem mocks nem altera�
 A primeira execução desta jornada não selecionava a aba de volume e terminou por timeout; a navegação do teste foi corrigida. A jornada direcionada passou e, em seguida, `pnpm test:e2e` completo passou com **8 testes**, em Chromium e banco descartável, usando papel restrito no servidor. A revisão independente não encontrou bloqueadores no novo teste.
 
 Essa jornada não é prova isolada de acesso entre tenants nem de restauração pública. Os controles de autorização/RLS e as políticas internas de restauração continuam cobertos pelas suítes de API/componentes já registradas. Toda a execução permanece no mesmo worktree/branch isolado, sem testes ou alterações na `main` e sem deploy.
+
+## Reconciliação do PR #302 com a main — 27/10/2026
+
+Os commits da política CSAT do [PR #302](https://github.com/jeffaxe81/crm-vendas/pull/302), incluindo `834e7cb6bb8e85a806c2c37c61c298ad23e231a5`, já pertencem à história da main por meio do [PR #304](https://github.com/jeffaxe81/crm-vendas/pull/304). A branch de origem foi atualizada para `main@d105e80868b8ed73224ff699376937cb530786f6`; o PR passa a apontar diretamente para main.
+
+O diff restante é somente este registro de integração, sem reaplicar uma versão antiga do executor ou dos testes. A política de CSAT continua impedindo ressurreição de tokens: respostas e metadados são preservados, hashes são renovados e pesquisas não respondidas permanecem expiradas até geração autorizada de novo link.
+
+As notas acima descrevem a entrega isolada original. O fluxo de recuperação protegido e a política de referências da caixa de saída evoluíram posteriormente nos PRs #313 e #314; a orientação operacional atual está em `docs/deploy/protected-recovery.md` e `docs/deploy/email-oauth-local.md`. A reconciliação não altera esses controles, não executa recuperação contra dados reais e não realiza deploy. A aptidão para merge depende da CI no novo SHA do PR.
