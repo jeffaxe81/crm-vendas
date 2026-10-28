@@ -4,7 +4,7 @@ O PR #316 acrescenta quatro jornadas Playwright: desktop com skip-link e largura
 
 ## Diagnóstico do teste de teclado
 
-Na CI `40742272504`, em `7b94ecb7`, 11 jornadas passaram e uma falhou: após A primeira hipótese foi que `blur()` não reiniciava a posição de navegação sequencial do Chromium. Focar o body com `tabindex=-1` temporário resolveu uma reprodução mínima em dez páginas novas. Uma tentativa anterior reutilizava a mesma página com `setContent` e não reproduzia o estado inicial de forma estável. Essa reprodução mínima não representava toda a aplicação: a CI `40754345491`, em `9a1d43b3`, repetiu a falha do skip-link, com outras 11 jornadas aprovadas.
+Na CI `40742272504`, em `7b94ecb7`, 11 jornadas passaram e uma falhou. A primeira hipótese foi que `blur()` não reiniciava a posição de navegação sequencial do Chromium. Focar o body com `tabindex=-1` temporário resolveu uma reprodução mínima em dez páginas novas. Uma tentativa anterior reutilizava a mesma página com `setContent` e não reproduzia o estado inicial de forma estável. Essa reprodução mínima não representava toda a aplicação: a CI `40754345491`, em `9a1d43b3`, repetiu a falha do skip-link, com outras 11 jornadas aprovadas.
 
 O diagnóstico seguinte usou a aplicação real em servidor Next.js de desenvolvimento isolado, porta 3333, com todas as chamadas de API interceptadas e respostas sintéticas, sem acesso ao banco. Ao focar o body e pressionar Tab, `document.activeElement` era `nextjs-portal`; dentro do shadow DOM, o foco estava no botão `Open Next.js Dev Tools`. Esse elemento é inserido antes da aplicação no modo de desenvolvimento utilizado pela CI.
 
