@@ -123,19 +123,21 @@ test("dashboard Gate 0 keeps desktop keyboard navigation accessible", async ({
   await page.reload();
   await expect(page.getByRole("main", { name: "Acesso ao CRM" })).toBeVisible();
   const shell = page.locator(".crm-shell");
+  const previousTabIndex = await shell.getAttribute("tabindex");
   await shell.evaluate(element => {
     // The development server prepends Next.js Dev Tools outside the CRM.
-    // Start at the application boundary; Tab must still reach its skip-link.
-    const previousTabIndex = element.getAttribute("tabindex");
-    element.tabIndex = -1;
-    element.focus();
-    if (previousTabIndex === null) element.removeAttribute("tabindex");
-    else element.setAttribute("tabindex", previousTabIndex);
+    // Keep a temporary programmatic focus target until Tab reaches the skip-link.
+    element.setAttribute("tabindex", "-1");
+    (element as HTMLElement).focus();
   });
   await expect(shell).toBeFocused();
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Ir para o conteúdo" });
   await expect(skip).toBeFocused();
+  await shell.evaluate((element, value) => {
+    if (value === null) element.removeAttribute("tabindex");
+    else element.setAttribute("tabindex", value);
+  }, previousTabIndex);
   await page.keyboard.press("Enter");
   await expect(page.getByRole("main", { name: "Acesso ao CRM" })).toBeFocused();
 });
