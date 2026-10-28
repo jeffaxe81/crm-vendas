@@ -295,3 +295,41 @@ test("a failed performance sample stops the run and never echoes a secret transp
   );
   assert.equal(calls, 11);
 });
+
+test("unordered samples preserve tenant boundaries and distinguish p95 from maximum", async () => {
+  const order = [
+    20, 1, 15, 7, 12, 3, 18, 9, 5, 16, 2, 14, 8, 19, 4, 11, 6, 17, 10, 13,
+  ];
+  const { fetchStub, calls } = fakeFetch();
+  let elapsed = 0;
+  let tick = 0;
+  const clock = () => {
+    const reading = tick++;
+    if (reading % 2 === 0) return elapsed;
+    const measurement = Math.floor(reading / 2);
+    elapsed += order[Math.floor(measurement / 3)] * ((measurement % 3) + 1);
+    return elapsed;
+  };
+  const result = await runDashboardStagingSmoke(
+    { ...config(), performance: { warmupIterations: 0, samplesPerTenant: 20 } },
+    fetchStub,
+    clock
+  );
+  assert.equal(result.requests, 70);
+  assert.equal(calls.length, 70);
+  assert.deepEqual(
+    result.performance.tenants.map(t => [
+      t.label,
+      t.sampleCount,
+      t.minMs,
+      t.p50Ms,
+      t.p95Ms,
+      t.maxMs,
+    ]),
+    [
+      ["A", 20, 1, 10, 19, 20],
+      ["B", 20, 2, 20, 38, 40],
+      ["C", 20, 3, 30, 57, 60],
+    ]
+  );
+});
