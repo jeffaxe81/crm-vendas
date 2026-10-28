@@ -122,6 +122,14 @@ test("dashboard Gate 0 keeps desktop keyboard navigation accessible", async ({
 
   await page.reload();
   await expect(page.getByRole("main", { name: "Acesso ao CRM" })).toBeVisible();
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  });
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement === document.body))
+    .toBe(true);
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Ir para o conteúdo" });
   await expect(skip).toBeFocused();
