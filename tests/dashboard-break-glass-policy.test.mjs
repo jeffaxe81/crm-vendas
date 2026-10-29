@@ -38,7 +38,8 @@ test("valid tracking policy remains fail-closed", () => {
 test("policy rejects weakened or self-approved emergency access", () => {
   const cases = [
     policy => (policy.controls.mfa_required = false),
-    policy => (policy.sample_request.approver = policy.sample_request.requester),
+    policy =>
+      (policy.sample_request.approver = policy.sample_request.requester),
     policy => (policy.sample_request.scopes = ["*"]),
     policy => (policy.sample_request.duration_minutes = 31),
     policy => (policy.controls.audit_required = false),

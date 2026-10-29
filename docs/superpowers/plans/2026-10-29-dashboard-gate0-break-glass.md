@@ -11,11 +11,13 @@
 **Spec:** `docs/superpowers/specs/2026-10-29-dashboard-gate0-break-glass-design.md`
 
 ## Global Constraints
+
 - `breakGlassEnabled=false`.
 - `productionApproved=false`.
 - MFA, segundo aprovador distinto, escopo, TTL e auditoria são obrigatórios.
 
 ## Review Focus
+
 - autoaprovação;
 - TTL excessivo;
 - wildcard de escopo;
@@ -23,21 +25,23 @@
 - estado forjado de aprovação.
 
 ### Task 1: Manifesto e validador
+
 **Files:**
+
 - Create: `docs/quality/dashboard-break-glass-policy.json`
 - Create: `scripts/check-dashboard-break-glass-policy.mjs`
 - Create: `tests/dashboard-break-glass-policy.test.mjs`
 
 - [ ] **Step 1: Write failing tests**
-Testar manifesto ausente e entradas inválidas antes do validador existir.
+      Testar manifesto ausente e entradas inválidas antes do validador existir.
 - [ ] **Step 2: Run RED**
-Run: `node --test tests/dashboard-break-glass-policy.test.mjs`
-Expected: FAIL por módulo/manifesto ausente.
+      Run: `node --test tests/dashboard-break-glass-policy.test.mjs`
+      Expected: FAIL por módulo/manifesto ausente.
 - [ ] **Step 3: Implement validator + manifest**
-Máximo TTL 30 minutos; dois atores distintos; MFA obrigatório; scopes explícitos; audit trail obrigatório; estados de GO rejeitados.
+      Máximo TTL 30 minutos; dois atores distintos; MFA obrigatório; scopes explícitos; audit trail obrigatório; estados de GO rejeitados.
 - [ ] **Step 4: Run GREEN**
-Run: `node --test tests/dashboard-break-glass-policy.test.mjs`
-Expected: PASS.
+      Run: `node --test tests/dashboard-break-glass-policy.test.mjs`
+      Expected: PASS.
 - [ ] **Step 5: Run repository gate**
-Run: `pnpm test:repo && pnpm verify`
-Expected: PASS.
+      Run: `pnpm test:repo && pnpm verify`
+      Expected: PASS.
