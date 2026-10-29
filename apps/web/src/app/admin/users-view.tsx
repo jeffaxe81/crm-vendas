@@ -98,7 +98,17 @@ function UserRow({
   );
 }
 export function UsersView({ accessToken }: { accessToken: string }) {
+  return <UsersSessionView key={accessToken} accessToken={accessToken} />;
+}
+
+function UsersSessionView({ accessToken }: { accessToken: string }) {
   const { t } = useTranslation();
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const normalize = (value: string) =>
+    value.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().trim();
+  const query = normalize(search);
   const [users, setUsers] = useState<OrganizationUserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -129,6 +139,14 @@ export function UsersView({ accessToken }: { accessToken: string }) {
       active = false;
     };
   }, [accessToken, version]);
+  const visibleUsers = users.filter(
+    user =>
+      (!query ||
+        normalize(user.user.displayName).includes(query) ||
+        normalize(user.user.email).includes(query)) &&
+      (!roleFilter || user.role === roleFilter) &&
+      (!statusFilter || user.isActive === (statusFilter === "active"))
+  );
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -213,19 +231,80 @@ export function UsersView({ accessToken }: { accessToken: string }) {
       >
         {t("Atualizar usuários")}
       </button>
+      <fieldset>
+        <legend>{t("Filtrar usuários carregados")}</legend>
+        <label>
+          {t("Buscar usuários carregados")}
+          <input
+            type="search"
+            value={search}
+            onChange={event => setSearch(event.target.value)}
+          />
+        </label>
+        <label>
+          {t("Filtrar por perfil")}
+          <select
+            value={roleFilter}
+            onChange={event => setRoleFilter(event.target.value)}
+          >
+            <option value="">{t("Todos os perfis")}</option>
+            {MembershipRoleSchema.options.map(role => (
+              <option key={role}>{role}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          {t("Filtrar por vínculo")}
+          <select
+            value={statusFilter}
+            onChange={event => setStatusFilter(event.target.value)}
+          >
+            <option value="">{t("Todos os vínculos")}</option>
+            <option value="active">{t("Vínculo ativo")}</option>
+            <option value="inactive">{t("Vínculo inativo")}</option>
+          </select>
+        </label>
+        <button
+          type="button"
+          onClick={() => {
+            setSearch("");
+            setRoleFilter("");
+            setStatusFilter("");
+          }}
+        >
+          {t("Limpar filtros")}
+        </button>
+      </fieldset>
       {loading ? (
         <p>{t("Carregando usuários...")}</p>
       ) : (
-        <ul className="companies-view__grid">
-          {users.map(user => (
-            <UserRow
-              key={`${user.membershipId}:${version}`}
-              user={user}
-              accessToken={accessToken}
-              onChanged={() => setVersion(value => value + 1)}
-            />
-          ))}
-        </ul>
+        <>
+          <p role="status">
+            {t("{shown} de {loaded} usuários carregados", {
+              shown: visibleUsers.length,
+              loaded: users.length,
+            })}
+          </p>
+          {visibleUsers.length === 0 ? (
+            <p>
+              {t(
+                users.length
+                  ? "Nenhum usuário corresponde aos filtros."
+                  : "Nenhum usuário carregado."
+              )}
+            </p>
+          ) : null}
+          <ul className="companies-view__grid">
+            {visibleUsers.map(user => (
+              <UserRow
+                key={`${user.membershipId}:${version}`}
+                user={user}
+                accessToken={accessToken}
+                onChanged={() => setVersion(value => value + 1)}
+              />
+            ))}
+          </ul>
+        </>
       )}
     </section>
   );
