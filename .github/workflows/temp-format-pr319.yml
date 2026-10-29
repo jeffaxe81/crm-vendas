@@ -1,0 +1,30 @@
+name: Temporary formatter
+on:
+  push:
+    branches:
+      - qa/dashboard-concurrency-peak-20261029
+permissions:
+  contents: write
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: qa/dashboard-concurrency-peak-20261029
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - run: corepack enable
+      - run: corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier --write scripts/dashboard-staging-smoke.mjs
+      - name: Commit formatting and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/dashboard-staging-smoke.mjs
+          git rm .github/workflows/temp-format-pr319.yml
+          git commit -m "style: aplicar Prettier no arquivo bloqueante"
+          git push origin HEAD:qa/dashboard-concurrency-peak-20261029
