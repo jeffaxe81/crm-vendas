@@ -116,9 +116,7 @@ describe("contact editing", () => {
     });
   });
 
-  it(
-    "edits an existing channel through PATCH /contacts/:id/channels/:channelId",
-    async () => {
+  it("edits an existing channel through PATCH /contacts/:id/channels/:channelId", async () => {
     const updatedChannel = {
       ...contact.channels[0],
       value: "ana.souza@example.test",
@@ -163,11 +161,8 @@ describe("contact editing", () => {
     ).toBeInTheDocument();
     expect(fetchMock).toHaveBeenNthCalledWith(
       3,
-      expect.stringContaining(
-        `/contacts/${contactId}/channels/${channelId}`
-      ),
+      expect.stringContaining(`/contacts/${contactId}/channels/${channelId}`),
       expect.objectContaining({ method: "PATCH" })
     );
-    }
-  );
+  });
 });
