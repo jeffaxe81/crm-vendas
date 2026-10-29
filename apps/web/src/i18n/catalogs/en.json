@@ -1386,6 +1386,8 @@
   "O consumo inclui os bytes criptografados de backups concluídos, aguardando exclusão e reservas de publicação. Reservas incertas são preservadas até a conclusão ou exclusão confirmada. Dados do PostgreSQL e outros anexos não estão incluídos.": "Usage includes encrypted bytes for completed backups, backups awaiting deletion and publication reservations. Uncertain reservations are retained until completion or confirmed deletion. PostgreSQL data and other attachments are excluded.",
   "BACKUP_QUOTA_EXCEEDED": "Backup capacity exceeded. Increase the quota or free backup capacity before trying again.",
   "Capacidade de backups excedida. Aumente a cota ou libere capacidade antes de tentar novamente.": "Backup capacity exceeded. Increase the quota or free backup capacity before trying again.",
+  "Carregar mais empresas": "Load more companies",
+  "Carregando mais empresas...": "Loading more companies...",
   "Carregar mais contatos": "Load more contacts",
   "Carregar mais atividades": "Load more activities",
   "Carregar mais oportunidades": "Load more opportunities",

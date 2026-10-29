@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "status": "POLICY_DEFINED_NOT_ENABLED",
+  "controls": {
+    "mfa_required": true,
+    "second_approver_required": true,
+    "requester_must_differ_from_approver": true,
+    "max_duration_minutes": 30,
+    "explicit_scopes_only": true,
+    "wildcard_scope_allowed": false,
+    "audit_required": true
+  },
+  "sample_request": {
+    "requester": "operator-a",
+    "approver": "operator-b",
+    "scopes": ["dashboards.read"],
+    "duration_minutes": 15,
+    "mfa_verified": true,
+    "audit_enabled": true
+  }
+}

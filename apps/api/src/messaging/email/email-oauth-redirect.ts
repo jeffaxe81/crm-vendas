@@ -1,6 +1,9 @@
 import { isIP } from "node:net";
 /** Local HTTP is opt-in and pinned to the exact deployment-owned origin. */
-export function validEmailOAuthOrigin(raw: string): boolean {
+export function validEmailOAuthOrigin(
+  raw: string,
+  environment: NodeJS.ProcessEnv = process.env
+): boolean {
   try {
     const url = new URL(raw);
     if (
@@ -23,10 +26,10 @@ export function validEmailOAuthOrigin(raw: string): boolean {
     )
       return true;
     return (
-      process.env.EMAIL_OAUTH_ALLOW_LOOPBACK === "true" &&
+      environment.EMAIL_OAUTH_ALLOW_LOOPBACK === "true" &&
       url.protocol === "http:" &&
       ["127.0.0.1", "localhost", "[::1]"].includes(url.hostname) &&
-      process.env.EMAIL_OAUTH_CALLBACK_ORIGIN === raw
+      environment.EMAIL_OAUTH_CALLBACK_ORIGIN === raw
     );
   } catch {
     return false;
