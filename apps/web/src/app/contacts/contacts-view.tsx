@@ -114,6 +114,15 @@ export function ContactsView({
 }: ContactsViewProps) {
   const { t } = useTranslation();
   const [contacts, setContacts] = useState<ContactRecord[]>([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const session = useRef(accessToken);
+  session.current = accessToken;
+  const generation = useRef(0);
+  const refreshGeneration = useRef(0);
+  const pageRequest = useRef<object | null>(null);
+
   const [contactSearch, setContactSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState<
     "all" | "with-channel" | "without-channel"
@@ -162,6 +171,14 @@ export function ContactsView({
 
   useEffect(() => {
     let active = true;
+    generation.current += 1;
+    const workspaceVersion = ++refreshGeneration.current;
+    pageRequest.current = null;
+    setLoadingMore(false);
+    setContacts([]);
+    setHistory([]);
+    setPage(1);
+    setTotal(0);
 
     async function loadWorkspace() {
       setLoading(true);
@@ -178,7 +195,7 @@ export function ContactsView({
           ),
         ]);
 
-        if (active) {
+        if (active && refreshGeneration.current === workspaceVersion) {
           setContacts(current => {
             const loadedIds = new Set(
               contactResult.items.map(contact => contact.id)
@@ -188,6 +205,8 @@ export function ContactsView({
               ...current.filter(contact => !loadedIds.has(contact.id)),
             ];
           });
+          setPage(contactResult.page);
+          setTotal(contactResult.total);
           setHistory(
             contactResult.items.flatMap(
               contact => contact.relationshipEntries ?? []
@@ -196,7 +215,7 @@ export function ContactsView({
           setCompanies(companyResult.items);
         }
       } catch (cause) {
-        if (active) {
+        if (active && refreshGeneration.current === workspaceVersion) {
           setError(
             cause instanceof Error
               ? cause.message
@@ -204,7 +223,7 @@ export function ContactsView({
           );
         }
       } finally {
-        if (active) {
+        if (active && refreshGeneration.current === workspaceVersion) {
           setLoading(false);
         }
       }
@@ -217,15 +236,98 @@ export function ContactsView({
     };
   }, [accessToken]);
 
+  useEffect(() => {
+    generation.current += 1;
+    pageRequest.current = null;
+    setLoadingMore(false);
+  }, [contactSearch, channelFilter, contactSort]);
+
+  async function loadMoreContacts() {
+    if (loading || pageRequest.current || page * 20 >= total) return;
+    const request = {};
+    const version = generation.current;
+    const token = accessToken;
+    pageRequest.current = request;
+    setLoadingMore(true);
+    setError("");
+    const isCurrent = () =>
+      session.current === token && generation.current === version;
+    try {
+      const result = await apiRequest<ListResponse<ContactRecord>>(
+        `/contacts?page=${page + 1}&limit=20`,
+        { accessToken: token }
+      );
+      if (!isCurrent()) return;
+      setContacts(current => {
+        const ids = new Set(current.map(contact => contact.id));
+        return [
+          ...current,
+          ...result.items.filter(contact => {
+            if (ids.has(contact.id)) return false;
+            ids.add(contact.id);
+            return true;
+          }),
+        ];
+      });
+      setHistory(current => {
+        const entries = new Map(current.map(entry => [entry.id, entry]));
+        for (const contact of result.items) {
+          for (const entry of contact.relationshipEntries ?? []) {
+            if (!entries.has(entry.id)) entries.set(entry.id, entry);
+          }
+        }
+        return [...entries.values()];
+      });
+      setPage(result.page);
+      setTotal(result.total);
+    } catch (cause) {
+      if (isCurrent())
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Não foi possível carregar os contatos."
+        );
+    } finally {
+      if (pageRequest.current === request) {
+        pageRequest.current = null;
+        setLoadingMore(false);
+      }
+    }
+  }
+
   async function reloadContacts() {
-    const contactResult = await apiRequest<ListResponse<ContactRecord>>(
-      "/contacts?page=1&limit=20",
-      { accessToken }
-    );
-    setContacts(contactResult.items);
-    setHistory(
-      contactResult.items.flatMap(contact => contact.relationshipEntries ?? [])
-    );
+    // An import may finish after its original session has already changed.
+    if (session.current !== accessToken) return;
+    generation.current += 1;
+    const version = ++refreshGeneration.current;
+    pageRequest.current = null;
+    setLoadingMore(false);
+    setLoading(true);
+    try {
+      const contactResult = await apiRequest<ListResponse<ContactRecord>>(
+        "/contacts?page=1&limit=20",
+        { accessToken }
+      );
+      if (
+        session.current !== accessToken ||
+        refreshGeneration.current !== version
+      )
+        return;
+      setContacts(contactResult.items);
+      setPage(contactResult.page);
+      setTotal(contactResult.total);
+      setHistory(
+        contactResult.items.flatMap(
+          contact => contact.relationshipEntries ?? []
+        )
+      );
+    } finally {
+      if (
+        session.current === accessToken &&
+        refreshGeneration.current === version
+      )
+        setLoading(false);
+    }
   }
 
   async function createContact(event: FormEvent<HTMLFormElement>) {
@@ -251,7 +353,9 @@ export function ContactsView({
         method: "POST",
         body: payload,
       });
+      if (session.current !== accessToken) return;
       contactSave.saved();
+      setTotal(current => current + 1);
       setContacts(current => [...current, { ...created, channels: [] }]);
       setContactForm(emptyContactForm);
       setContactFormOpen(false);
@@ -619,9 +723,11 @@ export function ContactsView({
           accessToken={accessToken}
           onClose={() => setImportOpen(false)}
           onImported={async () => {
+            if (session.current !== accessToken) return;
             try {
               await reloadContacts();
             } catch (cause) {
+              if (session.current !== accessToken) return;
               setError(
                 cause instanceof Error
                   ? cause.message
@@ -820,6 +926,16 @@ export function ContactsView({
           </article>
         ))}
       </div>
+
+      {page * 20 < total ? (
+        <button
+          type="button"
+          disabled={loading || loadingMore}
+          onClick={() => void loadMoreContacts()}
+        >
+          {t("Carregar mais contatos")}
+        </button>
+      ) : null}
 
       {taggedContact ? (
         <section
