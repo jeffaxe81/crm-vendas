@@ -1387,5 +1387,10 @@
   "BACKUP_QUOTA_EXCEEDED": "Backup capacity exceeded. Increase the quota or free backup capacity before trying again.",
   "Capacidade de backups excedida. Aumente a cota ou libere capacidade antes de tentar novamente.": "Backup capacity exceeded. Increase the quota or free backup capacity before trying again.",
   "Carregar mais empresas": "Load more companies",
-  "Carregando mais empresas...": "Loading more companies..."
+  "Carregando mais empresas...": "Loading more companies...",
+  "Carregar mais contatos": "Load more contacts",
+  "Carregar mais atividades": "Load more activities",
+  "Carregar mais oportunidades": "Load more opportunities",
+  "Exportar produtos CSV": "Export products CSV",
+  "Exporta somente os produtos da página atual.": "Exports only products on the current page."
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ActivityCreateInput, ActivityUpdateInput } from "@axes/contracts";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { downloadLoadedCalendar } from "../../lib/local-productivity-export";
@@ -120,6 +120,12 @@ export function ActivitiesView({
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [pageError, setPageError] = useState("");
+  const generation = useRef(0);
+  const extraRequest = useRef(false);
   const [refreshVersion, setRefreshVersion] = useState(0);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<ActivityFormState>(emptyForm);
@@ -132,6 +138,13 @@ export function ActivitiesView({
 
   useEffect(() => {
     let active = true;
+    const currentGeneration = ++generation.current;
+    extraRequest.current = false;
+    setLoadingMore(false);
+    setPageError("");
+    setPage(0);
+    setTotal(0);
+    setActivities([]);
 
     async function loadActivities() {
       setLoading(true);
@@ -155,6 +168,8 @@ export function ActivitiesView({
         );
         if (active) {
           setActivities(result.items);
+          setPage(result.page);
+          setTotal(result.total);
         }
       } catch (cause) {
         if (active) {
@@ -175,8 +190,60 @@ export function ActivitiesView({
 
     return () => {
       active = false;
+      if (generation.current === currentGeneration) generation.current += 1;
     };
   }, [accessToken, query, refreshVersion, status]);
+
+  async function loadMoreActivities() {
+    if (loading || extraRequest.current || page === 0 || page * 20 >= total)
+      return;
+    const currentGeneration = generation.current;
+    const nextPage = page + 1;
+    extraRequest.current = true;
+    setLoadingMore(true);
+    setPageError("");
+    const params = new URLSearchParams({
+      page: String(nextPage),
+      limit: "20",
+      status,
+      sortBy: "dueAt",
+      sortOrder: "asc",
+    });
+    if (query) params.set("q", query);
+    try {
+      const result = await apiRequest<ActivityListResponse>(
+        `/activities?${params.toString()}`,
+        { accessToken }
+      );
+      if (generation.current !== currentGeneration) return;
+      setActivities(current => {
+        const ids = new Set(current.map(activity => activity.id));
+        return [
+          ...current,
+          ...result.items.filter(activity => {
+            if (ids.has(activity.id)) return false;
+            ids.add(activity.id);
+            return true;
+          }),
+        ];
+      });
+      setPage(result.page);
+      setTotal(result.total);
+    } catch (cause) {
+      if (generation.current === currentGeneration) {
+        setPageError(
+          cause instanceof Error
+            ? cause.message
+            : "Não foi possível carregar as atividades."
+        );
+      }
+    } finally {
+      if (generation.current === currentGeneration) {
+        extraRequest.current = false;
+        setLoadingMore(false);
+      }
+    }
+  }
 
   async function openCreate() {
     setError("");
@@ -765,6 +832,23 @@ export function ActivitiesView({
             );
           })}
         </ul>
+      ) : null}
+
+      {pageError ? (
+        <p className="activities-view__error" role="alert">
+          {t(pageError)}
+        </p>
+      ) : null}
+      {!loading && page > 0 && page * 20 < total ? (
+        <button
+          type="button"
+          disabled={loadingMore}
+          onClick={() => void loadMoreActivities()}
+        >
+          {loadingMore
+            ? t("Carregando atividades...")
+            : t("Carregar mais atividades")}
+        </button>
       ) : null}
 
       {!loading && !error && visibleActivities.length === 0 ? (

@@ -31,6 +31,7 @@ const product = {
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 describe("C4.3 products view", () => {
@@ -207,5 +208,116 @@ describe("C4.3 products view", () => {
       name: "Nova",
       version: 1,
     });
+  });
+});
+
+describe("products visible-page CSV export", () => {
+  it("exports only the current server page for read-only users with safe CSV values", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ items: [product], total: 51 }))
+      .mockResolvedValueOnce(
+        response({
+          items: [
+            {
+              ...product,
+              id: "p-51",
+              code: "=SUM(1)",
+              name: "Produto 51",
+              description: 'Texto, "especial"',
+              isActive: false,
+            },
+          ],
+          total: 51,
+        })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    let downloaded: Blob | undefined;
+    vi.stubGlobal(
+      "URL",
+      class extends URL {
+        static createObjectURL(blob: Blob) {
+          downloaded = blob;
+          return "blob:products";
+        }
+        static revokeObjectURL() {}
+      }
+    );
+    let filename = "";
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (
+      this: HTMLAnchorElement
+    ) {
+      filename = this.download;
+    });
+    render(<ProductsView accessToken="token" canWrite={false} />);
+    await screen.findByText("Licença PABX");
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+    await screen.findByText("Produto 51");
+    const button = screen.getByRole("button", {
+      name: "Exportar produtos CSV",
+    });
+    expect(button).toHaveAttribute(
+      "title",
+      "Exporta somente os produtos da página atual."
+    );
+    fireEvent.click(button);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(filename).toBe("produtos-pagina-2.csv");
+    expect(downloaded?.type).toBe("text/csv;charset=utf-8");
+    const csv = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = reject;
+      reader.readAsText(downloaded!);
+    });
+    expect(csv).toContain(
+      '"Código","Nome","Descrição","Preço unitário","Situação"'
+    );
+    expect(csv).toContain(
+      `"'=SUM(1)","Produto 51","Texto, ""especial""","1200.50","Inativo"`
+    );
+    expect(csv).not.toContain("Licença PABX");
+    expect(
+      screen.queryByRole("button", { name: "Novo produto" })
+    ).not.toBeInTheDocument();
+  });
+
+  it("disables export while loading and when the page is empty", async () => {
+    let resolve!: (value: Response) => void;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        () =>
+          new Promise<Response>(done => {
+            resolve = done;
+          })
+      )
+    );
+    render(<ProductsView accessToken="token" canWrite />);
+    expect(
+      screen.getByRole("button", { name: "Exportar produtos CSV" })
+    ).toBeDisabled();
+    resolve(response({ items: [], total: 0 }));
+    await screen.findByText("Nenhum produto encontrado.");
+    expect(
+      screen.getByRole("button", { name: "Exportar produtos CSV" })
+    ).toBeDisabled();
+  });
+
+  it("disables export of stale products after a page request fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(response({ items: [product], total: 51 }))
+        .mockResolvedValueOnce(response({ message: "Falha" }, 500))
+    );
+    render(<ProductsView accessToken="token" canWrite={false} />);
+    await screen.findByText("Licença PABX");
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+    await screen.findByRole("alert");
+    expect(
+      screen.getByRole("button", { name: "Exportar produtos CSV" })
+    ).toBeDisabled();
   });
 });

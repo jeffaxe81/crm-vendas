@@ -5,7 +5,7 @@ import type {
   OpportunityMoveInput,
   OpportunityUpdateInput,
 } from "@axes/contracts";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
 import { downloadLoadedCsv } from "../../lib/local-productivity-export";
@@ -143,6 +143,12 @@ export function OpportunitiesView({
 }: OpportunitiesViewProps) {
   const { t } = useTranslation();
   const [opportunities, setOpportunities] = useState<OpportunityRecord[]>([]);
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [pageError, setPageError] = useState("");
+  const requestGeneration = useRef(0);
+  const pageRequest = useRef<number | null>(null);
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -198,6 +204,13 @@ export function OpportunitiesView({
   useEffect(() => {
     let active = true;
 
+    const generation = ++requestGeneration.current;
+    pageRequest.current = null;
+    setPage(0);
+    setTotal(0);
+    setLoadingMore(false);
+    setPageError("");
+
     async function loadOpportunities() {
       setLoading(true);
       setError("");
@@ -219,6 +232,8 @@ export function OpportunitiesView({
         );
         if (active) {
           setOpportunities(result.items);
+          setPage(result.page);
+          setTotal(result.total);
         }
       } catch (cause) {
         if (active) {
@@ -239,8 +254,59 @@ export function OpportunitiesView({
 
     return () => {
       active = false;
+      if (requestGeneration.current === generation) {
+        requestGeneration.current++;
+      }
     };
   }, [accessToken, query, refreshVersion]);
+
+  async function loadMoreOpportunities() {
+    if (loading || pageRequest.current !== null || page * 20 >= total) return;
+    const generation = requestGeneration.current;
+    pageRequest.current = generation;
+    setLoadingMore(true);
+    setPageError("");
+    const params = new URLSearchParams({
+      page: String(page + 1),
+      limit: "20",
+      sortBy: "updatedAt",
+      sortOrder: "desc",
+    });
+    if (query) params.set("q", query);
+    try {
+      const result = await apiRequest<OpportunityListResponse>(
+        `/opportunities?${params.toString()}`,
+        { accessToken }
+      );
+      if (requestGeneration.current !== generation) return;
+      setOpportunities(current => {
+        const ids = new Set(current.map(opportunity => opportunity.id));
+        return [
+          ...current,
+          ...result.items.filter(opportunity => {
+            if (ids.has(opportunity.id)) return false;
+            ids.add(opportunity.id);
+            return true;
+          }),
+        ];
+      });
+      setPage(result.page);
+      setTotal(result.total);
+    } catch (cause) {
+      if (requestGeneration.current === generation) {
+        setPageError(
+          cause instanceof Error
+            ? cause.message
+            : "Não foi possível carregar as oportunidades."
+        );
+      }
+    } finally {
+      if (requestGeneration.current === generation) {
+        pageRequest.current = null;
+        setLoadingMore(false);
+      }
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -1438,6 +1504,22 @@ export function OpportunitiesView({
             </p>
           )}
         </section>
+      ) : null}
+      {pageError ? (
+        <p className="opportunities-view__error" role="alert">
+          {t(pageError)}
+        </p>
+      ) : null}
+      {!loading && !error && page > 0 && page * 20 < total ? (
+        <button
+          type="button"
+          disabled={loadingMore}
+          onClick={() => void loadMoreOpportunities()}
+        >
+          {loadingMore
+            ? t("Carregando oportunidades...")
+            : t("Carregar mais oportunidades")}
+        </button>
       ) : null}
     </section>
   );
