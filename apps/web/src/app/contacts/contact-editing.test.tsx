@@ -161,9 +161,7 @@ describe("contact editing", () => {
     ).toBeInTheDocument();
     expect(fetchMock).toHaveBeenNthCalledWith(
       3,
-      expect.stringContaining(
-        `/contacts/${contactId}/channels/${channelId}`
-      ),
+      expect.stringContaining(`/contacts/${contactId}/channels/${channelId}`),
       expect.objectContaining({ method: "PATCH" })
     );
   });
