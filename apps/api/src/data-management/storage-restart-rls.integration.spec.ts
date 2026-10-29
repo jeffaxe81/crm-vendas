@@ -8,6 +8,7 @@ import { TenantStorageAllocationService } from "./tenant-storage-allocation.serv
 describe("storage restart, RLS and rollback drill", () => {
   let owner: PrismaService;
   let restricted: PrismaService;
+  let restrictedConnection: string;
   let orgA: string;
   let orgB: string;
   let userId: string;
@@ -22,8 +23,9 @@ describe("storage restart, RLS and rollback drill", () => {
 
   beforeAll(async () => {
     const connections = storageDrillConnections(process.env);
+    restrictedConnection = connections.restricted;
     owner = new PrismaService(connections.owner);
-    restricted = new PrismaService(connections.restricted);
+    restricted = new PrismaService(restrictedConnection);
     const [role] = await restricted.$queryRawUnsafe<
       {
         rolsuper: boolean;
@@ -91,7 +93,7 @@ describe("storage restart, RLS and rollback drill", () => {
     process.env.RLS_DATABASE_URL = "invalid-after-safety-check";
     try {
       await restricted.onModuleDestroy();
-      restricted = new PrismaService(process.env.RLS_DATABASE_URL);
+      restricted = new PrismaService(restrictedConnection);
       service = new TenantStorageAllocationService(restricted);
 
       expect(await service.read(principal(orgA))).toMatchObject({
