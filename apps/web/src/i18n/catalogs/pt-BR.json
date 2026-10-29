@@ -1385,5 +1385,10 @@
   "Bloquear novos backups ao atingir a capacidade": "Bloquear novos backups ao atingir a capacidade",
   "O consumo inclui os bytes criptografados de backups concluídos, aguardando exclusão e reservas de publicação. Reservas incertas são preservadas até a conclusão ou exclusão confirmada. Dados do PostgreSQL e outros anexos não estão incluídos.": "O consumo inclui os bytes criptografados de backups concluídos, aguardando exclusão e reservas de publicação. Reservas incertas são preservadas até a conclusão ou exclusão confirmada. Dados do PostgreSQL e outros anexos não estão incluídos.",
   "BACKUP_QUOTA_EXCEEDED": "BACKUP_QUOTA_EXCEEDED",
-  "Capacidade de backups excedida. Aumente a cota ou libere capacidade antes de tentar novamente.": "Capacidade de backups excedida. Aumente a cota ou libere capacidade antes de tentar novamente."
+  "Capacidade de backups excedida. Aumente a cota ou libere capacidade antes de tentar novamente.": "Capacidade de backups excedida. Aumente a cota ou libere capacidade antes de tentar novamente.",
+  "Carregar mais contatos": "Carregar mais contatos",
+  "Carregar mais atividades": "Carregar mais atividades",
+  "Carregar mais oportunidades": "Carregar mais oportunidades",
+  "Exportar produtos CSV": "Exportar produtos CSV",
+  "Exporta somente os produtos da página atual.": "Exporta somente os produtos da página atual."
 }
