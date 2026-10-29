@@ -116,7 +116,9 @@ it("creates a queued manual backup using the authenticated API", async () => {
   fireEvent.click(button);
 
   expect(await screen.findByText(/Backup solicitado/)).toBeInTheDocument();
-  expect(await screen.findByText(/Aguardando/)).toBeInTheDocument();
+  expect(
+    await screen.findByText(/Aguardando/, { selector: "li" })
+  ).toBeInTheDocument();
   const mutation = fetchMock.mock.calls.find(
     ([url, init]) => url.endsWith("/admin/backups") && init?.method === "POST"
   );
@@ -154,7 +156,9 @@ it("polls a running operation and stops after completion", async () => {
   await act(async () => {
     render(<BackupAdministrationView accessToken="synthetic-token" />);
   });
-  expect(screen.getByText(/Executando/)).toBeInTheDocument();
+  expect(
+    screen.getByText(/Executando/, { selector: "li" })
+  ).toBeInTheDocument();
 
   await act(async () => {
     await vi.advanceTimersByTimeAsync(10_000);
@@ -231,7 +235,9 @@ it("requires explicit confirmation tied to the selected backup and then polls de
   );
   fireEvent.click(submit);
   expect(await screen.findByText(/Exclusão solicitada/)).toBeInTheDocument();
-  expect(await screen.findByText(/Exclusão pendente/)).toBeInTheDocument();
+  expect(
+    await screen.findByText(/Exclusão pendente/, { selector: "li" })
+  ).toBeInTheDocument();
   expect(
     screen.queryByRole("region", { name: "Excluir backup" })
   ).not.toBeInTheDocument();
@@ -297,12 +303,14 @@ it("polls a pending deletion and stops after the file is removed", async () => {
   await act(async () => {
     render(<BackupAdministrationView accessToken="synthetic-token" />);
   });
-  expect(screen.getByText(/Exclusão pendente/)).toBeInTheDocument();
+  expect(
+    screen.getByText(/Exclusão pendente/, { selector: "li" })
+  ).toBeInTheDocument();
   await act(async () => {
     await vi.advanceTimersByTimeAsync(10_000);
   });
   expect(catalogCalls).toBe(2);
-  expect(screen.getByText(/Excluído/)).toBeInTheDocument();
+  expect(screen.getByText(/Excluído/, { selector: "li" })).toBeInTheDocument();
   await act(async () => {
     await vi.advanceTimersByTimeAsync(20_000);
   });
@@ -396,7 +404,7 @@ it("keeps polling an accepted deletion after the first refresh fails", async () 
     await vi.advanceTimersByTimeAsync(10_000);
   });
   expect(catalogCalls).toBe(3);
-  expect(screen.getByText(/Excluído/)).toBeInTheDocument();
+  expect(screen.getByText(/Excluído/, { selector: "li" })).toBeInTheDocument();
   await act(async () => {
     await vi.advanceTimersByTimeAsync(20_000);
   });
@@ -452,4 +460,81 @@ it("shows unsupported restore models but never enables destructive restore", asy
   expect(
     screen.queryByRole("button", { name: /confirmar restauração/i })
   ).not.toBeInTheDocument();
+});
+
+it("filters loaded backups without requests and preserves selected deletion identity", async () => {
+  const fetchMock = vi.fn(async (url: string) => {
+    if (url.endsWith("/admin/recovery/capabilities"))
+      return jsonResponse({ enabled: false, configured: false });
+    if (url.endsWith("/admin/backups/operations")) return jsonResponse([]);
+    if (url.endsWith("/admin/backups/schedule")) return jsonResponse(schedule);
+    if (url.endsWith("/admin/backups"))
+      return jsonResponse({
+        configured: true,
+        backups: [
+          completedBackup,
+          {
+            ...completedBackup,
+            id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+            state: "FAILED",
+            reason: "SCHEDULED",
+            errorCode: "SYNTHETIC_FAILURE",
+          },
+        ],
+      });
+    throw Error("Unexpected fixture request");
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  render(<BackupAdministrationView accessToken="token" />);
+  const history = screen.getByRole("region", { name: "Histórico de backups" });
+  await within(history).findByText(/SYNTHETIC_FAILURE/);
+  const calls = fetchMock.mock.calls.length;
+  fireEvent.change(within(history).getByLabelText("Status dos backups"), {
+    target: { value: "FAILED" },
+  });
+  expect(
+    within(history).queryByRole("button", { name: "Excluir backup" })
+  ).not.toBeInTheDocument();
+  expect(
+    within(history).getByText("1 de 2 backups carregados")
+  ).toBeInTheDocument();
+  fireEvent.change(within(history).getByLabelText("Status dos backups"), {
+    target: { value: "COMPLETED" },
+  });
+  expect(
+    within(history).queryByText(/SYNTHETIC_FAILURE/)
+  ).not.toBeInTheDocument();
+  fireEvent.click(
+    within(history).getByRole("button", { name: "Excluir backup" })
+  );
+  expect(screen.getByText(completedBackup.id)).toBeInTheDocument();
+  fireEvent.click(
+    within(history).getByRole("button", { name: "Limpar filtro" })
+  );
+  expect(
+    within(history).getByText("2 de 2 backups carregados")
+  ).toBeInTheDocument();
+  expect(fetchMock).toHaveBeenCalledTimes(calls);
+});
+
+it("resets the backup status filter when the authenticated token changes", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string) => {
+      if (url.endsWith("/admin/recovery/capabilities"))
+        return jsonResponse({ enabled: false, configured: false });
+      if (url.endsWith("/admin/backups/operations")) return jsonResponse([]);
+      if (url.endsWith("/admin/backups/schedule"))
+        return jsonResponse(schedule);
+      return jsonResponse({ configured: true, backups: [] });
+    })
+  );
+  const { rerender } = render(
+    <BackupAdministrationView accessToken="old-token" />
+  );
+  const filter = await screen.findByLabelText("Status dos backups");
+  fireEvent.change(filter, { target: { value: "FAILED" } });
+  expect(filter).toHaveValue("FAILED");
+  rerender(<BackupAdministrationView accessToken="new-token" />);
+  expect(screen.getByLabelText("Status dos backups")).toHaveValue("ALL");
 });

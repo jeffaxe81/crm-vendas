@@ -9,6 +9,7 @@ import {
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   BackupRecordSchema,
+  BackupStateSchema,
   OperationPreviewSchema,
   type BackupRecord,
   type OperationPreview,
@@ -81,6 +82,15 @@ export function BackupAdministrationView({
   const currentToken = useRef(accessToken);
   currentToken.current = accessToken;
   const [backups, setBackups] = useState<BackupRecord[]>([]);
+  const [backupFilter, setBackupFilter] = useState({
+    token: accessToken,
+    status: "ALL",
+  });
+  const statusFilter =
+    backupFilter.token === accessToken ? backupFilter.status : "ALL";
+  const filteredBackups = backups.filter(
+    item => statusFilter === "ALL" || item.state === statusFilter
+  );
   const [operations, setOperations] = useState<Operation[]>([]);
   const [schedule, setSchedule] = useState<Schedule>(defaults);
   const [configured, setConfigured] = useState(false);
@@ -514,11 +524,45 @@ export function BackupAdministrationView({
             "O download gera JSON sem criptografia. Guarde o arquivo em local privado e não o compartilhe por canais não autorizados."
           )}
         </p>
+        <label>
+          {t("Status dos backups")}
+          <select
+            value={statusFilter}
+            onChange={event =>
+              setBackupFilter({
+                token: accessToken,
+                status: event.target.value,
+              })
+            }
+          >
+            <option value="ALL">{t("Todos os status")}</option>
+            {BackupStateSchema.options.map(state => (
+              <option key={state} value={state}>
+                {t(states[state] ?? state)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          type="button"
+          disabled={statusFilter === "ALL"}
+          onClick={() => setBackupFilter({ token: accessToken, status: "ALL" })}
+        >
+          {t("Limpar filtro")}
+        </button>
+        <p role="status">
+          {t("{shown} de {loaded} backups carregados", {
+            shown: filteredBackups.length,
+            loaded: backups.length,
+          })}
+        </p>
         {backups.length === 0 ? (
           <p>{t("Nenhum backup no catálogo.")}</p>
+        ) : filteredBackups.length === 0 ? (
+          <p>{t("Nenhum backup corresponde ao filtro.")}</p>
         ) : (
           <ul>
-            {backups.map(item => (
+            {filteredBackups.map(item => (
               <li key={item.id}>
                 <strong>{date(item.createdAt)}</strong> ·{" "}
                 {states[item.state] ?? item.state} · {item.reason} ·{" "}
