@@ -66,8 +66,11 @@ const emptyForm: CompanyFormState = {
   tradeName: "",
 };
 
-function requestCompanies(accessToken: string): Promise<CompanyListResponse> {
-  return apiRequest<CompanyListResponse>("/companies?page=1&limit=20", {
+function requestCompanies(
+  accessToken: string,
+  page = 1
+): Promise<CompanyListResponse> {
+  return apiRequest<CompanyListResponse>(`/companies?page=${page}&limit=20`, {
     accessToken,
   });
 }
@@ -78,6 +81,10 @@ export function CompaniesView({
 }: CompaniesViewProps) {
   const { t } = useTranslation();
   const [companies, setCompanies] = useState<CompanyRecord[]>([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const requestGeneration = useRef(0);
   const [query, setQuery] = useState("");
   const [companyProfileFilter, setCompanyProfileFilter] = useState<
     "all" | "with-trade-name" | "without-trade-name"
@@ -104,6 +111,12 @@ export function CompaniesView({
 
   useEffect(() => {
     let active = true;
+    const generation = ++requestGeneration.current;
+    setCompanies([]);
+    setPage(1);
+    setTotal(0);
+    setLoadingMore(false);
+    closeImport();
 
     async function loadCompanies() {
       setLoading(true);
@@ -111,11 +124,13 @@ export function CompaniesView({
 
       try {
         const result = await requestCompanies(accessToken);
-        if (active) {
+        if (active && generation === requestGeneration.current) {
           setCompanies(result.items);
+          setPage(result.page);
+          setTotal(result.total);
         }
       } catch (cause) {
-        if (active) {
+        if (active && generation === requestGeneration.current) {
           setError(
             cause instanceof Error
               ? cause.message
@@ -123,7 +138,7 @@ export function CompaniesView({
           );
         }
       } finally {
-        if (active) {
+        if (active && generation === requestGeneration.current) {
           setLoading(false);
         }
       }
@@ -135,6 +150,34 @@ export function CompaniesView({
       active = false;
     };
   }, [accessToken]);
+
+  async function loadMoreCompanies() {
+    if (loading || loadingMore || submitting || importing) return;
+    const generation = requestGeneration.current;
+    setLoadingMore(true);
+    setError("");
+    try {
+      const result = await requestCompanies(accessToken, page + 1);
+      if (generation !== requestGeneration.current) return;
+      setCompanies(current => {
+        const loaded = new Map(current.map(company => [company.id, company]));
+        for (const company of result.items) loaded.set(company.id, company);
+        return [...loaded.values()];
+      });
+      setPage(result.page);
+      setTotal(result.total);
+    } catch (cause) {
+      if (generation === requestGeneration.current) {
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Não foi possível carregar as empresas."
+        );
+      }
+    } finally {
+      if (generation === requestGeneration.current) setLoadingMore(false);
+    }
+  }
 
   const visibleCompanies = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
@@ -260,6 +303,7 @@ export function CompaniesView({
       return;
     }
 
+    let generation = requestGeneration.current;
     setError("");
     setImporting(true);
     try {
@@ -275,19 +319,26 @@ export function CompaniesView({
           body,
         }
       );
+      if (generation !== requestGeneration.current) return;
       setImportResult(result);
 
+      generation = ++requestGeneration.current;
+      setLoadingMore(false);
       const refreshed = await requestCompanies(accessToken);
+      if (generation !== requestGeneration.current) return;
       setCompanies(refreshed.items);
+      setPage(refreshed.page);
+      setTotal(refreshed.total);
       setQuery("");
     } catch (cause) {
+      if (generation !== requestGeneration.current) return;
       setError(
         cause instanceof Error
           ? cause.message
           : "Não foi possível confirmar a importação."
       );
     } finally {
-      setImporting(false);
+      if (generation === requestGeneration.current) setImporting(false);
     }
   }
 
@@ -318,6 +369,7 @@ export function CompaniesView({
           body: payload,
         });
         setCompanies(current => [...current, created]);
+        setTotal(current => current + 1);
         setQuery("");
         saveFeedback.saved();
         closeForm();
@@ -390,7 +442,11 @@ export function CompaniesView({
             {t("Exportar empresas CSV")}
           </Button>
           {canWrite ? (
-            <Button variant="outline" onClick={openImport} disabled={importing}>
+            <Button
+              variant="outline"
+              onClick={openImport}
+              disabled={importing || loading || loadingMore}
+            >
               <FileUp aria-hidden="true" />
               {t("Importar CSV")}
             </Button>
@@ -466,6 +522,18 @@ export function CompaniesView({
           {t(" empresas carregadas")}
         </span>
       </div>
+
+      {!loading && page * 20 < total ? (
+        <Button
+          variant="outline"
+          disabled={loadingMore || submitting || importing}
+          onClick={() => void loadMoreCompanies()}
+        >
+          {loadingMore
+            ? t("Carregando mais empresas...")
+            : t("Carregar mais empresas")}
+        </Button>
+      ) : null}
 
       {error ? (
         <p className="companies-view__error" role="alert">

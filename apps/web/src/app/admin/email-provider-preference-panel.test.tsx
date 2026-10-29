@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { EmailProviderPreferencePanel } from "./email-provider-preference-panel";
 
@@ -52,10 +58,12 @@ it("stages Gmail for one company without connecting account or enabling sends", 
   });
   fireEvent.click(screen.getByRole("button", { name: "Salvar preferência" }));
   expect(await screen.findByText(/Preferência salva/)).toBeInTheDocument();
-  expect(requests).toEqual([
-    { method: "GET", body: undefined },
-    { method: "PUT", body: { version: 0, providerCode: "GMAIL" } },
-    { method: "GET", body: undefined },
-  ]);
+  await waitFor(() =>
+    expect(requests).toEqual([
+      { method: "GET", body: undefined },
+      { method: "PUT", body: { version: 0, providerCode: "GMAIL" } },
+      { method: "GET", body: undefined },
+    ])
+  );
   expect(screen.getByText(/Envio: Desativado/)).toBeInTheDocument();
 });
