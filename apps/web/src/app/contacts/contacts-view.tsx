@@ -143,8 +143,17 @@ export function ContactsView({
   const [importOpen, setImportOpen] = useState(false);
   const [contactForm, setContactForm] =
     useState<ContactFormState>(emptyContactForm);
+  const [editingContactId, setEditingContactId] = useState<string | null>(null);
+  const [editContactForm, setEditContactForm] =
+    useState<ContactFormState>(emptyContactForm);
   const [channelContactId, setChannelContactId] = useState<string | null>(null);
   const [channelForm, setChannelForm] =
+    useState<ChannelFormState>(emptyChannelForm);
+  const [editingChannel, setEditingChannel] = useState<{
+    contactId: string;
+    channelId: string;
+  } | null>(null);
+  const [editChannelForm, setEditChannelForm] =
     useState<ChannelFormState>(emptyChannelForm);
   const [linkContactId, setLinkContactId] = useState<string | null>(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState("");
@@ -369,6 +378,57 @@ export function ContactsView({
     }
   }
 
+  async function updateContact(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editingContactId) return;
+
+    const fullName = editContactForm.fullName.trim();
+    if (!fullName) {
+      setError(t("Informe o nome completo."));
+      return;
+    }
+
+    setError("");
+    if (!contactSave.start()) return;
+    try {
+      const updated = await apiRequest<ContactRecord>(
+        `/contacts/${editingContactId}`,
+        {
+          accessToken,
+          method: "PATCH",
+          body: {
+            fullName,
+            jobTitle: editContactForm.jobTitle.trim(),
+          },
+        }
+      );
+      if (session.current !== accessToken) return;
+      contactSave.saved();
+      setContacts(current =>
+        current.map(contact =>
+          contact.id === editingContactId
+            ? {
+                ...contact,
+                ...updated,
+                channels: updated.channels ?? contact.channels,
+                relationshipEntries:
+                  updated.relationshipEntries ?? contact.relationshipEntries,
+              }
+            : contact
+        )
+      );
+      setEditingContactId(null);
+      setEditContactForm(emptyContactForm);
+    } catch (cause) {
+      contactSave.failed();
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível atualizar o contato."
+      );
+    }
+  }
+
   async function createChannel(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!channelContactId) {
@@ -413,6 +473,54 @@ export function ContactsView({
         cause instanceof Error
           ? cause.message
           : "Não foi possível salvar o canal."
+      );
+    }
+  }
+
+  async function updateChannel(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editingChannel) return;
+
+    setError("");
+    if (!channelSave.start()) return;
+    try {
+      const payload: ContactChannelInput = {
+        type: editChannelForm.type,
+        value: editChannelForm.value.trim(),
+        ...(editChannelForm.label.trim()
+          ? { label: editChannelForm.label.trim() }
+          : {}),
+        isPrimary: editChannelForm.isPrimary,
+      };
+      const updated = await apiRequest<ContactChannelRecord>(
+        `/contacts/${editingChannel.contactId}/channels/${editingChannel.channelId}`,
+        {
+          accessToken,
+          method: "PATCH",
+          body: payload,
+        }
+      );
+      channelSave.saved();
+      setContacts(current =>
+        current.map(contact =>
+          contact.id === editingChannel.contactId
+            ? {
+                ...contact,
+                channels: (contact.channels ?? []).map(channel =>
+                  channel.id === editingChannel.channelId ? updated : channel
+                ),
+              }
+            : contact
+        )
+      );
+      setEditingChannel(null);
+      setEditChannelForm(emptyChannelForm);
+    } catch (cause) {
+      channelSave.failed();
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível atualizar o canal."
       );
     }
   }
@@ -783,6 +891,45 @@ export function ContactsView({
         </form>
       ) : null}
 
+      {editingContactId ? (
+        <form
+          className="contact-form"
+          aria-label={t("Editar contato")}
+          onSubmit={updateContact}
+        >
+          <label>
+            <span>{t("Nome completo")}</span>
+            <input
+              value={editContactForm.fullName}
+              onChange={event =>
+                setEditContactForm(current => ({
+                  ...current,
+                  fullName: event.target.value,
+                }))
+              }
+              required
+            />
+          </label>
+          <label>
+            <span>{t("Cargo")}</span>
+            <input
+              value={editContactForm.jobTitle}
+              onChange={event =>
+                setEditContactForm(current => ({
+                  ...current,
+                  jobTitle: event.target.value,
+                }))
+              }
+            />
+          </label>
+          <SaveButton
+            type="submit"
+            status={contactSave.status}
+            label={t("Salvar alterações")}
+          />
+        </form>
+      ) : null}
+
       <div className="contacts-view__filters" role="search">
         <label>
           <span>{t("Buscar contatos carregados")}</span>
@@ -866,6 +1013,28 @@ export function ContactsView({
                 {(contact.channels ?? []).map(channel => (
                   <li key={channel.id}>
                     <strong>{channel.type}</strong> {channel.value}
+                    {canWrite ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          channelSave.reset();
+                          setEditingChannel({
+                            contactId: contact.id,
+                            channelId: channel.id,
+                          });
+                          setEditChannelForm({
+                            type: channel.type as ContactChannelInput["type"],
+                            value: channel.value,
+                            label: channel.label ?? "",
+                            isPrimary: channel.isPrimary,
+                          });
+                        }}
+                      >
+                        {t("Editar canal {0}", {
+                          0: channel.label || channel.value,
+                        })}
+                      </button>
+                    ) : null}
                   </li>
                 ))}
               </ul>
@@ -880,6 +1049,21 @@ export function ContactsView({
               ))}
 
             <div className="contact-card__actions">
+              {canWrite ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    contactSave.reset();
+                    setEditingContactId(contact.id);
+                    setEditContactForm({
+                      fullName: contact.fullName,
+                      jobTitle: contact.jobTitle ?? "",
+                    });
+                  }}
+                >
+                  {t("Editar contato")}
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={() => {
@@ -975,6 +1159,76 @@ export function ContactsView({
             label={t("Salvar campos customizados")}
           />
         </section>
+      ) : null}
+
+      {editingChannel ? (
+        <form
+          className="contact-form"
+          aria-label={t("Editar canal")}
+          onSubmit={updateChannel}
+        >
+          <label>
+            <span>{t("Tipo")}</span>
+            <select
+              value={editChannelForm.type}
+              onChange={event =>
+                setEditChannelForm(current => ({
+                  ...current,
+                  type: event.target.value as ContactChannelInput["type"],
+                }))
+              }
+            >
+              <option value="EMAIL">{t("E-mail")}</option>
+              <option value="PHONE">{t("Telefone")}</option>
+              <option value="MOBILE">{t("Celular")}</option>
+              <option value="WHATSAPP">{t("WhatsApp")}</option>
+              <option value="OTHER">{t("Outro")}</option>
+            </select>
+          </label>
+          <label>
+            <span>{t("Valor")}</span>
+            <input
+              value={editChannelForm.value}
+              onChange={event =>
+                setEditChannelForm(current => ({
+                  ...current,
+                  value: event.target.value,
+                }))
+              }
+              required
+            />
+          </label>
+          <label>
+            <span>{t("Rótulo")}</span>
+            <input
+              value={editChannelForm.label}
+              onChange={event =>
+                setEditChannelForm(current => ({
+                  ...current,
+                  label: event.target.value,
+                }))
+              }
+            />
+          </label>
+          <label className="contact-form__checkbox">
+            <input
+              type="checkbox"
+              checked={editChannelForm.isPrimary}
+              onChange={event =>
+                setEditChannelForm(current => ({
+                  ...current,
+                  isPrimary: event.target.checked,
+                }))
+              }
+            />
+            <span>{t("Canal principal")}</span>
+          </label>
+          <SaveButton
+            type="submit"
+            status={channelSave.status}
+            label={t("Salvar alterações")}
+          />
+        </form>
       ) : null}
 
       {channelContactId ? (
