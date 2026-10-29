@@ -29,13 +29,19 @@
 
 ## Ciclo 12 — prioridades
 
-| ID     | Épico          | Título                                                                | Prioridade  | Situação   | Dependências | Esforço |
-| ------ | -------------- | --------------------------------------------------------------------- | ----------- | ---------- | ------------ | ------- |
-| C12-01 | Infraestrutura | Deploy HTTPS reproduzível (Nginx, certificados, role do banco, front) | P0 — máxima | Em revisão | —            | Médio   |
+| ID     | Épico          | Título                                                                | Prioridade  | Situação                                   | Dependências | Esforço |
+| ------ | -------------- | --------------------------------------------------------------------- | ----------- | ------------------------------------------ | ------------ | ------- |
+| C12-01 | Infraestrutura | Deploy HTTPS reproduzível (Nginx, certificados, role do banco, front) | P0 — máxima | Implementado; homologação externa pendente | —            | Médio   |
 
-C12-01 é a primeira entrega do Ciclo 12 e bloqueia as demais em ambiente de servidor:
-corrige a causa do incidente de 2026-10-09 (502 por senha do `axes_app` dessincronizada)
-e versiona o deploy completo. Detalhes em `docs/deploy/deploy-https.md`.
+C12-01 é a primeira entrega do Ciclo 12 e bloqueia as demais em ambiente de servidor.
+A implementação e o smoke reproduzível foram entregues pelos PRs #107 e #109: corrigem
+a causa do incidente de 2026-10-09 (502 por senha do `axes_app` dessincronizada) e
+versionam o deploy completo. A homologação externa ainda bloqueia o GO de produção:
+os seis gates `C12-REAL-01` a `C12-REAL-06` permanecem
+`PENDING_REAL_ENVIRONMENT` até execução no ambiente alvo e revisão humana das
+evidências. O manifesto está em
+`docs/quality/c12-deploy-real-environment-pending-2026-10-28.json`. Detalhes do
+deploy em `docs/deploy/deploy-https.md`.
 
 ## Histórias de usuário prioritárias
 
