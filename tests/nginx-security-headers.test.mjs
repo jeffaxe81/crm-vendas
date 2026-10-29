@@ -33,3 +33,44 @@ test("nginx enforces the reviewed HTTPS and security-header baseline", () => {
   assert.doesNotMatch(config, /TLSv1(?:\s|;)/);
   assert.doesNotMatch(config, /TLSv1\.1(?:\s|;)/);
 });
+
+// This is an offline template contract, not a substitute for nginx -t or
+// validation of the deployed server and its upstream response headers.
+test("security headers are standalone, unique and inherited by every location", () => {
+  const expected = new Map([
+    ["Strict-Transport-Security", "max-age=31536000"],
+    ["X-Content-Type-Options", "nosniff"],
+    ["X-Frame-Options", "SAMEORIGIN"],
+    ["Referrer-Policy", "strict-origin-when-cross-origin"],
+    ["Permissions-Policy", "geolocation=(), payment=(), usb=()"],
+  ]);
+  let depth = 0;
+  let httpsServer = false;
+  for (const line of config.split("\n")) {
+    const directive = line.replace(/#.*/, "").trim();
+    if (/^listen\s+443\s+ssl\s+http2;$/.test(directive)) {
+      assert.equal(depth, 1);
+      httpsServer = true;
+    }
+    if (/\badd_header\b/.test(directive)) {
+      assert.equal(depth, 1, "location add_header overrides inherited headers");
+      assert.ok(httpsServer, "headers must belong to the HTTPS server");
+      const match = /^add_header ([\w-]+)\s+"([^"]+)" always;$/.exec(directive);
+      assert.ok(match, "each header must be a standalone valid directive");
+      assert.ok(
+        expected.has(match[1]),
+        "unexpected or duplicate security header"
+      );
+      assert.equal(match[2], expected.get(match[1]));
+      expected.delete(match[1]);
+    }
+    // Braces in quoted strings do not change the Nginx block scope.
+    const unquoted = directive.replace(/"[^"]*"|'[^']*'/g, "");
+    depth += (unquoted.match(/\{/g) ?? []).length;
+    depth -= (unquoted.match(/\}/g) ?? []).length;
+    assert.ok(depth >= 0, "unbalanced blocks");
+    if (depth === 0) httpsServer = false;
+  }
+  assert.equal(depth, 0, "unbalanced blocks");
+  assert.equal(expected.size, 0, "all baseline headers must be active");
+});
