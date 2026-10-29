@@ -14,8 +14,7 @@ export type EmailOAuthHomologationResult = Readonly<{
   pending: string[];
 }>;
 
-const UUID =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const GOOGLE_CLIENT =
   /^[0-9]{6,18}-[a-z0-9_-]{3,120}\.apps\.googleusercontent\.com$/;
 
@@ -77,8 +76,7 @@ export async function assessEmailOAuthHomologation(
       if (!row || typeof row !== "object" || Array.isArray(row)) return false;
       const record = row as Record<string, unknown>;
       return (
-        record.organizationId === organizationId &&
-        record.provider === provider
+        record.organizationId === organizationId && record.provider === provider
       );
     });
     if (matches.length !== 1) throw new Error();
@@ -103,8 +101,7 @@ export async function assessEmailOAuthHomologation(
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     const secret = parsed[organizationId + ":" + provider];
     secretValid =
-      typeof secret === "string" &&
-      /^[\x21-\x7e]{16,4096}$/.test(secret);
+      typeof secret === "string" && /^[\x21-\x7e]{16,4096}$/.test(secret);
   } catch {
     secretValid = false;
   }
@@ -114,9 +111,7 @@ export async function assessEmailOAuthHomologation(
   return {
     provider,
     status:
-      missing.length === 0
-        ? "READY_FOR_CONTROLLED_HOMOLOGATION"
-        : "NOT_READY",
+      missing.length === 0 ? "READY_FOR_CONTROLLED_HOMOLOGATION" : "NOT_READY",
     readyForControlledHomologation: missing.length === 0,
     sendingEnabled: false,
     pending: missing,
