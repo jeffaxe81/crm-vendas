@@ -8,6 +8,7 @@ import {
 
 import { FormEvent, useEffect, useState } from "react";
 
+import { downloadLoadedCsv } from "../../lib/local-productivity-export";
 import { apiRequest } from "../../lib/api-client";
 import {
   formatMoney,
@@ -227,26 +228,55 @@ export function ProductsView({ accessToken, canWrite }: ProductsViewProps) {
           <h1 id="products-title">{t("Produtos")}</h1>
           <p>{t("Produtos e serviços usados para compor oportunidades.")}</p>
         </div>
-        {canWrite ? (
-          <div className="companies-view__header-actions">
-            <button
-              type="button"
-              onClick={() => {
-                closeForm();
-                setImportOpen(true);
-              }}
-            >
-              {t("Importar CSV")}
-            </button>
-            <button
-              type="button"
-              className="button companies-view__primary"
-              onClick={openCreate}
-            >
-              {t("Novo produto")}
-            </button>
-          </div>
-        ) : null}
+        <div className="companies-view__header-actions">
+          <button
+            type="button"
+            title={t("Exporta somente os produtos da página atual.")}
+            disabled={loading || products.length === 0 || Boolean(error)}
+            onClick={() => {
+              if (loading || products.length === 0 || error) return;
+              downloadLoadedCsv(
+                `produtos-pagina-${page}.csv`,
+                [
+                  t("Código"),
+                  t("Nome"),
+                  t("Descrição"),
+                  t("Preço unitário"),
+                  t("Situação"),
+                ],
+                products.map(product => [
+                  product.code,
+                  product.name,
+                  product.description,
+                  product.unitPrice,
+                  product.isActive ? t("Ativo") : t("Inativo"),
+                ])
+              );
+            }}
+          >
+            {t("Exportar produtos CSV")}
+          </button>
+          {canWrite ? (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  closeForm();
+                  setImportOpen(true);
+                }}
+              >
+                {t("Importar CSV")}
+              </button>
+              <button
+                type="button"
+                className="button companies-view__primary"
+                onClick={openCreate}
+              >
+                {t("Novo produto")}
+              </button>
+            </>
+          ) : null}
+        </div>
       </header>
 
       <form
