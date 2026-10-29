@@ -3,7 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
-import { downloadLoadedCalendar } from "../../lib/local-productivity-export";
+import {
+  downloadLoadedCalendar,
+  downloadLoadedCsv,
+} from "../../lib/local-productivity-export";
 import { useTranslation } from "../../i18n/language-provider";
 
 type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
@@ -118,6 +121,7 @@ export function AgendaView({
   const [activities, setActivities] = useState<ActivityRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loadedScope, setLoadedScope] = useState("");
 
   const period = useMemo(() => {
     const today = new Date();
@@ -136,6 +140,20 @@ export function AgendaView({
       to: endOfWeek(anchor),
     };
   }, [weekOffset, focus, refreshVersion]);
+
+  const requestScope = JSON.stringify([
+    accessToken,
+    ownerUserId,
+    period.from?.toISOString(),
+    period.to.toISOString(),
+    priority,
+    status,
+    type,
+    page,
+    focus,
+  ]);
+  const canExportCsv =
+    !loading && !error && activities.length > 0 && loadedScope === requestScope;
 
   useEffect(() => {
     let active = true;
@@ -174,6 +192,7 @@ export function AgendaView({
         );
         if (active) {
           setTotal(result.total);
+          setLoadedScope(requestScope);
           setActivities(
             result.items.filter(activity => activity.dueAt !== null)
           );
@@ -198,7 +217,17 @@ export function AgendaView({
     return () => {
       active = false;
     };
-  }, [accessToken, ownerUserId, period, priority, status, type, page, focus]);
+  }, [
+    accessToken,
+    ownerUserId,
+    period,
+    priority,
+    status,
+    type,
+    page,
+    focus,
+    requestScope,
+  ]);
 
   const grouped = useMemo(() => {
     const groups = new Map<string, ActivityRecord[]>();
@@ -241,6 +270,29 @@ export function AgendaView({
           }
         >
           {t("Exportar agenda ICS")}
+        </button>
+        <button
+          type="button"
+          disabled={!canExportCsv}
+          title={t("Exporta somente a página atual da agenda.")}
+          onClick={() => {
+            if (!canExportCsv) return;
+            downloadLoadedCsv(
+              "crm-agenda-pagina.csv",
+              ["Título", "Tipo", "Status", "Prioridade", "Prazo"].map(label =>
+                t(label)
+              ),
+              activities.map(item => [
+                item.title,
+                t(typeLabels[item.type]),
+                t(statusLabels[item.status]),
+                t(priorityLabels[item.priority]),
+                item.dueAt,
+              ])
+            );
+          }}
+        >
+          {t("Exportar agenda CSV")}
         </button>
       </header>
 

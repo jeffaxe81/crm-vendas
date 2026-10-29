@@ -2,6 +2,7 @@
 
 import { Fragment, FormEvent, useEffect, useState } from "react";
 
+import { downloadLoadedCsv } from "../../lib/local-productivity-export";
 import { apiRequest } from "../../lib/api-client";
 import { TerritoryDetailPanel } from "./territory-detail-panel";
 import { useTranslation } from "../../i18n/language-provider";
@@ -62,6 +63,13 @@ export function TerritoriesView({
   const [form, setForm] = useState<TerritoryForm>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [refresh, setRefresh] = useState(0);
+  const requestScope = JSON.stringify([accessToken, page, query, refresh]);
+  const [loadedScope, setLoadedScope] = useState<string | null>(null);
+  const canExport =
+    !loading &&
+    !error &&
+    territories.length > 0 &&
+    loadedScope === requestScope;
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [reassigning, setReassigning] = useState<TerritoryRecord | null>(null);
   const [reassignValue, setReassignValue] = useState("");
@@ -86,6 +94,7 @@ export function TerritoriesView({
         );
         if (active) {
           setTerritories(result.items);
+          setLoadedScope(requestScope);
           setTotal(result.total);
           const lastPage = Math.max(1, Math.ceil(result.total / PAGE_SIZE));
           if (page > lastPage) setPage(lastPage);
@@ -106,7 +115,7 @@ export function TerritoriesView({
     return () => {
       active = false;
     };
-  }, [accessToken, page, query, refresh]);
+  }, [accessToken, page, query, refresh, requestScope]);
 
   function openCreate() {
     setError("");
@@ -267,8 +276,28 @@ export function TerritoriesView({
             )}
           </p>
         </div>
-        {canWrite ? (
-          <div className="companies-view__header-actions">
+        <div className="companies-view__header-actions">
+          <button
+            type="button"
+            disabled={!canExport}
+            onClick={() => {
+              if (!canExport) return;
+              downloadLoadedCsv(
+                "territorios.csv",
+                [t("Nome"), t("Região"), t("Vendedor")],
+                territories.map(territory => [
+                  territory.name,
+                  territory.region,
+                  territory.salesRep?.displayName ??
+                    (territory.salesRepId ? t("Vendedor indisponível") : "—"),
+                ])
+              );
+            }}
+          >
+            {t("Exportar territórios CSV")}
+          </button>
+          <p>{t("Exporta somente a página atual de territórios.")}</p>
+          {canWrite ? (
             <button
               type="button"
               className="button companies-view__primary"
@@ -276,8 +305,8 @@ export function TerritoriesView({
             >
               {t("Novo território")}
             </button>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </header>
 
       <form

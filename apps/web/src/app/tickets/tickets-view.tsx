@@ -11,6 +11,7 @@ import {
 import { FormEvent, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api-client";
+import { downloadLoadedCsv } from "../../lib/local-productivity-export";
 import { SupportQueuesPanel } from "./support-queues-panel";
 import { SlaBadge, worstSlaState } from "./sla-labels";
 import { SlaPoliciesPanel } from "./sla-policies-panel";
@@ -84,6 +85,16 @@ export function TicketsView({
   const [onlyMine, setOnlyMine] = useState(false);
   const [queuesOpen, setQueuesOpen] = useState(false);
   const [queuesRefresh, setQueuesRefresh] = useState(0);
+  const requestScope = JSON.stringify([
+    accessToken,
+    status,
+    query,
+    queueFilter,
+    onlyMine,
+    refresh,
+    page,
+  ]);
+  const [loadedScope, setLoadedScope] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -120,6 +131,7 @@ export function TicketsView({
         }>(`/tickets?${params.toString()}`, { accessToken });
         if (active) {
           setTickets(result.items);
+          setLoadedScope(requestScope);
           const count = result.total ?? result.items.length;
           setTotal(count);
           const lastPage = Math.max(1, Math.ceil(count / 50));
@@ -144,7 +156,16 @@ export function TicketsView({
     return () => {
       active = false;
     };
-  }, [accessToken, status, query, queueFilter, onlyMine, refresh, page]);
+  }, [
+    accessToken,
+    status,
+    query,
+    queueFilter,
+    onlyMine,
+    refresh,
+    page,
+    requestScope,
+  ]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -187,6 +208,8 @@ export function TicketsView({
   const selected = tickets.find(ticket => ticket.id === selectedId) ?? null;
   const queueNames = new Map(queues.map(queue => [queue.id, queue.name]));
   const activeQueues = queues.filter(queue => queue.isActive);
+  const canExport =
+    !loading && !error && tickets.length > 0 && loadedScope === requestScope;
 
   return (
     <section className="companies-view" aria-labelledby="tickets-title">
@@ -200,29 +223,56 @@ export function TicketsView({
             )}
           </p>
         </div>
-        {canWrite || canManageQueues || canManageSla ? (
-          <div className="companies-view__header-actions">
-            {canManageQueues ? (
-              <button type="button" onClick={() => setQueuesOpen(true)}>
-                {t("Gerenciar filas")}
-              </button>
-            ) : null}
-            {canManageSla ? (
-              <button type="button" onClick={() => setSlaOpen(true)}>
-                {t("Políticas de SLA")}
-              </button>
-            ) : null}
-            {canWrite ? (
-              <button
-                type="button"
-                className="button companies-view__primary"
-                onClick={() => setFormOpen(true)}
-              >
-                {t("Nova solicitação")}
-              </button>
-            ) : null}
-          </div>
-        ) : null}
+        <div className="companies-view__header-actions">
+          <button
+            type="button"
+            disabled={!canExport}
+            title={t("Exporta somente as solicitações da página atual.")}
+            onClick={() => {
+              if (!canExport) return;
+              downloadLoadedCsv(
+                "solicitacoes.csv",
+                [
+                  "Protocolo",
+                  "Assunto",
+                  "Status",
+                  "Prioridade",
+                  "Fila",
+                  "Aberta em",
+                ].map(label => t(label)),
+                tickets.map(ticket => [
+                  ticket.protocol,
+                  ticket.subject,
+                  t(statusLabels[ticket.status]),
+                  t(priorityLabels[ticket.priority]),
+                  ticket.queueId ? (queueNames.get(ticket.queueId) ?? "") : "",
+                  ticket.openedAt,
+                ])
+              );
+            }}
+          >
+            {t("Exportar solicitações CSV")}
+          </button>
+          {canManageQueues ? (
+            <button type="button" onClick={() => setQueuesOpen(true)}>
+              {t("Gerenciar filas")}
+            </button>
+          ) : null}
+          {canManageSla ? (
+            <button type="button" onClick={() => setSlaOpen(true)}>
+              {t("Políticas de SLA")}
+            </button>
+          ) : null}
+          {canWrite ? (
+            <button
+              type="button"
+              className="button companies-view__primary"
+              onClick={() => setFormOpen(true)}
+            >
+              {t("Nova solicitação")}
+            </button>
+          ) : null}
+        </div>
       </header>
 
       <form

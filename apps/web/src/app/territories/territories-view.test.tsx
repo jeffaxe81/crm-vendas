@@ -262,3 +262,128 @@ describe("C4.1.6 territories view", () => {
     expect(screen.getAllByText(/R\$\s*1\.000,00/).length).toBeGreaterThan(0);
   });
 });
+
+describe("territory CSV export", () => {
+  it("downloads safe CSV for the current page without extra requests for readers", async () => {
+    const blobs: Blob[] = [];
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      value: vi.fn((blob: Blob) => {
+        blobs.push(blob);
+        return "blob:territories";
+      }),
+    });
+    Object.defineProperty(URL, "revokeObjectURL", {
+      configurable: true,
+      value: vi.fn(),
+    });
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {});
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ items: [territory], total: 51 }))
+      .mockResolvedValueOnce(
+        response({
+          items: [
+            {
+              ...territory,
+              id: "hidden-id",
+              name: "=SUM(1,2)",
+              region: 'Sul, "Leste"\nÁrea',
+              description: "hidden-description",
+              salesRepId: "hidden-rep",
+              version: 999,
+            },
+          ],
+          total: 51,
+        })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    render(<TerritoriesView accessToken="secret-token" canWrite={false} />);
+    await screen.findByText(/Território Norte/);
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+    await screen.findByRole("button", { name: /SUM\(1,2\)/ });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Exportar territórios CSV" })
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(click).toHaveBeenCalledOnce();
+    expect((click.mock.instances[0] as HTMLAnchorElement).download).toBe(
+      "territorios.csv"
+    );
+    expect(blobs[0]!.type).toBe("text/csv;charset=utf-8");
+    const csv = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = reject;
+      reader.readAsText(blobs[0]!);
+    });
+    expect(csv).toContain('"Nome","Região","Vendedor"\r\n');
+    expect(csv).toContain(
+      '"\'=SUM(1,2)","Sul, ""Leste""\nÁrea","Vendedor indisponível"'
+    );
+    for (const hidden of [
+      "Território Norte",
+      "hidden-id",
+      "hidden-description",
+      "hidden-rep",
+      "999",
+      "secret-token",
+    ])
+      expect(csv).not.toContain(hidden);
+    expect(
+      screen.queryByRole("button", { name: "Novo território" })
+    ).not.toBeInTheDocument();
+    click.mockRestore();
+  });
+
+  it("disables export while loading, empty, or after a failed search with stale rows", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response({ items: [territory], total: 1 }))
+      .mockRejectedValueOnce(new Error("Search failed"))
+      .mockResolvedValueOnce(response({ items: [], total: 0 }));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<TerritoriesView accessToken="token" canWrite={false} />);
+    const button = screen.getByRole("button", {
+      name: "Exportar territórios CSV",
+    });
+    expect(button).toBeDisabled();
+    await screen.findByText(/Território Norte/);
+    expect(button).toBeEnabled();
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "failed" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Buscar" }));
+    await screen.findByRole("alert");
+    expect(button).toBeDisabled();
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "empty" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Buscar" }));
+    await screen.findByText("Nenhum território encontrado.");
+    expect(button).toBeDisabled();
+  });
+});
+
+it("does not export stale search results when opening a form clears the error", async () => {
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce(response({ items: [territory], total: 1 }))
+    .mockRejectedValueOnce(new Error("Search failed"));
+  vi.stubGlobal("fetch", fetchMock);
+  render(<TerritoriesView accessToken="token" canWrite />);
+  await screen.findByText(/Território Norte/);
+  fireEvent.change(screen.getByRole("searchbox"), {
+    target: { value: "new query" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Buscar" }));
+  await screen.findByRole("alert");
+  fireEvent.click(screen.getByRole("button", { name: "Novo território" }));
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: "Exportar territórios CSV" })
+  ).toBeDisabled();
+  expect(fetchMock).toHaveBeenCalledTimes(2);
+});
