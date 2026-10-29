@@ -2,6 +2,7 @@
 
 import { Fragment, FormEvent, useEffect, useState } from "react";
 
+import { downloadLoadedCsv } from "../../lib/local-productivity-export";
 import { apiRequest } from "../../lib/api-client";
 import { TerritoryDetailPanel } from "./territory-detail-panel";
 import { useTranslation } from "../../i18n/language-provider";
@@ -267,8 +268,28 @@ export function TerritoriesView({
             )}
           </p>
         </div>
-        {canWrite ? (
-          <div className="companies-view__header-actions">
+        <div className="companies-view__header-actions">
+          <button
+            type="button"
+            disabled={loading || Boolean(error) || territories.length === 0}
+            onClick={() => {
+              if (loading || error || territories.length === 0) return;
+              downloadLoadedCsv(
+                "territorios.csv",
+                [t("Nome"), t("Região"), t("Vendedor")],
+                territories.map(territory => [
+                  territory.name,
+                  territory.region,
+                  territory.salesRep?.displayName ??
+                    (territory.salesRepId ? t("Vendedor indisponível") : "—"),
+                ])
+              );
+            }}
+          >
+            {t("Exportar territórios CSV")}
+          </button>
+          <p>{t("Exporta somente a página atual de territórios.")}</p>
+          {canWrite ? (
             <button
               type="button"
               className="button companies-view__primary"
@@ -276,8 +297,8 @@ export function TerritoriesView({
             >
               {t("Novo território")}
             </button>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </header>
 
       <form
