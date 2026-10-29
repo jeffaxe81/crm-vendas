@@ -102,18 +102,25 @@ function validateConfiguration(config) {
   );
   if (config.performance !== undefined) {
     const settings = config.performance;
+    const keys = Object.keys(settings ?? {})
+      .sort()
+      .join(",");
     requireCondition(
       settings &&
         typeof settings === "object" &&
         !Array.isArray(settings) &&
-        Object.keys(settings).sort().join(",") ===
-          "samplesPerTenant,warmupIterations" &&
+        (keys === "samplesPerTenant,warmupIterations" ||
+          keys === "concurrency,samplesPerTenant,warmupIterations") &&
         Number.isInteger(settings.warmupIterations) &&
         settings.warmupIterations >= 0 &&
         settings.warmupIterations <= 10 &&
         Number.isInteger(settings.samplesPerTenant) &&
         settings.samplesPerTenant >= 5 &&
-        settings.samplesPerTenant <= 100,
+        settings.samplesPerTenant <= 100 &&
+        (settings.concurrency === undefined ||
+          (Number.isInteger(settings.concurrency) &&
+            settings.concurrency >= 1 &&
+            settings.concurrency <= 20)),
       "INVALID_PERFORMANCE_CONFIGURATION"
     );
   }
@@ -209,23 +216,32 @@ function clockValue(now) {
 
 async function measureVolume(config, fetchImpl, baseUrl, now) {
   const { warmupIterations, samplesPerTenant } = config.performance;
+  const concurrency = config.performance.concurrency ?? 1;
   for (let i = 0; i < warmupIterations; i++)
     for (const tenant of config.tenants)
       await readVolume(fetchImpl, baseUrl, tenant);
   const durations = config.tenants.map(() => []);
+  const samples = [];
   for (let i = 0; i < samplesPerTenant; i++) {
     for (const [index, tenant] of config.tenants.entries()) {
-      const start = clockValue(now);
-      await readVolume(fetchImpl, baseUrl, tenant);
-      const elapsed = clockValue(now) - start;
-      requireCondition(elapsed >= 0, "INVALID_PERFORMANCE_CLOCK");
-      durations[index].push(elapsed);
+      samples.push(async () => {
+        const start = clockValue(now);
+        await readVolume(fetchImpl, baseUrl, tenant);
+        const elapsed = clockValue(now) - start;
+        requireCondition(elapsed >= 0, "INVALID_PERFORMANCE_CLOCK");
+        durations[index].push(elapsed);
+      });
     }
+  }
+  for (let offset = 0; offset < samples.length; offset += concurrency) {
+    await Promise.all(
+      samples.slice(offset, offset + concurrency).map(sample => sample())
+    );
   }
   const round = value => Number(value.toFixed(3));
   return {
-    mode: "sequential",
-    concurrency: 1,
+    mode: concurrency === 1 ? "sequential" : "parallel",
+    concurrency,
     timeoutMs: 15000,
     warmupIterations,
     samplesPerTenant,
