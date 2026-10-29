@@ -366,3 +366,24 @@ describe("territory CSV export", () => {
     expect(button).toBeDisabled();
   });
 });
+
+it("does not export stale search results when opening a form clears the error", async () => {
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce(response({ items: [territory], total: 1 }))
+    .mockRejectedValueOnce(new Error("Search failed"));
+  vi.stubGlobal("fetch", fetchMock);
+  render(<TerritoriesView accessToken="token" canWrite />);
+  await screen.findByText(/Território Norte/);
+  fireEvent.change(screen.getByRole("searchbox"), {
+    target: { value: "new query" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Buscar" }));
+  await screen.findByRole("alert");
+  fireEvent.click(screen.getByRole("button", { name: "Novo território" }));
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: "Exportar territórios CSV" })
+  ).toBeDisabled();
+  expect(fetchMock).toHaveBeenCalledTimes(2);
+});

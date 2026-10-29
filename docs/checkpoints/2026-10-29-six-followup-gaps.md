@@ -17,14 +17,14 @@ A branch parte da main e foi atualizada até `d5007961`. As duas integrações s
 
 ## Execução e validação
 
-Seis tarefas foram distribuídas ao grupo em worktrees independentes. O limite de uso interrompeu os auxiliares, deixando alterações parciais de solicitações, territórios e usuários. O coordenador preservou esses arquivos, concluiu as três demais tarefas e fez a revisão final do conjunto. Não houve revisão independente final após a interrupção.
+Seis tarefas foram distribuídas ao grupo em worktrees independentes. O limite de uso interrompeu os auxiliares, deixando alterações parciais de solicitações, territórios e usuários. O coordenador preservou esses arquivos, concluiu as três demais tarefas e fez a revisão final do conjunto. A revisão independente final foi retomada posteriormente. Ela identificou uma falha de elegibilidade do CSV de territórios: após falha de busca, abrir um formulário limpava o erro e reabilitava resultados antigos. Um teste reproduziu a falha antes da correção; a exportação agora exige o escopo da última consulta concluída (token, página, busca e refresh). Não houve outros P1/P2 na revisão inicial.
 
 - Quatro cenários de agenda/backups foram observados falhando por ausência dos novos controles antes da implementação.
 - Contraprova dos arquivos originais de solicitações/territórios/usuários: nove verificações novas falharam, oito existentes passaram; os três componentes foram restaurados após a execução.
 - Os 31 testes direcionados das cinco telas passaram.
 - Os 18 testes direcionados de dashboards passaram.
 - Duas mutações temporárias foram detectadas: iniciar requisições além do lote limitado e aceitar concorrência 21. O script original foi restaurado e permaneceu sem diff.
-- Tipos e formatação passaram. A suíte web completa passou com **716 testes em 89 arquivos**; a suíte de repositório passou com **134 testes**. A CI completa deve ser conferida no candidato final do PR.
+- Tipos e formatação passaram. A suíte web do candidato inicial passou com **716 testes em 89 arquivos**; a suíte de repositório passou com **134 testes**. Após a correção indicada pela revisão, os nove testes de territórios passaram; a suíte web completa deve ser repetida no novo candidato. A CI completa deve ser conferida no candidato final do PR.
 
 Os testes existentes de backups passaram a localizar os status nos itens das listas, pois os mesmos rótulos agora também aparecem no seletor de filtro. Uma asserção incompleta de opções de perfil foi substituída pela verificação dos valores efetivos do select. A ação de salvar perfil continua sendo verificada por sua chamada PATCH, sem exigir uma mensagem transitória que é desmontada pelo refresh já existente.
 

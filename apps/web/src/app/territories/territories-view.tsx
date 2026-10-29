@@ -63,6 +63,13 @@ export function TerritoriesView({
   const [form, setForm] = useState<TerritoryForm>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [refresh, setRefresh] = useState(0);
+  const requestScope = JSON.stringify([accessToken, page, query, refresh]);
+  const [loadedScope, setLoadedScope] = useState<string | null>(null);
+  const canExport =
+    !loading &&
+    !error &&
+    territories.length > 0 &&
+    loadedScope === requestScope;
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [reassigning, setReassigning] = useState<TerritoryRecord | null>(null);
   const [reassignValue, setReassignValue] = useState("");
@@ -87,6 +94,7 @@ export function TerritoriesView({
         );
         if (active) {
           setTerritories(result.items);
+          setLoadedScope(requestScope);
           setTotal(result.total);
           const lastPage = Math.max(1, Math.ceil(result.total / PAGE_SIZE));
           if (page > lastPage) setPage(lastPage);
@@ -107,7 +115,7 @@ export function TerritoriesView({
     return () => {
       active = false;
     };
-  }, [accessToken, page, query, refresh]);
+  }, [accessToken, page, query, refresh, requestScope]);
 
   function openCreate() {
     setError("");
@@ -271,9 +279,9 @@ export function TerritoriesView({
         <div className="companies-view__header-actions">
           <button
             type="button"
-            disabled={loading || Boolean(error) || territories.length === 0}
+            disabled={!canExport}
             onClick={() => {
-              if (loading || error || territories.length === 0) return;
+              if (!canExport) return;
               downloadLoadedCsv(
                 "territorios.csv",
                 [t("Nome"), t("Região"), t("Vendedor")],
