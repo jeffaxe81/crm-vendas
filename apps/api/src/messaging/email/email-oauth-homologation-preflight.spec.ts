@@ -9,6 +9,7 @@ const googleClientId =
 
 function completeEnvironment(): NodeJS.ProcessEnv {
   return {
+    EMAIL_OAUTH_ALLOW_LOOPBACK: "true",
     EMAIL_OAUTH_CALLBACK_ORIGIN: "http://127.0.0.1:3000",
     EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON: JSON.stringify({
       version: 1,
