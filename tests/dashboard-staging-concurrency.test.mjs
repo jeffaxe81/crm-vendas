@@ -8,7 +8,11 @@ const counts = [
   { companies: 1000, contacts: 0, opportunities: 0, activities: 0 },
   { companies: 10000, contacts: 0, opportunities: 0, activities: 0 },
 ];
-const tokens = ["concurrent-token-A", "concurrent-token-B", "concurrent-token-C"];
+const tokens = [
+  "concurrent-token-A",
+  "concurrent-token-B",
+  "concurrent-token-C",
+];
 
 function response(body, status = 200) {
   return new Response(JSON.stringify(body), {
