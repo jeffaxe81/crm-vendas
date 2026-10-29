@@ -21,7 +21,8 @@ export function checkDashboardBreakGlassPolicy(policy) {
     "explicit_scopes_only",
     "audit_required",
   ])
-    if (controls[key] !== true) errors.push("controls." + key + " must be true");
+    if (controls[key] !== true)
+      errors.push("controls." + key + " must be true");
   if (controls.wildcard_scope_allowed !== false)
     errors.push("wildcard scope must remain disabled");
   if (
@@ -44,9 +45,7 @@ export function checkDashboardBreakGlassPolicy(policy) {
     request.scopes.length === 0 ||
     request.scopes.some(
       scope =>
-        !nonEmpty(scope) ||
-        scope === "*" ||
-        !/^[a-z][a-z0-9.-]*$/.test(scope)
+        !nonEmpty(scope) || scope === "*" || !/^[a-z][a-z0-9.-]*$/.test(scope)
     )
   )
     errors.push("explicit non-wildcard scopes are required");
@@ -58,7 +57,8 @@ export function checkDashboardBreakGlassPolicy(policy) {
       request.duration_minutes > controls.max_duration_minutes)
   )
     errors.push("requested duration exceeds policy");
-  if (request.mfa_verified !== true) errors.push("MFA verification is required");
+  if (request.mfa_verified !== true)
+    errors.push("MFA verification is required");
   if (request.audit_enabled !== true) errors.push("audit trail is required");
 
   return {
