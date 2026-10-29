@@ -87,14 +87,20 @@ describe("storage restart, RLS and rollback drill", () => {
       randomUUID()
     );
 
-    await restricted.onModuleDestroy();
-    restricted = new PrismaService(process.env.RLS_DATABASE_URL);
-    service = new TenantStorageAllocationService(restricted);
+    const originalRestrictedUrl = process.env.RLS_DATABASE_URL;
+    process.env.RLS_DATABASE_URL = "invalid-after-safety-check";
+    try {
+      await restricted.onModuleDestroy();
+      restricted = new PrismaService(process.env.RLS_DATABASE_URL);
+      service = new TenantStorageAllocationService(restricted);
 
-    expect(await service.read(principal(orgA))).toMatchObject({
-      allocatedGiB: 8,
-      enforced: true,
-    });
+      expect(await service.read(principal(orgA))).toMatchObject({
+        allocatedGiB: 8,
+        enforced: true,
+      });
+    } finally {
+      process.env.RLS_DATABASE_URL = originalRestrictedUrl;
+    }
 
     const crossTenant = await restricted.withTenant(orgB, tx =>
       tx.$queryRawUnsafe(
