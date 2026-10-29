@@ -119,53 +119,53 @@ describe("contact editing", () => {
   it(
     "edits an existing channel through PATCH /contacts/:id/channels/:channelId",
     async () => {
-    const updatedChannel = {
-      ...contact.channels[0],
-      value: "ana.souza@example.test",
-      label: "Corporativo",
-      updatedAt: "2026-10-29T12:15:00.000Z",
-    };
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(
-        response({ items: [contact], page: 1, limit: 20, total: 1 })
-      )
-      .mockResolvedValueOnce(
-        response({ items: [], page: 1, limit: 100, total: 0 })
-      )
-      .mockResolvedValueOnce(response(updatedChannel));
-    vi.stubGlobal("fetch", fetchMock);
+      const updatedChannel = {
+        ...contact.channels[0],
+        value: "ana.souza@example.test",
+        label: "Corporativo",
+        updatedAt: "2026-10-29T12:15:00.000Z",
+      };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(
+          response({ items: [contact], page: 1, limit: 20, total: 1 })
+        )
+        .mockResolvedValueOnce(
+          response({ items: [], page: 1, limit: 100, total: 0 })
+        )
+        .mockResolvedValueOnce(response(updatedChannel));
+      vi.stubGlobal("fetch", fetchMock);
 
-    render(<ContactsView accessToken={accessToken} />);
+      render(<ContactsView accessToken={accessToken} />);
 
-    const card = (await screen.findByText("Ana Silva")).closest("article");
-    expect(card).not.toBeNull();
+      const card = (await screen.findByText("Ana Silva")).closest("article");
+      expect(card).not.toBeNull();
 
-    fireEvent.click(
-      within(card as HTMLElement).getByRole("button", {
-        name: "Editar canal Trabalho",
-      })
-    );
+      fireEvent.click(
+        within(card as HTMLElement).getByRole("button", {
+          name: "Editar canal Trabalho",
+        })
+      );
 
-    const form = screen.getByRole("form", { name: "Editar canal" });
-    fireEvent.change(within(form).getByLabelText("Valor"), {
-      target: { value: "ana.souza@example.test" },
-    });
-    fireEvent.change(within(form).getByLabelText("Rótulo"), {
-      target: { value: "Corporativo" },
-    });
-    fireEvent.click(
-      within(form).getByRole("button", { name: "Salvar alterações" })
-    );
+      const form = screen.getByRole("form", { name: "Editar canal" });
+      fireEvent.change(within(form).getByLabelText("Valor"), {
+        target: { value: "ana.souza@example.test" },
+      });
+      fireEvent.change(within(form).getByLabelText("Rótulo"), {
+        target: { value: "Corporativo" },
+      });
+      fireEvent.click(
+        within(form).getByRole("button", { name: "Salvar alterações" })
+      );
 
-    expect(
-      await screen.findByText("ana.souza@example.test")
-    ).toBeInTheDocument();
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      3,
-      expect.stringContaining(`/contacts/${contactId}/channels/${channelId}`),
-      expect.objectContaining({ method: "PATCH" })
-    );
+      expect(
+        await screen.findByText("ana.souza@example.test")
+      ).toBeInTheDocument();
+      expect(fetchMock).toHaveBeenNthCalledWith(
+        3,
+        expect.stringContaining(`/contacts/${contactId}/channels/${channelId}`),
+        expect.objectContaining({ method: "PATCH" })
+      );
     }
   );
 });
