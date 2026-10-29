@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import type { AuthenticatedPrincipal } from "../authorization/authenticated-request";
 import { PrismaService } from "../database/prisma.service";
+import { storageDrillConnections } from "./storage-drill-safety";
 import { TenantStorageAllocationService } from "./tenant-storage-allocation.service";
 
 describe("storage restart, RLS and rollback drill", () => {
@@ -20,16 +21,29 @@ describe("storage restart, RLS and rollback drill", () => {
     }) as AuthenticatedPrincipal;
 
   beforeAll(async () => {
-    if (!process.env.RLS_DATABASE_URL)
-      throw Error("Restricted PostgreSQL role required");
-    owner = new PrismaService(
-      process.env.MIGRATION_DATABASE_URL ?? process.env.DATABASE_URL
-    );
-    restricted = new PrismaService(process.env.RLS_DATABASE_URL);
+    const connections = storageDrillConnections(process.env);
+    owner = new PrismaService(connections.owner);
+    restricted = new PrismaService(connections.restricted);
+    const [role] = await restricted.$queryRawUnsafe<
+      {
+        rolsuper: boolean;
+        rolbypassrls: boolean;
+        relrowsecurity: boolean;
+        relforcerowsecurity: boolean;
+      }[]
+    >(`SELECT r.rolsuper, r.rolbypassrls, c.relrowsecurity, c.relforcerowsecurity
+       FROM pg_roles r CROSS JOIN pg_class c
+       WHERE r.rolname = current_user
+         AND c.oid = 'public.tenant_storage_allocations'::regclass`);
+    expect(role).toEqual({
+      rolsuper: false,
+      rolbypassrls: false,
+      relrowsecurity: true,
+      relforcerowsecurity: true,
+    });
   });
 
   beforeEach(async () => {
-    await owner.$executeRawUnsafe('TRUNCATE "organizations", "users" CASCADE');
     const user = await owner.user.create({
       data: {
         email: "restart-" + randomUUID() + "@example.test",
@@ -41,23 +55,23 @@ describe("storage restart, RLS and rollback drill", () => {
     userId = user.id;
     orgA = (
       await owner.organization.create({
-        data: { name: "Restart A", slug: "restart-a" },
+        data: { name: "Restart A", slug: "restart-a-" + randomUUID() },
       })
     ).id;
     orgB = (
       await owner.organization.create({
-        data: { name: "Restart B", slug: "restart-b" },
+        data: { name: "Restart B", slug: "restart-b-" + randomUUID() },
       })
     ).id;
   });
 
   afterAll(async () => {
-    await restricted?.onModuleDestroy();
-    if (owner) {
-      await owner.$executeRawUnsafe(
-        'TRUNCATE "organizations", "users" CASCADE'
-      );
-      await owner.onModuleDestroy();
+    // Audit rows are immutable. Retain uniquely named synthetic fixtures rather
+    // than truncating unrelated tenants or bypassing audit protections.
+    try {
+      await restricted?.onModuleDestroy();
+    } finally {
+      await owner?.onModuleDestroy();
     }
   });
 
@@ -92,10 +106,11 @@ describe("storage restart, RLS and rollback drill", () => {
 
     await expect(
       restricted.withTenant(orgA, async tx => {
-        await tx.$executeRawUnsafe(
+        const changed = await tx.$executeRawUnsafe(
           "UPDATE public.tenant_storage_allocations SET allocation_gib=99 WHERE organization_id=$1::uuid",
           orgA
         );
+        expect(changed).toBe(1);
         throw new Error("SYNTHETIC_ROLLBACK");
       })
     ).rejects.toThrow("SYNTHETIC_ROLLBACK");
