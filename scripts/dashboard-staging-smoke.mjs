@@ -102,7 +102,9 @@ function validateConfiguration(config) {
   );
   if (config.performance !== undefined) {
     const settings = config.performance;
-    const keys = Object.keys(settings ?? {}).sort().join(",");
+    const keys = Object.keys(settings ?? {})
+      .sort()
+      .join(",");
     requireCondition(
       settings &&
         typeof settings === "object" &&
