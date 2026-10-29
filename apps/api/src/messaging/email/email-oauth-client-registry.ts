@@ -60,8 +60,11 @@ function configurationUnavailable(): never {
   });
 }
 
-function strictCallbackOrigin(raw: string): string {
-  if (raw.length > 256 || !validEmailOAuthOrigin(raw))
+function strictCallbackOrigin(
+  raw: string,
+  environment: NodeJS.ProcessEnv
+): string {
+  if (raw.length > 256 || !validEmailOAuthOrigin(raw, environment))
     return configurationUnavailable();
   return raw;
 }
@@ -76,7 +79,11 @@ function strictCallbackOrigin(raw: string): string {
 export class EnvironmentEmailOAuthClientResolver implements EmailOAuthClientResolver {
   private readonly clients = new Map<string, ClientConfiguration>();
 
-  constructor(callbackOrigin?: string, registrationsJson?: string) {
+  constructor(
+    callbackOrigin?: string,
+    registrationsJson?: string,
+    environment: NodeJS.ProcessEnv = process.env
+  ) {
     if (!callbackOrigin && !registrationsJson) return;
     if (
       !callbackOrigin ||
@@ -85,7 +92,7 @@ export class EnvironmentEmailOAuthClientResolver implements EmailOAuthClientReso
     ) {
       configurationUnavailable();
     }
-    const origin = strictCallbackOrigin(callbackOrigin);
+    const origin = strictCallbackOrigin(callbackOrigin, environment);
     let parsed: unknown;
     try {
       parsed = JSON.parse(registrationsJson);
@@ -113,7 +120,8 @@ export class EnvironmentEmailOAuthClientResolver implements EmailOAuthClientReso
   ): EnvironmentEmailOAuthClientResolver {
     return new EnvironmentEmailOAuthClientResolver(
       environment.EMAIL_OAUTH_CALLBACK_ORIGIN,
-      environment.EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON
+      environment.EMAIL_OAUTH_CLIENT_REGISTRATIONS_JSON,
+      environment
     );
   }
 
