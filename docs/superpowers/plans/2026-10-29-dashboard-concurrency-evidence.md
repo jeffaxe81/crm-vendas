@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-29-dashboard-concurrency-evidence-design.md`
 
+**Implementation status:** GREEN candidate after validated RED; full gate pending.
+
 ## Global Constraints
 
 - Dados sintéticos somente.
