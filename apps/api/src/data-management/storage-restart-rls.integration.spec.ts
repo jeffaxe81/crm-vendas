@@ -84,7 +84,7 @@ describe("storage restart, RLS and rollback drill", () => {
 
     const crossTenant = await restricted.withTenant(orgB, tx =>
       tx.$queryRawUnsafe(
-        'SELECT organization_id FROM public.tenant_storage_allocations WHERE organization_id=$1::uuid',
+        "SELECT organization_id FROM public.tenant_storage_allocations WHERE organization_id=$1::uuid",
         orgA
       )
     );
@@ -93,7 +93,7 @@ describe("storage restart, RLS and rollback drill", () => {
     await expect(
       restricted.withTenant(orgA, async tx => {
         await tx.$executeRawUnsafe(
-          'UPDATE public.tenant_storage_allocations SET allocation_gib=99 WHERE organization_id=$1::uuid',
+          "UPDATE public.tenant_storage_allocations SET allocation_gib=99 WHERE organization_id=$1::uuid",
           orgA
         );
         throw new Error("SYNTHETIC_ROLLBACK");
