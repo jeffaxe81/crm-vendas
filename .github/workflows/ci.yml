@@ -97,7 +97,12 @@ jobs:
         run: pnpm release:preflight
 
       - name: Check formatting
-        run: pnpm format:check
+        shell: bash
+        run: |
+          cp apps/web/src/app/contacts/contact-editing.test.tsx "$RUNNER_TEMP/contact-editing.before.tsx"
+          pnpm exec prettier --write apps/web/src/app/contacts/contact-editing.test.tsx
+          diff -u "$RUNNER_TEMP/contact-editing.before.tsx" apps/web/src/app/contacts/contact-editing.test.tsx || true
+          exit 1
 
       - name: Lint source
         run: pnpm lint
