@@ -61,6 +61,29 @@ const RESTORE_MODELS = [
 ] as const;
 const implemented = new Set<string>(RESTORE_MODELS);
 
+export const REVIEWED_SPECIAL_RESTORE_POLICIES = [
+  "InboundMessage:ORGANIZATION:EXCLUDE:PRESERVE",
+  "EmailRelaySettings:ORGANIZATION:EXCLUDE:PRESERVE",
+  "EmailProviderPreference:ORGANIZATION:EXCLUDE:PRESERVE",
+  "WebhookSubscription:ORGANIZATION:EXCLUDE:PRESERVE",
+  "WebhookDispatch:ORGANIZATION:EXCLUDE:PRESERVE",
+  "WebhookDelivery:ORGANIZATION:EXCLUDE:PRESERVE",
+  "EmailOutbox:ORGANIZATION:EXCLUDE:PRESERVE_AND_REVOKE",
+  "BackupRecord:ORGANIZATION:EXCLUDE:PRESERVE",
+  "DataOperation:ORGANIZATION:EXCLUDE:PRESERVE",
+  "OperationPreview:ORGANIZATION:EXCLUDE:PRESERVE",
+  "BackupSchedule:ORGANIZATION:EXCLUDE:PRESERVE",
+  "PurgePolicy:ORGANIZATION:EXCLUDE:PRESERVE",
+  "Organization:ORGANIZATION_ROOT:FULL:REPLACE",
+  "User:REFERENCED_USERS:PROJECTION:REFERENCES",
+  "OrganizationMembership:ORGANIZATION:PROJECTION:PRESERVE_SUPERUSER",
+  "RefreshSession:ORGANIZATION:EXCLUDE:PRESERVE_AND_REVOKE",
+  "AuditLog:ORGANIZATION:EXCLUDE:PRESERVE",
+  "TicketProtocolCounter:ORGANIZATION:FULL:MERGE_HIGH_WATER",
+  "TicketSatisfactionSurvey:ORGANIZATION:PROJECTION:RENEW_EXPIRED_TOKEN",
+  "IntegrationCredential:ORGANIZATION:PROJECTION:PRESERVE",
+] as const;
+
 /**
  * Read-only assessment of currently unsupported full-replacement models.
  * Inspect both the target and the current tenant: missing target rows do not
