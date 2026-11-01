@@ -1416,5 +1416,8 @@
   "Todos os status": "Todos los estados",
   "Limpar filtro": "Limpiar filtro",
   "{shown} de {loaded} backups carregados": "{shown} de {loaded} copias de seguridad cargadas",
-  "Nenhum backup corresponde ao filtro.": "Ninguna copia de seguridad coincide con el filtro."
+  "Nenhum backup corresponde ao filtro.": "Ninguna copia de seguridad coincide con el filtro.",
+  "Informe o motivo da perda.": "Informe el motivo de la pérdida.",
+  "Motivo da perda": "Motivo de la pérdida",
+  "Confirmar perda": "Confirmar pérdida"
 }
