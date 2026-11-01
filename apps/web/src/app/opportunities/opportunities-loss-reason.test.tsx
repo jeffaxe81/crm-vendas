@@ -87,10 +87,7 @@ describe("C3 loss reason web completion", () => {
       if (url.includes("/opportunities?")) {
         return response({
           items: [
-            opportunityRecord(
-              moved ? lostStageId : openStageId,
-              moved ? 4 : 3
-            ),
+            opportunityRecord(moved ? lostStageId : openStageId, moved ? 4 : 3),
           ],
           page: 1,
           limit: 20,
@@ -158,103 +155,96 @@ describe("C3 loss reason web completion", () => {
     });
   });
 
-  it(
-    "requires and sends a loss reason when creating directly in LOST",
-    async () => {
-      const fetchMock = vi.fn(
-        async (input: string | URL, init?: RequestInit) => {
-          const url = String(input);
+  it("requires and sends a loss reason when creating directly in LOST", async () => {
+    const fetchMock = vi.fn(async (input: string | URL, init?: RequestInit) => {
+      const url = String(input);
 
-          if (url.includes("/opportunities?")) {
-            return response({ items: [], page: 1, limit: 20, total: 0 });
-          }
+      if (url.includes("/opportunities?")) {
+        return response({ items: [], page: 1, limit: 20, total: 0 });
+      }
 
-          if (url.endsWith("/pipelines")) {
-            return response(pipelineResponse());
-          }
+      if (url.endsWith("/pipelines")) {
+        return response(pipelineResponse());
+      }
 
-          if (url.includes("/companies?")) {
-            return response({
-              items: [
-                {
-                  id: companyId,
-                  legalName: "Empresa Exemplo",
-                  tradeName: null,
-                },
-              ],
-              page: 1,
-              limit: 100,
-              total: 1,
-            });
-          }
-
-          if (url.includes("/contacts?")) {
-            return response({ items: [], page: 1, limit: 100, total: 0 });
-          }
-
-          if (url.endsWith("/opportunities") && init?.method === "POST") {
-            return response(opportunityRecord(lostStageId, 1), 201);
-          }
-
-          throw new Error(`Unexpected fetch: ${url}`);
-        }
-      );
-      vi.stubGlobal("fetch", fetchMock);
-
-      render(
-        <OpportunitiesView
-          accessToken={accessToken}
-          ownerUserId={ownerUserId}
-          canWrite
-          canMove
-        />
-      );
-
-      await screen.findByText("Nenhuma oportunidade encontrada.");
-      fireEvent.click(
-        screen.getByRole("button", { name: "Nova oportunidade" })
-      );
-
-      fireEvent.change(screen.getByLabelText("Título"), {
-        target: { value: "Nova perda" },
-      });
-      fireEvent.change(screen.getByLabelText("Cliente"), {
-        target: { value: `company:${companyId}` },
-      });
-      fireEvent.change(screen.getByLabelText("Funil"), {
-        target: { value: pipelineId },
-      });
-      fireEvent.change(screen.getByLabelText("Etapa"), {
-        target: { value: lostStageId },
-      });
-      fireEvent.change(screen.getByLabelText("Valor estimado"), {
-        target: { value: "900.00" },
-      });
-
-      const reason = await screen.findByLabelText("Motivo da perda");
-      fireEvent.change(reason, {
-        target: { value: "Sem aderência comercial" },
-      });
-      fireEvent.click(
-        screen.getByRole("button", { name: "Salvar oportunidade" })
-      );
-
-      await waitFor(() => {
-        const postCall = fetchMock.mock.calls.find(
-          ([input, init]) =>
-            String(input).endsWith("/opportunities") && init?.method === "POST"
-        );
-        expect(postCall).toBeDefined();
-        expect(JSON.parse(String(postCall?.[1]?.body))).toMatchObject({
-          pipelineId,
-          stageId: lostStageId,
-          companyId,
-          ownerUserId,
-          title: "Nova perda",
-          estimatedValue: "900.00",
-          lossReason: "Sem aderência comercial",
+      if (url.includes("/companies?")) {
+        return response({
+          items: [
+            {
+              id: companyId,
+              legalName: "Empresa Exemplo",
+              tradeName: null,
+            },
+          ],
+          page: 1,
+          limit: 100,
+          total: 1,
         });
+      }
+
+      if (url.includes("/contacts?")) {
+        return response({ items: [], page: 1, limit: 100, total: 0 });
+      }
+
+      if (url.endsWith("/opportunities") && init?.method === "POST") {
+        return response(opportunityRecord(lostStageId, 1), 201);
+      }
+
+      throw new Error(`Unexpected fetch: ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <OpportunitiesView
+        accessToken={accessToken}
+        ownerUserId={ownerUserId}
+        canWrite
+        canMove
+      />
+    );
+
+    await screen.findByText("Nenhuma oportunidade encontrada.");
+    fireEvent.click(screen.getByRole("button", { name: "Nova oportunidade" }));
+
+    fireEvent.change(screen.getByLabelText("Título"), {
+      target: { value: "Nova perda" },
+    });
+    fireEvent.change(screen.getByLabelText("Cliente"), {
+      target: { value: `company:${companyId}` },
+    });
+    fireEvent.change(screen.getByLabelText("Funil"), {
+      target: { value: pipelineId },
+    });
+    fireEvent.change(screen.getByLabelText("Etapa"), {
+      target: { value: lostStageId },
+    });
+    fireEvent.change(screen.getByLabelText("Valor estimado"), {
+      target: { value: "900.00" },
+    });
+
+    const reason = await screen.findByLabelText("Motivo da perda");
+    fireEvent.change(reason, {
+      target: { value: "Sem aderência comercial" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Salvar oportunidade" })
+    );
+
+    await waitFor(() => {
+      const postCall = fetchMock.mock.calls.find(
+        ([input, init]) =>
+          String(input).endsWith("/opportunities") && init?.method === "POST"
+      );
+      expect(postCall).toBeDefined();
+      expect(JSON.parse(String(postCall?.[1]?.body))).toMatchObject({
+        pipelineId,
+        stageId: lostStageId,
+        companyId,
+        ownerUserId,
+        title: "Nova perda",
+        estimatedValue: "900.00",
+        lossReason: "Sem aderência comercial",
       });
-    }
-  );
+    });
+  });
 });
