@@ -116,6 +116,58 @@ describe("contact editing", () => {
     });
   });
 
+  it("clears the optional contact job title with null", async () => {
+    const updated = {
+      ...contact,
+      jobTitle: null,
+      version: 2,
+      updatedAt: "2026-10-29T12:12:00.000Z",
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        response({ items: [contact], page: 1, limit: 20, total: 1 })
+      )
+      .mockResolvedValueOnce(
+        response({ items: [], page: 1, limit: 100, total: 0 })
+      )
+      .mockResolvedValueOnce(response(updated));
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<ContactsView accessToken={accessToken} />);
+
+    const card = (await screen.findByText("Ana Silva")).closest("article");
+    expect(card).not.toBeNull();
+
+    fireEvent.click(
+      within(card as HTMLElement).getByRole("button", {
+        name: "Editar contato",
+      })
+    );
+
+    const form = screen.getByRole("form", { name: "Editar contato" });
+    fireEvent.change(within(form).getByLabelText("Cargo"), {
+      target: { value: "" },
+    });
+    fireEvent.click(
+      within(form).getByRole("button", { name: "Salvar alterações" })
+    );
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenNthCalledWith(
+        3,
+        expect.stringContaining(`/contacts/${contactId}`),
+        expect.objectContaining({
+          method: "PATCH",
+          body: JSON.stringify({
+            fullName: "Ana Silva",
+            jobTitle: null,
+          }),
+        })
+      );
+    });
+  });
+
   it("edits an existing channel through PATCH /contacts/:id/channels/:channelId", async () => {
     const updatedChannel = {
       ...contact.channels[0],
