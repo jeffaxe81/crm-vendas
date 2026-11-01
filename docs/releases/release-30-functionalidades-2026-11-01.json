@@ -1,0 +1,157 @@
+{
+  "release": "30-funcionalidades-2026-11-01",
+  "baseSha": "e59c7741c225f5f1f4e6a29e9d5d2361517ed11d",
+  "status": "release-candidate",
+  "functionalities": [
+    {
+      "id": "F01",
+      "name": "Login local com credenciais próprias",
+      "status": "integral"
+    },
+    {
+      "id": "F02",
+      "name": "Sessão com access token e refresh seguro HttpOnly",
+      "status": "integral"
+    },
+    {
+      "id": "F03",
+      "name": "Logout com revogação de sessão",
+      "status": "integral"
+    },
+    {
+      "id": "F04",
+      "name": "Isolamento multiempresa por organização e RLS",
+      "status": "integral"
+    },
+    {
+      "id": "F05",
+      "name": "RBAC com perfis ADMIN, MANAGER, SELLER e VIEWER",
+      "status": "integral"
+    },
+    {
+      "id": "F06",
+      "name": "Auditoria append-only com trilha de alterações",
+      "status": "integral"
+    },
+    {
+      "id": "F07",
+      "name": "CRUD de empresas com soft delete",
+      "status": "integral"
+    },
+    {
+      "id": "F08",
+      "name": "Paginação incremental de empresas",
+      "status": "integral"
+    },
+    {
+      "id": "F09",
+      "name": "Busca e filtros de empresas",
+      "status": "integral"
+    },
+    {
+      "id": "F10",
+      "name": "CRUD de contatos com soft delete",
+      "status": "integral"
+    },
+    {
+      "id": "F11",
+      "name": "Paginação incremental de contatos",
+      "status": "integral"
+    },
+    {
+      "id": "F12",
+      "name": "Criação e edição de canais de contato",
+      "status": "integral"
+    },
+    {
+      "id": "F13",
+      "name": "Controle de canal principal por tipo",
+      "status": "integral"
+    },
+    {
+      "id": "F14",
+      "name": "Vínculo e desvínculo empresa-contato",
+      "status": "integral"
+    },
+    {
+      "id": "F15",
+      "name": "Histórico de relacionamento empresa/contato",
+      "status": "integral"
+    },
+    {
+      "id": "F16",
+      "name": "Tags por organização com vínculo a entidades",
+      "status": "integral"
+    },
+    {
+      "id": "F17",
+      "name": "Campos customizáveis COMPANY e CONTACT",
+      "status": "integral"
+    },
+    {
+      "id": "F18",
+      "name": "Funil comercial padrão com etapas OPEN/WON/LOST",
+      "status": "integral"
+    },
+    {
+      "id": "F19",
+      "name": "CRUD tenant-aware de oportunidades",
+      "status": "integral"
+    },
+    {
+      "id": "F20",
+      "name": "Movimentação controlada de oportunidades entre etapas",
+      "status": "integral"
+    },
+    {
+      "id": "F21",
+      "name": "Bloqueio de reabertura de oportunidades WON/LOST",
+      "status": "integral"
+    },
+    {
+      "id": "F22",
+      "name": "CRUD e ciclo de vida de atividades",
+      "status": "integral"
+    },
+    {
+      "id": "F23",
+      "name": "Vínculo de atividades a oportunidades",
+      "status": "integral"
+    },
+    {
+      "id": "F24",
+      "name": "Catálogo de produtos",
+      "status": "integral"
+    },
+    {
+      "id": "F25",
+      "name": "Itens de oportunidade com recálculo de valor",
+      "status": "integral"
+    },
+    {
+      "id": "F26",
+      "name": "Importação CSV de empresas com preview/confirm",
+      "status": "integral"
+    },
+    {
+      "id": "F27",
+      "name": "Importação CSV de contatos com preview/confirm",
+      "status": "integral"
+    },
+    {
+      "id": "F28",
+      "name": "Importação CSV de produtos com preview/confirm",
+      "status": "integral"
+    },
+    {
+      "id": "F29",
+      "name": "Relatório de vendas por produto com exportação CSV",
+      "status": "integral"
+    },
+    {
+      "id": "F30",
+      "name": "Relatórios de funil e atividades por responsável",
+      "status": "integral"
+    }
+  ]
+}
