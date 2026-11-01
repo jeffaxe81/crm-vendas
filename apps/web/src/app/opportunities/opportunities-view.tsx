@@ -24,6 +24,7 @@ type OpportunityRecord = {
   estimatedValue: string;
   expectedCloseAt: string | null;
   notes: string | null;
+  lossReason: string | null;
   version: number;
   createdBy: string;
   updatedBy: string;
@@ -83,6 +84,7 @@ type OpportunityFormState = {
   estimatedValue: string;
   expectedCloseAt: string;
   notes: string;
+  lossReason: string;
 };
 
 const emptyForm: OpportunityFormState = {
@@ -93,6 +95,7 @@ const emptyForm: OpportunityFormState = {
   estimatedValue: "",
   expectedCloseAt: "",
   notes: "",
+  lossReason: "",
 };
 
 type OpportunityEditFormState = {
@@ -162,6 +165,10 @@ export function OpportunitiesView({
   const [movingOpportunityId, setMovingOpportunityId] = useState<string | null>(
     null
   );
+  const [lossReasonOpportunityId, setLossReasonOpportunityId] = useState<
+    string | null
+  >(null);
+  const [lossReasonDraft, setLossReasonDraft] = useState("");
   const [stageSelections, setStageSelections] = useState<
     Record<string, string>
   >({});
@@ -191,6 +198,9 @@ export function OpportunitiesView({
 
   const selectedPipeline = pipelines.find(
     pipeline => pipeline.id === form.pipelineId
+  );
+  const selectedCreateStage = selectedPipeline?.stages.find(
+    stage => stage.id === form.stageId
   );
   const resolvedBoardPipelineId =
     boardPipelineId || opportunities[0]?.pipelineId || pipelines[0]?.id || "";
@@ -382,6 +392,7 @@ export function OpportunitiesView({
 
     const title = form.title.trim();
     const estimatedValue = form.estimatedValue.trim();
+    const lossReason = form.lossReason.trim();
     const [customerType, customerId] = form.customer.split(":", 2);
 
     if (
@@ -392,6 +403,11 @@ export function OpportunitiesView({
       !estimatedValue
     ) {
       setError(t("Preencha os campos obrigatórios da oportunidade."));
+      return;
+    }
+
+    if (selectedCreateStage?.kind === "LOST" && !lossReason) {
+      setError(t("Informe o motivo da perda."));
       return;
     }
 
@@ -408,6 +424,7 @@ export function OpportunitiesView({
         ? { expectedCloseAt: new Date(form.expectedCloseAt).toISOString() }
         : {}),
       ...(form.notes.trim() ? { notes: form.notes.trim() } : {}),
+      ...(selectedCreateStage?.kind === "LOST" ? { lossReason } : {}),
     };
 
     setError("");
@@ -433,7 +450,10 @@ export function OpportunitiesView({
     }
   }
 
-  async function moveOpportunity(opportunity: OpportunityRecord) {
+  async function performMove(
+    opportunity: OpportunityRecord,
+    lossReason?: string
+  ) {
     if (!canMove || movingOpportunityId) {
       return;
     }
@@ -452,9 +472,20 @@ export function OpportunitiesView({
       return;
     }
 
+    const targetStage = pipeline?.stages.find(stage => stage.id === stageId);
+    const normalizedLossReason = lossReason?.trim();
+
+    if (targetStage?.kind === "LOST" && !normalizedLossReason) {
+      setError(t("Informe o motivo da perda."));
+      return;
+    }
+
     const payload: OpportunityMoveInput = {
       stageId,
       version: opportunity.version,
+      ...(targetStage?.kind === "LOST"
+        ? { lossReason: normalizedLossReason }
+        : {}),
     };
 
     setError("");
@@ -474,6 +505,8 @@ export function OpportunitiesView({
         delete next[opportunity.id];
         return next;
       });
+      setLossReasonOpportunityId(null);
+      setLossReasonDraft("");
       setRefreshVersion(version => version + 1);
     } catch (cause) {
       setError(
@@ -484,6 +517,45 @@ export function OpportunitiesView({
     } finally {
       setMovingOpportunityId(null);
     }
+  }
+
+  async function moveOpportunity(opportunity: OpportunityRecord) {
+    if (!canMove || movingOpportunityId) {
+      return;
+    }
+
+    const stageId = stageSelections[opportunity.id] ?? opportunity.stageId;
+    const pipeline = pipelines.find(item => item.id === opportunity.pipelineId);
+    const targetStage = pipeline?.stages.find(stage => stage.id === stageId);
+
+    if (targetStage?.kind === "LOST") {
+      setError("");
+      setLossReasonOpportunityId(opportunity.id);
+      setLossReasonDraft("");
+      return;
+    }
+
+    await performMove(opportunity);
+  }
+
+  async function confirmLoss(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!lossReasonOpportunityId) {
+      return;
+    }
+
+    const opportunity = opportunities.find(
+      item => item.id === lossReasonOpportunityId
+    );
+    const lossReason = lossReasonDraft.trim();
+
+    if (!opportunity || !lossReason) {
+      setError(t("Informe o motivo da perda."));
+      return;
+    }
+
+    await performMove(opportunity, lossReason);
   }
 
   async function loadCustomers() {
@@ -843,6 +915,23 @@ export function OpportunitiesView({
               ))}
             </select>
           </label>
+          {selectedCreateStage?.kind === "LOST" ? (
+            <label>
+              <span>{t("Motivo da perda")}</span>
+              <textarea
+                name="lossReason"
+                value={form.lossReason}
+                maxLength={500}
+                onChange={event =>
+                  setForm(current => ({
+                    ...current,
+                    lossReason: event.target.value,
+                  }))
+                }
+                required
+              />
+            </label>
+          ) : null}
           <label>
             <span>{t("Valor estimado")}</span>
             <input
@@ -1005,6 +1094,38 @@ export function OpportunitiesView({
             {t("oportunidades carregadas")}
           </p>
         </div>
+      ) : null}
+
+      {lossReasonOpportunityId ? (
+        <form
+          className="opportunities-view__create"
+          aria-label={t("Confirmar perda")}
+          onSubmit={event => void confirmLoss(event)}
+        >
+          <label>
+            <span>{t("Motivo da perda")}</span>
+            <textarea
+              value={lossReasonDraft}
+              maxLength={500}
+              onChange={event => setLossReasonDraft(event.target.value)}
+              required
+            />
+          </label>
+          <div className="opportunity-card__actions">
+            <button className="button" type="submit">
+              {t("Confirmar perda")}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLossReasonOpportunityId(null);
+                setLossReasonDraft("");
+              }}
+            >
+              {t("Cancelar")}
+            </button>
+          </div>
+        </form>
       ) : null}
 
       {error ? (
