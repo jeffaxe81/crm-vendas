@@ -448,7 +448,7 @@ describe("Cycle 3.6.2 opportunities API", () => {
       tenant =>
         tenant.opportunity.findUniqueOrThrow({
           where: { id: opportunityId },
-        })
+        }),
     );
     expect((persisted as unknown as { lossReason?: string }).lossReason).toBe(
       "Cliente escolheu concorrente"
