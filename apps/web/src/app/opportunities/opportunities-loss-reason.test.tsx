@@ -226,8 +226,8 @@ describe("C3 loss reason web completion", () => {
     fireEvent.change(reason, {
       target: { value: "Sem aderência comercial" },
     });
-    fireEvent.click(
-      screen.getByRole("button", { name: "Salvar oportunidade" })
+    fireEvent.submit(
+      screen.getByRole("form", { name: "Nova oportunidade" })
     );
 
     await waitFor(() => {
