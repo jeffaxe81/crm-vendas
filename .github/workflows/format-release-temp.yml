@@ -1,0 +1,31 @@
+name: Format release manifest test once
+on:
+  workflow_dispatch:
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: release/30-functionalidades-20261101
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.3.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier --write tests/release-30-functionalities.test.mjs
+      - run: |
+          if git diff --quiet; then
+            echo "No formatting changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/release-30-functionalities.test.mjs
+          git commit -m "style(release): apply Prettier canonical output"
+          git push origin HEAD:release/30-functionalidades-20261101
