@@ -161,42 +161,44 @@ describe("C3 loss reason web completion", () => {
   it(
     "requires and sends a loss reason when creating directly in LOST",
     async () => {
-      const fetchMock = vi.fn(async (input: string | URL, init?: RequestInit) => {
-        const url = String(input);
+      const fetchMock = vi.fn(
+        async (input: string | URL, init?: RequestInit) => {
+          const url = String(input);
 
-        if (url.includes("/opportunities?")) {
-          return response({ items: [], page: 1, limit: 20, total: 0 });
+          if (url.includes("/opportunities?")) {
+            return response({ items: [], page: 1, limit: 20, total: 0 });
+          }
+
+          if (url.endsWith("/pipelines")) {
+            return response(pipelineResponse());
+          }
+
+          if (url.includes("/companies?")) {
+            return response({
+              items: [
+                {
+                  id: companyId,
+                  legalName: "Empresa Exemplo",
+                  tradeName: null,
+                },
+              ],
+              page: 1,
+              limit: 100,
+              total: 1,
+            });
+          }
+
+          if (url.includes("/contacts?")) {
+            return response({ items: [], page: 1, limit: 100, total: 0 });
+          }
+
+          if (url.endsWith("/opportunities") && init?.method === "POST") {
+            return response(opportunityRecord(lostStageId, 1), 201);
+          }
+
+          throw new Error(`Unexpected fetch: ${url}`);
         }
-
-        if (url.endsWith("/pipelines")) {
-          return response(pipelineResponse());
-        }
-
-        if (url.includes("/companies?")) {
-          return response({
-            items: [
-              {
-                id: companyId,
-                legalName: "Empresa Exemplo",
-                tradeName: null,
-              },
-            ],
-            page: 1,
-            limit: 100,
-            total: 1,
-          });
-        }
-
-        if (url.includes("/contacts?")) {
-          return response({ items: [], page: 1, limit: 100, total: 0 });
-        }
-
-        if (url.endsWith("/opportunities") && init?.method === "POST") {
-          return response(opportunityRecord(lostStageId, 1), 201);
-        }
-
-        throw new Error(`Unexpected fetch: ${url}`);
-      });
+      );
       vi.stubGlobal("fetch", fetchMock);
 
       render(
@@ -209,7 +211,9 @@ describe("C3 loss reason web completion", () => {
       );
 
       await screen.findByText("Nenhuma oportunidade encontrada.");
-      fireEvent.click(screen.getByRole("button", { name: "Nova oportunidade" }));
+      fireEvent.click(
+        screen.getByRole("button", { name: "Nova oportunidade" })
+      );
 
       fireEvent.change(screen.getByLabelText("Título"), {
         target: { value: "Nova perda" },
@@ -228,7 +232,9 @@ describe("C3 loss reason web completion", () => {
       });
 
       const reason = await screen.findByLabelText("Motivo da perda");
-      fireEvent.change(reason, { target: { value: "Sem aderência comercial" } });
+      fireEvent.change(reason, {
+        target: { value: "Sem aderência comercial" },
+      });
       fireEvent.click(
         screen.getByRole("button", { name: "Salvar oportunidade" })
       );
