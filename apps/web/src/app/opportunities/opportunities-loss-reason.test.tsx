@@ -138,7 +138,9 @@ describe("C3 loss reason web completion", () => {
     ).toBe(false);
 
     const reason = await screen.findByLabelText("Motivo da perda");
-    fireEvent.change(reason, { target: { value: "  Cliente sem orçamento  " } });
+    fireEvent.change(reason, {
+      target: { value: "  Cliente sem orçamento  " },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Confirmar perda" }));
 
     await waitFor(() => {
@@ -156,7 +158,9 @@ describe("C3 loss reason web completion", () => {
     });
   });
 
-  it("requires and sends a loss reason when creating directly in LOST", async () => {
+  it(
+    "requires and sends a loss reason when creating directly in LOST",
+    async () => {
     const fetchMock = vi.fn(async (input: string | URL, init?: RequestInit) => {
       const url = String(input);
 
@@ -245,5 +249,6 @@ describe("C3 loss reason web completion", () => {
         lossReason: "Sem aderência comercial",
       });
     });
-  });
+    }
+  );
 });
