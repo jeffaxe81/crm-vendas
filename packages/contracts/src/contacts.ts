@@ -21,11 +21,13 @@ export const ContactCreateInputSchema = z.object({
   notes: z.string().trim().max(10_000).optional(),
 });
 
-export const ContactUpdateInputSchema =
-  ContactCreateInputSchema.partial().refine(
-    value => Object.values(value).some(item => item !== undefined),
-    { message: "Informe ao menos uma alteração." }
-  );
+export const ContactUpdateInputSchema = ContactCreateInputSchema.partial()
+  .extend({
+    jobTitle: z.string().trim().min(1).max(160).nullable().optional(),
+  })
+  .refine(value => Object.values(value).some(item => item !== undefined), {
+    message: "Informe ao menos uma alteração.",
+  });
 
 export type ContactChannelType = z.infer<typeof ContactChannelTypeSchema>;
 export type ContactChannelInput = z.infer<typeof ContactChannelInputSchema>;

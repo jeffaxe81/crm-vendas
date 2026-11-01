@@ -21,6 +21,14 @@ describe("Cycle 2 CRM core contracts", () => {
     });
   });
 
+  it("allows clearing an optional contact job title", () => {
+    const schema = requireSchema("ContactUpdateInputSchema");
+
+    expect(schema.parse({ jobTitle: null })).toMatchObject({
+      jobTitle: null,
+    });
+  });
+
   it("caps pagination at 100 items", () => {
     const schema = requireSchema("PaginationQuerySchema");
 
