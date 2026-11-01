@@ -443,12 +443,10 @@ describe("Cycle 3.6.2 opportunities API", () => {
       version: 2,
     });
 
-    const persisted = await prisma.withTenant(
-      fixture.organization.id,
-      tenant =>
-        tenant.opportunity.findUniqueOrThrow({
-          where: { id: opportunityId },
-        }),
+    const persisted = await prisma.withTenant(fixture.organization.id, tenant =>
+      tenant.opportunity.findUniqueOrThrow({
+        where: { id: opportunityId },
+      })
     );
     expect((persisted as unknown as { lossReason?: string }).lossReason).toBe(
       "Cliente escolheu concorrente"
