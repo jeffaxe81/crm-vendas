@@ -86,7 +86,12 @@ describe("C3 loss reason web completion", () => {
 
       if (url.includes("/opportunities?")) {
         return response({
-          items: [opportunityRecord(moved ? lostStageId : openStageId, moved ? 4 : 3)],
+          items: [
+            opportunityRecord(
+              moved ? lostStageId : openStageId,
+              moved ? 4 : 3
+            ),
+          ],
           page: 1,
           limit: 20,
           total: 1,
@@ -124,11 +129,13 @@ describe("C3 loss reason web completion", () => {
     fireEvent.change(stageSelect, { target: { value: lostStageId } });
     fireEvent.click(screen.getByRole("button", { name: "Mover etapa" }));
 
-    expect(fetchMock.mock.calls.some(
-      ([input, init]) =>
-        String(input).endsWith(`/opportunities/${opportunityId}/stage`) &&
-        init?.method === "PATCH"
-    )).toBe(false);
+    expect(
+      fetchMock.mock.calls.some(
+        ([input, init]) =>
+          String(input).endsWith(`/opportunities/${opportunityId}/stage`) &&
+          init?.method === "PATCH"
+      )
+    ).toBe(false);
 
     const reason = await screen.findByLabelText("Motivo da perda");
     fireEvent.change(reason, { target: { value: "  Cliente sem orçamento  " } });
