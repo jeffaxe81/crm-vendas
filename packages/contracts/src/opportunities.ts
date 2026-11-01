@@ -27,6 +27,7 @@ export const OpportunityCreateInputSchema = z
     estimatedValue: OpportunityDecimalSchema,
     expectedCloseAt: OpportunityDateTimeSchema.optional(),
     notes: z.string().trim().max(10_000).optional(),
+    lossReason: z.string().trim().min(1).max(500).optional(),
   })
   .refine(
     value =>
@@ -57,10 +58,13 @@ export const OpportunityUpdateInputSchema = z
     }
   );
 
-export const OpportunityMoveInputSchema = z.object({
-  stageId: z.string().uuid(),
-  version: z.number().int().min(1),
-});
+export const OpportunityMoveInputSchema = z
+  .object({
+    stageId: z.string().uuid(),
+    version: z.number().int().min(1),
+    lossReason: z.string().trim().min(1).max(500).optional(),
+  })
+  .strict();
 
 export const OpportunityListQuerySchema = PaginationQuerySchema.extend({
   pipelineId: z.string().uuid().optional(),
