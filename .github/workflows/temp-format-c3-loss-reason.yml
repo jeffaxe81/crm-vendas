@@ -1,0 +1,37 @@
+name: Temporary format C3 loss reason test
+
+on:
+  push:
+    branches:
+      - feat/c3-loss-reason-completion-20261101
+    paths:
+      - .github/workflows/temp-format-c3-loss-reason.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feat/c3-loss-reason-completion-20261101
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - run: corepack enable
+      - run: corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier --write apps/web/src/app/opportunities/opportunities-loss-reason.test.tsx
+      - name: Commit formatted test
+        run: |
+          if git diff --quiet; then
+            echo "No formatting changes required"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/app/opportunities/opportunities-loss-reason.test.tsx
+          git commit -m "style(web): apply canonical Prettier to loss reason test"
+          git push origin HEAD:feat/c3-loss-reason-completion-20261101
