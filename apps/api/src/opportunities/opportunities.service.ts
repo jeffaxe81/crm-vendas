@@ -588,7 +588,8 @@ export class OpportunitiesService {
     if (inputLossReason !== undefined) {
       throw new BadRequestException({
         code: "OPPORTUNITY_LOSS_REASON_ONLY_FOR_LOST",
-        message: "O motivo de perda só pode ser informado em uma etapa perdida.",
+        message:
+          "O motivo de perda só pode ser informado em uma etapa perdida.",
       });
     }
 
