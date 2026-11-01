@@ -745,6 +745,7 @@ model Opportunity {
   estimatedValue  Decimal                @map("estimated_value") @db.Decimal(19, 2)
   expectedCloseAt DateTime?              @map("expected_close_at") @db.Timestamptz(6)
   notes           String?
+  lossReason      String?                @map("loss_reason") @db.VarChar(500)
   createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   createdBy       String                 @map("created_by") @db.Uuid
