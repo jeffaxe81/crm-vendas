@@ -398,7 +398,7 @@ export function ContactsView({
           method: "PATCH",
           body: {
             fullName,
-            jobTitle: editContactForm.jobTitle.trim(),
+            jobTitle: editContactForm.jobTitle.trim() || null,
           },
         }
       );
