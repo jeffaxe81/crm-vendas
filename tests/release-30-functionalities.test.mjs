@@ -20,5 +20,11 @@ test("release manifest freezes exactly 30 integral functionalities", async () =>
   assert.equal(new Set(ids).size, 30);
   assert.equal(new Set(names).size, 30);
   assert.ok(items.every(item => item.status === "integral"));
-  assert.deepEqual(ids, Array.from({ length: 30 }, (_, i) => `F${String(i + 1).padStart(2, "0")}`));
+  assert.deepEqual(
+    ids,
+    Array.from(
+      { length: 30 },
+      (_, i) => `F${String(i + 1).padStart(2, "0")}`
+    )
+  );
 });
