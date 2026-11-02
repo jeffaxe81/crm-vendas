@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased] - Ciclo 4 / ACT-003 — Follow-up comercial
+
+- `FOLLOW_UP` adicionado aos contratos e ao enum PostgreSQL de atividades com migration aditiva.
+- Atividades: criação, visualização e filtro de follow-ups, preservando a regra de atraso existente.
+- Agenda: filtro server-side e rótulo de follow-up, inclusive em pendências vencidas.
+- Exportação ICS, traduções PT-BR/EN/ES e testes de integração, Web e regressão.
+- Ver `docs/checkpoints/cycle-4-current.md`; sem deploy em produção.
+
 ## [Unreleased] - Ciclo 12 (P0) — Deploy HTTPS reproduzível e correção do 502
 
 - compose: serviço `db-bootstrap` sincroniza a senha e os GRANTs do role `axes_app` a cada `up` (antes só na criação do volume — causa do 502 de 2026-10-09);
