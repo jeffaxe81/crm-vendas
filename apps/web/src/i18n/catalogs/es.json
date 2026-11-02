@@ -1419,5 +1419,8 @@
   "Nenhum backup corresponde ao filtro.": "Ninguna copia de seguridad coincide con el filtro.",
   "Informe o motivo da perda.": "Informe el motivo de la pérdida.",
   "Motivo da perda": "Motivo de la pérdida",
-  "Confirmar perda": "Confirmar pérdida"
+  "Confirmar perda": "Confirmar pérdida",
+  "Follow-up": "Seguimiento",
+  "Filtrar tipo": "Filtrar tipo",
+  "Todos os tipos": "Todos los tipos"
 }
