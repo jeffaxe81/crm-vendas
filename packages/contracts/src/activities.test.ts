@@ -102,7 +102,6 @@ describe("C4.1.1 activity agenda window", () => {
   });
 });
 
-
 describe("C4 ACT-003 explicit follow-up contracts", () => {
   it("accepts FOLLOW_UP in create, update and list filters", () => {
     const createSchema = requireSchema("ActivityCreateInputSchema");

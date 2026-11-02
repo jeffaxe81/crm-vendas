@@ -32,6 +32,7 @@
 ### Task 1: Contratos e persistência
 
 **Files:**
+
 - Modify: `packages/contracts/src/activities.ts`
 - Modify: `packages/contracts/src/activities.test.ts` ou teste equivalente existente
 - Modify: `apps/api/prisma/schema.prisma`
@@ -39,6 +40,7 @@
 - Test: `apps/api/src/activities/activities.integration.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `ActivityTypeSchema`, CRUD atual de Activities.
 - Produces: valor canônico `FOLLOW_UP`.
 
@@ -53,12 +55,14 @@
 ### Task 2: Atividades e Agenda Web
 
 **Files:**
+
 - Modify: `apps/web/src/app/activities/activities-view.tsx`
 - Modify: `apps/web/src/app/activities/activities-view.test.tsx`
 - Modify: `apps/web/src/app/agenda/agenda-view.tsx`
 - Test: testes existentes de Agenda ou novo teste focado.
 
 **Interfaces:**
+
 - Consumes: API `/activities` com `type=FOLLOW_UP`.
 - Produces: criação, filtro e exibição de Follow-up.
 
@@ -72,6 +76,7 @@
 ### Task 3: Fechamento do Cycle 4
 
 **Files:**
+
 - Modify: `README.md`
 - Modify: `CHANGELOG.md`
 - Create: `docs/checkpoints/cycle-4-current.md`
