@@ -49,7 +49,7 @@ describe("C4 ACT-003 follow-up na agenda", () => {
     expect(
       await screen.findByText("Retornar proposta vencida")
     ).toBeInTheDocument();
-    expect(screen.getByText("Follow-up")).toBeInTheDocument();
+    expect(screen.getByText("Follow-up", { selector: "span" })).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Tipo"), {
       target: { value: "FOLLOW_UP" },
     });
