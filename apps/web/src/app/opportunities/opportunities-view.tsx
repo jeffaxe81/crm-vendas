@@ -1569,7 +1569,7 @@ export function OpportunitiesView({
                                 >
                                   {stageStatusLabel(stageKind)}
                                 </span>
-                                {stageKind === "LOST" && opportunity.lossReason ? (
+                                {opportunity.lossReason ? (
                                   <p className="opportunity-card__terminal-note">
                                     {t("Motivo da perda")}: {opportunity.lossReason}
                                   </p>
