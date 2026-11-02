@@ -1419,5 +1419,8 @@
   "Nenhum backup corresponde ao filtro.": "No backups match the filter.",
   "Informe o motivo da perda.": "Enter the loss reason.",
   "Motivo da perda": "Loss reason",
-  "Confirmar perda": "Confirm loss"
+  "Confirmar perda": "Confirm loss",
+  "Follow-up": "Follow-up",
+  "Filtrar tipo": "Filter type",
+  "Todos os tipos": "All types"
 }
