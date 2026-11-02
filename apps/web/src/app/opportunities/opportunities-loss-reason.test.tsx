@@ -206,18 +206,32 @@ describe("C3 loss reason web completion", () => {
     await screen.findByText("Nenhuma oportunidade encontrada.");
     fireEvent.click(screen.getByRole("button", { name: "Nova oportunidade" }));
 
+    await screen.findByRole("option", { name: "Empresa Exemplo" });
+    await screen.findByRole("option", { name: "Funil de Vendas" });
+
     fireEvent.change(screen.getByLabelText("Título"), {
       target: { value: "Nova perda" },
     });
-    fireEvent.change(screen.getByLabelText("Cliente"), {
+
+    const customerSelect = screen.getByLabelText("Cliente");
+    fireEvent.change(customerSelect, {
       target: { value: `company:${companyId}` },
     });
-    fireEvent.change(screen.getByLabelText("Funil"), {
+    expect(customerSelect).toHaveValue(`company:${companyId}`);
+
+    const pipelineSelect = screen.getByLabelText("Funil");
+    fireEvent.change(pipelineSelect, {
       target: { value: pipelineId },
     });
-    fireEvent.change(screen.getByLabelText("Etapa"), {
+    expect(pipelineSelect).toHaveValue(pipelineId);
+
+    await screen.findByRole("option", { name: "Perdida" });
+    const stageSelect = screen.getByLabelText("Etapa");
+    fireEvent.change(stageSelect, {
       target: { value: lostStageId },
     });
+    expect(stageSelect).toHaveValue(lostStageId);
+
     fireEvent.change(screen.getByLabelText("Valor estimado"), {
       target: { value: "900.00" },
     });
