@@ -64,6 +64,7 @@ enum PipelineStageKind {
 enum ActivityType {
   TASK
   APPOINTMENT
+  FOLLOW_UP
 
   @@map("activity_type")
 }
