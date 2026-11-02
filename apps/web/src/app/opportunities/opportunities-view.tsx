@@ -1262,6 +1262,11 @@ export function OpportunitiesView({
                       {currentStage?.name}.
                     </p>
                   ) : null}
+                  {currentStageKind === "LOST" && opportunity.lossReason ? (
+                    <p className="opportunity-card__terminal-note">
+                      {t("Motivo da perda")}: {opportunity.lossReason}
+                    </p>
+                  ) : null}
 
                   <div className="opportunity-card__actions">
                     <button
@@ -1564,6 +1569,11 @@ export function OpportunitiesView({
                                 >
                                   {stageStatusLabel(stageKind)}
                                 </span>
+                                {stageKind === "LOST" && opportunity.lossReason ? (
+                                  <p className="opportunity-card__terminal-note">
+                                    {t("Motivo da perda")}: {opportunity.lossReason}
+                                  </p>
+                                ) : null}
 
                                 {canMove && stageKind === "OPEN" ? (
                                   <div className="opportunity-card__stage">
