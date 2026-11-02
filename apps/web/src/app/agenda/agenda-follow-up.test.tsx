@@ -15,7 +15,7 @@ afterEach(() => {
 });
 
 describe("C4 ACT-003 follow-up na agenda", () => {
-  it("exibe o tipo e consulta follow-ups atrasados com o filtro canônico", async () => {
+  it("filtra follow-ups atrasados na agenda", async () => {
     const fetchMock = vi.fn(async (_input: string | URL) => {
       return {
         ok: true,
@@ -49,7 +49,9 @@ describe("C4 ACT-003 follow-up na agenda", () => {
     expect(
       await screen.findByText("Retornar proposta vencida")
     ).toBeInTheDocument();
-    expect(screen.getByText("Follow-up", { selector: "span" })).toBeInTheDocument();
+    expect(
+      screen.getByText("Follow-up", { selector: "span" })
+    ).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Tipo"), {
       target: { value: "FOLLOW_UP" },
     });
