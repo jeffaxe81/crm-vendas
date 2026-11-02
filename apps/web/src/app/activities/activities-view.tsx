@@ -578,7 +578,9 @@ export function ActivitiesView({
         <button
           type="button"
           disabled={
-            typeFilter === "all" && priorityFilter === "all" && dueFilter === "all"
+            typeFilter === "all" &&
+            priorityFilter === "all" &&
+            dueFilter === "all"
           }
           onClick={() => {
             setTypeFilter("all");
