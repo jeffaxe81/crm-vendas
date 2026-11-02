@@ -504,7 +504,14 @@ describe("webhook transactional outbox and adversarial PostgreSQL leases", () =>
       estimatedValue: "42.00",
     };
     await opportunities.create({ ...input, stageId: stages[1]!.id }, context());
-    await opportunities.create({ ...input, stageId: stages[2]!.id }, context());
+    await opportunities.create(
+      {
+        ...input,
+        stageId: stages[2]!.id,
+        lossReason: "Cliente encerrou a negociação",
+      },
+      context()
+    );
     const open = await opportunities.create(
       { ...input, stageId: stages[0]!.id },
       context()
@@ -517,7 +524,11 @@ describe("webhook transactional outbox and adversarial PostgreSQL leases", () =>
       ),
       opportunities.move(
         open.id,
-        { version: 1, stageId: stages[2]!.id },
+        {
+          version: 1,
+          stageId: stages[2]!.id,
+          lossReason: "Cliente encerrou a negociação",
+        },
         context()
       ),
     ]);

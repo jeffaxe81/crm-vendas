@@ -198,6 +198,7 @@ describe("domain event boundaries", () => {
           ownerUserId: "actor",
           title: "private title",
           estimatedValue: "0.00",
+          ...(kind === "LOST" ? { lossReason: "Proposta recusada" } : {}),
         },
         context
       );
@@ -216,7 +217,11 @@ describe("domain event boundaries", () => {
       const f = domainFixture(kind);
       await f.opportunities.move(
         "entity",
-        { stageId: "target", version: 1 },
+        {
+          stageId: "target",
+          version: 1,
+          ...(kind === "LOST" ? { lossReason: "Proposta recusada" } : {}),
+        },
         context
       );
       expect(f.dispatches).toHaveLength(1);

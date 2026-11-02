@@ -36,6 +36,7 @@ type OpportunityRecord = {
   estimatedValue: { toFixed(digits?: number): string };
   expectedCloseAt: Date | null;
   notes: string | null;
+  lossReason: string | null;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
@@ -131,10 +132,14 @@ export class OpportunitiesService {
     const opportunity = await this.prisma.withTenant(
       context.organizationId,
       async tenant => {
-        await this.validateCreateReferences(
+        const targetStageKind = await this.validateCreateReferences(
           tenant,
           input,
           context.organizationId
+        );
+        const lossReason = this.validateLossReason(
+          targetStageKind,
+          input.lossReason
         );
 
         const created = await tenant.opportunity.create({
@@ -151,19 +156,18 @@ export class OpportunitiesService {
               ? new Date(input.expectedCloseAt)
               : null,
             notes: input.notes ?? null,
+            lossReason,
             createdBy: context.actorUserId,
             updatedBy: context.actorUserId,
           },
         });
-        const stage = await tenant.pipelineStage.findFirst({
-          where: { id: input.stageId, organizationId: context.organizationId },
-          select: { kind: true },
-        });
-        if (stage?.kind === "WON" || stage?.kind === "LOST") {
+        if (targetStageKind === "WON" || targetStageKind === "LOST") {
           await enqueueWebhookEvent(tenant, {
             ...context,
             eventType:
-              stage.kind === "WON" ? "opportunity.won" : "opportunity.lost",
+              targetStageKind === "WON"
+                ? "opportunity.won"
+                : "opportunity.lost",
             entityId: created.id,
             entityVersion: created.version,
             occurredAt: created.createdAt,
@@ -356,6 +360,11 @@ export class OpportunitiesService {
           });
         }
 
+        const lossReason = this.validateLossReason(
+          targetStage.kind,
+          input.lossReason
+        );
+
         const result = await tenant.opportunity.updateMany({
           where: {
             id,
@@ -365,6 +374,7 @@ export class OpportunitiesService {
           },
           data: {
             stageId: targetStage.id,
+            lossReason,
             updatedBy: context.actorUserId,
             version: { increment: 1 },
           },
@@ -499,7 +509,7 @@ export class OpportunitiesService {
     tenant: Prisma.TransactionClient,
     input: OpportunityCreateInput,
     organizationId: string
-  ): Promise<void> {
+  ): Promise<"OPEN" | "WON" | "LOST"> {
     const [pipeline, stage, membership] = await Promise.all([
       tenant.pipeline.findFirst({
         where: { id: input.pipelineId, organizationId, isActive: true },
@@ -512,7 +522,7 @@ export class OpportunitiesService {
           pipelineId: input.pipelineId,
           isActive: true,
         },
-        select: { id: true },
+        select: { id: true, kind: true },
       }),
       tenant.organizationMembership.findFirst({
         where: {
@@ -555,6 +565,35 @@ export class OpportunitiesService {
         this.referenceNotFound();
       }
     }
+
+    return stage.kind;
+  }
+
+  private validateLossReason(
+    stageKind: "OPEN" | "WON" | "LOST",
+    inputLossReason?: string
+  ): string | null {
+    const lossReason = inputLossReason?.trim();
+
+    if (stageKind === "LOST") {
+      if (!lossReason) {
+        throw new BadRequestException({
+          code: "OPPORTUNITY_LOSS_REASON_REQUIRED",
+          message: "Informe o motivo da perda.",
+        });
+      }
+      return lossReason;
+    }
+
+    if (inputLossReason !== undefined) {
+      throw new BadRequestException({
+        code: "OPPORTUNITY_LOSS_REASON_ONLY_FOR_LOST",
+        message:
+          "O motivo de perda só pode ser informado em uma etapa perdida.",
+      });
+    }
+
+    return null;
   }
 
   private async validateMutableReferences(
@@ -635,6 +674,7 @@ export class OpportunitiesService {
       estimatedValue: opportunity.estimatedValue.toFixed(2),
       expectedCloseAt: opportunity.expectedCloseAt?.toISOString() ?? null,
       notes: opportunity.notes,
+      lossReason: opportunity.lossReason,
       version: opportunity.version,
     };
   }

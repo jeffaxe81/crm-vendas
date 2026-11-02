@@ -89,6 +89,7 @@ function backup(): SnapshotData {
       estimatedValue: "9007199254740993.27",
       expectedCloseAt: null,
       notes: null,
+      lossReason: null,
       ...audit,
     },
   ];

@@ -154,9 +154,10 @@ describe("Cycle 3.6.2 opportunities API", () => {
     const stage = stages[0];
     const secondStage = stages[1];
     const wonStage = stages.find(item => item.kind === "WON");
+    const lostStage = stages.find(item => item.kind === "LOST");
 
-    if (!stage || !secondStage || !wonStage) {
-      throw new Error("Expected default OPEN and WON pipeline stages.");
+    if (!stage || !secondStage || !wonStage || !lostStage) {
+      throw new Error("Expected default OPEN, WON and LOST pipeline stages.");
     }
 
     return {
@@ -169,6 +170,7 @@ describe("Cycle 3.6.2 opportunities API", () => {
       stageId: stage.id,
       secondStageId: secondStage.id,
       wonStageId: wonStage.id,
+      lostStageId: lostStage.id,
     };
   }
 
@@ -402,6 +404,71 @@ describe("Cycle 3.6.2 opportunities API", () => {
       .expect(409);
 
     expect(reopened.body.code).toBe("OPPORTUNITY_ALREADY_CLOSED");
+  });
+
+  it("requires a loss reason when moving an opportunity to LOST", async () => {
+    const fixture = await createFixture("lost-reason-required");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    const response = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}/stage`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({ stageId: fixture.lostStageId, version: 1 })
+      .expect(400);
+
+    expect(response.body.code).toBe("OPPORTUNITY_LOSS_REASON_REQUIRED");
+  });
+
+  it("persists and exposes the reason when an opportunity is lost", async () => {
+    const fixture = await createFixture("lost-reason-persisted");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    const lost = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}/stage`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .set("x-request-id", "c3-loss-reason")
+      .send({
+        stageId: fixture.lostStageId,
+        version: 1,
+        lossReason: "Cliente escolheu concorrente",
+      })
+      .expect(200);
+
+    expect(lost.body).toMatchObject({
+      id: opportunityId,
+      stageId: fixture.lostStageId,
+      lossReason: "Cliente escolheu concorrente",
+      version: 2,
+    });
+
+    const persisted = await prisma.withTenant(fixture.organization.id, tenant =>
+      tenant.opportunity.findUniqueOrThrow({
+        where: { id: opportunityId },
+      })
+    );
+    expect((persisted as unknown as { lossReason?: string }).lossReason).toBe(
+      "Cliente escolheu concorrente"
+    );
+  });
+
+  it("rejects lossReason when the destination stage is not LOST", async () => {
+    const fixture = await createFixture("loss-reason-open");
+    const created = await createOpportunity(fixture);
+    const opportunityId = created.body.id as string;
+
+    const response = await request(app.getHttpServer())
+      .patch(`/api/v1/opportunities/${opportunityId}/stage`)
+      .set("Authorization", `Bearer ${fixture.token}`)
+      .send({
+        stageId: fixture.secondStageId,
+        version: 1,
+        lossReason: "Não deveria ser aceito",
+      })
+      .expect(400);
+
+    expect(response.body.code).toBe("OPPORTUNITY_LOSS_REASON_ONLY_FOR_LOST");
   });
 
   it("rejects a destination stage that belongs to another pipeline", async () => {

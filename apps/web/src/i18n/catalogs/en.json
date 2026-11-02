@@ -1416,5 +1416,8 @@
   "Todos os status": "All statuses",
   "Limpar filtro": "Clear filter",
   "{shown} de {loaded} backups carregados": "{shown} of {loaded} loaded backups",
-  "Nenhum backup corresponde ao filtro.": "No backups match the filter."
+  "Nenhum backup corresponde ao filtro.": "No backups match the filter.",
+  "Informe o motivo da perda.": "Enter the loss reason.",
+  "Motivo da perda": "Loss reason",
+  "Confirmar perda": "Confirm loss"
 }

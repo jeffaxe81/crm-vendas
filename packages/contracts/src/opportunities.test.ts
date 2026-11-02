@@ -94,14 +94,28 @@ describe("Cycle 3.6.2 opportunity contracts", () => {
     }
   });
 
-  it("requires a real change in update and version in stage move", () => {
+  it("requires a real change in update and accepts a bounded loss reason in stage move", () => {
     const updateSchema = requireSchema("OpportunityUpdateInputSchema");
     const moveSchema = requireSchema("OpportunityMoveInputSchema");
 
     expect(updateSchema.safeParse({ version: 2 }).success).toBe(false);
-    expect(moveSchema.parse({ stageId, version: 2 })).toEqual({
+    expect(
+      moveSchema.parse({
+        stageId,
+        version: 2,
+        lossReason: "  Cliente escolheu concorrente  ",
+      })
+    ).toEqual({
       stageId,
       version: 2,
+      lossReason: "Cliente escolheu concorrente",
     });
+    expect(
+      moveSchema.safeParse({
+        stageId,
+        version: 2,
+        lossReason: "x".repeat(501),
+      }).success
+    ).toBe(false);
   });
 });
