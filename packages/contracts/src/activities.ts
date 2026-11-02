@@ -2,7 +2,11 @@ import { z } from "zod";
 
 import { PaginationQuerySchema } from "./companies";
 
-export const ActivityTypeSchema = z.enum(["TASK", "APPOINTMENT"]);
+export const ActivityTypeSchema = z.enum([
+  "TASK",
+  "APPOINTMENT",
+  "FOLLOW_UP",
+]);
 export const ActivityStatusSchema = z.enum([
   "PENDING",
   "COMPLETED",
