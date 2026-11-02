@@ -226,9 +226,7 @@ describe("C3 loss reason web completion", () => {
     fireEvent.change(reason, {
       target: { value: "Sem aderência comercial" },
     });
-    fireEvent.submit(
-      screen.getByRole("form", { name: "Nova oportunidade" })
-    );
+    fireEvent.submit(screen.getByRole("form", { name: "Nova oportunidade" }));
 
     await waitFor(() => {
       const postCall = fetchMock.mock.calls.find(
