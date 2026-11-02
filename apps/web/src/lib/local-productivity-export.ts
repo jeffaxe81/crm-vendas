@@ -122,7 +122,7 @@ export type CalendarExportItem = {
   id: string;
   title: string;
   dueAt: string | null;
-  type?: "TASK" | "APPOINTMENT";
+  type?: "TASK" | "APPOINTMENT" | "FOLLOW_UP";
 };
 
 function escapeCalendarValue(value: string): string {
