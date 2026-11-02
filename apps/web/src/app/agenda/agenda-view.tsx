@@ -10,7 +10,7 @@ import {
 import { useTranslation } from "../../i18n/language-provider";
 
 type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
-type ActivityType = "TASK" | "APPOINTMENT";
+type ActivityType = "TASK" | "APPOINTMENT" | "FOLLOW_UP";
 type ActivityPriority = "LOW" | "MEDIUM" | "HIGH";
 
 type ActivityRecord = {
@@ -40,6 +40,7 @@ type AgendaFilter<T extends string> = T | "ALL";
 const typeLabels: Record<ActivityType, string> = {
   TASK: "Tarefa",
   APPOINTMENT: "Compromisso",
+  FOLLOW_UP: "Follow-up",
 };
 
 const statusLabels: Record<ActivityStatus, string> = {
@@ -394,6 +395,7 @@ export function AgendaView({
             <option value="ALL">{t("Todos")}</option>
             <option value="TASK">{t("Tarefa")}</option>
             <option value="APPOINTMENT">{t("Compromisso")}</option>
+            <option value="FOLLOW_UP">{t("Follow-up")}</option>
           </select>
         </label>
 

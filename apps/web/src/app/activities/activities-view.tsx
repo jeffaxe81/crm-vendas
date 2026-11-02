@@ -8,7 +8,7 @@ import { downloadLoadedCalendar } from "../../lib/local-productivity-export";
 import { useTranslation } from "../../i18n/language-provider";
 
 type ActivityStatus = "PENDING" | "COMPLETED" | "CANCELLED";
-type ActivityType = "TASK" | "APPOINTMENT";
+type ActivityType = "TASK" | "APPOINTMENT" | "FOLLOW_UP";
 type ActivityPriority = "LOW" | "MEDIUM" | "HIGH";
 
 type ActivityRecord = {
@@ -81,6 +81,7 @@ const statusLabels: Record<ActivityStatus, string> = {
 const typeLabels: Record<ActivityType, string> = {
   TASK: "Tarefa",
   APPOINTMENT: "Compromisso",
+  FOLLOW_UP: "Follow-up",
 };
 
 const priorityLabels: Record<ActivityPriority, string> = {
@@ -110,6 +111,7 @@ export function ActivitiesView({
   const { t } = useTranslation();
   const [activities, setActivities] = useState<ActivityRecord[]>([]);
   const [status, setStatus] = useState<ActivityStatus>("PENDING");
+  const [typeFilter, setTypeFilter] = useState<"all" | ActivityType>("all");
   const [priorityFilter, setPriorityFilter] = useState<
     "all" | ActivityPriority
   >("all");
@@ -431,6 +433,9 @@ export function ActivitiesView({
     const now = new Date();
     const today = now.toDateString();
     return activities.filter(activity => {
+      if (typeFilter !== "all" && activity.type !== typeFilter) {
+        return false;
+      }
       if (priorityFilter !== "all" && activity.priority !== priorityFilter) {
         return false;
       }
@@ -444,7 +449,7 @@ export function ActivitiesView({
       }
       return true;
     });
-  }, [activities, priorityFilter, dueFilter]);
+  }, [activities, typeFilter, priorityFilter, dueFilter]);
 
   return (
     <section className="activities-view" aria-labelledby="activities-title">
@@ -526,6 +531,20 @@ export function ActivitiesView({
 
       <div className="activities-view__quick-filters">
         <label>
+          <span>{t("Filtrar tipo")}</span>
+          <select
+            value={typeFilter}
+            onChange={event =>
+              setTypeFilter(event.target.value as "all" | ActivityType)
+            }
+          >
+            <option value="all">{t("Todos os tipos")}</option>
+            <option value="TASK">{t("Tarefa")}</option>
+            <option value="APPOINTMENT">{t("Compromisso")}</option>
+            <option value="FOLLOW_UP">{t("Follow-up")}</option>
+          </select>
+        </label>
+        <label>
           <span>{t("Filtrar prioridade")}</span>
           <select
             value={priorityFilter}
@@ -558,8 +577,13 @@ export function ActivitiesView({
         </label>
         <button
           type="button"
-          disabled={priorityFilter === "all" && dueFilter === "all"}
+          disabled={
+            typeFilter === "all" &&
+            priorityFilter === "all" &&
+            dueFilter === "all"
+          }
           onClick={() => {
+            setTypeFilter("all");
             setPriorityFilter("all");
             setDueFilter("all");
           }}
@@ -624,6 +648,7 @@ export function ActivitiesView({
               >
                 <option value="TASK">{t("Tarefa")}</option>
                 <option value="APPOINTMENT">{t("Compromisso")}</option>
+                <option value="FOLLOW_UP">{t("Follow-up")}</option>
               </select>
             </label>
 

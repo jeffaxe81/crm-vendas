@@ -23,6 +23,7 @@
 
 ### **Cycle 4 Documentation** (Next Sprint)
 
+- [Ciclo 4 — checkpoint de atividades, agenda e follow-ups](./docs/checkpoints/cycle-4-current.md) — progresso verificável da PR #333.
 - 📝 [`CYCLE_4_READY_FOR_SPRINT.md`](./CYCLE_4_READY_FOR_SPRINT.md) - 120 story points, 5 epics
 - 🏗️ [`CYCLE_4_ARCHITECTURE.md`](./CYCLE_4_ARCHITECTURE.md) - Component design & API specs
 - 🗄️ [`CYCLE_4_DATABASE_SCHEMA.md`](./CYCLE_4_DATABASE_SCHEMA.md) - Database migrations & design

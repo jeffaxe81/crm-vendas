@@ -101,3 +101,21 @@ describe("C4.1.1 activity agenda window", () => {
     expect(parsed.success).toBe(true);
   });
 });
+
+describe("C4 ACT-003 explicit follow-up contracts", () => {
+  it("accepts FOLLOW_UP in create, update and list filters", () => {
+    const createSchema = requireSchema("ActivityCreateInputSchema");
+    const updateSchema = requireSchema("ActivityUpdateInputSchema");
+    const listSchema = requireSchema("ActivityListQuerySchema");
+
+    expect(
+      createSchema.safeParse({
+        type: "FOLLOW_UP",
+        title: "Retornar proposta ao cliente",
+        ownerUserId,
+      }).success
+    ).toBe(true);
+    expect(updateSchema.safeParse({ type: "FOLLOW_UP" }).success).toBe(true);
+    expect(listSchema.safeParse({ type: "FOLLOW_UP" }).success).toBe(true);
+  });
+});
