@@ -1419,5 +1419,8 @@
   "Nenhum backup corresponde ao filtro.": "Nenhum backup corresponde ao filtro.",
   "Informe o motivo da perda.": "Informe o motivo da perda.",
   "Motivo da perda": "Motivo da perda",
-  "Confirmar perda": "Confirmar perda"
+  "Confirmar perda": "Confirmar perda",
+  "Follow-up": "Follow-up",
+  "Filtrar tipo": "Filtrar tipo",
+  "Todos os tipos": "Todos os tipos"
 }
