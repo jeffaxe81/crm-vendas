@@ -110,5 +110,24 @@ describe("Cycle 4 explicit follow-up API", () => {
       type: "FOLLOW_UP",
       title: "Retornar proposta",
     });
+
+    const converted = await request(app.getHttpServer())
+      .patch(`/api/v1/activities/${created.body.id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ type: "TASK" })
+      .expect(200);
+    expect(converted.body.type).toBe("TASK");
+
+    const restored = await request(app.getHttpServer())
+      .patch(`/api/v1/activities/${created.body.id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ type: "FOLLOW_UP" })
+      .expect(200);
+    expect(restored.body.type).toBe("FOLLOW_UP");
+
+    const persisted = await prisma.withTenant(organization.id, tenant =>
+      tenant.activity.findUniqueOrThrow({ where: { id: created.body.id } })
+    );
+    expect(persisted.type).toBe("FOLLOW_UP");
   });
 });
