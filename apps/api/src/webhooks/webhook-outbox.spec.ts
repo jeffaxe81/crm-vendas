@@ -198,7 +198,7 @@ describe("domain event boundaries", () => {
           ownerUserId: "actor",
           title: "private title",
           estimatedValue: "0.00",
-          ...(kind === "LOST" ? { lossReason: "Cliente escolheu concorrente" } : {}),
+          ...(kind === "LOST" ? { lossReason: "Proposta recusada" } : {}),
         },
         context
       );
@@ -220,7 +220,7 @@ describe("domain event boundaries", () => {
         {
           stageId: "target",
           version: 1,
-          ...(kind === "LOST" ? { lossReason: "Cliente escolheu concorrente" } : {}),
+          ...(kind === "LOST" ? { lossReason: "Proposta recusada" } : {}),
         },
         context
       );
