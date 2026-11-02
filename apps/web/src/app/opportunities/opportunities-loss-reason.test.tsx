@@ -153,6 +153,10 @@ describe("C3 loss reason web completion", () => {
         lossReason: "Cliente sem orçamento",
       });
     });
+
+    expect(
+      await screen.findByText("Motivo da perda: Cliente sem orçamento")
+    ).toBeInTheDocument();
   });
 
   it("requires and sends a loss reason when creating directly in LOST", async () => {
