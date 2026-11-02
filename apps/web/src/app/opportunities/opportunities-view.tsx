@@ -1571,7 +1571,8 @@ export function OpportunitiesView({
                                 </span>
                                 {opportunity.lossReason ? (
                                   <p className="opportunity-card__terminal-note">
-                                    {t("Motivo da perda")}: {opportunity.lossReason}
+                                    {t("Motivo da perda")}:{" "}
+                                    {opportunity.lossReason}
                                   </p>
                                 ) : null}
 
