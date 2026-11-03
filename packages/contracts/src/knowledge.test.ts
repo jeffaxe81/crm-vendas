@@ -147,7 +147,12 @@ describe("Cycle 5 knowledge contracts", () => {
   it("registers the knowledge workspace behind knowledge.read", () => {
     const destinations = (contracts as Record<string, unknown>)[
       "workspaceDestinations"
-    ] as Array<{ id: string; label: string; group: string | null; permission: string | null }>;
+    ] as Array<{
+      id: string;
+      label: string;
+      group: string | null;
+      permission: string | null;
+    }>;
 
     expect(destinations).toContainEqual({
       id: "knowledge",
