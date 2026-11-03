@@ -428,3 +428,20 @@ export {
   type RestoreExecutionRequest,
   type DeleteExecutionRequest,
 } from "./recovery";
+
+export {
+  KnowledgeAccessLevelSchema,
+  KnowledgeAiStatusSchema,
+  KnowledgeCreateInputSchema,
+  KnowledgeDocumentInputSchema,
+  KnowledgeItemTypeSchema,
+  KnowledgeListQuerySchema,
+  KnowledgeUpdateInputSchema,
+  type KnowledgeAccessLevel,
+  type KnowledgeAiStatus,
+  type KnowledgeCreateInput,
+  type KnowledgeDocumentInput,
+  type KnowledgeItemType,
+  type KnowledgeListQuery,
+  type KnowledgeUpdateInput,
+} from "./knowledge";
