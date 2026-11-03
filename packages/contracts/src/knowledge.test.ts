@@ -144,6 +144,19 @@ describe("Cycle 5 knowledge contracts", () => {
     expect(schema.safeParse({ page: 1, limit: 101 }).success).toBe(false);
   });
 
+  it("registers the knowledge workspace behind knowledge.read", () => {
+    const destinations = (contracts as Record<string, unknown>)[
+      "workspaceDestinations"
+    ] as Array<{ id: string; label: string; group: string | null; permission: string | null }>;
+
+    expect(destinations).toContainEqual({
+      id: "knowledge",
+      label: "Hub de conhecimento",
+      group: "Conhecimento",
+      permission: "knowledge.read",
+    });
+  });
+
   it("exports access and AI status schemas without executing AI", () => {
     const access = requireSchema("KnowledgeAccessLevelSchema");
     const ai = requireSchema("KnowledgeAiStatusSchema");
