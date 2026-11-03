@@ -30,6 +30,8 @@ const explanations: Record<WorkspaceSection, string> = {
   tickets: "Gerencie solicitações de atendimento, filas e responsáveis.",
   communication:
     "Consulte a área de comunicação integrada; conexões externas precisam ser configuradas e autorizadas.",
+  knowledge:
+    "Organize notas, links e documentos relacionados ao trabalho comercial.",
   "management-summary":
     "Visualize os relatórios e indicadores de desempenho de vendas.",
   territories:
