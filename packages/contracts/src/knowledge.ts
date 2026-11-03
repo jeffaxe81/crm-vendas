@@ -32,10 +32,7 @@ const HttpUrlSchema = z
   .trim()
   .url()
   .max(2_000)
-  .refine(value => {
-    const protocol = new URL(value).protocol;
-    return protocol === "http:" || protocol === "https:";
-  }, "Use uma URL HTTP ou HTTPS.");
+  .refine(value => /^https?:\/\//i.test(value), "Use uma URL HTTP ou HTTPS.");
 
 const Base64Schema = z
   .string()
