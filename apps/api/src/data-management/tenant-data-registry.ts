@@ -143,6 +143,10 @@ export const TENANT_DATA_REGISTRY: readonly TenantDataPolicy[] = [
   full("Opportunity", "opportunities", "OPERATIONAL"),
   full("Product", "products", "CONFIGURATION"),
   full("OpportunityItem", "opportunity_items", "OPERATIONAL"),
+  full("KnowledgeItem", "knowledge_items", "OPERATIONAL"),
+  full("KnowledgeCompany", "knowledge_companies", "OPERATIONAL"),
+  full("KnowledgeContact", "knowledge_contacts", "OPERATIONAL"),
+  full("KnowledgeOpportunity", "knowledge_opportunities", "OPERATIONAL"),
   full("Ticket", "tickets", "OPERATIONAL"),
   full("TicketEvent", "ticket_events", "OPERATIONAL"),
   {
