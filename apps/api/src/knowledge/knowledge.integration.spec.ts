@@ -300,7 +300,7 @@ describe("Cycle 5 knowledge API and tenant boundaries", () => {
       const note = { type: "NOTE", title, noteContent: "Nota " + i };
       const link = { type: "LINK", title, url: "https://example.test/" + i };
       const item = { type: "DOCUMENT", title, document: doc };
-      const payloads: unknown[] = [
+      const payloads: Record<string, unknown>[] = [
         { ...note, title: "  " },
         { ...note, noteContent: " " },
         { ...note, title: i },
