@@ -34,21 +34,38 @@ const HttpUrlSchema = z
   .max(2_000)
   .refine(value => /^https?:\/\//i.test(value), "Use uma URL HTTP ou HTTPS.");
 
+const MAX_KNOWLEDGE_DOCUMENT_BYTES = 10 * 1024 * 1024;
+const MAX_KNOWLEDGE_DOCUMENT_BASE64_LENGTH =
+  Math.ceil(MAX_KNOWLEDGE_DOCUMENT_BYTES / 3) * 4;
+
 const Base64Schema = z
   .string()
   .trim()
   .min(4)
+  .max(MAX_KNOWLEDGE_DOCUMENT_BASE64_LENGTH, "Documento excede 10 MiB.")
   .refine(
     value =>
       /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(
         value
       ),
     "Documento em Base64 inválido."
-  );
+  )
+  .refine(value => {
+    const padding = value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0;
+    return (value.length / 4) * 3 - padding <= MAX_KNOWLEDGE_DOCUMENT_BYTES;
+  }, "Documento excede 10 MiB.");
 
 export const KnowledgeDocumentInputSchema = z
   .object({
-    fileName: z.string().trim().min(1).max(255),
+    fileName: z
+      .string()
+      .trim()
+      .min(1)
+      .max(255)
+      .refine(
+        value => !/[\\/]/.test(value) && !/[\\x00-\\x1f]/.test(value),
+        "Nome de arquivo inválido."
+      ),
     mimeType: z.string().trim().min(1).max(255),
     base64: Base64Schema,
   })
