@@ -32,7 +32,9 @@ test("Knowledge Hub creates notes, links and documents and persists after reload
   await editor.getByLabel("Título").fill(noteTitle);
   await editor.getByLabel("Conteúdo da nota").fill("Registro criado via E2E.");
   await editor.getByRole("button", { name: "Salvar" }).click();
-  await expect(page.locator("article").filter({ hasText: noteTitle })).toBeVisible();
+  await expect(
+    page.locator("article").filter({ hasText: noteTitle })
+  ).toBeVisible();
 
   await page.getByRole("button", { name: "Novo registro" }).click();
   await editor.getByLabel("Tipo").selectOption("LINK");
@@ -41,7 +43,9 @@ test("Knowledge Hub creates notes, links and documents and persists after reload
     .getByLabel("URL HTTP/HTTPS")
     .fill(`https://example.org/c5/${suffix}`);
   await editor.getByRole("button", { name: "Salvar" }).click();
-  await expect(page.locator("article").filter({ hasText: linkTitle })).toBeVisible();
+  await expect(
+    page.locator("article").filter({ hasText: linkTitle })
+  ).toBeVisible();
 
   await page.getByRole("button", { name: "Novo registro" }).click();
   await editor.getByLabel("Tipo").selectOption("DOCUMENT");
@@ -52,13 +56,19 @@ test("Knowledge Hub creates notes, links and documents and persists after reload
     buffer: Buffer.from(contents),
   });
   await editor.getByRole("button", { name: "Salvar" }).click();
-  await expect(page.locator("article").filter({ hasText: docTitle })).toBeVisible();
+  await expect(
+    page.locator("article").filter({ hasText: docTitle })
+  ).toBeVisible();
 
   // A reload must use the authenticated refresh flow, never local mock state.
   await page.reload();
   await openWorkspaceSection(page, "Hub de conhecimento");
-  await expect(page.locator("article").filter({ hasText: noteTitle })).toBeVisible();
-  await expect(page.locator("article").filter({ hasText: linkTitle })).toBeVisible();
+  await expect(
+    page.locator("article").filter({ hasText: noteTitle })
+  ).toBeVisible();
+  await expect(
+    page.locator("article").filter({ hasText: linkTitle })
+  ).toBeVisible();
   const documentCard = page.locator("article").filter({ hasText: docTitle });
   await expect(documentCard).toBeVisible();
 
