@@ -119,7 +119,8 @@ export class DataPreviewService {
         return exportTenantSnapshot(
           tx,
           principal.organizationId,
-          this.options.maxBytes
+          this.options.maxBytes,
+          { includeKnowledgeDocuments: true }
         );
       },
       {
