@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased] - Ciclo 5 — Hub de conhecimento
+
+- Adicionados modelos de conhecimento NOTE/LINK/DOCUMENT, relações, RLS forçado e metadados passivos para IA futura.
+- Endpoints NestJS com acesso por perfil, PRIVATE para autor, registros de auditoria, versionamento e soft delete.
+- Hub Web responsivo com paginação, pesquisa, formulários e download autenticado, além de idiomas pt-BR/en/es.
+- Armazenamento local de anexos com limite de 10 MiB, hash SHA-256, nomes não confiáveis rejeitados e chaves opacas.
+- Backup de tenant passa a preparar bytes dos documentos no envelope cifrado, e restauração exige hashes e cobertura completa dos blobs.
+- Testes de contratos, API, isolamento, storage, recuperação e navegador; todos sujeitos à aprovação do CI no commit final.
+- **Produção bloqueada** até homologação real de HTTPS, RLS, backup, rollback e aceite de operação.
+
+
 ## [Unreleased] - Ciclo 4 / ACT-003 — Follow-up comercial
 
 - `FOLLOW_UP` adicionado aos contratos e ao enum PostgreSQL de atividades com migration aditiva.
