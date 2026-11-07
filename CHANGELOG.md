@@ -10,7 +10,6 @@
 - Testes de contratos, API, isolamento, storage, recuperação e navegador; todos sujeitos à aprovação do CI no commit final.
 - **Produção bloqueada** até homologação real de HTTPS, RLS, backup, rollback e aceite de operação.
 
-
 ## [Unreleased] - Ciclo 4 / ACT-003 — Follow-up comercial
 
 - `FOLLOW_UP` adicionado aos contratos e ao enum PostgreSQL de atividades com migration aditiva.
