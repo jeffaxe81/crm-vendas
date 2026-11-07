@@ -21,16 +21,15 @@
 - UI com busca paginada, leitura, criação, edição, exclusão e download; internacionalização pt-BR/en/es.
 - Testes de contratos, integração API, storage e interface.
 
-## Recuperação de dados: regra de segurança
+## Backup e restauração de documentos — implementação em validação
 
-A exportação de **notas e links** utiliza snapshots transacionais do banco, com políticas explícitas de restauração. Já **documentos** possuem bytes em volume separado:
-
-- Volume Compose `knowledge-data` montado em `/var/lib/axes-crm/knowledge`.
-- `KNOWLEDGE_STORAGE_ROOT` é obrigatório em produção.
-- A exportação de backup de organizações contendo DOCUMENT, inclusive após soft delete, **falha de forma explícita** com `BACKUP_ATTACHMENT_ADAPTER_REQUIRED`.
-- A restauração de snapshots que contenham DOCUMENT ou alterem uma organização com documentos existentes também falha antes de excluir registros.
-- A mitigação é proposital: um backup só do PostgreSQL **não é um backup íntegro dos documentos**.
-- Não desativar esta proteção para passar no CI. É obrigatório implementar e homologar um adaptador que exporte/restaure bytes com integridade, controle de tenant e rollback seguro.
+- Volume persistente: `knowledge-data`, montado em `/var/lib/axes-crm/knowledge`; em produção `KNOWLEDGE_STORAGE_ROOT` é obrigatório.
+- A API armazena metadados e SHA-256 no PostgreSQL; o objeto físico é imutável e separado.
+- Novo adaptador inclui cada DOCUMENT, inclusive soft-deleted, **com bytes Base64 e hash**, na mesma carga autenticada e criptografada do backup. A validação compara os blobs com os registros do snapshot, detecta adulteração e rejeita bytes faltantes.
+- O restaurador prepara objetos com chave opaca antes de remover o grafo SQL. Um arquivo existente só é reutilizado se os bytes coincidirem; nunca há sobrescrita de blob.
+- Backups antigos que não contêm todos os blobs continuam recusados para DOCUMENT. Ausência de volume, inconsistência de checksum e quota excedida impedem exportação.
+- **Importante:** os arquivos gravados antes de uma falha de transação SQL podem permanecer como órfãos inofensivos. A limpeza/reconciliação e os testes de restauração operacional ainda precisam ser homologados; não declarar atomicidade filesystem+SQL.
+- Testes adicionados de exportação, importação, adulteração, colisão e restauração transacional, além do E2E Knowledge Hub. **Não marcar aprovado antes do CI do SHA final.**
 
 ## Ainda pendente
 
