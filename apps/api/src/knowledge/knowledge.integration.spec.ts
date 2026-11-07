@@ -161,18 +161,9 @@ describe("Cycle 5 knowledge API and tenant boundaries", () => {
   it("enforces PRIVATE author access and rejects cross-tenant relations", async () => {
     const orgA = await createOrganization("knowledge-private-a");
     const orgB = await createOrganization("knowledge-private-b");
-    const author = await createUser(
-      orgA.id,
-      "knowledge-author@example.test"
-    );
-    const reader = await createUser(
-      orgA.id,
-      "knowledge-other@example.test"
-    );
-    const foreign = await createUser(
-      orgB.id,
-      "knowledge-foreign@example.test"
-    );
+    const author = await createUser(orgA.id, "knowledge-author@example.test");
+    const reader = await createUser(orgA.id, "knowledge-other@example.test");
+    const foreign = await createUser(orgB.id, "knowledge-foreign@example.test");
     const [authorToken, readerToken] = await Promise.all([
       login(author.user.email, author.password, orgA.slug),
       login(reader.user.email, reader.password, orgA.slug),
