@@ -44,6 +44,8 @@ services:
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
       # Disabled unless BOTH values are explicitly configured in private .env.
       BACKUP_DIRECTORY: ${BACKUP_DIRECTORY:-}
+      # Documento persistente, separado do banco; incluir em backup/restore.
+      KNOWLEDGE_STORAGE_ROOT: /var/lib/axes-crm/knowledge
       BACKUP_ENCRYPTION_KEY: ${BACKUP_ENCRYPTION_KEY:-}
       BACKUP_WORKER_POLL_MS: ${BACKUP_WORKER_POLL_MS:-15000}
       BACKUP_MAX_BYTES: ${BACKUP_MAX_BYTES:-67108864}
@@ -65,6 +67,7 @@ services:
     restart: unless-stopped
     volumes:
       - backup-data:/var/lib/axes-crm/backups
+      - knowledge-data:/var/lib/axes-crm/knowledge
     ports:
       - "${API_BIND_ADDRESS:-${BIND_ADDRESS:-127.0.0.1}}:3001:3001"
     depends_on:
@@ -162,3 +165,4 @@ services:
 volumes:
   postgres-data:
   backup-data:
+  knowledge-data:
