@@ -27,14 +27,7 @@ test("property campaign checks all sixteen business-rule classes", () => {
 
 test("property campaign shards partition the requested total exactly", () => {
   const reports = [0, 1, 2].map(shard =>
-    run([
-      "--total",
-      "10003",
-      "--shards",
-      "3",
-      "--shard",
-      String(shard),
-    ])
+    run(["--total", "10003", "--shards", "3", "--shard", String(shard)])
   );
   assert.equal(
     reports.reduce((sum, item) => sum + item.executed, 0),
@@ -46,14 +39,7 @@ test("property campaign shards partition the requested total exactly", () => {
       reports[index - 1].offset + reports[index - 1].executed
     );
   }
-  const replay = run([
-    "--total",
-    "10003",
-    "--shards",
-    "3",
-    "--shard",
-    "1",
-  ]);
+  const replay = run(["--total", "10003", "--shards", "3", "--shard", "1"]);
   assert.equal(replay.checksum, reports[1].checksum);
   assert.deepEqual(replay.variants, reports[1].variants);
 });
