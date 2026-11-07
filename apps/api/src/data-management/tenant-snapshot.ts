@@ -17,7 +17,8 @@ import type { TenantDataPolicy } from "./tenant-data-registry";
 export async function exportTenantSnapshot(
   transaction: Prisma.TransactionClient,
   organizationId: string,
-  maxBytes: number
+  maxBytes: number,
+  options: { includeKnowledgeDocuments?: boolean } = {}
 ): Promise<SnapshotData> {
   const [isolation] = await transaction.$queryRawUnsafe<
     { transaction_isolation: string }[]
@@ -42,7 +43,7 @@ export async function exportTenantSnapshot(
     ) AS present`,
     organizationId
   );
-  if (documents?.present !== false)
+  if (documents?.present !== false && !options.includeKnowledgeDocuments)
     throw new BackupError("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
 
   for (const policy of SNAPSHOT_POLICIES) {
