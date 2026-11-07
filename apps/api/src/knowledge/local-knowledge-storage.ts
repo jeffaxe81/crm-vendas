@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, open, readFile, rm } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 
 import { KnowledgeDocumentInputSchema } from "@axes/contracts";
@@ -47,12 +47,18 @@ export class LocalKnowledgeStorage implements KnowledgeStorage {
     const storageKey = `${itemId}-${randomUUID()}`;
     const target = this.filePath(storageKey);
     await mkdir(this.root, { recursive: true, mode: 0o700 });
+    // Claim the key with exclusive creation. If a collision occurs, never
+    // remove an existing object owned by another knowledge item.
+    const handle = await open(target, "wx", 0o600);
     try {
-      await writeFile(target, bytes, { flag: "wx", mode: 0o600 });
+      await handle.writeFile(bytes);
+      await handle.sync();
     } catch (error) {
+      await handle.close();
       await rm(target, { force: true }).catch(() => undefined);
       throw error;
     }
+    await handle.close();
     return {
       storageKey,
       sizeBytes: bytes.length,
