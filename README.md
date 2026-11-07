@@ -11,6 +11,16 @@
 
 ---
 
+## CRM atual — Cycle 5 (Hub de Conhecimento)
+
+A evolução operacional está sendo desenvolvida na [PR #334](https://github.com/jeffaxe81/crm-vendas/pull/334). Este README contém também um roadmap histórico; **o status real deve ser obtido no CI e no [checkpoint C5](docs/checkpoints/cycle-5-current.md)**. Não confundir build automatizado com homologação do servidor.
+
+- A API usa `/api/v1/knowledge` para notas, links e documentos, com permissões `knowledge.read`/`knowledge.write`, isolamento por organização e itens `PRIVATE` restritos ao autor.
+- Documentos de até **10 MiB decodificados** são guardados em filesystem privado, com SHA-256 e download autenticado como attachment. Sem IA ativa neste ciclo.
+- Configure um volume persistente em `KNOWLEDGE_STORAGE_ROOT=/var/lib/axes-crm/knowledge` (o `compose.yaml` monta `knowledge-data`).
+- Backups criptografados usam `BACKUP_DIRECTORY` e `BACKUP_ENCRYPTION_KEY`, mantendo dados do PostgreSQL e bytes dos documentos no mesmo payload, sujeitos ao limite `BACKUP_MAX_BYTES`. **Não usar um backup apenas do PostgreSQL como cópia completa dos documentos.**
+- Nenhuma restauração de produção está automaticamente autorizada. Para recuperação, exigir teste controlado, hash verificado, rollback e aceite operacional conforme [issue #159](https://github.com/jeffaxe81/crm-vendas/issues/159).
+
 ## 📋 Quick Navigation
 
 > **👉 START HERE**: Read [`PROJECT_SUMMARY_DOCUMENTATION_INDEX.md`](./PROJECT_SUMMARY_DOCUMENTATION_INDEX.md) for complete overview & reading order by role
