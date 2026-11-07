@@ -52,8 +52,8 @@ if (process.env.GITHUB_STEP_SUMMARY) {
   appendFileSync(
     process.env.GITHUB_STEP_SUMMARY,
     "## CRM — deterministic contract homologation\n\n" +
-      `- Commit: \`\${summary.sha}\`\n` +
-      `- Executed: **\${total.toLocaleString("en-US")}** contract cases in \${shards} shards\n` +
+      "- Commit: `" + (summary.sha ?? "local") + "`\n" +
+      "- Executed: **" + total.toLocaleString("en-US") + "** contract cases in " + shards + " shards\n" +
       "- Failed: **0**\n" +
       "- Coverage: 16 property classes (NOTE, LINK, DOCUMENT, input, URL, UUID, pagination, update)\n" +
       "- This is **contract property testing**, not 100 million HTTP requests or browser journeys.\n"
