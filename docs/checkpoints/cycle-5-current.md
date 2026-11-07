@@ -35,7 +35,8 @@
 
 - Gate integral em um único commit: formato, lint, types, contratos, Web, shards da API, E2E, build, RLS e Compose.
 - E2E real de ponta a ponta para upload, sessão restaurada e download.
-- Adaptador completo para snapshot/restore atômico de DOCUMENT, com teste destrutivo isolado.
+- Executar e aprovar o teste de restauração transacional dos documentos e o E2E do Hub no **mesmo SHA** da PR.
+- Homologar em servidor isolado a reconciliação de arquivos órfãos após rollback SQL; não equiparar pré-publicação de blobs à atomicidade entre filesystem e PostgreSQL.
 - Antivírus/varredura externa antes de aceitar arquivos de fontes não confiáveis em produção.
 - Homologação do servidor da [#159](https://github.com/jeffaxe81/crm-vendas/issues/159), incluindo HTTPS/CA, login, RLS, backup e rollback operacional.
 - Aceite operacional identificado.
