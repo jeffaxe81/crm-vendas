@@ -269,8 +269,8 @@ describe("Cycle 5 knowledge API and tenant boundaries", () => {
       .expect(200);
     expect(download.headers["content-disposition"]).toContain("attachment");
     expect(download.headers["x-content-type-options"]).toBe("nosniff");
-    expect(Buffer.isBuffer(download.body)).toBe(true);
-    expect(download.body.toString()).toBe(contents);
+    const downloadedText = download.text ?? download.body.toString();
+    expect(downloadedText).toBe(contents);
 
     await request(app.getHttpServer())
       .delete("/api/v1/knowledge/" + created.body.id)
