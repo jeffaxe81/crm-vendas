@@ -12,7 +12,10 @@ export type KnowledgeStoredObject = {
 };
 
 export interface KnowledgeStorage {
-  put(itemId: string, input: KnowledgeStorageInput): Promise<KnowledgeStoredObject>;
+  put(
+    itemId: string,
+    input: KnowledgeStorageInput
+  ): Promise<KnowledgeStoredObject>;
   get(storageKey: string): Promise<Buffer>;
   remove(storageKey: string): Promise<void>;
 }
