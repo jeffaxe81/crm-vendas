@@ -43,7 +43,8 @@ export function validateKnowledgeDocumentBlobs(
       !HEX_64.test(row.sha256) ||
       typeof row.sizeBytes !== "string" ||
       !/^\d+$/.test(row.sizeBytes)
-    ) invalid("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+    )
+      invalid("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
     if (metadata.has(row.storageKey))
       invalid("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
     metadata.set(row.storageKey, row);
@@ -55,7 +56,8 @@ export function validateKnowledgeDocumentBlobs(
       typeof blob !== "object" ||
       Array.isArray(blob) ||
       !exactKeys(blob, ["storageKey", "sizeBytes", "sha256", "base64"])
-    ) invalid("BACKUP_INVALID");
+    )
+      invalid("BACKUP_INVALID");
     const object = blob as KnowledgeDocumentBlob;
     const row = metadata.get(object.storageKey);
     if (
@@ -70,13 +72,15 @@ export function validateKnowledgeDocumentBlobs(
       object.base64.length > Math.ceil(MAX_KNOWLEDGE_BLOB_BYTES / 3) * 4 ||
       object.base64.length % 4 !== 0 ||
       !/^[a-zA-Z0-9+/]*={0,2}$/.test(object.base64)
-    ) invalid("BACKUP_INVALID");
+    )
+      invalid("BACKUP_INVALID");
     const bytes = Buffer.from(object.base64, "base64");
     if (
       bytes.length !== object.sizeBytes ||
       bytes.toString("base64") !== object.base64 ||
       createHash("sha256").update(bytes).digest("hex") !== object.sha256
-    ) invalid("BACKUP_INVALID");
+    )
+      invalid("BACKUP_INVALID");
     seen.add(object.storageKey);
   }
 }
