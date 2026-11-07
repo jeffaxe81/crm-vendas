@@ -1,0 +1,6 @@
+CRM C5 massive-contract campaign
+requested=100000000
+shards=16
+seed=20261107
+run=2026-11-07-a
+mode=non-production-contract-properties
