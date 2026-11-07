@@ -1,0 +1,29 @@
+name: C5 massive-test formatter preview
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/c5-test-format-preview.yml"
+      - "scripts/homologation/**"
+      - "tests/e2e/knowledge-blackbox.spec.ts"
+      - "tests/contract-campaign.test.mjs"
+      - "apps/api/src/knowledge/knowledge.integration.spec.ts"
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - name: Prettier exact patch
+        run: |
+          pnpm exec prettier --write scripts/homologation/contract-campaign.cjs scripts/homologation/verify-campaign.cjs tests/contract-campaign.test.mjs tests/e2e/knowledge-blackbox.spec.ts apps/api/src/knowledge/knowledge.integration.spec.ts
+          git diff --no-color -- scripts/homologation tests/contract-campaign.test.mjs tests/e2e/knowledge-blackbox.spec.ts apps/api/src/knowledge/knowledge.integration.spec.ts
