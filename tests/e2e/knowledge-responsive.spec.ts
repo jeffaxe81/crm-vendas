@@ -27,9 +27,7 @@ test("Knowledge Hub supports mobile navigation, keyboard escape, and desktop con
   const group = drawer.getByRole("button", { name: "Grupo Conhecimento" });
   if ((await group.getAttribute("aria-expanded")) !== "true")
     await group.click();
-  await drawer
-    .getByRole("button", { name: "Hub de conhecimento" })
-    .click();
+  await drawer.getByRole("button", { name: "Hub de conhecimento" }).click();
   await expect(open).toHaveAttribute("aria-expanded", "false");
 
   await page.getByRole("button", { name: "Novo registro" }).click();
@@ -37,7 +35,9 @@ test("Knowledge Hub supports mobile navigation, keyboard escape, and desktop con
   await editor.getByLabel("Título").fill(title);
   await editor.getByLabel("Conteúdo da nota").fill("Fluxo responsivo");
   await editor.getByRole("button", { name: "Salvar" }).click();
-  await expect(page.locator("article").filter({ hasText: title })).toBeVisible();
+  await expect(
+    page.locator("article").filter({ hasText: title })
+  ).toBeVisible();
 
   await open.click();
   await expect(drawer).toBeVisible();
@@ -49,5 +49,7 @@ test("Knowledge Hub supports mobile navigation, keyboard escape, and desktop con
     page.getByRole("heading", { name: "Hub de conhecimento" })
   ).toBeVisible();
   await page.setViewportSize({ width: 1440, height: 900 });
-  await expect(page.locator("article").filter({ hasText: title })).toBeVisible();
+  await expect(
+    page.locator("article").filter({ hasText: title })
+  ).toBeVisible();
 });
