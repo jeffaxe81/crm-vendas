@@ -114,7 +114,7 @@ describe("Cycle 5 knowledge contracts", () => {
 
     // The configured 10 MiB limit must be checked against decoded bytes,
     // not just the base64 text length; one byte over the limit is rejected.
-    const overLimit = Buffer.alloc(10 * 1024 * 1024 + 1, 0).toString("base64");
+    const overLimit = "A".repeat(Math.ceil((10 * 1024 * 1024 + 1) / 3) * 4);
     expect(schema.safeParse({ ...valid, base64: overLimit }).success).toBe(
       false
     );
