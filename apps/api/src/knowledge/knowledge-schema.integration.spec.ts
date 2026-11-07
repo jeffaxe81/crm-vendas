@@ -57,7 +57,11 @@ describe("Cycle 5 knowledge database schema", () => {
 
   it("enables row level security on every knowledge table", async () => {
     const rows = await prisma.$queryRawUnsafe<
-      Array<{ relname: string; relrowsecurity: boolean; relforcerowsecurity: boolean }>
+      Array<{
+        relname: string;
+        relrowsecurity: boolean;
+        relforcerowsecurity: boolean;
+      }>
     >(
       `SELECT c.relname, c.relrowsecurity, c.relforcerowsecurity
        FROM pg_class c
@@ -70,8 +74,11 @@ describe("Cycle 5 knowledge database schema", () => {
     );
 
     expect(rows).toHaveLength(expectedTables.length);
-    expect(rows.every(row => row.relrowsecurity && row.relforcerowsecurity)).toBe(true);
+    expect(
+      rows.every(row => row.relrowsecurity && row.relforcerowsecurity)
+    ).toBe(true);
   });
+
   it("requires tenant isolation policies with matching WITH CHECK rules", async () => {
     const rows = await prisma.$queryRawUnsafe<
       Array<{
@@ -100,5 +107,4 @@ describe("Cycle 5 knowledge database schema", () => {
       expect(policy.with_check).toContain("organization_id");
     }
   });
-
 });
