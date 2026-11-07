@@ -45,9 +45,9 @@ const Base64Schema = z
   .max(MAX_KNOWLEDGE_DOCUMENT_BASE64_LENGTH, "Documento excede 10 MiB.")
   .refine(
     value =>
-      /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(
-        value
-      ),
+      value.length <= MAX_KNOWLEDGE_DOCUMENT_BASE64_LENGTH &&
+      value.length % 4 === 0 &&
+      /^[A-Za-z0-9+/]*={0,2}$/.test(value),
     "Documento em Base64 inválido."
   )
   .refine(value => {
