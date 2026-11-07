@@ -355,12 +355,14 @@ describe("Cycle 5 knowledge API and tenant boundaries", () => {
     expect(
       await prisma.withTenant(organization.id, tx =>
         tx.auditLog.count({
-          where: { organizationId: organization.id, action: "knowledge.created" },
+          where: {
+            organizationId: organization.id,
+            action: "knowledge.created",
+          },
         })
       )
     ).toBe(0);
   }, 60_000);
-
 
   it("handles 32 concurrent writes, pagination and foreign tenant isolation", async () => {
     const orgA = await createOrganization("knowledge-concurrency-a");
@@ -422,6 +424,4 @@ describe("Cycle 5 knowledge API and tenant boundaries", () => {
       .set("Authorization", "Bearer " + tokenB)
       .expect(404);
   }, 60_000);
-
-
 });
