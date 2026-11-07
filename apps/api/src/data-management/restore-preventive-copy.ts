@@ -9,6 +9,7 @@ import {
 } from "./backup-manifest";
 import { BackupStoreIntegrityError, type BackupStore } from "./backup-store";
 import { exportTenantSnapshot } from "./tenant-snapshot";
+import { exportKnowledgeDocumentBlobs } from "./knowledge-backup-objects";
 import { preflightDeletionExecution } from "./recovery-deletion-preflight";
 
 export type PreventiveRestoreCopy = {
@@ -107,11 +108,20 @@ export async function stageRestorePreventiveCopy(
 
   // Use the operation UUID as the immutable backup object name. Retries must
   // read/adopt this object, never publish another version under a new name.
-  const data = await exportTenantSnapshot(tx, organizationId, maxBytes);
+  const data = await exportTenantSnapshot(tx, organizationId, maxBytes, {
+    includeKnowledgeDocuments: true,
+  });
   const currentFingerprint = snapshotDataFingerprint(data);
   if (currentFingerprint !== locked.currentFingerprint)
     throw new BackupError("RESTORE_PREVIEW_STALE");
-  const bytes = encodeSnapshot(organizationId, data, new Date(), maxBytes);
+  const knowledgeDocuments = await exportKnowledgeDocumentBlobs(data, maxBytes);
+  const bytes = encodeSnapshot(
+    organizationId,
+    data,
+    new Date(),
+    maxBytes,
+    knowledgeDocuments
+  );
   try {
     await store.read(operationId);
   } catch (error) {
