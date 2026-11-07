@@ -6,6 +6,8 @@ import { PrismaService } from "../database/prisma.service";
 import { BackupStore } from "./backup-store";
 import { backupStorageUsage } from "./backup-storage-capacity";
 import { BackupService } from "./backup.service";
+import { LocalKnowledgeStorage } from "../knowledge/local-knowledge-storage";
+import { stageKnowledgeDocumentBlobs } from "./knowledge-backup-objects";
 import type { Prisma } from "../generated/prisma/client";
 
 describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
@@ -364,4 +366,58 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
       ).reservedBytes
     ).toBe(0n);
   });
+  it("round-trips document bytes inside the encrypted tenant snapshot", async () => {
+    const { organization, user } = await fixture();
+    const previous = process.env.KNOWLEDGE_STORAGE_ROOT;
+    const documentRoot = await mkdtemp(join(tmpdir(), "axes-doc-archive-"));
+    process.env.KNOWLEDGE_STORAGE_ROOT = documentRoot;
+    try {
+      const documents = new LocalKnowledgeStorage(documentRoot);
+      const id = randomUUID();
+      const contents = Buffer.from("Contrato confidencial e verificável");
+      const saved = await documents.put(id, {
+        fileName: "contrato.pdf",
+        mimeType: "application/pdf",
+        base64: contents.toString("base64"),
+      });
+      await owner.knowledgeItem.create({
+        data: {
+          id,
+          organizationId: organization.id,
+          type: "DOCUMENT",
+          title: "Contrato",
+          originalFileName: "contrato.pdf",
+          mimeType: "application/pdf",
+          storageKey: saved.storageKey,
+          sizeBytes: BigInt(saved.sizeBytes),
+          sha256: saved.sha256,
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+      });
+      const archived = await service.create(
+        organization.id,
+        user.id,
+        "MANUAL"
+      );
+      expect(archived.state).toBe("COMPLETED");
+      const verified = await service.verify(organization.id, archived.id);
+      expect(verified.knowledgeDocuments).toHaveLength(1);
+      expect(verified.knowledgeDocuments[0]?.storageKey).toBe(saved.storageKey);
+      expect(
+        Buffer.from(verified.knowledgeDocuments[0]!.base64, "base64")
+      ).toEqual(contents);
+      await documents.remove(saved.storageKey);
+      await stageKnowledgeDocumentBlobs(
+        verified.data,
+        verified.knowledgeDocuments
+      );
+      expect(await documents.get(saved.storageKey)).toEqual(contents);
+    } finally {
+      if (previous === undefined) delete process.env.KNOWLEDGE_STORAGE_ROOT;
+      else process.env.KNOWLEDGE_STORAGE_ROOT = previous;
+      await rm(documentRoot, { recursive: true, force: true });
+    }
+  });
+
 });
