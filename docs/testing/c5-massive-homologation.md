@@ -4,14 +4,14 @@
 
 ## Matriz de testes
 
-| Frente | Exercício | Evidência |
-| --- | --- | --- |
-| Unidade / propriedades | NOTE, LINK, DOCUMENT, validação de URL, base64, nome de arquivo, UUID, paginação e atualizações | `scripts/homologation/contract-campaign.cjs` |
-| Caixa-preta HTTP | 128 POSTs deliberadamente inválidos, oito filtros inválidos e duas requisições sem sessão; verificar que não persistem registros | `apps/api/src/knowledge/knowledge.integration.spec.ts` |
-| Concorrência | 32 POSTs, em lotes de 8; integridade dos IDs, duas páginas de resultados e isolamento de outra organização | `apps/api/src/knowledge/knowledge.integration.spec.ts` |
-| Segurança E2E | Organizações distintas, PRIVATE, leitura/edição/exclusão cruzada, download, conteúdo binário, upload com path traversal e autenticação obrigatória | `tests/e2e/knowledge-blackbox.spec.ts` |
-| Navegador E2E | Login, NOTE/LINK/DOCUMENT, recarga e download | `tests/e2e/knowledge-hub.spec.ts` |
-| Recuperação | Snapshot criptografado, SHA-256, retorno dos bytes, restauração SQL, colisões e adulteração | `apps/api/src/data-management/knowledge-backup-objects.spec.ts` e `backup.integration.spec.ts` |
+| Frente                 | Exercício                                                                                                                                          | Evidência                                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Unidade / propriedades | NOTE, LINK, DOCUMENT, validação de URL, base64, nome de arquivo, UUID, paginação e atualizações                                                    | `scripts/homologation/contract-campaign.cjs`                                                   |
+| Caixa-preta HTTP       | 128 POSTs deliberadamente inválidos, oito filtros inválidos e duas requisições sem sessão; verificar que não persistem registros                   | `apps/api/src/knowledge/knowledge.integration.spec.ts`                                         |
+| Concorrência           | 32 POSTs, em lotes de 8; integridade dos IDs, duas páginas de resultados e isolamento de outra organização                                         | `apps/api/src/knowledge/knowledge.integration.spec.ts`                                         |
+| Segurança E2E          | Organizações distintas, PRIVATE, leitura/edição/exclusão cruzada, download, conteúdo binário, upload com path traversal e autenticação obrigatória | `tests/e2e/knowledge-blackbox.spec.ts`                                                         |
+| Navegador E2E          | Login, NOTE/LINK/DOCUMENT, recarga e download                                                                                                      | `tests/e2e/knowledge-hub.spec.ts`                                                              |
+| Recuperação            | Snapshot criptografado, SHA-256, retorno dos bytes, restauração SQL, colisões e adulteração                                                        | `apps/api/src/data-management/knowledge-backup-objects.spec.ts` e `backup.integration.spec.ts` |
 
 ## Campanha de 100 milhões de propriedades
 
