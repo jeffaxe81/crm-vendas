@@ -83,12 +83,14 @@ describe("knowledge object backup and restore adapter", () => {
     const changed = {
       KnowledgeItem: [{ ...data.KnowledgeItem![0], sha256: "0".repeat(64) }],
     };
-    await expect(exportKnowledgeDocumentBlobs(changed, 64 * 1024 * 1024))
-      .rejects.toThrow("BACKUP_ATTACHMENT_INTEGRITY_FAILED");
+    await expect(
+      exportKnowledgeDocumentBlobs(changed, 64 * 1024 * 1024)
+    ).rejects.toThrow("BACKUP_ATTACHMENT_INTEGRITY_FAILED");
     const store = new LocalKnowledgeStorage(directory);
     await store.remove(stored.storageKey);
-    await expect(exportKnowledgeDocumentBlobs(data, 64 * 1024 * 1024))
-      .rejects.toThrow("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+    await expect(
+      exportKnowledgeDocumentBlobs(data, 64 * 1024 * 1024)
+    ).rejects.toThrow("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
   });
 
   it("never overwrites an existing blob of different bytes", async () => {
@@ -100,18 +102,21 @@ describe("knowledge object backup and restore adapter", () => {
         Buffer.from("alterado")
       )
     ).rejects.toThrow("KNOWLEDGE_STORAGE_COLLISION");
-    expect((await readFile(join(directory, stored.storageKey))).toString())
-      .toBe("original");
+    expect(
+      (await readFile(join(directory, stored.storageKey))).toString()
+    ).toBe("original");
     await stageKnowledgeDocumentBlobs(data, blobs);
   });
 
   it("does not interpret foreign or duplicate keys as local documents", async () => {
     const { data } = await fixture();
     const blobs = await exportKnowledgeDocumentBlobs(data, 64 * 1024 * 1024);
-    expect(() => validateKnowledgeDocumentBlobs(data, [...blobs, ...blobs]))
-      .toThrow("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+    expect(() =>
+      validateKnowledgeDocumentBlobs(data, [...blobs, ...blobs])
+    ).toThrow("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
     const foreign = [{ ...blobs[0]!, storageKey: randomUUID() }];
-    expect(() => validateKnowledgeDocumentBlobs(data, foreign))
-      .toThrow("BACKUP_INVALID");
+    expect(() => validateKnowledgeDocumentBlobs(data, foreign)).toThrow(
+      "BACKUP_INVALID"
+    );
   });
 });
