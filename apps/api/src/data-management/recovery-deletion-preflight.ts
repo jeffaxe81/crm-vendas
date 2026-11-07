@@ -12,7 +12,9 @@ export async function deletionSnapshot(
   organizationId: string,
   maxBytes: number
 ) {
-  const current = await exportTenantSnapshot(tx, organizationId, maxBytes);
+  const current = await exportTenantSnapshot(tx, organizationId, maxBytes, {
+    includeKnowledgeDocuments: true,
+  });
   const outbox = await tx.emailOutbox.findMany({
     where: { organizationId },
     select: { ticketId: true },
