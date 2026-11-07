@@ -95,6 +95,25 @@ describe("Cycle 5 knowledge contracts", () => {
     ).toBe(false);
   });
 
+  it("rejects oversized, empty and path-traversal document uploads", () => {
+    const schema = requireSchema("KnowledgeDocumentInputSchema");
+    const valid = {
+      fileName: "contrato.pdf",
+      mimeType: "application/pdf",
+      base64: "SGVsbG8=",
+    };
+
+    expect(schema.safeParse(valid).success).toBe(true);
+    expect(schema.safeParse({ ...valid, base64: "====" }).success).toBe(false);
+    expect(schema.safeParse({ ...valid, fileName: "../contrato.pdf" }).success).toBe(false);
+    expect(schema.safeParse({ ...valid, fileName: "pasta\\contrato.pdf" }).success).toBe(false);
+
+    // The configured 10 MiB limit must be checked against decoded bytes,
+    // not just the base64 text length; one byte over the limit is rejected.
+    const overLimit = Buffer.alloc(10 * 1024 * 1024 + 1, 0).toString("base64");
+    expect(schema.safeParse({ ...valid, base64: overLimit }).success).toBe(false);
+  });
+
   it("limits each relationship class to 20 unique UUIDs", () => {
     const schema = requireSchema("KnowledgeCreateInputSchema");
     const repeated = Array.from({ length: 2 }, () => companyId);
