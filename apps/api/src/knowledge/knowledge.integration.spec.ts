@@ -281,4 +281,85 @@ describe("Cycle 5 knowledge API and tenant boundaries", () => {
       .set("Authorization", "Bearer " + adminToken)
       .expect(404);
   });
+  it("black-box rejects 128 adversarial payloads without writing business data", async () => {
+    const organization = await createOrganization("knowledge-blackbox");
+    const { user, password } = await createUser(
+      organization.id,
+      "knowledge-blackbox@example.test"
+    );
+    const token = await login(user.email, password, organization.slug);
+    const valid = "11111111-1111-4111-8111-111111111111";
+
+    for (let i = 0; i < 128; i += 1) {
+      const title = "Adversarial " + i;
+      const doc = {
+        fileName: "arquivo-" + i + ".txt",
+        mimeType: "text/plain",
+        base64: Buffer.from("test" + i).toString("base64"),
+      };
+      const note = { type: "NOTE", title, noteContent: "Nota " + i };
+      const link = { type: "LINK", title, url: "https://example.test/" + i };
+      const item = { type: "DOCUMENT", title, document: doc };
+      const payloads: unknown[] = [
+        { ...note, title: "  " },
+        { ...note, noteContent: " " },
+        { ...note, title: i },
+        { ...note, companyIds: [valid, valid] },
+        { ...note, companyIds: ["invalid"] },
+        { ...note, injected: "<script>" },
+        { ...link, url: "ftp://example.test/" + i },
+        { ...link, url: "javascript:alert(" + i + ")" },
+        { ...item, document: { ...doc, fileName: "../" + title } },
+        { ...item, document: { ...doc, mimeType: " " } },
+        { ...item, document: { ...doc, base64: "@bad" } },
+        { type: "DOCUMENT", title },
+        { ...note, accessLevel: "WORLD" },
+        { ...note, url: "https://example.test" },
+        { ...link, noteContent: "invalid" },
+        { ...item, document: { ...doc, fileName: "x".repeat(256) } },
+      ];
+      await request(app.getHttpServer())
+        .post("/api/v1/knowledge")
+        .set("Authorization", "Bearer " + token)
+        .send(payloads[i % payloads.length])
+        .expect(400);
+    }
+
+    for (const path of [
+      "?page=0",
+      "?page=-1",
+      "?limit=0",
+      "?limit=101",
+      "?type=WRONG",
+      "?accessLevel=WORLD",
+      "?createdBy=unknown",
+      "?q=%20%20%20",
+    ]) {
+      await request(app.getHttpServer())
+        .get("/api/v1/knowledge" + path)
+        .set("Authorization", "Bearer " + token)
+        .expect(400);
+    }
+
+    await request(app.getHttpServer()).get("/api/v1/knowledge").expect(401);
+    await request(app.getHttpServer())
+      .post("/api/v1/knowledge")
+      .send({ type: "NOTE", title: "Sem sessão", noteContent: "Inválido" })
+      .expect(401);
+
+    expect(
+      await prisma.withTenant(organization.id, tx =>
+        tx.knowledgeItem.count({ where: { organizationId: organization.id } })
+      )
+    ).toBe(0);
+    expect(
+      await prisma.withTenant(organization.id, tx =>
+        tx.auditLog.count({
+          where: { organizationId: organization.id, action: "knowledge.created" },
+        })
+      )
+    ).toBe(0);
+  }, 60_000);
+
+
 });
