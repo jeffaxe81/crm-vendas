@@ -121,7 +121,9 @@ export function KnowledgeView({
         setTotal(response.total);
       } catch (cause) {
         if (active)
-          setError(errorText(cause, "Não foi possível carregar o conhecimento."));
+          setError(
+            errorText(cause, "Não foi possível carregar o conhecimento.")
+          );
       } finally {
         if (active) setLoading(false);
       }
@@ -272,11 +274,17 @@ export function KnowledgeView({
           <p className="knowledge-hub__eyebrow">{t("Conhecimento")}</p>
           <h1>{t("Hub de conhecimento")}</h1>
           <p>
-            {t("Notas, links e documentos organizados por equipe, sem exposição entre empresas.")}
+            {t(
+              "Notas, links e documentos organizados por equipe, sem exposição entre empresas."
+            )}
           </p>
         </div>
         {canWrite ? (
-          <button type="button" className="crm-button crm-button--default" onClick={openCreate}>
+          <button
+            type="button"
+            className="crm-button crm-button--default"
+            onClick={openCreate}
+          >
             {t("Novo registro")}
           </button>
         ) : null}
@@ -318,21 +326,35 @@ export function KnowledgeView({
         </button>
       </form>
 
-      {error ? <p className="knowledge-hub__error" role="alert">{error}</p> : null}
-      {notice ? <p className="knowledge-hub__notice" role="status">{notice}</p> : null}
+      {error ? (
+        <p className="knowledge-hub__error" role="alert">
+          {error}
+        </p>
+      ) : null}
+      {notice ? (
+        <p className="knowledge-hub__notice" role="status">
+          {notice}
+        </p>
+      ) : null}
       {loading ? <p role="status">{t("Carregando registros...")}</p> : null}
 
       {!loading && items.length === 0 ? (
-        <p className="knowledge-hub__empty">{t("Nenhum registro encontrado.")}</p>
+        <p className="knowledge-hub__empty">
+          {t("Nenhum registro encontrado.")}
+        </p>
       ) : null}
 
       <div className="knowledge-hub__list">
         {items.map(record => (
           <article key={record.id} className="knowledge-hub__item">
             <div className="knowledge-hub__item-header">
-              <span className="knowledge-hub__type">{t(typeNames[record.type])}</span>
+              <span className="knowledge-hub__type">
+                {t(typeNames[record.type])}
+              </span>
               <span className="knowledge-hub__access">
-                {record.accessLevel === "PRIVATE" ? t("Privado") : t("Organização")}
+                {record.accessLevel === "PRIVATE"
+                  ? t("Privado")
+                  : t("Organização")}
               </span>
             </div>
             <h2>{record.title}</h2>
@@ -345,29 +367,50 @@ export function KnowledgeView({
               </a>
             ) : null}
             {record.type === "DOCUMENT" ? (
-              <p>{record.originalFileName} — {record.sizeBytes ?? 0} bytes</p>
+              <p>
+                {record.originalFileName} — {record.sizeBytes ?? 0} bytes
+              </p>
             ) : null}
             <p className="knowledge-hub__metadata">
               {[record.category, record.source].filter(Boolean).join(" · ")}
-              {record.aiStatus !== "UNPROCESSED" ? " · IA: " + record.aiStatus : ""}
+              {record.aiStatus !== "UNPROCESSED"
+                ? " · IA: " + record.aiStatus
+                : ""}
             </p>
-            {record.companyIds.length + record.contactIds.length + record.opportunityIds.length > 0 ? (
+            {record.companyIds.length +
+              record.contactIds.length +
+              record.opportunityIds.length >
+            0 ? (
               <p className="knowledge-hub__links">
-                {record.companyIds.length} empresa(s) · {record.contactIds.length} contato(s) · {record.opportunityIds.length} oportunidade(s)
+                {record.companyIds.length} empresa(s) ·{" "}
+                {record.contactIds.length} contato(s) ·{" "}
+                {record.opportunityIds.length} oportunidade(s)
               </p>
             ) : null}
             <div className="knowledge-hub__actions">
               {record.type === "DOCUMENT" ? (
-                <button type="button" disabled={busy} onClick={() => void download(record)}>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void download(record)}
+                >
                   {t("Baixar")}
                 </button>
               ) : null}
               {canWrite ? (
                 <>
-                  <button type="button" disabled={busy} onClick={() => openEdit(record)}>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => openEdit(record)}
+                  >
                     {t("Editar")}
                   </button>
-                  <button type="button" disabled={busy} onClick={() => void remove(record)}>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => void remove(record)}
+                  >
                     {t("Excluir")}
                   </button>
                 </>
@@ -379,11 +422,21 @@ export function KnowledgeView({
 
       {!loading && totalPages > 1 ? (
         <nav className="knowledge-hub__pagination" aria-label={t("Paginação")}>
-          <button type="button" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+          <button
+            type="button"
+            disabled={page <= 1}
+            onClick={() => setPage(page - 1)}
+          >
             {t("Anterior")}
           </button>
-          <span>{page} / {totalPages}</span>
-          <button type="button" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
+          <span>
+            {page} / {totalPages}
+          </span>
+          <button
+            type="button"
+            disabled={page >= totalPages}
+            onClick={() => setPage(page + 1)}
+          >
             {t("Próxima")}
           </button>
         </nav>
@@ -399,7 +452,10 @@ export function KnowledgeView({
                 <select
                   value={form.type}
                   onChange={event =>
-                    setForm(value => ({ ...value, type: event.target.value as KnowledgeType }))
+                    setForm(value => ({
+                      ...value,
+                      type: event.target.value as KnowledgeType,
+                    }))
                   }
                 >
                   <option value="NOTE">{t("Nota")}</option>
@@ -414,7 +470,9 @@ export function KnowledgeView({
                 required
                 maxLength={200}
                 value={form.title}
-                onChange={event => setForm(value => ({ ...value, title: event.target.value }))}
+                onChange={event =>
+                  setForm(value => ({ ...value, title: event.target.value }))
+                }
               />
             </label>
             <label>
@@ -422,7 +480,9 @@ export function KnowledgeView({
               <input
                 maxLength={120}
                 value={form.category}
-                onChange={event => setForm(value => ({ ...value, category: event.target.value }))}
+                onChange={event =>
+                  setForm(value => ({ ...value, category: event.target.value }))
+                }
               />
             </label>
             <label>
@@ -430,14 +490,21 @@ export function KnowledgeView({
               <input
                 maxLength={200}
                 value={form.source}
-                onChange={event => setForm(value => ({ ...value, source: event.target.value }))}
+                onChange={event =>
+                  setForm(value => ({ ...value, source: event.target.value }))
+                }
               />
             </label>
             <label>
               {t("Acesso")}
               <select
                 value={form.accessLevel}
-                onChange={event => setForm(value => ({ ...value, accessLevel: event.target.value as KnowledgeAccess }))}
+                onChange={event =>
+                  setForm(value => ({
+                    ...value,
+                    accessLevel: event.target.value as KnowledgeAccess,
+                  }))
+                }
               >
                 <option value="ORGANIZATION">{t("Organização")}</option>
                 <option value="PRIVATE">{t("Privado")}</option>
@@ -451,7 +518,12 @@ export function KnowledgeView({
                   rows={4}
                   maxLength={100000}
                   value={form.noteContent}
-                  onChange={event => setForm(value => ({ ...value, noteContent: event.target.value }))}
+                  onChange={event =>
+                    setForm(value => ({
+                      ...value,
+                      noteContent: event.target.value,
+                    }))
+                  }
                 />
               </label>
             ) : null}
@@ -462,7 +534,9 @@ export function KnowledgeView({
                   type="url"
                   required
                   value={form.url}
-                  onChange={event => setForm(value => ({ ...value, url: event.target.value }))}
+                  onChange={event =>
+                    setForm(value => ({ ...value, url: event.target.value }))
+                  }
                 />
               </label>
             ) : null}
@@ -477,10 +551,19 @@ export function KnowledgeView({
               </label>
             ) : null}
             <div className="knowledge-hub__actions">
-              <button className="crm-button crm-button--default" type="submit" disabled={busy}>
+              <button
+                className="crm-button crm-button--default"
+                type="submit"
+                disabled={busy}
+              >
                 {busy ? t("Salvando...") : t("Salvar")}
               </button>
-              <button className="crm-button crm-button--outline" type="button" disabled={busy} onClick={() => setEditorOpen(false)}>
+              <button
+                className="crm-button crm-button--outline"
+                type="button"
+                disabled={busy}
+                onClick={() => setEditorOpen(false)}
+              >
                 {t("Cancelar")}
               </button>
             </div>
