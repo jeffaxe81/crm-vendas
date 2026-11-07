@@ -1,0 +1,30 @@
+name: C5 format diagnostic (temporary)
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/c5-format-diagnostic.yml"
+      - "apps/api/src/knowledge/**"
+      - "packages/contracts/src/knowledge*"
+
+permissions:
+  contents: read
+
+jobs:
+  format-preview:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Print exact Prettier corrections
+        run: |
+          pnpm exec prettier --write apps/api/src/knowledge/local-knowledge-storage.spec.ts apps/api/src/knowledge/local-knowledge-storage.ts packages/contracts/src/knowledge.test.ts
+          git --no-pager diff -- apps/api/src/knowledge/local-knowledge-storage.spec.ts apps/api/src/knowledge/local-knowledge-storage.ts packages/contracts/src/knowledge.test.ts
