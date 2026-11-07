@@ -102,7 +102,9 @@ describe("Cycle 5 Knowledge Hub Web", () => {
   });
 
   it("sends search and type filters to the server", async () => {
-    const fetchMock = vi.fn(async (_input: string | URL) => response(emptyPage));
+    const fetchMock = vi.fn(async (_input: string | URL) =>
+      response(emptyPage)
+    );
     vi.stubGlobal("fetch", fetchMock);
     render(<KnowledgeView accessToken={token} canWrite={false} />);
     await screen.findByText("Nenhum registro encontrado.");
