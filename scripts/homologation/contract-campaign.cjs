@@ -35,7 +35,8 @@ if (shards < 1 || shards > 64 || shard >= shards)
 if (seedInput > 0xffffffff) throw new Error("Seed must fit uint32");
 
 const count = Math.floor(total / shards) + (shard < total % shards ? 1 : 0);
-const offset = shard * Math.floor(total / shards) + Math.min(shard, total % shards);
+const offset =
+  shard * Math.floor(total / shards) + Math.min(shard, total % shards);
 let state = (seedInput ^ Math.imul(shard + 1, 0x9e3779b9)) >>> 0;
 if (state === 0) state = 0x6d2b79f5;
 let checksum = 2166136261;
@@ -161,12 +162,18 @@ for (let local = 0; local < count; local += 1) {
   const parsed = schema.safeParse(input);
   if (parsed.success !== accepted)
     throw new Error(
-      "PROPERTY_FAILURE shard=" + shard +
-        " index=" + globalIndex +
-        " variant=" + variant +
-        " seed=" + seedInput +
-        " got=" + parsed.success +
-        " expected=" + accepted
+      "PROPERTY_FAILURE shard=" +
+        shard +
+        " index=" +
+        globalIndex +
+        " variant=" +
+        variant +
+        " seed=" +
+        seedInput +
+        " got=" +
+        parsed.success +
+        " expected=" +
+        accepted
     );
   if (parsed.success) {
     if (variant === 10 && parsed.data.q !== input.q.trim())
