@@ -302,6 +302,12 @@ export class BackupService {
             const data = await exportTenantSnapshot(
               tx,
               organizationId,
+              this.options.maxBytes,
+              { includeKnowledgeDocuments: true }
+            );
+            requireActive(workerFence?.signal);
+            const knowledgeDocuments = await exportKnowledgeDocumentBlobs(
+              data,
               this.options.maxBytes
             );
             requireActive(workerFence?.signal);
@@ -309,7 +315,8 @@ export class BackupService {
               organizationId,
               data,
               new Date(),
-              this.options.maxBytes
+              this.options.maxBytes,
+              knowledgeDocuments
             );
           },
           {
