@@ -7,7 +7,7 @@ import { BackupStore } from "./backup-store";
 import { backupStorageUsage } from "./backup-storage-capacity";
 import { BackupService } from "./backup.service";
 import { LocalKnowledgeStorage } from "../knowledge/local-knowledge-storage";
-import { stageKnowledgeDocumentBlobs } from "./knowledge-backup-objects";
+import { restoreTenantSnapshot } from "./restore-executor";
 import type { Prisma } from "../generated/prisma/client";
 
 describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
@@ -404,11 +404,22 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
         Buffer.from(verified.knowledgeDocuments[0]!.base64, "base64")
       ).toEqual(contents);
       await documents.remove(saved.storageKey);
-      await stageKnowledgeDocumentBlobs(
-        verified.data,
-        verified.knowledgeDocuments
+      await runtime.withMaintenance(
+        organization.id,
+        tx =>
+          restoreTenantSnapshot(
+            tx,
+            organization.id,
+            verified.data,
+            verified.knowledgeDocuments
+          ),
+        { isolationLevel: "RepeatableRead", timeout: 60_000 }
       );
       expect(await documents.get(saved.storageKey)).toEqual(contents);
+      const restored = await runtime.withTenant(organization.id, tx =>
+        tx.knowledgeItem.findFirst({ where: { id } })
+      );
+      expect(restored?.storageKey).toBe(saved.storageKey);
     } finally {
       if (previous === undefined) delete process.env.KNOWLEDGE_STORAGE_ROOT;
       else process.env.KNOWLEDGE_STORAGE_ROOT = previous;
