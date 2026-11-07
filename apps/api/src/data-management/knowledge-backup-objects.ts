@@ -40,15 +40,17 @@ export async function exportKnowledgeDocumentBlobs(
       typeof row.storageKey !== "string" ||
       typeof row.sha256 !== "string" ||
       typeof row.sizeBytes !== "string"
-    ) throw new BackupError("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+    )
+      throw new BackupError("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
     // Check the upper bound before reading large external files.
     const expected = Number(row.sizeBytes);
     if (
       !Number.isSafeInteger(expected) ||
       expected <= 0 ||
       expected > 10 * 1024 * 1024 ||
-      expected * 4 / 3 > remaining
-    ) throw new BackupError("BACKUP_TOO_LARGE");
+      (expected * 4) / 3 > remaining
+    )
+      throw new BackupError("BACKUP_TOO_LARGE");
     let bytes: Buffer;
     try {
       bytes = await store.get(row.storageKey);
