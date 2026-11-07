@@ -279,6 +279,7 @@ export function CrmShell({
               "Comercial",
               "Produtividade",
               "Atendimento",
+              "Conhecimento",
               "Gestão",
               "Administração",
             ] as const
