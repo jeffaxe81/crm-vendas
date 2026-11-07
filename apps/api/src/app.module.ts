@@ -34,6 +34,7 @@ import { IntegrationsModule } from "./integrations/integrations.module";
 
 import { DataManagementModule } from "./data-management/data-management.module";
 import { DashboardsModule } from "./dashboards/dashboards.module";
+import { KnowledgeModule } from "./knowledge/knowledge.module";
 
 import { WorkspaceModule } from "./workspace/workspace.module";
 
@@ -42,6 +43,7 @@ import { WorkspaceModule } from "./workspace/workspace.module";
     WorkspaceModule,
     DataManagementModule,
     DashboardsModule,
+    KnowledgeModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ["../../.env", ".env"],
