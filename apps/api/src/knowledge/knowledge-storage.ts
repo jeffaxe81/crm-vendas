@@ -1,4 +1,6 @@
 /** Storage is deliberately separate from Prisma; database rows contain only metadata. */
+export const KNOWLEDGE_STORAGE = Symbol("KNOWLEDGE_STORAGE");
+
 export type KnowledgeStorageInput = {
   fileName: string;
   mimeType: string;
