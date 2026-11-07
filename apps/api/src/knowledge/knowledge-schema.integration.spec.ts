@@ -57,9 +57,9 @@ describe("Cycle 5 knowledge database schema", () => {
 
   it("enables row level security on every knowledge table", async () => {
     const rows = await prisma.$queryRawUnsafe<
-      Array<{ relname: string; relrowsecurity: boolean }>
+      Array<{ relname: string; relrowsecurity: boolean; relforcerowsecurity: boolean }>
     >(
-      `SELECT c.relname, c.relrowsecurity
+      `SELECT c.relname, c.relrowsecurity, c.relforcerowsecurity
        FROM pg_class c
        JOIN pg_namespace n ON n.oid = c.relnamespace
        WHERE n.nspname = 'public'
@@ -70,6 +70,35 @@ describe("Cycle 5 knowledge database schema", () => {
     );
 
     expect(rows).toHaveLength(expectedTables.length);
-    expect(rows.every(row => row.relrowsecurity)).toBe(true);
+    expect(rows.every(row => row.relrowsecurity && row.relforcerowsecurity)).toBe(true);
   });
+  it("requires tenant isolation policies with matching WITH CHECK rules", async () => {
+    const rows = await prisma.$queryRawUnsafe<
+      Array<{
+        tablename: string;
+        policyname: string;
+        qual: string | null;
+        with_check: string | null;
+      }>
+    >(
+      `SELECT tablename, policyname, qual, with_check
+       FROM pg_policies
+       WHERE schemaname = 'public'
+         AND tablename = ANY(ARRAY[${expectedTables
+           .map(table => `'${table}'`)
+           .join(", ")}])`
+    );
+
+    for (const table of expectedTables) {
+      const policies = rows.filter(row => row.tablename === table);
+      expect(policies).toHaveLength(1);
+      const policy = policies[0]!;
+      expect(policy.policyname).toBe(`${table}_tenant_isolation`);
+      expect(policy.qual).toContain("app.current_organization_id");
+      expect(policy.with_check).toContain("app.current_organization_id");
+      expect(policy.qual).toContain("organization_id");
+      expect(policy.with_check).toContain("organization_id");
+    }
+  });
+
 });
