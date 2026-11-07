@@ -5,7 +5,13 @@ import {
   snapshotFields,
 } from "./backup-models";
 import { BackupError } from "./backup-error";
-import { isValidSnapshotField, type SnapshotData } from "./backup-manifest";
+import {
+  isValidSnapshotField,
+  validateKnowledgeDocumentBlobs,
+  type KnowledgeDocumentBlob,
+  type SnapshotData,
+} from "./backup-manifest";
+import { stageKnowledgeDocumentBlobs } from "./knowledge-backup-objects";
 import { validateRestoreIdentityReferences } from "./restore-identity-check";
 import { validateRestorePreservedMemberships } from "./restore-membership-check";
 import { validateRestoreReferences } from "./restore-reference-check";
@@ -159,11 +165,6 @@ const unsupportedPolicies = TENANT_DATA_REGISTRY.filter(
 );
 
 function prepareGraph(data: SnapshotData, organizationId: string) {
-  // Metadata-only snapshots do not contain the external object bytes.
-  // Even a forged/imported DOCUMENT row must not be restored without them.
-  if (data.KnowledgeItem?.some(row => row.type === "DOCUMENT")) {
-    fail("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
-  }
   for (const policy of unsupportedPolicies) {
     const rows = data[policy.model];
     if (rows !== undefined && !Array.isArray(rows))
@@ -289,7 +290,8 @@ async function requireCurrentPolicies(
 export async function restoreTenantSnapshot(
   tx: Prisma.TransactionClient,
   organizationId: string,
-  data: SnapshotData
+  data: SnapshotData,
+  knowledgeDocuments: readonly KnowledgeDocumentBlob[] = []
 ): Promise<void> {
   await requireMaintenanceContext(tx, organizationId);
   if (
@@ -299,6 +301,8 @@ export async function restoreTenantSnapshot(
   ) {
     fail("RESTORE_TARGET_INVALID");
   }
+  // Direct callers must supply an authenticated blob for every document.
+  validateKnowledgeDocumentBlobs(data, knowledgeDocuments);
   // Prepare the entire graph and recheck live identities before the first DELETE.
   const graph = prepareGraph(data, organizationId);
   const protocolCounterHighWater = prepareTicketProtocolCounterHighWater(
@@ -316,18 +320,10 @@ export async function restoreTenantSnapshot(
   // Direct callers cannot bypass the safety checks of the locked preflight.
   await requireSupportedTicketRestoreDependencies(tx, organizationId, data);
   await requireCurrentPolicies(tx, organizationId);
-  const [knowledgeDocuments] = await tx.$queryRawUnsafe<
-    Array<{ present: boolean }>
-  >(
-    `SELECT EXISTS(
-      SELECT 1 FROM public.knowledge_items
-      WHERE organization_id=$1::uuid
-        AND type='DOCUMENT'::knowledge_item_type
-    ) AS present`,
-    organizationId
-  );
-  if (knowledgeDocuments?.present !== false)
-    fail("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+  // Publish only verified immutable target objects before any SQL deletion.
+  // Existing blobs are never overwritten; transactional rollback leaves
+  // unreferenced objects, never a partially replaced business graph.
+  await stageKnowledgeDocumentBlobs(data, knowledgeDocuments);
 
   // CSAT holds a RESTRICT FK to Ticket. Its reviewed special policy replaces
   // the projection inside this same transaction before the Ticket graph is
