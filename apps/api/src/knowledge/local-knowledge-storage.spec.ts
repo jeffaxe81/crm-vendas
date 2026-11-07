@@ -25,33 +25,7 @@ describe("LocalKnowledgeStorage", () => {
       base64: bytes.toString("base64"),
     });
     expect(saved.storageKey).toMatch(
-      new RegExp(`^${itemId}-[a-f0-9-]{36}import { createHash, randomUUID } from "node:crypto";
-import { mkdtemp, readdir, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { LocalKnowledgeStorage } from "./local-knowledge-storage";
-
-describe("LocalKnowledgeStorage", () => {
-  let root: string;
-  const itemId = "00000000-0000-4000-8000-000000000001";
-
-  beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), "axe-knowledge-"));
-  });
-
-  afterEach(async () => {
-    await rm(root, { recursive: true, force: true });
-  });
-
-  it("persists bytes using an opaque key and round-trips SHA-256", async () => {
-    const storage = new LocalKnowledgeStorage(root);
-    const bytes = Buffer.from("Contrato de teste");
-    const saved = await storage.put(itemId, {
-      fileName: "cliente.pdf",
-      mimeType: "application/pdf",
-      base64: bytes.toString("base64"),
-    });
-)
+      new RegExp(`^${itemId}-[a-f0-9-]{36}$`)
     );
     expect(saved.storageKey).not.toContain("cliente.pdf");
     expect(saved.sizeBytes).toBe(bytes.length);
