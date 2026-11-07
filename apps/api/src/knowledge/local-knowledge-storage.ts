@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdir, open, readFile, rm } from "node:fs/promises";
+import { mkdir, open, rm } from "node:fs/promises";
+import { constants } from "node:fs";
 import { isAbsolute, join } from "node:path";
 
 import { KnowledgeDocumentInputSchema } from "@axes/contracts";
@@ -71,7 +72,49 @@ export class LocalKnowledgeStorage implements KnowledgeStorage {
   }
 
   async get(storageKey: string): Promise<Buffer> {
-    return readFile(this.filePath(storageKey));
+    // Never follow a symlink supplied by a compromised storage directory.
+    const handle = await open(
+      this.filePath(storageKey),
+      constants.O_RDONLY | constants.O_NOFOLLOW
+    );
+    try {
+      const stat = await handle.stat();
+      if (!stat.isFile() || stat.size > MAX_BYTES)
+        throw new Error("KNOWLEDGE_DOCUMENT_SIZE_INVALID");
+      return await handle.readFile();
+    } finally {
+      await handle.close();
+    }
+  }
+
+  /**
+   * Restore an exact immutable object key. Never overwrite an existing key;
+   * an identical previously staged blob is safe to reuse after a retry.
+   */
+  async restore(storageKey: string, bytes: Buffer): Promise<void> {
+    const target = this.filePath(storageKey);
+    if (bytes.length < 1 || bytes.length > MAX_BYTES)
+      throw new Error("KNOWLEDGE_DOCUMENT_SIZE_INVALID");
+    await mkdir(this.root, { recursive: true, mode: 0o700 });
+    let handle;
+    try {
+      handle = await open(target, "wx", 0o600);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+      const existing = await this.get(storageKey);
+      if (!existing.equals(bytes))
+        throw new Error("KNOWLEDGE_STORAGE_COLLISION");
+      return;
+    }
+    try {
+      await handle.writeFile(bytes);
+      await handle.sync();
+    } catch (error) {
+      await handle.close();
+      await rm(target, { force: true }).catch(() => undefined);
+      throw error;
+    }
+    await handle.close();
   }
 
   async remove(storageKey: string): Promise<void> {
