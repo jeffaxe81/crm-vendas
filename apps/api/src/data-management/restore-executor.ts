@@ -46,6 +46,11 @@ const RESTORE_MODELS = [
   "Opportunity",
   "OpportunityItem",
   "Activity",
+  // Knowledge associations depend on companies, contacts and opportunities.
+  "KnowledgeItem",
+  "KnowledgeCompany",
+  "KnowledgeContact",
+  "KnowledgeOpportunity",
   "Territory",
   "TerritoryQuota",
   "TerritoryTarget",
@@ -154,6 +159,11 @@ const unsupportedPolicies = TENANT_DATA_REGISTRY.filter(
 );
 
 function prepareGraph(data: SnapshotData, organizationId: string) {
+  // Metadata-only snapshots do not contain the external object bytes.
+  // Even a forged/imported DOCUMENT row must not be restored without them.
+  if (data.KnowledgeItem?.some(row => row.type === "DOCUMENT")) {
+    fail("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+  }
   for (const policy of unsupportedPolicies) {
     const rows = data[policy.model];
     if (rows !== undefined && !Array.isArray(rows))
@@ -229,6 +239,7 @@ function prepareGraph(data: SnapshotData, organizationId: string) {
               "Int",
               "Boolean",
               "Decimal",
+              "BigInt",
               "Json",
             ].includes(field.type)
           ) {
@@ -305,6 +316,18 @@ export async function restoreTenantSnapshot(
   // Direct callers cannot bypass the safety checks of the locked preflight.
   await requireSupportedTicketRestoreDependencies(tx, organizationId, data);
   await requireCurrentPolicies(tx, organizationId);
+  const [knowledgeDocuments] = await tx.$queryRawUnsafe<
+    Array<{ present: boolean }>
+  >(
+    `SELECT EXISTS(
+      SELECT 1 FROM public.knowledge_items
+      WHERE organization_id=$1::uuid
+        AND type='DOCUMENT'::knowledge_item_type
+    ) AS present`,
+    organizationId
+  );
+  if (knowledgeDocuments?.present !== false)
+    fail("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
 
   // CSAT holds a RESTRICT FK to Ticket. Its reviewed special policy replaces
   // the projection inside this same transaction before the Ticket graph is
