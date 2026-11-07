@@ -362,4 +362,66 @@ describe("Cycle 5 knowledge API and tenant boundaries", () => {
   }, 60_000);
 
 
+  it("handles 32 concurrent writes, pagination and foreign tenant isolation", async () => {
+    const orgA = await createOrganization("knowledge-concurrency-a");
+    const orgB = await createOrganization("knowledge-concurrency-b");
+    const author = await createUser(
+      orgA.id,
+      "knowledge-concurrency-a@example.test"
+    );
+    const foreign = await createUser(
+      orgB.id,
+      "knowledge-concurrency-b@example.test"
+    );
+    const tokenA = await login(author.user.email, author.password, orgA.slug);
+    const tokenB = await login(foreign.user.email, foreign.password, orgB.slug);
+    const created: string[] = [];
+    for (let batch = 0; batch < 4; batch += 1) {
+      const responses = await Promise.all(
+        Array.from({ length: 8 }, (_, index) =>
+          request(app.getHttpServer())
+            .post("/api/v1/knowledge")
+            .set("Authorization", "Bearer " + tokenA)
+            .send({
+              type: "NOTE",
+              title: "Concurrent " + (batch * 8 + index),
+              noteContent: "Concurrent insert " + batch + "-" + index,
+            })
+        )
+      );
+      for (const response of responses) {
+        expect(response.status).toBe(201);
+        created.push(response.body.id as string);
+      }
+    }
+    expect(new Set(created).size).toBe(32);
+
+    const firstPage = await request(app.getHttpServer())
+      .get("/api/v1/knowledge?limit=20&page=1")
+      .set("Authorization", "Bearer " + tokenA)
+      .expect(200);
+    const secondPage = await request(app.getHttpServer())
+      .get("/api/v1/knowledge?limit=20&page=2")
+      .set("Authorization", "Bearer " + tokenA)
+      .expect(200);
+    expect(firstPage.body.total).toBe(32);
+    expect(firstPage.body.items).toHaveLength(20);
+    expect(secondPage.body.items).toHaveLength(12);
+    const actual = [...firstPage.body.items, ...secondPage.body.items].map(
+      item => item.id as string
+    );
+    expect(new Set(actual)).toEqual(new Set(created));
+
+    const foreignList = await request(app.getHttpServer())
+      .get("/api/v1/knowledge")
+      .set("Authorization", "Bearer " + tokenB)
+      .expect(200);
+    expect(foreignList.body.total).toBe(0);
+    await request(app.getHttpServer())
+      .get("/api/v1/knowledge/" + created[0])
+      .set("Authorization", "Bearer " + tokenB)
+      .expect(404);
+  }, 60_000);
+
+
 });
