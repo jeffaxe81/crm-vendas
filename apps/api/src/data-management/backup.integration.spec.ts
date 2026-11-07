@@ -395,11 +395,7 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
           updatedBy: user.id,
         },
       });
-      const archived = await service.create(
-        organization.id,
-        user.id,
-        "MANUAL"
-      );
+      const archived = await service.create(organization.id, user.id, "MANUAL");
       expect(archived.state).toBe("COMPLETED");
       const verified = await service.verify(organization.id, archived.id);
       expect(verified.knowledgeDocuments).toHaveLength(1);
@@ -419,5 +415,4 @@ describe("verified tenant backup catalog and RepeatableRead snapshot", () => {
       await rm(documentRoot, { recursive: true, force: true });
     }
   });
-
 });
