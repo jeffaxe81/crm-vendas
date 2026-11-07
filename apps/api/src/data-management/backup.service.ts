@@ -27,6 +27,7 @@ import {
   type SnapshotData,
 } from "./backup-manifest";
 import { exportTenantSnapshot } from "./tenant-snapshot";
+import { exportKnowledgeDocumentBlobs } from "./knowledge-backup-objects";
 export const BACKUP_STORE = Symbol("BACKUP_STORE");
 export const BACKUP_OPTIONS = Symbol("BACKUP_OPTIONS");
 export type BackupOptions = { maxBytes: number; snapshotTimeoutMs: number };
@@ -38,6 +39,7 @@ export type BackupWorkerFence = {
 export type VerifiedBackup = {
   bytes: Buffer;
   data: SnapshotData;
+  knowledgeDocuments: import("./backup-manifest").KnowledgeDocumentBlob[];
   manifest: BackupManifest;
   record: BackupRecord;
 };
