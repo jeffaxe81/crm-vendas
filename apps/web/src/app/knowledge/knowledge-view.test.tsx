@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { KnowledgeView } from "./knowledge-view";
@@ -41,9 +47,7 @@ describe("Cycle 5 Knowledge Hub Web", () => {
   it("keeps VIEWER read-only while showing scoped knowledge", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () =>
-        response({ ...emptyPage, items: [record], total: 1 })
-      )
+      vi.fn(async () => response({ ...emptyPage, items: [record], total: 1 }))
     );
     render(<KnowledgeView accessToken={token} canWrite={false} />);
     expect(await screen.findByText(record.title)).toBeInTheDocument();
@@ -54,28 +58,30 @@ describe("Cycle 5 Knowledge Hub Web", () => {
 
   it("submits a note to the authenticated API and reloads results", async () => {
     let created = false;
-    const fetchMock = vi.fn(async (_input: string | URL, init?: RequestInit) => {
-      if (init?.method === "POST") {
-        const body = JSON.parse(String(init.body)) as {
-          type: string;
-          title: string;
-          noteContent: string;
-        };
-        expect(body).toMatchObject({
-          type: "NOTE",
-          title: "Registro da visita",
-          noteContent: "Cliente apresentou nova demanda.",
-        });
-        expect(init.headers).toEqual(
-          expect.objectContaining({ Authorization: "Bearer " + token })
+    const fetchMock = vi.fn(
+      async (_input: string | URL, init?: RequestInit) => {
+        if (init?.method === "POST") {
+          const body = JSON.parse(String(init.body)) as {
+            type: string;
+            title: string;
+            noteContent: string;
+          };
+          expect(body).toMatchObject({
+            type: "NOTE",
+            title: "Registro da visita",
+            noteContent: "Cliente apresentou nova demanda.",
+          });
+          expect(init.headers).toEqual(
+            expect.objectContaining({ Authorization: "Bearer " + token })
+          );
+          created = true;
+          return response(record, 201);
+        }
+        return response(
+          created ? { ...emptyPage, items: [record], total: 1 } : emptyPage
         );
-        created = true;
-        return response(record, 201);
       }
-      return response(
-        created ? { ...emptyPage, items: [record], total: 1 } : emptyPage
-      );
-    });
+    );
     vi.stubGlobal("fetch", fetchMock);
     render(<KnowledgeView accessToken={token} canWrite />);
 
@@ -90,9 +96,9 @@ describe("Cycle 5 Knowledge Hub Web", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
     expect(await screen.findByText(record.title)).toBeInTheDocument();
-    expect(fetchMock.mock.calls.some(([, init]) => init?.method === "POST")).toBe(
-      true
-    );
+    expect(
+      fetchMock.mock.calls.some(([, init]) => init?.method === "POST")
+    ).toBe(true);
   });
 
   it("sends search and type filters to the server", async () => {
