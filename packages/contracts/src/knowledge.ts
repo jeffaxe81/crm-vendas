@@ -63,7 +63,7 @@ export const KnowledgeDocumentInputSchema = z
       .min(1)
       .max(255)
       .refine(
-        value => !/[\\/]/.test(value) && !/[\\x00-\\x1f]/.test(value),
+        value => !/[\\/]/.test(value) && !/[\x00-\x1f]/.test(value),
         "Nome de arquivo inválido."
       ),
     mimeType: z.string().trim().min(1).max(255),
