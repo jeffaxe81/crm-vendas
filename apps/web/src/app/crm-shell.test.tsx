@@ -161,9 +161,7 @@ it("shows the Knowledge Hub group only with knowledge.read", () => {
   const group = screen.getByRole("button", { name: "Grupo Conhecimento" });
   expect(group).toBeVisible();
   fireEvent.click(group);
-  fireEvent.click(
-    screen.getByRole("button", { name: "Hub de conhecimento" })
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Hub de conhecimento" }));
   expect(onNavigate).toHaveBeenCalledWith("knowledge");
   cleanup();
   render(
