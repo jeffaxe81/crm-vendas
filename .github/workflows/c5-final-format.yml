@@ -1,0 +1,31 @@
+name: C5 final formatting preview
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/c5-final-format.yml"
+      - "apps/api/src/knowledge/**"
+      - "apps/web/src/app/knowledge/**"
+      - "apps/api/src/data-management/tenant-snapshot.ts"
+      - "apps/api/src/data-management/restore-executor.ts"
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.20.0
+      - name: Configure pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.3.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - name: Print exact canonical formatting patch
+        run: |
+          pnpm exec prettier --write apps/api/src/knowledge apps/web/src/app/knowledge apps/api/src/data-management/tenant-snapshot.ts apps/api/src/data-management/restore-executor.ts apps/web/src/lib/api-client.ts apps/web/src/app/page.tsx apps/web/src/app/crm-shell.tsx
+          git diff --no-color -- apps/api/src/knowledge apps/web/src/app/knowledge apps/api/src/data-management/tenant-snapshot.ts apps/api/src/data-management/restore-executor.ts apps/web/src/lib/api-client.ts apps/web/src/app/page.tsx apps/web/src/app/crm-shell.tsx
