@@ -11,19 +11,7 @@ import type {
 
 const UUID = /^[a-f\d]{8}-[a-f\d]{4}-[1-8][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}$/i;
 const STORAGE_KEY = new RegExp(
-  `^${UUID.source.slice(1, -1)}-${UUID.source.slice(1, -1)}import { createHash, randomUUID } from "node:crypto";
-import { mkdir, open, readFile, rm } from "node:fs/promises";
-import { isAbsolute, join } from "node:path";
-
-import { KnowledgeDocumentInputSchema } from "@axes/contracts";
-import type {
-  KnowledgeStorage,
-  KnowledgeStorageInput,
-  KnowledgeStoredObject,
-} from "./knowledge-storage";
-
-const UUID = /^[a-f\d]{8}-[a-f\d]{4}-[1-8][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}$/i;
-,
+  `^${UUID.source.slice(1, -1)}-${UUID.source.slice(1, -1)}$`,
   "i"
 );
 const MAX_BYTES = 10 * 1024 * 1024;
