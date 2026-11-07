@@ -16,10 +16,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../database/prisma.service";
 import { Prisma } from "../generated/prisma/client";
-import {
-  KNOWLEDGE_STORAGE,
-  type KnowledgeStorage,
-} from "./knowledge-storage";
+import { KNOWLEDGE_STORAGE, type KnowledgeStorage } from "./knowledge-storage";
 
 type KnowledgeContext = {
   organizationId: string;
@@ -54,10 +51,7 @@ export class KnowledgeService {
     return {
       organizationId: context.organizationId,
       deletedAt: null,
-      OR: [
-        { accessLevel: "ORGANIZATION" },
-        { createdBy: context.actorUserId },
-      ],
+      OR: [{ accessLevel: "ORGANIZATION" }, { createdBy: context.actorUserId }],
     };
   }
 
@@ -275,12 +269,7 @@ export class KnowledgeService {
             updatedBy: context.actorUserId,
           },
         });
-        await this.replaceRelations(
-          tenant,
-          id,
-          context.organizationId,
-          input
-        );
+        await this.replaceRelations(tenant, id, context.organizationId, input);
         await tenant.auditLog.create({
           data: {
             organizationId: context.organizationId,
@@ -373,12 +362,7 @@ export class KnowledgeService {
             message: "O registro foi alterado por outra operação.",
           });
         }
-        await this.replaceRelations(
-          tenant,
-          id,
-          context.organizationId,
-          input
-        );
+        await this.replaceRelations(tenant, id, context.organizationId, input);
         await tenant.auditLog.create({
           data: {
             organizationId: context.organizationId,
@@ -443,9 +427,8 @@ export class KnowledgeService {
   }
 
   async download(id: string, context: KnowledgeContext) {
-    const item = await this.prisma.withTenant(
-      context.organizationId,
-      tenant => this.requireItem(tenant, id, context)
+    const item = await this.prisma.withTenant(context.organizationId, tenant =>
+      this.requireItem(tenant, id, context)
     );
     if (
       item.type !== "DOCUMENT" ||
