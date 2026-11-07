@@ -8,8 +8,7 @@ import { DatabaseModule } from "../database/database.module";
 import { KnowledgeController } from "./knowledge.controller";
 import { KnowledgeService } from "./knowledge.service";
 import { LocalKnowledgeStorage } from "./local-knowledge-storage";
-
-export const KNOWLEDGE_STORAGE = Symbol("KNOWLEDGE_STORAGE");
+import { KNOWLEDGE_STORAGE } from "./knowledge-storage";
 
 @Module({
   imports: [DatabaseModule, AuditModule, AuthorizationModule],
