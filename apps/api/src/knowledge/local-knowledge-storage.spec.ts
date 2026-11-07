@@ -24,14 +24,10 @@ describe("LocalKnowledgeStorage", () => {
       mimeType: "application/pdf",
       base64: bytes.toString("base64"),
     });
-    expect(saved.storageKey).toMatch(
-      new RegExp(`^${itemId}-[a-f0-9-]{36}$`)
-    );
+    expect(saved.storageKey).toMatch(new RegExp(`^${itemId}-[a-f0-9-]{36}$`));
     expect(saved.storageKey).not.toContain("cliente.pdf");
     expect(saved.sizeBytes).toBe(bytes.length);
-    expect(saved.sha256).toBe(
-      createHash("sha256").update(bytes).digest("hex")
-    );
+    expect(saved.sha256).toBe(createHash("sha256").update(bytes).digest("hex"));
     expect(await storage.get(saved.storageKey)).toEqual(bytes);
     await storage.remove(saved.storageKey);
     await expect(storage.get(saved.storageKey)).rejects.toThrow();
