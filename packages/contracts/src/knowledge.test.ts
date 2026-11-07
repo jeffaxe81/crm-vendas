@@ -105,8 +105,12 @@ describe("Cycle 5 knowledge contracts", () => {
 
     expect(schema.safeParse(valid).success).toBe(true);
     expect(schema.safeParse({ ...valid, base64: "====" }).success).toBe(false);
-    expect(schema.safeParse({ ...valid, fileName: "../contrato.pdf" }).success).toBe(false);
-    expect(schema.safeParse({ ...valid, fileName: "pasta\\contrato.pdf" }).success).toBe(false);
+    expect(
+      schema.safeParse({ ...valid, fileName: "../contrato.pdf" }).success
+    ).toBe(false);
+    expect(
+      schema.safeParse({ ...valid, fileName: "pasta\\contrato.pdf" }).success
+    ).toBe(false);
 
     // The configured 10 MiB limit must be checked against decoded bytes,
     // not just the base64 text length; one byte over the limit is rejected.
