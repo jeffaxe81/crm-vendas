@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdtemp, readdir, rm } from "node:fs/promises";
+import { mkdtemp, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { LocalKnowledgeStorage } from "./local-knowledge-storage";
@@ -56,6 +56,28 @@ describe("LocalKnowledgeStorage", () => {
       })
     ).rejects.toThrow();
     expect(await readdir(root)).toEqual([]);
+  });
+
+  it("refuses empty or oversized objects already present in storage", async () => {
+    const storage = new LocalKnowledgeStorage(root);
+    const key = `${itemId}-${randomUUID()}`;
+    await writeFile(join(root, key), Buffer.alloc(0));
+    await expect(storage.get(key)).rejects.toThrow(
+      "KNOWLEDGE_DOCUMENT_SIZE_INVALID"
+    );
+    await writeFile(join(root, key), Buffer.alloc(10 * 1024 * 1024 + 1));
+    await expect(storage.get(key)).rejects.toThrow(
+      "KNOWLEDGE_DOCUMENT_SIZE_INVALID"
+    );
+  });
+
+  it("rejects a symbolic link even when the link name matches an opaque key", async () => {
+    const storage = new LocalKnowledgeStorage(root);
+    const key = `${itemId}-${randomUUID()}`;
+    const outside = join(root, "outside.txt");
+    await writeFile(outside, "private test bytes");
+    await symlink(outside, join(root, key));
+    await expect(storage.get(key)).rejects.toThrow();
   });
 
   it("requires an absolute storage root", () => {
