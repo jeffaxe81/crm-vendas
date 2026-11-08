@@ -269,6 +269,9 @@ describe("Cycle 5 knowledge API and tenant boundaries", () => {
       .expect(200);
     expect(download.headers["content-disposition"]).toContain("attachment");
     expect(download.headers["x-content-type-options"]).toBe("nosniff");
+    expect(download.headers["content-security-policy"]).toBe("sandbox");
+    expect(download.headers["cache-control"]).toBe("private, no-store");
+    expect(download.headers["x-download-options"]).toBe("noopen");
     const downloadedText = download.text ?? download.body.toString();
     expect(downloadedText).toBe(contents);
 
