@@ -79,9 +79,14 @@ export class LocalKnowledgeStorage implements KnowledgeStorage {
     );
     try {
       const stat = await handle.stat();
-      if (!stat.isFile() || stat.size > MAX_BYTES)
+      if (!stat.isFile() || stat.size < 1 || stat.size > MAX_BYTES)
         throw new Error("KNOWLEDGE_DOCUMENT_SIZE_INVALID");
-      return await handle.readFile();
+      // Recheck after reading: a file changed between fstat and readFile
+      // must not bypass the same 10 MiB limit enforced at upload time.
+      const bytes = await handle.readFile();
+      if (bytes.length < 1 || bytes.length > MAX_BYTES)
+        throw new Error("KNOWLEDGE_DOCUMENT_SIZE_INVALID");
+      return bytes;
     } finally {
       await handle.close();
     }
