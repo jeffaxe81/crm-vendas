@@ -74,6 +74,11 @@ export class KnowledgeController {
     const name = encodeURIComponent(document.fileName);
     response.setHeader("Content-Type", document.mimeType);
     response.setHeader("X-Content-Type-Options", "nosniff");
+    // Attachments may contain untrusted bytes; prevent browser execution and
+    // shared caches from retaining tenant documents.
+    response.setHeader("Content-Security-Policy", "sandbox");
+    response.setHeader("Cache-Control", "private, no-store");
+    response.setHeader("X-Download-Options", "noopen");
     response.setHeader(
       "Content-Disposition",
       "attachment; filename=\"document\"; filename*=UTF-8''" + name
