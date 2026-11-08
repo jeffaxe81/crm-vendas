@@ -141,6 +141,44 @@ describe("Dispatch navigation in CRM", () => {
   });
 });
 
+it("shows the Knowledge Hub group only with knowledge.read", () => {
+  viewport(false);
+  const onNavigate = vi.fn();
+  const withKnowledge: AuthSessionResponse = {
+    ...session,
+    permissions: [...session.permissions, "knowledge.read"],
+  };
+  render(
+    <CrmShell
+      session={withKnowledge}
+      activeSection="companies"
+      onNavigate={onNavigate}
+      onLogout={() => undefined}
+    >
+      <p>Hub de teste</p>
+    </CrmShell>
+  );
+  const group = screen.getByRole("button", { name: "Grupo Conhecimento" });
+  expect(group).toBeVisible();
+  fireEvent.click(group);
+  fireEvent.click(screen.getByRole("button", { name: "Hub de conhecimento" }));
+  expect(onNavigate).toHaveBeenCalledWith("knowledge");
+  cleanup();
+  render(
+    <CrmShell
+      session={session}
+      activeSection="companies"
+      onNavigate={onNavigate}
+      onLogout={() => undefined}
+    >
+      <p>Sem permissão</p>
+    </CrmShell>
+  );
+  expect(
+    screen.queryByRole("button", { name: "Grupo Conhecimento" })
+  ).not.toBeInTheDocument();
+});
+
 it("reopens the CRM 1.2 quick setup from the authenticated shell", () => {
   viewport(false);
   const onOpenQuickSetup = vi.fn();

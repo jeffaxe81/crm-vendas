@@ -51,6 +51,12 @@ export const workspaceDestinations = [
     permission: "ticket.read",
   },
   {
+    id: "knowledge",
+    label: "Hub de conhecimento",
+    group: "Conhecimento",
+    permission: "knowledge.read",
+  },
+  {
     id: "management-summary",
     label: "Resumo gerencial",
     group: "Gestão",

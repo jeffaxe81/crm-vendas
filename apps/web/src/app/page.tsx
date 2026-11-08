@@ -18,6 +18,7 @@ import { Headset, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { authApiRequest, SESSION_UNAUTHORIZED_EVENT } from "../lib/api-client";
 import { ActivitiesView } from "./activities/activities-view";
 import { AgendaView } from "./agenda/agenda-view";
+import { KnowledgeView } from "./knowledge/knowledge-view";
 import { CompaniesView } from "./companies/companies-view";
 import { ContactsView } from "./contacts/contacts-view";
 import { CrmShell, type CrmSection } from "./crm-shell";
@@ -369,6 +370,12 @@ function HomeContent({
               accessToken={session.accessToken}
               ownerUserId={session.user.id}
               canWrite={session.permissions.includes("activity.write")}
+            />
+          ) : activeSection === "knowledge" &&
+            session.permissions.includes("knowledge.read") ? (
+            <KnowledgeView
+              accessToken={session.accessToken}
+              canWrite={session.permissions.includes("knowledge.write")}
             />
           ) : activeSection === "agenda" ? (
             <AgendaView

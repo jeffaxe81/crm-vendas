@@ -109,7 +109,12 @@ export async function executeConfirmedRestoreLocked(
     maxBytes
   );
 
-  await restoreTenantSnapshot(tx, principal.organizationId, target.data);
+  await restoreTenantSnapshot(
+    tx,
+    principal.organizationId,
+    target.data,
+    target.knowledgeDocuments
+  );
 
   // A lost lease after slow I/O or graph replacement aborts the entire SQL
   // transaction, including preview consumption, catalog, restore and audits.

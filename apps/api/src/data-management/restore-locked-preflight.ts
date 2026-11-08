@@ -98,7 +98,9 @@ export async function preflightRestoreExecution(
   await validateRestorePreservedMemberships(tx, organizationId, verified.data);
   await validateOrganizationRestoreOwner(tx, organizationId, verified.data);
 
-  const current = await exportTenantSnapshot(tx, organizationId, maxBytes);
+  const current = await exportTenantSnapshot(tx, organizationId, maxBytes, {
+    includeKnowledgeDocuments: true,
+  });
   const currentCounts = counts(current);
   // Fail closed before consuming the one-time confirmation. A model in either
   // state must not be silently omitted by the current partial restore executor.

@@ -8,6 +8,7 @@ import {
 import { useWorkspace } from "./workspace/workspace-provider";
 import {
   BarChart3,
+  BookOpenText,
   Building2,
   CalendarDays,
   ClipboardList,
@@ -47,6 +48,7 @@ const icons: Partial<Record<CrmSection, typeof Building2>> = {
   companies: Building2,
   contacts: UsersRound,
   activities: ClipboardList,
+  knowledge: BookOpenText,
   agenda: CalendarDays,
   opportunities: TrendingUp,
   products: Package,
@@ -277,6 +279,7 @@ export function CrmShell({
               "Comercial",
               "Produtividade",
               "Atendimento",
+              "Conhecimento",
               "Gestão",
               "Administração",
             ] as const

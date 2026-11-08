@@ -53,6 +53,29 @@ enum CustomFieldType {
   @@map("custom_field_type")
 }
 
+enum KnowledgeItemType {
+  NOTE
+  LINK
+  DOCUMENT
+
+  @@map("knowledge_item_type")
+}
+
+enum KnowledgeAccessLevel {
+  ORGANIZATION
+  PRIVATE
+
+  @@map("knowledge_access_level")
+}
+
+enum KnowledgeAiStatus {
+  UNPROCESSED
+  READY
+  FAILED
+
+  @@map("knowledge_ai_status")
+}
+
 enum PipelineStageKind {
   OPEN
   WON
@@ -184,6 +207,7 @@ model Organization {
   pipelines                Pipeline[]
   activities               Activity[]
   opportunities            Opportunity[]
+  knowledgeItems           KnowledgeItem[]
   roles                    Role[]
   products                 Product[]
   opportunityItems         OpportunityItem[]
@@ -264,6 +288,9 @@ model User {
   opportunitiesCreated        Opportunity[]              @relation("OpportunityCreatedBy")
   opportunitiesUpdated        Opportunity[]              @relation("OpportunityUpdatedBy")
   opportunitiesDeleted        Opportunity[]              @relation("OpportunityDeletedBy")
+  knowledgeItemsCreated        KnowledgeItem[]             @relation("KnowledgeItemCreatedBy")
+  knowledgeItemsUpdated        KnowledgeItem[]             @relation("KnowledgeItemUpdatedBy")
+  knowledgeItemsDeleted        KnowledgeItem[]             @relation("KnowledgeItemDeletedBy")
   productsCreated             Product[]                  @relation("ProductCreatedBy")
   productsUpdated             Product[]                  @relation("ProductUpdatedBy")
   productsDeleted             Product[]                  @relation("ProductDeletedBy")
@@ -381,6 +408,7 @@ model Company {
   customFieldValues   CompanyCustomFieldValue[]
   activities          Activity[]
   opportunities       Opportunity[]
+  knowledgeLinks       KnowledgeCompany[]
   territoryTargets    TerritoryTarget[]
   tickets             Ticket[]
 
@@ -496,6 +524,7 @@ model Contact {
   customFieldValues   ContactCustomFieldValue[]
   activities          Activity[]
   opportunities       Opportunity[]
+  knowledgeLinks       KnowledgeContact[]
   tickets             Ticket[]
 
   @@unique([id, organizationId], map: "contacts_id_organization_key")
@@ -766,6 +795,7 @@ model Opportunity {
   deleter         User?                  @relation("OpportunityDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
   activities      Activity[]
   items           OpportunityItem[]
+  knowledgeLinks  KnowledgeOpportunity[]
 
   @@unique([id, organizationId], map: "opportunities_id_organization_key")
   @@index([organizationId, deletedAt, stageId, expectedCloseAt], map: "opportunities_org_deleted_stage_close_idx")
@@ -1265,3 +1295,90 @@ model WebhookDelivery {
   @@index([organizationId, subscriptionId, createdAt], map: "webhook_deliveries_org_subscription_created_idx")
   @@map("webhook_deliveries")
 }
+
+
+model KnowledgeItem {
+  id               String               @id @default(uuid()) @db.Uuid
+  organizationId   String               @map("organization_id") @db.Uuid
+  type             KnowledgeItemType
+  title            String               @db.VarChar(200)
+  category         String?              @db.VarChar(120)
+  source           String?              @db.VarChar(200)
+  accessLevel      KnowledgeAccessLevel @default(ORGANIZATION) @map("access_level")
+  noteContent      String?              @map("note_content")
+  url              String?              @db.VarChar(2000)
+  originalFileName String?              @map("original_file_name") @db.VarChar(255)
+  mimeType         String?              @map("mime_type") @db.VarChar(255)
+  storageKey       String?              @map("storage_key") @db.VarChar(255)
+  sizeBytes        BigInt?              @map("size_bytes") @db.BigInt
+  sha256           String?              @db.VarChar(64)
+  aiStatus         KnowledgeAiStatus    @default(UNPROCESSED) @map("ai_status")
+  aiProcessedAt    DateTime?            @map("ai_processed_at") @db.Timestamptz(6)
+  aiProvider       String?              @map("ai_provider") @db.VarChar(120)
+  aiModel          String?              @map("ai_model") @db.VarChar(160)
+  aiExternalRef    String?              @map("ai_external_ref") @db.VarChar(255)
+  aiMetadata       Json?                @map("ai_metadata") @db.JsonB
+  createdAt        DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy        String               @map("created_by") @db.Uuid
+  updatedBy        String               @map("updated_by") @db.Uuid
+  version          Int                  @default(1)
+  deletedAt        DateTime?            @map("deleted_at") @db.Timestamptz(6)
+  deletedBy        String?              @map("deleted_by") @db.Uuid
+  organization     Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  creator          User                 @relation("KnowledgeItemCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  updater          User                 @relation("KnowledgeItemUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  deleter          User?                @relation("KnowledgeItemDeletedBy", fields: [deletedBy], references: [id], onDelete: Restrict)
+  companyLinks     KnowledgeCompany[]
+  contactLinks     KnowledgeContact[]
+  opportunityLinks KnowledgeOpportunity[]
+
+  @@unique([id, organizationId], map: "knowledge_items_id_organization_key")
+  @@index([organizationId, deletedAt, createdAt], map: "knowledge_items_org_deleted_created_idx")
+  @@index([organizationId, type, deletedAt, createdAt], map: "knowledge_items_org_type_deleted_created_idx")
+  @@index([organizationId, createdBy, accessLevel, deletedAt], map: "knowledge_items_org_author_access_deleted_idx")
+  @@map("knowledge_items")
+}
+
+model KnowledgeCompany {
+  id              String        @id @default(uuid()) @db.Uuid
+  organizationId  String        @map("organization_id") @db.Uuid
+  knowledgeItemId String        @map("knowledge_item_id") @db.Uuid
+  companyId       String        @map("company_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  knowledgeItem   KnowledgeItem @relation(fields: [knowledgeItemId, organizationId], references: [id, organizationId], onDelete: Cascade, map: "knowledge_companies_item_org_fkey")
+  company         Company       @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "knowledge_companies_company_org_fkey")
+
+  @@unique([organizationId, knowledgeItemId, companyId], map: "knowledge_companies_org_item_company_key")
+  @@index([organizationId, companyId, knowledgeItemId], map: "knowledge_companies_org_company_item_idx")
+  @@map("knowledge_companies")
+}
+
+model KnowledgeContact {
+  id              String        @id @default(uuid()) @db.Uuid
+  organizationId  String        @map("organization_id") @db.Uuid
+  knowledgeItemId String        @map("knowledge_item_id") @db.Uuid
+  contactId       String        @map("contact_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  knowledgeItem   KnowledgeItem @relation(fields: [knowledgeItemId, organizationId], references: [id, organizationId], onDelete: Cascade, map: "knowledge_contacts_item_org_fkey")
+  contact         Contact       @relation(fields: [contactId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "knowledge_contacts_contact_org_fkey")
+
+  @@unique([organizationId, knowledgeItemId, contactId], map: "knowledge_contacts_org_item_contact_key")
+  @@index([organizationId, contactId, knowledgeItemId], map: "knowledge_contacts_org_contact_item_idx")
+  @@map("knowledge_contacts")
+}
+
+model KnowledgeOpportunity {
+  id              String        @id @default(uuid()) @db.Uuid
+  organizationId  String        @map("organization_id") @db.Uuid
+  knowledgeItemId String        @map("knowledge_item_id") @db.Uuid
+  opportunityId   String        @map("opportunity_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  knowledgeItem   KnowledgeItem @relation(fields: [knowledgeItemId, organizationId], references: [id, organizationId], onDelete: Cascade, map: "knowledge_opportunities_item_org_fkey")
+  opportunity     Opportunity   @relation(fields: [opportunityId, organizationId], references: [id, organizationId], onDelete: Restrict, map: "knowledge_opportunities_opportunity_org_fkey")
+
+  @@unique([organizationId, knowledgeItemId, opportunityId], map: "knowledge_opportunities_org_item_opportunity_key")
+  @@index([organizationId, opportunityId, knowledgeItemId], map: "knowledge_opportunities_org_opportunity_item_idx")
+  @@map("knowledge_opportunities")
+}
+

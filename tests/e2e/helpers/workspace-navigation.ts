@@ -9,6 +9,7 @@ const groups: Record<string, string> = {
   Atendimento: "Atendimento",
   "Comunicação integrada": "Atendimento",
   "Resumo gerencial": "Gestão",
+  "Hub de conhecimento": "Conhecimento",
   "Chaves de integração": "Administração",
 };
 const preparedPages = new WeakSet<Page>();

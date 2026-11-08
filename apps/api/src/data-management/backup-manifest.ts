@@ -9,6 +9,82 @@ import {
 import { BackupError } from "./backup-error";
 export type SnapshotRow = Record<string, unknown>;
 export type SnapshotData = Record<string, SnapshotRow[]>;
+export type KnowledgeDocumentBlob = {
+  storageKey: string;
+  sizeBytes: number;
+  sha256: string;
+  base64: string;
+};
+
+const MAX_KNOWLEDGE_BLOB_BYTES = 10 * 1024 * 1024;
+const HEX_64 = /^[a-f0-9]{64}$/;
+const STORAGE_KEY_PATTERN =
+  /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+
+/** Check that encrypted backup blobs cover every document row exactly once. */
+export function validateKnowledgeDocumentBlobs(
+  data: SnapshotData,
+  value: unknown
+): asserts value is KnowledgeDocumentBlob[] {
+  if (!Array.isArray(value)) invalid("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+  const rows = (data.KnowledgeItem ?? []).filter(
+    row => row.type === "DOCUMENT"
+  );
+  if (rows.length !== value.length)
+    invalid("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+  const metadata = new Map<string, SnapshotRow>();
+  for (const row of rows) {
+    if (
+      typeof row.id !== "string" ||
+      typeof row.storageKey !== "string" ||
+      !STORAGE_KEY_PATTERN.test(row.storageKey) ||
+      !row.storageKey.startsWith(row.id + "-") ||
+      typeof row.sha256 !== "string" ||
+      !HEX_64.test(row.sha256) ||
+      typeof row.sizeBytes !== "string" ||
+      !/^\d+$/.test(row.sizeBytes)
+    )
+      invalid("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+    if (metadata.has(row.storageKey))
+      invalid("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+    metadata.set(row.storageKey, row);
+  }
+  const seen = new Set<string>();
+  for (const blob of value) {
+    if (
+      !blob ||
+      typeof blob !== "object" ||
+      Array.isArray(blob) ||
+      !exactKeys(blob, ["storageKey", "sizeBytes", "sha256", "base64"])
+    )
+      invalid("BACKUP_INVALID");
+    const object = blob as KnowledgeDocumentBlob;
+    const row = metadata.get(object.storageKey);
+    if (
+      !row ||
+      seen.has(object.storageKey) ||
+      !Number.isSafeInteger(object.sizeBytes) ||
+      object.sizeBytes < 1 ||
+      object.sizeBytes > MAX_KNOWLEDGE_BLOB_BYTES ||
+      row.sizeBytes !== String(object.sizeBytes) ||
+      object.sha256 !== row.sha256 ||
+      typeof object.base64 !== "string" ||
+      object.base64.length > Math.ceil(MAX_KNOWLEDGE_BLOB_BYTES / 3) * 4 ||
+      object.base64.length % 4 !== 0 ||
+      !/^[a-zA-Z0-9+/]*={0,2}$/.test(object.base64)
+    )
+      invalid("BACKUP_INVALID");
+    const bytes = Buffer.from(object.base64, "base64");
+    if (
+      bytes.length !== object.sizeBytes ||
+      bytes.toString("base64") !== object.base64 ||
+      createHash("sha256").update(bytes).digest("hex") !== object.sha256
+    )
+      invalid("BACKUP_INVALID");
+    seen.add(object.storageKey);
+  }
+}
+
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 function invalid(code = "BACKUP_INVALID"): never {
   throw new BackupError(code);
@@ -206,9 +282,11 @@ export function encodeSnapshot(
   organizationId: string,
   data: SnapshotData,
   createdAt: Date,
-  maxBytes: number
+  maxBytes: number,
+  knowledgeDocuments: readonly KnowledgeDocumentBlob[] = []
 ): Buffer {
   validateData(data, organizationId);
+  validateKnowledgeDocumentBlobs(data, knowledgeDocuments);
   const core = {
     schemaVersion: 1 as const,
     schemaFingerprint: snapshotFingerprint(),
@@ -218,11 +296,15 @@ export function encodeSnapshot(
       SNAPSHOT_POLICIES.map(p => [p.model, data[p.model]!.length])
     ),
   };
+  // Legacy manifests without documents retain their exact v1 checksum.
+  const payload = knowledgeDocuments.length
+    ? { data, knowledgeDocuments }
+    : { data };
   const manifest = BackupManifestSchema.parse({
     ...core,
-    checksum: digest({ manifest: core, data }),
+    checksum: digest({ manifest: core, ...payload }),
   });
-  const bytes = Buffer.from(canonical({ manifest, data }));
+  const bytes = Buffer.from(canonical({ manifest, ...payload }));
   if (bytes.length > maxBytes) invalid("BACKUP_TOO_LARGE");
   return bytes;
 }
@@ -230,9 +312,17 @@ export function decodeSnapshot(
   bytes: Buffer,
   organizationId: string,
   maxBytes: number
-): { data: SnapshotData; manifest: BackupManifest } {
+): {
+  data: SnapshotData;
+  manifest: BackupManifest;
+  knowledgeDocuments: KnowledgeDocumentBlob[];
+} {
   if (bytes.length > maxBytes) invalid("BACKUP_TOO_LARGE");
-  let document: { manifest: Record<string, unknown>; data: SnapshotData };
+  let document: {
+    manifest: Record<string, unknown>;
+    data: SnapshotData;
+    knowledgeDocuments?: KnowledgeDocumentBlob[];
+  };
   try {
     document = JSON.parse(bytes.toString("utf8"));
   } catch {
@@ -241,7 +331,8 @@ export function decodeSnapshot(
   if (
     !document ||
     typeof document !== "object" ||
-    !exactKeys(document, ["manifest", "data"]) ||
+    (!exactKeys(document, ["manifest", "data"]) &&
+      !exactKeys(document, ["manifest", "data", "knowledgeDocuments"])) ||
     !document.manifest
   )
     invalid();
@@ -255,11 +346,18 @@ export function decodeSnapshot(
   if (manifest.schemaFingerprint !== snapshotFingerprint())
     invalid("BACKUP_SCHEMA_UNSUPPORTED");
   validateData(document.data, organizationId);
+  const knowledgeDocuments = document.knowledgeDocuments ?? [];
+  validateKnowledgeDocumentBlobs(document.data, knowledgeDocuments);
+  if (!knowledgeDocuments.length && document.knowledgeDocuments !== undefined)
+    invalid("BACKUP_INVALID");
   const counts = Object.fromEntries(
     SNAPSHOT_POLICIES.map(p => [p.model, document.data[p.model]!.length])
   );
   if (canonical(counts) !== canonical(manifest.counts)) invalid();
   const { checksum, ...core } = manifest;
-  if (digest({ manifest: core, data: document.data }) !== checksum) invalid();
-  return { manifest, data: document.data };
+  const payload = knowledgeDocuments.length
+    ? { data: document.data, knowledgeDocuments }
+    : { data: document.data };
+  if (digest({ manifest: core, ...payload }) !== checksum) invalid();
+  return { manifest, data: document.data, knowledgeDocuments };
 }

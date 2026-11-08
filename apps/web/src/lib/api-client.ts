@@ -135,6 +135,37 @@ export async function apiRequest<T>(
   return payload as T;
 }
 
+/** Download binary attachments with the active session; never parse bytes as JSON. */
+export async function apiDownload(
+  path: string,
+  accessToken: string
+): Promise<{ bytes: Blob; fileName: string }> {
+  const response = await fetch(apiBaseUrl() + path, {
+    headers: {
+      Authorization: "Bearer " + accessToken,
+      "x-request-id": createRequestId(),
+    },
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    reportUnauthorized(response.status, accessToken);
+    const payload = await response.json().catch(() => undefined);
+    throw new ApiError(errorMessage(payload, response.status), response.status);
+  }
+  const disposition = response.headers.get("content-disposition") ?? "";
+  const encodedName = disposition.match(/filename\*=UTF-8''([^;\s]+)/i)?.[1];
+  let fileName = "documento";
+  if (encodedName) {
+    try {
+      fileName = decodeURIComponent(encodedName);
+    } catch {
+      // Use a neutral filename when the header is malformed.
+    }
+  }
+  // Downloads are user-initiated and are never rendered inline.
+  return { bytes: await response.blob(), fileName };
+}
+
 export function authApiRequest<T>(
   path: string,
   options: Omit<ApiRequestOptions, "credentials" | "accessToken"> = {}

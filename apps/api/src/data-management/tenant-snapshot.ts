@@ -17,7 +17,8 @@ import type { TenantDataPolicy } from "./tenant-data-registry";
 export async function exportTenantSnapshot(
   transaction: Prisma.TransactionClient,
   organizationId: string,
-  maxBytes: number
+  maxBytes: number,
+  options: { includeKnowledgeDocuments?: boolean } = {}
 ): Promise<SnapshotData> {
   const [isolation] = await transaction.$queryRawUnsafe<
     { transaction_isolation: string }[]
@@ -29,7 +30,24 @@ export async function exportTenantSnapshot(
     )
   )
     throw new BackupError("BACKUP_SNAPSHOT_ISOLATION_REQUIRED");
+  // Notes/links are complete DB rows, but documents reference external bytes.
+  // A DB-only tenant snapshot cannot protect documents, including deleted files.
+  // Keep fail-closed semantics whenever any knowledge document exists.
+  const [documents] = await transaction.$queryRawUnsafe<
+    Array<{ present: boolean }>
+  >(
+    `SELECT EXISTS(
+      SELECT 1 FROM public.knowledge_items
+      WHERE organization_id=$1::uuid
+        AND type='DOCUMENT'::knowledge_item_type
+    ) AS present`,
+    organizationId
+  );
+  if (documents?.present !== false && !options.includeKnowledgeDocuments)
+    throw new BackupError("BACKUP_ATTACHMENT_ADAPTER_REQUIRED");
+
   for (const policy of SNAPSHOT_POLICIES) {
+    if (policy.model === "KnowledgeItem") continue;
     if (
       /^(File|Attachment|StoredFile|FileObject)$/.test(policy.model) ||
       snapshotFields(policy).some(
